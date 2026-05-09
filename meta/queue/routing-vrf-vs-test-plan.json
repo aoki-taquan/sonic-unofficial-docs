@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/vrf-vs-test-plan.md",
+  "verification": "hld-only",
+  "concerns": [
+    "vrfmgrd / intfmgrd / Orchagent (VrfOrch / IntfOrch) \u306e VS \u30c6\u30b9\u30c8\u30ab\u30d0\u30fc\u7bc4\u56f2\u304c\u73fe\u884c sonic-swss \u306e test_vrf*.py \u7b49\u3067\u5b9f\u88c5\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "1000 VRF \u30b9\u30b1\u30fc\u30eb\u4e0a\u9650\u304c\u73fe\u884c ASIC \u3067\u5b9f\u6a5f\u5230\u9054\u53ef\u80fd\u304b\u78ba\u8a8d (HLD \u306f VS \u4e0a\u9650\u5024)",
+    "VRF \u8de8\u304e nexthop (route leak) \u306e\u30b5\u30dd\u30fc\u30c8\u72b6\u6cc1\u78ba\u8a8d",
+    "vrfmgrd warm-restart \u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
+    "neighsyncd / fpmsyncd \u304c VRF \u5225 entry \u3092 APP_DB \u306e VRF \u30ad\u30fc\u3068\u3068\u3082\u306b publish \u3059\u308b\u30ed\u30b8\u30c3\u30af\u78ba\u8a8d"
+  ],
+  "priority": "medium",
+  "issue": 504
+}
