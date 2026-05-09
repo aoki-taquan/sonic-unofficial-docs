@@ -1033,6 +1033,19 @@
       "priority": "medium",
       "issue": 169,
       "pr": 170
+    },
+    {
+      "page": "docs/routing/srv6-sid-l3adj.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SRv6Orch の L3Adj 取り扱い拡張の現行 master 実装存在確認 (sonic-swss/orchagent/srv6orch.cpp、PR #2902)",
+        "m_pendingSRv6MySIDEntries データ構造とハンドリングの取り込み確認",
+        "NeighOrch から SRv6Orch への Neighbor ADD/DEL 通知購読経路の実装確認",
+        "SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID の libsairedis / community SAI 取り込み状況確認",
+        "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認"
+      ],
+      "priority": "medium",
+      "issue": 171
     }
   ]
 }
