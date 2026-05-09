@@ -1162,7 +1162,8 @@
         "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認"
       ],
       "priority": "medium",
-      "issue": 187
+      "issue": 187,
+      "pr": 188
     }
   ]
 }
