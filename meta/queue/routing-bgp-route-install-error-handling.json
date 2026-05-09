@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/bgp-route-install-error-handling.md",
+  "verification": "hld-only",
+  "concerns": [
+    "ERROR_ROUTE_TABLE / ERROR_DB スキーマの現行 master 取り込み確認",
+    "fpmsyncd 側 ERROR_ROUTE_TABLE subscriber と Zebra への送信ロジック実装確認",
+    "BGP_ERROR_CFG_TABLE の sonic-yang-models 取り込み確認",
+    "config bgp error-handling CLI の sonic-utilities 取り込み確認",
+    "後発 BGP Suppress FIB Pending（dplane_fpm_nl）との置き換え関係 / 共存可否確認",
+    "2019 年 HLD のため現行実装乖離リスク（priority=high）"
+  ],
+  "priority": "high"
+}
