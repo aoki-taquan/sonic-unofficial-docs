@@ -1,0 +1,110 @@
+---
+title: Fast-reboot Flow Improvements（finalizer / reconciliation）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - fast-reboot
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    `warmboot-finalizer` の fast-reboot 兼用、`restore_neighbors.py`、enable_counters の遅延ロジックなどは現行 master の実装と差分の可能性。
+
+# Fast-reboot Flow Improvements（finalizer / reconciliation）
+
+## 概要
+
+SONiC fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 HLD[^1]。中身は次の 2 軸:
+
+1. **fast-reboot の終了を示す flag を導入**（warmboot-finalizer を流用）。これにより flex counter 有効化など「init 完了後に走らせたい処理」を遅延起動できる
+2. **異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂**。dump file（default gateway / neighbor / FDB）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）[^1]
+
+実測（202111 + Nvidia SN2700）: dump あり 28.07s / なし 25.11s と HLD 内に記載[^1]。
+
+## 動作仕様
+
+### Reconciliation の各レイヤ
+
+```mermaid
+flowchart TB
+    KEXEC[kexec\nSONIC_BOOT_TYPE=fast] --> SYNC[syncd: INIT/APPLY view\n旧 ASIC state を比較]
+    KEXEC --> ORCH[orchagent: 旧 APPDB と現状を比較]
+    KEXEC --> NEIGH[neighsyncd: restore_neighbors.py\nARP/NDP 送信]
+    KEXEC --> FPM[fpmsyncd: route 復元]
+    SYNC --> FIN[reboot finalizer]
+    ORCH --> FIN
+    NEIGH --> FIN
+    FPM --> FIN
+    FIN --> FLAG[Redis から warm-boot/fast-boot flag を除去]
+    FIN --> POST[後続初期化\nflex counter enable 等]
+```
+
+### syncd: INIT view → APPLY view
+
+syncd は再起動時に **INIT view**（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
+
+### neighsyncd: restore_neighbors.py
+
+旧 image 終了直前に保存した既知 neighbor 一覧に対し、起動後に ARP/NDP を打って現実の MAC / 状態を取り戻す[^1]。これがないと neighbor は learning 待ちで slow。
+
+### fpmsyncd: route 復元
+
+旧 APPDB の `ROUTE_TABLE` をそのまま温存し、bgpd 起動完了後に diff を流し込む。fpmsyncd は新規 zebra と同期。
+
+### Reboot finalizer
+
+`finalize-warmboot.sh` を fast-reboot 兼用にして、終了 flag を Redis から外すタイミングを統一。これを起点に `enable_counters.py` などの後続スクリプトが走る[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In addition to the recover mechanism, the warmboot-finalizer can be enhanced to finalize fast-reboot as well
+  and introduce a new flag indicating the process is done.
+  This new flag can be used later on for any functionality, we want to start only after init flow finished
+reasoning: finalizer 流用と新 flag 導入の根拠。
+-->
+
+### vendor NOS → SONiC ISSU
+
+dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC→SONiC と同じ flow。渡されなくても起動は完了するが、neighbor / FDB を slow path で再学習するため downtime が伸びる[^1]。
+
+## 設定
+
+`fast-reboot` コマンドで起動。`--use-config <path>` などのオプションは HLD で個別言及なし。
+
+## 制限事項
+
+- **dataplane <30s / control plane <90s** はターゲット値。実測は platform 依存
+- vendor NOS 由来 dump の提供は別途プラットフォーム実装側
+- finalizer の flag を起点にする処理（flex counter 等）は HLD 例示。追加対象は要 case-by-case
+
+## 干渉する機能
+
+- **system-wide warmboot**: 同じスクリプト基盤と finalizer を共有
+- **flex counter / enable_counters.py**: finalizer flag 待ちで起動
+- **SAI Application Extension Infrastructure**: HLD 末尾に integration 章あり[^1]
+
+## トラブルシューティング
+
+- 30s 超え → syncd の INIT/APPLY 比較が長い、neighbor restore が ARP burst で詰まる、ASIC 側の port 起動順
+- finalizer が flag を外さない → 各 reconciliation サブシステムから finalizer への ack が来ているか確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- warmboot-finalizer を fast-reboot 兼用にする現行 sonic-buildimage / sonic-utilities 取り込み確認
+- restore_neighbors.py の現行 sonic-swss/neighsyncd 取り込み確認
+- enable_counters.py 等の finalizer flag 待ちロジック確認
+- syncd INIT/APPLY view framework の現行 sonic-sairedis 取り込み確認
+- vendor NOS → SONiC ISSU dump 仕様の文書化状況確認
+- HLD 実測値（28s/25s）の現行マスターでの再現性確認
+-->
