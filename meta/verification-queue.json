@@ -219,6 +219,18 @@
       "priority": "medium"
     },
     {
+      "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
+      "issue": 53,
+      "verification": "hld-only",
+      "concerns": [
+        "ZmqClient / ZmqServer / ZmqProducerStateTable / ZmqConsumerStateTable の現行実装の存在確認",
+        "DB 更新の on/off フラグが実装にあるか、また既定値の確認",
+        "リトライポリシーの実装挙動（再試行回数・バックオフ）",
+        "select 通知と DB 書き込みの順序保証の実コード確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/internals/why-need-health-check.md",
       "issue": 51,
       "verification": "hld-only",
