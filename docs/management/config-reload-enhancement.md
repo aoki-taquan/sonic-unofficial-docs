@@ -1,7 +1,7 @@
 ---
 title: config reload の event-driven 化（FEATURE.delayed + PortInitDone）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
     - sonic-feature
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`hostcfgd` の `delayed` field 対応、APPL_DB `PORT_TABLE:PortInitDone` の購読、`has_timer` → `delayed` への db_migrator 移行、warm/fast boot の `waitAdvancedBootDone` 連携、既存 systemd timer の削除はすべて未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-host-services/scripts/featured`（`delayed` フィールド処理 / `enable_delayed_services` / PORT_TABLE 購読 + PortInitDone ハンドラ / `handle_port_table_timeout` / `waitAdvancedBootDone`）、`sonic-utilities/scripts/db_migrator.py:719-726` の `has_timer`→`delayed` 移行、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67` の `delayed` leaf、`sonic-swss/portsyncd/portsyncd.cpp:134` の `PortInitDone` publish を確認済み（verified at: 2026-05-09）。
 
 # config reload の event-driven 化（FEATURE.delayed + PortInitDone）
 
