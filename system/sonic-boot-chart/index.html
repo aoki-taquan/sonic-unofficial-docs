@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/reboot-support-blockingmode-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-boot-chart/">
       
       
-        <link rel="prev" href="../persistent-log-level-hld/">
+        <link rel="prev" href="../reboot-support-blockingmode-in-sonic/">
       
       
-        <link rel="next" href="../sonic-boot-chart/">
+        <link rel="next" href="../sonic-optional-feature-control-enhancement/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>reboot コマンドの blocking mode（reboot.conf / -b / -v） - SONiC 非公式ドキュメント</title>
+        <title>SONiC Boot Chart（systemd-bootchart 統合） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#reboot-blocking-moderebootconf-b-v" class="md-skip">
+        <a href="#sonic-boot-chartsystemd-bootchart" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              reboot コマンドの blocking mode（reboot.conf / -b / -v）
+              SONiC Boot Chart（systemd-bootchart 統合）
             
           </span>
         </div>
@@ -2527,6 +2527,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -2546,7 +2574,7 @@
   <span class="md-ellipsis">
     
   
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+    SONiC Boot Chart（systemd-bootchart 統合）
   
 
     
@@ -2564,7 +2592,7 @@
   <span class="md-ellipsis">
     
   
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+    SONiC Boot Chart（systemd-bootchart 統合）
   
 
     
@@ -2613,32 +2641,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#blocking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧挙動（非 blocking）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#blocking-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新挙動（blocking mode）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        有効化方法（オプトイン、両立可能）
+        ビルド時オプション
       
     </span>
   </a>
@@ -2646,10 +2652,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#verbosedot" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verbose（dot 出力）
+        既定設定
       
     </span>
   </a>
@@ -2657,10 +2663,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etcsonicrebootconf" class="md-nav__link">
+  <a href="#sonic-bootchart-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        /etc/sonic/reboot.conf
+        sonic-bootchart CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sonic-bootchart CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable / disable
       
     </span>
   </a>
@@ -2668,10 +2686,48 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#platform-reboot" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform reboot との関係
+        config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力先
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フロー
       
     </span>
   </a>
@@ -2684,7 +2740,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2696,10 +2752,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli-yang-config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        CLI / YANG / CONFIG_DB
       
     </span>
   </a>
@@ -2707,29 +2763,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -2745,7 +2779,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2756,7 +2790,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2767,7 +2801,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2778,7 +2812,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2792,34 +2826,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Boot Chart（systemd-bootchart 統合）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -4194,32 +4200,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#blocking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧挙動（非 blocking）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#blocking-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新挙動（blocking mode）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        有効化方法（オプトイン、両立可能）
+        ビルド時オプション
       
     </span>
   </a>
@@ -4227,10 +4211,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#verbosedot" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verbose（dot 出力）
+        既定設定
       
     </span>
   </a>
@@ -4238,10 +4222,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etcsonicrebootconf" class="md-nav__link">
+  <a href="#sonic-bootchart-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        /etc/sonic/reboot.conf
+        sonic-bootchart CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sonic-bootchart CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable / disable
       
     </span>
   </a>
@@ -4249,10 +4245,48 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#platform-reboot" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform reboot との関係
+        config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力先
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フロー
       
     </span>
   </a>
@@ -4265,7 +4299,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4277,10 +4311,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli-yang-config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        CLI / YANG / CONFIG_DB
       
     </span>
   </a>
@@ -4288,29 +4322,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4326,7 +4338,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4337,7 +4349,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4348,7 +4360,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4359,7 +4371,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4386,7 +4398,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/reboot-support-blockingmode-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-boot-chart.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4396,149 +4408,118 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 1.0, 2025-06）のみを根拠に書かれている。<code>reboot</code> スクリプト本体（sonic-buildimage）の <code>-b</code> / <code>-v</code> フラグ実装、<code>/etc/sonic/reboot.conf</code> パーサ、平台固有 reboot との関係は未確認。</p>
+<p><code>INCLUDE_BOOTCHART</code> ビルドフラグの sonic-buildimage への取り込み、<code>sonic-bootchart</code> CLI utility の sonic-utilities への取り込み、<code>/etc/systemd/bootchart.conf</code> の生成 / 更新パスは実コードでの裏取り未済。</p>
 </div>
-<h1 id="reboot-blocking-moderebootconf-b-v"><code>reboot</code> コマンドの blocking mode（<code>reboot.conf</code> / <code>-b</code> / <code>-v</code>）<a class="headerlink" href="#reboot-blocking-moderebootconf-b-v" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-boot-chartsystemd-bootchart">SONiC Boot Chart（<code>systemd-bootchart</code> 統合）<a class="headerlink" href="#sonic-boot-chartsystemd-bootchart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の <code>reboot</code> スクリプトは内部で <code>systemctl reboot</code> を呼ぶが、これは <strong>非同期</strong> であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。結果、コンソール出力は次の 2 パターンがランダムに発生する:</p>
+<p>SONiC は <strong>モジュール構成</strong> で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は <code>systemd-bootchart</code> を SONiC に統合し、<strong>boot プロセスの sampling profiling</strong> を行う仕組みを定義する。出力は SVG で可視化される。</p>
+<p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>A: <code>systemctl reboot</code> 戻り後にユーザシェルがプロンプトを 1 行表示してから切断</li>
-<li>B: シェルが先に kill されてプロンプト無しで切断</li>
+<li><code>systemd-bootchart</code> を SONiC OS に統合し、<strong>default install / default disable</strong></li>
+<li>ユーザは CLI で enable / disable</li>
+<li>sample 数 / 頻度を CLI で設定可能</li>
+<li>設定 / 生成 SVG を表示</li>
 </ul>
-<p>自動化システムから見ると <strong><code>reboot</code> 完了の判定が安定しない</strong>。本 HLD はこれを <strong>B 動作（プロンプトを出さずブロックして切断まで待つ）</strong> に統一する <strong>blocking mode</strong> を導入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>破壊的変更を避けるため、blocking mode は <strong>明示的にオプトイン</strong>（<code>-b</code> または <code>reboot.conf</code>）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="blocking">旧挙動（非 blocking）<a class="headerlink" href="#blocking" title="Permanent link">&para;</a></h3>
+<h3 id="_3">ビルド時オプション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>INCLUDE_BOOTCHART=y/n</code> で SONiC build に含めるかを制御する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>make<span class="w"> </span><span class="nv">INCLUDE_BOOTCHART</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin<span class="w">   </span><span class="c1"># 含める</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span><span class="nv">INCLUDE_BOOTCHART</span><span class="o">=</span>n<span class="w"> </span>target/sonic-mellanox.bin<span class="w">   </span><span class="c1"># 含めない</span>
+</span></code></pre></div>
+<p><code>y</code> の場合、Debian upstream から <code>systemd-bootchart</code> パッケージ（128 KB）を SONiC host に install する。</p>
+<p><code>ENABLE_BOOTCHART=y</code> で <strong>default 状態の有効化</strong> を制御するフラグも追加される。</p>
+<h3 id="_4">既定設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>/etc/systemd/bootchart.conf</code> に SONiC 既定値を提供<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-ini highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[Bootchart]</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">Samples</span><span class="o">=</span><span class="s">4500</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="na">Frequency</span><span class="o">=</span><span class="s">25</span>
+</span></code></pre></div>
+<p>これは <strong>3 分間 × 25 sample/sec = 4500 sample</strong> を収集する設定。</p>
+<h3 id="sonic-bootchart-cli"><code>sonic-bootchart</code> CLI<a class="headerlink" href="#sonic-bootchart-cli" title="Permanent link">&para;</a></h3>
+<p><code>sonic-utilities</code> の <code>scripts/</code> に新ユーティリティ <code>sonic-bootchart</code> を追加する。位置付けは <code>sonic-kdump-config</code> や <code>sonic-installer</code> に近いスタンドアロン CLI<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ sudo sonic-bootchart
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Usage: sonic-bootchart [OPTIONS] COMMAND [ARGS]...
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Commands:
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  config   Configure bootchart  (要 root)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  disable  Disable bootchart    (要 root)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  enable   Enable bootchart     (要 root)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  show     Display bootchart configuration
+</span></code></pre></div>
+<h4 id="enable-disable">enable / disable<a class="headerlink" href="#enable-disable" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Running<span class="w"> </span>command:<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>systemd-bootchart
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>disable
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Running<span class="w"> </span>command:<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>systemd-bootchart
+</span></code></pre></div>
+<p><code>INCLUDE_BOOTCHART=n</code> でビルドした image でこれを叩くとエラー<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sudo sonic-bootchart enable
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>systemd-bootchart is not installed
+</span></code></pre></div>
+<p>enable は <strong>永続的</strong>。<code>config save</code> / <code>config reload</code> の影響を受けず、<code>disable</code> するまで boot 毎に走る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="config">config<a class="headerlink" href="#config" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
+</span></code></pre></div>
+<p>このコマンドが <code>/etc/systemd/bootchart.conf</code> を直接更新する。<strong>次回 boot から</strong> 新値が使われる。</p>
+<p><code>samples = frequency × time-span</code> で換算される。</p>
+<h4 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ sudo sonic-bootchart show
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Status     Operational Status   Frequency  Time Span (sec)  Output
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    in-active            10         50               /run/log/bootchart-20220504-1325.svg
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Status</code></td>
+<td><code>systemctl is-enabled systemd-bootchart</code> 出力（boot 時に走るか）</td>
+</tr>
+<tr>
+<td><code>Operational Status</code></td>
+<td><code>systemctl is-active systemd-bootchart</code> 出力（現在 sample 収集中か）</td>
+</tr>
+<tr>
+<td><code>Frequency</code></td>
+<td>sample/sec</td>
+</tr>
+<tr>
+<td><code>Time Span</code></td>
+<td>起動後何秒間 sampling するか</td>
+</tr>
+<tr>
+<td><code>Output</code></td>
+<td>完了している場合に SVG パスを表示。未完了なら空</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">出力先<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>systemd-bootchart</code> は SVG を <strong><code>/run/log/</code></strong> に保存する。<code>/run</code> は tmpfs のため <strong>reboot で消える</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。永続化したければ <code>/var/log/</code> 等にコピーする運用が必要。</p>
+<h3 id="_6">フロー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
-    participant U as user shell
-    participant R as reboot script
-    participant S as systemctl reboot
+    participant U as user
+    participant CLI as sonic-bootchart
     participant SD as systemd
-    U-&gt;&gt;R: sudo reboot
-    R-&gt;&gt;S: systemctl reboot
-    S--&gt;&gt;R: return (async)
-    par 競合
-        R--&gt;&gt;U: 戻り値で次プロンプト
-        SD--&gt;&gt;U: shell kill
+    participant BC as systemd-bootchart
+    participant FS as /run/log
+    U-&gt;&gt;CLI: sudo sonic-bootchart enable
+    CLI-&gt;&gt;SD: systemctl enable systemd-bootchart
+    U-&gt;&gt;U: sudo reboot
+    SD-&gt;&gt;BC: 起動 (boot 早期)
+    loop 3 minutes (default)
+        BC-&gt;&gt;BC: 25 Hz sampling
     end
-    Note over U: タイミング次第で\nプロンプトが見えたり見えなかったり</code></pre>
-<h3 id="blocking-mode">新挙動（blocking mode）<a class="headerlink" href="#blocking-mode" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user shell
-    participant R as reboot script
-    participant S as systemctl reboot
-    participant SD as systemd
-    U-&gt;&gt;R: sudo reboot -b   (or reboot.conf blocking_mode=true)
-    R-&gt;&gt;S: systemctl reboot
-    S--&gt;&gt;R: return (async)
-    Note over R: ループで sleep 10s\n(timeout まで)
-    SD-&gt;&gt;U: shell kill (R も巻き添えで終了)
-    Note over U: 必ずプロンプト無しで切断</code></pre>
-<p>要点:</p>
-<ul>
-<li><code>systemctl reboot</code> 戻り後、<code>reboot</code> スクリプトは <strong>dead loop</strong> で待機。これによりシェルが kill されるまでプロンプトが出ない</li>
-<li>何らかの理由で systemd が reboot しない場合、loop が永久に続くと困るので <strong>timeout</strong> を導入</li>
-</ul>
-<h3 id="_3">有効化方法（オプトイン、両立可能）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>設定</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>パラメータ</td>
-<td><code>reboot -b</code></td>
-</tr>
-<tr>
-<td>設定ファイル</td>
-<td><code>/etc/sonic/reboot.conf</code> で <code>blocking_mode=true</code></td>
-</tr>
-</tbody>
-</table>
-<p>どちらか有効なら blocking mode になる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="verbosedot">Verbose（dot 出力）<a class="headerlink" href="#verbosedot" title="Permanent link">&para;</a></h3>
-<p>blocking mode 中、生存表示として <strong>10 秒ごとに <code>.</code> を出力、50 個ごとに改行</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。出力例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Fri 20 Oct 2023 06:03:33 AM UTC Issuing OS-level reboot ...
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>..................................................
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>..................................................
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>..............................Connection to 10.150.22.134 closed by remote host.
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Connection to 10.150.22.134 closed.
-</span></code></pre></div>
-<p>dot 出力の有効化には <strong>blocking mode が前提</strong>。その上で次のいずれか<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>設定</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>パラメータ</td>
-<td><code>reboot -v -b</code></td>
-</tr>
-<tr>
-<td>設定ファイル</td>
-<td><code>reboot.conf</code> で <code>show_timer=true</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="etcsonicrebootconf"><code>/etc/sonic/reboot.conf</code><a class="headerlink" href="#etcsonicrebootconf" title="Permanent link">&para;</a></h3>
-<p>ファイル不在なら全部デフォルト<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>Config</th>
-<th>型</th>
-<th>デフォルト</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>blocking_mode</code></td>
-<td>bool</td>
-<td><code>false</code></td>
-<td>blocking mode を有効化</td>
-</tr>
-<tr>
-<td><code>blocking_mode_timeout</code></td>
-<td>int (秒)</td>
-<td><code>180</code></td>
-<td>blocking ループの上限。超えると script 終了（reboot がハングしている兆候）</td>
-</tr>
-<tr>
-<td><code>show_timer</code></td>
-<td>bool</td>
-<td><code>false</code></td>
-<td>10 秒ごとの dot 出力。<code>blocking_mode=true</code> が前提</td>
-</tr>
-</tbody>
-</table>
-<p>例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>blocking_mode=true
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>blocking_mode_timeout=10
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show_timer=true
-</span></code></pre></div>
-<p>CLI 経由の <code>Ctrl+C</code> で抜けたい場合は手動でも止められるため、CLI パラメータ側にはタイムアウトオプションを置かない（reboot.conf のみ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/reboot/Reboot_BlockingMode_HLD.md#L60-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  We don't want to make a break change to SONIC reboot command, so we introduce 2 options ...
-  - Parameter: Use command optional parameter `-b` to enable blocking mode for reboot script.
-  - Config file: ... `blocking_mode` is enabled in `reboot.conf` config file.
-  ... If the systemctl reboot failed, the deadloop might block the console thread.
-  So we introduce the timeout config to exit when reboot takes too long.
-reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop からの脱出を保証」という設計の根拠。
--->
-
-<h3 id="platform-reboot">Platform reboot との関係<a class="headerlink" href="#platform-reboot" title="Permanent link">&para;</a></h3>
-<p><strong>Platform reboot が有効なときは blocking mode が効かない</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。プラットフォーム固有のフローに従う。</p>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+    BC-&gt;&gt;FS: bootchart-&lt;ts&gt;.svg 出力
+    U-&gt;&gt;CLI: sudo sonic-bootchart show
+    CLI-&gt;&gt;FS: SVG 一覧表示</code></pre>
+<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="cli-yang-config_db">CLI / YANG / CONFIG_DB<a class="headerlink" href="#cli-yang-config_db" title="Permanent link">&para;</a></h3>
+<p>本機能は <strong>YANG / CONFIG_DB に変更なし</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>/etc/systemd/bootchart.conf</code> の直接書き換えで設定する独立ユーティリティ。</p>
 <table>
 <thead>
 <tr>
@@ -4548,68 +4529,76 @@ reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop か�
 </thead>
 <tbody>
 <tr>
-<td><code>reboot</code></td>
-<td>デフォルト（非 blocking）</td>
+<td><code>sudo sonic-bootchart enable</code></td>
+<td>次回起動以降の sampling を有効化</td>
 </tr>
 <tr>
-<td><code>reboot -b</code></td>
-<td>blocking mode</td>
+<td><code>sudo sonic-bootchart disable</code></td>
+<td>無効化</td>
 </tr>
 <tr>
-<td><code>reboot -v -b</code></td>
-<td>blocking + dot 出力</td>
+<td><code>sudo sonic-bootchart config --time-span &lt;s&gt; --frequency &lt;hz&gt;</code></td>
+<td>収集パラメータ更新</td>
+</tr>
+<tr>
+<td><code>sudo sonic-bootchart show</code></td>
+<td>状態 / 出力 SVG を表示</td>
 </tr>
 </tbody>
 </table>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB スキーマには変更なし。設定は <strong><code>/etc/sonic/reboot.conf</code></strong>（ファイル）で行う。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 自動化向け: 全 reboot を blocking 化</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/sonic/reboot.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s">blocking_mode=true</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s">blocking_mode_timeout=300</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s">show_timer=true</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s">EOF</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 手動でその場限りで blocking</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>sudo<span class="w"> </span>reboot<span class="w"> </span>-b<span class="w"> </span>-v
+<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Image が INCLUDE_BOOTCHART=y でビルドされていることが前提</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 50 秒 × 10 Hz = 500 samples に縮小</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># reboot して計測</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>sudo<span class="w"> </span>reboot
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># 戻ってきたら SVG を確認</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>show
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>後方互換オプトイン</strong>。指定しない限り従来どおりの非 blocking 動作<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Platform reboot 有効時は無効</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>timeout を超えると blocking ループは抜ける。その時点で systemd reboot が来ていない場合、運用者は別途確認する必要がある</li>
-<li><code>reboot.conf</code> のフォーマットは単純な <code>key=value</code> ファイル。INI / TOML 等ではない</li>
+<li><strong>build flag が必要</strong>。<code>INCLUDE_BOOTCHART=y</code> でビルドされていない image では使えない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>出力先 <code>/run/log</code> は <strong>tmpfs</strong> のため reboot で消失する。永続化が必要なら別途コピー</li>
+<li>設定変更は <strong>次回 boot から</strong> 適用。現在 boot 中の sampling は変えられない</li>
+<li>HLD の Open Items<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:<ul>
+<li>SONiC installer での bootchart 設定マイグレーション（S2S アップグレード時の引き継ぎ）</li>
+<li>boot 後 runtime に sampling を実行するモードの要望</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+</li>
+<li><code>enable</code> / <code>disable</code> 状態は <strong><code>config save</code> / <code>config reload</code> の影響を受けない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config_db.json</code> には載らないため</li>
+</ul>
+<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>systemctl reboot</code></strong>: 内部で呼ぶコマンド。挙動は変えず、後段の wait の有無を変える</li>
-<li><strong>Platform reboot</strong>: 有効時は本機能を上書き</li>
-<li><strong>コンソールセッション管理 / 自動化（Ansible 等）</strong>: 「shell が必ず prompt 無しで切れる」を期待できるようになる</li>
-<li><strong>fast-reboot / warm-reboot</strong>: 本 HLD は通常 reboot を対象とする。fast/warm への適用は HLD 未言及</li>
+<li><strong><code>systemd</code></strong>: <code>systemd-bootchart</code> をサービスとして管理</li>
+<li><strong><code>sonic-installer</code></strong>: <code>INCLUDE_BOOTCHART</code> フラグの引き継ぎ（HLD 上は Open Item）</li>
+<li><strong>boot シーケンス全体</strong>: 早期に走る daemon のため、<code>hostcfgd</code> / <code>database.service</code> 起動前から sample 開始</li>
+<li><strong>既存 <code>systemd-bootchart</code></strong>: パッケージ自体の挙動（output / config パス）に従う</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>reboot -b</code> でも extra prompt が出る場合、<code>reboot.conf</code> でも有効化されているか・タイミングの再現条件を確認</li>
-<li><code>blocking_mode_timeout</code> 超過で抜けた場合、<code>systemctl reboot</code> 自体が失敗している可能性。<code>journalctl</code> で reboot ターゲットの遷移を確認</li>
-<li>dot が出ない場合、<code>-v</code> または <code>show_timer=true</code> が同時に有効か確認</li>
+<li><code>sonic-bootchart enable</code> で <code>not installed</code> → image を <code>INCLUDE_BOOTCHART=y</code> で再ビルド</li>
+<li>reboot 後 SVG が無い → <code>Operational Status</code> が <code>in-active</code> か（= 完了済み）、<code>Time Span</code> が経過しているかを確認</li>
+<li>SVG が生成されているのに古いまま → <code>/run/log/bootchart-*.svg</code> の timestamp、最新 boot の SVG が tmpfs に存在するか</li>
+<li>設定を変えても反映されない → <code>config</code> 後に <strong>必ず reboot</strong> が必要、<code>/etc/systemd/bootchart.conf</code> の現在値を直接確認</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- reboot スクリプト (sonic-buildimage) の -b / -v 引数実装
-- /etc/sonic/reboot.conf パーサ実装
-- blocking_mode_timeout の最終デフォルト値 (180 vs 他)
-- platform reboot 検出ロジック
-- fast-reboot / warm-reboot への blocking mode 適用可否
+- INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage への取り込み確認
+- sonic-bootchart CLI の sonic-utilities scripts/ への取り込み確認
+- /etc/systemd/bootchart.conf の SONiC default 値（Samples=4500, Frequency=25）の現行確認
+- /run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認
+- sonic-installer に bootchart 設定 migration が取り込まれたか（HLD Open Item）の現状確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/reboot/Reboot_BlockingMode_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/profiling/sonic_bootchart.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
