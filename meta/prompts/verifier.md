@@ -44,3 +44,7 @@ Writer バッチが並走している場合、Bash の作業ディレクトリ�
 3. **commit する前に必ず `git pull --ff-only origin main`**。`meta/verification-queue.json` は集約ビューなので、競合した場合は `meta/queue/*.json` を main 側に合わせ直してから `aggregate_queue.py` で再生成する
 4. **PR 作成前に再度 main を pull**。PR が「親 commit がもう main にない」状態で立たないよう注意
 5. もし `gh pr merge --squash` で他人の PR と同梱されてしまったら、それは GitHub 側の挙動として受け入れる（main には反映されている）
+
+## worktree 動作ルール（isolation: worktree で動いている場合）
+
+writer.md と同じ。**`cd /home/coder/sonic-unofficial-docs` 禁止**、起動直後に `WT=$(pwd)` を控えて以降は `git -C "$WT"` か `cd "$WT"` で自 worktree を対象にする。
