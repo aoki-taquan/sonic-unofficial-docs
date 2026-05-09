@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/port-buffer-drop-counters-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-on-show-acl-commands/">
       
       
-        <link rel="prev" href="../enhancements-on-show-acl-commands/">
+        <link rel="prev" href="../dhcp-dos-mitigation-in-sonic/">
       
       
-        <link rel="next" href="../watermark-counters-in-sonic/">
+        <link rel="next" href="../port-buffer-drop-counters-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group） - SONiC 非公式ドキュメント</title>
+        <title>show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#port_buffer_drop-fc-group" class="md-skip">
+        <a href="#show-acl-state_dbacl_table_table-acl_rule_table-status" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+              show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
             
           </span>
         </div>
@@ -1877,34 +1877,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1924,7 +1896,7 @@
   <span class="md-ellipsis">
     
   
-    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
   
 
     
@@ -1942,7 +1914,7 @@
   <span class="md-ellipsis">
     
   
-    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
   
 
     
@@ -1994,7 +1966,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件サマリ
+        旧フローと新フロー
       
     </span>
   </a>
@@ -2002,10 +1974,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対象カウンタ
+        STATE_DB スキーマ
       
     </span>
   </a>
@@ -2013,10 +1985,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#flex-counter-group" class="md-nav__link">
+  <a href="#aclorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flex Counter group の位置付け
+        aclorch の責務追加
       
     </span>
   </a>
@@ -2027,7 +1999,7 @@
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI: 表示
+        CLI 出力例
       
     </span>
   </a>
@@ -2035,10 +2007,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli-enabledisable-interval" class="md-nav__link">
+  <a href="#acl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI: enable/disable と interval 変更
+        内部生成 ACL は対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
       
     </span>
   </a>
@@ -2051,7 +2034,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2085,10 +2068,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認例
       
     </span>
   </a>
@@ -2101,7 +2095,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2112,7 +2106,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2123,7 +2117,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2134,7 +2128,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2148,6 +2142,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -3665,7 +3687,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件サマリ
+        旧フローと新フロー
       
     </span>
   </a>
@@ -3673,10 +3695,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対象カウンタ
+        STATE_DB スキーマ
       
     </span>
   </a>
@@ -3684,10 +3706,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#flex-counter-group" class="md-nav__link">
+  <a href="#aclorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flex Counter group の位置付け
+        aclorch の責務追加
       
     </span>
   </a>
@@ -3698,7 +3720,7 @@
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI: 表示
+        CLI 出力例
       
     </span>
   </a>
@@ -3706,10 +3728,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli-enabledisable-interval" class="md-nav__link">
+  <a href="#acl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI: enable/disable と interval 変更
+        内部生成 ACL は対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
       
     </span>
   </a>
@@ -3722,7 +3755,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3756,10 +3789,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認例
       
     </span>
   </a>
@@ -3772,7 +3816,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3783,7 +3827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3794,7 +3838,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3805,7 +3849,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3832,7 +3876,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/port-buffer-drop-counters-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/enhancements-on-show-acl-commands.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3842,189 +3886,155 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>PORT_BUFFER_DROP</code> Flex Counter group の sonic-swss / sonic-utilities への取り込み状況、<code>counterpoll port-buffer-drop</code> CLI 実装、interval バリデーション（30s–5m）の実装は未裏取り。</p>
+<p>本ページは公式 HLD（Rev 0.2, 2023-03）のみを根拠に書かれている。<code>aclorch</code> の STATE_DB 書き込み、<code>show acl table</code> / <code>show acl rule</code> の sonic-utilities 取り込みは未確認。</p>
 </div>
-<h1 id="port_buffer_drop-fc-group">ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）<a class="headerlink" href="#port_buffer_drop-fc-group" title="Permanent link">&para;</a></h1>
+<h1 id="show-acl-state_dbacl_table_table-acl_rule_table-status">show acl 強化（<code>STATE_DB.ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> の status）<a class="headerlink" href="#show-acl-state_dbacl_table_table-acl_rule_table-status" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のポート単位 SAI ドロップカウンタ（ingress/egress バッファドロップ）は、過去に普通の port counter と同じ Flex Counter グループに混ぜて 1 秒間隔でポーリングしようとしたところ、<strong>性能上の問題と衝突を引き起こすことが判明</strong> し、いったん master から外された経緯がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<blockquote>
-<p>"These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308 <sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-</blockquote>
-<p>本機能は <strong>専用の Flex Counter グループ <code>PORT_BUFFER_DROP</code> を新設</strong> し、デフォルト 60 秒というゆったりした間隔で安全にポーリングする設計である。CLI 側でも「短すぎる interval を設定できないようバリデーション」を入れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の ACL 設定は CONFIG_DB（または APP_DB）に投入し、<code>acl-loader</code> で食わせる。問題は <strong>「投入は成功扱いだが ASIC リソース不足等で実際には作られていない」</strong> ケースを <code>show acl table</code> / <code>show acl rule</code> から判別できない点。両 CLI は CONFIG_DB / APP_DB を直接読むだけで、ASIC 反映状態を映していなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は STATE_DB に <strong><code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code></strong> を新設し、<code>aclorch</code> が SAI 戻り値を反映する。<code>show acl table</code> / <code>show acl rule</code> の出力に <strong><code>Status</code>（Active / Inactive）</strong> 列を追加する。本 HLD は <strong>データプレーン ACL 専用</strong>。コントロールプレーン ACL は別ドキュメント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">要件サマリ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD の Functional Requirements<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ポートレベル buffer drop 用の <strong>新しい Flex Counter グループ</strong> を導入する。</li>
-<li>このグループは <strong>既定で enable</strong>。</li>
-<li>ポーリング間隔の <strong>既定は 60s</strong>。</li>
-<li>CLI で以下を提供:<ul>
-<li>enable / disable</li>
-<li>30s〜5m の範囲で interval 設定</li>
-<li>設定の表示</li>
-</ul>
-</li>
-</ul>
-<h3 id="_4">対象カウンタ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ポーリング対象は以下の SAI port stat 2 種<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>SAI counter</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SAI_PORT_STAT_IN_DROPPED_PKTS</code></td>
-<td>ポート ingress バッファドロップ数</td>
-</tr>
-<tr>
-<td><code>SAI_PORT_STAT_OUT_DROPPED_PKTS</code></td>
-<td>ポート egress バッファドロップ数</td>
-</tr>
-</tbody>
-</table>
-<p>これらは port のバッファ起因のドロップを示す。<strong>通常の <code>PORT_STAT</code>（既定 1s）と分離</strong> して、長い間隔で取りに行く構造になる。</p>
-<h3 id="flex-counter-group">Flex Counter group の位置付け<a class="headerlink" href="#flex-counter-group" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    SAI[SAI port stats] --&gt; FC1[PORT_STAT FC group\n(default 1000ms)]
-    FC1 --&gt; CDB1[(COUNTERS_DB)]
-    SAI --&gt; FC2[PORT_BUFFER_DROP FC group\n(default 60000ms)]
-    FC2 --&gt; CDB2[(COUNTERS_DB)]</code></pre>
-<p>既存 <code>PORT_STAT</code> から本機能対象の 2 カウンタを切り出して <strong>別 FC グループにする</strong> だけで、データの保管先（COUNTERS_DB）は同じ。</p>
-<h3 id="cli">CLI: 表示<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p><code>counterpoll show</code> の出力に <code>PORT_BUFFER_DROP</code> 行が <strong>新たに追加</strong> される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Before:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$ counterpoll show
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Type                        Interval (in ms)    Status
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>--------------------------  ------------------  --------
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>QUEUE_STAT                  default (10000)     enable
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>PORT_STAT                   default (1000)      enable
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>RIF_STAT                    default (1000)      enable
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>QUEUE_WATERMARK_STAT        default (10000)     enable
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>PG_WATERMARK_STAT           default (10000)     enable
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>After:
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>admin@sonic:~$ counterpoll show
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>Type                        Interval (in ms)    Status
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>--------------------------  ------------------  --------
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>QUEUE_STAT                  default (10000)     enable
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>PORT_STAT                   default (1000)      enable
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>PORT_BUFFER_DROP            default (60000)     enable
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>RIF_STAT                    default (1000)      enable
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>QUEUE_WATERMARK_STAT        default (10000)     enable
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>PG_WATERMARK_STAT           default (10000)     enable
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
+<h3 id="_3">旧フローと新フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    subgraph 旧
+      U[user] --&gt; AL[acl-loader]
+      AL --&gt; CFG[(CONFIG_DB)]
+      AL --&gt;|常に success| OK
+      CFG --&gt; AO[aclorch]
+      AO --&gt; SAI
+      AO -.-&gt;|失敗時 syslog のみ| LOG[syslog]
+      SHOW[show acl table/rule] --&gt; CFG
+    end
+    subgraph 新
+      CFG2[(CONFIG_DB)] --&gt; AO2[aclorch]
+      AO2 --&gt; SAI2[SAI]
+      AO2 --&gt;|status| ST[(STATE_DB\nACL_TABLE_TABLE\nACL_RULE_TABLE)]
+      SHOW2[show acl table/rule] --&gt; CFG2
+      SHOW2 --&gt; ST
+    end</code></pre>
+<p>ACL の <strong>設定経路（add/update/delete）は変えず</strong>、<code>aclorch</code> が SAI 戻り値で <code>STATE_DB</code> の status を Active / Inactive に更新する。<code>show</code> 側は CONFIG_DB と STATE_DB を join する形に変更<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACL_TABLE_TABLE|&lt;acl_table_name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    status : &quot;Active&quot; | &quot;Inactive&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ACL_RULE_TABLE|&lt;acl_table_name&gt;|&lt;acl_rule_name&gt;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    status : &quot;Active&quot; | &quot;Inactive&quot;
 </span></code></pre></div>
-<p>既定値は <strong>60000ms = 60s</strong>。</p>
-<h3 id="cli-enabledisable-interval">CLI: enable/disable と interval 変更<a class="headerlink" href="#cli-enabledisable-interval" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># enable / disable</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>disable
+<p>例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ redis-cli -n 6 hgetall &#39;ACL_TABLE_TABLE|DATA_ACL&#39;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>1) &quot;status&quot;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>2) &quot;Active&quot;
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># interval を変更（ms 単位、30000〜300000 の範囲）</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>$ redis-cli -n 6 hgetall &#39;ACL_RULE|DATAACL|RULE_1&#39;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>1) &quot;status&quot;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>2) &quot;Inactive&quot;
 </span></code></pre></div>
-<p>interval は <strong>30000ms（30s）以上、300000ms（5min）以下</strong> にバリデーションされる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それ未満の値は CLI で拒否する。これは旧来の問題（短い interval だと性能影響）を CLI 段階で防ぐためのガード<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>HLD 本文中の表記には揺れがあり、ルール側のキーが <code>ACL_RULE_TABLE|...</code> と <code>ACL_RULE|...</code> の両方で書かれている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装側でどちらが採用されたかは要確認。</p>
+</blockquote>
+<h3 id="aclorch"><code>aclorch</code> の責務追加<a class="headerlink" href="#aclorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ACL table / rule create で SAI が成功 → 該当エントリの STATE_DB を <code>status=Active</code></li>
+<li>失敗 → <code>status=Inactive</code></li>
+<li>delete 時には STATE_DB の対応エントリも削除</li>
+</ul>
+<h3 id="cli">CLI 出力例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ show acl table DATAACL
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Name     Type    Binding      Description    Stage      Status
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>-------  ------  -----------  -------------  -------    -------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>DATAACL  L3      Ethernet0    DATAACL        ingress    Active
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                 Ethernet4
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                 Ethernet8
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                 Ethernet12
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>$ show acl rule
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Table    Rule    Priority  Action    Match                Status
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>-------  ------  --------  --------  -------------------  --------
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>DATAACL  RULE_1  9999      DROP      DST_IP: 9.5.9.3/32   Inactive
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>                                     ETHER_TYPE: 2048
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>DATAACL  RULE_2  9998      FORWARD   DST_IP: 10.2.1.2/32  Inactive
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>                                     ETHER_TYPE: 2048
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                                     IP_PROTOCOL: 6
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>                                     L4_DST_PORT: 22
+</span></code></pre></div>
+<p><code>show</code> 側は CONFIG_DB から既存列、STATE_DB から <code>Status</code> 列を取って <code>Status</code> を末尾に追加する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md#L52-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/acl/ACL-enhancements-on-show-command.md#L37-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  1. New flex counter group is introduced for the port-level buffer drop counters
-  2. The FC group is enabled by default
-  3. The polling interval is 60s by default
-  3. Users can configure FC group via a CLI tool
-      1. Users can enable/disable polling
-      2. Users can set the polling interval in range from 30s to 5m
-      3. Users can view the FC configuration
-reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠。
+  In the proposed design, we introduce a new table to `STATE_DB`, and `orchagent` will write the return status to the `STATE_DB` table.
+  The user can check the status of ACL table or ACL rule creation with CLI `show acl table` or `show acl rule`.
+reasoning: 「STATE_DB を増やして aclorch が反映、show が join」設計の根拠。
 -->
 
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="acl">内部生成 ACL は対象外<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h3>
+<p>PFC handler や dual-ToR の Mux handler が <strong>内部的に</strong> 作る ACL table / rule は本 HLD の対象外。これらは CONFIG_DB に対応行が無いため <code>show</code> で結合できない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warmboot-fastboot">Warmboot / Fastboot<a class="headerlink" href="#warmboot-fastboot" title="Permanent link">&para;</a></h3>
+<p>新規 STATE_DB テーブルは warm/fast boot を跨いで保持しない。よって warm/fast boot に追加の影響は無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>PORT_BUFFER_DROP</code></td>
-<td><code>FLEX_COUNTER_STATUS</code>, <code>POLL_INTERVAL</code></td>
-<td>本グループの enable / interval を保持</td>
-</tr>
-</tbody>
-</table>
-<p>具体的なフィールド名は他 FC グループと同じスキーマに従う想定。HLD では FC グループ名 <code>PORT_BUFFER_DROP</code> 自体のみが明示されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>既存の <code>ACL_TABLE</code> / <code>ACL_RULE</code> テーブルを使う。スキーマ変更なし。</p>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Command</th>
-<th>用途</th>
+<th>変更</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>counterpoll show</code></td>
-<td>全 FC グループ状態の一覧（PORT_BUFFER_DROP 行が追加される）</td>
+<td><code>show acl table</code></td>
+<td>出力に <code>Status</code> 列追加</td>
 </tr>
 <tr>
-<td><code>counterpoll port-buffer-drop enable</code></td>
-<td>当該グループ有効化</td>
-</tr>
-<tr>
-<td><code>counterpoll port-buffer-drop disable</code></td>
-<td>同 無効化</td>
-</tr>
-<tr>
-<td><code>counterpoll port-buffer-drop interval &lt;ms&gt;</code></td>
-<td>30000〜300000 の範囲で interval 変更</td>
+<td><code>show acl rule</code></td>
+<td>出力に <code>Status</code> 列追加</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 通常運用（60s）</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 短時間に切り詰め（最短 30s）</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 一時的に止める</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>disable
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="_5">確認例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># テーブル作成確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>load<span class="w"> </span>&lt;acl.json&gt;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>acl<span class="w"> </span>table<span class="w"> </span>DATAACL<span class="w">    </span><span class="c1"># Status 列で Active/Inactive を見る</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 失敗していたら redis で詳細確認</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_TABLE_TABLE|DATAACL&#39;</span>
 </span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>interval は 30s〜5min の範囲外を受け付けない</strong>。これは過去の master 問題（drop counters を 1s 間隔で回したら問題が出た）を再発させないための設計上の制限<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>対象カウンタは <strong>port 単位の <code>IN_DROPPED_PKTS</code> / <code>OUT_DROPPED_PKTS</code> のみ</strong>。Queue / PG / Buffer Pool 単位の drop は別 FC グループ系統が担当する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>既定間隔 60s のため、<strong>短時間のマイクロドロップを瞬時に観測する用途には向かない</strong>。観測解像度は 1 分単位が前提。</li>
+<li><strong>データプレーン ACL のみ</strong> が対象。コントロールプレーン ACL は別 HLD<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>PFC / Mux 等が内部生成する ACL は対象外（CONFIG_DB に対応行が無いため）</li>
+<li><code>Status</code> 列の値は <code>Active</code> / <code>Inactive</code> の 2 値のみ。失敗理由の詳細は出ない（syslog 参照）</li>
+<li>既存の sonic-mgmt テストで syslog をパースして成否判定していたものは、新 CLI を使う形にリファクタ可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>PORT_STAT</code> FC group</strong>: 元々 1 つにまとめられていた drop 系カウンタが分離した。<code>PORT_STAT</code> の interval を 1s に保ったままでも drop 系は 60s 側で安全に取れる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>既存の <code>show interfaces counters</code></strong>: 表示する drop 系列の値は <code>COUNTERS_DB</code> 経由で読み取る前提。FC グループの polling が disable だと最新値が更新されないため、disable 時は値が固まる挙動になる。</li>
-<li><strong>マイクロバースト解析</strong>: drop 系を 30s〜60s 単位でしか取らないので、サブ秒のバーストドロップを捉える要求があるなら、別途 watermark 系・テレメトリ機構を併用する必要がある（本 HLD のスコープ外）。</li>
-<li><strong>WRED / ECN 統計</strong>: 別 HLD 系統。<code>PORT_BUFFER_DROP</code> は SAI のバッファドロップ全般を見るが、WRED 由来の早期ドロップを区別するには WRED 統計側の機能を使う。</li>
+<li><strong><code>aclorch</code></strong>: 主要変更箇所。SAI 戻り値の解釈と STATE_DB 反映ロジックが追加</li>
+<li><strong><code>acl-loader</code></strong>: 投入後の確認手段が CLI ベースになるため、自動化スクリプトが分かりやすくなる</li>
+<li><strong>PFC / dual-ToR Mux handler</strong>: 内部生成 ACL は本機能の対象外なので、運用上の混乱に注意</li>
+<li><strong>sonic-mgmt 既存テスト</strong>: syslog 監視ベースから新 CLI ベースへ移行できる</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>PORT_BUFFER_DROP</code> 行が <code>counterpoll show</code> に出ない: sonic-utilities が当該機能未取り込みの可能性。<code>counterpoll show</code> の実装と <code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code> のエントリ存在を確認。</li>
-<li><code>interval 1000</code> 等の短い値で error: 仕様どおり。30000〜300000 の範囲を指定する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>drop count が 0 のまま増えない: enable 状態か <code>counterpoll show</code> で確認。disable のままだと当然 0 のまま。</li>
-<li>値が想定と桁違いに少ない: interval が長いため <strong>定常的な drop もまばらにしか積み上がらないように見える</strong> ことがある。値は累積カウンタなので、観測時の <code>dt</code> を考慮して評価する。</li>
+<li><code>show acl table</code> で <code>Inactive</code> が出る場合、<code>syslog</code> で <code>aclorch</code> の SAI エラー（リソース不足・属性不一致など）を確認</li>
+<li><code>Status</code> 列が空の場合、STATE_DB に対応エントリが書かれていない可能性。<code>aclorch</code> がまだ処理していない or 内部生成 ACL の可能性</li>
+<li><code>redis-cli -n 6 hgetall 'ACL_RULE_TABLE|DATAACL|RULE_1'</code> で実値を直接確認</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装
+- STATE_DB ルール側キー (ACL_RULE_TABLE|... vs ACL_RULE|...) の最終形
+- show acl table / show acl rule の sonic-utilities 取り込み
+- PFC / Mux 内部生成 ACL の扱いの将来計画
+- sonic-mgmt の test_acl.py 更新状況
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/acl/ACL-enhancements-on-show-command.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
