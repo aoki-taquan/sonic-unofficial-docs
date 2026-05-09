@@ -917,7 +917,8 @@
         "MUX_METRICS_TABLE / MUX_SWITCH_CAUSE / LINK_PROBE_STATS の STATE_DB スキーマ取り込み確認"
       ],
       "priority": "high",
-      "issue": 153
+      "issue": 153,
+      "pr": 154
     }
   ]
 }
