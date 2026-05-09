@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/pfc-historical-statistics.md",
+  "issue": 324,
+  "verification": "hld-only",
+  "concerns": [
+    "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認",
+    "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認",
+    "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認",
+    "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認",
+    "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認"
+  ],
+  "priority": "medium"
+}
