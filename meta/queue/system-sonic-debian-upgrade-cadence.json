@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/sonic-debian-upgrade-cadence.md",
+  "verification": "hld-only",
+  "concerns": [
+    "直近の Debian Bookworm / Trixie 取り込みコミットの sonic-buildimage / sonic-linux-kernel 確認",
+    "slave container の Azure pipeline 定義状況確認",
+    "platform/broadcom/saibcm-modules-dnx の Debian 別 branch 運用確認",
+    "src/sonic-host-services の docker-sonic-vs 互換維持の現状確認",
+    "廃止された Debian バージョンと release ノート整合確認"
+  ],
+  "priority": "low"
+}
