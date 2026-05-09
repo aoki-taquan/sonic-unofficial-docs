@@ -1433,6 +1433,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/bmp-for-monitoring-sonic-bgp-info.md",
+      "verification": "hld-only",
+      "concerns": [
+        "bmp container と openbmpd / bmpcfgd の sonic-buildimage / sonic-bmp 取り込み確認",
+        "BMP_STATE_DB の DB number 割当と multi-ASIC 構成の現行確認",
+        "BGP_NEIGHBOR_TABLE / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE schema の sonic-yang-models / swss-common 反映確認",
+        "FRR bgpd -M bmp モジュール有効化と /etc/frr/bgpd.conf テンプレート確認",
+        "Delay-removal アルゴリズムの実装確認 (DEL- prefix と timestamp 管理)",
+        "gNMI heartbeat (PR #1563) の取り込み状況確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
       "issue": 93,
       "verification": "code-verified",
