@@ -1,0 +1,140 @@
+---
+title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+area: acl-qos
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/pfc_asym/PFC_Asymmetric_Test_HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / テストプラン文書"
+    この文書は機能 HLD ではなく **テストプラン**。`sonic-mgmt` の `tests/pfc_asym/pfc_asym.py` 実装、`pfc_gen.py` の Mellanox / Arista 配備手順は要裏取り。
+
+# Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+
+## 概要
+
+Asymmetric PFC は SONiC 機能だが、本ドキュメントはその **機能テスト計画** を扱う。既存の PTF テスト（`sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py`）を再構成し、`sonic-mgmt` の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (`pfc_gen.py`) を組み合わせて検証する[^1]。
+
+対象テストベッド: **T0-x** 系列（全 T0 構成）。SONiC DUT は **RPC image** が必須[^1]。
+
+## 動作仕様
+
+### テスト構成
+
+```mermaid
+flowchart LR
+  Fanout[Fanout switch<br>pfc_gen.py 動作] -->|PFC frames<br>大量送信| DUT[SONiC DUT]
+  PTF[PTF host<br>pfc_asym.py] --> Fanout
+  PTF -->|traffic + check| DUT
+```
+
+`pfc_gen.py` は Fanout 上で動かす PFC パケット送信器。`pfc_asym.py` (PTF) はトラフィック注入とドロップ／受け入れの確認を担当する[^1]。
+
+### 既存 PTF コードのリファクタ
+
+`pfc_asym.py` には以下の改修が必要[^1]:
+
+1. **送信速度向上**: `threading.Thread` を `multiprocessing.Process` に置換（GIL 回避）。L83 周辺。
+2. **ARP responder 設定生成の冗長削除**: L56 のループで毎回ファイル生成しているのを 1 回だけにする。
+
+### 新規 pytest test suite
+
+`tests/pfc_asym/pfc_asym.py` を新規追加[^1]。グローバル定数:
+
+```python
+PFC_GEN_FILE      = "pfc_gen.py"
+PFC_FRAMES_NUMBER = 1000000   # 送信 pause frame 数
+PFC_QUEUE_INDEX   = 0xff      # 非ゼロ pause time を載せる priority マスク
+```
+
+### Pytest fixtures
+
+| Fixture | 役割 |
+|---------|------|
+| `deploy_pfc_gen` (scope=module, autouse) | `pfc_gen.py` を Fanout に配備 |
+| `setup` | DUT と Fanout の前処理 |
+| `pfc_storm_template` | PFC ストーム用テンプレ生成 |
+| `pfc_storm_runner` | PFC ストーム実行 |
+| `enable_pfc_asym` | DUT で Asymmetric PFC を有効化 |
+| `flush_neighbors` | テスト間で ARP/ND テーブルクリア |
+
+### `pfc_gen.py` の Fanout 配備
+
+プラットフォームごとに配備手順が違う[^1]:
+
+#### Mellanox
+
+Fanout デプロイ ansible playbook (`fanout.yml`) の `pfcwd_config` タグに含まれており、自動配備される。
+
+```bash
+ansible-playbook -i lab fanout.yml -l ${FANOUT} --become --tags pfcwd_config -vvvv
+```
+
+#### Arista
+
+手動コピーが必要[^1]:
+
+1. `/mnt/flash/` がなければ作成
+2. `pfc_gen.py` を `/mnt/flash/pfc_gen.py` に配置
+
+#### 新プラットフォーム追加
+
+新たな Fanout SKU 対応では `roles/test/files/helpers/pfc_gen.py` の配置パスとデプロイ手順を `deploy_pfc_gen` fixture に追加する[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/pfc_asym/PFC_Asymmetric_Test_HLD.md#L96-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  deploy_pfc_gen (scope="module", autouse=True)
+  To simulate that neighbors are overloaded (send many PFC frames) there is used PFC packets generator which is running on Fanout switch.
+  File location - roles/test/files/helpers/pfc_gen.py
+reasoning: pfc_gen.py の役割と配備 fixture の根拠。
+-->
+
+### PTF テストケース実行
+
+`tests/ptf_runner.py` モジュールを使って既存 PTF テストケースをラップする[^1]。
+
+## 設定
+
+### 関連する CONFIG_DB / CLI / YANG
+
+該当なし（テスト計画文書）。
+
+### 設定例（テスト実行）
+
+```bash
+# sonic-mgmt 側
+cd sonic-mgmt/tests
+pytest pfc_asym/pfc_asym.py --topology=t0
+```
+
+具体的な引数は sonic-mgmt の標準 testbed パラメタに従う。
+
+## 制限事項
+
+- **T0 トポロジ専用**: HLD は T0-x 系列を対象としており、T1 等の他トポロジは別途検討が必要[^1]。
+- **RPC image 必須**: 通常リリースイメージでは動作しない[^1]。
+- **Fanout 構成依存**: Mellanox / Arista それぞれの Fanout で `pfc_gen.py` 配備手順が違う。新ベンダ Fanout では拡張作業が必要。
+
+## 干渉する機能
+
+- **PFC watchdog**: 同じ PFC ストームで誤発火する可能性。テスト中は PFC-WD を無効化または計算外にする想定。
+- **PFC Asymmetric 機能本体**: 機能 HLD は別文書（[`PFC-Asymmetric.md`](https://github.com/sonic-net/SONiC/blob/master/doc/pfc_asym/PFC-Asymmetric.md) など）で扱われる。本ページはそのテスト計画。
+- **ARP responder**: PTF テスト中の ARP 応答に依存。`flush_neighbors` fixture で各テストケース前にリセット。
+
+## トラブルシューティング
+
+- ストーム送信レートが期待値に届かない: `multiprocessing` 化が反映されているか、Fanout 側 CPU の制約を確認[^1]。
+- `pfc_gen.py` が Fanout で見つからない: `deploy_pfc_gen` fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。
+- ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/pfc_asym/PFC_Asymmetric_Test_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
