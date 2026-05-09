@@ -858,7 +858,8 @@
         "sonic-flex-counter YANG への ACL container 追加状況確認"
       ],
       "priority": "medium",
-      "issue": 145
+      "issue": 145,
+      "pr": 146
     }
   ]
 }
