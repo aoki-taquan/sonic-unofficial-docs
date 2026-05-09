@@ -1,12 +1,8 @@
 {
   "page": "docs/platform/enhanced-lpo-debug-registers-hld.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap \u306e sonic-platform-common \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "xcvr_api_factory.py \u306b Arista enhanced LPO \u7528 vendor \u5206\u5c90\u304c\u8ffd\u52a0\u3055\u308c\u305f\u304b\u78ba\u8a8d",
-    "Page 01h Byte 195 = 0x4C \u691c\u51fa\u30ed\u30b8\u30c3\u30af\u306e\u5b9f\u88c5\u78ba\u8a8d",
-    "TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_DOM_THRESHOLD / TRANSCEIVER_DOM_FLAG \u3078\u306e\u65b0 LPO* \u30ad\u30fc\u8ffd\u52a0\u304c\u73fe\u884c schema \u306b\u53cd\u6620\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "\u4ed6 vendor (Innolight / Eoptolink \u7b49) \u306e override \u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d"
+    "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap および xcvr_api_factory.py の Arista enhanced LPO vendor 分岐は sonic-platform-common HEAD で grep 検出できず、Page 01h Byte 195 = 0x4C ベースの enhanced LPO 検出ロジックも未取り込み。HLD は提案段階で master 反映なし"
   ],
   "priority": "medium",
   "issue": 530,

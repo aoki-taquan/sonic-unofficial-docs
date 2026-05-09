@@ -1,13 +1,8 @@
 {
   "page": "docs/management/sonic-console-switch.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "consoled / consutil の現行 master (sonic-buildimage) 取り込み確認",
-    "CONSOLE_SWITCH / CONSOLE_PORT YANG 取り込み確認",
-    "TTY device mapping の現行運用方法（vendor template）確認",
-    "reverse SSH の port-based / IP-based forwarding 実装確認",
-    "AAA / PAM 経路で console session が RADIUS / TACACS で認証されるかの実装確認",
-    "USB serial 挿抜時の TTY 番号安定化機構の現行実装確認"
+    "consutil CLI (sonic-utilities/consutil/main.py) と CONSOLE_PORT 単体テーブル（minigraph 経由）は master 取り込み済みだが、HLD が前提とする consoled デーモン本体・CONSOLE_SWITCH トップレベルテーブル・reverse SSH 集約のための remote_device mapping ロジックは sonic-buildimage / sonic-host-services のいずれにも検出できない。HLD 1.1 の中核（switch hub としての port-based / IP-based forwarding と consoled）は未実装"
   ],
   "priority": "medium"
 }
