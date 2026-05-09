@@ -1,0 +1,14 @@
+{
+  "page": "docs/switching/openconfig-support-for-portchannel-aggregate-interface.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt-common の transformer ベース OpenConfig PortChannel 実装の取り込み確認",
+    "oc-lag:aggregate-id でメンバ Ethernet を PortChannel に紐付ける GET / SET 経路の実装確認",
+    "min-links 属性の SONiC 側マッピング先（PORTCHANNEL table の min_links 等）の確認",
+    "gNMI Capabilities に openconfig-interfaces / openconfig-if-aggregate / openconfig-if-ethernet が含まれているか確認",
+    "subinterface（VLAN / IP）対応の現行ステータス確認（本 HLD 範囲外）"
+  ],
+  "priority": "medium",
+  "issue": 175,
+  "pr": 176
+}

@@ -1,0 +1,15 @@
+{
+  "page": "docs/overlay/dscp-remapping-for-tunnel-traffic.md",
+  "issue": 19,
+  "verification": "discrepancy-found",
+  "concerns": [
+    "db_migrator が pfc_enable から pfc_wd_sw_enable を派生するロジックの存在確認 → 実装は pfcwd_sw_enable（実装との乖離あり、ページに記載済み）"
+  ],
+  "priority": "high",
+  "verified_concerns": [
+    "tunneldecaporch / muxorch::create_tunnel が新 SAI 属性を投入しているか裏取り (verified 2026-05-09)",
+    "qos_config.j2 が AZURE_TUNNEL マップを Dual-ToR 限定で出力しているか裏取り (verified 2026-05-09)",
+    "MuxTunnel terminator が P2P で作成されているか実装確認 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
+}

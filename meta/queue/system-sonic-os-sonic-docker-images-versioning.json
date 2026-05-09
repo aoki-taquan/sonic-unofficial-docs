@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/sonic-os-sonic-docker-images-versioning.md",
+  "verification": "hld-only",
+  "concerns": [
+    "SONiC Application Extension Infrastructure 自体の現行採用状況（Proposal が採択されたか）の確認",
+    "sonic-package-manager の package.json depends 形式（並列 OR の '^1.0.0,^2.0.0' 表記）対応状況確認",
+    "components フィールドによる SDK component 単位の制約パースが現行 sonic-utilities にあるか未確認",
+    "SWSS_VERSION 等の環境変数注入による複数 API 並行サポートの現行 sonic-package-manager / docker 実装確認",
+    "HLD は 2021 年の Initial Proposal のため現行運用との乖離が大きい可能性"
+  ],
+  "priority": "high",
+  "issue": 161,
+  "pr": 162
+}

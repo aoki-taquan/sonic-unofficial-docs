@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/ssdhealth-design.md",
+  "issue": 61,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-utilities/scripts/ssdhealth スクリプトの実装存在確認",
+    "sonic-platform-common の sonic_ssd/ssd_base.py の API シグネチャ確認",
+    "ベンダ別 ssdutil.py プラグインの配置と継承構造確認",
+    "pmon ssdmond デーモンの実装有無（HLD では optional）",
+    "show/main.py の platform メニュー登録確認"
+  ],
+  "priority": "low"
+}

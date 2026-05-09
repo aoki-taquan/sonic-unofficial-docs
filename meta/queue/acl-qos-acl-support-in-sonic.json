@@ -1,0 +1,16 @@
+{
+  "page": "docs/acl-qos/acl-support-in-sonic.md",
+  "issue": 69,
+  "verification": "code-verified",
+  "concerns": [
+    "ACL_RULE_TABLE と ACL_TABLE のキー名揺れの実装上の正解（aclorch 内）",
+    "swssconfig の full/partial モードが現行 sonic-swss-common にあるか確認 (キャッシュに swssconfig ディレクトリが見当たらず未確認)",
+    "config acl / show acl 系 CLI の追加 HLD との関係整理"
+  ],
+  "priority": "high",
+  "verified_concerns": [
+    "l3/mirror 以外の type、IPv6 (l2_prot_type)、LAG bind、自動 unbind の実装拡張 → aclorch.cpp で IPV6_ANY/NON_IPV6/LAG bind/MCLAG が確認できた (verified 2026-05-09)",
+    "byte counter (Should Have) の現行実装状況 → aclorch.cpp:517 で SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT を有効化 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
+}

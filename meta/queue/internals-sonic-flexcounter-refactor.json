@@ -1,0 +1,12 @@
+{
+  "page": "docs/internals/sonic-flexcounter-refactor.md",
+  "issue": 57,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-sairedis の syncd/FlexCounter.{h,cpp} に CounterContext / AttrContext テンプレートが導入されているか確認",
+    "if constexpr による per-instance stats_mode の分岐実装の有無確認",
+    "BaseCounterContext の flag 設計（capability query 有無, getStats vs getStatsExt）が現行コードに存在するか確認",
+    "POC からの最終実装の差分（HLD 上「demonstration only」と明記）"
+  ],
+  "priority": "low"
+}

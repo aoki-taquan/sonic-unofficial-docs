@@ -1,0 +1,15 @@
+{
+  "page": "docs/platform/custom-si-settings-for-cmis-modules.md",
+  "issue": 217,
+  "pr": 218,
+  "verification": "hld-only",
+  "concerns": [
+    "xcvrd / sonic-platform-daemons の optics_si_setting.json パーサ実装確認",
+    "CMIS FSM AP_CONFIG → DP_INIT 間の SI 適用フック実装確認",
+    "GLOBAL → PORT → Default の検索順実装確認",
+    "TxInputEqFixedManualControl サポート + AdaptiveInputEqEnableTx 無効化処理確認",
+    "active SI キャッシュ + 差分マージ実装確認",
+    "3 回リトライ後 init 中止フローの実装確認"
+  ],
+  "priority": "medium"
+}

@@ -1,0 +1,12 @@
+{
+  "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
+  "issue": 49,
+  "verification": "hld-only",
+  "concerns": [
+    "PORT_RATES / RIF_RATES Flex Counter group が community sonic-swss に存在するか未確認",
+    "Lua プラグインの実体配置と portsorch / intfsorch 統合の確認",
+    "RATES テーブルの実 schema が HLD の記述と一致するか未確認",
+    "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認"
+  ],
+  "priority": "medium"
+}

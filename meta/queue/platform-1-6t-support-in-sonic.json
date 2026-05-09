@@ -1,0 +1,15 @@
+{
+  "page": "docs/platform/1-6t-support-in-sonic.md",
+  "issue": 215,
+  "pr": 216,
+  "verification": "hld-only",
+  "concerns": [
+    "xcvrd の get_interface_speed への 1.6T 分岐取り込み確認",
+    "PortsOrch porthlpr の maxPortSpeed=1600000 取り込み確認",
+    "port_rates.lua の lane_speed=200000 → 212.5e9 取り込み確認",
+    "sonic-utilities の config/show 1.6T 対応確認",
+    "sonic-port YANG の speed 制約 1600000 受理確認",
+    "SFF-8024 新 ID の sonic-platform-common 取り込み確認"
+  ],
+  "priority": "medium"
+}

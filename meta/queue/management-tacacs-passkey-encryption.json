@@ -1,0 +1,15 @@
+{
+  "page": "docs/management/tacacs-passkey-encryption.md",
+  "issue": 113,
+  "verification": "hld-only",
+  "concerns": [
+    "hostcfgd の暗号化 passkey 復号と /etc/cipher_pass 読み込み実装",
+    "sonic-utilities の --encrypt フラグ実装",
+    "TACPLUS|global.key_encrypt の YANG 取り込み",
+    "RADIUS / LDAP 共通インフラ化進捗",
+    "show tacacs の passkey フィールド削除",
+    "OpenSSL 暗号スイート (AES-CBC / GCM) の確定",
+    "/etc/cipher_pass パーミッション設定の sonic-buildimage 反映"
+  ],
+  "priority": "medium"
+}

@@ -1,0 +1,13 @@
+{
+  "page": "docs/platform/hld-for-handling-sai-failures.md",
+  "issue": 259,
+  "verification": "hld-only",
+  "concerns": [
+    "Orch 基底クラスの handleSaiCreate/Set/Remove/Get Status virtual 関数追加が現行 master にあるか確認",
+    "ERROR_DB スキーマと Redis 上の DB タイプ割り当ての実装存在確認",
+    "fpmsyncd 等の上位プロセス側 ERROR_DB 消費ロジックの実装状況",
+    "warm reboot pre-check に ERROR_DB チェックが追加されているか未確認",
+    "HLD 内の TODO セクション (status 別 / API 別 / Orch 別) の進捗追跡"
+  ],
+  "priority": "high"
+}

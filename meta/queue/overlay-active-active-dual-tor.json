@@ -1,0 +1,15 @@
+{
+  "page": "docs/overlay/active-active-dual-tor.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-linkmgrd の active-active state machine と self/peer 独立判定ロジックの実装存在確認",
+    "MuxOrch の prefix-based neighbor (SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true + 別 prefix route) 実装確認",
+    "FORWARDING_STATE_COMMAND / FORWARDING_STATE_RESPONSE / PORT_TABLE_PEER / HW_FORWARDING_STATE_PEER / HW_MUX_CABLE_TABLE_PEER の APP_DB/STATE_DB スキーマ取り込み確認",
+    "config mux mode detach の sonic-utilities / xcvrd 取り込み状況確認",
+    "BGP update delay 10s 設定が active-active T0 の bgp template に取り込まれているか未確認",
+    "MuxOrch が standby 移行時に ingress drop ACL を skip するロジックの実装確認"
+  ],
+  "priority": "high",
+  "issue": 151,
+  "pr": 152
+}

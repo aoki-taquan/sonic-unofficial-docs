@@ -1,0 +1,14 @@
+{
+  "page": "docs/routing/multiple-nexthop-route-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)",
+    "MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認",
+    "NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認",
+    "routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認",
+    "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認"
+  ],
+  "priority": "medium",
+  "issue": 169,
+  "pr": 170
+}

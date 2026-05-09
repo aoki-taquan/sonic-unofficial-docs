@@ -1,0 +1,17 @@
+{
+  "page": "docs/routing/bfd-hw-offload.md",
+  "issue": 91,
+  "verification": "code-verified",
+  "concerns": [
+    "Phase 2 以降の CONFIG_DB スキーマ / config CLI 追加状況",
+    "2021 年 HLD と現行 master の乖離（Warm reboot 挙動含む）"
+  ],
+  "priority": "high",
+  "verified_concerns": [
+    "BfdOrch が現行 master の sonic-swss に存在するか → bfdorch.cpp 確認 (verified 2026-05-09)",
+    "APPL_DB BFD セッションテーブルの最終キー名 → BFD_SESSION_TABLE (sonic-swss-common/common/schema.h:120) (verified 2026-05-09)",
+    "SAI_BFD_SESSION_* 属性 → SAI_BFD_SESSION_TYPE_*, SAI_BFD_SESSION_STATE_* を bfdorch で利用確認 (verified 2026-05-09)",
+    "show bfd session の sonic-utilities 取り込み → show/main.py:2669 で実装確認 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
+}

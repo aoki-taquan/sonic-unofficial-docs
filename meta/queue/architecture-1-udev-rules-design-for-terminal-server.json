@@ -1,0 +1,14 @@
+{
+  "page": "docs/architecture/1-udev-rules-design-for-terminal-server.md",
+  "verification": "hld-only",
+  "concerns": [
+    "terminal server 機能を提供する SONiC platform リポでの udev rules ファイル配布有無確認",
+    "/etc/udev/rules.d/ への配置パスと命名規約（platform 別 rules ファイル）の現行確認",
+    "cp210x ドライバが提供する ATTRS{interface} 名（'CP2108 Interface N'）の現行カーネル / 装置での実際の値確認",
+    "故障 USB hub port 検出を syslog / SNMP に通知する仕組みの有無確認",
+    "HLD は 2020 年改訂のため現行 master との乖離リスクあり"
+  ],
+  "priority": "low",
+  "issue": 195,
+  "pr": 196
+}

@@ -1,0 +1,12 @@
+{
+  "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
+  "issue": 230,
+  "verification": "hld-only",
+  "concerns": [
+    "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認",
+    "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか未確認",
+    "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認",
+    "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認"
+  ],
+  "priority": "medium"
+}

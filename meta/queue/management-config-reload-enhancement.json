@@ -1,0 +1,16 @@
+{
+  "page": "docs/management/config-reload-enhancement.md",
+  "issue": 89,
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "high",
+  "verified_concerns": [
+    "hostcfgd の FEATURE.delayed 対応 / PORT_TABLE 購読 / フォールバックタイムアウト実装確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+    "portsyncd が APPL_DB PORT_TABLE:PortInitDone を publish する経路確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+    "db_migrator の has_timer→delayed 移行実装確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+    "sonic-feature YANG モデルへの delayed leaf 追加確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+    "既存 systemd *.timer の撤去状況 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+    "warm/fast reboot の waitAdvancedBootDone 連携実装 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)"
+  ],
+  "last_verified": "2026-05-09"
+}

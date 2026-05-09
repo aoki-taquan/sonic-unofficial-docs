@@ -1,0 +1,16 @@
+{
+  "page": "docs/switching/layer-2-forwarding-enhancements.md",
+  "verification": "hld-only",
+  "concerns": [
+    "FdbOrch の per-port / per-(port,VLAN) flush API と m_entries map 化（fdb_type 保持）の現行実装確認",
+    "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）の実装存在確認",
+    "MAC move event の SAI 通知ハンドラと FdbOrch 反映ロジックの実装確認",
+    "config mac aging_time / config mac add/del CLI の sonic-utilities 取り込み確認",
+    "config vlan range / config vlan member range CLI の redis pipeline 実装確認",
+    "SWITCH_TABLE の fdb_aging_time フィールド命名と SwitchOrch / SAI 反映経路の現行確認",
+    "HLD は 2019 年改訂のため現行 master との乖離リスクが大きい"
+  ],
+  "priority": "high",
+  "issue": 177,
+  "pr": 178
+}

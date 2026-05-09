@@ -1,0 +1,11 @@
+{
+  "page": "docs/overlay/nvgre-tunnel-in-sonic.md",
+  "issue": 21,
+  "verification": "hld-only",
+  "concerns": [
+    "nvgreorch の存在と実装状況 (orchdaemon 登録) が未確認",
+    "NVGRE_TUNNEL / NVGRE_TUNNEL_MAP スキーマ追加が sonic-swss-common にあるか未確認",
+    "config nvgre-tunnel CLI が sonic-utilities に追加済みか未確認"
+  ],
+  "priority": "low"
+}

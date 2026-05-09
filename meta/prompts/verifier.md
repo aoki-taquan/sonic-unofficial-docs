@@ -8,16 +8,21 @@ merge 済みのページについて、実コードを読んで裏取りを行�
 
 ## 入力
 
+- `meta/queue/*.json` の per-page エントリ（priority 順に処理する。`high` → `medium` → `low`）
 - 対象ページの `frontmatter.sources`
 - ページ内の `<!-- evidence: ... -->` コメント
 
+> **キューの真実は per-page ファイル**。`meta/verification-queue.json` は `meta/queue/*.json` の集約ビューであり、Verifier が直接編集してはならない。エントリの更新は対応する `meta/queue/<area>-<slug>.json` に対して行い、`.venv/bin/python3 meta/scripts/aggregate_queue.py` で集約ビューを再生成する。
+
 ## 手順
 
-1. 各 `sources[]` の `repo + path + ref` を `.cache/sonic-sources/` でチェックアウトして実体を確認
-2. 本文中の主張と実コード/HLD/issue の間に齟齬がないかチェック
-3. 結果に応じて以下のいずれか:
-   - 完全に一致: `verification: code-verified`、`last_verified` を更新
-   - 齟齬あり: `verification: discrepancy-found`、本文に注記、必要なら別 issue を起票
+1. `meta/queue/*.json` を priority 順に列挙し、未処理（`verification` が `hld-only` / `issue-confirmed`）のものから取り掛かる
+2. 各 `sources[]` の `repo + path + ref` を `.cache/sonic-sources/` でチェックアウトして実体を確認
+3. 本文中の主張と実コード/HLD/issue の間に齟齬がないかチェック
+4. 結果に応じて以下のいずれか:
+   - 完全に一致: ページ frontmatter の `verification: code-verified`、`last_verified` を更新。対応する `meta/queue/<area>-<slug>.json` を **削除**（裏取り済みのため）するか、`verified_concerns` に確認済み懸念を移して `concerns` を空にする
+   - 齟齬あり: `verification: discrepancy-found`、本文に注記、必要なら別 issue を起票。per-page ファイルの `concerns` を更新
+5. `.venv/bin/python3 meta/scripts/aggregate_queue.py` を実行して集約ビューを再生成し、PR に含める
 
 ## 出力
 
@@ -36,6 +41,6 @@ Writer バッチが並走している場合、Bash の作業ディレクトリ�
 
 1. **branch 切替・編集・build・commit を 1 つの Bash 呼び出しにまとめる**。`set -e` を入れて `git branch --show-current` で現在地を都度確認する。複数 Bash 呼び出しに分けると Writer 側の `checkout` で奪われる
 2. **`git add -A` を使わない**。常に `git add <specific paths>` で対象ファイルを限定する。Writer の untracked / modified ファイルを誤って巻き込まない
-3. **commit する前に必ず `git pull --ff-only origin main`**。`meta/verification-queue.json` は Writer も更新するので衝突しやすい
+3. **commit する前に必ず `git pull --ff-only origin main`**。`meta/verification-queue.json` は集約ビューなので、競合した場合は `meta/queue/*.json` を main 側に合わせ直してから `aggregate_queue.py` で再生成する
 4. **PR 作成前に再度 main を pull**。PR が「親 commit がもう main にない」状態で立たないよう注意
 5. もし `gh pr merge --squash` で他人の PR と同梱されてしまったら、それは GitHub 側の挙動として受け入れる（main には反映されている）

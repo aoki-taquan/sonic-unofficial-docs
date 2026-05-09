@@ -1,0 +1,12 @@
+{
+  "page": "docs/management/sonic-config-update-validation-via-yang.md",
+  "issue": 240,
+  "verification": "hld-only",
+  "concerns": [
+    "ConfigDBConnector の YANG 検証デコレータが各 sonic-utilities config CLI に取り込まれているか未確認",
+    "buffermgrd 側の D-Bus GCU API 連携実装存在確認",
+    "DEVICE_METADATA.yang_config_validation の取り込みと config yang_config_validation CLI 実装確認",
+    "HLD は 2022-08 (Phase 1) のため Phase 2 以降の変更や YANG カバレッジ拡張状況は要追跡"
+  ],
+  "priority": "medium"
+}

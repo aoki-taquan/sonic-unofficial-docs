@@ -1,0 +1,14 @@
+{
+  "page": "docs/architecture/reset-factory-design.md",
+  "issue": 137,
+  "verification": "hld-only",
+  "concerns": [
+    "/usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み",
+    "config-setup factory への keep-basic 拡張",
+    "config-setup.conf KEEP_BASIC_TABLES 最新値",
+    "default_users.json ビルド時生成",
+    "overlayfs upperdir クリア手順",
+    "gNOI FactoryReset との連携"
+  ],
+  "priority": "medium"
+}

@@ -1,0 +1,16 @@
+{
+  "page": "docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md",
+  "issue": 127,
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "high",
+  "verified_concerns": [
+    "Copporch の SAI enum capability query → copporch.cpp:239- query_objecttype_implementation/enum_values_capability (verified 2026-05-09)",
+    "supported_trap_ids / default_supported_trap_ids → copporch.cpp:106,219,246,287 (verified 2026-05-09)",
+    "STATE_DB COPP_TRAP_CAPABILITY_TABLE と hw_status → copporch.cpp:199,222-235 (verified 2026-05-09)",
+    "copp_cfg.j2 の queue1_group3 / neighbor_miss → copp_cfg.j2:66,135 (verified 2026-05-09)",
+    "show copp configuration CLI → sonic-utilities/show/copp.py:189-206 (verified 2026-05-09)",
+    "SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS → copporch.cpp:99 でマップ確認 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
+}

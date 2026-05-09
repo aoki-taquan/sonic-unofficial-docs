@@ -1,0 +1,12 @@
+{
+  "page": "docs/routing/reliable-tsa.md",
+  "issue": 97,
+  "verification": "hld-only",
+  "concerns": [
+    "bgpcfgd の CHASSIS_APP_DB BGP_DEVICE_GLOBAL|STATE 購読実装",
+    "TSA/TSB スクリプトの Supervisor 側 CHASSIS_APP_DB 書き込み",
+    "startup_tsa_tsb サービスの実装と timer 値",
+    "Supervisor host config_db.json への tsa_enabled 永続化フロー"
+  ],
+  "priority": "medium"
+}

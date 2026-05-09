@@ -1,0 +1,13 @@
+{
+  "page": "docs/platform/dump-on-sai-failure.md",
+  "issue": 83,
+  "verification": "hld-only",
+  "concerns": [
+    "SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP 列挙値が sonic-sairedis に追加されているか確認",
+    "/usr/bin/syncd_dump.sh と platform_syncd_dump.sh のリポジトリ実装確認",
+    "/var/log/sai_failure_dump/ のホストマウント設定確認",
+    "techsupport 側で本ディレクトリを収集 / クリアする実装確認",
+    "orchagent の SAI 失敗ハンドリングで attribute set を呼ぶコードパス確認"
+  ],
+  "priority": "medium"
+}

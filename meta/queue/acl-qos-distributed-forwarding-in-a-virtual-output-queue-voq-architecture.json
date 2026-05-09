@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md",
+  "issue": 284,
+  "verification": "hld-only",
+  "concerns": [
+    "docker-database-chassis / redis_chassis 起動経路と config-chassisdb systemd ユニットの実装存在確認",
+    "database_config.json への redis_chassis / CHASSIS_APP_DB エントリ反映確認",
+    "FSI 側 OrchAgent の Chassis DB 接続実装と切断時の防御的プロトコル停止ロジック確認",
+    "system_port_id / Switch ID 採番実装と SAI VoQ 仕様への適合確認",
+    "HLD は 2020-09 改訂のため現行 master 実装との乖離リスクあり"
+  ],
+  "priority": "medium"
+}

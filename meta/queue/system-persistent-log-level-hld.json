@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/persistent-log-level-hld.md",
+  "issue": 33,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-swss-common の logger.cpp/loglevel.cpp 変更が CONFIG_DB 購読に切替済か未確認",
+    "swssloglevel -d オプション実装の存在確認",
+    "db_migrator が LOGLEVEL_DB→CONFIG_DB 移行を実装済みか未確認",
+    "Phase 2 の LOGLEVEL_DB / JINJA2_CACHE 削除が現在 master で完了しているか未確認"
+  ],
+  "priority": "medium"
+}

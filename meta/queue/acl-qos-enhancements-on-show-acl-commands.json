@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
+  "issue": 125,
+  "verification": "hld-only",
+  "concerns": [
+    "aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装",
+    "STATE_DB ルール側キーの最終形 (ACL_RULE_TABLE|... vs ACL_RULE|...)",
+    "show acl table / show acl rule の sonic-utilities 取り込み",
+    "PFC / Mux 内部生成 ACL の扱いの将来計画",
+    "sonic-mgmt の test_acl.py の更新状況"
+  ],
+  "priority": "medium"
+}
