@@ -947,6 +947,20 @@
       "priority": "medium",
       "issue": 157,
       "pr": 158
+    },
+    {
+      "page": "docs/system/sonic-boot-chart.md",
+      "verification": "hld-only",
+      "concerns": [
+        "INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage 取り込み確認",
+        "sonic-bootchart CLI の sonic-utilities scripts/ 配下への取り込み確認",
+        "/etc/systemd/bootchart.conf の SONiC default 値（Samples=4500, Frequency=25）が現行 image に反映されているか未確認",
+        "/run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認",
+        "sonic-installer の bootchart 設定 migration（HLD Open Item）が解消されているか未確認"
+      ],
+      "priority": "low",
+      "issue": 159,
+      "pr": 160
     }
   ]
 }
