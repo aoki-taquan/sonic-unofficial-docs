@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/router-interface-counters-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/pcieinfo-design/">
       
       
-        <link rel="prev" href="../reliable-tsa/">
+        <link rel="prev" href="../icmp-hardware-offload/">
       
       
-        <link rel="next" href="../routing-and-next-hop-table-enhancement/">
+        <link rel="next" href="../platform-capability-file-enhancement/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ルータインタフェース (RIF) カウンタ - SONiC 非公式ドキュメント</title>
+        <title>pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rif" class="md-skip">
+        <a href="#pcieutil-show-platform-pcieinfopcie-pcieyaml" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ルータインタフェース (RIF) カウンタ
+              pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -915,8 +915,6 @@
       
   
   
-    
-  
   
   
     
@@ -966,23 +964,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -1000,13 +995,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1026,7 +1021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1054,7 +1049,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1082,7 +1077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1110,7 +1105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1138,7 +1133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1166,7 +1161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1194,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1222,7 +1217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1250,7 +1245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1278,7 +1273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1306,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1334,7 +1329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1362,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1390,7 +1385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1415,37 +1410,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ルータインタフェース (RIF) カウンタ
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1461,181 +1429,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データ経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        COUNTERS_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        レート計算
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#telemetry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Telemetry 経由の参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        表示例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1648,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1676,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1704,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -4206,6 +3999,8 @@
       
   
   
+    
+  
   
   
     
@@ -4249,20 +4044,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4280,13 +4078,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4306,7 +4104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -4334,7 +4132,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -4362,7 +4160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -4390,7 +4188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -4418,7 +4216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -4446,7 +4244,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -4474,7 +4272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -4502,7 +4300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -4527,10 +4325,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4546,6 +4371,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント階層
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcieutil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pcieutil の実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcieyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定ファイル pcie.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4558,7 +4569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -4586,7 +4597,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -4614,7 +4625,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -4642,7 +4653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -4670,7 +4681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -4698,7 +4709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -5383,7 +5394,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データ経路
+        コンポーネント階層
       
     </span>
   </a>
@@ -5391,10 +5402,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
+  <a href="#pcieutil" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTERS_DB スキーマ
+        pcieutil の実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcieyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定ファイル pcie.yaml
       
     </span>
   </a>
@@ -5405,18 +5427,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        レート計算
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#telemetry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Telemetry 経由の参照
+        出力例
       
     </span>
   </a>
@@ -5441,10 +5452,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / YANG
       
     </span>
   </a>
@@ -5466,7 +5477,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        表示例
+        設定例
       
     </span>
   </a>
@@ -5482,7 +5493,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -5493,7 +5504,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -5502,6 +5513,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5528,7 +5550,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/router-interface-counters-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/pcieinfo-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5537,197 +5559,199 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss</code> の <code>IntfsOrch</code> および <code>flex_counter</code> グループ、<code>sonic-utilities</code> の <code>rifstat</code> 実装での裏取りは未済。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は改訂日付が記載されておらず、Open Questions のまま終わっている。<code>sonic-utilities</code> の <code>pcieutil</code>、<code>sonic-platform-common</code> の <code>pcie_common.py</code> 実装、各プラットフォームの <code>pcie.yaml</code> 配備は要裏取り。</p>
 </div>
-<h1 id="rif">ルータインタフェース (RIF) カウンタ<a class="headerlink" href="#rif" title="Permanent link">&para;</a></h1>
+<h1 id="pcieutil-show-platform-pcieinfopcie-pcieyaml">pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）<a class="headerlink" href="#pcieutil-show-platform-pcieinfopcie-pcieyaml" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のポート単位カウンタ（<code>portstat</code> 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される <strong>ルータインタフェース (RIF)</strong> 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、VLAN インタフェース、ポートチャネル上の L3 サブインタフェースなど、SAI が <code>sai_router_interface</code> オブジェクトとして扱うものを指す。</p>
-<p>本機能は SAI の <code>SAI_ROUTER_INTERFACE_STAT_*</code> カウンタを <strong>flex counter で定期取得</strong> し、<code>COUNTERS_DB</code> に集約したうえで、<code>show interfaces counters rif</code> CLI から RX/TX のパケット・バイト・エラーを表示できるようにするものである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">データ経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    SAI[SAI\nsai_get_router_interface_stats] --&gt;|polling| FC[Flex Counter\n(RIF FC group, default 1s)]
-    FC --&gt; CDB[(COUNTERS_DB)]
-    CDB --&gt;|COUNTERS:rif_vid\nCOUNTERS_RIF_NAME_MAP\nCOUNTERS_RIF_TYPE_MAP| CLI[show interfaces counters rif]
-    SWSS[IntfsOrch] -.-&gt;|RIF 追加/削除を FC に登録\nMAP 更新| CDB</code></pre>
-<p>要点は次の 3 点。</p>
-<ul>
-<li>取得元は SAI <code>sai_router_interface_api -&gt; sai_get_router_interface_stats()</code>。</li>
-<li>集約器は flex counter の RIF 専用グループで、デフォルトインターバルはポートカウンタと同じ <strong>1 秒</strong> に揃える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>IntfsOrch</code> が RIF オブジェクト生成・破棄時に flex counter への登録/解除と、<code>COUNTERS_RIF_NAME_MAP</code> / <code>COUNTERS_RIF_TYPE_MAP</code> の更新を行う。</li>
-</ul>
-<h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
-<p>各 RIF VID に対応するエントリで、以下 8 個のカウンタが格納される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が <strong>本来あるべきトポロジ</strong> から欠落していないかを検査するためのツール群を追加する HLD。プラットフォーム標準の PCIe デバイス一覧を <code>pcie.yaml</code> に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>提供される CLI は 3 コマンド<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>キー</th>
-<th>カウンタ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>COUNTERS:rif_vid</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS</code></td>
-</tr>
-</tbody>
-</table>
-<p>加えて以下のマッピングが追加される。</p>
-<table>
-<thead>
-<tr>
-<th>マップ</th>
+<th>CLI</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>COUNTERS_RIF_NAME_MAP</code></td>
-<td>RIF OID ↔ RIF 名（例: <code>Ethernet0</code>, <code>Vlan2</code>, <code>Portchannel0002</code>）</td>
+<td><code>show platform pcieinfo</code></td>
+<td>現在の PCIe デバイス情報を表示</td>
 </tr>
 <tr>
-<td><code>COUNTERS_RIF_TYPE_MAP</code></td>
-<td>RIF OID ↔ 種別（LAG / Vlan 等）</td>
+<td><code>show platform pcieinfo -c</code> (<code>--check</code>)</td>
+<td>期待構成 (<code>pcie.yaml</code>) と比較し pass/fail を出力</td>
+</tr>
+<tr>
+<td><code>pcieutil pcie_generate</code></td>
+<td>現在の PCIe 情報から <code>pcie.yaml</code> を生成</td>
 </tr>
 </tbody>
 </table>
-<p>VID ベースの COUNTERS テーブルだけでは人間に読みにくいため、CLI 側はこのマップを介して RIF 名で参照する。</p>
-<h3 id="_4">レート計算<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>-p / --period</code> オプションで指定された秒数 <code>delta</code> をもとに、CLI 側で次の式により BPS / PPS を算出する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BPS = (new_*_OCTETS  - old_*_OCTETS)  / delta
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PPS = (new_*_PACKETS - old_*_PACKETS) / delta
-</span></code></pre></div>
-<p>BPS は値域に応じて <code>MB/s</code> / <code>KB/s</code> / <code>B/s</code> で表示する。<code>-p</code> を指定しない呼び出しでは BPS / PPS 列は <code>N/A</code> で出力される。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/rif-counters/RIF_counters.md#L70-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  BPS = (new_*_OCTETS - old_*_OCTETS) / delta,
-  Where delta is the period specified. The BPS is printed in MB/s, KB/s or B/s depending on the value.
-  PPS = (new_*_PACKETS - old_*_PACKETS) / delta
-reasoning: BPS / PPS の計算式と表示形式の根拠。
--->
-
-<h3 id="telemetry">Telemetry 経由の参照<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h3>
-<p><code>sonic-telemetry</code> 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、HLD は <strong>virtual path</strong> 経由の参照を推奨している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>pcie_generate</code> は <strong>誤上書きを避けるため</strong> <code>show platform pcieinfo</code> 経由では呼べず、<code>pcieutil</code> を直接使う<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">コンポーネント階層<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI1[show platform pcieinfo] --&gt; SUB[show/main.py の platform サブコマンド]
+  SUB --&gt; PU[pcieutil CLI]
+  PU --&gt; PC[sonic_platform_base/sonic_pice/pcie_common.py]
+  PC --&gt; YAML[(device/&lt;platform&gt;/plugins/pcie.yaml)]
+  PC --&gt; KERNEL[/sys/bus/pci 等]</code></pre>
+<p><code>show/main.py</code> の <code>platform</code> メニューに <code>pcieinfo</code> 項目を追加し、内部的に <code>pcieutil [pcie_show|pcie_check]</code> を実行する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>DB target</th>
-<th>Virtual Path</th>
-<th>意味</th>
+<th><code>show</code> 形</th>
+<th><code>pcieutil</code> 形</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>COUNTERS_DB</code></td>
-<td><code>RIF_COUNTERS/&lt;interface_name&gt;</code></td>
-<td>単一 RIF の全カウンタ</td>
+<td><code>show platform pcieinfo</code></td>
+<td><code>pcieutil pcie_show</code></td>
 </tr>
 <tr>
-<td><code>COUNTERS_DB</code></td>
-<td><code>RIF_COUNTERS/*/&lt;counter_name&gt;</code></td>
-<td>全 RIF の単一カウンタ</td>
+<td><code>show platform pcieinfo --check</code></td>
+<td><code>pcieutil pcie_check</code></td>
 </tr>
 <tr>
-<td><code>COUNTERS_DB</code></td>
-<td><code>RIF_COUNTERS/&lt;interface&gt;/&lt;counter&gt;</code></td>
-<td>単一 RIF の単一カウンタ</td>
+<td><code>show platform pcieinfo -c</code></td>
+<td><code>pcieutil pcie_check</code></td>
 </tr>
 </tbody>
 </table>
+<p><code>pcie_generate</code> は <strong>show 経由では呼ばない</strong>。これは <code>pcie.yaml</code> 上書き防止のための意図的な分離<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="pcieutil">pcieutil の実装<a class="headerlink" href="#pcieutil" title="Permanent link">&para;</a></h3>
+<p>新ユーティリティ <code>sonic-utilities/pcieutil/</code> がデバイスプラグイン <code>pcie_common.py</code> を import して使う。共通 API<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>関数</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_pcie_device()</code></td>
+<td>現在の PCIe デバイス一覧を返す</td>
+</tr>
+<tr>
+<td><code>get_pcie_check()</code></td>
+<td>現在の一覧と <code>pcie.yaml</code> の比較結果を返す。<code>pcie.yaml</code> 不在ならシステムエラーで終了</td>
+</tr>
+<tr>
+<td><code>dump_conf_yaml()</code></td>
+<td>現在の PCIe 情報から <code>pcie.yaml</code> を生成</td>
+</tr>
+</tbody>
+</table>
+<p>実装パスは <code>sonic_platform_base/sonic_pice/pcie_common.py</code>（HLD 原文どおり、ディレクトリ名スペル <code>sonic_pice</code> のまま）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="pcieyaml">設定ファイル <code>pcie.yaml</code><a class="headerlink" href="#pcieyaml" title="Permanent link">&para;</a></h3>
+<p>各プラットフォーム配下に置く<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>device/&lt;Platform&gt;/plugins/pcie.yaml
+</span></code></pre></div>
+<p>YAML の形式（list of mapping）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bus</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;00&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">dev</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;00&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">fn</span><span class="p">:</span><span class="w">  </span><span class="s">&#39;0&#39;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">1f0c</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Host</span><span class="nv"> </span><span class="s">bridge:</span><span class="nv"> </span><span class="s">Intel</span><span class="nv"> </span><span class="s">Corporation</span><span class="nv"> </span><span class="s">Atom</span><span class="nv"> </span><span class="s">processor</span><span class="nv"> </span><span class="s">C2000</span><span class="nv"> </span><span class="s">SoC</span><span class="nv"> </span><span class="s">Transaction</span><span class="nv"> </span><span class="s">Router&#39;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bus</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;00&#39;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">dev</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;01&#39;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nt">fn</span><span class="p">:</span><span class="w">  </span><span class="s">&#39;0&#39;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">1f10</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;PCI</span><span class="nv"> </span><span class="s">bridge:</span><span class="nv"> </span><span class="s">Intel</span><span class="nv"> </span><span class="s">Corporation</span><span class="nv"> </span><span class="s">Atom</span><span class="nv"> </span><span class="s">processor</span><span class="nv"> </span><span class="s">C2000</span><span class="nv"> </span><span class="s">PCIe</span><span class="nv"> </span><span class="s">Root</span><span class="nv"> </span><span class="s">Port</span><span class="nv"> </span><span class="s">1&#39;</span>
+</span></code></pre></div>
+<p>各エントリは bus / dev / fn / id / name を保持する。<code>get_pcie_check()</code> は同じキー集合で実機側と突合する。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/pcie-mon/pcieinfo_design.md#L36-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Common API ... get_pcie_device(), get_pcie_check(), dump_conf_yaml()
+  Config file Location: device/Platform/plugins/pcie.yaml
+reasoning: API シグネチャと設定ファイル配置の根拠。
+-->
+
+<h3 id="_4">出力例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ show platform pcieinfo
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>==============================Display PCIe Device===============================
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>bus:dev.fn 01:00.0 - dev_id=0xb960, Ethernet controller: Broadcom Limited Device b960
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>bus:dev.fn 01:00.1 - dev_id=0xb960, Ethernet controller: Broadcom Limited Device b960
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>$ show platform pcieinfo -c
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>===============================PCIe Device Check================================
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Error: [Errno 2] No such file or directory:
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>       &#39;/usr/share/sonic/device/x86_64-cel_seastone-r0/plugins/pcie.yaml&#39;
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Not found config file, please add a config file manually,
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a> or generate it by running [pcieutil pcie_generate]
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>$ pcieutil pcie_generate
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>Are you sure to overwrite config file pcie.yaml with current pcie device info? [y/N]: y
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>generate config file pcie.yaml under path /usr/share/sonic/device/x86_64-cel_seastone-r0/plugins
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>$ show platform pcieinfo -c
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>===============================PCIe Device Check================================
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>PCI Device: Ethernet controller: Broadcom Limited Device b960 ------------------ [Passed]
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>PCI Device: Ethernet controller: Broadcom Limited Device b960 ------------------ [Passed]
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>PCIe Device Checking All Test -----------&gt;&gt;&gt; PASSED
+</span></code></pre></div>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には専用の CONFIG_DB エントリは記載されていない。flex counter のインターバル変更等は既存の <code>FLEX_COUNTER_TABLE</code> 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。</p>
+<h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
+<p>該当しない。<code>pcie.yaml</code> はプラットフォーム同梱ファイルであり CONFIG_DB / YANG 経路は持たない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>CLI</th>
+<th>詳細</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>show interfaces counters rif [-p PERIOD] [--verbose] [&lt;interface&gt;]</code></td>
-<td>RIF カウンタを一覧 / 単体表示</td>
+<td><code>show platform pcieinfo</code></td>
+<td><code>pcieutil pcie_show</code> を実行</td>
 </tr>
 <tr>
-<td><code>sonic-clear interface rifcounters [&lt;interface&gt;]</code></td>
-<td>RIF カウンタをクリア（単体または全体）</td>
+<td><code>show platform pcieinfo -c</code></td>
+<td><code>pcieutil pcie_check</code> を実行。<code>pcie.yaml</code> と比較</td>
+</tr>
+<tr>
+<td><code>pcieutil pcie_generate</code></td>
+<td>現状の PCIe 情報から <code>pcie.yaml</code> を生成（show 経由では不可）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">表示例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>引数なしの場合は全 RIF を表形式で表示<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    Tx_PPS    TX_ERR
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-----------       -------  --------  --------  ------    -------  --------  --------  --------
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet0         2180       N/A       N/A        0      44697      N/A       N/A     0
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Portchannel0002   2833       N/A       N/A        0          0      N/A       N/A     0
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Vlan2             2833       N/A       N/A        0       4170      N/A       N/A     0
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>新規プラットフォーム持ち込み時の標準手順<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. 期待値ファイル生成</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>pcieutil<span class="w"> </span>pcie_generate
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. 起動後・運用中の検査</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>platform<span class="w"> </span>pcieinfo<span class="w"> </span>-c
 </span></code></pre></div>
-<p>インタフェース名を指定するとデバッグ向けの整形出力になる。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Portchannel0002
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>---------------
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  RX:
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    0 packets
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    0 bytes
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    0 error packets
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    0 error bytes
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  TX:
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    0 packets
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    0 bytes
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    0 error packets
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    0 error bytes
-</span></code></pre></div>
-<p><code>COUNTERS_RIF_NAME_MAP</code> に存在しない名前を渡した場合は警告メッセージを出すと HLD は記載している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>portstat</strong>: 別系統。<code>SAI_PORT_STAT_*</code> カウンタを使い、L2 視点のドロップやエラーを返す。RIF カウンタはあくまで L3 視点であり、両者を合算した値ではない。</li>
-<li><strong><code>Port_illegal_packets_drop_design</code> (Interface MIB)</strong>: SNMP 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に <strong>集約</strong> されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。</li>
-<li><strong>flex counter インターバル</strong>: ポートカウンタと同じ既定 1 秒。負荷増を懸念する場合はインターバルを長くする運用が考えられる。</li>
+<li><strong><code>pcie.yaml</code> 不在で <code>pcie_check</code> が即エラー終了</strong>: 新プラットフォームでは事前に <code>pcie_generate</code> が必要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>pcie_generate</code> は show 経由禁止</strong>: 誤上書き防止の設計選択。スクリプト化する場合は <code>pcieutil pcie_generate</code> を直接呼ぶ。</li>
+<li><strong>PCIe トポロジの変更対応</strong>: ハード交換やリビジョン違いがあると <code>pcie.yaml</code> の再生成が必要。HLD はリビジョン管理を規定していない。</li>
+<li><strong>HLD は Open Questions が空のまま</strong> で打ち切られており、設計の細部（並び順比較の厳密性、エラー詳細出力等）は実装側に委ねられている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show interfaces counters rif</code> がインタフェースを 1 つも表示しない場合、<code>COUNTERS_RIF_NAME_MAP</code> の存在を <code>redis-cli -n 2 keys 'COUNTERS_RIF*'</code> 等で確認する。<code>IntfsOrch</code> がマップを生成しているはず。</li>
-<li>値がすべてゼロ / 動かない場合、当該プラットフォームの SAI が <code>SAI_ROUTER_INTERFACE_STAT_*</code> を実装していない可能性がある。HLD は SAI 必須カウンタを列挙しているが、ベンダー実装が揃っているとは限らない。</li>
-<li>特定 RIF の VID と名前の対応を確認するには <code>COUNTERS_RIF_NAME_MAP</code> を redis から直接読む。</li>
+<li><strong>プラットフォームプラグイン (<code>sonic_platform_base</code>)</strong>: <code>pcie_common.py</code> を経由するため、ベンダ固有の PCIe 列挙ロジック差は無く統一動作する想定。</li>
+<li><strong><code>show platform</code> 系コマンド</strong>: 同じ <code>platform</code> サブコマンドの兄弟（<code>summary</code>、<code>syseeprom</code> 等）と共存。コマンド系の整合（オプション規約）に注意。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>[Errno 2] No such file or directory: pcie.yaml</code>: 該当プラットフォームの <code>device/.../plugins/</code> に <code>pcie.yaml</code> が無い。<code>pcieutil pcie_generate</code> で生成する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>一部デバイスが <code>[Failed]</code>: PCIe トポロジ実状と yaml の bus/dev/fn/id が合っていない。ハード交換・差し替えや、yaml の更新漏れを疑う。</li>
+<li><code>pcieutil</code> 自体が見つからない: <code>sonic-utilities</code> パッケージ版が古い可能性。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/rif-counters/RIF_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/pcie-mon/pcieinfo_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
