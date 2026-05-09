@@ -1,0 +1,15 @@
+{
+  "page": "docs/acl-qos/acl-flex-counters-support.md",
+  "verification": "hld-only",
+  "concerns": [
+    "AclOrch の m_acl_fc_mgr (FlexCounterManager) と CounterType::ACL_COUNTER の現行 master 実装存在確認",
+    "COUNTERS_ACL_COUNTER_RULE_MAP のキー区切り文字とフォーマット確認",
+    "counterpoll acl interval の単位（HLD は ms / sec が混在）と現行 CLI 文法確認",
+    "mirror session deactivate 時に ACL_COUNTER を維持し再 bind するロジック実装確認",
+    "syncd/FlexCounter.cpp の ACL group サポート取り込み確認",
+    "sonic-flex-counter YANG への ACL container 追加状況確認"
+  ],
+  "priority": "medium",
+  "issue": 145,
+  "pr": 146
+}

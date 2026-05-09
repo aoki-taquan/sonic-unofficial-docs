@@ -1,0 +1,16 @@
+{
+  "page": "docs/switching/sonic-sai-post-support-for-macsec.md",
+  "issue": 103,
+  "verification": "code-verified",
+  "concerns": [
+    "SAI POST capability query / completion callback API の community SAI での提供状況",
+    "2025-07 HLD と現行実装の乖離（status 値の最終形含む）"
+  ],
+  "priority": "high",
+  "verified_concerns": [
+    "Orchagent / MACSecOrch / MACSecMgr の POST 対応 → orchagent/macsecpost.cpp で STATE_FIPS_MACSEC_POST_TABLE 読み書き (verified 2026-05-09)",
+    "STATE_DB FIPS_MACSEC_POST_TABLE スキーマ → schema.h:471 で STATE_FIPS_MACSEC_POST_TABLE_NAME 定義 (verified 2026-05-09)",
+    "/proc/cmdline sonic_fips=1 と /etc/fips/fips_enable 検査ロジック → build_image.sh:214 で sonic_fips=1、build_debian.sh:691-692 で /etc/fips/fips_enable 初期化 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
+}

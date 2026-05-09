@@ -1,0 +1,11 @@
+{
+  "page": "docs/routing/router-interface-counters-in-sonic.md",
+  "issue": 13,
+  "verification": "hld-only",
+  "concerns": [
+    "IntfsOrch の RIF flex counter 登録/解除と COUNTERS_RIF_NAME_MAP 更新が HLD どおりか未確認",
+    "FLEX_COUNTER_TABLE への RIF グループ登録（CONFIG_DB 側スキーマ）が未確認",
+    "rifstat / sonic-clear interface rifcounters の実装存在確認"
+  ],
+  "priority": "medium"
+}

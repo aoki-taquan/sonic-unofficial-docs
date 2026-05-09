@@ -1,0 +1,12 @@
+{
+  "page": "docs/routing/prefix-based-mux-neighbors.md",
+  "issue": 227,
+  "verification": "hld-only",
+  "concerns": [
+    "NeighborOrch / MuxOrch の neighbor_mode 分岐実装存在確認",
+    "SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE が community SAI / syncd に取り込まれているか未確認",
+    "CONFIG_DB の MUX_CABLE.neighbor_mode と State-DB MUX_CABLE_TABLE.neighbor_mode 反映の確認",
+    "show muxcable config CLI 拡張と dualtor_neighbor_check の sonic-utilities 取り込み確認"
+  ],
+  "priority": "medium"
+}

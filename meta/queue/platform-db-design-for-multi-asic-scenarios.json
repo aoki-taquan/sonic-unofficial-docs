@@ -1,0 +1,15 @@
+{
+  "page": "docs/platform/db-design-for-multi-asic-scenarios.md",
+  "verification": "hld-only",
+  "concerns": [
+    "config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認",
+    "config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認",
+    "config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認",
+    "show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認",
+    "config save <single_file> での Golden Config 形式 1 ファイル保存実装確認",
+    "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認"
+  ],
+  "priority": "medium",
+  "issue": 187,
+  "pr": 188
+}

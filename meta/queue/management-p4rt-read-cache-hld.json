@@ -1,0 +1,12 @@
+{
+  "page": "docs/management/p4rt-read-cache-hld.md",
+  "issue": 236,
+  "verification": "hld-only",
+  "concerns": [
+    "p4rt-app (PINS) の P4RuntimeImpl::table_entry_cache_ 実装存在確認",
+    "Write→cache 反映 (INSERT/MODIFY/DELETE) と P4Orch 応答ハンドリングの実装確認",
+    "cache と AppDb の検証ロジック実装と起動方法 (頻度設定の有無) 未確認",
+    "warm boot 時の cache 事前充填パスの実装状況"
+  ],
+  "priority": "medium"
+}

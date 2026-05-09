@@ -1,0 +1,11 @@
+{
+  "page": "docs/switching/sonic-bum-storm-control.md",
+  "issue": 15,
+  "verification": "hld-only",
+  "concerns": [
+    "PolicerOrch のストーム制御専用ロジック (内部命名 <intf>_<storm_type>) が実装に存在するか未確認",
+    "warm boot 時に PolicerOrch が PORT_STORM_CONTROL を再投入する経路が未確認",
+    "value update 時の SAI 挙動 (SET vs 再作成) は未確認"
+  ],
+  "priority": "medium"
+}

@@ -1,0 +1,15 @@
+{
+  "page": "docs/switching/lag-on-distributed-voq-system.md",
+  "verification": "hld-only",
+  "concerns": [
+    "portsorch の SYSTEM_LAG_TABLE / SYSTEM_LAG_MEMBER_TABLE 購読と remote LAG 作成経路の現行実装確認",
+    "SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID への system_lag_id 反映実装確認 (sonic-sairedis 側も含む)",
+    "supervisor 側 redis-server の Lua スクリプト（lag_id_add / delete / get）の取り込み確認",
+    "chassisdb.conf の SYSTEM_LAG_ID_START / END 読み込み + CHASSIS_APP_DB 反映実装確認",
+    "Port struct への system_lag_name / system_lag_id / switch_id フィールド追加の確認",
+    "VOQ system port object の OID と alias 表現が SYSTEM_LAG_MEMBER_TABLE と整合しているか確認"
+  ],
+  "priority": "medium",
+  "issue": 179,
+  "pr": 180
+}

@@ -1,0 +1,13 @@
+{
+  "page": "docs/platform/single-asic-voq-fixed-system-sonic.md",
+  "issue": 254,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-py-common.device_info.is_voq_chassis() が chassisdb.conf 存在チェックに改修されているか確認",
+    "Orchagent の Chassis DB 接続条件分岐 / inband ポート未生成パス実装確認",
+    "Bgpconfd の ChassisDbMgr 起動条件分岐確認",
+    "sonic-utilities 各 CLI の Chassis 専用ロジックの is_voq_chassis 分岐実装確認",
+    "caclmgrd の midplane ACL 生成が Chassis VoQ 限定になっているか確認"
+  ],
+  "priority": "medium"
+}

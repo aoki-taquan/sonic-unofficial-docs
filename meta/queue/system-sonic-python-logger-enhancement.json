@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-python-logger-enhancement.md",
+  "issue": 133,
+  "verification": "hld-only",
+  "concerns": [
+    "SysLogger の singleton 化と enable_runtime_config 引数の sonic-py-common 取り込み",
+    "LOGGER.require_manual_refresh フィールドのスキーマ確定",
+    "config syslog level CLI の sonic-utilities 取り込み",
+    "redis 未起動時の fallback 経路実装",
+    "swssloglevel の deprecation 計画"
+  ],
+  "priority": "medium"
+}

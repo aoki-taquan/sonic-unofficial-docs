@@ -1,0 +1,12 @@
+{
+  "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
+  "issue": 289,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt-common の transformer 経由 OpenConfig VLAN ハンドラ実装存在確認",
+    "openconfig-interfaces / openconfig-vlan / openconfig-if-ip → CONFIG_DB (VLAN/VLAN_INTERFACE/VLAN_MEMBER) マッピング実装確認",
+    "REST/gNMI で switched-vlan / routed-vlan 両系統が動作するか実機確認",
+    "translib 経路と transformer 経路の併存時の整合性挙動確認"
+  ],
+  "priority": "medium"
+}

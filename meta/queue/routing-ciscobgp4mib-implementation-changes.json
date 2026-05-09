@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
+  "issue": 93,
+  "verification": "hld-only",
+  "concerns": [
+    "bgpmon デーモンが現行 master の各 BGP コンテナに supervisor 登録されているか",
+    "STATE_DB の NEIGH_STATE_TABLE スキーマ（キー・値）の最終形",
+    "snmp_ax_impl の NEIGH_STATE_TABLE 参照経路と全 namespace 集約",
+    "15 秒ポーリング・frr.log mtime 監視の実装値",
+    "Bgp4MIB(1.3.6.1.2.1.15) のマルチ ASIC 対応進捗"
+  ],
+  "priority": "medium"
+}

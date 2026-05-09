@@ -1,0 +1,14 @@
+{
+  "page": "docs/platform/automatic-module-provisioning-for-chassis.md",
+  "issue": 121,
+  "verification": "hld-only",
+  "concerns": [
+    "module_base.py に MODULE_STATUS_PROVISION_* 定数が追加されたか",
+    "provision_module() API の sonic-platform-common 取り込み",
+    "sonic-provisiond デーモンのコード追加 (pmon docker)",
+    "chassisd の oper_status 同期と sonic-provisiond の責務分離",
+    "ベンダー provision_module リファレンス実装事例",
+    "失敗時のリトライ戦略"
+  ],
+  "priority": "high"
+}

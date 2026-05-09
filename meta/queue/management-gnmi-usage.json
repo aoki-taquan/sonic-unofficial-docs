@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/gnmi-usage.md",
+  "issue": 203,
+  "verification": "hld-only",
+  "concerns": [
+    "telemetry コンテナにインストールされる patched 版 gnmi_get/gnmi_set/gnmi_cli の実バイナリ存在確認",
+    "-xpath_target で受け付ける有効値（OC-YANG / SONIC-YANG / CONFIG_DB / COUNTERS_DB 他）の現行 master 実装確認",
+    "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認",
+    "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認"
+  ],
+  "priority": "medium",
+  "pr": 204
+}

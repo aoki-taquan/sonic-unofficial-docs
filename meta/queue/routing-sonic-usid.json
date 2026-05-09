@@ -1,0 +1,12 @@
+{
+  "page": "docs/routing/sonic-usid.md",
+  "issue": 95,
+  "verification": "hld-only",
+  "concerns": [
+    "srv6orch の end_behavior_map / end_flavor_map に un/ua/udt*/udx* が追加済みか",
+    "SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か",
+    "FRR 系の SRv6 制御プレーン対応進捗",
+    "APPL_DB SRV6_MY_SID_TABLE のスキーマ確定形"
+  ],
+  "priority": "medium"
+}

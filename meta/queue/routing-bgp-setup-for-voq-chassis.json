@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/bgp-setup-for-voq-chassis.md",
+  "issue": 224,
+  "verification": "hld-only",
+  "concerns": [
+    "FRR 側 bgp bestpath peer-type multipath-relax の SONiC 同梱 FRR (sonic-frr) への取り込み確認",
+    "bgpcfgd の voq_chassis テンプレート実装存在確認",
+    "CONFIG_DB の BGP_VOQ_CHASSIS_NEIGHBOR スキーマが現行 master にあるか未確認",
+    "sonic-config-engine の minigraph → BGP_VOQ_CHASSIS_NEIGHBOR 振り分け実装確認",
+    "HLD は 2020-09 改訂のため現行 master 実装との大幅な乖離リスクあり"
+  ],
+  "priority": "high"
+}

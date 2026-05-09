@@ -1,0 +1,12 @@
+{
+  "page": "docs/acl-qos/dhcp-dos-mitigation-in-sonic.md",
+  "issue": 23,
+  "verification": "hld-only",
+  "concerns": [
+    "portmgrd の tc qdisc/filter 投入実装の存在確認",
+    "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか未確認",
+    "CoPP のシステム全体 DHCP 制限が実際に削除されたか未確認",
+    "ドロップ監視デーモンの存在と命名は未確認"
+  ],
+  "priority": "medium"
+}

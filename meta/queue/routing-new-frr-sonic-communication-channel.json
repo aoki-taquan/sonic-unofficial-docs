@@ -1,0 +1,14 @@
+{
+  "page": "docs/routing/new-frr-sonic-communication-channel.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-buildimage 配下の sonic-frr/dplane_fpm_sonic/ と build-dplane-fpm-sonic-module.patch の現行取り込み確認 (PR #18715)",
+    "zebra supervisor.conf.j2 の -M dplane_fpm_sonic への切替が現行 master にあるか確認",
+    "sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID/RTM_DELSRV6LOCALSID メッセージ受理実装確認 (PR #3123)",
+    "APPL_DB.SRV6_MY_SID_TABLE のスキーマ取り込み確認",
+    "FRR upstream の dplane_fpm_nl の差分が dplane_fpm_sonic にどこまで取り込まれているか未確認"
+  ],
+  "priority": "medium",
+  "issue": 167,
+  "pr": 168
+}

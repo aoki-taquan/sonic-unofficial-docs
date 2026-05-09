@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/kdump-remote-ssh.md",
+  "verification": "hld-only",
+  "concerns": [
+    "KDUMP table への remote / ssh_string / ssh_path フィールド追加の sonic-yang-models / sonic-utilities 取り込み確認",
+    "hostcfgd の KDUMP handler 実装が新 attribute を kdump-tools 設定（/etc/default/kdump-tools）に反映するロジックの確認",
+    "build_debian.sh への network_setup.sh / network_setup.hook 同梱有無の確認",
+    "config kdump remote add/remove ssh_string / ssh_path CLI の sonic-utilities 取り込み確認",
+    "crash kernel 内で DHCP を取得する network_setup.sh のスクリプト存在確認"
+  ],
+  "priority": "medium",
+  "issue": 157,
+  "pr": 158
+}

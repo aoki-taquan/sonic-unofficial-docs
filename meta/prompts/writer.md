@@ -84,9 +84,17 @@ PR 本文には次を必ず含める（Reviewer の機械チェック対象）:
 
 ## 裏取りキューへの登録
 
-Writer が `verification: hld-only` 等で残した懸念点（HLD と実装の差分の可能性、要件レベル止まりで実装未確認、CONFIG_DB が未定義 等）は、PR 本文に書くだけでなく **`meta/verification-queue.json`** に追記する。Verifier が優先度順に拾えるようにするため。
+Writer が `verification: hld-only` 等で残した懸念点（HLD と実装の差分の可能性、要件レベル止まりで実装未確認、CONFIG_DB が未定義 等）は、PR 本文に書くだけでなく **`meta/queue/<area>-<slug>.json`** に新規ファイルを作成して登録する。Verifier が優先度順に拾えるようにするため。
 
-エントリ形式:
+> **編集レース回避のため per-page ファイル方式を採用**。`meta/verification-queue.json` は `meta/queue/*.json` の集約ビューであり、Writer が直接編集してはならない。集約ビューは `.venv/bin/python3 meta/scripts/aggregate_queue.py` で再生成する（PR に含めて良い）。
+
+ファイル名規則:
+
+- `<area>` = `docs/<area>/<slug>.md` の area 部分（例: `routing`）
+- `<slug>` = `.md` を除いた basename。slug にスラッシュが含まれる場合は `-` に置換
+- 例: `docs/routing/default-route.md` → `meta/queue/routing-default-route.json`
+
+1 ファイル 1 entry。エントリ形式:
 
 ```json
 {
@@ -104,4 +112,4 @@ Writer が `verification: hld-only` 等で残した懸念点（HLD と実装の�
 
 `priority` は `high` / `medium` / `low`。`high` は「現役機能で陳腐化リスク大」、`low` は「廃止予定 / 限定的なシナリオのみ」。
 
-**`pr` フィールドは Writer 段階では未確定で良い**（PR 作成前にエントリを書くため）。PR 番号が決まり次第、Reviewer または Merger 段階で同じエントリの `pr` を後埋めする。
+**`pr` フィールドは Writer 段階では未確定で良い**（PR 作成前にエントリを書くため）。PR 番号が決まり次第、Reviewer または Merger 段階で同じエントリの `pr` を後埋めする（per-page ファイルを編集 → `aggregate_queue.py` を再実行）。

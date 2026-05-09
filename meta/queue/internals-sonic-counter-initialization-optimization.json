@@ -1,0 +1,14 @@
+{
+  "page": "docs/internals/sonic-counter-initialization-optimization.md",
+  "issue": 139,
+  "verification": "hld-only",
+  "concerns": [
+    "flex_counter_manager の batch_mode 引数と pending_sai_objects 実装",
+    "portsorch doTask での flush() 呼び出し位置",
+    "queue flex counter manager の uc / mc 分割",
+    "PG flex counter manager 化",
+    "sonic-sairedis 側の集合 polling API 追加",
+    "集合一発成功 → 個別 fallback の判定ロジック"
+  ],
+  "priority": "medium"
+}

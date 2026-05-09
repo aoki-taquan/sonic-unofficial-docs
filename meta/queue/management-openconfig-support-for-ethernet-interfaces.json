@@ -1,0 +1,15 @@
+{
+  "page": "docs/management/openconfig-support-for-ethernet-interfaces.md",
+  "issue": 213,
+  "pr": 214,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt-common transformer の openconfig-interfaces/if-ethernet/if-ip 実装確認",
+    "subinterface index 0 のみ対応の実装方針確認",
+    "ipv6/config/enabled → ipv6_use_link_local_only マッピング実装確認",
+    "SPEED_200/400/600/800GB identity の sonic-mgmt-common 取り込み確認",
+    "translib App から transformer への移行進捗",
+    "重複 IP 検出の実装位置 (transformer / SONiC YANG validator)"
+  ],
+  "priority": "medium"
+}

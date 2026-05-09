@@ -1,0 +1,11 @@
+{
+  "page": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
+  "issue": 63,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt の dip_sip.py / dip_sip.yml / testcases.yml の現存と本 HLD 記載パラメータとの一致",
+    "対応 topology リストが現行 sonic-mgmt の testbed 種別と整合するか確認",
+    "uRPF / ACL とのテスト前提条件が他のテストインフラ HLD でカバーされているか確認"
+  ],
+  "priority": "low"
+}

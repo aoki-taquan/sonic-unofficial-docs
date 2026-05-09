@@ -1,0 +1,10 @@
+{
+  "page": "docs/routing/bgp-router-id-explicitly-configured.md",
+  "issue": 11,
+  "verification": "hld-only",
+  "concerns": [
+    "bgpcfgd 実装側のピア追加分岐 (Loopback0 vs bgp_router_id) が HLD どおりか未確認",
+    "bgpd.conf テンプレート (sonic-buildimage の Jinja) で bgp_router_id 優先ロジックが実装済みか未確認"
+  ],
+  "priority": "medium"
+}

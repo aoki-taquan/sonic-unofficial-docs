@@ -1,0 +1,14 @@
+{
+  "page": "docs/platform/everflow-support-on-voq-chassis.md",
+  "issue": 123,
+  "verification": "hld-only",
+  "concerns": [
+    "Option 1 / Option 2 のどちらが master に取り込まれたか",
+    "mirrororch / neighorch の VoQ 向け拡張",
+    "SYSTEM_PORT を受理する SAI mirror 実装の community 提供",
+    "recycle port セットアップ手順",
+    "帯域・遅延への影響評価",
+    "HLD の TBD 節（テスト・future work）の現状"
+  ],
+  "priority": "medium"
+}

@@ -1,0 +1,14 @@
+{
+  "page": "docs/overlay/dash-sonic-kvm.md",
+  "issue": 111,
+  "verification": "hld-only",
+  "concerns": [
+    "BMv2 / VPP / saidash / dashsai client-server の現行 master 取り込み",
+    "vms-kvm-dpu トポロジ ansible playbook の所在",
+    "gnmi_cli_py の Python 2 依存と移行計画",
+    "DPU SONiC KVM image with dataplane のリリース有無",
+    "SAIRedis の saivs / dashsai client 切替実装",
+    "5.2 DPU+VPP NPU testbed (TBD) の進捗"
+  ],
+  "priority": "medium"
+}
