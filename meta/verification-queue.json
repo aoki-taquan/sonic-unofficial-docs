@@ -655,6 +655,20 @@
         "HLD 後の属性追加（rate-limit 等）"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/gnoi-hld-for-file-and-factory-reset-apis.md",
+      "issue": 117,
+      "verification": "hld-only",
+      "concerns": [
+        "File.Remove の path 検証実装 (string match の安全性)",
+        "gnoi_reset.issue_reset の host service 側実装",
+        "gnoi_client CLI の sonic-mgmt-common 取り込み",
+        "factory_os / zero_fill / retain_certs フラグのベンダ対応",
+        "RBAC と factory reset 権限分離",
+        "他 gNOI HLD (System / OS) との整合"
+      ],
+      "priority": "medium"
     }
   ]
 }
