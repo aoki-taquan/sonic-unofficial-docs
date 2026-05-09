@@ -868,6 +868,21 @@
       "priority": "medium"
     },
     {
+      "page": "docs/management/tacacs-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "hostcfgd / aaa.j2 テンプレートで /etc/pam.d/common-auth-sonic に pam_tacplus を組み込むロジックの現行 master 確認",
+        "config tacacs * CLI が sonic-utilities / sonic-config-engine に取り込まれているか確認",
+        "CONFIG_DB の TACPLUS / TACPLUS_SERVER / AAA テーブルスキーマが現行 sonic-yang-models と一致するか確認",
+        "AAA failthrough オプションの sufficient/required PAM 制御フラグへの変換が現行実装で正しいか確認",
+        "config tacacs src_ip による outgoing TCP 49 の bind 挙動が pam_tacplus の bind_addr 引数で制御されているか確認",
+        "test plan の sonic-mgmt 側実装存在確認"
+      ],
+      "priority": "medium",
+      "issue": 477,
+      "pr": 478
+    },
+    {
       "page": "docs/overlay/dash-sonic-kvm.md",
       "issue": 111,
       "verification": "hld-only",
