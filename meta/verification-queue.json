@@ -1411,6 +1411,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/vrf-vs-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "vrfmgrd / intfmgrd / Orchagent (VrfOrch / IntfOrch) の VS テストカバー範囲が現行 sonic-swss の test_vrf*.py 等で実装されているか確認",
+        "1000 VRF スケール上限が現行 ASIC で実機到達可能か確認 (HLD は VS 上限値)",
+        "VRF 跨ぎ nexthop (route leak) のサポート状況確認",
+        "vrfmgrd warm-restart の実装存在確認",
+        "neighsyncd / fpmsyncd が VRF 別 entry を APP_DB の VRF キーとともに publish するロジック確認"
+      ],
+      "priority": "medium",
+      "issue": 504,
+      "pr": 505
+    },
+    {
       "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
       "issue": 289,
       "verification": "code-verified",
