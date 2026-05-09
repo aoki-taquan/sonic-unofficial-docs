@@ -304,7 +304,8 @@
         "vendor invisible default trap のテスト前除去手順が現行テストフレームワークに組み込まれているか未確認"
       ],
       "priority": "medium",
-      "issue": 438
+      "issue": 438,
+      "pr": 439
     },
     {
       "page": "docs/acl-qos/dash-acl-tags.md",
