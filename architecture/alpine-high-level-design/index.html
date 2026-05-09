@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/tacacs-passkey-encryption/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/alpine-high-level-design/">
       
       
-        <link rel="prev" href="../tacacs-authentication/">
+        <link rel="prev" href="../1-udev-rules-design-for-terminal-server/">
       
       
-        <link rel="next" href="../tacacs-test-plan/">
+        <link rel="next" href="../build-profiles/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass） - SONiC 非公式ドキュメント</title>
+        <title>Alpine 仮想 SONiC（ALViS / KNE デプロイ） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tacacs-passkey-key_encrypt-master-key-etccipher_pass" class="md-skip">
+        <a href="#alpine-sonicalvis-kne" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
+              Alpine 仮想 SONiC（ALViS / KNE デプロイ）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -600,20 +602,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -631,13 +636,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -657,7 +662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -682,10 +687,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpine 仮想 SONiC（ALViS / KNE デプロイ）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -701,6 +733,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-container 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-container_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 container にする理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build / Platform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kne-akd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KNE デプロイ (AKD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リソース要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -713,7 +914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -741,7 +942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -769,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -797,7 +998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -825,7 +1026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -853,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -881,7 +1082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -909,7 +1110,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -937,7 +1138,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
+      <a href="../sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -965,7 +1166,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -993,7 +1194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1021,7 +1222,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1049,7 +1250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1077,7 +1278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1105,7 +1306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
+      <a href="../sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1133,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1161,7 +1362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1189,7 +1390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1217,7 +1418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1245,7 +1446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1273,7 +1474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -5695,8 +5896,6 @@
       
   
   
-    
-  
   
   
     
@@ -5786,23 +5985,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -5820,13 +6016,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5846,7 +6042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aaa-improvements/" class="md-nav__link">
+      <a href="../../management/aaa-improvements/" class="md-nav__link">
         
   
   
@@ -5874,7 +6070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -5902,7 +6098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -5930,7 +6126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -5958,7 +6154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -5986,7 +6182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -6014,7 +6210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -6042,7 +6238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -6070,7 +6266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -6098,7 +6294,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -6126,7 +6322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -6154,7 +6350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -6182,7 +6378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -6210,7 +6406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -6238,7 +6434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -6266,7 +6462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -6294,7 +6490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -6322,7 +6518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -6350,7 +6546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -6378,7 +6574,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -6406,7 +6602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../radius-management-user-authentication/" class="md-nav__link">
+      <a href="../../management/radius-management-user-authentication/" class="md-nav__link">
         
   
   
@@ -6434,7 +6630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../redis-client-manager-rcm-hld/" class="md-nav__link">
+      <a href="../../management/redis-client-manager-rcm-hld/" class="md-nav__link">
         
   
   
@@ -6462,7 +6658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -6490,7 +6686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -6518,7 +6714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6546,7 +6742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -6574,7 +6770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -6602,7 +6798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -6630,7 +6826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -6658,7 +6854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-console-switch/" class="md-nav__link">
+      <a href="../../management/sonic-console-switch/" class="md-nav__link">
         
   
   
@@ -6686,7 +6882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -6714,7 +6910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -6742,7 +6938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -6770,7 +6966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -6798,7 +6994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6826,7 +7022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -6851,37 +7047,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -6897,214 +7066,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネント構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗号化インフラ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7117,7 +7078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -12778,117 +12739,100 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-container 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-container_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 container にする理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build / Platform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kne-akd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KNE デプロイ (AKD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント構成
+        リソース要件
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗号化インフラ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12899,7 +12843,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12910,29 +12854,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12959,7 +12881,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/tacacs-passkey-encryption.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/alpine-high-level-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12967,265 +12889,122 @@
   
 
 
-<div class="admonition danger">
-<p class="admonition-title">裏取りステータス: Discrepancy-found（YANG / cipher 基盤のみ取り込み済み、CLI / hostcfgd 取り込みは未完了）</p>
-<p>取り込み済み: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang</code> L47/L100-101/L148-149 で <code>key_encrypt_type</code> typedef と <code>TACPLUS_SERVER</code> / <code>TACPLUS|global</code> への <code>key_encrypt</code> leaf を確認。<code>sonic-buildimage/src/sonic-py-common/sonic_py_common/security_cipher.py</code> L18 で <code>CIPHER_PASS_FILE = "/etc/cipher_pass.json"</code> 定数、L41/L67 で読み書き API、L222/L237 で「<code>cipher_pass</code> registry からのパスワード取得」基盤を確認。<code>/etc/cipher_pass.json</code> の保全は <code>sonic-buildimage/files/image_config/config-setup/01-pre-security-cipher</code> / <code>01-post-security-cipher</code> で確認（HLD では <code>/etc/cipher_pass</code> と表記、現行実装では <strong><code>.json</code> 拡張子付きの <code>/etc/cipher_pass.json</code></strong>）。未取り込み: <code>sonic-utilities/config/aaa.py</code> L248-256 の <code>tacacs passkey</code> サブコマンドに <code>--encrypt</code> フラグは無い（現状は平文 secret をそのまま <code>add_table_kv(db, 'TACPLUS', 'global', 'passkey', secret)</code> する）。<code>sonic-host-services</code> 配下の <code>hostcfgd</code> にも <code>cipher_pass</code> / <code>key_encrypt</code> / 復号処理を行う実装は確認できない（grep でヒットなし、<code>PASSWORD_HARDENING</code> 関連のみ）。設計の中核である「CLI で <code>--encrypt</code> を付けて暗号化保存し hostcfgd で復号して PAM に渡す」フローは現行 master では <strong>未取り込み</strong>。<code>show tacacs</code> の passkey マスキング・RADIUS / LDAP の共通化も未確認 (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>ALPINE は v0.1（2025-05、Google 提案）の比較的新しい設計。<code>PLATFORM=alpinevs</code> ターゲット、<code>alpinevs-init</code> サービス、Lucius dataplane の <code>libsai-grpc</code> 連携が現行 master に取り込まれているかは未裏取り。</p>
 </div>
-<h1 id="tacacs-passkey-key_encrypt-master-key-etccipher_pass">TACACS+ passkey 暗号化（<code>key_encrypt</code> + master key <code>/etc/cipher_pass</code>）<a class="headerlink" href="#tacacs-passkey-key_encrypt-master-key-etccipher_pass" title="Permanent link">&para;</a></h1>
+<h1 id="alpine-sonicalvis-kne">Alpine 仮想 SONiC（ALViS / KNE デプロイ）<a class="headerlink" href="#alpine-sonicalvis-kne" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TACACS+ は SONiC のリモート認証で広く使われるが、<strong>TACACS+ passkey は CONFIG_DB に平文で保存</strong> されてきた。<code>config_db.json</code> の流出やバックアップファイルからの漏洩がリスクである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は CONFIG_DB 上の passkey を <strong>OpenSSL（base64 エンコード）で暗号化保存</strong> し、PAM 設定ファイル書き込み直前に <code>hostcfgd</code> が <strong>マスタキー（<code>/etc/cipher_pass</code>、root 専用）</strong> を使って復号する経路を導入する。<code>config_db.json</code> 単体では passkey を取り出せなくなり、デバイス間で同じ <code>config_db.json</code> を流用しても問題が起きないように、共通インフラとして TACACS / RADIUS / LDAP で再利用可能にする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ALPINE は Google が提案した SONiC のスイッチスタックシミュレーションフレームワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。仮想スイッチ本体である <strong>ALViS (Alpine Virtual Switch)</strong> と、KNE (Kubernetes Network Emulation) ベースのデプロイモデル <strong>AKD (Alpine KNE Deployment)</strong> から成る。既存の <code>sonic-vs</code> と異なり、SONiC VM とソフトウェア dataplane を <strong>2 つの container に分離</strong> して実機に近い挙動（特に warm reboot 時に dataplane を維持）を再現する点がコア設計。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="2-container">2-container 構成<a class="headerlink" href="#2-container" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    USER[管理者] --&gt;|config tacacs passkey ... --encrypt| CLI[sonic-utilities CLI]
-    CLI --&gt;|master key 入力 (--encrypt 時のみ)| MK[Master Key Manager\nsecuritycipher]
-    MK --&gt;|root 専用 ro| FILE[/etc/cipher_pass]
-    CLI --&gt;|暗号化 passkey| CFG[(CONFIG_DB.TACPLUS|global)]
-    CFG --&gt; HCE[HostCfg Enforcer (hostcfgd)]
-    FILE --&gt; HCE
-    HCE --&gt;|復号した平文 passkey| PAM[PAM config files\n(common-auth-sonic)]
-    SSH[SSH / Console] --&gt; PAM
-    PAM --&gt; AUTH[TACACS+ サーバ認証]</code></pre>
-<p>主要要素<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    subgraph Pod[KNE Pod]
+        SS[SwitchStack Container&lt;br/&gt;qemu で SONiC VM 起動]
+        DP[ASIC Simulation Container&lt;br/&gt;Lucius / vendor sim]
+    end
+    SS -- libsai-grpc --&gt; DP
+    SS -- UPM(packet I/O) --&gt; DP
+    DP -- KNE links --&gt; Other[他 ALViS / Host]</code></pre>
+<p><code>SwitchStack Container</code> は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> は <strong>gRPC ベースの SAI クライアント</strong> (<code>libsai-grpc</code>) で別 container の dataplane と通信する。CPU port の packet in/out は <strong>UPM (Userspace Packet Module)</strong> が担う。</p>
+<p><code>ASIC Simulation Container</code> がソフトウェア dataplane。デフォルトは OpenConfig 由来の <strong>Lucius</strong> (lemming プロジェクト)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。vendor は (1) ASIC sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。</p>
+<h3 id="2-container_1">2 container にする理由<a class="headerlink" href="#2-container_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>runtime flag <code>key_encrypt</code></strong>（CONFIG_DB の <code>TACPLUS|global</code>）: 暗号化機能の有効/無効</li>
-<li><strong>CLI 層</strong>: <code>--encrypt</code> 指定時にマスタキーを対話的に取得し、OpenSSL + base64 で passkey を暗号化して CONFIG_DB に書く</li>
-<li><strong><code>/etc/cipher_pass</code></strong>: マスタキーを保存。root のみ読み込み可（read only）</li>
-<li><strong><code>hostcfgd</code></strong>: CONFIG_DB の暗号化 passkey と <code>/etc/cipher_pass</code> のマスタキーで復号し、<code>common-auth-sonic</code> 等の PAM 設定に平文で書き出す（ここで平文に戻す必要がある。PAM/Linux ログインスタックが平文 passkey を期待するため）</li>
+<li><strong>Warm reboot 模擬</strong>: VM だけ再起動して dataplane を維持できる。SAI/SDK reconciliation のテストが実機前に可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>Dynamic Port Breakout</strong>: VM 起動時に lane を確定させず、<code>create_hostif</code>/<code>create_port</code> 呼び出し時にポート生成</li>
+<li><strong>HW 模擬度</strong>: VM 内に余分な veth が無く、<code>ip addr</code> で見える netdev は SAI が作った hostif と完全一致</li>
 </ul>
-<h3 id="_4">データフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as User
-    participant C as sonic-utilities (config)
-    participant SC as securitycipher\n(Master Key Mgr)
-    participant CFG as CONFIG_DB
-    participant H as hostcfgd
-    participant P as PAM common-auth-sonic
-    U-&gt;&gt;C: config tacacs passkey TEST1 --encrypt
-    C--&gt;&gt;U: Password: (master key 入力プロンプト)
-    U-&gt;&gt;C: &lt;master&gt;
-    C-&gt;&gt;SC: master key を /etc/cipher_pass へ保存\n(必要なら新規作成)
-    C-&gt;&gt;SC: TEST1 を OpenSSL で暗号化 + base64
-    SC--&gt;&gt;C: &lt;Encrypted_Passkey&gt;
-    C-&gt;&gt;CFG: TACPLUS|global を更新\n(passkey=&lt;Encrypted&gt;, key_encrypt=true)
-    CFG--&gt;&gt;H: SET 通知
-    H-&gt;&gt;SC: master key 取得 (/etc/cipher_pass)
-    H-&gt;&gt;H: 暗号化 passkey を復号
-    H-&gt;&gt;P: 平文 passkey を PAM 設定に書き込み</code></pre>
-<p>PAM が平文 passkey を要求する以上、最終的に <strong>どこかで復号する必要がある</strong>。本設計はその「どこか」をデバイス内 root 専用ファイルに閉じ込めることでリスクを最小化する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md#L60-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  This decryption step is crucial because the login or SSH daemon references the PAM config file to verify the TACACS secret / passkey.
-  If it remains encrypted, the SSH daemon will be unable to recognize the passkey, leading to login failures.
-  ...
-  3. Same file will be read while decrypting the passkey at hostcfgd
-  4. The infra (encrypt/decrypt and master key/password storage & retrieval) will be common for all the features like TACACS, RADIUS, LDAP etc..
-reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「インフラを TACACS / RADIUS / LDAP で共有する」という核となる設計判断の根拠。
--->
-
-<h3 id="_5">暗号化インフラ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="build-platform">Build / Platform<a class="headerlink" href="#build-platform" title="Permanent link">&para;</a></h3>
+<p><code>sonic-buildimage</code> に新プラットフォーム <code>alpinevs</code> が追加される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PLATFORM=alpinevs make configure
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make target/sonic-alpinevs.img.gz
+</span></code></pre></div>
+<p>ランタイム時は <code>alpinevs-init</code> サービスが <code>config_db.json</code> の <code>DEVICE_METADATA.hwsku</code> を見て platform を選択する。<code>hwsku=alpine_vs</code> 指定で:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>HwSKU: alpine_vs
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ASIC: alpinevs
+</span></code></pre></div>
+<p>無指定なら sonic_vs と同じ <code>Force10-S6000</code> がデフォルト。</p>
+<h3 id="ports">Ports<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>項目</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>暗号化ライブラリ</td>
-<td>OpenSSL<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>エンコード</td>
-<td>base64</td>
-</tr>
-<tr>
-<td>マスタキー保管</td>
-<td><code>/etc/cipher_pass</code>（root 専用、read only）</td>
-</tr>
-<tr>
-<td>暗号化主体</td>
-<td><code>sonic-utilities</code>（passkey 設定 CLI）</td>
-</tr>
-<tr>
-<td>復号主体</td>
-<td><code>hostcfgd</code>（PAM 反映直前）</td>
-</tr>
-</tbody>
-</table>
-<p>このインフラは <strong>TACACS / RADIUS / LDAP 共通</strong> として設計されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>設定:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>passkey<span class="w"> </span>TEST1<span class="w"> </span>--encrypt
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Password:
-</span></code></pre></div>
-<p>ポイント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>--encrypt</code> フラグが付いた場合のみマスタキーを対話的に要求する</li>
-<li>フラグ無しの従来動作（平文保存）は残る（後方互換）</li>
-<li><code>key_encrypt</code> runtime flag が有効な場合、<code>--encrypt</code> は <strong>必須要件</strong> になる</li>
-</ul>
-<p>表示:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>tacacs
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TACPLUS<span class="w"> </span>global<span class="w"> </span>passkey<span class="w"> </span>configured<span class="w"> </span>Yes<span class="w"> </span>/<span class="w"> </span>No
-</span></code></pre></div>
-<p><code>show tacacs</code> の出力から passkey フィールドそのものを削除し、<strong>設定有無の Yes/No だけを表示</strong> する形に変更される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&quot;TACPLUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;auth_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;login&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;key_encrypt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;passkey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Encrypted_Passkey&gt;&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>型</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>key_encrypt</code></td>
-<td>bool（"true"/"false"）</td>
-<td>本機能の有効/無効。新規追加</td>
-</tr>
-<tr>
-<td><code>passkey</code></td>
-<td>string</td>
-<td>既存フィールド。<code>key_encrypt=true</code> のとき暗号化 base64 文字列。長さ上限は <strong>256 まで拡張</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
+<th>種別</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>config tacacs passkey &lt;key&gt; [--encrypt]</code></td>
-<td>passkey 設定。<code>--encrypt</code> でマスタキー入力プロンプト</td>
+<td>Data ports</td>
+<td>dataplane 内のスイッチング。KNE topology の links から生成</td>
 </tr>
 <tr>
-<td><code>show tacacs</code></td>
-<td>passkey 値は表示せず Yes/No のみ</td>
+<td>Management port</td>
+<td>container 間通信および外部 test runner との接続</td>
+</tr>
+<tr>
+<td>HostIF</td>
+<td>VM 内に hostif として作られ、ASIC ⇄ CPU の packet I/O。genetlink / send-to-ingress も対応</td>
 </tr>
 </tbody>
 </table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-system-tacacs</code> 系 YANG モジュールに対し、HLD は次の変更を提案<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>既存 <code>passkey</code> リーフの <strong>長さ上限を 256 に拡張</strong></li>
-<li>新規 <code>key_encrypt</code> リーフを追加</li>
-</ul>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 機能有効化（CONFIG_DB を直接編集する想定）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-cli<span class="w"> </span>...<span class="w"> </span>TACPLUS<span class="p">|</span>global<span class="w"> </span><span class="nv">key_encrypt</span><span class="o">=</span><span class="nb">true</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># passkey を暗号化保存</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>config<span class="w"> </span>tacacs<span class="w"> </span>passkey<span class="w"> </span>MyTacacsSecret<span class="w"> </span>--encrypt
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Password:<span class="w"> </span>&lt;master<span class="w"> </span>key&gt;
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># 確認</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>show<span class="w"> </span>tacacs
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>TACPLUS<span class="w"> </span>global<span class="w"> </span>passkey<span class="w"> </span>configured<span class="w"> </span>Yes
+<h3 id="kne-akd">KNE デプロイ (AKD)<a class="headerlink" href="#kne-akd" title="Permanent link">&para;</a></h3>
+<p>KNE のノード type <code>ALPINE</code>（<a href="https://github.com/openconfig/kne/tree/main">openconfig/kne の topo/node/alpine</a>）を使う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。topology 例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nodes: {
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  name: &quot;alpine-dut&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  vendor: ALPINE
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  config: {
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    image: &quot;...alpine-vs:ga&quot;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    vendor_data {
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>      [type.googleapis.com/alpine.AlpineConfig] {
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        containers: { name: &quot;dataplane&quot;
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>                      image: &quot;...lucius:ga&quot;
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>                      command: &quot;/lucius/lucius&quot; }
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>      }
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    }
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  }
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>}
 </span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p><code>vendor_data</code> の <code>containers</code> で別 vendor の sim を差し替え可能。services は ssh(22) / gnmi+gnoi(9339) / p4rt(9559) を露出する。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  At a high level, the Alpine Virtual Switch (ALViS) is composed of 2 foundational Docker containers:
+  1. SwitchStack Container which runs a SONiC VM, and
+  2. ASIC Simulation Container which runs the virtual ASIC.
+reasoning: 2-container 構成と各 container の役割の根拠。
+-->
+
+<h2 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
+<p>SAI 仕様自体への変更は無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dataplane への接続方式は vendor 実装次第。Lucius の場合は <strong>gRPC 経由で SAI 呼び出しを auto-generated client が転送</strong> する（<a href="https://github.com/openconfig/lemming/blob/main/dataplane/docs/protoforsai.md">lemming の protoforsai</a> 参照）。</p>
+<h2 id="_3">リソース要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>VM は qemu で <code>-m 32768</code>（32GB RAM）<code>-smp 12</code>（12 vCPU）で起動する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実測例では qemu プロセスが ~4.2GB RES、Lucius が ~230MB RES。<strong>開発者ワークステーションでも動かせる規模</strong> が要件の 1 つ。</p>
+<h2 id="warmboot-fastboot">Warmboot / Fastboot<a class="headerlink" href="#warmboot-fastboot" title="Permanent link">&para;</a></h2>
+<p>設計に変更は無い<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。むしろ ALViS は <strong>warm reboot 開発のためのツール</strong>として位置づけられる（VM 再起動中も dataplane container が forwarding を続ける）。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>マスタキーが置かれる <strong><code>/etc/cipher_pass</code> をローカル root に頼って保護</strong> する。root を奪取された場合の防御層は無い<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>PAM スタックの仕様上、PAM 設定に書き込む段階では平文に戻さざるを得ない</li>
-<li>復号は <strong><code>hostcfgd</code> プロセスで行う</strong>。<code>hostcfgd</code> のメモリダンプを取られると平文 passkey が露出する</li>
-<li>HLD では暗号化アルゴリズムや鍵長は OpenSSL に委ねるとだけ書かれており、実装側で具体的な暗号スイートが決まる必要がある</li>
+<li>現行は AKD 環境でしか動かない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>KVM 有効ホストが必須。VM 内で動かす場合は nested virtualization が必要</li>
+<li><code>docker-sonic-alpinevs</code>（VM 抜きで apps + dataplane を直接動かす派生）は Open/Action 項目で検討中</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: TACACS 以外（RADIUS / LDAP）の AAA 設定 PAM 反映と同じ層に手が入る。共通インフラ化と整合させる必要あり<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong><code>config save</code> / <code>config_db.json</code> の他デバイスへのコピー</strong>: 暗号化 passkey は鍵が同一でないと復号できない。<code>/etc/cipher_pass</code> を複製しないと他デバイスで動かない（または暗号化を無効にしてから差し替え）</li>
-<li><strong><code>show tacacs</code></strong>: passkey フィールド削除に伴い、表示と既存スクリプトの parser に影響</li>
-<li><strong>YANG validator</strong>: <code>passkey</code> の長さ拡張で 64 文字や 128 文字を上限としている YANG / scripts に影響</li>
+<li><strong>sonic-vs</strong>: 同じ仮想スイッチ枠だが、<code>sonic-vs</code> は SAI に bcm 等の実装無しの単純 sim。ALViS は SAI を gRPC で外出しする点が異なる</li>
+<li><strong>KNE / ondatra</strong>: トポロジ・テスト用 control framework として直接連携</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>--encrypt</code> で設定したが SSH 認証が失敗する場合、<code>hostcfgd</code> が <code>/etc/cipher_pass</code> を読めているか（root 権限・パーミッション）を確認</li>
-<li><code>common-auth-sonic</code> に書かれた passkey が暗号化のままになっていないか確認（書き込み直前の復号で失敗している可能性）</li>
-<li><code>key_encrypt=true</code> のまま平文 <code>passkey</code> が混在しているケースは復号失敗で PAM が動かなくなる。一旦 <code>key_encrypt=false</code> で平文に揃えてから再暗号化する</li>
-</ul>
-<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<p>2026-05-09 時点の現行 master を裏取り。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>HLD</th>
-<th>現行 master</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>YANG <code>key_encrypt</code> leaf</td>
-<td>必須</td>
-<td>✅ 取り込み済み (<code>sonic-system-tacacs.yang</code> L47/L100-101/L148-149)</td>
-</tr>
-<tr>
-<td>master key ファイルパス</td>
-<td><code>/etc/cipher_pass</code></td>
-<td>⚠️ 実体は <strong><code>/etc/cipher_pass.json</code></strong>（<code>sonic_py_common/security_cipher.py</code> L18）</td>
-</tr>
-<tr>
-<td>共通暗号化 API</td>
-<td>必須</td>
-<td>✅ <code>security_cipher.py</code> で encrypt/decrypt API を実装</td>
-</tr>
-<tr>
-<td><code>config tacacs passkey ... --encrypt</code> CLI</td>
-<td>必須</td>
-<td>❌ <strong>未実装</strong>。<code>sonic-utilities/config/aaa.py</code> L248-256 は単に平文 secret をそのまま CONFIG_DB に書く</td>
-</tr>
-<tr>
-<td><code>hostcfgd</code> で <code>key_encrypt=true</code> を見て復号 → PAM へ</td>
-<td>必須</td>
-<td>❌ <strong>未実装</strong>（hostcfgd 配下に該当する復号処理が無い）</td>
-</tr>
-<tr>
-<td><code>show tacacs</code> から passkey 削除</td>
-<td>必須</td>
-<td>❌ 未確認（CLI 取り込みが無いため意味なし）</td>
-</tr>
-<tr>
-<td>RADIUS / LDAP との共通化</td>
-<td>future</td>
-<td>未取り込み</td>
-</tr>
-</tbody>
-</table>
-<p>YANG と共通暗号インフラ（<code>security_cipher.py</code> + <code>/etc/cipher_pass.json</code> 永続化スクリプト）は揃っているが、<strong>運用フローの中核である CLI と hostcfgd 取り込みが未完了</strong>であり、現状ユーザは <code>--encrypt</code> 経路で TACACS+ passkey を保護できない。HLD は <code>/etc/cipher_pass</code> と表記しているが実装上の正は <code>/etc/cipher_pass.json</code>。</p>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装
-- /etc/cipher_pass のパーミッション・パッケージング (sonic-buildimage)
-- sonic-utilities の `config tacacs passkey ... --encrypt` 実装
-- TACPLUS|global key_encrypt の YANG (sonic-system-tacacs) 取り込み
-- RADIUS / LDAP との共通インフラ化の進捗
-- show tacacs から passkey フィールドが削除されたか
-- 暗号化アルゴリズム (AES-CBC? AES-GCM?) の確定
+- alpinevs platform の sonic-buildimage 取り込み確認
+- libsai-grpc / UPM の syncd 連携の現行実装確認
+- Lucius (lemming) との互換 commit pin の確認
+- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認
+- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/alpine/alpine_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
