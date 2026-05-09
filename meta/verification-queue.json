@@ -1324,6 +1324,21 @@
         "Warmboot Manager HLD と本 HLD の連携経路の現行実装確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/gnsi-hld.md",
+      "issue": 211,
+      "pr": 212,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否",
+        "console_mgmt / ssh_mgmt host service モジュール実装存否",
+        "EnableAuthzPolicy / EnablePathzPolicy / CertCRLConfig 等 gNMI server フラグの現行 master 実装確認",
+        "STATE_DB に gNSI profile state を書き込む実装確認",
+        "openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況",
+        "HLD は 2023-11 v0.1 Initial で 2 年超経過、現行 master との大幅乖離リスク"
+      ],
+      "priority": "high"
     }
   ]
 }
