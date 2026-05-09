@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/dynamically-headroom-calculation.md",
+  "verification": "hld-only",
+  "concerns": [
+    "buffermgrd の dynamic クラスと vendor Lua plugin 呼び出し経路の現行 master 取り込み確認",
+    "DEVICE_METADATA.buffer_model の sonic-yang-models 取り込み確認",
+    "ASIC_TABLE / PERIPHERAL_TABLE / PORT_PERIPHERAL_TABLE / BUFFER_MAX_PARAM の STATE_DB 公開実装確認",
+    "LOSSLESS_TRAFFIC_PATTERN / LOSSLESS_BUFFER_PARAM の YANG 取り込み確認",
+    "SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE の community SAI 取り込み確認",
+    "vendor (Mellanox/Broadcom) の dynamic Lua plugin と asic_table.json 提供状況確認"
+  ],
+  "priority": "medium"
+}
