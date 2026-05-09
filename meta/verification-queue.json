@@ -1983,6 +1983,19 @@
       "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
     },
     {
+      "page": "docs/system/sonic-migration-to-chrony.md",
+      "verification": "hld-only",
+      "concerns": [
+        "chrony パッケージの sonic-buildimage 同梱と ntpd / ntpsec の削除確認",
+        "/etc/chrony/chrony.conf テンプレートの sonic-buildimage / sonic-host-services 取り込み確認",
+        "NTP / NTP_SERVER CONFIG_DB → chrony.conf 生成パスの確認",
+        "DHCP 経由 NTP server 取得 (chrony-helper / dhclient hook) の確認",
+        "HW RTC 自動 sync が kernel time discipline 経由で動いていることの確認",
+        "config ntp 系 CLI の chronyc 経由実装への切替確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/sonic-python-logger-enhancement.md",
       "issue": 133,
       "verification": "discrepancy-found",
