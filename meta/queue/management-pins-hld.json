@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/pins-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "p4rt-app container と p4rt-orch (sonic-pins / sonic-swss) の現行 master 取り込み確認",
+    "APPL_STATE_DB / response path の libswsscommon 取り込み確認",
+    "send_to_ingress netdev の sonic-buildimage / kernel module 取り込み確認",
+    "saip4ext.h の opencomputeproject/SAI 取り込み確認",
+    "supplementary HLD（in_progress 表記）の現行版確認と分割 issue 化",
+    "gRPC port 9559 の固定 / config 化の進捗確認"
+  ],
+  "priority": "high"
+}
