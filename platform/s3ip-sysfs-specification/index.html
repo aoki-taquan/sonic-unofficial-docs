@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/dscp-remapping-for-tunnel-traffic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/s3ip-sysfs-specification/">
       
       
-        <link rel="prev" href="../dash-sonic-kvm/">
+        <link rel="prev" href="../recirculation-port-support-on-voq-chassis/">
       
       
-        <link rel="next" href="../nvgre-tunnel-in-sonic/">
+        <link rel="next" href="../sai-api-version-check/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） - SONiC 非公式ドキュメント</title>
+        <title>S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dscp-tc-dual-tor-pfc" class="md-skip">
+        <a href="#s3ip-sysfs-platform-sys_switch" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+              S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3343,8 +3343,6 @@
       
   
   
-    
-  
   
   
     
@@ -3376,23 +3374,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -3410,13 +3405,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3436,7 +3431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-active-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
         
   
   
@@ -3464,7 +3459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-standby-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
         
   
   
@@ -3492,7 +3487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-sonic-kvm/" class="md-nav__link">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -3517,37 +3512,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -3563,236 +3531,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        バウンスバック経路と問題
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swss" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SWSS スキーマ追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tunnel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TUNNEL テーブルの更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lossless-pfcwd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 lossless キューと PFCWD の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        終端オブジェクトの分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dscp3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        バウンスバック経路の例（DSCP=3 トラフィック）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3805,7 +3543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -3833,7 +3571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -3861,7 +3599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-dash-hld/" class="md-nav__link">
+      <a href="../../overlay/sonic-dash-hld/" class="md-nav__link">
         
   
   
@@ -3889,7 +3627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -3917,7 +3655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -7381,6 +7119,8 @@
       
   
   
+    
+  
   
   
     
@@ -7458,20 +7198,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -7489,13 +7232,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -7515,7 +7258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7543,7 +7286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -7571,7 +7314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -7599,7 +7342,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -7627,7 +7370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -7655,7 +7398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -7683,7 +7426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -7711,7 +7454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7739,7 +7482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -7767,7 +7510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -7795,7 +7538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -7823,7 +7566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -7851,7 +7594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -7879,7 +7622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -7907,7 +7650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -7935,7 +7678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -7963,7 +7706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -7991,7 +7734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -8016,10 +7759,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/s3ip-sysfs-specification/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -8035,6 +7805,153 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共通ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#led" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LED 値域
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カテゴリ一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permission の傾向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-enumfan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status enum（FAN 例）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC との関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -8047,7 +7964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -8075,7 +7992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -8103,7 +8020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -8131,7 +8048,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -8159,7 +8076,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -8187,7 +8104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+      <a href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
         
   
   
@@ -8215,7 +8132,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -8243,7 +8160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -8271,7 +8188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-psu-daemon-design/" class="md-nav__link">
+      <a href="../sonic-psu-daemon-design/" class="md-nav__link">
         
   
   
@@ -8299,7 +8216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-sfp-refactoring/" class="md-nav__link">
+      <a href="../sonic-sfp-refactoring/" class="md-nav__link">
         
   
   
@@ -8327,7 +8244,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -8355,7 +8272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -8383,7 +8300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/thermal-control-test-plan/" class="md-nav__link">
+      <a href="../thermal-control-test-plan/" class="md-nav__link">
         
   
   
@@ -13253,7 +13170,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        バウンスバック経路と問題
+        共通ルール
       
     </span>
   </a>
@@ -13261,43 +13178,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#swss" class="md-nav__link">
+  <a href="#led" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SWSS スキーマ追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tunnel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TUNNEL テーブルの更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lossless-pfcwd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 lossless キューと PFCWD の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性
+        LED 値域
       
     </span>
   </a>
@@ -13308,7 +13192,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        終端オブジェクトの分離
+        カテゴリ一覧
       
     </span>
   </a>
@@ -13316,10 +13200,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dscp3" class="md-nav__link">
+  <a href="#permission" class="md-nav__link">
     <span class="md-ellipsis">
       
-        バウンスバック経路の例（DSCP=3 トラフィック）
+        Permission の傾向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-enumfan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status enum（FAN 例）
       
     </span>
   </a>
@@ -13328,6 +13223,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC との関係
+      
+    </span>
+  </a>
   
 </li>
       
@@ -13335,65 +13241,15 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        制限事項
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13404,29 +13260,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13453,7 +13287,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/dscp-remapping-for-tunnel-traffic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/s3ip-sysfs-specification.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13462,282 +13296,181 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
-<p>主要実装は現行 master で確認済みだが、HLD と実装で <strong>PFC watchdog 用フィールド名に差異</strong> がある。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>S3IP 仕様自体は規約文書。<code>/sys_switch/</code> 配下を提供する kernel module / driver の現行 vendor 取り込み、<code>s3ip_sysfs_framework_hld.md</code> 側の SONiC platform API plugin 統合は未裏取り。</p>
 </div>
-<h1 id="dscp-tc-dual-tor-pfc">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）<a class="headerlink" href="#dscp-tc-dual-tor-pfc" title="Permanent link">&para;</a></h1>
+<h1 id="s3ip-sysfs-platform-sys_switch">S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）<a class="headerlink" href="#s3ip-sysfs-platform-sys_switch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR（Active / Standby）構成では、サーバ側で輻輳が起きると <strong>upper / lower 両方の ToR に PFC pause が同時に伝搬</strong> する状況が起こり得る。Standby ToR はサウスバウンド（T1 → ToR → サーバ）方向に来たトラフィックを <strong>同じキューでバウンスバック</strong> して T1 を介して Active ToR に流すため、輻輳ポイントが解消されても T1 ↔ ToR 間で pause が固着する <strong>PFC デッドロック</strong> が発生する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は、tunnel encap 時に <strong>キュー / DSCP を別系統に書き換え</strong>、tunnel decap 時に <strong>port 単位のマップを上書きして TC / PG を再設定</strong> することで、バウンスバック経路と通常経路を物理的に別キューへ分離する。SAI に新規追加された tunnel 属性を使うため、<code>202012</code> / <code>202205</code> ブランチを最初のターゲットにすると HLD は明記している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・FPGA・CPLD・watchdog・slot・syseeprom・LED）の情報を <strong><code>/sys_switch/</code> 配下の決まったパスで公開する</strong> 標準仕様<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC platform plugin が直接プラットフォーム driver を叩くのではなく <strong>kernel が事前に sysfs を整える</strong> ことで、vendor 別の plugin コードを薄くし、共通の platform monitor logic で扱えるようにする。本ページは仕様（path / 値域 / 型）の引き写しではなく、<strong>カテゴリ毎に何が読めるか / どこが書ける（R/W）か</strong> を整理する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">バウンスバック経路と問題<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>Standby ToR が受け取った南向きトラフィックは、対向 ToR (Active 側) へ MuxTunnel (IPinIP) で encap して送り返される。元のポート単位の TC / Queue がそのまま使われると、T1 → Standby ToR → T1 の往復が同一キューで連結し、PFC pause が解消しない。HLD は <strong>encap 側で DSCP / Queue を変える</strong> のと、<strong>decap 側で受信ポート単位 TC / PG を上書きする</strong> の 2 段で経路を分離する。</p>
-<pre class="mermaid"><code>flowchart LR
-    T1 --&gt;|DSCP=3, TC3, PG3, Q3| StandbyToR
-    StandbyToR --&gt;|encap MuxTunnel\nouter DSCP=2, Q2| T1b[T1]
-    T1b --&gt;|TC2, PG2| ActiveToR
-    ActiveToR --&gt;|decap; inner DSCP=3 維持\nDSCP_TO_TC_MAP TUNNEL → TC3, PG2| Server</code></pre>
-<h3 id="swss">SWSS スキーマ追加<a class="headerlink" href="#swss" title="Permanent link">&para;</a></h3>
-<p>新規・更新される QoS マップは 4 つ。<code>AZURE_TUNNEL</code> 系として既存の <code>AZURE</code> 系と並置される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>用途</th>
-<th>テーブル</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>decap 時 outer DSCP → TC</td>
-<td><code>DSCP_TO_TC_MAP\|AZURE_TUNNEL</code></td>
-<td>既存 <code>AZURE</code> から <code>5→1</code>, <code>33→8</code>, <code>48→7</code> を変更</td>
-</tr>
-<tr>
-<td>decap 時 TC → PG</td>
-<td><code>TC_TO_PRIORITY_GROUP_MAP\|AZURE_TUNNEL</code></td>
-<td>TC3→PG2, TC4→PG6 にずらす</td>
-</tr>
-<tr>
-<td>encap 時 TC → Queue</td>
-<td><code>TC_TO_QUEUE_MAP\|AZURE_TUNNEL</code></td>
-<td>TC3→Q2, TC4→Q6 等</td>
-</tr>
-<tr>
-<td>encap 時 (TC, color) → DSCP</td>
-<td><code>TC_TO_DSCP_MAP\|AZURE_TUNNEL</code></td>
-<td><strong>新設</strong>。<code>sonic-tc-dscp.yang</code> を新規追加</td>
-</tr>
-</tbody>
-</table>
-<p>ポート側マップ (<code>AZURE</code>) も合わせて更新される。<code>TC_TO_PRIORITY_GROUP_MAP|AZURE</code> は <code>TC2→PG2</code>, <code>TC6→PG6</code> を有効化し、tunnel 側で使う追加 lossy PG (PG2 / PG6) を成立させる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これらは Dual-ToR 限定で生成される: <code>DEVICE_METADATA['localhost']['subtype'] = 'DualToR'</code> のときのみ <code>qos_config.j2</code> がレンダリングする。</p>
-<h3 id="tunnel">TUNNEL テーブルの更新<a class="headerlink" href="#tunnel" title="Permanent link">&para;</a></h3>
-<p>既存 <code>TUNNEL|MuxTunnel0</code> を以下のように拡張する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nt">&quot;dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="nt">&quot;dst_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.32&quot;</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nt">&quot;ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copy_from_outer&quot;</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="nt">&quot;encap_ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">&quot;ttl_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">&quot;tunnel_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPINIP&quot;</span><span class="p">,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;decap_dscp_to_tc_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[DSCP_TO_TC_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="nt">&quot;decap_tc_to_pg_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="nt">&quot;encap_tc_to_queue_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_QUEUE_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="nt">&quot;encap_tc_color_to_dscp_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_DSCP_MAP|AZURE_TUNNEL]&quot;</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>注目点は次の 2 つ。</p>
+<h3 id="_3">共通ルール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>dscp_mode</code> は <strong><code>pipe</code> に変更</strong>（従来の <code>uniform</code> ではない）。decap 時 outer DSCP を捨てて inner DSCP を保つ。</li>
-<li><code>encap_tc_color_to_dscp_map</code> が <strong>新規キー</strong>。SAI の <code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code> に対応する。</li>
+<li>すべての path は <code>/sys_switch/&lt;category&gt;/...</code> のフラット階層</li>
+<li><code>number</code> は対象カテゴリの個数（例: <code>/sys_switch/temp_sensor/number</code>）</li>
+<li>番号付き要素は <code>temp[n]</code>, <code>fan[n]</code>, <code>psu[n]</code> の様に角括弧表記の <strong>0 始まり整数</strong> index</li>
+<li>単位は明示（millidegree Celsius / mV / mA / RPM 等）</li>
+<li>LED の値域は <strong>enum 0..8</strong>（dark / green / yellow / red / blue + flashing 系）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h3 id="lossless-pfcwd">追加 lossless キューと PFCWD の分離<a class="headerlink" href="#lossless-pfcwd" title="Permanent link">&para;</a></h3>
-<p>PG2 / PG6 が新たに lossy として有効になる一方で、追加 lossless キュー（Q2 / Q6 系）に対しては <strong>PFC watchdog を必ずしも有効化したくない</strong> という要件があるため、<code>PORT_QOS_MAP</code> に新フィールド <code>pfc_wd_sw_enable</code> が追加される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="led">LED 値域<a class="headerlink" href="#led" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>意味</th>
+<th style="text-align: right;">Value</th>
+<th>状態</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>pfc_enable</code></td>
-<td>PFC を有効にするキュー一覧</td>
+<td style="text-align: right;">0</td>
+<td>dark</td>
 </tr>
 <tr>
-<td><code>pfc_wd_sw_enable</code></td>
-<td>PFC watchdog をソフトウェア側で有効にするキュー一覧</td>
+<td style="text-align: right;">1</td>
+<td>green</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>yellow</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>red</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>blue</td>
+</tr>
+<tr>
+<td style="text-align: right;">5-8</td>
+<td>上記の flashing 版</td>
 </tr>
 </tbody>
 </table>
-<p>例:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT_QOS_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;pfc_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3,4,2,6&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;pfc_wd_sw_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3,4&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>旧構成からの移行で互換性を保つため、<code>db_migrator</code> を更新して既存 <code>pfc_enable</code> から <code>pfc_wd_sw_enable</code> を派生させる必要がある。新フィールドのため <code>sonic-port-qos-map.yang</code> の更新も伴う。</p>
-<h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>新規・既存を問わず、本機能で使う tunnel SAI 属性は次の 4 つ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">カテゴリ一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>SAI 属性</th>
-<th>役割</th>
+<th>カテゴリ</th>
+<th>path</th>
+<th>主な属性</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code></td>
-<td>encap で outer DSCP を (TC, color) からリマップ</td>
+<td>温度</td>
+<td><code>/sys_switch/temp_sensor/temp[n]/</code></td>
+<td><code>alias</code>, <code>type</code>, <code>max</code> (R/W), <code>min</code> (R/W), <code>value</code>（millidegree C）</td>
 </tr>
 <tr>
-<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP</code></td>
-<td>encap で送出キューを TC からリマップ</td>
+<td>電圧</td>
+<td><code>/sys_switch/vol_sensor/vol[n]/</code></td>
+<td><code>alias</code>, <code>type</code>, <code>max</code> (R/W), <code>min</code> (R/W), <code>range</code>, <code>nominal_value</code>, <code>value</code> (mV)</td>
 </tr>
 <tr>
-<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code></td>
-<td>decap で outer DSCP → TC をポート単位マップから上書き</td>
+<td>電流</td>
+<td><code>/sys_switch/curr_sensor/curr[n]/</code></td>
+<td><code>alias</code>, <code>type</code>, <code>max</code> (R/W), <code>min</code> (R/W), <code>value</code> (mA)</td>
 </tr>
 <tr>
-<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code></td>
-<td>decap で TC → PG をポート単位マップから上書き</td>
+<td>Syseeprom</td>
+<td><code>/sys_switch/syseeprom</code></td>
+<td>ONIE 形式の binary を直接読める</td>
+</tr>
+<tr>
+<td>FAN</td>
+<td><code>/sys_switch/fan/fan[n]/</code></td>
+<td>metadata + <code>direction</code> (F2B/B2F), <code>ratio</code> (R/W 0-100), motor 配下に <code>speed</code> / <code>speed_target</code> / <code>speed_tolerance</code> / <code>speed_max</code> / <code>speed_min</code>、<code>status</code> (<code>0=absent / 1=normal / 2=abnormal</code>), <code>led_status</code></td>
+</tr>
+<tr>
+<td>PSU</td>
+<td><code>/sys_switch/psu/psu[n]/</code></td>
+<td>metadata + <code>type</code> (<code>0=DC / 1=AC</code>), <code>present</code>, <code>power_good</code>, voltage / current / power / temp 系（HLD 後半）</td>
+</tr>
+<tr>
+<td>Transceiver</td>
+<td><code>/sys_switch/transceiver/eth[n]/</code></td>
+<td>optic 情報</td>
+</tr>
+<tr>
+<td>System LED</td>
+<td><code>/sys_switch/sys_led/</code></td>
+<td>location / sys / fan / psu LED 群</td>
+</tr>
+<tr>
+<td>FPGA</td>
+<td><code>/sys_switch/fpga/fpga[n]/</code></td>
+<td>name / version / 各種 sub register</td>
+</tr>
+<tr>
+<td>CPLD</td>
+<td><code>/sys_switch/cpld/cpld[n]/</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Watchdog</td>
+<td><code>/sys_switch/watchdog/</code></td>
+<td>enable / timeout / current_state</td>
+</tr>
+<tr>
+<td>Slot (modular)</td>
+<td><code>/sys_switch/slot/slot[n]/</code></td>
+<td>LC slot 情報</td>
 </tr>
 </tbody>
 </table>
-<p>orchagent 側では:</p>
+<h3 id="permission">Permission の傾向<a class="headerlink" href="#permission" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>tunneldecaporch</code>: decap tunnel 作成時に <code>DECAP_QOS_*</code> を投入。</li>
-<li><code>muxorch::create_tunnel</code>: encap 側 <code>ENCAP_QOS_*</code> を投入。</li>
+<li><strong>Read-only (RO)</strong>: metadata（model, serial, part_number, hardware_version, type, alias）、現在値（value, speed, status, led_status の一部）、定数（nominal_value, range, speed_target/max/min）</li>
+<li><strong>Read/Write (R/W)</strong>: 警告閾値（temp/vol/curr の <code>max</code>, <code>min</code>）、FAN の <code>ratio</code>、<code>led_status</code>（書込可な場合）</li>
 </ul>
-<h3 id="_4">終端オブジェクトの分離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>MuxTunnel</code> と通常の IPinIP tunnel が <strong>同じ Loopback (<code>10.1.0.32</code>) を <code>dst_ip</code></strong> として使うと、decap terminator がぶつかって追加属性を一方だけに付与できない。HLD は次のように <strong>terminator を 2 つに分離</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>トンネル種別</th>
-<th>terminator type</th>
-<th>理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MuxTunnel</code></td>
-<td><code>P2P</code></td>
-<td>対向 ToR の Loopback を <code>src_ip</code> に持てる</td>
-</tr>
-<tr>
-<td>通常 IPinIP</td>
-<td><code>P2MP</code></td>
-<td><code>src_ip</code> 不定。従来どおり</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dscp3">バウンスバック経路の例（DSCP=3 トラフィック）<a class="headerlink" href="#dscp3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant T1
-    participant Standby as Standby ToR
-    participant Active as Active ToR
-    participant Server
-    T1-&gt;&gt;Standby: DSCP=3, TC3, PG3, Q3 (port-level)
-    Standby-&gt;&gt;Standby: encap MuxTunnel
-    Note over Standby: outer DSCP := TC_TO_DSCP_MAP|AZURE_TUNNEL[3] = 2&lt;br/&gt;queue := TC_TO_QUEUE_MAP|AZURE_TUNNEL[3] = 2
-    Standby-&gt;&gt;T1: outer DSCP=2, Q2
-    T1-&gt;&gt;T1: port-level: DSCP2 → TC2 → PG2 (lossy 路)
-    T1-&gt;&gt;Active: TC2 路で転送
-    Active-&gt;&gt;Active: decap MuxTunnel (dscp_mode=pipe, inner DSCP=3 維持)
-    Note over Active: DSCP_TO_TC_MAP|AZURE_TUNNEL[3] = TC3&lt;br/&gt;TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL[3] = PG2
-    Active-&gt;&gt;Server: inner DSCP=3, queue は port-level (Q3)</code></pre>
+<p><code>max</code> / <code>min</code> を <strong>userspace から書き換えられる</strong> ことで、policy 層（thermal-control / pmon）が hardware 寄りに閾値を埋め込める設計。</p>
+<h3 id="status-enumfan">Status enum（FAN 例）<a class="headerlink" href="#status-enumfan" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>0: not present
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1: present and normal
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2: present and abnormal
+</span></code></pre></div>
+<p>PSU でも同様に <code>present</code> / <code>power_good</code> を独立に持つことで psud の状態判定を sysfs 経由で実装可能<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/qos/tunnel_dscp_remapping.md#L283-L302 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/s3ip_sysfs/s3ip_sysfs_specification.md#L33-L74 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Bounced back traffic from Standby ToR to T1 ... outer DSCP is rewritten to 2 ...
-  Traffic is delivered in Queue 2 ...
-  At Active ToR ... DSCP_TO_TC_MAP|AZURE_TUNNEL ... TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL ... PG 2
-reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
+  /sys_switch/temp_sensor/number RO int Total number of temperature sensors
+  /sys_switch/temp_sensor/temp[n]/max R/W int Alarm threshold, unit: millidegree Celsius
+reasoning: 仕様の path 規約と permission 表記の根拠。
 -->
 
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DSCP_TO_TC_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>DSCP → TC</td>
-<td>tunnel decap 用</td>
-</tr>
-<tr>
-<td><code>TC_TO_PRIORITY_GROUP_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → PG</td>
-<td>tunnel decap 用</td>
-</tr>
-<tr>
-<td><code>TC_TO_QUEUE_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → Queue</td>
-<td>tunnel encap 用</td>
-</tr>
-<tr>
-<td><code>TC_TO_DSCP_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → DSCP</td>
-<td>tunnel encap 用（新設）</td>
-</tr>
-<tr>
-<td><code>TUNNEL</code></td>
-<td><code>MuxTunnel0</code></td>
-<td><code>decap_dscp_to_tc_map</code> 等</td>
-<td>tunnel に上記マップを紐付け</td>
-</tr>
-<tr>
-<td><code>PORT_QOS_MAP</code></td>
-<td><code>Ethernet*</code></td>
-<td><code>pfc_wd_sw_enable</code></td>
-<td>PFCWD のキュー一覧（新設）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 上に新規 SONiC CLI の追加記述は無い。設定は <code>qos_config.j2</code> で生成される <code>config_db.json</code> の更新と、<code>db_migrator</code> 経由で旧構成から派生する。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<h2 id="sonic">SONiC との関係<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-tc-dscp.yang</code> — <code>TC_TO_DSCP_MAP</code> を表す <strong>新設モジュール</strong></li>
-<li><code>sonic-port-qos-map.yang</code> — <code>pfc_wd_sw_enable</code> フィールド追加</li>
+<li><strong><code>s3ip_sysfs_framework_hld.md</code></strong> が SONiC platform API plugin 側の取込み方を扱う（本仕様と対）</li>
+<li><code>psud</code> / <code>thermal_control</code> / <code>pmon</code> がここから読む形に置き換わると vendor plugin が大幅に薄くなる</li>
+<li>既存の vendor 専用 sysfs（<code>/sys/bus/i2c/...</code> 直叩き等）を抽象する位置づけ</li>
 </ul>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="nt">&quot;dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;tunnel_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPINIP&quot;</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="nt">&quot;decap_dscp_to_tc_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[DSCP_TO_TC_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">            </span><span class="nt">&quot;encap_tc_color_to_dscp_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_DSCP_MAP|AZURE_TUNNEL]&quot;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
-</span></code></pre></div>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>MuxTunnel</strong>: 本機能の主対象。terminator が <code>P2P</code> に分離される変更が入る。</li>
-<li><strong>通常の IPinIP tunnel</strong>: terminator は <code>P2MP</code> 維持。属性は付かない。</li>
-<li><strong>PFC watchdog</strong>: <code>pfc_enable</code> と <code>pfc_wd_sw_enable</code> の分離が前提。<code>db_migrator</code> を当てないと WD が無条件に有効化される旧挙動になる可能性。</li>
-<li><strong>port-level <code>AZURE</code> マップ</strong>: <code>TC2→PG2</code>, <code>TC6→PG6</code> を成立させるためポート側マップも書き換わる。同テーブルを上書きしているプラットフォーム固有設定があると衝突する可能性。</li>
+<li>本仕様は <strong>kernel 側の sysfs 提供仕様</strong>。userspace API は別途設計</li>
+<li>数値の更新頻度や atomicity は仕様で規定されていない（driver 実装依存）</li>
+<li>modular switch / Smart Switch 等の階層は <code>slot</code> / 別途 namespace 化が必要</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>バウンスバック経路でも輻輳が伝搬する場合: <code>MuxTunnel0</code> に <code>encap_tc_to_queue_map</code> / <code>encap_tc_color_to_dscp_map</code> が反映されているか CONFIG_DB と ASIC_DB（<code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code>）で確認する。</li>
-<li>decap 後の TC が想定外: <code>dscp_mode=pipe</code> になっているかを確認。<code>uniform</code> のままだと outer DSCP がそのまま inner に上書きされ、<code>DSCP_TO_TC_MAP|AZURE_TUNNEL</code> の効きが見えなくなる。</li>
-<li>PFCWD の対象キューが想定と違う: <code>db_migrator</code> が <code>pfc_wd_sw_enable</code> を生成しているか、または手動で <code>PORT_QOS_MAP</code> に入っているかを確認。</li>
-<li>terminator の競合: <code>MuxTunnel</code> と通常 IPinIP の両方を作っているのに decap 属性が片方にしか反映されない場合、terminator 分離 (P2P / P2MP) が orchagent で実装されているか裏取り。</li>
+<li><strong>psud / thermal_control / pmon-enhancement</strong>: 主要消費者</li>
+<li><strong>xcvrd / sfp-refactor</strong>: transceiver sysfs を介した optic 情報</li>
+<li><strong>system-eeprom / decode-syseeprom</strong>: <code>/sys_switch/syseeprom</code> の ONIE 形式を共有</li>
+<li><strong>vendor 既存 sysfs</strong>: 移行期間に併存</li>
 </ul>
-<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
-<ul>
-<li><strong>PFCWD フィールド名</strong>: HLD は <code>pfc_wd_sw_enable</code> と表記しているが、現行 master では <code>pfcwd_sw_enable</code>（アンダースコアの位置が異なる）として実装されている。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から <code>pfcwd_sw_enable</code> を派生している。CONFIG_DB / YANG (<code>sonic-port-qos-map</code>) を読む際は実装側の名称に合わせる必要がある。</li>
-<li>一方、<code>tunneldecaporch.cpp:834,1084</code>（<code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>..._TC_TO_PRIORITY_GROUP_MAP</code>）、<code>muxorch.cpp:259,2347</code>（MuxTunnel の <code>SAI_TUNNEL_PEER_MODE_P2P</code>）、<code>files/build_templates/qos_config.j2:441</code> の Dual-ToR 限定 <code>AZURE_TUNNEL</code> 出力は HLD どおり実装されていることを確認した。</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- /sys_switch/ tree の現行 vendor 採用状況（platform/<vendor>/sonic_platform/）確認
+- s3ip_sysfs_framework HLD と本仕様の対応 / SONiC 側 plugin 取り込み確認
+- temp/vol/curr の max/min の R/W がどの consumer から書かれるか整合確認
+- modular / Smart Switch slot への namespace 拡張の整合確認
+- 仕様文書の数値型 (millidegree / mV / mA / RPM) と SONiC platform API の単位整合確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/qos/tunnel_dscp_remapping.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/s3ip_sysfs/s3ip_sysfs_specification.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
