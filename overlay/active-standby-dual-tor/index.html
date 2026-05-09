@@ -3105,6 +3105,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -10087,6 +10098,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -10119,9 +10141,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>linkmgrd</code> の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュール、<code>MuxOrch</code> の neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）の最終採用案、<code>ycabled</code> の I2C リトライ動作、proxy ARP / proxy NDP / GARP / 6.3.5 系 neighbor 特殊ケースの実装は実コードでの裏取り未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-linkmgrd</code> の <code>src/link_manager/</code>・<code>src/link_prober/</code>・<code>src/mux_state/</code> ディレクトリ構成と、<code>LinkManagerStateMachineActiveStandby.{cpp,h}</code> の存在を確認。<code>MuxOrch</code> は HLD の 3 案のうち <strong>「neighbor + standalone tunnel route」併用案</strong> を採用しており、<code>muxorch.cpp:2444-2460</code> の <code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> がそれに該当する。<code>ycabled</code> は <code>sonic-platform-daemons/sonic-ycabled/</code> 配下に実装済みで <code>xcvrd</code> から分離されている。<code>MUX_METRICS_TABLE</code> / <code>LINK_PROBE_STATS</code> / <code>MUX_CABLE_RESPONSE_TABLE</code> / <code>MUX_METRICS_TABLE_PEER</code> などの STATE_DB / APP_DB スキーマも <code>sonic-swss-common/common/schema.h:143,460-464</code> に登録済み。<code>arp_update</code> スクリプトは <code>sonic-buildimage/files/scripts/arp_update</code> に存在。詳細は後段「実装との乖離 / 補足」。</p>
 </div>
 <h1 id="active-standby-dual-tory-cable-linkmgrd-state-machine-ipinip-tunnel">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）<a class="headerlink" href="#active-standby-dual-tory-cable-linkmgrd-state-machine-ipinip-tunnel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -10597,7 +10619,18 @@
 <li>standby → active への switchover に時間がかかる → <code>MUX_METRICS_TABLE</code> の <code>&lt;app&gt;_switch_active_*</code> で各コンポーネント所要時間を見る</li>
 <li>IPv6 のみ traffic が standby → active 切替で断 → <code>accept_untracked_na</code> 設定と <code>arp_update</code> の <code>FAILED → INCOMPLETE</code> 書き換えが動いているか確認</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>現行 master（2026-05 時点）の実コード裏取り結果:</p>
+<ul>
+<li><strong>linkmgrd の構成</strong>: HLD は LinkProber / MuxState / LinkState / LinkManager の 4 サブモジュールと記述。実装は <code>sonic-linkmgrd/src/</code> 配下に <code>link_prober/</code> / <code>mux_state/</code> / <code>link_manager/</code> の 3 ディレクトリ + <code>DbInterface.cpp</code>（state_db / app_db 通信を担う）の構成で、概ね一致。<code>LinkManagerStateMachineActiveStandby.{cpp,h}</code> がメインの遷移実装。</li>
+<li><strong>MuxOrch の neighbor 取扱い</strong>: HLD の 3 案のうち <strong>「neighbor entry を残して standby 側は zero-MAC + standalone tunnel route」案</strong> が採用されている。<code>sonic-swss/orchagent/muxorch.cpp:2444-2460</code> の <code>createStandaloneTunnelRoute()</code> / <code>removeStandaloneTunnelRoute()</code> がその実装で、neighbor 削除案や ACL redirect 案ではない。</li>
+<li><strong><code>PEER_SWITCH</code> テーブル / <code>PeerSwitchOrch</code></strong>: <code>sonic-swss/orchagent/orchdaemon.cpp:469</code> で <code>CFG_PEER_SWITCH_TABLE_NAME</code> をハンドラに登録、<code>muxorch.cpp:2190</code> で <code>MuxOrch::handlePeerSwitch</code> ハンドラを設定。</li>
+<li><strong>ycabled</strong>: <code>sonic-platform-daemons/sonic-ycabled/ycable/ycable.py</code> に独立 daemon として存在（旧 xcvrd から分離）。</li>
+<li><strong>STATE_DB スキーマ</strong>: <code>MUX_METRICS_TABLE</code> (<code>schema.h:460</code>)、<code>LINK_PROBE_STATS</code> (462行)、<code>MUX_METRICS_TABLE_PEER</code> (464行)、APP_DB の <code>MUX_CABLE_RESPONSE_TABLE</code> (143行) はすべて取り込み済み。</li>
+<li><strong>arp_update</strong>: <code>sonic-buildimage/files/scripts/arp_update</code> に存在。具体的な FAILED → INCOMPLETE 書き換えロジック / <code>accept_untracked_na</code> カーネル backport の現状は本ページでは詳細裏取り未済（HLD 末尾の TBD に近い領域）。</li>
+<li><strong>dualtor neighbor 監視</strong>: <code>sonic-utilities/scripts/dualtor_neighbor_check.py</code> に補助スクリプトが存在。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - linkmgrd の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認
 - MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認
