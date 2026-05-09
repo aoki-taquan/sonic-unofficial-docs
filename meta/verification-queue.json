@@ -1,0 +1,5 @@
+{
+  "_comment": "Writer が hld-only / issue-confirmed で残した懸念点を集約する。Verifier が priority 順に拾って実コードで裏取りする。詳細は meta/prompts/writer.md と meta/prompts/verifier.md。",
+  "schema_version": 1,
+  "entries": []
+}

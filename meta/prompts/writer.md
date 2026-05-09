@@ -28,6 +28,7 @@ issue のラベルにより、以下のサブタイプに分岐する。
    - 食い違いを発見した場合: `discrepancy-found` + 本文に注記
 5. 関連する CONFIG_DB テーブル / CLI コマンド / YANG モジュールを `related.*` に列挙
 6. 図は **mermaid**。スクリーンショット・PNG は使わない
+   - HLD 側に PNG 参照（例: `images/foo.png`）が含まれる場合、画像をそのままコピー・参照しない。図の意味を読み取り **mermaid（フローチャート / シーケンス / 状態遷移）で再描画**する
 7. 文体はである調・敬体禁止。専門用語は原語のまま（必要なら括弧で日本語訳）
 
 ## 出力
@@ -50,3 +51,26 @@ issue のラベルにより、以下のサブタイプに分岐する。
 - 自信のない記述には `verification: hld-only` 以下に留める
 - HLD の翻訳調をそのまま貼り付けない
 - 機能の存在自体を推測で書かない（実体が確認できたものだけ）
+- `related.config_db` `related.cli` `related.yang` に **HLD で言及されていない実装由来の項目を推測で書かない**。確実なもののみ列挙し、不明なら空配列にして本文側に注記する
+
+## 裏取りキューへの登録
+
+Writer が `verification: hld-only` 等で残した懸念点（HLD と実装の差分の可能性、要件レベル止まりで実装未確認、CONFIG_DB が未定義 等）は、PR 本文に書くだけでなく **`meta/verification-queue.json`** に追記する。Verifier が優先度順に拾えるようにするため。
+
+エントリ形式:
+
+```json
+{
+  "page": "docs/routing/default-route.md",
+  "issue": 1,
+  "pr": 7,
+  "verification": "hld-only",
+  "concerns": [
+    "実装側 (sonic-linkmgrd の MuxOrch) の状態遷移がドキュメントと一致するか未確認",
+    "CONFIG_DB の MUX_CABLE テーブルとの対応が未確認"
+  ],
+  "priority": "medium"
+}
+```
+
+`priority` は `high` / `medium` / `low`。`high` は「現役機能で陳腐化リスク大」、`low` は「廃止予定 / 限定的なシナリオのみ」。

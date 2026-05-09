@@ -18,6 +18,8 @@
 | `related.cli` | optional | list | 関連 CLI コマンド |
 | `related.yang` | optional | list | 関連 YANG モジュール |
 
+`related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
+
 ## verification の意味
 
 | 値 | 意味 | 表示バッジ |

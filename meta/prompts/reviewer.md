@@ -41,6 +41,12 @@ Writer が出した PR を機械的に検査し、整合性チェックの結果
 - [ ] 翻訳調（HLD の英文の直訳）になっていない
 - [ ] 専門用語の原語が保たれている
 - [ ] スクリーンショット・PNG が使われていない（mermaid のみ）
+- [ ] HLD 側に PNG 参照があった場合、本文中で画像をそのまま貼っていない（mermaid で再描画されている）
+
+### 6. 裏取りキュー
+
+- [ ] `verification` が `hld-only` または `issue-confirmed` の場合、`meta/verification-queue.json` に該当エントリが追加されている（PR 内に変更が含まれていてよい）
+- [ ] `discrepancy-found` の場合は本文に注記があり、別 issue が立てられている（または PR 本文に立てる旨が記載されている）
 
 ## 出力
 
