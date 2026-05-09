@@ -1086,6 +1086,8 @@
       
         
       
+        
+      
     
     
     
@@ -1138,6 +1140,34 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2267,6 +2297,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6303,6 +6344,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -6400,6 +6447,90 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config-db/portchannel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config-db/vlan-member/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN_MEMBER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config-db/vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN テーブル
   
 
     
@@ -6750,6 +6881,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -6783,8 +6925,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-04 改訂で <strong>5 年以上前</strong>。<code>FdbOrch</code> の per-port / per-VLAN flush API、MAC move event 取り扱い、CONFIG_DB の <code>FDB</code> table へ static MAC を保存する経路、<code>config mac</code> / <code>config vlan range</code> CLI、<code>SWITCH_TABLE</code> の aging time フィールド命名は実コードでの裏取り未済（priority=high）。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>主要 orchagent 実装は確認できたが、HLD で提案された CLI のうち <code>config mac (aging_time / add / del)</code> および <code>config vlan range</code> / <code>config vlan member range</code> は現行 sonic-utilities の <code>config/main.py</code> には存在しない。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="l2-forwarding-fdb-flush-aging-static-mac-vlan-range">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）<a class="headerlink" href="#l2-forwarding-fdb-flush-aging-static-mac-vlan-range" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -7030,7 +7172,19 @@
 <li>aging が効かない → <code>redis-cli -n 4 hgetall 'SWITCH_TABLE|switch'</code> で aging_time 値を確認、HW 側の aging 上限と比較</li>
 <li>MAC move 後に古い port に packet が出続ける → MAC move event 通知の SAI 側サポート、<code>ASIC_DB</code> の FDB entry を確認</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
+<ul>
+<li><strong><code>config mac</code> / <code>config vlan range</code> CLI 未取り込み</strong>: HLD は <code>config mac aging_time</code> / <code>config mac add</code> / <code>config mac del</code> / <code>config vlan range</code> / <code>config vlan member range</code> を提案するが、現行 master の <code>sonic-utilities/config/main.py</code> には <code>mac</code> グループおよび <code>vlan range</code> サブコマンドは存在しない。<code>show mac aging-time</code> (<code>show/main.py:1244</code>) は実装済みだが、CLI 経由での aging_time 設定 / static MAC 追加 / VLAN レンジ作成は <strong>CONFIG_DB 直接書き込み（sonic-cfggen / config_db.json 編集）</strong> か、<code>sonic-utilities/scripts/fdbclear</code>（旧来の <code>sonic-clear fdb</code> 相当）でのフラッシュ運用となっている。</li>
+<li><strong>HLD と一致する実装</strong>: <code>sonic-swss/orchagent/fdborch.cpp</code> 側は HLD どおり実装済み。具体的には:<ul>
+<li><code>fdborch.cpp:91-138</code> MAC move event ハンドリング（<code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE</code> を使用）</li>
+<li><code>fdborch.cpp:459,1254-1316,1754</code> <code>saved_fdb_entries</code> による「port が VLAN 未メンバの間に来た static MAC を保留 → 復活」の実装</li>
+<li><code>fdborch.cpp:985,1006,1038,1090,1217</code> <code>flushFDBEntries(bridge_port_oid, vlan_oid)</code> による per-port / per-VLAN / per-(port,VLAN) flush API</li>
+<li><code>sonic-swss/orchagent/switchorch.cpp:49,664,1674-1686</code> で <code>SWITCH_TABLE.fdb_aging_time</code> キーから <code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code> への反映</li>
+</ul>
+</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - FdbOrch の per-port / per-VLAN flush API と m_entries の (MAC, bv_id) → fdb_type マップ化の現行実装確認
 - saved FDB（port が VLAN 未メンバの間 static を保留）の実装存在確認
