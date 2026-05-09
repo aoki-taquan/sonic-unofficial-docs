@@ -831,6 +831,20 @@
       ],
       "priority": "high",
       "pr": 142
+    },
+    {
+      "page": "docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md",
+      "verification": "hld-only",
+      "concerns": [
+        "buffermgrd / buffer manager の INACTIVE port zero profile 適用ロジックの実装存在確認",
+        "BUFFER_MAX_PARAM_TABLE の現行 STATE_DB スキーマと portsorch 側の書き込みコード確認",
+        "BufferOrch の create_buffer_profile / set_ingress_priority_group_attribute SAI 呼び出し経路確認",
+        "PG / queue 削除サポートを表すフラグの場所と命名（`support removing PGs` の実体）未確認",
+        "sonic-cfggen の buffer template (Jinja) で INACTIVE port 判定と zero profile 生成が現行 master にあるか未確認"
+      ],
+      "priority": "medium",
+      "issue": 143,
+      "pr": 144
     }
   ]
 }
