@@ -13535,9 +13535,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.4 (2022-08)。<code>PSU_INFO</code> の <code>power_overload</code> / <code>power_*_threshold</code> フィールド、<code>PsuBase</code> の <code>get_psu_power_*_threshold</code> 抽象 API、3 秒ループの psud 実装は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-daemons/sonic-psud/scripts/psud</code> で <code>PSU_INFO_UPDATE_PERIOD_SECS = 3</code>、<code>PSU_INFO_POWER_OVERLOAD = 'power_overload'</code>、<code>PSU_INFO_POWER_WARNING_SUPPRESS_THRESHOLD</code> / <code>PSU_INFO_POWER_CRITICAL_THRESHOLD</code> の定数と判定ロジックが確認できた。<code>sonic-platform-common/sonic_platform_base/psu_base.py</code> の <code>get_psu_power_warning_suppress_threshold</code> / <code>get_psu_power_critical_threshold</code> / <code>get_input_voltage</code> / <code>get_input_current</code> 抽象 API も実在。<code>sonic-utilities/scripts/psushow</code> で <code>power_overload</code> を読み取り <code>WARNING</code> / <code>OK</code> を表示。</p>
 </div>
 <h1 id="psudpsu-power-threshold">psud（PSU 監視デーモン / power threshold ヒステリシス）<a class="headerlink" href="#psudpsu-power-threshold" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13708,6 +13708,14 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 <li><strong>modular switch</strong>: 全 PSU 合計 power が <strong>switch power budget</strong> を超えるかも別途監視</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-platform-daemons/sonic-psud/scripts/psud:81 PSU_INFO_UPDATE_PERIOD_SECS = 3, :540 self.stop_event.wait(PSU_INFO_UPDATE_PERIOD_SECS)
+- sonic-platform-daemons/sonic-psud/scripts/psud:60-62 PSU_INFO_POWER_OVERLOAD/_WARNING_SUPPRESS_THRESHOLD/_CRITICAL_THRESHOLD
+- sonic-platform-daemons/sonic-psud/scripts/psud:637 power_critical_threshold + power_warning_suppress_threshold で判定
+- sonic-platform-common/sonic_platform_base/psu_base.py:227 get_psu_power_warning_suppress_threshold, :237 get_psu_power_critical_threshold, :269 get_input_voltage, :279 get_input_current
+- sonic-utilities/scripts/psushow:41 db.get(STATE_DB, PSU_INFO|<name>, 'power_overload'); :42 status = 'WARNING' if power_overload == 'True' else 'OK'
+-->
+
 <!-- concerns hint:
 - psud の 3 秒ループ実装と power_overload 判定ロジックの sonic-platform-daemons 取り込み確認
 - PSU_INFO の power_warning_suppress_threshold / power_critical_threshold / power_overload の sonic-yang-models 反映確認

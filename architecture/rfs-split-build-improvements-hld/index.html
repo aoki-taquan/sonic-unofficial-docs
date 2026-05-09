@@ -13591,9 +13591,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.1 (日付未記載)。<code>rules/config</code> の <code>ENABLE_RFS_SPLIT_BUILD</code> フラグ、<code>slave.mk</code> の RFS squashfs ターゲット、<code>build_debian.sh</code> の 2 段分岐は要裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（フラグ名は RFS_SPLIT_FIRST_STAGE / LAST_STAGE）</p>
+<p>HLD で言及される <code>ENABLE_RFS_SPLIT_BUILD</code> 単一フラグは現行 <code>rules/config</code> には存在せず、代わりに <code>slave.mk</code> から <code>build_debian.sh</code> に <strong><code>RFS_SPLIT_FIRST_STAGE</code> / <code>RFS_SPLIT_LAST_STAGE</code> の 2 段フラグ</strong>を <code>export</code> して制御している (<code>slave.mk:1439-1440, 1701-1702</code>)。<code>build_debian.sh:63 [[ $RFS_SPLIT_LAST_STAGE != y ]]</code>、<code>:605 [[ $RFS_SPLIT_FIRST_STAGE == y ]]</code>、<code>:622 [[ $RFS_SPLIT_LAST_STAGE == y ]]</code> で Stage 分岐。</p>
 </div>
 <h1 id="rfs-split-buildbuild_debiansh-2-squashfs">RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）<a class="headerlink" href="#rfs-split-buildbuild_debiansh-2-squashfs" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13688,6 +13688,13 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <li>フラグが効かない: <code>rules/config</code> での <code>ENABLE_RFS_SPLIT_BUILD</code> を確認。<code>y</code> でも <code>slave.mk</code> 側のターゲットが生成されているか <code>make -n</code> で確認。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/build_debian.sh:63 if [[ $RFS_SPLIT_LAST_STAGE != y ]]; then ... :605 RFS_SPLIT_FIRST_STAGE==y :622 RFS_SPLIT_LAST_STAGE==y
+- sonic-buildimage/slave.mk:1439-1440 export RFS_SPLIT_FIRST_STAGE=y; RFS_SPLIT_LAST_STAGE=n
+- sonic-buildimage/slave.mk:1701-1702 export RFS_SPLIT_FIRST_STAGE=n; RFS_SPLIT_LAST_STAGE=y
+- ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
+-->
+
 <div class="footnote">
 <hr />
 <ol>

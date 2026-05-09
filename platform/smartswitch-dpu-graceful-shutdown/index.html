@@ -13535,9 +13535,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.1 (2025-12) Initial Proposal。<code>gnoi_reboot_daemon.py</code> / <code>module_base.py</code> の graceful 経路、<code>CHASSIS_MODULE_INFO_TABLE</code> の <code>state_transition_in_progress</code> / <code>transition_type</code> フィールド、PMON 制限下での gNOI HALT 起動経路は未裏取り。priority=high で queue 登録。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD は v0.1 (2025-12) Initial Proposal。実装は <strong>HLD と乖離</strong>。<code>sonic-platform-common</code> <code>module_base.py</code> の <code>set_admin_state_gracefully()</code> / <code>_graceful_shutdown_handler()</code> および <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code> の <code>submit_dpu_callback()</code> は実在するが、HLD で提案されている独立した <code>gnoi_reboot_daemon.py</code> は <strong>sonic-platform-daemons に未取り込み</strong>。STATE_DB のフラグも HLD の <code>CHASSIS_MODULE_INFO_TABLE</code> / <code>state_transition_in_progress</code> ではなく <code>CHASSIS_MODULE_TABLE</code> の <code>transition_in_progress</code> (<code>set_module_state_transition</code>) と独立した <code>gnoi_halt_in_progress</code> フラグの 2 系統で実装されている。chassisd が直接 <code>module.set_admin_state_gracefully</code> を呼ぶ構成で、独立した gNOI 経路は実体がない。</p>
 </div>
 <h1 id="smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）<a class="headerlink" href="#smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13686,6 +13686,14 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><strong>gNOI / gNMI</strong>: HALT を含む reboot RPC の依存</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御
+- sonic-platform-common/sonic_platform_base/module_base.py L624 set_module_state_transition() は CHASSIS_MODULE_TABLE|<name> に transition_in_progress / transition_type / start_time を hset (HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress とは別キー)
+- sonic-platform-daemons/sonic-chassisd/scripts/chassisd L1362 module.set_admin_state_gracefully(admin_state); L1373 module.clear_module_gnoi_halt_in_progress() を直接呼ぶ
+- sonic-platform-daemons 配下に gnoi_reboot_daemon.py / sonic-pmon は未取り込み (find -iname "*gnoi*" -> 空)
+- sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang に transition_in_progress / gnoi_halt_in_progress フィールドの取り込みは確認できず
+-->
+
 <!-- concerns hint:
 - gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認
 - module_base.py の graceful_shutdown_handler 実装と subtype/switch_type 判定確認

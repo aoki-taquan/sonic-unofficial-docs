@@ -13657,9 +13657,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-mgmt</code> の <code>ansible/roles/test/files/ptftests/dip_sip.py</code> / <code>tasks/dip_sip.yml</code> / <code>vars/testcases.yml</code> の現存と本 HLD 記載内容との一致は未裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（pytest 移行）</p>
+<p>HLD で提案されている独立 PTF スクリプト <code>ansible/roles/test/files/ptftests/dip_sip.py</code> は <strong>既に削除済</strong>。代わりに <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code> (pytest) に移行されており、<code>ansible/roles/test/tasks/dip_sip.yml</code> は <code>pytest_runner.yml</code> を呼ぶラッパに縮約されている (114 byte)。<code>vars/testcases.yml</code> は実在 (11721 byte)。HLD のテスト本体記述は <strong>現行コードと構造が異なる</strong> ため、test_dip_sip.py 側の最新仕様に追従する必要あり。</p>
 </div>
 <h1 id="dipsip-ptf">DIP=SIP PTF 検証テスト<a class="headerlink" href="#dipsip-ptf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13875,6 +13875,13 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 <li>port index 不一致: <code>dst_port_ids</code> / <code>src_port_ids</code> の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。<code>dip_sip.yml</code> の前処理ログ（minigraph / LLDP gather）を確認。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- gh api search/code: sonic-net/sonic-mgmt 配下に tests/ipfwd/test_dip_sip.py (pytest) が現存
+- gh api repos/sonic-net/sonic-mgmt/contents/ansible/roles/test/tasks/dip_sip.yml: size 114 byte; 中身は include_tasks: roles/test/tasks/pytest_runner.yml + test_node: ipfwd/test_dip_sip.py のラッパ
+- ansible/roles/test/files/ptftests/dip_sip.py は GitHub 検索でヒットせず -> 削除済
+- ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
+-->
+
 <div class="footnote">
 <hr />
 <ol>

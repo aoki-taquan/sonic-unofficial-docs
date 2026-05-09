@@ -13613,9 +13613,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 手順書ベース</p>
-<p>このページは利用者向け手順書をベースにしている。Azure pipeline (#142) の URL や <code>sonic-vs.img.gz</code> のパスは時期により変わりうる。<code>sonic-buildimage</code> の VS ターゲットビルド成果物を確認すること。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（手順書ベース）</p>
+<p><code>sonic-buildimage/platform/vs/README.gns3.md</code> および <code>sonic-gns3a.sh</code> スクリプトが現存し、<code>sonic-vs.img</code> を入力に GNS3 アプライアンスファイル (.gns3a) を生成する手順を記述。デフォルト認証情報 <code>admin / YourPaSsWoRd</code> は <code>sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd</code> で実装と一致。Azure pipeline 番号や成果物 URL は時期で変わるため、ビルド時の最新値に追従されたい。</p>
 </div>
 <h1 id="gns3-vm-sonic-sonic-vsimg-qemu">GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）<a class="headerlink" href="#gns3-vm-sonic-sonic-vsimg-qemu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13709,6 +13709,13 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <li>ログインで弾かれる: デフォルト <code>admin / YourPaSsWoRd</code>。<code>sonic-vs.img</code> のバージョンによっては変更されている可能性。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/platform/vs/README.gns3.md (HOWTO Create a GNS3 Appliance File)
+- sonic-buildimage/platform/vs/sonic-gns3a.sh (HLD と同じ手順スクリプト)
+- sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd
+- sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
+-->
+
 <div class="footnote">
 <hr />
 <ol>

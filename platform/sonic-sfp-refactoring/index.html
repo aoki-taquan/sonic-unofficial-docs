@@ -13535,9 +13535,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v5.0 (2021-07)。<code>sonic-platform-common/sonic_platform_base/sonic_xcvr/</code> ディレクトリ構造（<code>api/</code> <code>mem_maps/</code> <code>codes/</code> <code>xcvr_eeprom.py</code> <code>xcvr_api_factory.py</code>）の現行実装と SFF-8472 / SFF-8436 / CMIS 各 API の取り込み状況は未裏取り。<code>SfpOptoeBase</code> の現行クラス階層も未確認。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-common/sonic_platform_base/sonic_xcvr/</code> 配下に <code>api/</code> <code>mem_maps/</code> <code>codes/</code> <code>fields/</code> <code>cdb/</code> <code>utils/</code> および <code>xcvr_api_factory.py</code> <code>xcvr_eeprom.py</code> <code>sfp_optoe_base.py</code> が確認できた。<code>api/public/</code> に <code>cmis.py</code> <code>c_cmis.py</code> <code>sff8472.py</code> 等が実装されており、<code>xcvr_api_factory.py:51 class XcvrApiFactory</code> が <code>id_mapping</code> で identifier → API クラスを切り替える。<code>sonic-platform-daemons/sonic-xcvrd/xcvrd/</code> 配下が <code>sfp.get_xcvr_api()</code> を全面的に使用。</p>
 </div>
 <h1 id="sfp-xcvrapi-xcvreeprom-spec">SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）<a class="headerlink" href="#sfp-xcvrapi-xcvreeprom-spec" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13680,6 +13680,14 @@ reasoning: identifier-based spec 判定への切替の根拠。
 <li><strong>gearbox / external PHY</strong>: <code>XcvrApi</code> ではなく <code>PAI</code> 配下、別系統</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-platform-common/sonic_platform_base/sonic_xcvr/{__init__.py,api,cdb,codes,fields,mem_maps,utils,sfp_optoe_base.py,xcvr_api_factory.py,xcvr_eeprom.py}
+- sonic_xcvr/api/public/{cmis.py, c_cmis.py, sff8472.py, ...} と vendor 別 (amphenol/credo/hisense/innolight)
+- sonic_xcvr/xcvr_api_factory.py:51 class XcvrApiFactory; :125 id_mapping = {...} で 0x18/0x19/0x1b/0x1e -> CmisApi, など切替
+- sonic_xcvr/sfp_optoe_base.py:14 class SfpOptoeBase(SfpBase)
+- sonic-platform-daemons/sonic-xcvrd/xcvrd/{xcvrd_utilities/optics_si_parser.py:162, media_settings_parser.py:337/375/396, sff_mgr.py:396, common.py:119/242, utils.py:19} で sfp.get_xcvr_api() 使用
+-->
+
 <!-- concerns hint:
 - sonic_xcvr (api/ mem_maps/ codes/ xcvr_eeprom.py xcvr_api_factory.py) の sonic-platform-common 取り込み確認
 - SFF-8024 / SFF-8436 / SFF-8472 / CMIS 各 XcvrApi 実装の存在確認

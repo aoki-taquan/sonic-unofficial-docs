@@ -13613,9 +13613,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2020-07 改訂のターミナルサーバ向け設計で、ハードウェアトポロジ依存（usb hub + cp210x チップ）。<code>/etc/udev/rules.d/</code> への配置形式、現行 SONiC platform 配下での提供有無は実コードでの裏取り未済。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（haliburton platform で実装確認）</p>
+<p><code>sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/haliburton/script/50-ttyUSB-C0.rules</code> に HLD と一致する <code>DRIVERS=="cp210x", ATTRS{interface}=="CP2108 Interface N", SYMLINK+="C0-X"</code> 形式の rules が確認できた。<code>platform-modules-haliburton.init</code> で /etc/udev/rules.d/ 配下に配置される。USB hub 故障の syslog / SNMP 通知機構は本 platform では実装なし。</p>
 </div>
 <h1 id="ttyusb-symlink-udev-rules">ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計<a class="headerlink" href="#ttyusb-symlink-udev-rules" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13761,6 +13761,11 @@
 <li>別ハードで rules を流用したら全滅 → <code>KERNELS</code> の bus 位置がハードに依存。新ハードで <code>udevadm info -a</code> で属性を改めて確認</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/haliburton/script/50-ttyUSB-C0.rules:10 ACTION=="add",KERNELS=="1-1.1.1:1.0",DRIVERS=="cp210x",ATTRS{bInterfaceNumber}=="00",ATTRS{interface}=="CP2108 Interface 0",SYMLINK+="C0-1",MODE="0666" (HLD と完全一致)
+- sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/debian/platform-modules-haliburton.init で udev rules を /etc/udev/rules.d/ に配置
+-->
+
 <!-- concerns hint:
 - terminal server 機能を提供する SONiC platform リポでの udev rules 配布有無確認
 - /etc/udev/rules.d/ 配置パスと命名規約（platform 別 rules ファイル）の現行確認

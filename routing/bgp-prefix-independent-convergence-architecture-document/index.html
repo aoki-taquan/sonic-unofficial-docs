@@ -13579,9 +13579,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v1.0 (2024-01) と新しいが、SONiC 側の <code>nhgorch</code> の hierarchical NHG 取り込み、<code>fpmsyncd</code> の <code>FAST DOWNLOAD</code> / <code>SLOW DOWNLOAD</code> 区別、SAI <code>NEXT_HOP_GROUP</code> の hierarchical update 動作は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（FAST/SLOW DOWNLOAD は warm-restart 経由）</p>
+<p><code>sonic-swss/orchagent/nhgorch.{h,cpp}</code> で <code>NextHopGroup::m_is_recursive</code> / <code>setRecursive(bool)</code> / <code>isRecursive()</code> と <code>is_recursive</code> フラグによる hierarchical NHG 制御が確認できた。<code>fpmsyncd</code> 側の <strong>FAST/SLOW DOWNLOAD</strong> という用語は実装に存在せず、<code>fpmsyncd/fpmsyncd.cpp</code> で <code>WarmRestartHelper</code> 経由の <strong>warm-restart timer</strong> 区別として実装されている。SAI vendor 側の hitless update 動作と FRR zebra→FPM 経路は本 cache では未確認。</p>
 </div>
 <h1 id="bgp-picprefix-independent-convergence-nhg">BGP PIC（Prefix Independent Convergence / NHG 階層）<a class="headerlink" href="#bgp-picprefix-independent-convergence-nhg" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13720,6 +13720,12 @@ reasoning: FAST/SLOW DOWNLOAD 二段収束の根拠と call flow ステップの
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>参考: IETF <code>draft-ietf-rtgwg-bgp-pic</code></p>
+<!-- evidence (verifier-batch-20):
+- sonic-swss/orchagent/nhgorch.h:50 class NextHopGroup; :86 isRecursive(); :88 setRecursive(); m_is_recursive メンバ
+- sonic-swss/orchagent/nhgorch.cpp:65 bool is_recursive = false; :118 if (is_recursive) ... :292 nhg->setRecursive(is_recursive); :691 NextHopGroup ctor で m_is_recursive(false)
+- sonic-swss/fpmsyncd/fpmsyncd.cpp:12 #include "warmRestartHelper.h"; :153 sync.getWarmStartHelper().checkAndStart() (FAST/SLOW DOWNLOAD は warm-restart timer に対応)
+-->
+
 <!-- concerns hint:
 - nhgorch の hierarchical NHG (service / underlay) サポート状況の sonic-swss 取り込み確認
 - fpmsyncd の FAST/SLOW DOWNLOAD 区別実装確認

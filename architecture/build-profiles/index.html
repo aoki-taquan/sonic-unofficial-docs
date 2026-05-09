@@ -13635,9 +13635,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-buildimage</code> の <code>rules/profiles/</code> 配下と Makefile の <code>PROFILE</code> 変数取り込みは未裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD で提案されている <code>rules/profiles/</code> ディレクトリと Makefile での <code>PROFILE</code> 変数取り込みは現行 master に <strong>取り込まれていない</strong>。<code>sonic-buildimage/Makefile.work</code> は <code>include rules/config</code> と <code>-include rules/config.user</code> のみで、<code>profiles/$(PROFILE).mk</code> を後段で取り込む実装は無い。HLD は将来的な提案 / 別 fork での運用としてのみ参考にすべき。</p>
 </div>
 <h1 id="rulesprofilesmk">ビルドプロファイル（rules/profiles/*.mk）<a class="headerlink" href="#rulesprofilesmk" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13771,6 +13771,12 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <li>ビルド再現性が取れない: <code>rules/config.user</code> がコミット外で残っていないか確認。プロファイル運用に統一する場合は <code>config.user</code> を空にしてプロファイルだけで賄う。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/rules/profiles/ ディレクトリは存在しない (find で確認)
+- sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
+- 結論: HLD は提案段階で master に未マージ
+-->
+
 <div class="footnote">
 <hr />
 <ol>

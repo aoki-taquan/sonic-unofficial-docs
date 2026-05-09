@@ -13557,9 +13557,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.7 (2022-09)。<code>MdioIpcServer</code> / <code>VendorPai</code> クラス、<code>gearbox_config.json</code> の <code>phys[].lib_name</code> / <code>phy_access_lib_name</code> / <code>mdio_cl22_only</code>、<code>syncd -i/--paiInstance</code> の現行 master 取り込みは未裏取り。Broadcom platform でのみ検証されており他 vendor は未確認との注記あり。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（命名差分あり）</p>
+<p><code>sonic-sairedis/syncd/MdioIpcServer.{h,cpp}</code> と <code>Syncd.cpp</code> での <code>m_mdioIpcServer = std::make_shared&lt;MdioIpcServer&gt;(m_vendorSai, m_commandLineOptions-&gt;m_globalContext)</code> を確認済み。HLD の <code>VendorPai</code> 相当は <code>sonic-sairedis/syncd/VendorSai.h</code> (class VendorSai) として実装。<code>gearbox_config.json</code> の <code>phys[].lib_name</code> も device 配下に存在（Arista 等）。<strong>ただし</strong>: <code>phy_access_lib_name</code> / <code>mdio_cl22_only</code> は HLD 文書のみで device 側 JSON には未浸透。単一 gbsyncd docker の方針も <code>sonic-buildimage/platform/components/docker-gbsyncd-{credo,broncos,agera2,milleniob}</code> のように <strong>vendor 別 docker</strong> が並存しており、HLD の "single gbsyncd docker" は完全には達成されていない。</p>
 </div>
 <h1 id="npu-mdio-gbsyncd-docker">NPU MDIO アクセスと gbsyncd 単一 docker 化<a class="headerlink" href="#npu-mdio-gbsyncd-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13692,6 +13692,15 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 <li><strong><code>xcvrd</code> / <code>media_settings</code></strong>: PHY の前段に位置する optic 制御</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-sairedis/syncd/MdioIpcServer.h, MdioIpcServer.cpp 実在
+- sonic-sairedis/syncd/Syncd.cpp:137 m_mdioIpcServer = std::make_shared<MdioIpcServer>(m_vendorSai, m_commandLineOptions->m_globalContext)
+- sonic-sairedis/syncd/VendorSai.h class VendorSai (HLD の VendorPai に対応する一本化クラス)
+- sonic-sairedis/syncd/CommandLineOptionsParser.cpp:119 -g/global context オプションで m_globalContext 設定 (HLD の paiInstance 相当)
+- sonic-buildimage/device/arista/.../gearbox_config.json に lib_name キーが存在 (phy_access_lib_name / mdio_cl22_only は HLD 文中のみ)
+- sonic-buildimage/platform/components/docker-gbsyncd-{credo,broncos,agera2,milleniob} に加え platform/vs/docker-gbsyncd-vs / files/scripts/gbsyncd.sh が並存 -> 単一 docker への統合は部分的
+-->
+
 <!-- concerns hint:
 - syncd の MdioIpcServer 実装と Unix socket path 規約の sonic-sairedis 取り込み確認
 - VendorPai クラス定義と paiInstance / contextConfig 引数の sonic-sairedis 取り込み確認

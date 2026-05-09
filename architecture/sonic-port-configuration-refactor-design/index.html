@@ -13613,9 +13613,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>portconfig.py</code> 一元化の現行進捗、<code>platform.json</code> への完全移行状況、<code>daemon_base.py</code> / <code>sfputilbase.py</code> / <code>sfputilhelper.py</code> / <code>sfputil/main.py</code> / <code>util_base.py</code> の現状は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/src/sonic-config-engine/portconfig.py</code> に <code>get_port_config</code> / <code>parse_port_config_file</code> / <code>get_child_ports</code> / <code>get_breakout_mode</code> / <code>get_fabric_port_config</code> / <code>get_fabric_monitor_config</code> が一本化されている。これを <code>sonic-cfggen</code> (<code>:35 from portconfig import get_port_config</code>)、<code>minigraph.py</code> (<code>:18</code>)、<code>sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py</code> (<code>from portconfig import get_port_config</code>)、<code>sonic-utilities/show/interfaces/__init__.py</code> (<code>from portconfig import get_child_ports</code>) が呼び出しており、import 経路の一元化は達成。device 側 <code>platform.json</code> も既に多数の vendor で配布済 (Supermicro / Ragile / Arista 等)。</p>
 </div>
 <h1 id="port_configini-portconfigpy">port_config.ini パーサ統合（portconfig.py 一元化）<a class="headerlink" href="#port_configini-portconfigpy" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13732,6 +13732,15 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 <li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/src/sonic-config-engine/portconfig.py:171 def get_port_config(...); :214 def parse_port_config_file(port_config_file); ほか get_child_ports / get_breakout_mode / get_fabric_port_config / get_fabric_monitor_config
+- sonic-buildimage/src/sonic-config-engine/sonic-cfggen:35 from portconfig import get_port_config, get_breakout_mode
+- sonic-buildimage/src/sonic-config-engine/minigraph.py:18 from portconfig import get_port_config, get_fabric_port_config, get_fabric_monitor_config
+- sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py:15 from portconfig import get_port_config
+- sonic-utilities/show/interfaces/__init__.py:14 from portconfig import get_child_ports
+- platform.json: sonic-buildimage/device/{supermicro,ragile,...}/.../platform.json 配布済
+-->
+
 <div class="footnote">
 <hr />
 <ol>

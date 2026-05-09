@@ -13691,9 +13691,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は Debian Stretch 時代のスナップショット（Python 3.6、docker 18.09 への upgrade を提案）。<code>SONIC_USE_DOCKER_BUILDKIT</code> フラグ、<code>dockers/dockerfile-macros.j2</code>、<code>SAIREDIS_DPKG_TARGET=binary-syncd</code> の取り込み状況は要裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（部分実装）</p>
+<p>HLD は Debian Stretch 時代の文書だが、<code>sonic-buildimage/dockers/dockerfile-macros.j2</code> の <code>install_debian_packages</code> / <code>install_python_wheels</code> / <code>copy_files</code> マクロは現存。BuildKit は <code>SONIC_USE_DOCKER_BUILDKIT</code> フラグとしては未取り込みで、CI / <code>scripts/collect_docker_version_files.sh</code> で <code>DOCKER_BUILDKIT=1</code> を直接設定する形になっている (<code>.azure-pipelines/template-variables.yml</code> ではむしろ <code>DOCKER_BUILDKIT: 0</code> 既定)。<code>SAIREDIS_DPKG_TARGET=binary-syncd</code> 個別の指定は現行 <code>rules/sairedis.mk</code> には残っておらず、<code>slave.mk:879 $(if $($*_DPKG_TARGET),...)</code> の汎用機構に統合されている。dh <code>--parallel</code> 関連は debian/rules 側で patch 済み。</p>
 </div>
 <h1 id="dockerfile-buildkit-dh-sairedis">ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）<a class="headerlink" href="#dockerfile-buildkit-dh-sairedis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13903,6 +13903,14 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <li>並列ビルドで失敗: dh compat 10 以上または <code>dh --parallel</code> 設定、各 debian/rules で並列実行に対応しているか確認。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/dockers/dockerfile-macros.j2 :1 install_debian_packages, :16 install_python_wheels, :33 copy_files マクロ実装済
+- sonic-buildimage/.azure-pipelines/template-variables.yml:7 DOCKER_BUILDKIT: 0 (既定 OFF)
+- sonic-buildimage/scripts/collect_docker_version_files.sh:46-47 DOCKER_BUILDKIT=1 docker build (個別 script で BuildKit 利用)
+- SONIC_USE_DOCKER_BUILDKIT フラグ自体は grep 0 件 -> HLD で提案された名前ではなく素の DOCKER_BUILDKIT 環境変数で運用
+- sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
+-->
+
 <div class="footnote">
 <hr />
 <ol>
