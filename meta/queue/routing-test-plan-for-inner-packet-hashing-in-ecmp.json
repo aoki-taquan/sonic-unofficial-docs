@@ -10,5 +10,6 @@
     "\u672c HLD \u306f 2021 \u5e74\u7248 Rev 1.1\u3002priority=high"
   ],
   "priority": "high",
-  "issue": 501
+  "issue": 501,
+  "pr": 502
 }

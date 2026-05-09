@@ -322,7 +322,8 @@
         "本 HLD は 2021 年版 Rev 1.1。priority=high"
       ],
       "priority": "high",
-      "issue": 501
+      "issue": 501,
+      "pr": 502
     },
     {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
