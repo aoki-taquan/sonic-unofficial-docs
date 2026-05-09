@@ -1280,7 +1280,8 @@
         "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認",
         "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "pr": 204
     }
   ]
 }
