@@ -1,13 +1,15 @@
 {
   "page": "docs/architecture/ssdhealth-design.md",
   "issue": 61,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "sonic-utilities/scripts/ssdhealth スクリプトの実装存在確認",
-    "sonic-platform-common の sonic_ssd/ssd_base.py の API シグネチャ確認",
-    "ベンダ別 ssdutil.py プラグインの配置と継承構造確認",
-    "pmon ssdmond デーモンの実装有無（HLD では optional）",
-    "show/main.py の platform メニュー登録確認"
+    "HLD は scripts/ssdhealth を提案するが master では sonic-utilities/ssdutil/ パッケージのみ存在（独立 ssdhealth スクリプトは無い）",
+    "HLD の sonic_platform_base/sonic_ssd/ssd_base.py パスは存在せず、master では sonic_storage/storage_base.py + ssd.py 構成に再編されている",
+    "pmon ssdmond デーモンは sonic-platform-daemons に未取り込み（HLD では optional）",
+    "show platform ssdhealth は内部で ssdutil を呼ぶラッパーであることを show/platform.py で確認済み"
+  ],
+  "verified_concerns": [
+    "show/platform.py の platform メニュー登録は確認済み (subcommand 'ssdhealth' が存在)"
   ],
   "priority": "low"
 }

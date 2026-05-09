@@ -1,7 +1,7 @@
 ---
 title: Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 (Barefoot 起源)。`DtelOrch` の sonic-swss 取り込み、SAI dtel attributes の vendor サポート、`AclRuleDTelDropWatchList` / `AclRuleDTelFlowWatchList` 拡張、euclid Python 設定モジュールの現行 master 取り込みは未裏取り。CLI は未提供。
+!!! info "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/dtelorch.cpp` / `dtelorch.h` を master で確認。`DTEL_REPORT_SESSION` / `DTEL_INT_SESSION` 系のスキーマ定数は `sonic-swss-common/common/schema.h` に存在。CLI 未提供は HLD 通り。
 
 # Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
 

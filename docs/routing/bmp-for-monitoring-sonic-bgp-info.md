@@ -1,7 +1,7 @@
 ---
 title: BMP（BGP Monitoring Protocol / BMP_STATE_DB）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 (2024-02)。`bmp` container と `openbmpd` fork、`bmpcfgd`、`BMP_STATE_DB` の DB 番号、FRR `bmp` モジュールの取り込み、CLI / config の細部、`delay-removal` のタイマ実装は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/dockers/docker-sonic-bmp/`（bmp container）、`sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`、`sonic-buildimage/src/sonic-bmp/`（openbmpd fork）、および `sonic-swss-common/common/schema.h` の `BMP_STATE_DB` 定義を master で確認済み。`docker-bmp-watchdog` も併存。
 
 # BMP（BGP Monitoring Protocol / BMP_STATE_DB）
 

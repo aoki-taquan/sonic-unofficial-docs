@@ -453,19 +453,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/independent-dpu-upgrade.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DPU Host Services / NPU Offloader バイナリの sonic-host-services 取り込み確認",
-        "GNMI/GNOI Splitter 実装と path-based 振分けの sonic-gnmi 取り込み確認",
-        "Containerz gNOI service の openconfig/gnoi 取り込みと SONiC 側ハンドラ確認",
-        "System.SetPackage / OS.Activate / System.Reboot の DPU 側 gNOI ハンドラ確認",
-        "v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認",
-        "DPU graceful shutdown / HA との race condition の整合確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/system/platform-monitor-enhancement-design.md",
       "verification": "hld-only",
       "concerns": [
@@ -1412,19 +1399,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/bmp-for-monitoring-sonic-bgp-info.md",
-      "verification": "hld-only",
-      "concerns": [
-        "bmp container と openbmpd / bmpcfgd の sonic-buildimage / sonic-bmp 取り込み確認",
-        "BMP_STATE_DB の DB number 割当と multi-ASIC 構成の現行確認",
-        "BGP_NEIGHBOR_TABLE / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE schema の sonic-yang-models / swss-common 反映確認",
-        "FRR bgpd -M bmp モジュール有効化と /etc/frr/bgpd.conf テンプレート確認",
-        "Delay-removal アルゴリズムの実装確認 (DEL- prefix と timestamp 管理)",
-        "gNMI heartbeat (PR #1563) の取り込み状況確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
       "issue": 93,
       "verification": "code-verified",
@@ -1564,19 +1538,6 @@
       "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
     },
     {
-      "page": "docs/routing/segment-routing-over-ipv6-srv6-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "Srv6Orch / srv6cfgd の sonic-swss / sonic-buildimage 取り込み確認",
-        "SRV6_SID_LIST / SRV6_MY_SID_TABLE / SRV6_POLICY / SRV6_STEER の sonic-yang-models 取り込み確認",
-        "SAI SRv6 attribute (SAI_MY_SID_ENTRY 等) の sonic-sairedis 取り込み確認",
-        "ROUTE_TABLE への SID list 拡張の swss-common 反映確認",
-        "v0.5 で追加された MySID counter (counter polling / config srv6 counter CLI) の現行実装確認",
-        "FRR SRv6 fpmsyncd 連携の取り込み状況"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/routing/sonic-usid.md",
       "issue": 95,
       "verification": "code-verified",
@@ -1589,19 +1550,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/routing/sonic-weighted-ecmp.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DeviceGlobalCfgMgr.set_wcmp の sonic-buildimage / sonic-bgpcfgd 取り込み確認",
-        "bgpd.wcmp.conf.j2 (docker-fpm-frr/frr/bgpd/wcmp) の存在確認",
-        "BGP_DEVICE_GLOBAL|STATE wcmp_enabled の sonic-yang-models 反映確認",
-        "init_cfg.json.j2 デフォルト wcmp_enabled=false 確認",
-        "FRR 側の link-bandwidth ext community → NHG weight 1-255 正規化動作の検証",
-        "show bgp device-global / config bgp device-global wcmp の sonic-utilities 取り込み確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/srv6-sid-l3adj.md",
@@ -1799,32 +1747,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/analysis-of-disk-writers-in-sonic-devices.md",
-      "verification": "hld-only",
-      "concerns": [
-        "bgpmon.py の vtysh -H /dev/null 化の sonic-buildimage / sonic-bgpcfgd 取り込み確認",
-        "/tmp の tmpfs 化が image 構成に反映されているか確認 (fstab / cloud-init / build_templates)",
-        "supervisor-proc-exit-listener の log 出力先 /dev/shm/supervisor/ への変更の sonic-buildimage 取り込み確認",
-        "monit / logrotate の state path 変更の取り込み確認",
-        "jbd2 無効化を採用しない方針の確認 (現行 master で journaling は有効維持か)",
-        "計測再現性 (新しい SKU での確認、recent OS バージョンでの再測)"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/system/dataplane-telemetry-in-sonic.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DtelOrch の sonic-swss 取り込み確認",
-        "DTEL / DTEL_REPORT_SESSION / DTEL_INT_SESSION / DTEL_QUEUE_REPORT / DTEL_EVENT スキーマの sonic-yang-models 反映確認",
-        "SAI dtel attribute (saidtel.h) の opencomputeproject/SAI および vendor サポート確認",
-        "AclRuleDTelDropWatchList / AclRuleDTelFlowWatchList のサブクラス実装確認",
-        "ACL_TABLE_DTEL_FLOW_WATCHLIST / ACL_TABLE_DTEL_DROP_WATCHLIST の扱い確認",
-        "euclid Python モジュールの取り込みと利用例の確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/kdump-remote-ssh.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1839,20 +1761,6 @@
       "issue": 157,
       "pr": 158,
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/system/kdump.md",
-      "verification": "hld-only",
-      "concerns": [
-        "config kdump / show kdump CLI の sonic-utilities 取り込み確認",
-        "KDUMP CONFIG_DB スキーマと sonic-yang-models 反映確認",
-        "build_debian.sh での kdump-tools / makedumpfile 同梱確認",
-        "/etc/default/kdump-tools の USE_KDUMP 連動と crashkernel cmdline 反映確認",
-        "sonic-installer での kdump 状態継承確認",
-        "kernel debug image (linux-image-*-dbg) のビルドターゲット確認",
-        "secure boot 環境での kexec 二段起動の整合確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/system/memory-statistics-feature-in-sonic.md",
@@ -2081,13 +1989,15 @@
     {
       "page": "docs/architecture/ssdhealth-design.md",
       "issue": 61,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "sonic-utilities/scripts/ssdhealth スクリプトの実装存在確認",
-        "sonic-platform-common の sonic_ssd/ssd_base.py の API シグネチャ確認",
-        "ベンダ別 ssdutil.py プラグインの配置と継承構造確認",
-        "pmon ssdmond デーモンの実装有無（HLD では optional）",
-        "show/main.py の platform メニュー登録確認"
+        "HLD は scripts/ssdhealth を提案するが master では sonic-utilities/ssdutil/ パッケージのみ存在（独立 ssdhealth スクリプトは無い）",
+        "HLD の sonic_platform_base/sonic_ssd/ssd_base.py パスは存在せず、master では sonic_storage/storage_base.py + ssd.py 構成に再編されている",
+        "pmon ssdmond デーモンは sonic-platform-daemons に未取り込み（HLD では optional）",
+        "show platform ssdhealth は内部で ssdutil を呼ぶラッパーであることを show/platform.py で確認済み"
+      ],
+      "verified_concerns": [
+        "show/platform.py の platform メニュー登録は確認済み (subcommand 'ssdhealth' が存在)"
       ],
       "priority": "low"
     },
@@ -2099,18 +2009,6 @@
         "sonic-buildimage の NOJESSIE/NOSTRETCH/NOBUSTER/NOBULLSEYE フラグが現行 Makefile に存在するか確認",
         "sonic1-vs.xml サンプル XML の URL とブリッジ名 (mgtbr0/vmbr0) が現行 master と整合するか確認",
         "デフォルト認証情報 admin / YourPaSsWoRd が現行 sonic-vs ビルドで有効か確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/internals/why-need-health-check.md",
-      "issue": 51,
-      "verification": "hld-only",
-      "concerns": [
-        "/usr/bin/readiness_probe.sh の実体が community sonic-buildimage に存在するか未確認",
-        "各コンテナの /usr/bin/readiness_probe_hook 実装状況の棚卸しが未済",
-        "k8s controller 側 post-check ロジックの実装場所と再試行/タイムアウト値の確認",
-        "exit-listener supervisor service の現行実装と本機構の境界が HLD どおりか未確認"
       ],
       "priority": "low"
     },
@@ -2317,25 +2215,14 @@
       "priority": "low"
     },
     {
-      "page": "docs/platform/thermal-control-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SONiC-mgmt tests/platform/test_platform_info.py への thermal policy ケース追加状況確認",
-        "valid_policy.json / invalid_format_policy.json / invalid_value_policy.json の同 repo 配置確認",
-        "thermal_control_algorithm の run_at_boot_up / fan_speed_when_suspend 仕様の sonic-platform-daemons 取り込み確認",
-        "fan.any.absence / psu.any.absence / fan.all.set_speed / thermal_control.control の type 名統一性確認",
-        "親 thermal-control-design.md (現状 keboliu fork リンク) の master 移行有無確認"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/switching/wake-on-lan-in-sonic.md",
       "issue": 17,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "WolRequest proto に -u / -a / -t に相当するフィールドが追加済みか未確認",
-        "sonic-host-service 側 D-Bus ハンドラの実装存在確認",
-        "wol CLI スクリプトが UDP モードで実装されているか未確認"
+        "wol CLI は sonic-utilities Python ではなく sonic-buildimage/src/sonic-nettools/wol/ の Rust 実装として配置されている（HLD と齟齬）",
+        "SonicWolService gNOI / WolRequest proto は sonic-gnmi master で見つからない（取り込み未確認）",
+        "sonic-host-services 側 D-Bus WoL ハンドラも未確認（gNOI 経路は提案段階の可能性）",
+        "Rust 版 wol CLI が UDP モードを実装しているかは src/wol.rs を直接読む必要がある"
       ],
       "priority": "low"
     },
@@ -2404,18 +2291,6 @@
         "sonic-cfggen のデフォルト FEATURE エントリ生成",
         "sonic-feature.yang 等 YANG の追加状況",
         "後発 HLD (event-driven reload, delayed services) との関係"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/system/sonic-snmp-table-schema-proposal.md",
-      "issue": 319,
-      "verification": "hld-only",
-      "concerns": [
-        "SNMP / SNMP_COMMUNITY / SNMP_USER 3 テーブルの sonic-yang-models 取り込み確認",
-        "snmpd.conf.j2 の SNMP テーブル分岐（後方互換）実装の現行 master 取り込み",
-        "swss-common/schema.h に CFG_SNMP_TABLE_NAME が追加されているか未確認",
-        "SNMP_COMMUNITY.TYPE=RW の実装サポート状況確認"
       ],
       "priority": "low"
     },

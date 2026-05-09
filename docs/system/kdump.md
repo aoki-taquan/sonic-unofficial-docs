@@ -1,7 +1,7 @@
 ---
 title: kdump（kexec ベース kernel crash dump / makedumpfile）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-kdump
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.4 (2019-12) で 6 年以上前。`config kdump` / `show kdump` の sonic-utilities 取り込み、`KDUMP` CONFIG_DB スキーマ、`/etc/default/kdump-tools` の `USE_KDUMP` 連動、`build_debian.sh` での kdump-tools 同梱は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/config/kdump.py` を master で確認、`sonic-buildimage/build_debian.sh` で `kdump` 関連処理も確認、`sonic-buildimage/files/image_config/kdump/kdump-tools` も存在。HLD 当時の主要要素は master 取り込み済み。
 
 # kdump（kexec ベース kernel crash dump / makedumpfile）
 

@@ -1,7 +1,7 @@
 ---
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
 area: switching
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,13 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-utilities` の `wol` 実装、`sonic-gnmi` の `SonicWolService`、および `sonic-host-services` 側の D-Bus ハンドラ実装は未裏取り。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD と現行 master 実装に齟齬がある。
+    
+    - HLD は CLI を `sonic-utilities` 側 Python スクリプトとして想定しているが、現行 `wol` CLI は **Rust** 実装（`sonic-buildimage/src/sonic-nettools/wol/` の `Cargo.toml` / `src/main.rs` / `src/wol.rs` / `src/socket.rs`）として配置されている。`sonic-utilities` 側に `wol` スクリプトは存在しない。
+    - HLD の `SonicWolService` / `WolRequest` proto を検索した範囲では、`sonic-gnmi` master に該当 gNOI service・proto の取り込みは見つからなかった（D-Bus 経路含め `sonic-host-services` 側にも未確認）。gNOI 経由の WoL は HLD 提案段階のままの可能性が高い。
+    
+    Rust CLI の引数体系・UDP モード対応については `sonic-buildimage/src/sonic-nettools/wol/src/wol.rs` を直接参照すること。
 
 # Wake-on-LAN（wol CLI と SonicWolService gNOI）
 

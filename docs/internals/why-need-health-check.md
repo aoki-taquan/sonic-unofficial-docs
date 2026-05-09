@@ -1,7 +1,7 @@
 ---
 title: コンテナ health-check（k8s readiness probe）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`/usr/bin/readiness_probe.sh` の実体、各コンテナの `readiness_probe_hook` の有無、k8s controller 側の post-check ロジックは未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/readiness_probe.sh` を master で確認。各コンテナへの readiness probe 投入は ctrmgrd 経由で実装。
 
 # コンテナ health-check（k8s readiness probe）
 

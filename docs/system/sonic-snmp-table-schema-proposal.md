@@ -1,7 +1,7 @@
 ---
 title: SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 提案文書"
-    本ドキュメントはスキーマ提案であり、実装ステータスは Initial Proposal 相当。`SNMP_COMMUNITY.TYPE` の `RW` は当時未実装（Read-only のみ実効）であると HLD に明記されている[^1]。現行 master で 3 テーブル全てが yang モデルに含まれているか、`docker-snmp` の `snmpd.conf.j2` が CONFIG_DB のみを読むよう変更されているかは未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang` で SNMP/CONTACT/LOCATION コンテナ定義を確認。`sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2` で `SNMP_COMMUNITY` の RO/RW、`SNMP_USER` の RO/RW + auth/encryption、`SNMP.LOCATION.Location` / `SNMP.CONTACT` 取り込みを確認。SNMP_USER 側の `SNMP_USER_PERMISSION=RW` は実装済（`rwuser` 行で生成）。
 
 # SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
 

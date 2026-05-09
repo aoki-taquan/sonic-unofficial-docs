@@ -1,7 +1,7 @@
 ---
 title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 (2025-01) Initial Proposal。NPU 側 GNMI/GNOI Splitter、Offloader、`Containerz.*` GNOI 拡張、DPU Host Services の現行 master 取り込みは未裏取り。priority=high で queue 登録。
+!!! info "裏取りステータス: code-verified"
+    sonic-gnmi master で DPU Proxy（GNMI/GNOI Splitter）が `pkg/interceptors/dpuproxy/proxy.go` に実装済み（`ForwardToDPU` / `HandleLocally`）。Containerz gNOI は `gnmi_server/gnoi_containerz.go` および `gnoi_client/containerz/` に、`System.SetPackage` 等は `pkg/gnoi/system/system.go` / `gnmi_server/gnoi_system.go` に実装。HLD で言及されている主要ハンドラ群は master に取り込み済み。
 
 # Smart Switch: DPU 独立アップグレード（gNOI 経路）
 
