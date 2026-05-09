@@ -304,6 +304,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/platform/smartswitch-dpu-graceful-shutdown.md",
+      "verification": "hld-only",
+      "concerns": [
+        "gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認",
+        "module_base.py の graceful_shutdown_handler 実装と subtype/switch_type 判定確認",
+        "CHASSIS_MODULE_INFO_TABLE の state_transition_in_progress / transition_type フィールド sonic-yang-models 反映確認",
+        "smartswitch_reboot_helper との STATE_DB 排他ロジックの実装一致確認",
+        "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認",
+        "v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/platform/sonic-fast-link-up.md",
       "issue": 41,
       "verification": "code-verified",
