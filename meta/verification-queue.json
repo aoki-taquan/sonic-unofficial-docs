@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/platform/liquid-cooling-leakage-detection-in-sonic.md",
+      "issue": 256,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-platform-common の LiquidCoolingBase / LeakageSensor クラス実装存在確認",
+        "thermalctld の LiquidCoolingUpdater 別スレッド (0.5s 周期) 実装確認",
+        "STATE_DB の LIQUID_COOLING_DEVICE スキーマ取り込みと書き込みロジック確認",
+        "system-health hardware_checker.py の _check_liquid_cooling_status 実装と sonic-events-host / liquid-cooling-leak タグ発行確認",
+        "show platform leakage status / show system-health detail 拡張の sonic-utilities 取り込み確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/platform/single-asic-voq-fixed-system-sonic.md",
       "issue": 254,
       "verification": "hld-only",
