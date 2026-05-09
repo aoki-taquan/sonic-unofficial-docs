@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-arm-architecture-support/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/">
       
       
-        <link rel="prev" href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">
+        <link rel="prev" href="../sonic-fast-link-up/">
       
       
-        <link rel="next" href="../sonic-bulk-counter-design/">
+        <link rel="next" href="../sonic-port-fec-ber/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static） - SONiC 非公式ドキュメント</title>
+        <title>NPU MDIO アクセスと gbsyncd 単一 docker 化 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" class="md-skip">
+        <a href="#npu-mdio-gbsyncd-docker" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
+              NPU MDIO アクセスと gbsyncd 単一 docker 化
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -614,23 +612,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -648,13 +643,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -674,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -702,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alpine-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
         
   
   
@@ -730,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -758,7 +753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-system-improvements/" class="md-nav__link">
+      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
         
   
   
@@ -786,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../clock-managment-design/" class="md-nav__link">
+      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
         
   
   
@@ -814,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -842,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv6-relay-agent/" class="md-nav__link">
+      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
         
   
   
@@ -870,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -898,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/error-handling-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -926,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-change-application/" class="md-nav__link">
+      <a href="../../architecture/json-change-application/" class="md-nav__link">
         
   
   
@@ -954,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -982,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-profile-init-hld/" class="md-nav__link">
+      <a href="../../architecture/port-profile-init-hld/" class="md-nav__link">
         
   
   
@@ -1010,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-factory-design/" class="md-nav__link">
+      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
         
   
   
@@ -1038,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -1066,7 +1061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -1094,7 +1089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow-test-plan/" class="md-nav__link">
+      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -1122,7 +1117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
+      <a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
         
   
   
@@ -1147,37 +1142,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -1193,281 +1161,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルド時オプション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#makefile" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Makefile 変数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#docker-base-image" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Docker base image
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-slave" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-slave クロスビルド
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arm-x86" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ARM 固有 / X86 固有パッケージの分岐
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform レイアウト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apt-repo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        apt repo
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#onie-image-installer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ONIE image / installer
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ONIE image / installer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ストレージとブートローダ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-installer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-installer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kernel-arm" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Kernel ARM サポート
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Kernel ARM サポート">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#custom-kernel-expert-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Kernel (Expert Mode)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1480,7 +1173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1508,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-generic-hash/" class="md-nav__link">
+      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1536,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1564,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1592,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-packet-trimming/" class="md-nav__link">
+      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1620,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1648,7 +1341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1676,7 +1369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1704,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1732,7 +1425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1760,7 +1453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -7426,6 +7119,8 @@
       
   
   
+    
+  
   
   
     
@@ -7495,20 +7190,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -7526,13 +7224,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -7552,7 +7250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7580,7 +7278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -7608,7 +7306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -7636,7 +7334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -7664,7 +7362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -7692,7 +7390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -7720,7 +7418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -7748,7 +7446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7776,7 +7474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -7804,7 +7502,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -7832,7 +7530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -7860,7 +7558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -7888,7 +7586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -7916,7 +7614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -7944,7 +7642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -7972,7 +7670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -8000,7 +7698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -8028,7 +7726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -8056,7 +7754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -8084,7 +7782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -8112,7 +7810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -8140,7 +7838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -8168,7 +7866,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -8193,10 +7891,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NPU MDIO アクセスと gbsyncd 単一 docker 化
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -8212,6 +7937,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendorpai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VendorPai クラス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンドライン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearbox_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gearbox_config.json の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mdio-clause-22-45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MDIO Clause 22 / 45
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -8224,7 +8107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -8252,7 +8135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -8280,7 +8163,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -8308,7 +8191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -13178,7 +13061,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ビルド時オプション
+        コンポーネント関係
       
     </span>
   </a>
@@ -13186,10 +13069,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#makefile" class="md-nav__link">
+  <a href="#ipc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Makefile 変数
+        IPC
       
     </span>
   </a>
@@ -13197,93 +13080,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#docker-base-image" class="md-nav__link">
+  <a href="#vendorpai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docker base image
+        VendorPai クラス
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-slave" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-slave クロスビルド
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arm-x86" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ARM 固有 / X86 固有パッケージの分岐
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform レイアウト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apt-repo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        apt repo
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#onie-image-installer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ONIE image / installer
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ONIE image / installer">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ストレージとブートローダ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-installer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-installer
+        コマンドライン
       
     </span>
   </a>
@@ -13291,30 +13102,35 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kernel-arm" class="md-nav__link">
+  <a href="#gearbox_configjson" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Kernel ARM サポート
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Kernel ARM サポート">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#custom-kernel-expert-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Kernel (Expert Mode)
+        gearbox_config.json の拡張
       
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
+          <li class="md-nav__item">
+  <a href="#mdio-clause-22-45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MDIO Clause 22 / 45
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot
+      
+    </span>
+  </a>
   
 </li>
         
@@ -13327,45 +13143,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -13374,7 +13151,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13385,18 +13162,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13423,7 +13189,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-arm-architecture-support.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13431,236 +13197,154 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（slave 命名のみ進化）</p>
-<p>現行 master で枠組みが維持されていることを確認。<code>sonic-buildimage/Makefile.work:121-177</code> で <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code> 変数（default <code>amd64</code>）と <code>SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)</code> を確認。<code>onie-image.conf</code> / <code>onie-image-armhf.conf</code> / <code>onie-image-arm64.conf</code> がリポジトリルートに揃っており、<code>platform/aspeed/onie-image-arm64.conf</code> 等も追加されている。<code>installer/install.sh</code> も存在。slave docker は <code>sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2</code> の per-distribution テンプレートに進化し、<code>-march-&lt;arch&gt;</code> サフィックスを実行時に付ける形（HLD の <code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> 固定ディレクトリは廃止）。動作の枠組み・変数名は HLD と一致（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.7 (2022-09)。<code>MdioIpcServer</code> / <code>VendorPai</code> クラス、<code>gearbox_config.json</code> の <code>phys[].lib_name</code> / <code>phy_access_lib_name</code> / <code>mdio_cl22_only</code>、<code>syncd -i/--paiInstance</code> の現行 master 取り込みは未裏取り。Broadcom platform でのみ検証されており他 vendor は未確認との注記あり。</p>
 </div>
-<h1 id="sonic-arm-armhf-arm64-platform_arch-qemu-static">SONiC の ARM (armhf / arm64) ビルドサポート（<code>PLATFORM_ARCH</code> と qemu-static）<a class="headerlink" href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" title="Permanent link">&para;</a></h1>
+<h1 id="npu-mdio-gbsyncd-docker">NPU MDIO アクセスと gbsyncd 単一 docker 化<a class="headerlink" href="#npu-mdio-gbsyncd-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC ビルドシステムを <strong>ARM32 (armhf) / ARM64</strong> に対応させるための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は元々 x86_64 中心で書かれており、Makefile / docker / onie installer / kernel ビルド / sonic-installer 等が AMD64 をハードコードしていた。本 HLD は変更対象を整理する。</p>
-<p>変更対象モジュール<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>sonic-slave</code> (ビルド環境 docker)</li>
-<li><code>dockers/</code>（base / ptf 等の docker image）</li>
-<li><code>rules/</code> / <code>Makefile</code> / build script</li>
-<li><code>apt</code> repo list</li>
-<li>ONIE image / installer</li>
-</ul>
+<p>外部 PHY (gearbox) を制御するために gbsyncd は <strong>PAI library</strong> を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) <strong>switch NPU の MDIO bus</strong> で SAI 経由でアクセスするもの の 2 系統がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者では syncd と gbsyncd の <strong>プロセス間通信（IPC）</strong> が必要になる。本 HLD は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を <strong>runtime ロード</strong> することで <strong>単一 gbsyncd docker</strong> で全 platform を扱えるようにする設計。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">ビルド時オプション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>ユーザーは <code>make configure</code> 時に <code>PLATFORM</code> と一緒に <code>PLATFORM_ARCH</code> (or <code>SONIC_ARCH</code>) を指定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># armhf</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-armhf<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>armhf
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># arm64</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-arm64<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>arm64
+<h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  subgraph syncd_docker[syncd docker]
+    SY[syncd&lt;br/&gt;VendorSai]
+    MS[MdioIpcServer&lt;br/&gt;Unix socket /tmp/...]
+    SY --&gt; NPU[NPU SAI]
+    SY --- MS
+  end
+  subgraph gbsyncd_docker[gbsyncd docker (単一)]
+    GB[syncd instance&lt;br/&gt;--paiInstance N]
+    VP[VendorPai class&lt;br/&gt;VendorSai 継承]
+    GB --&gt; VP
+    VP -. dlopen .-&gt; PAI[PAI library&lt;br/&gt;vendor 別]
+    VP -. dlopen .-&gt; MAL[MDIO access lib]
+    MAL -.-&gt;|sysfs or&lt;br/&gt;IPC client| EXT
+  end
+  EXT[(External PHY)]
+  MAL -- Unix socket --&gt; MS
+  MS --&gt; NPU</code></pre>
+<h3 id="ipc">IPC<a class="headerlink" href="#ipc" title="Permanent link">&para;</a></h3>
+<ul>
+<li>IPC は Unix domain socket、syncd 側に <strong>MdioIpcServer</strong> クラスが新設され、独立スレッドで listen/accept/read/reply を行う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>gbsyncd 側は <strong>MDIO IPC client</strong> を<strong>動的ライブラリ</strong>として実装。kernel sysfs ベース platform では同じ抽象の sysfs MDIO アクセス lib を選べる</li>
+<li>IPC 速度は <strong>PHY firmware download が現実的時間で完了する</strong> ことが要件</li>
+<li>デバッグでは IPC 部分を <code>socat</code> 等で simulate 可能</li>
+</ul>
+<h3 id="vendorpai"><code>VendorPai</code> クラス<a class="headerlink" href="#vendorpai" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>VendorSai</code> を継承する新クラス<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>コンストラクタで <strong>PAI library path</strong> と <strong>MDIO access library path</strong> を引数に取り、両者を <strong>runtime に dlopen</strong> する</li>
+<li>これにより gbsyncd docker 1 つで vendor 別 PAI / MDIO 実装に切替可能になる</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">int</span><span class="w"> </span><span class="nf">syncd_main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">commandLineOptions</span><span class="o">-&gt;</span><span class="n">m_paiInstance</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">vendorSai</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">VendorPai</span><span class="o">&gt;</span><span class="p">(</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">            </span><span class="n">commandLineOptions</span><span class="o">-&gt;</span><span class="n">m_paiInstance</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">            </span><span class="n">commandLineOptions</span><span class="o">-&gt;</span><span class="n">m_contextConfig</span><span class="p">);</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">vendorSai</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">VendorSai</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>未指定なら <strong><code>amd64</code></strong> が default<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="makefile">Makefile 変数<a class="headerlink" href="#makefile" title="Permanent link">&para;</a></h3>
+<h3 id="_4">コマンドライン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>gbsyncd 内で動く syncd instance は <code>--paiInstance</code> (<code>-i &lt;N&gt;</code>) を受ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>-x &lt;gearbox_config.json&gt;</code> で gearbox 設定ファイルパス、<code>-i N</code> が config 内 <code>phys[N]</code> を選ぶインデックスになる。</p>
+<h3 id="gearbox_configjson"><code>gearbox_config.json</code> の拡張<a class="headerlink" href="#gearbox_configjson" title="Permanent link">&para;</a></h3>
+<p><code>phys</code> 配列の各要素に次のキーが追加される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>変数</th>
-<th>用途</th>
+<th>key</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>PLATFORM_ARCH</code></td>
-<td>ターゲットアーキテクチャ（<code>armhf</code> / <code>arm64</code> / <code>amd64</code>）</td>
+<td><code>phy_id</code></td>
+<td>既存。PHY 番号</td>
 </tr>
 <tr>
-<td><code>CONFIGURED_ARCH</code></td>
-<td>Makefile 内で <code>amd64</code> 直書きの代わりに使う変数</td>
+<td><code>lib_name</code></td>
+<td>PAI library のファイル名（dlopen 対象）</td>
+</tr>
+<tr>
+<td><code>phy_access_lib_name</code></td>
+<td>MDIO access library のファイル名（IPC client / sysfs lib）</td>
+</tr>
+<tr>
+<td><code>mdio_cl22_only</code></td>
+<td>この PHY が IEEE 802.3 Clause 22 のみ使う場合に true</td>
 </tr>
 </tbody>
 </table>
-<p>例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-makefile highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c"># 旧</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">LINUX_IMAGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>linux-image-<span class="k">$(</span>KVERSION<span class="k">)</span>_..._amd64.deb
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c"># 新</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">LINUX_IMAGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>linux-image-<span class="k">$(</span>KVERSION<span class="k">)</span>_..._<span class="k">$(</span>CONFIGURED_ARCH<span class="k">)</span>.deb
-</span></code></pre></div>
-<p><code>amd64</code> をハードコードしている全 <code>rules/*.mk</code> / <code>src/*/Makefile</code> を <code>$(CONFIGURED_ARCH)</code> に置換する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="docker-base-image">Docker base image<a class="headerlink" href="#docker-base-image" title="Permanent link">&para;</a></h3>
-<p>SONiC docker は <strong><code>debian</code> ベース</strong> から <strong><code>multiarch/&lt;distribution&gt;-&lt;arm_arch&gt;</code></strong> ベースに切替<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dockers/docker-base
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dockers/docker-base-stretch
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>dockers/docker-ptf
-</span></code></pre></div>
-<p>これにより各種コンパイル / packaging が ARM アーキテクチャ向けに走る。</p>
-<h3 id="sonic-slave"><code>sonic-slave</code> クロスビルド<a class="headerlink" href="#sonic-slave" title="Permanent link">&para;</a></h3>
-<p><code>sonic-slave</code> は他全 docker のビルド環境を提供する。<strong>ホスト x86_64 上で ARM バイナリを動かすため <code>binfmt-misc</code> + <code>qemu-static</code> を使う</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-slave-armhf
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-slave-arm64
-</span></code></pre></div>
-<p>セットアップ:</p>
-<ul>
-<li><code>qemu-static</code> をホストに install</li>
-<li>docker <code>multiarch/qemu-user-static:register</code> を実行して binfmt 登録</li>
-</ul>
-<pre class="mermaid"><code>graph LR
-    HOST[Host x86_64]
-    QEMU[binfmt-misc&lt;br/&gt;qemu-static]
-    SLA[sonic-slave-armhf / arm64&lt;br/&gt;(ARM image)]
-    BIN[ARM bin 実行]
-    HOST --&gt; QEMU --&gt; SLA --&gt; BIN</code></pre>
-<h3 id="arm-x86">ARM 固有 / X86 固有パッケージの分岐<a class="headerlink" href="#arm-x86" title="Permanent link">&para;</a></h3>
-<p><code>ixgbe</code> / <code>grub</code> のような X86 専用パッケージは <strong>ARM ビルドから除外</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。アーキテクチャ別の package 一覧を Makefile / rules で切替。</p>
-<h3 id="platform">Platform レイアウト<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h3>
-<p>同じ board でも CPU vendor が違うことがあるため、<strong>platform を arch 別</strong> にする<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>platform/marvell-armhf/
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ├ docker-syncd-mrvl-rpc.mk
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  ├ docker-syncd-mrvl-rpc/...
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ├ libsaithrift-dev.mk
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ├ linux-kernel-armhf.mk
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ├ one-image.mk
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ├ platform.conf
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ├ rules.mk
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  └ sai.mk
-</span></code></pre></div>
-<h3 id="apt-repo">apt repo<a class="headerlink" href="#apt-repo" title="Permanent link">&para;</a></h3>
-<p>Azure debian repo は ARM パッケージを提供しないため、<strong>ARM 用に sources.list を差し替え</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>files/apt/sources.list-armhf
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>files/build_templates/sonic_debian_extension.j2
-</span></code></pre></div>
-<h3 id="onie-image-installer">ONIE image / installer<a class="headerlink" href="#onie-image-installer" title="Permanent link">&para;</a></h3>
-<p>ONIE image 設定 / インストーラスクリプトを arch 別に分ける<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="mdio-clause-22-45">MDIO Clause 22 / 45<a class="headerlink" href="#mdio-clause-22-45" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>設定ファイル</th>
-<th>用途</th>
+<th></th>
+<th>アドレス空間</th>
+<th>port × reg</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>onie-image.conf</code></td>
-<td>x86_64</td>
+<td>Clause 22</td>
+<td>32 reg × 32 port × 32 addr</td>
+<td>古い PHY 向け</td>
 </tr>
 <tr>
-<td><code>onie-image-armhf.conf</code></td>
-<td>ARMHF</td>
-</tr>
-<tr>
-<td><code>onie-image-arm64.conf</code></td>
-<td>ARM64</td>
-</tr>
-<tr>
-<td><code>platform/&lt;TARGET&gt;/platform.conf</code></td>
-<td>各プラットフォーム固有設定。primary storage / partition / bootloader</td>
+<td>Clause 45</td>
+<td>65,536 reg × 32 dev × 32 port</td>
+<td>10G+ で標準</td>
 </tr>
 </tbody>
 </table>
-<p>ONIE installer script<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>installer/x86_64/install.sh
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>installer/arm64/install.sh
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>installer/armhf/install.sh
-</span></code></pre></div>
-<p>役割:</p>
+<p>SAI switch api に <strong>clause 22 用 MDIO read/write 関数</strong>が追加され、<code>SaiInterface</code> に clause 45/22 の virtual 関数、<code>VendorSai</code> がそれを override する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
 <ul>
-<li>bootloader update（boot image 詳細）</li>
-<li>primary disk のフォーマット / パーティション</li>
-<li>SONiC image を <code>/host</code> に展開</li>
+<li>IPC socket の生成 / 接続手順は coldboot と同一<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>platform 側ソフトは warm boot 中に外部 PHY を <strong>reset しない</strong>ことが必須</li>
 </ul>
-<h4 id="_4">ストレージとブートローダ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p>ARM はストレージとブートローダのバリエーションが大きいため <code>platform.conf</code> で差を吸収<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>区分</th>
-<th>x86_64</th>
-<th>ARM</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Primary storage</td>
-<td>SATA 系</td>
-<td>NAND / NOR / SD / MMC など</td>
-</tr>
-<tr>
-<td>Bootloader</td>
-<td>grub</td>
-<td>uboot or 独自</td>
-</tr>
-</tbody>
-</table>
-<p><code>platform.conf</code> で:</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/gearbox/gearbox_mdio-HLD.md#L82-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Our design choice is to use the Unix socket as the IPC mechanism. Our design has the MDIO IPC server
+  in the syncd daemon with its own thread. A new syncd class MdioIpcServer is added to start a new thread,
+  to create an unix socket, to listen on the socket, to accept connection and to read/reply IPC messages.
+reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
+-->
+
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>primary storage の選択 / partition / format / mount</li>
-<li>bootloader 設定（boot image 詳細を書く方法）</li>
+<li>HLD 検証は Broadcom NPU でのみ。他 vendor は未確認<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>--enableBulk</code> のような他フラグとの兼ね合いはスコープ外</li>
+<li>外部 PHY firmware download の時間制約が IPC 設計の制約に直結</li>
 </ul>
-<p>mount path を共通 SONiC installer に渡し、image 展開等の共通処理は再利用する設計。</p>
-<h3 id="sonic-installer"><code>sonic-installer</code><a class="headerlink" href="#sonic-installer" title="Permanent link">&para;</a></h3>
-<p><code>sonic-installer/main.py</code> は image upgrade / deletion / boot order 変更のため bootloader 設定を扱う。x86 では grub、<strong>ARM では uboot 用ファームウェアユーティリティ</strong> で boot 設定を読み書き<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="kernel-arm">Kernel ARM サポート<a class="headerlink" href="#kernel-arm" title="Permanent link">&para;</a></h3>
-<p><code>src/sonic-linux-kernel</code> の Makefile / patch を ARM 向けにも make できるよう更新<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>.config</code> は debian build infrastructure 経由で生成されるため、<code>dpkg</code> 環境変数で対象アーキテクチャを正しく選択する必要。</p>
-<h4 id="custom-kernel-expert-mode">Custom Kernel (Expert Mode)<a class="headerlink" href="#custom-kernel-expert-mode" title="Permanent link">&para;</a></h4>
-<p>ARM では SONiC default kernel と異なるバージョンが必要なケースがあり、<strong>platform 固有 makefile で上書き</strong> する<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>platform/marvell-armhf/linux-kernel-armhf.mk
-</span></code></pre></div>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
-<p>本 HLD は <strong>runtime 設定を伴わない</strong>。ビルド時オプション (<code>SONIC_ARCH</code>) と Makefile / docker 構成のみ。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ARMHF (32-bit ARM) image</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-armhf<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>armhf
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>make<span class="w"> </span>target/sonic-marvell-armhf.bin
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># ARM64 image</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-arm64<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>arm64
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>make<span class="w"> </span>target/sonic-marvell-arm64.bin
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># 既定（x86_64）</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>mellanox
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>make
-</span></code></pre></div>
-<p>ビルド前提:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># qemu-static を有効化（ホスト x86_64 上で ARM バイナリを実行）</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--privileged<span class="w"> </span>multiarch/qemu-user-static:register
-</span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ARM では <strong>debian repo を別途用意</strong> する必要がある（azure debian repo 非対応）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>カスタムカーネルは platform 固有 makefile で上書きが必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ARM ビルドはホスト x86_64 上で <strong>qemu emulation</strong> が必須。ネイティブ ARM ホストでビルドする場合は別経路</li>
-<li><code>amd64</code> ハードコード箇所が <strong>多数の Makefile に散在</strong>。新機能追加時にも <code>$(CONFIGURED_ARCH)</code> を使うことを忘れないよう注意</li>
-<li>HLD は ARM 対応初期のものであり、<strong>現在の SONiC build 構成と差分</strong> がある可能性大</li>
-<li>ONIE installer の partition / bootloader 部分は <strong>platform vendor 依存度が高い</strong></li>
+<li><strong>Gearbox Manager (<code>gearbox_mgr_design.md</code>)</strong>: 親 framework</li>
+<li><strong>syncd</strong>（NPU 用）と <strong>gbsyncd</strong>（PHY 用）の責務分離</li>
+<li><strong><code>gearbox_config.json</code></strong>: PHY topology 記述</li>
+<li><strong><code>platform.json</code> / <code>port_config.ini</code></strong>: PHY を介する port の表現</li>
+<li><strong><code>xcvrd</code> / <code>media_settings</code></strong>: PHY の前段に位置する optic 制御</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>sonic-buildimage</code> 全体</strong>: rules / Makefile / docker 構成</li>
-<li><strong><code>sonic-slave</code></strong>: クロスビルド環境</li>
-<li><strong><code>sonic-linux-kernel</code></strong>: kernel build</li>
-<li><strong><code>sonic-installer</code></strong>: bootloader アクセス（grub / uboot）</li>
-<li><strong>ONIE installer</strong>: image インストール</li>
-<li><strong>platform vendor のリポジトリ</strong> (<code>platform/marvell-armhf</code> 等): platform 固有 mk / conf</li>
-</ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li>ARM build が x86 binary を吐く → <code>SONIC_ARCH</code> 指定漏れ、<code>PLATFORM_ARCH</code> の参照箇所を確認</li>
-<li>docker build が失敗 → <code>multiarch/qemu-user-static:register</code> 実行済みか、<code>binfmt-misc</code> が有効か (<code>update-binfmts --display</code>)</li>
-<li>apt 取得失敗 → <code>files/apt/sources.list-armhf</code> の repo 設定が正しいか</li>
-<li>onie installer が動かない → <code>platform/&lt;target&gt;/platform.conf</code> の partition / bootloader 設定を確認</li>
-<li>sonic-installer が boot order を変更できない → ARM では uboot ファームウェアユーティリティが入っているかを確認</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- PLATFORM_ARCH / CONFIGURED_ARCH 変数の現行 Makefile 命名と amd64 ハードコード残存の確認
-- sonic-slave-armhf / sonic-slave-arm64 の現行 Dockerfile 構成と qemu-static 連携確認
-- onie-image-armhf.conf / onie-image-arm64.conf / installer/<arch>/install.sh の現行存在確認
-- sonic-installer.main の uboot 連携経路実装確認
-- src/sonic-linux-kernel の ARM 向けパッチと .config 生成 (dpkg 環境変数) の現行確認
-- platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認
+- syncd の MdioIpcServer 実装と Unix socket path 規約の sonic-sairedis 取り込み確認
+- VendorPai クラス定義と paiInstance / contextConfig 引数の sonic-sairedis 取り込み確認
+- gearbox_config.json の lib_name / phy_access_lib_name / mdio_cl22_only キー sonic-buildimage 反映確認
+- SAI switch api の clause 22 read/write 拡張の opencomputeproject/SAI 取り込み確認
+- 単一 gbsyncd docker での vendor 別 PAI/MDIO lib 同梱方針の現行 build 構成確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-multi-architecture/sonic_arm_support.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/gearbox/gearbox_mdio-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
