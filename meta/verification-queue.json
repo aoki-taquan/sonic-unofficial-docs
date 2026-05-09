@@ -246,21 +246,6 @@
       "priority": "high"
     },
     {
-      "page": "docs/overlay/vxlan-sonic.md",
-      "issue": 109,
-      "verification": "hld-only",
-      "concerns": [
-        "HLD 初版が古く、現行 master の VxlanOrch / VnetOrch 実装との乖離",
-        "BGP EVPN 統合 (Phase 2) の現状",
-        "Warm restart 対応進捗",
-        "VXLAN_TUNNEL_MAP の最終スキーマ (VNI↔VLAN / VNI↔VRF)",
-        "FdbOrch + VxlanOrch の remote VTEP 学習実装",
-        "HER (head-end replication) 実装",
-        "config vxlan / show vxlan CLI の sonic-utilities 取り込み"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/platform/automatic-module-provisioning-for-chassis.md",
       "issue": 121,
       "verification": "hld-only",
@@ -1334,6 +1319,18 @@
       "pr": 158
     },
     {
+      "page": "docs/system/memory-statistics-feature-in-sonic.md",
+      "issue": 323,
+      "verification": "hld-only",
+      "concerns": [
+        "memorystatsd デーモンの実装存在確認（sonic-host-services 等）",
+        "hostcfgd の MEMORY_STATISTICS テーブル監視と SIGHUP 連携実装確認",
+        "config memory-stats / show memory-stats CLI の sonic-utilities 取り込み確認",
+        "sonic-memory-statistics YANG モジュールの sonic-yang-models 取り込み確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/persistent-log-level-hld.md",
       "issue": 33,
       "verification": "hld-only",
@@ -1798,6 +1795,18 @@
         "sonic-cfggen のデフォルト FEATURE エントリ生成",
         "sonic-feature.yang 等 YANG の追加状況",
         "後発 HLD (event-driven reload, delayed services) との関係"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/system/sonic-snmp-table-schema-proposal.md",
+      "issue": 319,
+      "verification": "hld-only",
+      "concerns": [
+        "SNMP / SNMP_COMMUNITY / SNMP_USER 3 テーブルの sonic-yang-models 取り込み確認",
+        "snmpd.conf.j2 の SNMP テーブル分岐（後方互換）実装の現行 master 取り込み",
+        "swss-common/schema.h に CFG_SNMP_TABLE_NAME が追加されているか未確認",
+        "SNMP_COMMUNITY.TYPE=RW の実装サポート状況確認"
       ],
       "priority": "low"
     },
