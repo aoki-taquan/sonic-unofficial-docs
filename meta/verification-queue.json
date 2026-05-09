@@ -219,6 +219,19 @@
       "priority": "medium"
     },
     {
+      "page": "docs/acl-qos/acl-support-in-sonic.md",
+      "issue": 69,
+      "verification": "hld-only",
+      "concerns": [
+        "HLD は初期要件文書。現行 master では l3/mirror 以外の type、IPv6 (l2_prot_type=ipv6)、LAG bind、port 削除時自動 unbind 等が拡張されている可能性が高い",
+        "ACL_RULE_TABLE と ACL_TABLE のキー名揺れの実装上の正解（aclorch 内）",
+        "byte counter (Should Have) の現行実装状況",
+        "swssconfig の full/partial モードが現行 sonic-swss-common にあるか確認",
+        "config acl / show acl 系 CLI の追加 HLD との関係整理"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
       "issue": 67,
       "verification": "hld-only",
