@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/acl-qos/acl-user-defined-table-type-support.md",
+      "issue": 273,
+      "verification": "hld-only",
+      "concerns": [
+        "AclOrch の AclTableType / AclTable / 統合 AclRule (汎用 validate) 実装存在確認",
+        "CONFIG_DB の ACL_TABLE_TYPE / CTRL_PLANE_ACL_TABLE スキーマと sonic-acl YANG 拡張が現行 master にあるか未確認",
+        "STATE_DB の ACL_STAGE_CAPABILITY 公開と is_action_list_mandatory 検証ロジック実装確認",
+        "AclOrch 公開 API (addAclTable / addAclRule / updateAclRule) のシグネチャ確認",
+        "init_cfg.json への組み込みタイプ移行進捗確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/architecture/steps-to-bring-up-sonic-vs.md",
       "issue": 270,
       "verification": "hld-only",
