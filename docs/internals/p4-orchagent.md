@@ -16,6 +16,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     `P4Orch` の `ObjectManagerInterface` 階層、`RouterInterfaceManager` / `NeighborManager` / `NexthopManager` / `WcmpManager` / `RouteManager` / `AclTableManager` / `AclRuleManager` の現行実装、`Centralized Mapper` の参照カウントと `CrmOrch` 連携、`PortsOrch` / `VrfOrch` への public method 経由の参照、`APPL_STATE_DB` 経由の応答経路は実コードでの裏取り未済（PINS 機能）。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
 
 ## 概要

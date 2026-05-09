@@ -9,5 +9,8 @@
     "EAPoL / MAB 用 host interface trap の SAI / CoPP 設定取り込み確認",
     "RADIUS 動的 VLAN 割当（Tunnel attributes）の VLAN orch 連携確認"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

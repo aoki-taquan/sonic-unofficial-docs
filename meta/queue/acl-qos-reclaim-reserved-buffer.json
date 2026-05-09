@@ -9,5 +9,8 @@
     "vendor 別 zero_profile 提供有無の現行 sonic-buildimage 確認",
     "shared headroom pool model など複数 buffer model における zero_profile 互換性確認"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

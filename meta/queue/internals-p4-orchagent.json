@@ -12,5 +12,8 @@
   ],
   "priority": "medium",
   "issue": 199,
-  "pr": 200
+  "pr": 200,
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

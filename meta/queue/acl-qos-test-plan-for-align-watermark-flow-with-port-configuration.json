@@ -2,14 +2,17 @@
   "page": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
   "verification": "hld-only",
   "concerns": [
-    "counterpoll queue/watermark/pg-drop enable \u6642\u306e COUNTERS_DB \u30de\u30c3\u30d7\u751f\u6210\u30fb\u524a\u9664\u30ed\u30b8\u30c3\u30af (FlexCounterOrch / BufferOrch) \u306e\u73fe\u884c master \u5b9f\u88c5\u78ba\u8a8d",
-    "FLEX_COUNTER_DB \u4e0a\u306e QUEUE_STAT_COUNTER / QUEUE_WATERMARK_STAT_COUNTER / PG_WATERMARK_STAT_COUNTER / PG_DROP_STAT_COUNTER \u306e group key \u547d\u540d\u6574\u5408\u6027\u78ba\u8a8d",
-    "watermark enable \u6642\u306b PG / QUEUE \u4e21\u30de\u30c3\u30d7\u3092\u751f\u6210\u3059\u308b\u5b9f\u88c5\u304c\u73fe\u5b58\u3059\u308b\u304b\u78ba\u8a8d",
-    "config save / reload / reboot \u6a2a\u65ad\u3067 counterpoll \u306e enable/disable \u72b6\u614b\u304c\u4fdd\u6301\u3055\u308c\u308b\u304b\u78ba\u8a8d",
-    "\u672c\u30c6\u30b9\u30c8 (sonic-mgmt) \u306e\u5b58\u5728\u3068 PR Merge \u72b6\u6cc1\u78ba\u8a8d",
-    "\u672c HLD \u306f 2022 \u5e74 10 \u6708\u7248\u3067 3 \u5e74\u4ee5\u4e0a\u7d4c\u904e\u3057\u3066\u304a\u308a\u73fe\u884c master \u3068\u306e\u4e56\u96e2\u30ea\u30b9\u30af\u3042\u308a"
+    "counterpoll queue/watermark/pg-drop enable 時の COUNTERS_DB マップ生成・削除ロジック (FlexCounterOrch / BufferOrch) の現行 master 実装確認",
+    "FLEX_COUNTER_DB 上の QUEUE_STAT_COUNTER / QUEUE_WATERMARK_STAT_COUNTER / PG_WATERMARK_STAT_COUNTER / PG_DROP_STAT_COUNTER の group key 命名整合性確認",
+    "watermark enable 時に PG / QUEUE 両マップを生成する実装が現存するか確認",
+    "config save / reload / reboot 横断で counterpoll の enable/disable 状態が保持されるか確認",
+    "本テスト (sonic-mgmt) の存在と PR Merge 状況確認",
+    "本 HLD は 2022 年 10 月版で 3 年以上経過しており現行 master との乖離リスクあり"
   ],
   "priority": "high",
   "issue": 440,
-  "pr": 441
+  "pr": 441,
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

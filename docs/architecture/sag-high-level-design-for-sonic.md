@@ -1,7 +1,7 @@
 ---
 title: SAG（Static Anycast Gateway）for SONiC
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -21,8 +21,8 @@ related:
     - sonic-vlan
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2021-10 改訂、4 年以上経過）"
-    HLD は v0.3 / 2021-10。`SAG` テーブルとオーケストレータ拡張、`config static-anycast-gateway ...` CLI が現行 master で同名で取り込まれているかは未確認。
+!!! danger "裏取りステータス: discrepancy-found（master に SAG コード/YANG 未取り込み）"
+    Verifier 2026-05-09: `sonic-net/sonic-buildimage` master HEAD `9ea932e` を確認した時点で `src/sonic-sag` ディレクトリは存在せず、`src/sonic-yang-models/yang-models/` にも `sonic-static-anycast-gateway.yang` は無い（`sonic-static-route.yang` は別物）。HLD は v0.3 / 2021-10 で承認されているが、本ページが前提とする `SAG` テーブル / `IntfMgr` / `IntfsOrch` 拡張 / `config static-anycast-gateway` CLI は **community master に統合されていない**。本ページは HLD ベースの設計記述として参照する場合に限り有効で、現行 SONiC ビルドでは利用不可。
 
 # SAG（Static Anycast Gateway）for SONiC
 

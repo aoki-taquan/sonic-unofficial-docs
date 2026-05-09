@@ -20,6 +20,9 @@ related:
 !!! warning "裏取りステータス: HLD-only / 古い HLD"
     本テストプランは 2022 年 10 月版 (Rev 0.1) で約 3.5 年経過。`counterpoll <type> enable/disable` が `COUNTERS_DB` の各種マップ (QUEUE / PG / PG_DROP / WATERMARK) と `FLEX_COUNTER_DB` の counter group を整合的に作成・削除する挙動の現行 master 実装は未裏取り。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # `counterpoll` 種別と watermark / queue / pg-drop マップの整合テストプラン
 
 ## 概要

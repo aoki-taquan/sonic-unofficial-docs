@@ -19,6 +19,9 @@ related:
 !!! warning "裏取りステータス: HLD-only / 古い HLD"
     本 HLD は SONiC 初期の system-wide warmboot 設計メモ。後発の `Warmboot Manager`（Google 2023, Rev 0.1）が同領域を再設計しているため、`/host/warmboot/dump.rdb` 経路や `SONIC_BOOT_TYPE` カーネル引数の現行有効性は要確認。`priority=high`。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # System-wide Warmboot（going down / up path / SAI 期待値）
 
 ## 概要
