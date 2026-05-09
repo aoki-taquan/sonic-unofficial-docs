@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/switching/link-event-damping-hld.md",
+      "issue": 291,
+      "verification": "hld-only",
+      "concerns": [
+        "syncd の link event damping intercept ループ実装と sai_redis_port_attr_t 拡張の取り込み確認",
+        "PORT テーブルの link_event_damping_* 6 フィールド受領経路 (PortMgr / OrchAgent / sairedis) 実装確認",
+        "SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION モード要件への各 vendor SAI 適合状況",
+        "config interface link_event_damping_algorithm CLI の sonic-utilities 取り込み確認",
+        "COUNTERS DB の pre/post-damping カウンタ 6 種実装と定期更新ロジック確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
       "issue": 289,
       "verification": "hld-only",
