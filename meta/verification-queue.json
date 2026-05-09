@@ -219,6 +219,18 @@
       "priority": "medium"
     },
     {
+      "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
+      "issue": 67,
+      "verification": "hld-only",
+      "concerns": [
+        "PORT_BUFFER_DROP FC group が sonic-swss で flex counter インフラに登録されているか確認",
+        "counterpoll port-buffer-drop CLI 実装の存在確認 (sonic-utilities)",
+        "interval バリデーション範囲 30000〜300000 が CLI で実装されているか確認",
+        "default 60000ms が orchagent / sonic-buildimage init に反映されているか確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/sonic-port-configuration-refactor-design.md",
       "issue": 65,
       "verification": "hld-only",
