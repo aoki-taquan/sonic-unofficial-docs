@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-port-configuration-refactor-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-port-naming-convention-change/">
       
       
-        <link rel="prev" href="../sonic-ip-interface-loopback-action/">
+        <link rel="prev" href="../sonic-fast-link-up/">
       
       
-        <link rel="next" href="../ssdhealth-design/">
+        <link rel="next" href="../../internals/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>port_config.ini パーサ統合（portconfig.py 一元化） - SONiC 非公式ドキュメント</title>
+        <title>SONiC ポート命名規則の変更案（et[sX]pY[abcd]） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#port_configini-portconfigpy" class="md-skip">
+        <a href="#sonic-etsxpyabcd" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              port_config.ini パーサ統合（portconfig.py 一元化）
+              SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -568,23 +566,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -602,13 +597,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -628,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -656,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -684,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -712,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -737,37 +732,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    port_config.ini パーサ統合（portconfig.py 一元化）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -783,192 +751,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#portconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portconfig モジュールの変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        散在パーサの集約対象
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platformjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        platform.json への移行を見据えた構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        依存関係
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        テスト方針
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -981,7 +763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -2747,6 +2529,8 @@
       
   
   
+    
+  
   
   
     
@@ -2772,20 +2556,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2803,13 +2590,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2829,7 +2616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -2857,7 +2644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2885,7 +2672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2913,7 +2700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2941,7 +2728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -2966,10 +2753,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2985,6 +2799,203 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        現行の命名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etsxpyabcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新提案: et[sX]pY[abcd]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未解決の論点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        移行ステージ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3561,21 +3572,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#portconfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portconfig モジュールの変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        散在パーサの集約対象
+        現行の命名
       
     </span>
   </a>
@@ -3583,10 +3583,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#platformjson" class="md-nav__link">
+  <a href="#etsxpyabcd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        platform.json への移行を見据えた構造
+        新提案: et[sX]pY[abcd]
       
     </span>
   </a>
@@ -3597,7 +3597,29 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        依存関係
+        例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未解決の論点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        移行ステージ
       
     </span>
   </a>
@@ -3610,7 +3632,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3643,24 +3665,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        テスト方針
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3671,7 +3693,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3682,7 +3704,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3693,7 +3715,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3720,7 +3742,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-port-configuration-refactor-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-port-naming-convention-change.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3729,129 +3751,183 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>portconfig.py</code> 一元化の現行進捗、<code>platform.json</code> への完全移行状況、<code>daemon_base.py</code> / <code>sfputilbase.py</code> / <code>sfputilhelper.py</code> / <code>sfputil/main.py</code> / <code>util_base.py</code> の現状は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い提案</p>
+<p>本ページは公式 HLD（短いプロポーザル形式、改訂日不明）のみを根拠に書かれている。本提案は「<code>Ethernet0</code> 系から Linux 流の <code>et[sX]pY[abcd]</code> 系への移行」を提案しているが、SONiC コミュニティ master では現状も <code>EthernetN</code> の内部名が広く使われており、提案は <strong>未採用または部分採用</strong> の状態である可能性が高い。</p>
 </div>
-<h1 id="port_configini-portconfigpy">port_config.ini パーサ統合（portconfig.py 一元化）<a class="headerlink" href="#port_configini-portconfigpy" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-etsxpyabcd">SONiC ポート命名規則の変更案（<code>et[sX]pY[abcd]</code>）<a class="headerlink" href="#sonic-etsxpyabcd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のポート定義は伝統的に <strong><code>port_config.ini</code></strong>（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。共通パーサ <code>sonic-buildimage/src/sonic-config-engine/portconfig.py</code> がいる一方で、<strong>他のリポジトリ・モジュールにも独自に同じファイルをパースするコード</strong> が散在しており、メンテ性が悪化している。</p>
-<p>本 HLD は <strong>すべての <code>port_config.ini</code> 関連ロジックを <code>portconfig.py</code> に寄せる</strong> リファクタを定義する。さらに当時並行で進んでいた <code>port_config.ini</code> → <code>platform.json</code> 移行を踏まえ、<strong>パース層を 1 箇所に集約しておけば後段の差し替えコストが下がる</strong> ことを動機にしている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC は伝統的に <code>Ethernet0</code> / <code>Ethernet4</code> / ... のような <strong><code>Ethernet</code> プレフィクス + ASIC レーン番号</strong> をポート名に使ってきた。Microsoft からのプロポーザルとして本ドキュメントは以下の問題を指摘し、Linux Network Interface Naming に揃える命名規則を提案する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>プレフィクス <code>Ethernet</code> が冗長（長い）</li>
+<li>ポート番号（ASIC lane 起点）が <strong>前面パネル番号と一致しない</strong></li>
+<li>chassis（slot 概念あり）に対応できない</li>
+</ul>
+<p>提案する新規命名規則は <strong><code>et[sX]pY[abcd]</code></strong> で、systemd / udev の永続デバイス名規則に近いスタイルである。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="portconfig">portconfig モジュールの変更<a class="headerlink" href="#portconfig" title="Permanent link">&para;</a></h3>
-<p><code>portconfig.parse_port_config_file</code> の戻り値は <strong>常に index を含むよう統一</strong> する。<code>port_config.ini</code> 側で <code>index</code> が定義されていない場合でも、<strong>1-based の auto-increment</strong> をデフォルト値として埋める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>歴史的経緯として <code>port_config.ini</code> を <strong>0-based</strong> で書いている SKU が一部残っていた。これらは <strong>すべて 1-based に揃える</strong> ことが本リファクタの前提条件として示されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<blockquote>
-<p>"For now, there are still a few SKUs provided port_config.ini file with 0-based port index, all those port_config.ini files should be changed to 1-based." <sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-</blockquote>
-<p>ポート index は他モジュールでも使われるため、抜けがあると下流に伝播する。共通パーサが必ず index を返すことで、呼び出し側は「無いケース」を考えなくて済む構造になる。</p>
-<h3 id="_3">散在パーサの集約対象<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>5 ファイルが対象として列挙されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_3">現行の命名<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Ethernet0, Ethernet1, ..., Ethernet(N-1)        # N=32 or 64
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Ethernet0, Ethernet4, Ethernet8, ...            # 4 lane 単位 / breakout 想定
+</span></code></pre></div>
+<p>問題点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>Ethernet</code> プレフィクスが長くタイピングしづらい</li>
+<li>前面パネルポートと番号が直結しない</li>
+<li>同じ ASIC を多重 slot に積む chassis では番号衝突を起こす</li>
+</ul>
+<h3 id="etsxpyabcd">新提案: <code>et[sX]pY[abcd]</code><a class="headerlink" href="#etsxpyabcd" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>et   sX        pY        [abcd]
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>↑    ↑         ↑          ↑
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>prefix slot番号  front panel   breakout
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>(任意, x=1..)  port  (必須)    (任意)
+</span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>場所</th>
-<th>旧コード</th>
-<th>置き換え先</th>
+<th>部分</th>
+<th>必須/任意</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>sonic-buildimage/src/sonic-daemon-base/sonic_daemon_base/daemon_base.py</code></td>
-<td><code>port_config.ini</code> のパス取得</td>
-<td><code>portconfig.get_port_config_file_name</code></td>
+<td><code>et</code></td>
+<td>必須</td>
+<td>SONiC が選んだ prefix。<code>em</code> / <code>en</code> 等の Linux predictable name と類似。よく使われる Linux 規則の一族</td>
 </tr>
 <tr>
-<td><code>sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilbase.py</code></td>
-<td>パース全般</td>
-<td><code>portconfig.get_port_config</code></td>
+<td><code>sX</code></td>
+<td>任意</td>
+<td>slot 番号。chassis 構成で使う。X は通常 1 から</td>
 </tr>
 <tr>
-<td><code>sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py</code></td>
-<td>パース全般</td>
-<td><code>portconfig.get_port_config</code></td>
+<td><code>pY</code></td>
+<td>必須</td>
+<td>前面パネルポート Y。通常 1 から</td>
 </tr>
 <tr>
-<td><code>sonic-utilities/sfputil/main.py</code></td>
-<td>パス取得</td>
-<td><code>portconfig.get_port_config_file_name</code></td>
-</tr>
-<tr>
-<td><code>sonic-utilities/utilities_common/util_base.py</code></td>
-<td>パス取得</td>
-<td><code>portconfig.get_port_config_file_name</code></td>
+<td><code>[a\|b\|c\|d]</code></td>
+<td>任意</td>
+<td>breakout サブポート</td>
 </tr>
 </tbody>
 </table>
-<p><code>sfputilbase.py</code> は内部で <strong>3 つの dict と 1 つの list</strong> に整形して保持しており、後続コードがそのデータ構造に依存している。データ構造そのものは維持し、<code>portconfig.py</code> の出力を <strong>既存構造に詰め替える adapter 的な変換</strong> を入れる方針<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>sfputilhelper.py</code> と <code>sfputilbase.py</code> のロジックは似ているため、<strong>さらに共通箇所に切り出して再利用</strong> することも HLD で示唆されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ベンダ固有コードにも同様のパース箇所がある。これらは <strong>各ベンダ責任</strong> でリファクタする<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>ポート名例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>breakout なし、32 ポート pizza box</td>
+<td><code>etp1, etp2, ..., etp32</code></td>
+</tr>
+<tr>
+<td>2 分割 breakout</td>
+<td><code>etp16a, etp16b</code></td>
+</tr>
+<tr>
+<td>4 分割 breakout</td>
+<td><code>etp18a, etp18b, etp18c, etp18d</code></td>
+</tr>
+<tr>
+<td>chassis 複数 line card</td>
+<td><code>ets0p1, ets1p10</code></td>
+</tr>
+</tbody>
+</table>
+<p>数字の起点は <strong>「通常 1 から」</strong>。Microsoft 提案のコメントとして、index を 1 起点にすると C/C++ 配列など 0 起点言語との橋渡しで「先頭エントリが無駄になる/ならない」が実装と言語に依存する旨の議論がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_5">未解決の論点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>提案文書時点で未解決として明示されているもの<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>PortChannel（LAG）の命名規則</strong>: <code>et[sX]pY[abcd]</code> のような枠組みに乗せるか、別系統で持つか未定</li>
+</ul>
+<h3 id="_6">移行ステージ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>破壊的変更を一気にやるのではなく、4 段階に分けて段階移行する案<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>flowchart LR
-    PCI[port_config.ini\n(or platform.json)] --&gt; PC[sonic-config-engine/portconfig.py]
-    PC -.-&gt; A[daemon_base.py\nget_port_config_file_name]
-    PC -.-&gt; B[sfputilbase.py\nget_port_config + adapter]
-    PC -.-&gt; C[sfputilhelper.py\nget_port_config]
-    PC -.-&gt; D[sfputil/main.py\nget_port_config_file_name]
-    PC -.-&gt; E[utilities_common/util_base.py\nget_port_config_file_name]
-    PC -.-&gt; V[vendor 固有モジュール\n(各ベンダ責任)]</code></pre>
-<h3 id="platformjson">platform.json への移行を見据えた構造<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
-<p><code>port_config.ini</code> から <code>platform.json</code> への置換は当時進行中の作業<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>パース層を 1 箇所に集約</strong> しておけば、ファイルフォーマットを切り替えるときも <code>portconfig.py</code> 内の実装を差し替えるだけで済み、呼び出し側 5 ファイル（および adapter）に手を入れずに後方互換が保てる、というのが副次的な狙い。</p>
+    S1[Stage 1\nport_config.ini\nalias を新規則に] --&gt; S2[Stage 2\nコード内の Ethernet\nプレフィクス依存を解消]
+    S2 --&gt; S3[Stage 3\nテストの Ethernet\n依存を解消]
+    S3 --&gt; S4[Stage 4\n内部ポート名を\n新規則に切替\nLinux IF 名も同一]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>port_config.ini</code> の <strong>alias 列</strong> を新命名で埋める。内部名はまだ <code>EthernetN</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>SONiC コードベースから <code>Ethernet</code> プレフィクス前提（hardcode）を順次除去</td>
+</tr>
+<tr>
+<td>3</td>
+<td>テスト（DVS / pytest など）から <code>Ethernet</code> プレフィクス・<code>Ethernet0</code> ハードコードを除去</td>
+</tr>
+<tr>
+<td>4</td>
+<td>内部ポート名と Linux IF 名の両方を新命名に切替</td>
+</tr>
+</tbody>
+</table>
+<p>Stage 1 の段階で <strong>alias は新命名、内部名は EthernetN のまま</strong> という共存状態が続く。CLI 表示・SNMP・LLDP などユーザ視認領域は alias を出すことで命名移行を先行できる構成。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  There are also open PRs to begin transitioning from the "port_config.ini" file to a new "platform.json" file. So if we keep all parse logic in portconfig.py, it will be easy to keep backward compatible.
-reasoning: 一元化の動機が「platform.json への移行容易化」にあることの根拠。
+  ## Change stages ##
+  1. Change port_config.ini alias column to use the new naming convention.
+  2. Break SONiC code dependency of 'Ethernet' prefix.
+  3. Break SONiC test dependency of 'Ethernet' prefix and/or 'Ethernet0'.
+  4. Change SONiC port name to new naming convention.
+reasoning: 4 段階移行プランの根拠。
 -->
 
-<h3 id="_4">依存関係<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>portconfig.py</code> 自体は <code>sonic-buildimage/src/sonic-config-engine</code> パッケージに属する。これを他モジュールから再利用するために、HLD は次の 2 点を要求している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>build-time の unit test を持つモジュール</strong> は <code>sonic-config-engine</code> を <strong>build-time dependency</strong> として宣言する。</li>
-<li><strong>docker 内にインストールされるモジュール</strong> （例: pmon）は、その docker に <strong><code>sonic-config-engine</code> を同梱</strong> する必要がある。HLD では pmon docker が既に同梱しているため再利用可能と注記している<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ol>
-<p>つまり「parse 関数を呼ぶ側が <code>portconfig</code> 本体をリンクできる導線」を、テストとランタイム双方で確保するのが必須要件。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い。<code>port_config.ini</code> / <code>platform.json</code> は <strong>CONFIG_DB の上流</strong> にあるビルド成果物であり、本リファクタは「パース実装の集約」だけを扱う。CONFIG_DB の <code>PORT</code> テーブル等の schema は変更しない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本提案は CONFIG_DB のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は無い。<code>show interfaces</code> 系や <code>sfputil</code> 系の <strong>出力は変わらない</strong> ことが test plan で明示されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">テスト方針<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>HLD が示すテスト計画<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>t0 / t1-lag topology の regression</strong> を回し、既存テストが破壊されていないこと。</li>
-<li><strong><code>show interfaces</code> 全 sub-command</strong> をリファクタ前後で出力比較。</li>
-<li><strong><code>sfputil</code> 全 sub-command</strong> を比較。特に <code>sfputil lpmode</code> / <code>sfputil reset</code> が <strong>正しいインターフェース</strong> に効くことを確認。</li>
-<li>システム起動後、xcrvrd（transceiver daemon）が Redis に正しいデータを push しているか。</li>
-<li>SFP モジュール挿抜で status が反映されるか。</li>
-<li>xcrvrd を kill した後、Redis 側の関連情報が削除されるか。</li>
-<li>DOM 情報が正しく更新されるか。</li>
-</ol>
-<p>検証対象は <strong>Mellanox 全 SKU + 安定版 201911 image</strong> とされている<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。当時の master を切る基準点としての記述で、現在の community master との対応関係は別途確認が必要。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>CLI 自体の追加・削除は提案されていない。<code>show interface</code> 等の出力や CLI 入力で使うキーが alias ベースに切替わるかが運用上のポイント。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>0-based index の SKU を 1-based に揃える必要がある</strong>。これを怠ると <code>parse_port_config_file</code> の auto-increment と既存記述が衝突するか、もしくは下流 index 参照と齟齬を起こす<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ベンダ固有コードはスコープ外</strong>。各ベンダリポジトリの port_config パース箇所は本 HLD では網羅しない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>リファクタの順序保証が無い。たとえば <code>sfputilbase.py</code> だけ移行・他は旧経路、という中間状態では、auto-increment の挙動と旧パーサの挙動が <strong>微妙にずれる</strong> 可能性がある（旧パーサが index を返さないケースの扱い）。</li>
+<li><strong>本ドキュメントは提案段階</strong>。コミュニティが採択して全 stage を完了したかは別途確認が必要</li>
+<li>Stage 4（内部名切替）は SONiC コードベース全体・テスト・自動化スクリプトに広く影響するため、移行には大規模な検証が必要</li>
+<li>PortChannel 等 LAG 系名称の取り扱いは <strong>未解決</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>1 起点インデクスとプログラミング言語の 0 起点との橋渡しは実装ごとに注意</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>platform.json</code> への移行</strong>: 本リファクタが下地となる。パース層が 1 箇所なら <code>port_config.ini</code> か <code>platform.json</code> かを <code>portconfig.py</code> 内で吸収できる。</li>
-<li><strong>xcrvrd（transceiver daemon）</strong>: <code>port_config.ini</code> のパース経路に依存している。テスト計画でも DOM / 挿抜の挙動確認が必須項目になっている<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>sfputil</code> CLI</strong>: <code>lpmode</code> / <code>reset</code> が正しい interface に効くかが重要なチェックポイント。ポート名 → index のマッピングが auto-increment 経路に切り替わる際の影響範囲<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>build dependency</strong>: <code>sonic-config-engine</code> をビルド時依存に追加する変更が、他モジュールのビルド時間・コンテナサイズに微増の影響を与える可能性。</li>
+<li><strong><code>port_config.ini</code> / hwsku パッケージング</strong>: alias 列の更新</li>
+<li><strong>CLI / <code>show interface</code> / SNMP / LLDP</strong>: alias がユーザ可視領域に出るので、運用ドキュメントとの整合</li>
+<li><strong>テスト基盤（DVS / pytest / sonic-mgmt）</strong>: <code>Ethernet0</code> 等のハードコード除去が必要</li>
+<li><strong>chassis HLD</strong>: slot 番号 (<code>sX</code>) を意識した命名は chassis ユースケースが主動機</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li>移行後にポート番号がずれる: <code>port_config.ini</code> 側で 0-based のまま残っていないかを確認。auto-increment 経路と混ざると 1 ずれる。</li>
-<li><code>sfputil lpmode &lt;Ethernet0&gt;</code> が別 interface に効く: <code>portconfig.get_port_config</code> の戻りと <code>sfputilbase.py</code> の dict / list 詰め替えの adapter にバグがある可能性。</li>
-<li>pmon が起動失敗: <code>sonic-config-engine</code> が docker 内に配置されていない。<code>portconfig.py</code> を import できないため<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認</li>
+<li>chassis で <code>ets0p1</code> が <code>ets1p1</code> と衝突する場合、line card の slot 番号が想定どおりに振られているか確認</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- 本提案がどの Stage まで実装されたか（master では未だ EthernetN が主流）
+- port_config.ini alias 列の運用ガイドライン
+- chassis での ets<X>p<Y> 命名の実装事例
+- PortChannel 命名の最終決定
+- breakout (a/b/c/d) と CONFIG_DB.PORT のキーの整合
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-config-refactor/port-config-refactor-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-port-name/sonic-port-name.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
