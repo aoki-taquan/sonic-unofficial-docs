@@ -1612,6 +1612,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/sonic-weighted-ecmp.md",
+      "verification": "hld-only",
+      "concerns": [
+        "DeviceGlobalCfgMgr.set_wcmp の sonic-buildimage / sonic-bgpcfgd 取り込み確認",
+        "bgpd.wcmp.conf.j2 (docker-fpm-frr/frr/bgpd/wcmp) の存在確認",
+        "BGP_DEVICE_GLOBAL|STATE wcmp_enabled の sonic-yang-models 反映確認",
+        "init_cfg.json.j2 デフォルト wcmp_enabled=false 確認",
+        "FRR 側の link-bandwidth ext community → NHG weight 1-255 正規化動作の検証",
+        "show bgp device-global / config bgp device-global wcmp の sonic-utilities 取り込み確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/srv6-sid-l3adj.md",
       "verification": "code-verified",
       "concerns": [],
