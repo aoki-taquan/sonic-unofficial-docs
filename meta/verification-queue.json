@@ -204,7 +204,8 @@
         "本 HLD は 2022 年版で 4 年経過。仕様乖離の可能性大。priority=high"
       ],
       "priority": "high",
-      "issue": 492
+      "issue": 492,
+      "pr": 494
     },
     {
       "page": "docs/overlay/dscp-remapping-for-tunnel-traffic.md",

@@ -11,5 +11,6 @@
     "\u672c HLD \u306f 2022 \u5e74\u7248\u3067 4 \u5e74\u7d4c\u904e\u3002\u4ed5\u69d8\u4e56\u96e2\u306e\u53ef\u80fd\u6027\u5927\u3002priority=high"
   ],
   "priority": "high",
-  "issue": 492
+  "issue": 492,
+  "pr": 494
 }
