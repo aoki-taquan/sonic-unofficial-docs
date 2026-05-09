@@ -219,6 +219,19 @@
       "priority": "medium"
     },
     {
+      "page": "docs/routing/mpls-tc-to-tc-map.md",
+      "issue": 73,
+      "verification": "hld-only",
+      "concerns": [
+        "MPLS_TC_TO_TC_MAP テーブル名が sonic-swss-common の CFG_*_TABLE_NAME に追加済みか確認",
+        "QoS orch の MPLS_EXP_TO_TC ハンドラ実装の存在確認",
+        "PORT_QOS_MAP.mpls_tc_to_tc_map フィールドの認識ロジック確認",
+        "config reload / config clear が新マップを扱うか確認",
+        "YANG モデル (sonic-port-qos-map?) への追加状況"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/routing/dhcp-relay-for-ipv6-hld.md",
       "issue": 71,
       "verification": "hld-only",
