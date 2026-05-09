@@ -339,19 +339,6 @@
       "priority": "high"
     },
     {
-      "page": "docs/routing/class-based-forwarding-enhancement.md",
-      "issue": 233,
-      "verification": "hld-only",
-      "concerns": [
-        "新 NHG / CBF NHG orchestration agent の実装存在確認 (NhgOrch / CbfNhgOrch 等)",
-        "CONFIG_DB の DSCP_TO_FC_MAP / EXP_TO_FC_MAP スキーマ取り込みと QosOrch 拡張の確認",
-        "APP_DB の CLASS_BASED_NEXT_HOP_GROUP_TABLE / FC_TO_NHG_INDEX_MAP_TABLE スキーマが現行 master にあるか未確認",
-        "SAI PR #1193 (SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED) が community SAI / sairedis に取り込まれているか未確認",
-        "HLD は 2021-08 改訂のため現行 master 実装との大幅な乖離リスクあり"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
       "verification": "hld-only",
       "concerns": [
@@ -1172,6 +1159,18 @@
       "priority": "medium",
       "issue": 171,
       "pr": 172
+    },
+    {
+      "page": "docs/routing/static-configuration-of-srv6-in-sonic-hld.md",
+      "issue": 304,
+      "verification": "hld-only",
+      "concerns": [
+        "bgpcfgd の SRv6 Manager モジュール実装が現行 master にあるか未確認",
+        "CONFIG_DB の SRV6_MY_LOCATORS / SRV6_MY_SIDS スキーマが現行 master に取り込まれているか未確認",
+        "sonic-yang-models の sonic-srv6 モジュール存在確認",
+        "FRR の static-sids CLI (PR#16894) が SONiC 採用 FRR に取り込まれているか未確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",

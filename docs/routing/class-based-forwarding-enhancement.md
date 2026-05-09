@@ -1,7 +1,7 @@
 ---
 title: クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021-08 (Rev 0.2) で 4 年以上前。本機能の orchagent / sairedis 取り込み、SAI Pull Request #1193 (`SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED`) のリリース反映、CLASS_BASED_NEXT_HOP_GROUP_TABLE スキーマの取り込み状況は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/cbf/cbfnhgorch.h:88` で `CbfNhgOrch : public NhgOrchCommon<CbfNhg>`、`sonic-swss-common/common/schema.h:56,129` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME` / `APP_FC_TO_NHG_INDEX_MAP_TABLE_NAME`、`sonic-swss/orchagent/qosorch.cpp:92,93,111,112,1337` で `CFG_DSCP_TO_FC_MAP_TABLE_NAME` / `CFG_EXP_TO_FC_MAP_TABLE_NAME` のハンドラ登録、`sonic-sairedis/vslib/SwitchStateBase.cpp:4167` で `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` enum capability を確認（verified at: 2026-05-09）。
 
 # クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
 
