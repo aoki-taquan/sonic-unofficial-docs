@@ -13723,9 +13723,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.1 (2022-06)。<code>build_image.sh</code> の <code>SECURE_UPGRADE_MODE</code> 分岐、<code>sign_image_dev.sh</code> / <code>sign_image_${platform}.sh</code> の同梱、<code>sonic-installer install</code> の verification 経路、<code>onie-mk-demo.sh</code> 経由の sharch.sh prefix は未裏取り。secure boot HLD（hld_secure_boot.md）と対をなす。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage</code> master の <code>slave.mk</code> / <code>rules/config</code> / <code>onie-mk-demo.sh</code> / <code>files/build_templates/sonic_version.yml.j2</code> で <code>SECURE_UPGRADE_MODE</code> 分岐を確認。<code>sign_image_dev</code> 系の参照も <code>onie-mk-demo.sh</code> に存在。<code>sonic-utilities/sonic_installer/main.py</code> には <code>verify_secureboot_image</code> / <code>is_secure_upgrade_image_verification_supported</code> の検証経路が実装されている。secure boot HLD（hld_secure_boot.md）と対をなす。</p>
 </div>
 <h1 id="secure-upgradeimage-secure_upgrade_mode">Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）<a class="headerlink" href="#secure-upgradeimage-secure_upgrade_mode" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

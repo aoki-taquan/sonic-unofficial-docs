@@ -13845,9 +13845,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>CHANGE_DEFAULT_PASSWORD</code> build flag の sonic-buildimage 取り込み、<code>/etc/rc.local</code> で <code>chage -d 0 &lt;user&gt;</code> を 1st boot 時に呼ぶ実装、<code>pam_unix_account.so</code> 連携の現行 image での挙動は実コードでの裏取り未済。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/rules/config</code> に <code>CHANGE_DEFAULT_PASSWORD ?= n</code> のオプション、<code>build_debian.sh</code> に <code>[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]</code> 分岐と <code>password_expire="$( ... &amp;&amp; echo true || echo false )"</code> の export 処理を確認。<code>Makefile.work</code> / <code>slave.mk</code> でも flag を伝搬。HLD で要求された build flag の sonic-buildimage 取り込みは master で確認できた。</p>
 </div>
 <h1 id="california-sb-327">既定パスワードの初回ログイン強制変更（California SB-327 準拠）<a class="headerlink" href="#california-sb-327" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

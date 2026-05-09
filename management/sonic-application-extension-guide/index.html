@@ -13823,9 +13823,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Initial Proposal</p>
-<p>HLD は v0.1 / 2021-02 改訂の <strong>Initial Proposal</strong>。<code>sonic-package-manager</code> / マニフェスト形式 / <code>SONIC_PACKAGES_LOCAL</code> make ターゲット が現行 master でこの仕様どおりかは未確認。本ページは開発者向けガイドの抜粋であり、コア HLD は <code>sonic-application-extention-hld.md</code> を別途参照。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/sonic_package_manager/</code> に <code>manifest.py</code>（<code>ManifestSchema</code> / un-marshal / 検証）、<code>manager.py</code>、<code>metadata.py</code>、<code>database.py</code>、<code>dockerapi.py</code>、<code>main.py</code>、<code>constraint.py</code> が master に存在。マニフェスト形式と <code>sonic-package-manager</code> CLI 経路は master 取り込み済み。コア HLD（<code>sonic-application-extention-hld.md</code>）と整合。</p>
 </div>
 <h1 id="sonic-application-extension">SONiC Application Extension 開発・移植ガイド<a class="headerlink" href="#sonic-application-extension" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

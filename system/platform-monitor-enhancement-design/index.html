@@ -13745,9 +13745,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は v0.1（2017〜2019 と推定、日付不明）。<code>fand</code> / <code>psud</code> / <code>xcvrd</code> 拡張、<code>PLATFORM_INFO</code> / <code>CHASSIS_INFO</code> / <code>PSU_INFO</code> / <code>FAN_INFO</code> の現行 schema、syseeprom 周辺一括収集 task の実装は未裏取り。priority=high で queue 登録。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-daemons</code> master に <code>sonic-psud</code>、<code>sonic-syseepromd</code>、<code>sonic-xcvrd</code>、<code>sonic-thermalctld</code> が存在し、HLD で「fand」と呼ばれていた FAN 周期収集は <code>sonic-thermalctld</code> (= thermalctld) として実装されている。<code>scripts/psushow</code> / <code>fanshow</code> (<code>sonic-utilities</code>) が <code>STATE_DB</code> の <code>CHASSIS_INFO</code> / <code>PSU_INFO</code> / <code>FAN_INFO</code> を直接 read することを確認。HLD の中心方針（CLI/SNMP は STATE_DB のみ参照、daemon 側で plugin 直叩きを集約）は master 取り込み済み。<code>fand</code> 単独 daemon は無いという用語差のみ。</p>
 </div>
 <h1 id="pmon-psufansyseeprom-state_db">pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）<a class="headerlink" href="#pmon-psufansyseeprom-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

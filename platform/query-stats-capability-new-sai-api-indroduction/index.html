@@ -13801,9 +13801,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / upstream 由来</p>
-<p>HLD は SAI に追加された <code>sai_query_stats_capability</code> API を SONiC 側 <code>FlexCounter</code> で使う改修の説明。SAI 上流での API 取り込み状況、<code>sonic-sairedis</code> の <code>FlexCounter.cpp</code> 改修取り込み状況は要裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-sairedis/syncd/FlexCounter.cpp</code> master に <code>querySupportedCounters()</code> 実装と <code>use_sai_stats_capa_query</code> フラグ、<code>sai_stat_capability_list_t</code> を使った 2 段呼び出し（count 取得 → list 取り直し）パターン、<code>SAI_STATUS_NOT_IMPLEMENTED</code> フォールバックを確認。Port / Queue / PG / RIF / BufferPool で同パターン。HLD の改修は master 取り込み済み。</p>
 </div>
 <h1 id="sai_query_stats_capability-counter-capability">sai_query_stats_capability による Counter Capability 一括取得<a class="headerlink" href="#sai_query_stats_capability-counter-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

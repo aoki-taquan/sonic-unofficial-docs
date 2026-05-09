@@ -13745,9 +13745,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v1.0 (2024-10)。<code>chrony</code> パッケージの sonic-buildimage 取り込み、<code>/etc/chrony/chrony.conf</code> のテンプレート生成（NTP_SERVER CONFIG_DB 連携）、<code>config-setup</code> と DHCP 経由の NTP server 取得は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage</code> master に <code>files/image_config/chrony/chrony-config.sh</code> と <code>src/sonic-config-engine/tests/chrony.conf.j2</code>、<code>build_debian.sh</code> / <code>files/build_templates/sonic_debian_extension.j2</code> の chrony 取り込み処理を確認。NTP_SERVER CONFIG_DB → <code>chrony.conf</code> 生成パスと chrony パッケージ同梱は master 取り込み済み。</p>
 </div>
 <h1 id="ntpd-chrony-slew-kernel-time-discipline">ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）<a class="headerlink" href="#ntpd-chrony-slew-kernel-time-discipline" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

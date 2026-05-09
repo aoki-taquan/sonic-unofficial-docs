@@ -13823,9 +13823,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 要件レベル仕様</p>
-<p>HLD は <strong>要件記述に近い概念ペーパ</strong>で、具体的な API / CLI / CONFIG_DB スキーマは規定していない。実装の対応は別文書（<code>logger.cpp</code> / <code>generate_dump</code> / <code>show techsupport</code> 等）と要照合。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（要件レベル仕様）</p>
+<p>HLD は要件記述ペーパ。実装側は <code>sonic-utilities/scripts/generate_dump</code>（103KB の bash で General/Per daemon/Per platform ダンプを統合、<code>PLUGINS_DIR=/usr/local/bin/debug-dump</code> で plugin 機構実装）、<code>scripts/coredump_gen_handler.py</code>（クラッシュ → sysdump 連動）、<code>utilities_common/auto_techsupport_helper.py</code>、<code>scripts/techsupport_cleanup.py</code> を確認。要件で挙げられた sysdump 3 区分 / クラッシュ自動生成パスは master 取り込み済み。</p>
 </div>
 <h1 id="sonic-logging-system-dumps">SONiC Logging &amp; System Dumps（要件レベル仕様）<a class="headerlink" href="#sonic-logging-system-dumps" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

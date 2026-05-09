@@ -13823,9 +13823,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Initial Proposal</p>
-<p>HLD は v0.1（改訂日記載なし）。<code>port_rates.lua</code> に Pre/Post FEC BER 計算ロジックが追加されているか、<code>portstat.py</code> が <code>-f</code> で <code>FEC_PRE_BER</code> / <code>FEC_POST_BER</code> を表示するかは未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss/orchagent/port_rates.lua</code> master に <code>compute_ber()</code> 関数と <code>SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS</code> / <code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code> の HGET、Pre/Post FEC BER 計算（<code>rs_average_frame_ber</code> を使用）、lanes と serdes_speed lookup を確認。<code>sonic-utilities/scripts/portstat</code> に <code>-f</code>/<code>--fec-stats</code>、<code>-fh</code>/<code>--fec_hist</code> フラグ実装済み。HLD の主要要素は master 取り込み済み。</p>
 </div>
 <h1 id="port-fec-berprepost-fec-ber-show-fec-stat">Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）<a class="headerlink" href="#port-fec-berprepost-fec-ber-show-fec-stat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

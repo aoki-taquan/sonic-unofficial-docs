@@ -13823,9 +13823,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 手順書ベース</p>
-<p>この文書は手順書由来。<code>sonic-buildimage</code> のビルドフラグ（<code>NOJESSIE</code> 等の no-* スイッチ）は時期により変わる。<code>sonic1-vs.xml</code> の URL や Debian 系 distro 名も実態と合わせて確認すること。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（手順書ベース）</p>
+<p><code>sonic-buildimage</code> master の <code>Makefile</code> / <code>Makefile.work</code> で <code>NOJESSIE</code> / <code>NOSTRETCH</code> / <code>NOBUSTER</code> / <code>NOBULLSEYE</code> / <code>NOBOOKWORM</code> の no-* ビルドスイッチ群と <code>make NOJESSIE=1 KEEP_SLAVE_ON=yes</code> の使用例を確認。VS 経路も <code>platform/vs/docker-sonic-vs.{mk,dep}</code> 等で生きている。手順書としての主張は master と整合。実機ビルドでは現行リリース 1 種だけを残す（古い distro はスキップ）運用が前提。</p>
 </div>
 <h1 id="sonic-vs-libvirt">SONiC-VS のビルドと libvirt 起動手順<a class="headerlink" href="#sonic-vs-libvirt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

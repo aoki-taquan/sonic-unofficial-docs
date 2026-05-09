@@ -13823,9 +13823,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-platform-common</code> の Platform API 側で <code>capabilities</code> を読む経路、ベンダ固有 <code>platform.json</code> への実装反映状況、<code>controllable=false</code> の場合の上位アプリ振る舞いは未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json</code> 等で <code>chassis.status_led.controllable</code>、<code>fans[].speed.controllable</code> / <code>minimum</code>、<code>status_led.colors</code> 配列、<code>status_led.available</code> のスキーマが実機向け platform.json に既に展開されていることを確認。Marvell / Dell の複数プラットフォームで採用済み。HLD の capabilities 拡張は実装に取り込まれている。</p>
 </div>
 <h1 id="platformjson-capabilities-led-fan-speed-controllable">platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）<a class="headerlink" href="#platformjson-capabilities-led-fan-speed-controllable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
