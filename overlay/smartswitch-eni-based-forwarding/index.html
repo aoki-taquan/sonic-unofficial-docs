@@ -8824,9 +8824,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 0.2, 2025-10）のみを根拠に書かれている。<code>DashEniFwdOrch</code> の実装、<code>ENI_REDIRECT</code> ACL_TABLE_TYPE の AclOrch 取り込み、<code>ACL_RULE.REDIRECT</code> の tunnel nexthop 表記拡張、<code>VIP_TABLE</code> のスキーマ確定は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/dash/dashenifwdorch.h:69</code> で <code>TABLE_TYPE = "ENI_REDIRECT"</code>、<code>dashenifwdorch.h:92</code> で <code>class DashEniFwdOrch : public Orch2, public Observer</code>、<code>dashenifwdorch.h:51-58</code> で <code>DpuRegistry / EniNH / LocalEniNH / RemoteEniNH / EniAclRule / EniInfo / EniFwdCtx*</code> の各 helper クラスを確認。<code>sonic-swss/orchagent/dash/dashenifwdinfo.cpp:6</code> で <code>EniAclRule::BASE_PRIORITY = 9996</code>、<code>dashenifwdinfo.cpp:194</code> で <code>BASE_PRIORITY + static_cast&lt;int&gt;(type_)</code> により通常 9996 / TUNN_TERM 9997 を生成する仕組みを確認。<code>orchdaemon.{h,cpp}</code> への組み込み、mock_tests <code>dashenifwdorch_ut.cpp</code> の存在も確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）<a class="headerlink" href="#smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
