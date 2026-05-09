@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/sonic-port-auto-fec-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / OPER_PORT_FEC_MODE の community SAI 取り込み確認",
+    "portsorch での capability query と FEC=auto 分岐の現行 master 取り込み確認",
+    "sonic-yang-models の sonic-port.yang での fec=auto 追加確認",
+    "show interface fec の sonic-utilities での operational 表示実装確認",
+    "旧 image からの upgrade 時の後方互換挙動の実装確認",
+    "vendor SAI (Mellanox/Broadcom/Cisco) の override 属性対応状況"
+  ],
+  "priority": "medium"
+}
