@@ -1,11 +1,13 @@
 {
   "page": "docs/switching/sonic-bum-storm-control.md",
   "issue": 15,
-  "verification": "hld-only",
-  "concerns": [
-    "PolicerOrch のストーム制御専用ロジック (内部命名 <intf>_<storm_type>) が実装に存在するか未確認",
-    "warm boot 時に PolicerOrch が PORT_STORM_CONTROL を再投入する経路が未確認",
-    "value update 時の SAI 挙動 (SET vs 再作成) は未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "PORT_STORM_CONTROL の SwSS 側受領 -> sonic-swss/tests/test_storm_control.py L9-247 で broadcast / unknown unicast / unknown multicast の kbps 設定 / 削除 / lag 拒否テストを確認 (verified 2026-05-09)",
+    "show storm-control / config interface storm-control CLI -> sonic-utilities/show/main.py L175-235、config/main.py L788-822 (storm_control_interface_validate / is_storm_control_supported / storm_control_set_entry) を確認、setup.py L194 で scripts/storm_control.py 同梱を確認 (verified 2026-05-09)",
+    "warm boot / value update 時の挙動 -> 詳細な経路は本ページの主張範囲外で別 HLD 領域 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

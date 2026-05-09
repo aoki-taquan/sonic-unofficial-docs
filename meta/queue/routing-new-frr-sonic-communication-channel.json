@@ -1,14 +1,15 @@
 {
   "page": "docs/routing/new-frr-sonic-communication-channel.md",
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-buildimage 配下の sonic-frr/dplane_fpm_sonic/ と build-dplane-fpm-sonic-module.patch の現行取り込み確認 (PR #18715)",
-    "zebra supervisor.conf.j2 の -M dplane_fpm_sonic への切替が現行 master にあるか確認",
-    "sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID/RTM_DELSRV6LOCALSID メッセージ受理実装確認 (PR #3123)",
-    "APPL_DB.SRV6_MY_SID_TABLE のスキーマ取り込み確認",
-    "FRR upstream の dplane_fpm_nl の差分が dplane_fpm_sonic にどこまで取り込まれているか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "dplane_fpm_sonic モジュール取り込み -> sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c L170/L3467 で provider 登録、Makefile L9 で DPLANE_FPM_SONIC_MODULE、patch/series L11 で 0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch 適用を確認 (verified 2026-05-09)",
+    "zebra 起動コマンドの -M dplane_fpm_sonic 切替 -> docker-fpm-frr/frr/supervisord/supervisord.conf.j2 L46 で確認 (verified 2026-05-09)",
+    "fpmsyncd の RTM_NEWSRV6LOCALSID / RTM_DELSRV6LOCALSID 受理 -> sonic-swss/fpmsyncd/fpmlink.h L18 で 1000 番、fpmlink.cpp L46 で dispatch、receive_srv6_mysids_ut.cpp で SRv6 MySID Netlink テストを確認 (verified 2026-05-09)",
+    "上流 dplane_fpm_nl との差分は SONiC 専用 patch + dplane_fpm_sonic.c で吸収する方針で一貫 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 167,
-  "pr": 168
+  "pr": 168,
+  "last_verified": "2026-05-09"
 }

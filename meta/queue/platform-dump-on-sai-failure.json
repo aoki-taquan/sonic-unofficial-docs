@@ -1,13 +1,16 @@
 {
   "page": "docs/platform/dump-on-sai-failure.md",
   "issue": 83,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP 列挙値が sonic-sairedis に追加されているか確認",
-    "/usr/bin/syncd_dump.sh と platform_syncd_dump.sh のリポジトリ実装確認",
-    "/var/log/sai_failure_dump/ のホストマウント設定確認",
-    "techsupport 側で本ディレクトリを収集 / クリアする実装確認",
-    "orchagent の SAI 失敗ハンドリングで attribute set を呼ぶコードパス確認"
+    "汎用 dump スクリプト名が HLD では /usr/bin/syncd_dump.sh だが、現行 master では /usr/bin/sai_failure_dump.sh にリネームされている (sonic-sairedis/syncd/Syncd.cpp L45 SAI_FAILURE_DUMP_SCRIPT 定数, scripts/sai_failure_dump.sh)。本文記述と doc title はリネーム前の名前のまま。"
   ],
-  "priority": "medium"
+  "verified_concerns": [
+    "SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP 列挙値とディスパッチ -> sonic-sairedis/syncd/Syncd.cpp L4493 で SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD 経由の処理を確認、tests.cpp L958 でテストを確認 (verified 2026-05-09)",
+    "/var/log/sai_failure_dump/ 出力先 -> sai_failure_dump.sh L10 で DUMPDIR=/var/log/sai_failure_dump を確認 (verified 2026-05-09)",
+    "platform_syncd_dump.sh 呼び出し経路 -> sai_failure_dump.sh L12-13 で /usr/bin/platform_syncd_dump.sh の存在を確認して source、Mellanox docker (Dockerfile.j2 L70) で同名スクリプトをコピーしている例を確認 (verified 2026-05-09)",
+    "SAI_MAX_FAILURE_DUMPS 既定 10 -> sai_failure_dump.sh L8 で SAI_MAX_FAILURE_DUMPS=10 を確認 (verified 2026-05-09)"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

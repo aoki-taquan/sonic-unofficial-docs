@@ -1,7 +1,7 @@
 ---
 title: 新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `dplane_fpm_sonic.c` モジュールの sonic-buildimage/sonic-frr 配下への取り込み、`build-dplane-fpm-sonic-module.patch` の適用、zebra `supervisor.conf.j2` の `-M dplane_fpm_sonic` 切替、`RTM_NEWSRV6LOCALSID` / `RTM_DELSRV6LOCALSID` Netlink message type と `onSrv6LocalSidMsg()` callback の現行 master 実装は実コードでの裏取り未済（参考 PR: sonic-buildimage#18715, sonic-swss#3123）。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c` L170/L3467 で `prov_name = "dplane_fpm_sonic"` と provider 登録、`Makefile` L9 で `DPLANE_FPM_SONIC_MODULE` ビルドターゲット、`patch/series` L11 で `0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch` 適用を確認。`dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L46 で `zebra ... -M dplane_fpm_sonic -M snmp --asic-offload=notify_on_offload` 起動コマンドを確認。`sonic-swss/fpmsyncd/fpmlink.h` L18 で `RTM_NEWSRV6LOCALSID = 1000`、`fpmlink.cpp` L46 で `RTM_NEWSRV6LOCALSID` / `RTM_DELSRV6LOCALSID` の dispatch、`tests/mock_tests/fpmsyncd/receive_srv6_mysids_ut.cpp` で SRv6 MySID Netlink テストを確認（verified at: 2026-05-09）。
 
 # 新 FRR-SONiC 通信チャネル（`dplane_fpm_sonic` モジュール）
 

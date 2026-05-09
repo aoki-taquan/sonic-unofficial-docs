@@ -1,7 +1,7 @@
 ---
 title: ZMQ ProducerStateTable / ConsumerStateTable 設計
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-swss-common` 内の `ZmqClient` / `ZmqServer` / `ZmqProducerStateTable` / `ZmqConsumerStateTable` の実体・スレッド構成・DB 書き込みのオプション化（feature flag）の実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss-common/common/` 配下に `zmqclient.{h,cpp}` / `zmqserver.{h,cpp}` / `zmqproducerstatetable.{h,cpp}` / `zmqconsumerstatetable.{h,cpp}` の実体を確認。`zmqproducerstatetable.h` L16-49 で `ZmqProducerStateTable : public ProducerStateTable` 継承と `ZmqClient&` メンバ、コンストラクタ引数 `bool dbPersistence = true` を確認。`zmqconsumerstatetable.h` L22 / cpp L20-36 で Consumer 側コンストラクタ既定 `dbPersistence = false`、フラグに応じた DB 書き込み分岐を確認（DB 書き込みのオプション化）。Python バインディングは `pyext/swsscommon.i` L296-346 で `ZmqProducerStateTable` の director 化と `zmqWait` ヘルパを確認（verified at: 2026-05-09）。
 
 # ZMQ ProducerStateTable / ConsumerStateTable 設計
 

@@ -1,12 +1,14 @@
 {
   "page": "docs/management/sonic-config-update-validation-via-yang.md",
   "issue": 240,
-  "verification": "hld-only",
-  "concerns": [
-    "ConfigDBConnector の YANG 検証デコレータが各 sonic-utilities config CLI に取り込まれているか未確認",
-    "buffermgrd 側の D-Bus GCU API 連携実装存在確認",
-    "DEVICE_METADATA.yang_config_validation の取り込みと config yang_config_validation CLI 実装確認",
-    "HLD は 2022-08 (Phase 1) のため Phase 2 以降の変更や YANG カバレッジ拡張状況は要追跡"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "DEVICE_METADATA.yang_config_validation YANG 取り込み -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang L148 で leaf 定義、Configuration.md L1111 / sample_config_db.json L417 で既定 disable を確認 (verified 2026-05-09)",
+    "ConfigDBConnector の YANG 検証デコレータ -> sonic-utilities/config/validated_config_db_connector.py で ValidatedConfigDBConnector を実装、tests/validated_config_db_connector_test.py と各 feature テスト (sflow / radius / kube / config_snmp / feature) で validated_set_entry / validated_mod_entry を経由する取り込みを確認 (verified 2026-05-09)",
+    "GCU エンジン -> sonic-utilities/generic_config_updater/main.py / change_applier.py / gu_common.py で patch ベース更新と GenericConfigUpdaterError を確認 (verified 2026-05-09)",
+    "buffermgrd D-Bus GCU 連携は本ページの主張範囲外で未追跡 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

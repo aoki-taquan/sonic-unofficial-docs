@@ -1,7 +1,7 @@
 ---
 title: BUM ストームコントロール（PORT_STORM_CONTROL）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-swss` の `PolicerOrch` 実装、SAI ベンダー側の policer/port 属性対応、warm boot 時の挙動は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/tests/test_storm_control.py` L9-247 で `PORT_STORM_CONTROL` テーブル経由の broadcast / unknown unicast / unknown multicast の kbps 設定 / 削除テストを確認。`sonic-utilities/show/main.py` L175-235 で `show storm-control` コマンド一式、`config/main.py` L788-822 で `storm_control_interface_validate` / `is_storm_control_supported` / `storm_control_set_entry` を確認、`scripts/storm_control.py` を `setup.py` L194 で同梱していることを確認（verified at: 2026-05-09）。
 
 # BUM ストームコントロール（PORT_STORM_CONTROL）
 

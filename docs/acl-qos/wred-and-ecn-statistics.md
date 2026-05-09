@@ -1,7 +1,7 @@
 ---
 title: WRED / ECN 統計（per-queue / per-port、capability ベース）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
     - sonic-flex_counter
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`orchagent` の WRED capability discovery、`syncd` の Flex Counter group 拡張、`counterpoll` CLI の wredqueue/wredport トークン実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/portsorch.h` L42 で `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP = "WRED_ECN_QUEUE_STAT_COUNTER"` を確認、`flexcounterorch.cpp` L62/L95 で `WRED_QUEUE_KEY = "WRED_ECN_QUEUE"` のマッピングを確認。`portsorch.cpp` L433 で `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` を、L1872-1901 で `m_queueCounterCapabilitiesTable` への `WRED_ECN_QUEUE_*_COUNTER` capability 書き込みを確認。`sonic-utilities/counterpoll/main.py` L609-L624 で `counterpoll wredqueue` サブコマンド群、`tests/counterpoll_test.py` L326-L374 で `wredport` / `wredqueue` enable/interval を確認（verified at: 2026-05-09）。
 
 # WRED / ECN 統計（per-queue / per-port、capability ベース）
 

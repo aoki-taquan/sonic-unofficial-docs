@@ -1,7 +1,7 @@
 ---
 title: YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2022-08 (Phase 1 設計) で 3 年以上前。`ConfigDBConnector` のデコレータ適用範囲、各 `config <feature>` CLI への取り込み状況、buffermgrd の GCU D-Bus 連携実装は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang` L148 で `yang_config_validation` leaf 定義、`Configuration.md` L1111 で既定 `"yang_config_validation": "disable"`、`tests/yang_model_tests/tests/device_metadata.json` でデフォルト validation テストを確認。`sonic-utilities/config/validated_config_db_connector.py` と `tests/validated_config_db_connector_test.py` で `ValidatedConfigDBConnector` クラスを確認、各 feature テスト（`tests/sflow_test.py` L66 ほか radius / kube / config_snmp / feature 等）が `validated_config_db_connector.device_info.is_yang_config_validation_enabled` と `ValidatedConfigDBConnector.validated_set_entry` / `validated_mod_entry` をモックする形で取り込みを確認。`sonic-utilities/generic_config_updater/main.py` で GCU エンジン（`GenericConfigUpdaterError` ほか）が patch ベース更新を担うことを確認（verified at: 2026-05-09）。
 
 # YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
 

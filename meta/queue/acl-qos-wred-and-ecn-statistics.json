@@ -1,11 +1,13 @@
 {
   "page": "docs/acl-qos/wred-and-ecn-statistics.md",
   "issue": 27,
-  "verification": "hld-only",
-  "concerns": [
-    "orchagent の sai_query_stats_capability 利用と STATE_DB 投入が実装済みか未確認",
-    "counterpoll wredqueue / wredport CLI が sonic-utilities に実装されているか未確認",
-    "show queue wredcounters / sonic-clear queue wredcounters 実装の存在確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "orchagent の WRED capability 投入 -> sonic-swss/orchagent/portsorch.cpp L1872-1901 で m_queueCounterCapabilitiesTable に WRED_ECN_QUEUE_*_COUNTER を set (verified 2026-05-09)",
+    "counterpoll wredqueue / wredport CLI -> sonic-utilities/counterpoll/main.py L609-624 で wredqueue / wredport サブコマンド (interval/enable/disable) を確認 (verified 2026-05-09)",
+    "WRED_ECN_QUEUE_STAT_COUNTER Flex Counter group -> portsorch.h L42 で WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP マクロを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

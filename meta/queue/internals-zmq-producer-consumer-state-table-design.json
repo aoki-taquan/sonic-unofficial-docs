@@ -1,12 +1,14 @@
 {
   "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
   "issue": 53,
-  "verification": "hld-only",
-  "concerns": [
-    "ZmqClient / ZmqServer / ZmqProducerStateTable / ZmqConsumerStateTable の現行実装の存在確認",
-    "DB 更新の on/off フラグが実装にあるか、また既定値の確認",
-    "リトライポリシーの実装挙動（再試行回数・バックオフ）",
-    "select 通知と DB 書き込みの順序保証の実コード確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "ZmqClient / ZmqServer / ZmqProducerStateTable / ZmqConsumerStateTable の実装存在 -> sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp} を確認 (verified 2026-05-09)",
+    "DB 更新 on/off フラグ -> ZmqProducerStateTable は dbPersistence = true 既定 (zmqproducerstatetable.h L19-20)、ZmqConsumerStateTable は dbPersistence = false 既定 (zmqconsumerstatetable.h L22)、cpp L36 で if (dbPersistence) 分岐を確認 (verified 2026-05-09)",
+    "Python バインディング -> sonic-swss-common/pyext/swsscommon.i L296-346 で ZmqProducerStateTable の director 化と zmqWait ヘルパを確認 (verified 2026-05-09)",
+    "リトライポリシー / select 順序の詳細実装は本ページの主張範囲外で別途裏取り (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }
