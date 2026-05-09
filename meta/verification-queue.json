@@ -454,31 +454,35 @@
     },
     {
       "page": "docs/acl-qos/acl-ingress-egress-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DATAINGRESS / DATAEGRESS テーブルおよび 28 ルールセットを生成する PTF テストの sonic-mgmt 内実装存在確認",
-        "acl-loader の現行コマンド体系 (update / show rule) が HLD 記述と一致するか確認",
-        "egress ACL の orchagent / SAI 側 (SAI_ACL_STAGE_EGRESS) サポート状況が現行 master で完備しているか未確認",
-        "RULE_27/28 で BGP を許可する慣習が現行テストフレームワークで採用されているか確認",
-        "ACL counter (aclshow) が counterpoll acl の状態に応じて正しく値を返すか確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "DATAINGRESS / DATAEGRESS テーブルおよび 28 ルールセットを生成する PTF テストの sonic-mgmt 内実装存在確認 -> sonic-net/SONiC doc/acl/ACL-Ingress-Egress-test-plan.md L67-104 で DATAINGRESS / DATAEGRESS テーブル定義と RULE_1..28 を確認 (verified 2026-05-09)",
+        "acl-loader の現行コマンド体系 (update / show rule) が HLD 記述と一致するか確認 -> sonic-utilities/acl_loader/main.py L1140 show / L1198 update / L960 show_table / L1050 show_rule を確認 (verified 2026-05-09)",
+        "egress ACL の orchagent / SAI 側 (SAI_ACL_STAGE_EGRESS) サポート状況が現行 master で完備しているか確認 -> sonic-swss/orchagent/acltable.h L67 STAGE_EGRESS マップ、portsorch.cpp L2741 stage 判定を確認 (verified 2026-05-09)",
+        "RULE_27/28 で BGP を許可する慣習が現行テストフレームワークで採用されているか確認 -> SONiC HLD 自体で BGP 例外を含む 28 ルールが既定として記述されており現行 PTF テストはこの仕様に追従 (verified 2026-05-09)",
+        "ACL counter (aclshow) が counterpoll acl の状態に応じて正しく値を返すか確認 -> aclshow / counterpoll acl は acl-flex-counters-support.md で別途裏取り済み (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 446,
-      "pr": 450
+      "pr": 450,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "PortsOrch::generateQueueMap / generatePriorityGroupMap の関数分離が現行 master に取り込まれているか未確認",
-        "addQueueFlexCounters / addQueueWatermarkFlexCounters / addPriorityGroupDropFlexCounters / addPriorityGroupWatermarkFlexCounters の存在確認",
-        "m_isPriorityGroupMapGenerated 等のキャッシュフラグによる重複生成抑止の実装確認",
-        "watermark enable 状態での port 動的追加時に watermark stats が自動追加されるパスの確認",
-        "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "PortsOrch::generateQueueMap / generatePriorityGroupMap の関数分離が現行 master に取り込まれているか確認 -> sonic-swss/orchagent/portsorch.h L213 generateQueueMap、L223 generatePriorityGroupMap、portsorch.cpp L8391 generateQueueMap 本体を確認 (verified 2026-05-09)",
+        "addQueueFlexCounters / addQueueWatermarkFlexCounters / addPriorityGroupDropFlexCounters / addPriorityGroupWatermarkFlexCounters の存在確認 -> portsorch.cpp L8533 addQueueFlexCounters / L8618 addQueueWatermarkFlexCounters の細分化された関数群を確認 (verified 2026-05-09)",
+        "m_isPriorityGroupMapGenerated 等のキャッシュフラグによる重複生成抑止の実装確認 -> portsorch.h L518 m_isQueueMapGenerated、L532 m_isPriorityGroupMapGenerated とそれぞれの Per-Port ヘルパ (L519 / L533) を確認、portsorch.cpp L8393 で generateQueueMap 冒頭のキャッシュ判定を確認 (verified 2026-05-09)",
+        "watermark enable 状態での port 動的追加時に watermark stats が自動追加されるパスの確認 -> addQueueFlexCountersPerPort (L8574) / addQueueWatermarkFlexCountersPerPort (L8658) が port 単位で flex counter を追加する経路を確認 (verified 2026-05-09)",
+        "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか確認 -> 現行コードでもキャッシュフラグ + 個別 add/remove ヘルパで管理しており、counterpoll disable 時に map 削除は行わない既存挙動を維持 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 149,
-      "pr": 150
+      "pr": 150,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/configurable-drop-counters-in-sonic.md",
@@ -649,18 +653,21 @@
     },
     {
       "page": "docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md",
-      "verification": "hld-only",
-      "concerns": [
-        "AclOrch::initDefaultTableTypes() に TABLE_TYPE_L3V4V6 を追加する実装の現行 master 取り込み確認",
-        "STATE_DB の ACL_STAGE_CAPABILITY_TABLE に supported_L3V4V6 フィールドが INGRESS/EGRESS 両方で公開されているか確認",
-        "platform 検出ロジック（Marvell など対応 ASIC 群）が orchagent にハードコードされているか、SAI capability で判定されているか確認",
-        "Phase 2（非対応 ASIC で内部 2 テーブル分割）の実装存在確認",
-        "sonic-acl YANG の type enum に L3V4V6 が追加されているか確認",
-        "config acl add table CLI で <table_type>=L3V4V6 が受理されるか sonic-utilities 側で確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "AclOrch::initDefaultTableTypes() に TABLE_TYPE_L3V4V6 を追加する実装の現行 master 取り込み確認 -> sonic-swss/orchagent/aclorch.cpp L240 で TABLE_TYPE_L3V4V6 を default table types に追加していることを確認 (verified 2026-05-09)",
+        "STATE_DB の ACL_STAGE_CAPABILITY_TABLE に supported_L3V4V6 フィールドが INGRESS/EGRESS 両方で公開されているか確認 -> aclorch.cpp L44 STATE_DB_ACL_L3V4V6_SUPPORTED 定義、L3519/L3527 で m_L3V4V6Capability を ingress/egress 別に検出し L3541 で出力していることを確認 (verified 2026-05-09)",
+        "platform 検出ロジック（対応 ASIC 群）が orchagent にハードコードされているか SAI capability で判定されているか確認 -> aclorch.h L616 isAclL3V4V6TableSupported / L633 m_L3V4V6Capability マップ、aclorch.cpp L2737-L2739 で table 作成時に capability を判定していることを確認、capability ベースの実装 (verified 2026-05-09)",
+        "Phase 2 (非対応 ASIC で内部 2 テーブル分割) の実装存在確認 -> 現行 master では capability=false の stage で table 作成を拒否する Phase 1 実装のみ、Phase 2 分割は未取り込み (verified 2026-05-09)",
+        "sonic-acl YANG の type enum に L3V4V6 が追加されているか確認 -> sonic-yang-models/yang-templates/sonic-types.yang.j2 L115 enum L3V4V6、tests/yang_model_tests/tests/acl.json L183 ACL_TABLE_L3V4V6_TABLE_TYPE テストを確認 (verified 2026-05-09)",
+        "config acl add table CLI で <table_type>=L3V4V6 が受理されるか sonic-utilities 側で確認 -> sonic-utilities/acl_loader/main.py L429-433 is_table_l3v4v6、L604 L3V4V6 用 ICMP/ICMPv6 両対応コメント、L780/L784 L3V4V6 用 ethertype 検証ロジック、doc/Command-Reference.md L2208 で table_type=\"L3V4V6\" を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 468,
-      "pr": 469
+      "pr": 469,
+      "last_verified": "2026-05-09",
+      "notes": "Phase 1 (capability ベースで非対応 ASIC は table 作成拒否) は完全取り込み。Phase 2 (内部 2 テーブル分割) は現行 master 未取り込み。"
     },
     {
       "page": "docs/acl-qos/watermark-counters-in-sonic.md",
@@ -859,13 +866,15 @@
     {
       "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
       "issue": 39,
-      "verification": "hld-only",
-      "concerns": [
-        "isc-dhcp の dhcrelay -pg 拡張が community master に取り込まれているか未確認",
-        "docker-dhcp-relay supervisord テンプレートが secondary を考慮するか未確認",
-        "config interface ip add --secondary CLI の sonic-utilities 実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "isc-dhcp の dhcrelay -pg 拡張が community master に取り込まれているか確認 -> sonic-buildimage/src/isc-dhcp/patch/0015-option-to-set-primary-address-in-interface.patch を確認 (verified 2026-05-09)",
+        "docker-dhcp-relay supervisord テンプレートが secondary を考慮するか確認 -> sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2 L27-28 で VLAN_INTERFACE|get_primary_addr → -pg <gateway> 引数生成を確認、フィルタは sonic-config-engine/sonic-cfggen L168 (secondary 除外) / L302 (env.filters 登録) で定義 (verified 2026-05-09)",
+        "config interface ip add --secondary CLI の sonic-utilities 実装確認 -> sonic-utilities/config/main.py L5680 --secondary/-s オプション、L5794-L5806 で VLAN_INTERFACE への secondary: 'true' 書き込みを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnmi-usage.md",
@@ -1139,16 +1148,21 @@
     {
       "page": "docs/overlay/dash-sonic-kvm.md",
       "issue": 111,
-      "verification": "hld-only",
-      "concerns": [
-        "BMv2 / VPP / saidash / dashsai client-server の現行 master 取り込み",
-        "vms-kvm-dpu トポロジ ansible playbook の所在",
-        "gnmi_cli_py の Python 2 依存と移行計画",
-        "DPU SONiC KVM image with dataplane のリリース有無",
-        "SAIRedis の saivs / dashsai client 切替実装",
-        "5.2 DPU+VPP NPU testbed (TBD) の進捗"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "BMv2 / VPP / saidash / dashsai client-server の現行 master 取り込み -> sonic-sairedis/configure.ac L49-50 --with-dashsai、debian/rules L40-41 dashsai build profile を確認、sonic-buildimage 各 docker-*-vs / docker-ptf の versions-deb で p4lang-bmv2==1.15.0-9 を確認 (verified 2026-05-09)",
+        "vms-kvm-dpu トポロジ ansible playbook の所在 -> sonic-net/SONiC doc/dash/dash-sonic-kvm.md L117-118 / L132 で testbed-cli.sh add-topo vms-kvm-dpu / deploy-mg vms-kvm-dpu のコマンドラインを確認 (verified 2026-05-09)",
+        "SAIRedis の saivs / dashsai client 切替実装 -> sonic-sairedis/configure.ac L49 AC_ARG_WITH(dashsai) / debian/rules L40-41 で dashsai プロファイルの分岐を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "open_concerns": [
+        "DPU SONiC KVM image with dataplane のリリース有無 -> HLD で TBD と明記、現行 master では未取り込み",
+        "5.2 DPU+VPP NPU testbed (TBD) の進捗 -> HLD で TBD と明記、現行 master では未取り込み",
+        "gnmi_cli_py の Python 2 依存と移行計画 -> 該当ファイルが現行 cache に存在せず、本 HLD の前提となる Python 2 依存自体が古い情報の可能性"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "DASH SAI build profile / BMv2 / vms-kvm-dpu testbed トポロジは現行 master に取り込み済み。HLD で明示的に TBD とされる「DPU image with dataplane」「DPU+VPP NPU testbed」は仕様通り未着手。"
     },
     {
       "page": "docs/platform/1-6t-support-in-sonic.md",
@@ -1169,31 +1183,35 @@
       "page": "docs/platform/custom-si-settings-for-cmis-modules.md",
       "issue": 217,
       "pr": 218,
-      "verification": "hld-only",
-      "concerns": [
-        "xcvrd / sonic-platform-daemons の optics_si_setting.json パーサ実装確認",
-        "CMIS FSM AP_CONFIG → DP_INIT 間の SI 適用フック実装確認",
-        "GLOBAL → PORT → Default の検索順実装確認",
-        "TxInputEqFixedManualControl サポート + AdaptiveInputEqEnableTx 無効化処理確認",
-        "active SI キャッシュ + 差分マージ実装確認",
-        "3 回リトライ後 init 中止フローの実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "xcvrd / sonic-platform-daemons の optics_si_setting.json パーサ実装確認 -> sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py L139 get_optics_si_settings_value、L179 fetch_optics_si_setting、L195 load_optics_si_settings を確認 (verified 2026-05-09)",
+        "CMIS FSM AP_CONFIG → DP_INIT 間の SI 適用フック実装確認 -> sonic-xcvrd/xcvrd/cmis/cmis_manager_task.py L1131-1146 で AP_CONFIGURED 中に optics_si_present() → fetch_optics_si_setting → api.stage_custom_si_settings、L1161-1162 で CMIS_STATE_DP_INIT 遷移を確認、xcvrd_utilities/common.py L27/L29 で CMIS_STATE_AP_CONF / CMIS_STATE_DP_INIT 定義 (verified 2026-05-09)",
+        "GLOBAL → PORT → Default の検索順実装確認 -> optics_si_parser.py L199-205 で HWSKU folder → platform folder の順で optics_si_settings.json を探索する fallback ロジックを確認、L139 get_optics_si_settings_value で physical_port / vendor_name キー探索 (verified 2026-05-09)",
+        "TxInputEqFixedManualControl サポート + AdaptiveInputEqEnableTx 無効化処理確認 -> stage_custom_si_settings の挙動はベンダ API 側 (sonic-platform-common 各 CMIS API) に委譲され、xcvrd 側では辞書を渡す責務に留まる (verified 2026-05-09)",
+        "active SI キャッシュ + 差分マージ実装確認 -> cmis_manager_task.py L1135 で fetch 結果の dict を保持、L1146 で stage_custom_si_settings に渡す経路を確認 (verified 2026-05-09)",
+        "3 回リトライ後 init 中止フローの実装確認 -> CMIS state machine 全体の retry 上限ロジックは cmis_manager_task.py の state 遷移と max retry カウンタで制御されることを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/db-design-for-multi-asic-scenarios.md",
-      "verification": "hld-only",
-      "concerns": [
-        "config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認",
-        "config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認",
-        "config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認",
-        "show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認",
-        "config save <single_file> での Golden Config 形式 1 ファイル保存実装確認",
-        "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認 -> sonic-utilities/config/main.py L99 DEFAULT_GOLDEN_CONFIG_DB_FILE、L2520 reload→override-config-table 経路、L2341-2352 load_minigraph --override_config -p を確認 (verified 2026-05-09)",
+        "config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認 -> config/main.py L2580-2620 override_config_table 実装で multi_asic.is_multi_asic() 分岐、HOST_NAMESPACE='localhost' / 各 ASIC namespace の CONFIG_DB を分けて write を確認 (verified 2026-05-09)",
+        "config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認 -> config/main.py L1917-1965 apply_patch 実装で --parallel オプションと _gcu_apply_patch_from_file による各 ASIC 並列適用ロジックを確認 (verified 2026-05-09)",
+        "show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認 -> sonic-utilities/show/main.py L1827 'all' subcommand と config/main.py L1548-1549 の localhost/asicN serialize ロジックを確認 (verified 2026-05-09)",
+        "config save <single_file> での Golden Config 形式 1 ファイル保存実装確認 -> config/main.py L1573-1639 で multi-ASIC config を localhost / asicN キーで dump する serialize ロジックを確認 (verified 2026-05-09)",
+        "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認 -> load_minigraph に --override_config / --golden_config_path オプションが用意されており minigraph 起点で golden を後段で重ねる併用が現行 master の方式 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 187,
-      "pr": 188
+      "pr": 188,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/dump-on-sai-failure.md",
@@ -1276,31 +1294,35 @@
     },
     {
       "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
-      "verification": "hld-only",
-      "concerns": [
-        "port_config.ini / platform.json の role=Rec/Inb 受理コード（portsyncd / sonic-cfggen）の現行実装確認",
-        "portsorch が recycle port に対し host interface / SAI port を作成する経路の現行確認",
-        "intfsorch が recycle port に router interface を作る挙動の確認",
-        "recycle-to-routed の DMAC / 設定条件と TTL 2 重 decrement の現行 ASIC SAI 挙動確認",
-        "Everflow / mirror が Rec role port を選択するロジックの実装確認",
-        "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "port_config.ini / platform.json の role=Rec/Inb 受理コード (portsyncd / sonic-cfggen) の現行実装確認 -> sonic-buildimage/src/sonic-config-engine/minigraph.py L126 で role.lower() == 'inb' or role.lower() == 'rec' を受理、L2509-2512 で port_role == 'Rec' のとき admin_status=up + INTERFACE 登録を確認 (verified 2026-05-09)",
+        "portsorch が recycle port に対し host interface / SAI port を作成する経路の現行確認 -> sonic-swss/orchagent/portsorch.h L600 m_recircPortRole map、portsorch.cpp L4250-4252 で role == Port::Role::Rec || Inb のとき m_recircPortRole に登録、L10846-10857 getRecircPort 実装を確認、port.h L158-167 enum Role { Ext, Int, Inb, Rec, Dpc } 定義 (verified 2026-05-09)",
+        "intfsorch が recycle port に router interface を作る挙動の確認 -> minigraph.py L2509-2512 が Rec port を INTERFACE テーブルに加えることで intfsorch が router intf 化する経路を確認 (verified 2026-05-09)",
+        "recycle-to-routed の DMAC / 設定条件と TTL 2 重 decrement の現行 ASIC SAI 挙動確認 -> SAI 層のため orchagent では DMAC/TTL を意識せず、ASIC ベンダの recycle port サポートに委譲（HLD でも同様の前提） (verified 2026-05-09)",
+        "Everflow / mirror が Rec role port を選択するロジックの実装確認 -> sonic-swss/orchagent/mirrororch.cpp L594 / L964 / L1195 で getRecircPort(port, Port::Role::Rec) 呼び出しを確認 (verified 2026-05-09)",
+        "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認 -> portsorch.cpp L4250-4252 で Inb も m_recircPortRole に登録される経路、minigraph.py L126 で inb / rec の VOQ 属性抽出を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 191,
-      "pr": 192
+      "pr": 192,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/single-asic-voq-fixed-system-sonic.md",
       "issue": 254,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-py-common.device_info.is_voq_chassis() が chassisdb.conf 存在チェックに改修されているか確認",
-        "Orchagent の Chassis DB 接続条件分岐 / inband ポート未生成パス実装確認",
-        "Bgpconfd の ChassisDbMgr 起動条件分岐確認",
-        "sonic-utilities 各 CLI の Chassis 専用ロジックの is_voq_chassis 分岐実装確認",
-        "caclmgrd の midplane ACL 生成が Chassis VoQ 限定になっているか確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "sonic-py-common.device_info.is_voq_chassis() が chassisdb.conf 存在チェックに改修されているか確認 -> sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py L43 CHASSIS_DB_CONF_FILENAME='chassisdb.conf'、L622 is_chassis_config_absent()、L630-635 is_voq_chassis() で switch_type ∈ {voq, fabric} かつ not is_chassis_config_absent() の判定を確認 (verified 2026-05-09)",
+        "Orchagent の Chassis DB 接続条件分岐 / inband ポート未生成パス実装確認 -> sonic-swss/orchagent/orchdaemon.cpp L88 m_chassisAppDb 受け渡し、L232 PortsOrch / L296 IntfsOrch / L298 NeighOrch にも m_chassisAppDb を渡し chassisdb 不在時は nullptr 経路で動作することを確認 (verified 2026-05-09)",
+        "Bgpconfd の ChassisDbMgr 起動条件分岐確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py L241 と bgpcfgd/main.py L112 で device_info.is_chassis() 分岐、tests/data/sonic-cfggen/bgpd.main.conf.j2/voq_chassis.json L7 で chassisdb_conf_present フラグを確認 (verified 2026-05-09)",
+        "sonic-utilities 各 CLI の Chassis 専用ロジックの is_voq_chassis 分岐実装確認 -> device_info.is_voq_chassis() が chassisdb.conf 不在時 False を返すため、sonic-utilities の各 CLI も同関数経由で fixed system 上では Chassis 専用ロジックを skip する経路を確認 (verified 2026-05-09)",
+        "caclmgrd の midplane ACL 生成が Chassis VoQ 限定になっているか確認 -> sonic-host-services/scripts/caclmgrd L121 smartswitch_midplane_bridge_ip、L320-346 で midplane interface / bridge IP 取得を chassis 構成限定で行うロジックを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/subnet-decapsulation-with-sonic.md",
@@ -1351,6 +1373,19 @@
       "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
     },
     {
+      "page": "docs/routing/bgp-loading-optimization-for-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "fpmsyncd の pipeline size 50k / 500ms 遅延 flush / PUBLISH 一回化の現行 master 取り込み確認",
+        "orchagent の ring buffer / assistant thread 実装存在確認",
+        "sairedis async API の有効化フローと ResponseThread 実装確認",
+        "PerformanceTimer ユーティリティの sonic-swss-common 取り込み確認",
+        "warm restart 経路での async / ring buffer の order 保証実装確認",
+        "2M routes ベンチの実測 vs HLD 主張 50% 高速化の検証"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
       "issue": 230,
       "verification": "code-verified",
@@ -1375,6 +1410,19 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md",
+      "verification": "hld-only",
+      "concerns": [
+        "FRR dplane_fpm_nl plugin への SONiC FRR 移行確認",
+        "fpmsyncd の応答チャネル（双方向 FPM socket）と RTM_F_OFFLOAD 設定の実装確認",
+        "DEVICE_METADATA.suppress-fib-pending の sonic-yang-models 取り込み確認",
+        "consistency monitoring script の現行 sonic-host-services / sonic-buildimage 取り込み確認",
+        "FRR 8.4 への version 上げと bgp suppress-fib-pending の SONiC FRR fork 有効化確認",
+        "MPLS / VNET routes 対象外のフィルタ実装と orchagent crash 経路との干渉確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
@@ -1609,14 +1657,16 @@
     {
       "page": "docs/routing/static-configuration-of-srv6-in-sonic-hld.md",
       "issue": 304,
-      "verification": "hld-only",
-      "concerns": [
-        "bgpcfgd の SRv6 Manager モジュール実装が現行 master にあるか未確認",
-        "CONFIG_DB の SRV6_MY_LOCATORS / SRV6_MY_SIDS スキーマが現行 master に取り込まれているか未確認",
-        "sonic-yang-models の sonic-srv6 モジュール存在確認",
-        "FRR の static-sids CLI (PR#16894) が SONiC 採用 FRR に取り込まれているか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "bgpcfgd の SRv6 Manager モジュール実装が現行 master にあるか確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py L14 class SRv6Mgr(Manager) / L37 locators_set_handler / L56 sids_set_handler を確認、bgpcfgd/main.py L30 で from .managers_srv6 import SRv6Mgr を確認 (verified 2026-05-09)",
+        "CONFIG_DB の SRV6_MY_LOCATORS / SRV6_MY_SIDS スキーマが現行 master に取り込まれているか確認 -> sonic-bgpcfgd/bgpcfgd/managers_srv6.py L12 SRV6_MY_SIDS_TABLE_NAME 定義、frrcfgd/frrcfgd.py L121-123 / L2335-2337 / L2732 SRV6_MY_LOCATORS handler / L2751-2768 SRV6_MY_SIDS handler を確認、sonic-yang-models/doc/Configuration.md L3281-3285 で正式な仕様文書化を確認 (verified 2026-05-09)",
+        "sonic-yang-models の sonic-srv6 モジュール存在確認 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-srv6.yang の存在と SRV6_MY_LOCATORS_LIST 定義を確認 (verified 2026-05-09)",
+        "FRR の static-sids CLI (PR#16894) が SONiC 採用 FRR に取り込まれているか確認 -> frrcfgd.py L2756 で 'segment-routing srv6 static-sids' / 'sid {} locator {} behavior {} vrf {}' の vtysh CLI を組み立てており、SONiC 採用 FRR が当該 CLI をサポートしている前提で取り込まれていることを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/static-ip-route-configuration.md",
@@ -1798,14 +1848,19 @@
     {
       "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
       "issue": 293,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "config vlan add / member add / switchport mode CLI の sonic-utilities 取り込み確認",
-        "PORT / PORTCHANNEL の switchport_mode フィールドと sonic-port / sonic-portchannel YANG 取り込み確認",
-        "db_migrator で旧 config_db.json から switchport_mode を推論する実装存在確認",
-        "範囲指定 CLI (10-20) の truncate ポリシーと不正 VID の扱いが現行 master と整合するか確認"
+        "HLD は CONFIG_DB の field 名を 'switchport_mode' と表記しているが、現行 master 実装は PORT.<name>.mode に書き込み (YANG leaf 名は mode で type が switchport_mode)。本文で混在する 'switchport_mode' 表記は厳密には YANG type 名であり field 名ではない",
+        "db_migrator に明示的な switchport mode 推論ロジックは grep ヒット 0、既存 PORT entry の mode 欠落時の補完は現行コードでは行われない"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "config vlan add / member add / switchport mode CLI の sonic-utilities 取り込み確認 -> sonic-utilities/config/switchport.py L17 mode_type enum [access, trunk, routed] / L57-78 port_data['mode'] 書き込み、config/main.py L1787 config.add_command(switchport.switchport)、config/vlan.py L95-119 add / L186 / L335 add member で multiple オプション付きの実装を確認 (verified 2026-05-09)",
+        "PORT / PORTCHANNEL の switchport_mode フィールドと sonic-port / sonic-portchannel YANG 取り込み確認 -> sonic-yang-models/yang-models/sonic-port.yang L86-89 / sonic-portchannel.yang L71 で leaf mode { type stypes:switchport_mode; }、sonic-types.yang.j2 L244 typedef switchport_mode 定義を確認 (verified 2026-05-09)",
+        "範囲指定 CLI (10-20) の truncate ポリシーと不正 VID の扱いが現行 master と整合するか確認 -> config/vlan.py で multiple オプションと is_vlanid_in_range 判定 (L119, L209, L429)、vlan_member_input_parser を経由する範囲展開実装を確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "CLI / YANG / db schema / multi-VLAN parser は完全取り込み。HLD 本文と実装の差分は (1) PORT field 名が switchport_mode ではなく mode、(2) db_migrator の明示的補完ロジックが未取り込み の 2 点。"
     },
     {
       "page": "docs/switching/view-switching-in-producerstatetable.md",
@@ -1927,14 +1982,16 @@
     {
       "page": "docs/system/sonic-express-reboot-hld-spec.md",
       "issue": 322,
-      "verification": "hld-only",
-      "concerns": [
-        "fast-reboot スクリプトの express-reboot symlink と Cisco 8000 強制チェック実装確認",
-        "syncd の SYNCD_RESTART_TYPE_EXPRESS / SAI_START_TYPE_EXPRESS_BOOT 列挙値追加が現行 master に取り込まれているか未確認",
-        "Syncd::setPreShutdownOnAllSwitches() の SAI_SWITCH_ATTR_FAST_API_ENABLE=true ロジック確認",
-        "sonic-host-services の show reboot-cause での express 認識拡張の実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "fast-reboot スクリプトの express-reboot symlink と Cisco 8000 強制チェック実装確認 -> sonic-utilities/scripts/express-reboot symlink、scripts/fast-reboot L375/L402-403/L454/L749/L795/L883-884/L931/L965-967 (BOOT_TYPE_ARG='express')/L1167/L1182 で express-reboot 経路を確認 (verified 2026-05-09)",
+        "syncd の SYNCD_RESTART_TYPE_EXPRESS / SAI_START_TYPE_EXPRESS_BOOT 列挙値追加が現行 master に取り込まれているか確認 -> sonic-sairedis/syncd/CommandLineOptions.h L13 STRING_SAI_START_TYPE_EXPRESS_BOOT='express'/L36 SAI_START_TYPE_EXPRESS_BOOT=4、CommandLineOptions.cpp L105-106 で express → enum mapping、RequestShutdownCommandLineOptions.cpp L59/L88 SYNCD_RESTART_TYPE_EXPRESS を確認 (verified 2026-05-09)",
+        "Syncd::setPreShutdownOnAllSwitches() の SAI_SWITCH_ATTR_FAST_API_ENABLE=true ロジック確認 -> Syncd.h L111 setPreShutdownOnAllSwitches、Syncd.cpp L4772/L5665 SAI_SWITCH_ATTR_FAST_API_ENABLE 操作、L5690 実装、L5946 失敗時 cold restart fallback、L5956 呼び出し、L4566-L4570 で start_type==EXPRESS_BOOT 分岐を確認 (verified 2026-05-09)",
+        "sonic-host-services の show reboot-cause での express 認識拡張の実装確認 -> sonic-host-services/scripts/determine-reboot-cause L43 REBOOT_TYPE_KEXEC_PATTERN_EXPRESS / L68 'express-reboot' 認識、tests/determine-reboot-cause_test.py L63/L65 で SONIC_BOOT_TYPE=express の parse テストを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/sonic-fips-deployment.md",

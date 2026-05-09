@@ -1,12 +1,17 @@
 {
   "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
   "issue": 293,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "config vlan add / member add / switchport mode CLI の sonic-utilities 取り込み確認",
-    "PORT / PORTCHANNEL の switchport_mode フィールドと sonic-port / sonic-portchannel YANG 取り込み確認",
-    "db_migrator で旧 config_db.json から switchport_mode を推論する実装存在確認",
-    "範囲指定 CLI (10-20) の truncate ポリシーと不正 VID の扱いが現行 master と整合するか確認"
+    "HLD は CONFIG_DB の field 名を 'switchport_mode' と表記しているが、現行 master 実装は PORT.<name>.mode に書き込み (YANG leaf 名は mode で type が switchport_mode)。本文で混在する 'switchport_mode' 表記は厳密には YANG type 名であり field 名ではない",
+    "db_migrator に明示的な switchport mode 推論ロジックは grep ヒット 0、既存 PORT entry の mode 欠落時の補完は現行コードでは行われない"
   ],
-  "priority": "medium"
+  "verified_concerns": [
+    "config vlan add / member add / switchport mode CLI の sonic-utilities 取り込み確認 -> sonic-utilities/config/switchport.py L17 mode_type enum [access, trunk, routed] / L57-78 port_data['mode'] 書き込み、config/main.py L1787 config.add_command(switchport.switchport)、config/vlan.py L95-119 add / L186 / L335 add member で multiple オプション付きの実装を確認 (verified 2026-05-09)",
+    "PORT / PORTCHANNEL の switchport_mode フィールドと sonic-port / sonic-portchannel YANG 取り込み確認 -> sonic-yang-models/yang-models/sonic-port.yang L86-89 / sonic-portchannel.yang L71 で leaf mode { type stypes:switchport_mode; }、sonic-types.yang.j2 L244 typedef switchport_mode 定義を確認 (verified 2026-05-09)",
+    "範囲指定 CLI (10-20) の truncate ポリシーと不正 VID の扱いが現行 master と整合するか確認 -> config/vlan.py で multiple オプションと is_vlanid_in_range 判定 (L119, L209, L429)、vlan_member_input_parser を経由する範囲展開実装を確認 (verified 2026-05-09)"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "CLI / YANG / db schema / multi-VLAN parser は完全取り込み。HLD 本文と実装の差分は (1) PORT field 名が switchport_mode ではなく mode、(2) db_migrator の明示的補完ロジックが未取り込み の 2 点。"
 }

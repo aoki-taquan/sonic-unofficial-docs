@@ -1,7 +1,7 @@
 ---
 title: VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `port_config.ini` / `platform.json` の `role: Inb / Rec` 受理コード、`portsyncd` / `portsorch` / `intfsorch` の recirculation port 取り扱いは実コードでの裏取り未済。recycle-to-routed と TTL 二重 decrement の現行ベンダ SAI 挙動も未確認。
+!!! success "裏取りステータス: Code-verified"
+    sonic-swss `orchagent/port.h` L158-167 で `enum Role { Ext, Int, Inb, Rec, Dpc }` を確認。`portsorch.h` L600 で `map<string, Port::Role> m_recircPortRole` メンバを確認、`portsorch.cpp` L4250-4252 で `role == Port::Role::Rec || role == Port::Role::Inb` のとき m_recircPortRole に登録、L10846-10857 `getRecircPort(Port&, Port::Role)` を確認。minigraph 側は sonic-buildimage `src/sonic-config-engine/minigraph.py` L126 で `role.lower() == 'inb' or role.lower() == 'rec'` 受理（VOQ intf 属性抽出）、L2509-2512 で `port_role == 'Rec'` の port を admin_status=up + INTERFACE テーブル登録（routed 化）する経路を確認。Mirror 側は `mirrororch.cpp` L594/L964/L1195 で `getRecircPort(port, Port::Role::Rec)` 呼び出しを確認（verified at: 2026-05-09）。
 
 # VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
 

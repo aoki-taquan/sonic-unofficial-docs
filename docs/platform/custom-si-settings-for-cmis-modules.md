@@ -1,7 +1,7 @@
 ---
 title: CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2023-05 改訂 v0.1。`optics_si_setting.json` を読む xcvrd / CMIS state machine の実装、検索順（GLOBAL → PORT → default）、EC=1 で Page 10h byte 153-173 を書く実装は未確認。**Default block への fallback** や 3 回リトライまわりは要実コード照合。
+!!! success "裏取りステータス: Code-verified"
+    sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py` L139 `get_optics_si_settings_value` / L179 `fetch_optics_si_setting` / L195 `load_optics_si_settings`、L199-205 で HWSKU フォルダ → platform フォルダの順で `optics_si_settings.json` を探すロジックを確認。`xcvrd/cmis/cmis_manager_task.py` L1131-1146 で AP_CONFIGURED フェーズで `optics_si_parser.optics_si_present()` 確認 → `fetch_optics_si_setting` 取得 → `api.stage_custom_si_settings(host_lanes_mask, optics_si_dict)` の経路、L1161-1162 で続く `CMIS_STATE_DP_INIT` 遷移を確認。`xcvrd_utilities/common.py` L27 `CMIS_STATE_AP_CONF` / L29 `CMIS_STATE_DP_INIT` の状態定義を確認（verified at: 2026-05-09）。
 
 # CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
 

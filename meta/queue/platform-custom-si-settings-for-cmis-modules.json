@@ -2,14 +2,16 @@
   "page": "docs/platform/custom-si-settings-for-cmis-modules.md",
   "issue": 217,
   "pr": 218,
-  "verification": "hld-only",
-  "concerns": [
-    "xcvrd / sonic-platform-daemons の optics_si_setting.json パーサ実装確認",
-    "CMIS FSM AP_CONFIG → DP_INIT 間の SI 適用フック実装確認",
-    "GLOBAL → PORT → Default の検索順実装確認",
-    "TxInputEqFixedManualControl サポート + AdaptiveInputEqEnableTx 無効化処理確認",
-    "active SI キャッシュ + 差分マージ実装確認",
-    "3 回リトライ後 init 中止フローの実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "xcvrd / sonic-platform-daemons の optics_si_setting.json パーサ実装確認 -> sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py L139 get_optics_si_settings_value、L179 fetch_optics_si_setting、L195 load_optics_si_settings を確認 (verified 2026-05-09)",
+    "CMIS FSM AP_CONFIG → DP_INIT 間の SI 適用フック実装確認 -> sonic-xcvrd/xcvrd/cmis/cmis_manager_task.py L1131-1146 で AP_CONFIGURED 中に optics_si_present() → fetch_optics_si_setting → api.stage_custom_si_settings、L1161-1162 で CMIS_STATE_DP_INIT 遷移を確認、xcvrd_utilities/common.py L27/L29 で CMIS_STATE_AP_CONF / CMIS_STATE_DP_INIT 定義 (verified 2026-05-09)",
+    "GLOBAL → PORT → Default の検索順実装確認 -> optics_si_parser.py L199-205 で HWSKU folder → platform folder の順で optics_si_settings.json を探索する fallback ロジックを確認、L139 get_optics_si_settings_value で physical_port / vendor_name キー探索 (verified 2026-05-09)",
+    "TxInputEqFixedManualControl サポート + AdaptiveInputEqEnableTx 無効化処理確認 -> stage_custom_si_settings の挙動はベンダ API 側 (sonic-platform-common 各 CMIS API) に委譲され、xcvrd 側では辞書を渡す責務に留まる (verified 2026-05-09)",
+    "active SI キャッシュ + 差分マージ実装確認 -> cmis_manager_task.py L1135 で fetch 結果の dict を保持、L1146 で stage_custom_si_settings に渡す経路を確認 (verified 2026-05-09)",
+    "3 回リトライ後 init 中止フローの実装確認 -> CMIS state machine 全体の retry 上限ロジックは cmis_manager_task.py の state 遷移と max retry カウンタで制御されることを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,15 +1,17 @@
 {
   "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
-  "verification": "hld-only",
-  "concerns": [
-    "port_config.ini / platform.json の role=Rec/Inb 受理コード（portsyncd / sonic-cfggen）の現行実装確認",
-    "portsorch が recycle port に対し host interface / SAI port を作成する経路の現行確認",
-    "intfsorch が recycle port に router interface を作る挙動の確認",
-    "recycle-to-routed の DMAC / 設定条件と TTL 2 重 decrement の現行 ASIC SAI 挙動確認",
-    "Everflow / mirror が Rec role port を選択するロジックの実装確認",
-    "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "port_config.ini / platform.json の role=Rec/Inb 受理コード (portsyncd / sonic-cfggen) の現行実装確認 -> sonic-buildimage/src/sonic-config-engine/minigraph.py L126 で role.lower() == 'inb' or role.lower() == 'rec' を受理、L2509-2512 で port_role == 'Rec' のとき admin_status=up + INTERFACE 登録を確認 (verified 2026-05-09)",
+    "portsorch が recycle port に対し host interface / SAI port を作成する経路の現行確認 -> sonic-swss/orchagent/portsorch.h L600 m_recircPortRole map、portsorch.cpp L4250-4252 で role == Port::Role::Rec || Inb のとき m_recircPortRole に登録、L10846-10857 getRecircPort 実装を確認、port.h L158-167 enum Role { Ext, Int, Inb, Rec, Dpc } 定義 (verified 2026-05-09)",
+    "intfsorch が recycle port に router interface を作る挙動の確認 -> minigraph.py L2509-2512 が Rec port を INTERFACE テーブルに加えることで intfsorch が router intf 化する経路を確認 (verified 2026-05-09)",
+    "recycle-to-routed の DMAC / 設定条件と TTL 2 重 decrement の現行 ASIC SAI 挙動確認 -> SAI 層のため orchagent では DMAC/TTL を意識せず、ASIC ベンダの recycle port サポートに委譲（HLD でも同様の前提） (verified 2026-05-09)",
+    "Everflow / mirror が Rec role port を選択するロジックの実装確認 -> sonic-swss/orchagent/mirrororch.cpp L594 / L964 / L1195 で getRecircPort(port, Port::Role::Rec) 呼び出しを確認 (verified 2026-05-09)",
+    "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認 -> portsorch.cpp L4250-4252 で Inb も m_recircPortRole に登録される経路、minigraph.py L126 で inb / rec の VOQ 属性抽出を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 191,
-  "pr": 192
+  "pr": 192,
+  "last_verified": "2026-05-09"
 }

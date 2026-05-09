@@ -1,7 +1,7 @@
 ---
 title: L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-acl
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `AclOrch::initDefaultTableTypes()` への `TABLE_TYPE_L3V4V6` 追加、`ACL_STAGE_CAPABILITY_TABLE` への `supported_L3V4V6` フィールド追加、Phase 2（非対応 ASIC で内部的に v4/v6 SAI テーブル 2 枚を作る分割）の実装状況は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    sonic-swss `orchagent/aclorch.cpp` L44 で `STATE_DB_ACL_L3V4V6_SUPPORTED = "supported_L3V4V6"` 定義、L240 で `TABLE_TYPE_L3V4V6` を default table types に追加、L2737/L2739 で table 作成時に `isAclL3V4V6TableSupported(stage)` を判定、L3519/L3527 で `m_L3V4V6Capability` を ingress/egress 別に検出、L3541 でケーパビリティを SWSS_LOG に出力。`aclorch.h` L616 `isAclL3V4V6TableSupported` / L633 `m_L3V4V6Capability` マップを確認。CLI 側は sonic-utilities `acl_loader/main.py` L429-433 で `is_table_l3v4v6`、L780/L784 で `L3V4V6` 用 ethertype チェックを確認。YANG は sonic-yang-models `sonic-types.yang.j2` L115 `enum L3V4V6` を確認（verified at: 2026-05-09）。
 
 # L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
 

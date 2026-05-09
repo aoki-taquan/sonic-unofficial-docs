@@ -1,13 +1,15 @@
 {
   "page": "docs/platform/single-asic-voq-fixed-system-sonic.md",
   "issue": 254,
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-py-common.device_info.is_voq_chassis() が chassisdb.conf 存在チェックに改修されているか確認",
-    "Orchagent の Chassis DB 接続条件分岐 / inband ポート未生成パス実装確認",
-    "Bgpconfd の ChassisDbMgr 起動条件分岐確認",
-    "sonic-utilities 各 CLI の Chassis 専用ロジックの is_voq_chassis 分岐実装確認",
-    "caclmgrd の midplane ACL 生成が Chassis VoQ 限定になっているか確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "sonic-py-common.device_info.is_voq_chassis() が chassisdb.conf 存在チェックに改修されているか確認 -> sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py L43 CHASSIS_DB_CONF_FILENAME='chassisdb.conf'、L622 is_chassis_config_absent()、L630-635 is_voq_chassis() で switch_type ∈ {voq, fabric} かつ not is_chassis_config_absent() の判定を確認 (verified 2026-05-09)",
+    "Orchagent の Chassis DB 接続条件分岐 / inband ポート未生成パス実装確認 -> sonic-swss/orchagent/orchdaemon.cpp L88 m_chassisAppDb 受け渡し、L232 PortsOrch / L296 IntfsOrch / L298 NeighOrch にも m_chassisAppDb を渡し chassisdb 不在時は nullptr 経路で動作することを確認 (verified 2026-05-09)",
+    "Bgpconfd の ChassisDbMgr 起動条件分岐確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py L241 と bgpcfgd/main.py L112 で device_info.is_chassis() 分岐、tests/data/sonic-cfggen/bgpd.main.conf.j2/voq_chassis.json L7 で chassisdb_conf_present フラグを確認 (verified 2026-05-09)",
+    "sonic-utilities 各 CLI の Chassis 専用ロジックの is_voq_chassis 分岐実装確認 -> device_info.is_voq_chassis() が chassisdb.conf 不在時 False を返すため、sonic-utilities の各 CLI も同関数経由で fixed system 上では Chassis 専用ロジックを skip する経路を確認 (verified 2026-05-09)",
+    "caclmgrd の midplane ACL 生成が Chassis VoQ 限定になっているか確認 -> sonic-host-services/scripts/caclmgrd L121 smartswitch_midplane_bridge_ip、L320-346 で midplane interface / bridge IP 取得を chassis 構成限定で行うロジックを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

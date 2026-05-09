@@ -1,14 +1,16 @@
 {
   "page": "docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md",
-  "verification": "hld-only",
-  "concerns": [
-    "PortsOrch::generateQueueMap / generatePriorityGroupMap の関数分離が現行 master に取り込まれているか未確認",
-    "addQueueFlexCounters / addQueueWatermarkFlexCounters / addPriorityGroupDropFlexCounters / addPriorityGroupWatermarkFlexCounters の存在確認",
-    "m_isPriorityGroupMapGenerated 等のキャッシュフラグによる重複生成抑止の実装確認",
-    "watermark enable 状態での port 動的追加時に watermark stats が自動追加されるパスの確認",
-    "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "PortsOrch::generateQueueMap / generatePriorityGroupMap の関数分離が現行 master に取り込まれているか確認 -> sonic-swss/orchagent/portsorch.h L213 generateQueueMap、L223 generatePriorityGroupMap、portsorch.cpp L8391 generateQueueMap 本体を確認 (verified 2026-05-09)",
+    "addQueueFlexCounters / addQueueWatermarkFlexCounters / addPriorityGroupDropFlexCounters / addPriorityGroupWatermarkFlexCounters の存在確認 -> portsorch.cpp L8533 addQueueFlexCounters / L8618 addQueueWatermarkFlexCounters の細分化された関数群を確認 (verified 2026-05-09)",
+    "m_isPriorityGroupMapGenerated 等のキャッシュフラグによる重複生成抑止の実装確認 -> portsorch.h L518 m_isQueueMapGenerated、L532 m_isPriorityGroupMapGenerated とそれぞれの Per-Port ヘルパ (L519 / L533) を確認、portsorch.cpp L8393 で generateQueueMap 冒頭のキャッシュ判定を確認 (verified 2026-05-09)",
+    "watermark enable 状態での port 動的追加時に watermark stats が自動追加されるパスの確認 -> addQueueFlexCountersPerPort (L8574) / addQueueWatermarkFlexCountersPerPort (L8658) が port 単位で flex counter を追加する経路を確認 (verified 2026-05-09)",
+    "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか確認 -> 現行コードでもキャッシュフラグ + 個別 add/remove ヘルパで管理しており、counterpoll disable 時に map 削除は行わない既存挙動を維持 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 149,
-  "pr": 150
+  "pr": 150,
+  "last_verified": "2026-05-09"
 }

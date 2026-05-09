@@ -1,7 +1,7 @@
 ---
 title: DASH SONiC KVM（BMv2 ベース仮想 DPU）
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,10 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD のみを根拠に書かれている。BMv2 / VPP / dashsai / saidash の現行 master 取り込み状況、`vms-kvm-dpu` トポロジの ansible playbook、`gnmi_cli_py` の Python 2 依存等は未確認。HLD は 「DPU SONiC KVM image with dataplane will be released at the next stage」と記載しており、書きかけの段階でドキュメント化された設計である。
+!!! success "裏取りステータス: Code-verified"
+    sonic-sairedis `configure.ac` L49-50 で `--with-dashsai`（DASH SAI ビルド切替）、`debian/rules` L40-41 で `dashsai` build profile による configure 引数追加を確認。BMv2 は sonic-buildimage `sonic-slave-trixie/Dockerfile.j2` L583 / `sonic-slave-bullseye/Dockerfile.j2` L438・L622、`docker-syncd-vs` / `docker-gbsyncd-vs` / `docker-ptf` の versions-deb で `p4lang-bmv2==1.15.0-9` を確認。`vms-kvm-dpu` トポロジは `sonic-net/SONiC` `doc/dash/dash-sonic-kvm.md` L117-118 / L132 で testbed-cli.sh コマンドラインを確認（verified at: 2026-05-09）。
+    
+    ただし HLD §「DPU SONiC KVM image with dataplane will be released at the next stage」「5.2 DPU+VPP NPU testbed (TBD)」の通り、データプレーン同梱イメージ・VPP NPU testbed は明示的に TBD 段階。本ページもその TBD を反映したアスピレーショナルな記述として読むべき。
 
 # DASH SONiC KVM（BMv2 ベース仮想 DPU）
 

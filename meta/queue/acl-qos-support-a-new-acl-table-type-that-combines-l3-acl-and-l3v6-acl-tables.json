@@ -1,15 +1,18 @@
 {
   "page": "docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md",
-  "verification": "hld-only",
-  "concerns": [
-    "AclOrch::initDefaultTableTypes() \u306b TABLE_TYPE_L3V4V6 \u3092\u8ffd\u52a0\u3059\u308b\u5b9f\u88c5\u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "STATE_DB \u306e ACL_STAGE_CAPABILITY_TABLE \u306b supported_L3V4V6 \u30d5\u30a3\u30fc\u30eb\u30c9\u304c INGRESS/EGRESS \u4e21\u65b9\u3067\u516c\u958b\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "platform \u691c\u51fa\u30ed\u30b8\u30c3\u30af\uff08Marvell \u306a\u3069\u5bfe\u5fdc ASIC \u7fa4\uff09\u304c orchagent \u306b\u30cf\u30fc\u30c9\u30b3\u30fc\u30c9\u3055\u308c\u3066\u3044\u308b\u304b\u3001SAI capability \u3067\u5224\u5b9a\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "Phase 2\uff08\u975e\u5bfe\u5fdc ASIC \u3067\u5185\u90e8 2 \u30c6\u30fc\u30d6\u30eb\u5206\u5272\uff09\u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
-    "sonic-acl YANG \u306e type enum \u306b L3V4V6 \u304c\u8ffd\u52a0\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "config acl add table CLI \u3067 <table_type>=L3V4V6 \u304c\u53d7\u7406\u3055\u308c\u308b\u304b sonic-utilities \u5074\u3067\u78ba\u8a8d"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "AclOrch::initDefaultTableTypes() に TABLE_TYPE_L3V4V6 を追加する実装の現行 master 取り込み確認 -> sonic-swss/orchagent/aclorch.cpp L240 で TABLE_TYPE_L3V4V6 を default table types に追加していることを確認 (verified 2026-05-09)",
+    "STATE_DB の ACL_STAGE_CAPABILITY_TABLE に supported_L3V4V6 フィールドが INGRESS/EGRESS 両方で公開されているか確認 -> aclorch.cpp L44 STATE_DB_ACL_L3V4V6_SUPPORTED 定義、L3519/L3527 で m_L3V4V6Capability を ingress/egress 別に検出し L3541 で出力していることを確認 (verified 2026-05-09)",
+    "platform 検出ロジック（対応 ASIC 群）が orchagent にハードコードされているか SAI capability で判定されているか確認 -> aclorch.h L616 isAclL3V4V6TableSupported / L633 m_L3V4V6Capability マップ、aclorch.cpp L2737-L2739 で table 作成時に capability を判定していることを確認、capability ベースの実装 (verified 2026-05-09)",
+    "Phase 2 (非対応 ASIC で内部 2 テーブル分割) の実装存在確認 -> 現行 master では capability=false の stage で table 作成を拒否する Phase 1 実装のみ、Phase 2 分割は未取り込み (verified 2026-05-09)",
+    "sonic-acl YANG の type enum に L3V4V6 が追加されているか確認 -> sonic-yang-models/yang-templates/sonic-types.yang.j2 L115 enum L3V4V6、tests/yang_model_tests/tests/acl.json L183 ACL_TABLE_L3V4V6_TABLE_TYPE テストを確認 (verified 2026-05-09)",
+    "config acl add table CLI で <table_type>=L3V4V6 が受理されるか sonic-utilities 側で確認 -> sonic-utilities/acl_loader/main.py L429-433 is_table_l3v4v6、L604 L3V4V6 用 ICMP/ICMPv6 両対応コメント、L780/L784 L3V4V6 用 ethertype 検証ロジック、doc/Command-Reference.md L2208 で table_type=\"L3V4V6\" を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 468,
-  "pr": 469
+  "pr": 469,
+  "last_verified": "2026-05-09",
+  "notes": "Phase 1 (capability ベースで非対応 ASIC は table 作成拒否) は完全取り込み。Phase 2 (内部 2 テーブル分割) は現行 master 未取り込み。"
 }
