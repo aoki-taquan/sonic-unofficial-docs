@@ -1,0 +1,3090 @@
+[
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ARS/Local_ARS_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Local ARS HLD",
+    "area_hint": "unknown",
+    "size_bytes": 49741
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/BGP/BGP-route-aggregation-with-bbr-awareness.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Route Aggregation With BBR Awareness",
+    "area_hint": "routing",
+    "size_bytes": 14352
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/BGP/BGP-router-id.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Router ID Explicitly Configured",
+    "area_hint": "routing",
+    "size_bytes": 9909
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/BGP/BGP-supress-fib-pending.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Suppress Announcements of Routes Not Installed in HW",
+    "area_hint": "routing",
+    "size_bytes": 37368
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/BGP/Bgpcfgd-dyn-peer-modification-support.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Bgpcfgd Dynamic Peer Modification Support",
+    "area_hint": "routing",
+    "size_bytes": 10326
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/California-SB237/California-SB237.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Default Credential Management for California SB-327 Conformance",
+    "area_hint": "management",
+    "size_bytes": 8794
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/Clock commands/clock_managment_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Clock Managment Design",
+    "area_hint": "architecture",
+    "size_bytes": 7536
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/Container Hardening/SONiC_container_hardening_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Container Hardening",
+    "area_hint": "system",
+    "size_bytes": 19764
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/DHCPv4_Gateway/DHCPv4_gateway.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCP Relay (v4) - Specify gaaddr as Primary Interface's Gateway explicitly",
+    "area_hint": "unknown",
+    "size_bytes": 7647
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/DHCPv4_relay/DHCPv4-relay-agent-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCPv4 Relay Agent",
+    "area_hint": "architecture",
+    "size_bytes": 46922
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCP Relay for IPv6 HLD",
+    "area_hint": "unknown",
+    "size_bytes": 5345
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCPv6 Relay Agent",
+    "area_hint": "architecture",
+    "size_bytes": 12101
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/Dhcp_Mitigation/DHCP Mitigation.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCP DoS Mitigation in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 15175
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/MSTP/MSTP.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Multiple Spanning Tree Protocol",
+    "area_hint": "switching",
+    "size_bytes": 50302
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/PFC_historical_statistics/PFC_Counters_History_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "PFC Historical Statistics",
+    "area_hint": "acl-qos",
+    "size_bytes": 17749
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Query Stats Capability new SAI API indroduction",
+    "area_hint": "platform",
+    "size_bytes": 4468
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/SAI_failure_handling/SAI_failure_handling.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "HLD for handling SAI failures",
+    "area_hint": "platform",
+    "size_bytes": 7173
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/SAI_failure_handling/dump_on_sai_failure.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dump on SAI failure",
+    "area_hint": "platform",
+    "size_bytes": 4266
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/TWAMP/SONiC-TWAMP-Ligth-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "TWAMP Light HLD",
+    "area_hint": "unknown",
+    "size_bytes": 40188
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/AAA Improvements/AAA Improvements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "AAA Improvements",
+    "area_hint": "management",
+    "size_bytes": 72240
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/TACACS+ Authentication.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "TACACS+ Authentication",
+    "area_hint": "management",
+    "size_bytes": 10023
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/TACACS+ Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC TACACS+ improvement",
+    "area_hint": "management",
+    "size_bytes": 25135
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/TACACS+ Test Plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "TACACS+ Test Plan",
+    "area_hint": "management",
+    "size_bytes": 7519
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/ldap/hld_ldap.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "HLD LDAP",
+    "area_hint": "management",
+    "size_bytes": 18871
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/aaa/radius_authentication.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "RADIUS Management User Authentication",
+    "area_hint": "management",
+    "size_bytes": 38123
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/ACL-Flex-Counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ACL Flex Counters Support",
+    "area_hint": "acl-qos",
+    "size_bytes": 12047
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/ACL-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ACL in SONiC",
+    "area_hint": "acl-qos",
+    "size_bytes": 38085
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/ACL-Ingress-Egress-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ACL Ingress & Egress Test Plan",
+    "area_hint": "acl-qos",
+    "size_bytes": 17019
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/ACL-Table-Type-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ACL User Defined Table Type Support",
+    "area_hint": "acl-qos",
+    "size_bytes": 14399
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/ACL-enhancements-on-show-command.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Enhancements on show acl commands",
+    "area_hint": "acl-qos",
+    "size_bytes": 5275
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/Everflow-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "acl-qos",
+    "size_bytes": 55282
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/Extend-L3V6ACLs.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Support a new ACL Table Type that combines L3 ACL and L3V6 ACL Tables",
+    "area_hint": "acl-qos",
+    "size_bytes": 22178
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/acl.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ACL support in SONiC",
+    "area_hint": "acl-qos",
+    "size_bytes": 6851
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/acl_stage_capability.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Egress mirroring support and ACL action capability check",
+    "area_hint": "acl-qos",
+    "size_bytes": 7529
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/egress-acl-bug-fix-description.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Egress ACL Bug Fix Description",
+    "area_hint": "routing",
+    "size_bytes": 3397
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/acl/egress_outer_dscp_change_table.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Egress Outer DSCP change table",
+    "area_hint": "acl-qos",
+    "size_bytes": 28005
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/alpine/alpine_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ALPINE High Level Design",
+    "area_hint": "architecture",
+    "size_bytes": 14348
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/arp/Proxy Arp.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "unknown",
+    "size_bytes": 3145
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ASIC thermal monitoring High Level Design",
+    "area_hint": "system",
+    "size_bytes": 8869
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/auto-techsupport/auto_techsupport_and_coredump_mgmt.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Event Driven TechSupport Invocation & CoreDump Mgmt",
+    "area_hint": "system",
+    "size_bytes": 28428
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/banner/banner_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Banner messages HLD",
+    "area_hint": "unknown",
+    "size_bytes": 9884
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/barefoot_dtel/Dtel-SONiC.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dataplane Telemetry in SONiC",
+    "area_hint": "system",
+    "size_bytes": 19667
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/barefoot_dtel/Dtel-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dataplane Telemetry test plan",
+    "area_hint": "system",
+    "size_bytes": 10550
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bfd/BFD HW Offload HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BFD HW Offload",
+    "area_hint": "routing",
+    "size_bytes": 7420
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bfd/BFD HW Offload for BGP session HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BFD HW Offload for BGP session",
+    "area_hint": "routing",
+    "size_bytes": 25926
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bfd/BFD_Enhancement_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "routing",
+    "size_bytes": 25842
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Route Install Error Handling",
+    "area_hint": "routing",
+    "size_bytes": 23448
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bgp_loading_optimization/bgp-loading-optimization-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Loading Optimization for SONiC",
+    "area_hint": "routing",
+    "size_bytes": 20288
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bmc/bmc_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Support BMC flows in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 8489
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bmc/leakage_detection_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Liquid Cooling leakage detection in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 6712
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bmc/sonicBMC/pmon-bmc-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC BMC Platform Management & Monitoring",
+    "area_hint": "system",
+    "size_bytes": 44254
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bmp/bmp.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BMP for monitoring SONiC BGP info",
+    "area_hint": "routing",
+    "size_bytes": 18056
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/buffer-watermark/align_watermark_flow_with_port_configuration_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Align watermark flow with port configuration HLD",
+    "area_hint": "acl-qos",
+    "size_bytes": 13765
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Test Plan for Align watermark flow with port configuration",
+    "area_hint": "acl-qos",
+    "size_bytes": 12351
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/buffer-watermark/watermarks_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Watermark counters in SONiC",
+    "area_hint": "acl-qos",
+    "size_bytes": 17364
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bulk_counter/bulk_counter.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Bulk Counter Design",
+    "area_hint": "architecture",
+    "size_bytes": 11977
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/bum_storm_control/bum_storm_control_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC BUM Storm Control",
+    "area_hint": "unknown",
+    "size_bytes": 18480
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/cbf/cbf_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Class Based Forwarding Enhancement",
+    "area_hint": "unknown",
+    "size_bytes": 15639
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Automatic module provisioning for chassis",
+    "area_hint": "platform",
+    "size_bytes": 6185
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/cli_auto_generation/cli_auto_generation.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC CLI Auto-generation tool",
+    "area_hint": "management",
+    "size_bytes": 25014
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Enhanced LPO Debug Registers HLD",
+    "area_hint": "unknown",
+    "size_bytes": 28400
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/cmis-module-enhancement/cmis-module-enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Enhancement of CMIS module management",
+    "area_hint": "management",
+    "size_bytes": 13875
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/config-generic-update-rollback/Json_Change_Application_Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "JSON Change Application",
+    "area_hint": "architecture",
+    "size_bytes": 18149
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "JSON Patch Ordering using YANG Models",
+    "area_hint": "management",
+    "size_bytes": 29860
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/config-generic-update-rollback/SONiC_Generic_Config_Update_and_Rollback_Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Generic Configuration Update and Rollback",
+    "area_hint": "architecture",
+    "size_bytes": 65223
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/config_reload/config_reload_enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Config reload Enhancement",
+    "area_hint": "unknown",
+    "size_bytes": 7512
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/config_yang_validation/config_db_yang_validation.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Config Update Validation via YANG",
+    "area_hint": "management",
+    "size_bytes": 9971
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/configuration/SONiC_NOS_Configuration_Methods.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "unknown",
+    "size_bytes": 9091
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/console/Portable-Console-Device-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Portable Console Device Design",
+    "area_hint": "management",
+    "size_bytes": 20599
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/console/SONiC-Console-Switch-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Console Switch",
+    "area_hint": "management",
+    "size_bytes": 24715
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/console/serial-console-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Serial-console global config HLD",
+    "area_hint": "management",
+    "size_bytes": 9384
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/copp/CoPP Config and Management.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "acl-qos",
+    "size_bytes": 14494
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/copp/Copp_Manager_Redesign_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Copp Manager Redesign Test Plan",
+    "area_hint": "acl-qos",
+    "size_bytes": 6222
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/copp/Copp_Neighbor_Miss_Trap_And_Enhancements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "CoPP Neighbor Miss Trap And Enhancements",
+    "area_hint": "acl-qos",
+    "size_bytes": 13873
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/copp/Preserve_COPP_tables_to_improve_fast-reboot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "acl-qos",
+    "size_bytes": 3740
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/crm/CRM_requirements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Critical Resource Monitoring",
+    "area_hint": "system",
+    "size_bytes": 3587
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/crm/Critical-Resource-Monitoring-High-Level-Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Critical resource monitoring in SONiC",
+    "area_hint": "system",
+    "size_bytes": 37759
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/crm/Generic_SAI_Extensions_CRM.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Generic SAI Extension Critical Resource Monitoring (CRM)",
+    "area_hint": "system",
+    "size_bytes": 3550
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dash/dash-acl-tags/dash-acl-tags.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DASH ACL Tags",
+    "area_hint": "acl-qos",
+    "size_bytes": 13747
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dash/dash-sonic-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC-DASH HLD",
+    "area_hint": "unknown",
+    "size_bytes": 118843
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dash/dash-sonic-kvm.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DASH SONiC KVM",
+    "area_hint": "unknown",
+    "size_bytes": 8801
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/database/multi_database_instances.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Support Multiple user-defined redis database instances",
+    "area_hint": "internals",
+    "size_bytes": 42878
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/database/multi_namespace_db_instances.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Support redis databases in multiple namespaces",
+    "area_hint": "internals",
+    "size_bytes": 18148
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "system",
+    "size_bytes": 13357
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/debug-framework/debug_framework_design_spec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Debug Framework in SONiC",
+    "area_hint": "architecture",
+    "size_bytes": 20832
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/decap/subnet_decap_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Subnet Decapsulation with SONiC",
+    "area_hint": "platform",
+    "size_bytes": 12760
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dhcp_relay/DHCP-per-interface-counter.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DHCP Relay Per-Interface Counter",
+    "area_hint": "unknown",
+    "size_bytes": 24898
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dhcp_server/port_based_dhcp_server_high_level_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "IPv4 Port Based DHCP_SERVER in SONiC",
+    "area_hint": "management",
+    "size_bytes": 41892
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dip-sip/DIP=SIP_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DIP=SIP PTF Validation High Level Design",
+    "area_hint": "architecture",
+    "size_bytes": 4294
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/drop_counters/drop_counters_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Configurable Drop Counters in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 28429
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ICMP Hardware Offload",
+    "area_hint": "unknown",
+    "size_bytes": 19624
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dualtor/active_active_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Active-Active Dual ToR",
+    "area_hint": "unknown",
+    "size_bytes": 33254
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dualtor/dualtor_active_standby_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Active-Standby Dual ToR",
+    "area_hint": "unknown",
+    "size_bytes": 42646
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dualtor/multiple_nexthop_route_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "routing",
+    "size_bytes": 6749
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dualtor/mux_neighbors_using_prefix_route.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Prefix based Mux Neighbors",
+    "area_hint": "routing",
+    "size_bytes": 13039
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dump-utility/Dump-Utility.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dump Utility for Easy Debugging",
+    "area_hint": "unknown",
+    "size_bytes": 68448
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dut-monitor/DUT_monitor_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "All fields are mandatory",
+    "area_hint": "system",
+    "size_bytes": 10516
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC dynamic port breakout feature high level design",
+    "area_hint": "system",
+    "size_bytes": 61927
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ecmp/ecmp_calculator.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "routing",
+    "size_bytes": 28
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ecmp/fine_grained_next_hop_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Fine Grained ECMP",
+    "area_hint": "routing",
+    "size_bytes": 32441
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ecmp/inner_packet_hashing_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Test Plan for inner packet hashing in ECMP",
+    "area_hint": "routing",
+    "size_bytes": 8812
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ecmp/ordered_ecmp_next_hop_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "High Level Design Document",
+    "area_hint": "routing",
+    "size_bytes": 8261
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/error-handling/error_handling_design_spec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Error Handling Framework in SONiC",
+    "area_hint": "architecture",
+    "size_bytes": 22909
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/event-alarm-framework/event-alarm-framework.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 54912
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/event-alarm-framework/events-producer.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Goals",
+    "area_hint": "architecture",
+    "size_bytes": 35148
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Sonic Express reboot HLD Spec",
+    "area_hint": "system",
+    "size_bytes": 6244
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fast-linkup/fast-link-up-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Fast Link-Up",
+    "area_hint": "unknown",
+    "size_bytes": 19081
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Fast-reboot Flow Improvements HLD",
+    "area_hint": "system",
+    "size_bytes": 16167
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC FIPS Deployment",
+    "area_hint": "unknown",
+    "size_bytes": 6999
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONIC OpenSSL FIPS 140-3 HLD",
+    "area_hint": "unknown",
+    "size_bytes": 9145
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fips/SONiC-SAI-POST.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC SAI POST support for MACSec",
+    "area_hint": "switching",
+    "size_bytes": 5948
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/flex_counter/flex_counter_refactor.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC FlexCounter Refactor",
+    "area_hint": "unknown",
+    "size_bytes": 9325
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/flex_counter/optimize-counter-initialization.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Counter Initialization Optimization",
+    "area_hint": "unknown",
+    "size_bytes": 10474
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/flow_counters/flow_counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Trap Flow Counter Design",
+    "area_hint": "architecture",
+    "size_bytes": 25856
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/flow_counters/routes_flow_counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Route Flow Counter Design",
+    "area_hint": "routing",
+    "size_bytes": 20473
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/frr_maintainer/sonic-frr_upgrade_process.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "**Detailed Steps to Upgrade FRR in SONiC**",
+    "area_hint": "routing",
+    "size_bytes": 39873
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/fwutil/fwutil.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC FW utility",
+    "area_hint": "unknown",
+    "size_bytes": 45477
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/gearbox/gearbox_mdio-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC NPU MDIO access support and gbsyncd docker enhancement HLD",
+    "area_hint": "platform",
+    "size_bytes": 19598
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/gearbox/gearbox_mgr_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 32254
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Multi-Asic Single JSON Configuration Design",
+    "area_hint": "platform",
+    "size_bytes": 9161
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/grpc_client/design_doc.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "management",
+    "size_bytes": 30914
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/guidelines/SONiC feature quality definition.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Feature Quality Definition",
+    "area_hint": "system",
+    "size_bytes": 4143
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/guidelines/hld_template.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "HLD Name",
+    "area_hint": "unknown",
+    "size_bytes": 6561
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/handle-ASIC-SDK-health-event/handle-ASIC-SDK-health-event.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Handle ASIC/SDK health event",
+    "area_hint": "platform",
+    "size_bytes": 36170
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/hash/hash-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Generic Hash",
+    "area_hint": "architecture",
+    "size_bytes": 31566
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/high-frequency-telemetry/high-frequency-telemetry-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "High frequency telemetry high level design <!-- omit in toc -->",
+    "area_hint": "system",
+    "size_bytes": 29449
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/incremental-update-ip-lag/Incremental IP LAG Update.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC IP/LAG Incremental Update",
+    "area_hint": "switching",
+    "size_bytes": 7099
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "unknown",
+    "size_bytes": 26614
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ip/next_hop_group_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Routing and Next Hop Table Enhancement",
+    "area_hint": "unknown",
+    "size_bytes": 11983
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC IP Interface Loopback Action",
+    "area_hint": "architecture",
+    "size_bytes": 13803
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ipv6/ipv6_link_local.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "IPv6 Link-local enhancements",
+    "area_hint": "unknown",
+    "size_bytes": 23887
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/kdump/SONiC-kdump.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "kdump",
+    "area_hint": "system",
+    "size_bytes": 23191
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/kdump/kdump_Remote_SSH_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "kdump_Remote_SSH",
+    "area_hint": "system",
+    "size_bytes": 7609
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/kubernetes/Kubernetes-support.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "unknown",
+    "size_bytes": 45190
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/kubernetes/health-check.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Why need health-check",
+    "area_hint": "unknown",
+    "size_bytes": 3408
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "L3 Scaling and Performance Enhancements",
+    "area_hint": "unknown",
+    "size_bytes": 12417
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/lag/Increasing LACP PDU timeout during warm-reboot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Increasing LACP PDU timeout during warm-reboot",
+    "area_hint": "switching",
+    "size_bytes": 9587
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/lag/LACP Fallback Feature for SONiC_v0.5.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "switching",
+    "size_bytes": 6302
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/lag/LACP Fallback Test Plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Overview",
+    "area_hint": "switching",
+    "size_bytes": 13028
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/layer1/l1-meetings.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Meeting Recordings",
+    "area_hint": "unknown",
+    "size_bytes": 5922
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Layer 2 Forwarding Enhancements",
+    "area_hint": "unknown",
+    "size_bytes": 22719
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/link_event_damping/Link-event-damping-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Link Event Damping HLD",
+    "area_hint": "unknown",
+    "size_bytes": 27824
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/logging/Logging_and_sysdump_arch_spec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Logging & System Dumps Arch Spec",
+    "area_hint": "system",
+    "size_bytes": 2757
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/logging/persistent_logger/persistent_loglevel.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Persistent log level HLD",
+    "area_hint": "system",
+    "size_bytes": 18797
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/macsec/MACsec_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "MACsec SONiC High Level Design Document",
+    "area_hint": "switching",
+    "size_bytes": 59508
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/macsec-gearbox/macsec_backend_gearbox.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC HLD: Deterministic MACsec backend selection for gearbox ports",
+    "area_hint": "switching",
+    "size_bytes": 7577
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mclag/MCLAG_Enhancements_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "MCLAG Enhancements",
+    "area_hint": "switching",
+    "size_bytes": 42199
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mclag/Sonic-mclag-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "1. Document History",
+    "area_hint": "switching",
+    "size_bytes": 43728
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mclag/iccpd-code-introduction.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Brief introduction of ICCP code",
+    "area_hint": "switching",
+    "size_bytes": 7398
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/media-settings/Dynamic-gearbox-tuning.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Dynamic Gearbox Tuning Design Plan",
+    "area_hint": "platform",
+    "size_bytes": 21825
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/media-settings/Media-based-Port-settings.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Media based port settings in SONIC",
+    "area_hint": "unknown",
+    "size_bytes": 18193
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/memory_statistics/memory_statistics_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Memory Statistics Feature in SONiC",
+    "area_hint": "system",
+    "size_bytes": 23201
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/Docker to Host communication.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 12615
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/Management Framework.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Management Framework",
+    "area_hint": "management",
+    "size_bytes": 170311
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/Management_Framework_Transformer_Component_Support_For_Model_based_Replace_And_Delete.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Model Based Replace & Delete In Mgmt-Framework Transformer",
+    "area_hint": "management",
+    "size_bytes": 47367
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/OpenConfig_Interfaces.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "OpenConfig support for Ethernet interfaces.",
+    "area_hint": "management",
+    "size_bytes": 17068
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/OpenConfig_PortChannel_Interface.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "OpenConfig support for PortChannel (aggregate) interface.",
+    "area_hint": "switching",
+    "size_bytes": 16390
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/OpenConfig_System.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "OpenConfig support for System features",
+    "area_hint": "system",
+    "size_bytes": 27762
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/OpenConfig_VLAN_Interface.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Add support for VLAN interface using OpenConfig YANG.",
+    "area_hint": "switching",
+    "size_bytes": 37640
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/SONiC Management Framework Show Techsupport HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Show Techsupport",
+    "area_hint": "system",
+    "size_bytes": 19843
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC FRR-BGP Extended Unified Configuration Management Framework",
+    "area_hint": "routing",
+    "size_bytes": 67974
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/SONiC_YANG_Model_Guidelines.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC YANG MODEL GUIDELINES",
+    "area_hint": "management",
+    "size_bytes": 25919
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC GNMI Server Interface Design",
+    "area_hint": "management",
+    "size_bytes": 25290
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gNMI_Subscription_for_YangData.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNMI Subscription for YANG Data",
+    "area_hint": "routing",
+    "size_bytes": 63873
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNOI HLD for File and Factory Reset APIs",
+    "area_hint": "management",
+    "size_bytes": 8506
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gnoi_healthz_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNOI HLD for Healthz API",
+    "area_hint": "management",
+    "size_bytes": 13886
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gnoi_os_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNOI HLD for OS APIs",
+    "area_hint": "management",
+    "size_bytes": 11288
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gnoi_system_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNOI HLD for System APIs",
+    "area_hint": "management",
+    "size_bytes": 9586
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/gnsi.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNSI HLD",
+    "area_hint": "management",
+    "size_bytes": 16975
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/master_arbitration.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "gNMI Master Arbitration HLD",
+    "area_hint": "management",
+    "size_bytes": 16445
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/gnmi/save_on_set.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Save-On-Set HLD",
+    "area_hint": "management",
+    "size_bytes": 7228
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/redis_client_manager.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Redis Client Manager \\(RCM\\) HLD",
+    "area_hint": "management",
+    "size_bytes": 16696
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mgmt/sonic_stretch_management_vrf_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Management VRF Design Document - 201911 Release",
+    "area_hint": "routing",
+    "size_bytes": 29265
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/mpls/MPLS_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "MPLS for SONiC High Level Design Document",
+    "area_hint": "routing",
+    "size_bytes": 35668
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/multi_asic/DB_Design_for_multi_asic.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DB Design for multi-ASIC scenarios",
+    "area_hint": "platform",
+    "size_bytes": 7779
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/multi_asic/SONiC_multi_asic_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "1. SONiC on Multi ASIC platforms",
+    "area_hint": "platform",
+    "size_bytes": 71261
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/nat/nat_design_spec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "NAT in SONiC",
+    "area_hint": "architecture",
+    "size_bytes": 96066
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ntp/migration-to-chrony.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Migration to Chrony",
+    "area_hint": "system",
+    "size_bytes": 14020
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ntp/ntp-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Network Time Protocol (NTP) client configuration",
+    "area_hint": "system",
+    "size_bytes": 36987
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/nvgre_tunnel/nvgre_tunnel.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "NVGRE tunnel in SONIC",
+    "area_hint": "overlay",
+    "size_bytes": 13761
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/optional-feature-control/Optional-Feature-Control.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Optional Feature Control Enhancement",
+    "area_hint": "system",
+    "size_bytes": 1115
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pac/Port Access Control.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Port Access Control in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 44847
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/packet_trimming/packet-trimming-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Packet Trimming",
+    "area_hint": "architecture",
+    "size_bytes": 44131
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/passw_hardening/hld_password_hardening.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "PW Hardening Design",
+    "area_hint": "architecture",
+    "size_bytes": 37071
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/password-reset/SONiC_local_users_password_reset_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reset local users passwords during init - HLD",
+    "area_hint": "unknown",
+    "size_bytes": 11715
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/path_tracing/path_tracing_midpoint.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Path Tracing Midpoint",
+    "area_hint": "unknown",
+    "size_bytes": 25902
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pbh/pbh-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Policy Based Hashing",
+    "area_hint": "architecture",
+    "size_bytes": 40534
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pcie-mon/pcie-monitoring-services-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC PCIe Monitoring services HLD",
+    "area_hint": "system",
+    "size_bytes": 29248
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pcie-mon/pcieinfo_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "platform",
+    "size_bytes": 4333
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pfc_asym/PFC_Asymmetric_Test_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Asymmetric PFC Test Plan",
+    "area_hint": "acl-qos",
+    "size_bytes": 15159
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pic/bgp_pic_arch_doc.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Prefix Independent Convergence Architecture Document",
+    "area_hint": "routing",
+    "size_bytes": 18053
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pic/hld_fpmsyncd.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "`fpmsyncd` NextHop Group Enhancement High Level Design Document",
+    "area_hint": "routing",
+    "size_bytes": 40351
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/PINS_SONiC_Design_for_SaiGenericExt.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "PINS SONiC Control Plane for Generic SAI Extensions",
+    "area_hint": "platform",
+    "size_bytes": 32063
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/Packet_io.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "**PacketIO**",
+    "area_hint": "unknown",
+    "size_bytes": 9023
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/in_progress.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "PINS Supplementary HLD",
+    "area_hint": "unknown",
+    "size_bytes": 73
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/p4orch_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "P4 Orchagent",
+    "area_hint": "internals",
+    "size_bytes": 13860
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/p4rt_app_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "P4RT Application HLD",
+    "area_hint": "unknown",
+    "size_bytes": 11691
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/p4rt_app_read_cache_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "P4RT Read Cache HLD",
+    "area_hint": "unknown",
+    "size_bytes": 5878
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/pins_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "PINS HLD",
+    "area_hint": "unknown",
+    "size_bytes": 21395
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pins/send_to_ingress_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Send to Ingress HLD",
+    "area_hint": "unknown",
+    "size_bytes": 7404
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform/brcm_pdk_pddf.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "List of Tables",
+    "area_hint": "platform",
+    "size_bytes": 110006
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform/common_config.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Revision",
+    "area_hint": "platform",
+    "size_bytes": 9129
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform/pde.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 12038
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform-json/platform_json_enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Platform capability file enhancement",
+    "area_hint": "platform",
+    "size_bytes": 4191
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform_api/CMIS_Diagnostic_Monitoring_Overview_in_SONiC.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "CMIS Diagnostic Monitoring Overview in SONiC",
+    "area_hint": "system",
+    "size_bytes": 220979
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform_api/CMIS_and_C-CMIS_support_for_ZR.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "platform",
+    "size_bytes": 97660
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/platform_api/new_platform_api.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Global platform-specific psuutil class instance",
+    "area_hint": "platform",
+    "size_bytes": 7161
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/pmon-chassis-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Chassis Platform Management & Monitoring",
+    "area_hint": "system",
+    "size_bytes": 37596
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/pmon-chassis-requirements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Platform Monitor Requirement for Chassis Subsystem",
+    "area_hint": "system",
+    "size_bytes": 3712
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/pmon-enhancement-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Platform Monitor Enhancement Design",
+    "area_hint": "system",
+    "size_bytes": 18328
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/pmon-sensormon.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC PMON Sensor Monitoring Enhancement",
+    "area_hint": "system",
+    "size_bytes": 12984
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/pmon_multiasic_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "**Platform Monitor design for Multi-Asic platforms**",
+    "area_hint": "system",
+    "size_bytes": 12989
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/sonic_platform_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "platform",
+    "size_bytes": 39886
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/pmon/sonic_thermal_control_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Thermal Control Test Plan",
+    "area_hint": "platform",
+    "size_bytes": 10687
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-1.6t-support/port-1.6t-support.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "1.6T Support in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 6707
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-add-del-dynamically/dynamic_port_add_del_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Enhancements to add or del ports dynamically",
+    "area_hint": "unknown",
+    "size_bytes": 15343
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-config-refactor/port-config-refactor-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Port Configuration Refactor Design",
+    "area_hint": "architecture",
+    "size_bytes": 6078
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-illegal-packets/Port_illegal_packets_drop_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Port illegal packets drop design",
+    "area_hint": "architecture",
+    "size_bytes": 4435
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-mirroring/SONiC_Port_Mirroring_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Port Mirroring HLD",
+    "area_hint": "acl-qos",
+    "size_bytes": 30947
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-profile-init/port-profile-init-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Port Profile Init HLD",
+    "area_hint": "architecture",
+    "size_bytes": 10738
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port-si/Port_SI_Per_Speed.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 14958
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_auto_neg/auto-fec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Port Auto FEC Design",
+    "area_hint": "architecture",
+    "size_bytes": 11998
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_auto_neg/port-auto-negotiation-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Port Auto Negotiation Design",
+    "area_hint": "architecture",
+    "size_bytes": 35434
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Port buffer drop counters in SONiC",
+    "area_hint": "acl-qos",
+    "size_bytes": 3815
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_fec-ber/port_fec_ber.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Sonic Port FEC BER",
+    "area_hint": "unknown",
+    "size_bytes": 9061
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_fec_flr/port_fec_flr.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "FEC FLR support in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 15040
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/port_link_training/port-link-training-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Port Link Training Design",
+    "area_hint": "architecture",
+    "size_bytes": 14500
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/profiling/sonic_bootchart.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Boot Chart",
+    "area_hint": "unknown",
+    "size_bytes": 7491
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/psud/PSU_daemon_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC PSU Daemon Design",
+    "area_hint": "platform",
+    "size_bytes": 17026
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ptp/ptp.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "unknown",
+    "size_bytes": 2071
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/ECN_and_WRED_statistics_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "WRED and ECN Statistics",
+    "area_hint": "acl-qos",
+    "size_bytes": 22984
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/dynamically-headroom-calculation.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dynamically Headroom Calculation",
+    "area_hint": "acl-qos",
+    "size_bytes": 77566
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/graphs.flow-chart.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Flow charts",
+    "area_hint": "acl-qos",
+    "size_bytes": 5864
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/mpls_tc_to_tc_map.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "MPLS TC to TC map",
+    "area_hint": "routing",
+    "size_bytes": 5470
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "acl-qos",
+    "size_bytes": 11591
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/reclaim-reserved-buffer.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reclaim reserved buffer",
+    "area_hint": "acl-qos",
+    "size_bytes": 49117
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC QoS Scheduler and Shaping",
+    "area_hint": "acl-qos",
+    "size_bytes": 24765
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/qos/tunnel_dscp_remapping.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "DSCP remapping for tunnel traffic",
+    "area_hint": "overlay",
+    "size_bytes": 13453
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ragile-fancontrol/ragile fancontrol hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 15971
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/rates-and-utilization/Rates_and_utilization_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Byte, packet rates, port utilization in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 8825
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/reboot/Reboot_BlockingMode_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reboot support BlockingMode in SONiC",
+    "area_hint": "system",
+    "size_bytes": 5598
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/recirculation-port/recirculation_port.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Recirculation port support on VOQ chassis",
+    "area_hint": "platform",
+    "size_bytes": 8515
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC 201904 Release Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 201904 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 25326
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_201911_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 201911 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 17922
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202006_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202006 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 13226
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202012_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202012 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 30612
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202106_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202106 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 16773
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202111_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202111 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 28580
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202205_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202205 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 32953
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202211_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202211 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 21653
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202305_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202305 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 15169
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202311_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202311 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 16221
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202405_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202405 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 16222
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202411_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202411 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 7338
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/release-notes/SONiC_202505_Release_Notes.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC 202505 Release Notes",
+    "area_hint": "unknown",
+    "size_bytes": 13805
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/reset_factory/ResetFactoryHLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reset Factory design",
+    "area_hint": "architecture",
+    "size_bytes": 8761
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/rif-counters/RIF_counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Router interface counters in SONiC",
+    "area_hint": "routing",
+    "size_bytes": 7582
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/s3ip_sysfs/s3ip_sysfs_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "S3IP sysfs specification and S3IP sysfs framework HLD",
+    "area_hint": "architecture",
+    "size_bytes": 18931
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/s3ip_sysfs/s3ip_sysfs_specification.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "S3IP sysfs specification",
+    "area_hint": "unknown",
+    "size_bytes": 15485
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sag/sag-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SAG high level design for SONiC",
+    "area_hint": "architecture",
+    "size_bytes": 12773
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/secure_boot/hld_secure_boot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "HLD Secure Boot",
+    "area_hint": "unknown",
+    "size_bytes": 24632
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/secure_upgrade/secure_upgrade.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Secure upgrade",
+    "area_hint": "system",
+    "size_bytes": 12145
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sflow/Sflow_test_plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SFlow Test Plan",
+    "area_hint": "unknown",
+    "size_bytes": 8322
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sflow/sflow_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "sFlow High Level Design",
+    "area_hint": "architecture",
+    "size_bytes": 60186
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfp-cmis/CMIS-custom-SI-settings.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Custom SI settings for CMIS modules",
+    "area_hint": "platform",
+    "size_bytes": 17435
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfp-cmis/Interface-Link-bring-up-sequence.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 32355
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfp-cmis/cmis-init.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 23562
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfp-refactor/sfp-refactor.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Sonic_sfp Refactoring",
+    "area_hint": "platform",
+    "size_bytes": 18960
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfputil/dump_sfp_eeprom.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Dump SFP EEPROM page data in show techsupport command",
+    "area_hint": "system",
+    "size_bytes": 5859
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sfputil/read_write_eeprom_by_page.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "sfputil | add the ability to read/write any byte from EERPOM both by page and offset",
+    "area_hint": "platform",
+    "size_bytes": 6994
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/BFD/SmartSwitchDpuLivenessUsingBfd.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "About this Manual",
+    "area_hint": "routing",
+    "size_bytes": 15996
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Smart Switch GNMI feedback design <!-- omit in toc -->",
+    "area_hint": "management",
+    "size_bytes": 4821
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/graceful-shutdown/graceful-shutdown.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch DPU Graceful Shutdown",
+    "area_hint": "unknown",
+    "size_bytes": 11436
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/eni-based-forwarding.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch ENI Based Forwarding",
+    "area_hint": "unknown",
+    "size_bytes": 10676
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch High Availability Detailed Design",
+    "area_hint": "platform",
+    "size_bytes": 61717
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch High Availability High Level Design - DPU-Scope-DPU-Driven setup",
+    "area_hint": "architecture",
+    "size_bytes": 24413
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch High Availability Manager Daemon (HAMgrD) Design",
+    "area_hint": "architecture",
+    "size_bytes": 9545
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/smart-switch-ha-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch High Availability High Level Design",
+    "area_hint": "architecture",
+    "size_bytes": 149477
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "VNET Local Endpoint Forwarding",
+    "area_hint": "overlay",
+    "size_bytes": 3630
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Smart Switch IP address assignment",
+    "area_hint": "unknown",
+    "size_bytes": 17193
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/pmon/smartswitch-pmon.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SmartSwitch PMON High Level Design",
+    "area_hint": "platform",
+    "size_bytes": 67039
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/reboot/reboot-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Smart Switch Reboot High Level Design",
+    "area_hint": "system",
+    "size_bytes": 18912
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Smart Switch Database design",
+    "area_hint": "architecture",
+    "size_bytes": 18099
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/smart-switch/upgrade/dpu-upgrade-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Independent DPU Upgrade",
+    "area_hint": "system",
+    "size_bytes": 16418
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/snmp/extension-to-physical-entity-mib.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Entity MIB and Entity Sensor MIB Extension",
+    "area_hint": "system",
+    "size_bytes": 20832
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/snmp/snmp-changes-to-support-ipv6.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC SNMP Changes to support IPv6",
+    "area_hint": "system",
+    "size_bytes": 8293
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/snmp/snmp-configdb-migration-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SNMP Migration from snmp.yml to ConfigDB",
+    "area_hint": "system",
+    "size_bytes": 10263
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/snmp/snmp-schema-addition.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC SNMP TABLE schema proposal",
+    "area_hint": "system",
+    "size_bytes": 4998
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/snmp/snmp_ciscobgp4mib.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "CiscoBgp4MIB implementation changes",
+    "area_hint": "routing",
+    "size_bytes": 5070
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-application-extension/sonic-application-extension-guide.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Application Extension Guide",
+    "area_hint": "unknown",
+    "size_bytes": 19345
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-application-extension/sonic-application-extention-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Application Extension Infrastructure",
+    "area_hint": "architecture",
+    "size_bytes": 79122
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-application-extension/sonic-versioning-strategy.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC OS & SONiC Docker Images Versioning",
+    "area_hint": "system",
+    "size_bytes": 7395
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-application-extension/tpcm_app_ext.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Third Party Container Management Enhancements to SONiC Application Extensions framework",
+    "area_hint": "system",
+    "size_bytes": 17664
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/Build-Profiles.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "unknown",
+    "size_bytes": 2885
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/SONiC-Reproduceable-Build.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Reproduceable Build",
+    "area_hint": "unknown",
+    "size_bytes": 25663
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/build-enhancements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Build Improvements HLD",
+    "area_hint": "unknown",
+    "size_bytes": 27768
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/build_system_improvements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Build system improvements",
+    "area_hint": "unknown",
+    "size_bytes": 6671
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/images/build-enhancements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Build Improvements HLD",
+    "area_hint": "system",
+    "size_bytes": 23770
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/rfs-split-build-improvement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "RFS split build improvements HLD",
+    "area_hint": "unknown",
+    "size_bytes": 3456
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/saiversioncheck.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SAI API version check",
+    "area_hint": "platform",
+    "size_bytes": 3456
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-build-system/web_file_server_population_script.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Web file server population script",
+    "area_hint": "routing",
+    "size_bytes": 7124
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Control SONiC behaviors with SYSTEM_DEFAULTS table",
+    "area_hint": "switching",
+    "size_bytes": 6911
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-fpm-module/frr_sonic_communication_channel.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "New FRR-SONiC Communication Channel",
+    "area_hint": "routing",
+    "size_bytes": 9038
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-gns3/GNS3 VM for SONiC.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC on GNS3 VM",
+    "area_hint": "unknown",
+    "size_bytes": 5197
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-multi-architecture/sonic_arm_support.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONIC ARM Architecture support",
+    "area_hint": "architecture",
+    "size_bytes": 7402
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-port-name/sonic-port-name.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC port naming convention change",
+    "area_hint": "unknown",
+    "size_bytes": 1696
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Analysis of Disk Writers in SONiC Devices",
+    "area_hint": "unknown",
+    "size_bytes": 10477
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-swss-common/ZMQ producer-consumer state table design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "ZMQ producer/consumer state table design",
+    "area_hint": "internals",
+    "size_bytes": 4232
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/srv6/SRv6_uSID.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC uSID",
+    "area_hint": "routing",
+    "size_bytes": 6371
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/srv6/srv6_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Segment Routing over IPv6 (SRv6) HLD",
+    "area_hint": "routing",
+    "size_bytes": 24390
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/srv6/srv6_sid_l3adj.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SRv6 SID L3Adj",
+    "area_hint": "routing",
+    "size_bytes": 6708
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/srv6/srv6_static_config_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Static Configuration of SRv6 in SONiC HLD",
+    "area_hint": "routing",
+    "size_bytes": 13766
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/srv6/srv6_vpn.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SRv6 VPN HLD",
+    "area_hint": "routing",
+    "size_bytes": 18712
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ssdhealth/ssdhealth_design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "architecture",
+    "size_bytes": 6115
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ssh_config/ssh_config.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SSH server global config HLD",
+    "area_hint": "management",
+    "size_bytes": 11022
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/static-dns/static_dns.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Static DNS configuration",
+    "area_hint": "unknown",
+    "size_bytes": 7820
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/static-route/SONiC_static_route_bfd_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Scope",
+    "area_hint": "routing",
+    "size_bytes": 31610
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/static-route/SONiC_static_route_expiration_hdl.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Scope",
+    "area_hint": "routing",
+    "size_bytes": 8098
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/static-route/SONiC_static_route_hdl.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Static IP route Configuration",
+    "area_hint": "routing",
+    "size_bytes": 24341
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/storagemond/storagemond-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Storage Monitoring Daemon Design",
+    "area_hint": "system",
+    "size_bytes": 26310
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/stp/SONiC_PVST_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "switching",
+    "size_bytes": 44751
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/subport/sonic-sub-port-intf-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC sub port interface high level design",
+    "area_hint": "architecture",
+    "size_bytes": 34954
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/synchronous-mode/synchronous-mode-cfg.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "1. Scope",
+    "area_hint": "unknown",
+    "size_bytes": 4555
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/syslog/python-logger-enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Python logger enhancement",
+    "area_hint": "system",
+    "size_bytes": 6506
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/syslog/syslog-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Syslog Source IP",
+    "area_hint": "system",
+    "size_bytes": 28012
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/syslog/syslog-rate-limit-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Syslog Message Rate Limit Configuration Per Container",
+    "area_hint": "system",
+    "size_bytes": 16524
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system-telemetry/dialout.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC telemetry in dial-out mode",
+    "area_hint": "system",
+    "size_bytes": 11647
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system-telemetry/grpc_telemetry.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC gRPC data telemetry",
+    "area_hint": "system",
+    "size_bytes": 43127
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system-telemetry/process-docker-stats.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Process and docker stats availability via telemetry agent",
+    "area_hint": "system",
+    "size_bytes": 2710
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system-telemetry/reboot-cause.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reboot-cause information via telemetry agent",
+    "area_hint": "system",
+    "size_bytes": 5511
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system_health_monitoring/system-health-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC System Health Monitor High Level Design",
+    "area_hint": "system",
+    "size_bytes": 16025
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/system_health_monitoring/system-ready-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "System Ready HLD",
+    "area_hint": "system",
+    "size_bytes": 27158
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "TACACS+ Passkey Encryption",
+    "area_hint": "management",
+    "size_bytes": 8976
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Steps to Bring-Up SONiC-VS",
+    "area_hint": "unknown",
+    "size_bytes": 2401
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/test-plans/SONiC Test Plan Template.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "unknown",
+    "size_bytes": 3053
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/test-plans/Sonic Basic L2 Mode Test plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "switching",
+    "size_bytes": 3400
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/thermal-control/thermal-control-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Thermal Control Design",
+    "area_hint": "platform",
+    "size_bytes": 26058
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/threshold/SONiC Threshold feature spec.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 29776
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/tpid/SonicTPIDSettingHLD1.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "unknown",
+    "size_bytes": 17135
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/udev-terminalserver/udev rules for Terminal Server.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "1. udev rules design for terminal server",
+    "area_hint": "architecture",
+    "size_bytes": 8816
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/user-manual/SONiC-User-Manual.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC USER MANUAL",
+    "area_hint": "unknown",
+    "size_bytes": 41315
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Switch Port Modes and Vlan CLI Enhancement",
+    "area_hint": "switching",
+    "size_bytes": 37585
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/Reliable_TSA.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Reliable TSA",
+    "area_hint": "unknown",
+    "size_bytes": 5966
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/aggregate_voq_counters.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Aggregate VOQ Counters in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 8749
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/architecture.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Distributed Forwarding in a Virtual Output Queue (VOQ) Architecture",
+    "area_hint": "acl-qos",
+    "size_bytes": 16557
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/bgp_voq_chassis.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "BGP Setup for VoQ Chassis",
+    "area_hint": "routing",
+    "size_bytes": 13018
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/everflow.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Everflow support on VOQ Chassis",
+    "area_hint": "platform",
+    "size_bytes": 6725
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/fabric.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Fabric port support on SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 27037
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/lag_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "LAG on Distributed VOQ System",
+    "area_hint": "switching",
+    "size_bytes": 23188
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/single_asic_voq.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "**Single ASIC VOQ Fixed System SONiC**",
+    "area_hint": "platform",
+    "size_bytes": 4927
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/voq/voq_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "VOQ SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 47227
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vrf/SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Introduction",
+    "area_hint": "routing",
+    "size_bytes": 2383
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vrf/sonic-vrf-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC VRF support design spec draft",
+    "area_hint": "routing",
+    "size_bytes": 43820
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vrf/vrf-ansible-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "VRF feature ansible test plan <!-- omit in toc -->",
+    "area_hint": "routing",
+    "size_bytes": 19349
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vrf/vrf-vs-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "",
+    "area_hint": "routing",
+    "size_bytes": 6613
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vrrp/VRRP_Adaptation_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Virtual Router Redundancy Protocol Adaptation HLD",
+    "area_hint": "routing",
+    "size_bytes": 31042
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/EVPN/EVPN_VXLAN_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "EVPN VXLAN HLD",
+    "area_hint": "routing",
+    "size_bytes": 69977
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "EVPN VxLAN Multihoming",
+    "area_hint": "routing",
+    "size_bytes": 79646
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/Overlay ECMP ehancements.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Overlay ECMP Enhancements",
+    "area_hint": "routing",
+    "size_bytes": 19278
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/Overlay ECMP with BFD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Overlay ECMP with BFD monitoring",
+    "area_hint": "routing",
+    "size_bytes": 25813
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/Vxlan_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Vxlan SONiC",
+    "area_hint": "overlay",
+    "size_bytes": 19023
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/Multi_ASIC_warm_reboot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Multi ASIC warm reboot",
+    "area_hint": "system",
+    "size_bytes": 30114
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/SONiC_Warmboot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Warm Reboot",
+    "area_hint": "system",
+    "size_bytes": 27550
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/Warmboot_Manager_HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Warmboot Manager HLD",
+    "area_hint": "system",
+    "size_bytes": 28788
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/code_implementation.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SWSS docker warm restart code reference",
+    "area_hint": "system",
+    "size_bytes": 16499
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/open_issues.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "What are the development phases and scope for Warm reboot",
+    "area_hint": "system",
+    "size_bytes": 5697
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/sai_redis_api_idempotence.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC libsairedis API idempotence support",
+    "area_hint": "system",
+    "size_bytes": 10485
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/swss_warm_restart.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC SWSS docker warm restart",
+    "area_hint": "system",
+    "size_bytes": 10022
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/system-warmboot.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "System-wide Warmboot",
+    "area_hint": "system",
+    "size_bytes": 11269
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/warm-reboot/view_switch.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "View Switching in ProducerStateTable",
+    "area_hint": "switching",
+    "size_bytes": 6794
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/wcmp/wcmp-design.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Weighted ECMP",
+    "area_hint": "routing",
+    "size_bytes": 18849
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/wol/Wake-on-LAN-HLD.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Wake-on-LAN in SONiC",
+    "area_hint": "unknown",
+    "size_bytes": 8584
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/xrcvd/Interface-Link-bring-up-sequence-on-sff-modules.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Feature Name",
+    "area_hint": "system",
+    "size_bytes": 8272
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/xrcvd/transceiver-monitor-hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Transceiver and Sensor Monitoring HLD",
+    "area_hint": "system",
+    "size_bytes": 27813
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/xrcvd/xcvrd-snmp-testbed-test-plan.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SNMP Transceiver Monitoring Testbed Test Plan",
+    "area_hint": "system",
+    "size_bytes": 2737
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/y_cable/design_doc.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "import the vendor to module mapping",
+    "area_hint": "architecture",
+    "size_bytes": 14502
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ztp/SONiC-config-setup.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "SONiC Configuration Setup Service",
+    "area_hint": "system",
+    "size_bytes": 16071
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ztp/ztp.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Zero Touch Provisioning (ZTP)",
+    "area_hint": "unknown",
+    "size_bytes": 118947
+  },
+  {
+    "repo": "sonic-net/sonic-utilities",
+    "path": "doc/Command-Reference.md",
+    "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9",
+    "title": "SONiC Command Line Interface Guide",
+    "area_hint": "unknown",
+    "size_bytes": 607576
+  },
+  {
+    "repo": "sonic-net/sonic-swss",
+    "path": "doc/swss-schema.md",
+    "ref": "4305596156d70e9797e8a881b3d19b46de0bce0d",
+    "title": "",
+    "area_hint": "internals",
+    "size_bytes": 53703
+  },
+  {
+    "repo": "sonic-net/sonic-linkmgrd",
+    "path": "doc/default_route.md",
+    "ref": "65f563308c689e3225fdf3fc249a132350e9879b",
+    "title": "Default Route",
+    "area_hint": "routing",
+    "size_bytes": 5413
+  },
+  {
+    "repo": "sonic-net/sonic-gnmi",
+    "path": "doc/dialout.md",
+    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
+    "title": "SONiC telemetry in dial-out mode",
+    "area_hint": "system",
+    "size_bytes": 11647
+  },
+  {
+    "repo": "sonic-net/sonic-gnmi",
+    "path": "doc/gNMI_usage_examples.md",
+    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
+    "title": "gNMI Usage:",
+    "area_hint": "management",
+    "size_bytes": 4945
+  },
+  {
+    "repo": "sonic-net/sonic-gnmi",
+    "path": "doc/grpc_telemetry.md",
+    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
+    "title": "SONiC gRPC data telemetry",
+    "area_hint": "system",
+    "size_bytes": 52137
+  },
+  {
+    "repo": "sonic-net/sonic-frr",
+    "path": "doc/developer/ldpd-basic-test-setup.md",
+    "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
+    "title": "sysctl -w net.ipv4.ip_forward=1",
+    "area_hint": "routing",
+    "size_bytes": 18821
+  },
+  {
+    "repo": "sonic-net/sonic-frr",
+    "path": "doc/user/Useful_Sysctl_Settings.md",
+    "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
+    "title": "Useful Sysctl Settings",
+    "area_hint": "unknown",
+    "size_bytes": 1910
+  }
+]

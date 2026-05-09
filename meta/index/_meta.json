@@ -1,0 +1,17 @@
+{
+  "indexed_at": "2026-05-09T12:28:13+00:00",
+  "tool_versions": {
+    "python": "3.13.12",
+    "indexer_script": "0.1.0"
+  },
+  "scope": [
+    "master only",
+    "community only"
+  ],
+  "counts": {
+    "hld": 386,
+    "cli": 410,
+    "yang": 136,
+    "repos": 15
+  }
+}

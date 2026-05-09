@@ -1,0 +1,5960 @@
+[
+  {
+    "command_path": [
+      "clear",
+      "arp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "asic-sdk-health-event"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "dropcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "fabriccountersport"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "fabriccountersqueue"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "fdb"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "fdb",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "flowcnt-route"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "flowcnt-route",
+      "pattern"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "flowcnt-route",
+      "route"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "flowcnt-trap"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark",
+      "headroom"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark",
+      "multicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark",
+      "shared"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark",
+      "unicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark",
+      "headroom"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark",
+      "multicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark",
+      "shared"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "headroom-pool",
+      "watermark",
+      "unicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "ip"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "ipv6"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "line"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "nat"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "nat",
+      "translations"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "pbh"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "pbh",
+      "statistics"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "pfccounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "priority-group"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "priority-group",
+      "drop"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "priority-group",
+      "drop",
+      "counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "queue"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "queue",
+      "wredcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "queuecounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "rifcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "srv6counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "switchcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "cli",
+      "tunnelcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "clear",
+      "ndp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "clear/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "acl"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "acl",
+      "remove"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "acl",
+      "remove",
+      "neighbor"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "acl",
+      "remove",
+      "table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "apply-patch"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "asic-sdk-health-event"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "asic-sdk-health-event",
+      "suppress"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "asic-sdk-health-event",
+      "suppress",
+      "fatal"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "asic-sdk-health-event",
+      "suppress",
+      "notice"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "asic-sdk-health-event",
+      "suppress",
+      "warning"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "banner"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "banner",
+      "login"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "banner",
+      "logout"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "banner",
+      "motd"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "banner",
+      "state"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "bgp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "bmp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "priority-group"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "priority-group",
+      "lossless"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "priority-group",
+      "lossless",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "priority-group",
+      "lossless",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "priority-group",
+      "lossless",
+      "set"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "profile"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "profile",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "profile",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "profile",
+      "set"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "queue"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "queue",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "queue",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "queue",
+      "set"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "shared-headroom-pool"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "shared-headroom-pool",
+      "over-subscribe-ratio"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "buffer",
+      "shared-headroom-pool",
+      "size"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "cbf"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "checkpoint"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "clock"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "clock",
+      "date"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "clock",
+      "timezone"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "delete-checkpoint"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "dropcounters"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "dropcounters",
+      "add-reasons"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "dropcounters",
+      "disable-monitor"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "dropcounters",
+      "enable-monitor"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "dropcounters",
+      "remove-reasons"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ecn"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "hostname"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "interface_naming_mode"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "interface_naming_mode",
+      "alias"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "interface_naming_mode",
+      "default"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable",
+      "bgp-neighbor-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable",
+      "bgp-rib-in-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable",
+      "bgp-rib-out-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable",
+      "link-local"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "disable",
+      "use-link-local-only"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable",
+      "bgp-neighbor-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable",
+      "bgp-rib-in-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable",
+      "bgp-rib-out-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable",
+      "link-local"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "enable",
+      "use-link-local-only"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ipv6",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "list-checkpoints"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "load"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "load_mgmt_config"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "load_minigraph"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "loopback"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "loopback",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "loopback",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mirror_session"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mirror_session",
+      "erspan"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mirror_session",
+      "erspan",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mirror_session",
+      "span"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mirror_session",
+      "span",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "mmu"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ntp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ntp",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ntp",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "override-config-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "big_red_switch"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "counter_poll"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "pfc_stat_history"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "start"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "start_default"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "pfcwd",
+      "stop"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform",
+      "firmware"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform",
+      "firmware",
+      "install"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform",
+      "firmware",
+      "update"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform",
+      "firmware",
+      "update",
+      "full"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "platform",
+      "firmware",
+      "update",
+      "incremental"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "member"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "member",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "member",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "retry-count"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "retry-count",
+      "get"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "portchannel",
+      "retry-count",
+      "set"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "qos"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "qos",
+      "clear"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "qos",
+      "reload"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "rate"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "rate",
+      "smoothing-interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "replace"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "rollback"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "route"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "route",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "route",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "save"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "serial_console"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "serial_console",
+      "inactivity-timeout"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "serial_console",
+      "sysrq-capabilities"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "agent-id"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "agent-id",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "agent-id",
+      "add",
+      "table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "agent-id",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "collector"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "collector",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "advertised-speeds"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "advertised-types"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "autoneg"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "breakout"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "cable-length"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "dhcp-mitigation-rate"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "dhcp-mitigation-rate",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "dhcp-mitigation-rate",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "fast-linkup"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "fec"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "link-training"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "mpls"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "mtu"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "pfc"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "pfc",
+      "asymmetric"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "pfc",
+      "priority"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "sample-direction"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "sample-rate"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "shutdown"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "speed"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "startup"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "startup",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "startup",
+      "neighbor"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "storm-control"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "storm-control",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "storm-control",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "tpid"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver",
+      "dom"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver",
+      "frequency"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver",
+      "lpmode"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver",
+      "reset"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "transceiver",
+      "tx_power"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "type"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "adv_interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "ip"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "ip",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "ip",
+      "loopback-action"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "ip",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "pre_empt"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "track_interface"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "track_interface",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "track_interface",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp",
+      "version"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "adv_interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "pre_empt"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "priority"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "track_interface"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "track_interface",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "interface",
+      "vrrp6",
+      "track_interface",
+      "remove"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "polling-interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "sflow",
+      "sample-direction"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "community"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "community",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "community",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "community",
+      "replace"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "contact"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "contact",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "contact",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "contact",
+      "modify"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "location"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "location",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "location",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "location",
+      "modify"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "user"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "user",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmp",
+      "user",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmpagentaddress"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmpagentaddress",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmpagentaddress",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmptrap"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmptrap",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "snmptrap",
+      "modify"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ssh"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ssh",
+      "inactivity-timeout"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ssh",
+      "max-sessions"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "subinterface"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "subinterface",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "subinterface",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "suppress-fib-pending"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "switch-fast-linkup"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "switch-fast-linkup",
+      "global"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "synchronous_mode"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vnet"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vnet",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vnet",
+      "add-route"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vnet",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vnet",
+      "del-route"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "add"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "add_vrf_vni_map"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "bind"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "del"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "del_vrf_vni_map"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "vrf",
+      "unbind"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "bgp_eoiu"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "bgp_timer"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "disable"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "enable"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "neighsyncd_timer"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "warm_restart",
+      "teamsyncd_timer"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "watermark"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "watermark",
+      "telemetry"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "watermark",
+      "telemetry",
+      "interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "yang_config_validation"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ztp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "config",
+      "ztp",
+      "run"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "config/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "aaa"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "arp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "asic-sdk-health-event"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "asic-sdk-health-event",
+      "received"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "asic-sdk-health-event",
+      "suppress-configuration"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "banner"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bfd"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bfd",
+      "peer"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bfd",
+      "summary"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bmp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bmp",
+      "bgp-neighbor-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bmp",
+      "bgp-rib-in-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bmp",
+      "bgp-rib-out-table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "bmp",
+      "tables"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "boot"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer",
+      "configuration"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer",
+      "information"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer_pool"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer_pool",
+      "persistent-watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "buffer_pool",
+      "watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "clock"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "clock",
+      "timezones"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ecn"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "environment"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "event-counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "headroom-pool"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "headroom-pool",
+      "persistent-watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "headroom-pool",
+      "watermark"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ip"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6",
+      "fib"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6",
+      "link-local-mode"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6",
+      "prefix-list"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6",
+      "protocol"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ipv6",
+      "route"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "line"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "lldp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "lldp",
+      "neighbors"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "lldp",
+      "table"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "logging"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "mac"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "mac",
+      "aging-time"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "management_interface"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "management_interface",
+      "address"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "mgmt-vrf"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "mirror_session"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "mmu"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ndp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ntp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfc"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfc",
+      "asymmetric"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfc",
+      "priority"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfcwd"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfcwd",
+      "config"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "pfcwd",
+      "stats"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "policer"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "drop"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "drop",
+      "counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark",
+      "headroom"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark",
+      "multicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark",
+      "shared"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "persistent-watermark",
+      "unicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "headroom"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "multicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "shared"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "telemetry"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "telemetry",
+      "interval"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "priority-group",
+      "watermark",
+      "unicast"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "queue"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "queue",
+      "counters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "queue",
+      "wredcounters"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "radius"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "route-map"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "acl"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "all"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "copp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "interfaces"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "interfaces",
+      "loopback-action"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "ports"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "snmp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "snmp",
+      "community"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "snmp",
+      "contact"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "snmp",
+      "location"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "snmp",
+      "user"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "spanning-tree"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "runningconfiguration",
+      "syslog"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "serial_console"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "services"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "snmpagentaddress"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "snmptrap"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ssh"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "startupconfiguration"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "startupconfiguration",
+      "bgp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "storm-control"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "storm-control",
+      "interface"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "subinterfaces"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "subinterfaces",
+      "status"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "suppress-fib-pending"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "switch-fast-linkup"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "switch-fast-linkup",
+      "global"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "system-memory"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "tacacs"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "techsupport"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "uptime"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "version"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrf"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp",
+      "interface"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp",
+      "summary"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp",
+      "vrid"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp6"
+    ],
+    "kind": "group",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp6",
+      "interface"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp6",
+      "summary"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "vrrp6",
+      "vrid"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  },
+  {
+    "command_path": [
+      "show",
+      "cli",
+      "ztp"
+    ],
+    "kind": "command",
+    "help": "",
+    "source": {
+      "repo": "sonic-net/sonic-utilities",
+      "path": "show/main.py",
+      "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9"
+    }
+  }
+]

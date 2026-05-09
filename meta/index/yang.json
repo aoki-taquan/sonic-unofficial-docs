@@ -1,0 +1,1495 @@
+[
+  {
+    "module": "sonic-asic-sensors",
+    "revision": "2024-11-19",
+    "namespace": "http://github.com/sonic-net/sonic-asic-sensors",
+    "top_containers": [
+      "sonic-asic-sensors"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-asic-sensors.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-auto_techsupport",
+    "revision": "2021-08-09",
+    "namespace": "http://github.com/sonic-net/sonic-auto_techsupport",
+    "top_containers": [
+      "sonic-auto_techsupport"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-banner",
+    "revision": "2023-05-18",
+    "namespace": "http://github.com/sonic-net/sonic-banner",
+    "top_containers": [
+      "sonic-banner"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-banner.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-aggregate-address",
+    "revision": "2024-07-10",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-aggregate-address",
+    "top_containers": [
+      "sonic-bgp-aggregate-address"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-allowed-prefix",
+    "revision": "2022-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-allowed-prefix",
+    "top_containers": [
+      "sonic-bgp-allowed-prefix"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-allowed-prefix.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-bbr",
+    "revision": "2023-12-25",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-bbr",
+    "top_containers": [
+      "sonic-bgp-bbr"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-common",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-common",
+    "top_containers": [],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-common.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-device-global",
+    "revision": "2024-01-28",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-device-global",
+    "top_containers": [
+      "sonic-bgp-device-global"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-global",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-global",
+    "top_containers": [
+      "sonic-bgp-global"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-global.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-internal-neighbor",
+    "revision": "2021-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-internal-neighbor",
+    "top_containers": [
+      "sonic-bgp-internal-neighbor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-internal-neighbor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-monitor",
+    "revision": "2022-01-11",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-monitor",
+    "top_containers": [
+      "sonic-bgp-monitor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-neighbor",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-neighbor",
+    "top_containers": [
+      "sonic-bgp-neighbor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-peergroup",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-peergroup",
+    "top_containers": [
+      "sonic-bgp-peergroup"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-peerrange",
+    "revision": "2022-02-24",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-peerrange",
+    "top_containers": [
+      "sonic-bgp-peerrange"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-prefix-list",
+    "revision": "2025-02-17",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-prefix-list",
+    "top_containers": [
+      "sonic-bgp-prefix-list"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-sentinel",
+    "revision": "2023-06-06",
+    "namespace": "http://github.com/Azure/sonic-bgp-sentinel",
+    "top_containers": [
+      "sonic-bgp-sentinel"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bgp-voq-chassis-neighbor",
+    "revision": "2021-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-bgp-voq-chassis-neighbor",
+    "top_containers": [
+      "sonic-bgp-voq-chassis-neighbor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bgp-voq-chassis-neighbor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-bmp",
+    "revision": "2024-03-20",
+    "namespace": "http://github.com/sonic-net/sonic-bmp",
+    "top_containers": [
+      "sonic-bmp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-bmp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-breakout_cfg",
+    "revision": "2020-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-breakout_cfg",
+    "top_containers": [
+      "sonic-breakout_cfg"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-pg",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-pg",
+    "top_containers": [
+      "sonic-buffer-pg"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-pg.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-pool",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-pool",
+    "top_containers": [
+      "sonic-buffer-pool"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-pool.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-port-egress-profile-list",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-port-egress-profile-list",
+    "top_containers": [
+      "sonic-buffer-port-egress-profile-list"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-port-ingress-profile-list",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-port-ingress-profile-list",
+    "top_containers": [
+      "sonic-buffer-port-ingress-profile-list"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-port-ingress-profile-list.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-profile",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-profile",
+    "top_containers": [
+      "sonic-buffer-profile"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-profile.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-buffer-queue",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-buffer-queue",
+    "top_containers": [
+      "sonic-buffer-queue"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-buffer-queue.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-cable-length",
+    "revision": "2021-11-11",
+    "namespace": "http://github.com/sonic-net/sonic-cable-length",
+    "top_containers": [
+      "sonic-cable-length"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-cable-length.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-chassis-module",
+    "revision": "2023-02-24",
+    "namespace": "http://github.com/sonic-net/sonic-chassis-module",
+    "top_containers": [
+      "sonic-chassis-module"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-chassis-module.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-console",
+    "revision": "2026-02-12",
+    "namespace": "http://github.com/sonic-net/sonic-console",
+    "top_containers": [
+      "sonic-console"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-console.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-copp",
+    "revision": "2021-03-31",
+    "namespace": "http://github.com/sonic-net/sonic-copp",
+    "top_containers": [
+      "sonic-copp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-copp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-crm",
+    "revision": "2020-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-crm",
+    "top_containers": [
+      "sonic-crm"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-crm.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dash",
+    "revision": "2022-12-07",
+    "namespace": "http://github.com/Azure/sonic-dash",
+    "top_containers": [
+      "sonic-dash"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dash.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-debug-counter",
+    "revision": "2024-03-07",
+    "namespace": "http://github.com/sonic-net/sonic-debug-counter",
+    "top_containers": [
+      "sonic-debug-counter"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-debug-counter.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-default-lossless-buffer-parameter",
+    "revision": "2022-05-31",
+    "namespace": "http://github.com/sonic-net/sonic-default-lossless-buffer-parameter",
+    "top_containers": [
+      "sonic-default-lossless-buffer-parameter"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-default-lossless-buffer-parameter.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-device_metadata",
+    "revision": "2026-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-device_metadata",
+    "top_containers": [
+      "sonic-device_metadata"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-device_metadata.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-device_neighbor",
+    "revision": "2020-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-device_neighbor",
+    "top_containers": [
+      "sonic-device_neighbor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-device_neighbor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-device_neighbor_metadata",
+    "revision": "2022-08-25",
+    "namespace": "http://github.com/sonic-net/sonic-device_neighbor_metadata",
+    "top_containers": [
+      "sonic-device_neighbor_metadata"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-device_neighbor_metadata.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dhcp-server-ipv4",
+    "revision": "2023-07-19",
+    "namespace": "http://github.com/sonic-net/sonic-dhcp-server-ipv4",
+    "top_containers": [
+      "sonic-dhcp-server-ipv4"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dhcp-server",
+    "revision": "2022-09-23",
+    "namespace": "http://github.com/sonic-net/sonic-dhcp-server",
+    "top_containers": [
+      "sonic-dhcp-server"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dhcp-server.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dhcpv4-relay",
+    "revision": "2024-12-30",
+    "namespace": "http://github.com/sonic-net/sonic-dhcpv4-relay",
+    "top_containers": [
+      "sonic-dhcpv4-relay"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dhcpv4-relay.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dhcpv6-relay",
+    "revision": "2021-10-30",
+    "namespace": "http://github.com/sonic-net/sonic-dhcpv6-relay",
+    "top_containers": [
+      "sonic-dhcpv6-relay"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dns",
+    "revision": "2023-02-14",
+    "namespace": "http://github.com/sonic-net/sonic-dns",
+    "top_containers": [
+      "sonic-dns"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dns.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dot1p-tc-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-dot1p-tc-map",
+    "top_containers": [
+      "sonic-dot1p-tc-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dscp-fc-map",
+    "revision": "2021-10-29",
+    "namespace": "http://github.com/sonic-net/sonic-dscp-fc-map",
+    "top_containers": [
+      "sonic-dscp-fc-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dscp-fc-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-dscp-tc-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-dscp-tc-map",
+    "top_containers": [
+      "sonic-dscp-tc-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-bgp",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-bgp",
+    "top_containers": [
+      "sonic-events-bgp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-bgp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-common",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-common",
+    "top_containers": [],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-common.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-dhcp-relay",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-dhcp-relay",
+    "top_containers": [
+      "sonic-events-dhcp-relay"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-dhcp-relay.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-host",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-host",
+    "top_containers": [
+      "sonic-events-host"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-host.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-swss",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-swss",
+    "top_containers": [
+      "sonic-events-swss"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-swss.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-events-syncd",
+    "revision": "2022-12-01",
+    "namespace": "http://github.com/sonic-net/sonic-events-syncd",
+    "top_containers": [
+      "sonic-events-syncd"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-events-syncd.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-exp-fc-map",
+    "revision": "2021-10-29",
+    "namespace": "http://github.com/sonic-net/sonic-exp-fc-map",
+    "top_containers": [
+      "sonic-exp-fc-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-exp-fc-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-fabric-monitor",
+    "revision": "2023-03-14",
+    "namespace": "http://github.com/sonic-net/sonic-fabric-monitor",
+    "top_containers": [
+      "sonic-fabric-monitor"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-fabric-port",
+    "revision": "2023-03-14",
+    "namespace": "http://github.com/sonic-net/sonic-fabric-port",
+    "top_containers": [
+      "sonic-fabric-port"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-fabric-port.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-fast-linkup",
+    "revision": "2025-10-20",
+    "namespace": "http://github.com/sonic-net/sonic-fast-linkup",
+    "top_containers": [
+      "sonic-fast-linkup"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-fast-linkup.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-feature",
+    "revision": "",
+    "namespace": "http://github.com/sonic-net/sonic-feature",
+    "top_containers": [
+      "sonic-feature"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-feature.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-fine-grained-ecmp",
+    "revision": "2024-09-15",
+    "namespace": "http://github.com/sonic-net/sonic-fine-grained-ecmp",
+    "top_containers": [
+      "sonic-fine-grained-ecmp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-fips",
+    "revision": "2023-06-20",
+    "namespace": "http://github.com/sonic-net/sonic-fips",
+    "top_containers": [
+      "sonic-fips"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-fips.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-flex_counter",
+    "revision": "2020-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-flex_counter",
+    "top_containers": [
+      "sonic-flex_counter"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-flex_counter.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-gnmi",
+    "revision": "2023-02-10",
+    "namespace": "http://github.com/sonic-net/sonic-gnmi",
+    "top_containers": [
+      "sonic-gnmi"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-gnmi.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-grpcclient",
+    "revision": "2024-10-14",
+    "namespace": "http://github.com/sonic-net/sonic-grpcclient",
+    "top_containers": [
+      "sonic-grpcclient"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-grpcclient.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-hash",
+    "revision": "2023-09-25",
+    "namespace": "http://github.com/sonic-net/sonic-hash",
+    "top_containers": [
+      "sonic-hash"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-hash.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-heartbeat",
+    "revision": "2025-01-09",
+    "namespace": "http://github.com/sonic-net/sonic-heartbeat",
+    "top_containers": [
+      "sonic-heartbeat"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-heartbeat.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-high-frequency-telemetry",
+    "revision": "",
+    "namespace": "http://github.com/sonic-net/sonic-high-frequency-telemetry",
+    "top_containers": [
+      "sonic-high-frequency-telemetry"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-high-frequency-telemetry.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-interface",
+    "revision": "2025-03-06",
+    "namespace": "http://github.com/sonic-net/sonic-interface",
+    "top_containers": [
+      "sonic-interface"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-interface.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-kdump",
+    "revision": "2022-05-09",
+    "namespace": "http://github.com/sonic-net/sonic-kdump",
+    "top_containers": [
+      "sonic-kdump"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-kdump.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-kubernetes_master",
+    "revision": "2022-10-09",
+    "namespace": "http://github.com/sonic-net/sonic-kubernetes_master",
+    "top_containers": [
+      "sonic-kubernetes_master"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-kubernetes_master.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-lldp",
+    "revision": "2021-07-08",
+    "namespace": "http://github.com/sonic-net/sonic-lldp",
+    "top_containers": [
+      "sonic-lldp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-lldp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-logger",
+    "revision": "",
+    "namespace": "http://github.com/Azure/sonic-logger",
+    "top_containers": [
+      "sonic-logger"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-logger.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-loopback-interface",
+    "revision": "2021-04-05",
+    "namespace": "http://github.com/sonic-net/sonic-loopback-interface",
+    "top_containers": [
+      "sonic-loopback-interface"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-loopback-interface.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-lossless-traffic-pattern",
+    "revision": "2022-05-31",
+    "namespace": "http://github.com/sonic-net/sonic-lossless-traffic-pattern",
+    "top_containers": [
+      "sonic-lossless-traffic-pattern"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-lossless-traffic-pattern.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-macsec",
+    "revision": "2022-04-12",
+    "namespace": "http://github.com/sonic-net/sonic-macsec",
+    "top_containers": [
+      "sonic-macsec"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-macsec.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mclag",
+    "revision": "2019-10-01",
+    "namespace": "http://github.com/sonic-net/sonic-mclag",
+    "top_containers": [
+      "sonic-mclag"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mclag.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-memory-statistics",
+    "revision": "2024-07-22",
+    "namespace": "http://github.com/sonic-net/sonic-memory-statistics",
+    "top_containers": [
+      "sonic-memory-statistics"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-memory-statistics.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mgmt_interface",
+    "revision": "2021-04-07",
+    "namespace": "http://github.com/sonic-net/sonic-mgmt_interface",
+    "top_containers": [
+      "sonic-mgmt_interface"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mgmt_port",
+    "revision": "2021-04-07",
+    "namespace": "http://github.com/sonic-net/sonic-mgmt_port",
+    "top_containers": [
+      "sonic-mgmt_port"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mgmt_port.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mgmt_vrf",
+    "revision": "2021-04-07",
+    "namespace": "http://github.com/sonic-net/sonic-mgmt_vrf",
+    "top_containers": [
+      "sonic-mgmt_vrf"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mirror-session",
+    "revision": "2021-06-15",
+    "namespace": "http://github.com/sonic-net/sonic-mirror-session",
+    "top_containers": [
+      "sonic-mirror-session"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mirror-session.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mpls-tc-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-mpls-tc-map",
+    "top_containers": [
+      "sonic-mpls-tc-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mpls-tc-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mux-cable",
+    "revision": "2022-08-19",
+    "namespace": "http://github.com/sonic-net/sonic-mux-cable",
+    "top_containers": [
+      "sonic-mux-cable"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mux-cable.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-mux-linkmgr",
+    "revision": "2023-06-07",
+    "namespace": "http://github.com/sonic-net/sonic-mux-linkmgr",
+    "top_containers": [
+      "sonic-mux-linkmgr"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-mux-linkmgr.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-nat",
+    "revision": "2021-03-14",
+    "namespace": "http://github.com/sonic-net/sonic-nat",
+    "top_containers": [
+      "sonic-nat"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-nat.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-neigh",
+    "revision": "2023-03-31",
+    "namespace": "http://github.com/sonic-net/sonic-neigh",
+    "top_containers": [
+      "sonic-neigh"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-neigh.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-ntp",
+    "revision": "2021-04-07",
+    "namespace": "http://github.com/sonic-net/sonic-system-ntp",
+    "top_containers": [
+      "sonic-ntp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-ntp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-nvgre-tunnel",
+    "revision": "2021-10-31",
+    "namespace": "http://github.com/sonic-net/sonic-nvgre-tunnel",
+    "top_containers": [
+      "sonic-nvgre-tunnel"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-passwh",
+    "revision": "2022-05-03",
+    "namespace": "http://github.com/sonic-net/sonic-passwh",
+    "top_containers": [
+      "sonic-passwh"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-passwh.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-pbh",
+    "revision": "2021-04-23",
+    "namespace": "http://github.com/sonic-net/sonic-pbh",
+    "top_containers": [
+      "sonic-pbh"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-pbh.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-peer-switch",
+    "revision": "2022-08-23",
+    "namespace": "http://github.com/sonic-net/sonic-peer-switch",
+    "top_containers": [
+      "sonic-peer-switch"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-peer-switch.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-pfc-priority-priority-group-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-pfc-priority-priority-group-map",
+    "top_containers": [
+      "sonic-pfc-priority-priority-group-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-pfc-priority-queue-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-pfc-priority-queue-map",
+    "top_containers": [
+      "sonic-pfc-priority-queue-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-pfcwd",
+    "revision": "2021-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-pfcwd",
+    "top_containers": [
+      "sonic-pfcwd"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-pfcwd.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-port-qos-map",
+    "revision": "2019-05-15",
+    "namespace": "http://github.com/sonic-net/sonic-port-qos-map",
+    "top_containers": [
+      "sonic-port-qos-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-port-qos-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-port",
+    "revision": "2019-07-01",
+    "namespace": "http://github.com/sonic-net/sonic-port",
+    "top_containers": [
+      "sonic-port"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-port.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-portchannel",
+    "revision": "2021-06-13",
+    "namespace": "http://github.com/sonic-net/sonic-portchannel",
+    "top_containers": [
+      "sonic-portchannel"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-portchannel.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-queue",
+    "revision": "2021-04-01",
+    "namespace": "http://github.com/sonic-net/sonic-queue",
+    "top_containers": [
+      "sonic-queue"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-queue.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-restapi",
+    "revision": "2022-10-05",
+    "namespace": "http://github.com/sonic-net/sonic-restapi",
+    "top_containers": [
+      "sonic-restapi"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-restapi.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-route-common",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-route-common",
+    "top_containers": [
+      "sonic-route-common"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-route-common.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-route-map",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-route-map",
+    "top_containers": [
+      "sonic-route-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-route-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-routing-policy-sets",
+    "revision": "2021-02-26",
+    "namespace": "http://github.com/sonic-net/sonic-routing-policy-lists",
+    "top_containers": [
+      "sonic-routing-policy-sets"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-scheduler",
+    "revision": "2021-04-01",
+    "namespace": "http://github.com/sonic-net/sonic-scheduler",
+    "top_containers": [
+      "sonic-scheduler"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-scheduler.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-serial-console",
+    "revision": "2023-06-07",
+    "namespace": "http://github.com/Azure/sonic-serial-console",
+    "top_containers": [
+      "sonic-serial-console"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-serial-console.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-sflow",
+    "revision": "2023-04-11",
+    "namespace": "http://github.com/sonic-net/sonic-sflow",
+    "top_containers": [
+      "sonic-sflow"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-sflow.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-smart-switch",
+    "revision": "2023-10-17",
+    "namespace": "http://github.com/sonic-net/sonic-smart-switch",
+    "top_containers": [
+      "sonic-smart-switch"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-smart-switch.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-snmp",
+    "revision": "2022-05-13",
+    "namespace": "http://github.com/sonic-net/sonic-snmp",
+    "top_containers": [
+      "sonic-snmp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-snmp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-spanning-tree",
+    "revision": "2025-03-15",
+    "namespace": "http://github.com/sonic-net/sonic-stp",
+    "top_containers": [
+      "sonic-spanning-tree"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-spanning-tree.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-srv6",
+    "revision": "2024-12-05",
+    "namespace": "http://github.com/sonic-net/sonic-srv6",
+    "top_containers": [
+      "sonic-srv6"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-srv6.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-ssh-server",
+    "revision": "2022-08-29",
+    "namespace": "http://github.com/sonic-net/sonic-ssh-server",
+    "top_containers": [
+      "sonic-ssh-server"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-ssh-server.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-static-route",
+    "revision": "2022-03-17",
+    "namespace": "http://github.com/sonic-net/sonic-static-route",
+    "top_containers": [
+      "sonic-static-route",
+      "sonic-static_route"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-static-route.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-storm-control",
+    "revision": "2021-12-13",
+    "namespace": "http://github.com/sonic-net/sonic-storm-control",
+    "top_containers": [
+      "sonic-storm-control"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-storm-control.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-stormond-config",
+    "revision": "",
+    "namespace": "http://github.com/sonic-net/sonic-stormond-config",
+    "top_containers": [
+      "sonic-stormond-config"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-stormond-config.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-subnet-decap",
+    "revision": "2024-12-19",
+    "namespace": "http://github.com/sonic-net/sonic-subnet-decap",
+    "top_containers": [
+      "sonic-subnet-decap"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-subnet-decap.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-suppress-asic-sdk-health-event",
+    "revision": "2023-11-29",
+    "namespace": "http://github.com/sonic-net/sonic-suppress-asic-sdk-health-event",
+    "top_containers": [
+      "sonic-suppress-asic-sdk-health-event"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-syslog",
+    "revision": "2022-04-18",
+    "namespace": "http://github.com/sonic-net/sonic-system-syslog",
+    "top_containers": [
+      "sonic-syslog"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-syslog.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-aaa",
+    "revision": "2021-10-12",
+    "namespace": "http://github.com/sonic-net/sonic-system-aaa",
+    "top_containers": [
+      "sonic-system-aaa"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-aaa.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-defaults",
+    "revision": "",
+    "namespace": "http://github.com/Azure/system-defaults",
+    "top_containers": [
+      "sonic-system-defaults"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-defaults.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-ldap",
+    "revision": "2023-10-01",
+    "namespace": "http://github.com/Azure/sonic-system-ldap",
+    "top_containers": [
+      "sonic-system-ldap"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-ldap.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-port",
+    "revision": "2022-11-10",
+    "namespace": "http://github.com/sonic-net/sonic-system-port",
+    "top_containers": [
+      "sonic-system-port"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-port.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-radius",
+    "revision": "2022-11-11",
+    "namespace": "http://github.com/sonic-net/sonic-system-radius",
+    "top_containers": [
+      "sonic-system-radius"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-radius.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-system-tacacs",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-system-tacacs",
+    "top_containers": [
+      "sonic-system-tacacs"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-system-tacacs.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-tc-dscp-map",
+    "revision": "2025-01-10",
+    "namespace": "http://github.com/sonic-net/sonic-tc-dscp-map",
+    "top_containers": [
+      "sonic-tc-dscp-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-tc-dscp-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-tc-priority-group-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-tc-priority-group-map",
+    "top_containers": [
+      "sonic-tc-priority-group-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-tc-queue-map",
+    "revision": "2021-04-15",
+    "namespace": "http://github.com/sonic-net/sonic-tc-queue-map",
+    "top_containers": [
+      "sonic-tc-queue-map"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-telemetry",
+    "revision": "2022-05-13",
+    "namespace": "http://github.com/sonic-net/sonic-telemetry",
+    "top_containers": [
+      "sonic-telemetry"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-telemetry.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-telemetry_client",
+    "revision": "2023-01-12",
+    "namespace": "http://github.com/sonic-net/sonic-telemetry_client",
+    "top_containers": [
+      "sonic-telemetry_client"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-telemetry_client.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-trimming",
+    "revision": "2024-11-01",
+    "namespace": "http://github.com/sonic-net/sonic-trimming",
+    "top_containers": [
+      "sonic-trimming"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-trimming.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-tunnel",
+    "revision": "2022-08-23",
+    "namespace": "http://github.com/sonic-net/sonic-tunnel",
+    "top_containers": [
+      "sonic-tunnel"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-tunnel.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-versions",
+    "revision": "2020-04-10",
+    "namespace": "http://github.com/sonic-net/sonic-versions",
+    "top_containers": [
+      "sonic-versions"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-versions.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-vlan-sub-interface",
+    "revision": "2025-03-06",
+    "namespace": "http://github.com/sonic-net/sonic-vlan-sub-interface",
+    "top_containers": [
+      "sonic-vlan-sub-interface"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-vlan",
+    "revision": "2025-03-06",
+    "namespace": "http://github.com/sonic-net/sonic-vlan",
+    "top_containers": [
+      "sonic-vlan"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-vlan.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-vnet",
+    "revision": "2023-04-25",
+    "namespace": "http://github.com/sonic-net/sonic-vnet",
+    "top_containers": [
+      "sonic-vnet"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-vnet.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-voq-inband-interface",
+    "revision": "2022-10-06",
+    "namespace": "http://github.com/sonic-net/sonic-voq-inband-interface",
+    "top_containers": [
+      "sonic-voq-inband-interface"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-vrf",
+    "revision": "2021-03-30",
+    "namespace": "http://github.com/sonic-net/sonic-vrf",
+    "top_containers": [
+      "sonic-vrf"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-vrf.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-vxlan",
+    "revision": "2021-04-12",
+    "namespace": "http://github.com/sonic-net/sonic-vxlan",
+    "top_containers": [
+      "sonic-vxlan"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-vxlan.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-warm-restart",
+    "revision": "2021-05-24",
+    "namespace": "http://github.com/sonic-net/sonic-warm-restart",
+    "top_containers": [
+      "sonic-warm-restart"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-warm-restart.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-wred-profile",
+    "revision": "2021-04-01",
+    "namespace": "http://github.com/sonic-net/sonic-wred-profile",
+    "top_containers": [
+      "sonic-wred-profile"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-wred-profile.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-xcvrd-log",
+    "revision": "2024-10-14",
+    "namespace": "http://github.com/sonic-net/sonic-xcvrd-log",
+    "top_containers": [
+      "sonic-xcvrd-log"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-xcvrd-log.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  },
+  {
+    "module": "sonic-ztp",
+    "revision": "2025-04-03",
+    "namespace": "http://github.com/sonic-net/sonic-ztp",
+    "top_containers": [
+      "sonic-ztp"
+    ],
+    "path": "src/sonic-yang-models/yang-models/sonic-ztp.yang",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "repo": "sonic-net/sonic-buildimage"
+  }
+]

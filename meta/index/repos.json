@@ -1,0 +1,107 @@
+[
+  {
+    "repo": "sonic-net/SONiC",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "default_branch": "master",
+    "description": "SONiC top-level docs and HLDs",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-buildimage",
+    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "default_branch": "master",
+    "description": "Build infrastructure and Docker images for SONiC",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-utilities",
+    "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9",
+    "default_branch": "master",
+    "description": "CLI utilities (config, show, clear, sonic-installer, etc.)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-swss",
+    "ref": "4305596156d70e9797e8a881b3d19b46de0bce0d",
+    "default_branch": "master",
+    "description": "Switch State Service - orchestration agents (orchagent, etc.)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-swss-common",
+    "ref": "158de8d3463ff4b841653f6d57190bb142b80d9c",
+    "default_branch": "master",
+    "description": "Common library for SWSS (DB clients, schema)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-sairedis",
+    "ref": "88bc51ae95df66977601957515e5527119ffd4c5",
+    "default_branch": "master",
+    "description": "SAI redis adapter (syncd) and SAI infrastructure",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-mgmt-common",
+    "ref": "f71cf829883c36963455cf4d90fe16dae35f0b80",
+    "default_branch": "master",
+    "description": "Management framework common code (translib, transformer)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-platform-common",
+    "ref": "64beade8cddecdbc154531bc84bed2fa86581ea8",
+    "default_branch": "master",
+    "description": "Platform abstraction APIs and base classes",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-platform-daemons",
+    "ref": "4ba9612cb7756651062d37f977e3df17d57f740d",
+    "default_branch": "master",
+    "description": "Platform daemons (xcvrd, pcied, psud, ledd, thermalctld, etc.)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-snmpagent",
+    "ref": "329f1cca300b28cd7297e69db423cadf8c60ddb9",
+    "default_branch": "master",
+    "description": "SNMP subagent for SONiC",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-dhcp-relay",
+    "ref": "7316417034fee6a6c6002490362c9bc75eeafde1",
+    "default_branch": "master",
+    "description": "DHCP relay agent for SONiC",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-linkmgrd",
+    "ref": "65f563308c689e3225fdf3fc249a132350e9879b",
+    "default_branch": "master",
+    "description": "Dual-ToR link manager daemon",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-host-services",
+    "ref": "c5bbbe8b07b96f078fa4b761316627404b01bd04",
+    "default_branch": "master",
+    "description": "Host-side services (hostcfgd, procdockerstatsd, etc.)",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-gnmi",
+    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
+    "default_branch": "master",
+    "description": "gNMI/gNOI server for SONiC",
+    "included": true
+  },
+  {
+    "repo": "sonic-net/sonic-frr",
+    "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
+    "default_branch": "master",
+    "description": "FRRouting fork/integration for SONiC",
+    "included": true
+  }
+]
