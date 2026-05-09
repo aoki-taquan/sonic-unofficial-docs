@@ -2340,6 +2340,18 @@
       "priority": "low"
     },
     {
+      "page": "docs/platform/thermal-control-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SONiC-mgmt tests/platform/test_platform_info.py への thermal policy ケース追加状況確認",
+        "valid_policy.json / invalid_format_policy.json / invalid_value_policy.json の同 repo 配置確認",
+        "thermal_control_algorithm の run_at_boot_up / fan_speed_when_suspend 仕様の sonic-platform-daemons 取り込み確認",
+        "fan.any.absence / psu.any.absence / fan.all.set_speed / thermal_control.control の type 名統一性確認",
+        "親 thermal-control-design.md (現状 keboliu fork リンク) の master 移行有無確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/switching/sonic-basic-l2-mode-test-plan.md",
       "verification": "hld-only",
       "concerns": [
