@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/management/tacacs-authentication.md",
+      "issue": 242,
+      "verification": "hld-only",
+      "concerns": [
+        "hostcfgd AAA module が AAA / TACPLUS / TACPLUS_SERVER を購読して PAM/NSS ファイルを生成する実装の存在確認",
+        "pam_tacplus の source_ip パッチが SONiC 同梱版に当たっているか確認",
+        "nss_tacplus / tacplus_nss.conf の権限テーブル生成ロジック実装確認",
+        "/etc/pam.d/common-auth-sonic への切替が SSH/console 双方で実装されているか未確認",
+        "config aaa / config tacacs CLI の sonic-utilities への取り込み状況"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",
       "issue": 240,
       "verification": "hld-only",
