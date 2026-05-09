@@ -88,7 +88,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 
 ## 設定
 
-`config warm_restart enable system` 系のコマンドで `WARM_RESTART_TABLE` を有効化。詳細は [SWSS docker warm restart](./sonic-swss-docker-warm-restart.md) を参照。
+`config warm_restart enable system` 系のコマンドで `WARM_RESTART_TABLE` を有効化。詳細は SWSS docker warm restart の HLD（同 area の別ページ）を参照。
 
 ## 制限事項
 
@@ -99,7 +99,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 ## 干渉する機能
 
 - **fast-reboot**: 同じスクリプト基盤、同じ kernel arg を共有
-- **[Warmboot Manager](./warmboot-manager-hld.md)**: 後発の shutdown orchestrator。共存させる設計
+- **Warmboot Manager**: 後発の shutdown orchestrator（system area の別ページ）。共存させる設計
 - **BGP graceful restart / teamd 90s timer**: control plane downtime <90s 達成に必須
 
 ## トラブルシューティング
