@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/static-ip-route-configuration.md",
+  "issue": 311,
+  "verification": "hld-only",
+  "concerns": [
+    "frrcfgd の STATIC_ROUTE 監視と vtysh への注入実装が現行 master にあるか未確認",
+    "STATIC_ROUTE スキーマ（リスト形式の nexthop/ifname/distance/nexthop-vrf/blackhole）の sonic-yang-models 反映確認",
+    "openconfig-local-routing(-ext) YANG マッピングが現行 sonic-mgmt-common にあるか未確認",
+    "config route add/del CLI の sonic-utilities 取り込み確認",
+    "HLD は 2021-04 改訂で 4 年経過、現行 master との乖離リスクあり"
+  ],
+  "priority": "medium"
+}

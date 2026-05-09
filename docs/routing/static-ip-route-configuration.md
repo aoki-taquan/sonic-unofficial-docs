@@ -1,0 +1,154 @@
+---
+title: Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
+area: routing
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/static-route/SONiC_static_route_hdl.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - STATIC_ROUTE
+  cli:
+    - config route
+    - show ip route
+    - show ipv6 route
+  yang:
+    - openconfig-network-instance
+    - openconfig-local-routing
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD（2021-04 改訂、4 年以上経過）"
+    HLD は v0.4 / 2021-04。`STATIC_ROUTE` テーブルとフィールド設計、`frrcfgd` による vtysh への注入、OpenConfig YANG マッピングが現行 master でこの仕様どおりかは未確認。
+
+# Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
+
+## 概要
+
+CLI / REST / gNMI から **non-management な static route** を SONiC 管理フレームワーク経由で投入する設計。CONFIG_DB の `STATIC_ROUTE` テーブルに書き込み、`frrcfgd` がそれを vtysh 経由で FRR に流し込む形を取る[^1]。VRF 間の route leak（`nexthop-vrf`）と blackhole route も同じテーブルで表現する。
+
+## 動作仕様
+
+### モジュール構成
+
+```mermaid
+flowchart LR
+    CLI[config route / REST / gNMI] --> MFW[Mgmt Framework\n transformer]
+    MFW --> CDB[(CONFIG_DB STATIC_ROUTE)]
+    CDB --> FCF[frrcfgd]
+    FCF -->|vtysh| FRR[FRR zebra/staticd]
+    FRR -->|fpmsyncd| APP[(APPL_DB ROUTE_TABLE)]
+    APP --> RO[RouteOrch] --> ASIC[(ASIC)]
+```
+
+### CONFIG_DB スキーマ
+
+```text
+STATIC_ROUTE|<vrf_name>|<prefix>
+    nexthop      = comma-list of IP    ; 0.0.0.0 を埋め草に使う
+    ifname       = comma-list of ifname ; "" を埋め草に使う
+    distance     = comma-list of int   ; default 0
+    nexthop-vrf  = comma-list of VRF    ; route leak 用、空文字列で同 VRF
+    blackhole    = comma-list of bool   ; default false
+```
+
+各カンマリストの **同一インデックス** が 1 つの next-hop set を表す。プレフィクスと next-hop の AF は揃える必要がある[^1]。
+
+例: 同じ prefix `10.11.1.0/24` に 3 つの next-hop（うち 1 つは VRF leak）を設定するエントリ：
+
+```text
+key  = STATIC_ROUTE|Vrf-RED|10.11.1.0/24
+nexthop      = 0.0.0.0,    2.2.2.1, 0.0.0.0
+ifname       = Ethernet0,  "",      Ethernet12
+distance     = 10,         0,       30
+nexthop-vrf  = default,    "",      Vrf-GREEN
+```
+
+Blackhole 例：
+
+```text
+key       = STATIC_ROUTE|default|10.12.11.0/24
+nexthop   = 2.2.2.3, ""
+distance  = 10,       40
+blackhole = false,    true
+```
+
+### NEIGH_RESOLVE_TABLE（APPL_DB）
+
+next-hop が ARP/ND 未解決の場合、orchagent の router/neighbor モジュールが APPL_DB の `NEIGH_RESOLVE_TABLE` に書き、`nbrmgrd` が解決を起こす[^1]。
+
+### VRF 間の挙動
+
+インタフェースが他 VRF に移動すると、その IF を ifname に持つ静的経路は **inactive** になる（vtysh の running-config と CONFIG_DB の `STATIC_ROUTE` には残る）。元の VRF に戻れば再アクティブ化する。stale エントリの掃除はユーザ責任[^1]。
+
+### YANG マッピング
+
+OpenConfig 側は次のモジュールを使う[^1]：
+
+- `openconfig-network-instance.yang`
+- `openconfig-local-routing.yang`
+- `openconfig-local-routing-ext.yang`（未対応フィールドや拡張用）
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | 説明 |
+|-------|------|
+| `STATIC_ROUTE` | VRF + prefix 単位の静的経路定義 |
+
+### 関連する CLI
+
+| Command | 用途 |
+|---------|------|
+| `config route add prefix <p> nexthop <ip>` | 静的経路追加 |
+| `config route del prefix <p> nexthop <ip>` | 削除 |
+| `show ip route` / `show ipv6 route` | FRR 経由で経路確認 |
+
+### 関連する YANG
+
+- `openconfig-network-instance` / `openconfig-local-routing`（OpenConfig 標準）
+- 拡張は `openconfig-local-routing-ext`
+
+### 設定例
+
+```bash
+# 通常の静的経路
+sudo config route add prefix 10.11.1.0/24 nexthop 2.2.2.1
+
+# VRF leak 付き
+sonic-cfggen -a '{
+  "STATIC_ROUTE": {
+    "Vrf-RED|10.11.1.0/24": {
+      "nexthop":     "0.0.0.0,2.2.2.1,0.0.0.0",
+      "ifname":      "Ethernet0,,Ethernet12",
+      "distance":    "10,0,30",
+      "nexthop-vrf": "default,,Vrf-GREEN"
+    }
+  }
+}' --write-to-db
+```
+
+## 制限事項
+
+- next-hop の AF は prefix と同じである必要がある（IPv4 prefix に IPv6 next-hop は不可）。
+- インタフェース VRF 移動時の inactive 経路の自動 cleanup は無し（ユーザ責任）[^1]。
+- `nexthop` / `ifname` / `distance` / `nexthop-vrf` / `blackhole` のリスト長は同一インデックスで対応関係を持つため、揃える必要がある。
+- Warm boot 時の静的経路保持は HLD で要件として明記されている[^1]。
+
+## 干渉する機能
+
+- **frrcfgd / FRR staticd**: 本機能の出力先。FRR 側で `staticd` daemon が動いている必要がある。
+- **VRF**: route leak 機能はターゲット VRF が事前定義されている必要がある。
+- **fpmsyncd / RouteOrch**: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / SAI 側の特別処理は不要。
+
+## トラブルシューティング
+
+- 静的経路が ASIC に積まれない → `vtysh -c 'show ip route static'` で FRR 側に入っているか確認、`fpmsyncd` のログでエラーがないか確認。
+- VRF leak が動かない → `nexthop-vrf` で指定した VRF が VRF テーブルに存在し、対象インタフェースがその VRF にバインドされているかを確認。
+- 設定が反映されない → `frrcfgd` が起動しているか、CONFIG_DB の `STATIC_ROUTE` キーフォーマット（`vrf|prefix`）が正しいか確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/static-route/SONiC_static_route_hdl.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
