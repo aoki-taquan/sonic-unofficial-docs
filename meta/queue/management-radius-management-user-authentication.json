@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/radius-management-user-authentication.md",
+  "verification": "hld-only",
+  "concerns": [
+    "pam_radius と nss-mapper の現行 sonic-buildimage 取り込み確認",
+    "RADIUS / RADIUS_SERVER の sonic-yang-models 取り込み確認",
+    "config aaa / config radius CLI の sonic-utilities 取り込み確認",
+    "many_to_one フラグ (v0.11) の現行実装存在確認",
+    "source-interface / NAS-IP-Address (v0.10) の現行実装確認",
+    "DNS name サーバ指定 (v0.9 WIP) の現行 master 取り込み確認"
+  ],
+  "priority": "high"
+}
