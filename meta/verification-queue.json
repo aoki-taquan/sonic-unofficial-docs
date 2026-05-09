@@ -65,6 +65,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/management/aaa-improvements.md",
+      "verification": "hld-only",
+      "concerns": [
+        "D-Bus 経由 NSS module の現行 sonic-buildimage 取り込み確認",
+        "supplementary groups による多重 role の現行 PAM module 実装確認",
+        "/etc/pam.d/sudo / su への RADIUS / TACACS+ module 追加確認",
+        "/etc/sudoers の NOPASSWD 設定の現行値確認",
+        "実 RADIUS server (Aruba ClearPass 等) との互換性検証状況",
+        "container 内認証の現行解決策確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/management/config-reload-enhancement.md",
       "issue": 89,
       "verification": "code-verified",
@@ -182,6 +195,19 @@
       ],
       "concerns": [
         "HashOrch は独立コンポーネントとして実装されておらず、ハッシュ属性は SwitchOrch + CFG_SWITCH_HASH_TABLE_NAME (switchorch.cpp:1507, orchdaemon.cpp:199, switch_helper.cpp:24-) が扱う"
+      ],
+      "priority": "high"
+    },
+    {
+      "page": "docs/management/radius-management-user-authentication.md",
+      "verification": "hld-only",
+      "concerns": [
+        "pam_radius と nss-mapper の現行 sonic-buildimage 取り込み確認",
+        "RADIUS / RADIUS_SERVER の sonic-yang-models 取り込み確認",
+        "config aaa / config radius CLI の sonic-utilities 取り込み確認",
+        "many_to_one フラグ (v0.11) の現行実装存在確認",
+        "source-interface / NAS-IP-Address (v0.10) の現行実装確認",
+        "DNS name サーバ指定 (v0.9 WIP) の現行 master 取り込み確認"
       ],
       "priority": "high"
     },
@@ -760,6 +786,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/sonic-bulk-counter-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sai_bulk_object_get_stats / sai_bulk_object_clear_stats の community SAI 取り込み確認",
+        "BulkStatsContext / m_portBulkContexts の sonic-sairedis FlexCounter 取り込み確認",
+        "bulk chunk size 指定の FLEX_COUNTER_TABLE スキーマ取り込み確認 (v0.2)",
+        "polling 直後 timestamp の COUNTER_DB push 実装確認 (v0.2)",
+        "vendor 別 bulk capability の現状（Mellanox / Broadcom / Cisco）確認",
+        "fallback 経路の単体テスト存在確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/sonic-generic-hash.md",
       "issue": 333,
       "verification": "code-verified",
@@ -786,6 +825,58 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/architecture/sonic-packet-trimming.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SwitchOrch の trimming 拡張と SAI switch trimming 属性の community SAI 取り込み確認",
+        "BufferOrch の per-buffer-profile trimming 制御の実装確認",
+        "ACL DISABLE_TRIMMING action の SAI / AclOrch 取り込み確認",
+        "SWITCH_TRIMMING / BUFFER_PROFILE.packet_trimming / ACL_RULE 関連の YANG 取り込み確認",
+        "v0.2 Asymmetric DSCP / v0.3 Drop counter の現行 master 取り込み確認",
+        "vendor 別 PT capability と STATE_DB capability 公開確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/architecture/sonic-policy-based-hashing.md",
+      "verification": "hld-only",
+      "concerns": [
+        "PbhOrch の sonic-swss 取り込み確認",
+        "PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の sonic-yang-models 取り込み確認",
+        "SAI fine-grained hash 関連属性 (SAI_HASH_ATTR_*, SAI_FINE_GRAINED_HASH_FIELD_*) の community SAI 取り込み確認",
+        "config pbh / show pbh CLI の sonic-utilities 取り込み確認",
+        "v0.3 (2021-11) field set/del modification flow の取り込み確認",
+        "CRM の PBH FG hash 監視 (out of scope) の補完ステータス確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/architecture/sonic-port-auto-fec-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / OPER_PORT_FEC_MODE の community SAI 取り込み確認",
+        "portsorch での capability query と FEC=auto 分岐の現行 master 取り込み確認",
+        "sonic-yang-models の sonic-port.yang での fec=auto 追加確認",
+        "show interface fec の sonic-utilities での operational 表示実装確認",
+        "旧 image からの upgrade 時の後方互換挙動の実装確認",
+        "vendor SAI (Mellanox/Broadcom/Cisco) の override 属性対応状況"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/architecture/sonic-sub-port-interface-high-level-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "intfsmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認",
+        "VLAN_SUB_INTERFACE スキーマと sonic-yang-models 取り込み確認",
+        "SAI_ROUTER_INTERFACE_TYPE_SUB_PORT の community SAI 取り込み確認",
+        "config subinterface CLI の sonic-utilities 取り込み確認",
+        "v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認",
+        "PortChannel 上 sub-port の LAG hash 連携の現行実装確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
@@ -1035,6 +1126,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/management/redis-client-manager-rcm-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-mgmt-common/translib/db/ 配下への RCM 4 関数取り込み確認",
+        "既存 redis.NewClient / Close 直叩きの撲滅状況確認",
+        "DBStats への RCM counter 統合確認",
+        "pool size 20 default の現行コード確認",
+        "TransactionalRedisClient 利用箇所での close 完備確認（leak 検出）",
+        "ping ベースの早期 connection 失敗検出ロジックの実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/management/send-to-ingress-hld.md",
       "issue": 115,
       "verification": "code-verified",
@@ -1081,6 +1185,19 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/management/sonic-console-switch.md",
+      "verification": "hld-only",
+      "concerns": [
+        "consoled / consutil の現行 master (sonic-buildimage) 取り込み確認",
+        "CONSOLE_SWITCH / CONSOLE_PORT YANG 取り込み確認",
+        "TTY device mapping の現行運用方法（vendor template）確認",
+        "reverse SSH の port-based / IP-based forwarding 実装確認",
+        "AAA / PAM 経路で console session が RADIUS / TACACS で認証されるかの実装確認",
+        "USB serial 挿抜時の TTY 番号安定化機構の現行実装確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/management/sonic-tacacs-improvement.md",
