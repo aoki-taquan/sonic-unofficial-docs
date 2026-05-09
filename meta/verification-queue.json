@@ -19,19 +19,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/acl-qos/acl-user-defined-table-type-support.md",
-      "issue": 273,
-      "verification": "hld-only",
-      "concerns": [
-        "AclOrch の AclTableType / AclTable / 統合 AclRule (汎用 validate) 実装存在確認",
-        "CONFIG_DB の ACL_TABLE_TYPE / CTRL_PLANE_ACL_TABLE スキーマと sonic-acl YANG 拡張が現行 master にあるか未確認",
-        "STATE_DB の ACL_STAGE_CAPABILITY 公開と is_action_list_mandatory 検証ロジック実装確認",
-        "AclOrch 公開 API (addAclTable / addAclRule / updateAclRule) のシグネチャ確認",
-        "init_cfg.json への組み込みタイプ移行進捗確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md",
       "issue": 127,
       "verification": "code-verified",
@@ -401,6 +388,18 @@
         "STATE_DB スキーマ（PROCESS_STATS / DOCKER_STATS / LastUpdateTime キー）の現行 master 取り込み確認",
         "2 分周期と top-1024 プロセスのしきい値が現行実装で維持されているか未確認",
         "HLD は 2019-09 改訂で 6 年以上経過、現行 master との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
+      "page": "docs/system/reboot-cause-information-via-telemetry-agent.md",
+      "issue": 318,
+      "verification": "hld-only",
+      "concerns": [
+        "determine-reboot-cause / process-reboot-cause サービスの現行 master 実装確認",
+        "STATE_DB REBOOT_CAUSE スキーマ（cause/time/user/comment）の現行スキーマ整合確認",
+        "show reboot-cause history CLI の sonic-utilities 取り込み確認",
+        "HLD は 2020-09 改訂で 5 年以上経過、現行 master との乖離リスクあり"
       ],
       "priority": "high"
     },
