@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/openconfig-support-for-ethernet-interfaces/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/copp-manager-redesign-test-plan/">
       
       
-        <link rel="prev" href="../hld-ldap/">
+        <link rel="prev" href="../configurable-drop-counters-in-sonic/">
       
       
-        <link rel="next" href="../p4rt-application-hld/">
+        <link rel="next" href="../copp-neighbor-miss-trap-and-enhancements/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer） - SONiC 非公式ドキュメント</title>
+        <title>CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer" class="md-skip">
+        <a href="#copp-manager-feature-always_enabled" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
+              CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
             
           </span>
         </div>
@@ -335,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -2877,6 +2877,8 @@
       
   
   
+    
+  
   
   
     
@@ -2930,20 +2932,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2961,13 +2966,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2987,7 +2992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
+      <a href="../acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -3015,7 +3020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -3043,7 +3048,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
+      <a href="../acl-user-defined-table-type-support/" class="md-nav__link">
         
   
   
@@ -3071,7 +3076,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -3099,7 +3104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/asymmetric-pfc-test-plan/" class="md-nav__link">
+      <a href="../asymmetric-pfc-test-plan/" class="md-nav__link">
         
   
   
@@ -3127,7 +3132,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/configurable-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../configurable-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3152,10 +3157,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../acl-qos/copp-manager-redesign-test-plan/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3171,6 +3203,187 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        判定フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp_trap-etcsoniccopp_cfgjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPP_TRAP のサンプル（/etc/sonic/copp_cfg.json）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テストケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テストケース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラフィック検証の閾値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3183,7 +3396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -3211,7 +3424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
+      <a href="../dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -3239,7 +3452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -3267,7 +3480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
+      <a href="../distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
         
   
   
@@ -3295,7 +3508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -3323,7 +3536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -3351,7 +3564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
+      <a href="../enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
         
   
   
@@ -3379,7 +3592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/pfc-historical-statistics/" class="md-nav__link">
+      <a href="../pfc-historical-statistics/" class="md-nav__link">
         
   
   
@@ -3407,7 +3620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3435,7 +3648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -3463,7 +3676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/sonic-port-mirroring-hld/" class="md-nav__link">
+      <a href="../sonic-port-mirroring-hld/" class="md-nav__link">
         
   
   
@@ -3491,7 +3704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3519,7 +3732,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -4375,8 +4588,6 @@
       
   
   
-    
-  
   
   
     
@@ -4442,23 +4653,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -4476,13 +4684,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4502,7 +4710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -4530,7 +4738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -4558,7 +4766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -4586,7 +4794,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -4614,7 +4822,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -4642,7 +4850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -4670,7 +4878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -4698,7 +4906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -4726,7 +4934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -4754,7 +4962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -4782,7 +4990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -4807,37 +5015,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -4853,225 +5034,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#openconfig-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        対応する OpenConfig YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attribute-mapping" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Attribute mapping
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#identity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        速度 identity の拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#restgnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        REST/gNMI 操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#negative" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Negative ケース（仕様上は禁止）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（gNMI）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5084,7 +5046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -5112,7 +5074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -5140,7 +5102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -5168,7 +5130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -5196,7 +5158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -5224,7 +5186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -5252,7 +5214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5280,7 +5242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -5308,7 +5270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -5336,7 +5298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -5364,7 +5326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -5392,7 +5354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5420,7 +5382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -5448,7 +5410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -9552,7 +9514,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        判定フロー
       
     </span>
   </a>
@@ -9560,54 +9522,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#openconfig-yang" class="md-nav__link">
+  <a href="#copp_trap-etcsoniccopp_cfgjson" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対応する OpenConfig YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attribute-mapping" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Attribute mapping
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#identity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        速度 identity の拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#restgnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        REST/gNMI 操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#negative" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Negative ケース（仕様上は禁止）
+        COPP_TRAP のサンプル（/etc/sonic/copp_cfg.json）
       
     </span>
   </a>
@@ -9621,6 +9539,34 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テストケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テストケース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラフィック検証の閾値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -9653,35 +9599,13 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（gNMI）
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9692,7 +9616,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -9703,7 +9627,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -9714,7 +9638,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -9741,7 +9665,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/openconfig-support-for-ethernet-interfaces.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/copp-manager-redesign-test-plan.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -9751,240 +9675,166 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (2025-05) で SPEED_200/400/600/800GB の identity 追加と new state leaves 追加が記載。translib App ベースから transformer ベースへの置換状態、subinterface index 0 のみサポートの実装、<code>oc-ip:enabled</code> から <code>ipv6_use_link_local_only</code> への mapping は実コード未確認。</p>
+<p><code>coppmgrd</code> の trap install/uninstall 判定ロジック、<code>always_enabled</code> フラグの実装、<code>feature</code> テーブル削除（hdel）への反応、warm/fast-reboot 後の trap 状態保持が現行 master にどう取り込まれているかは未裏取り。</p>
 </div>
-<h1 id="openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）<a class="headerlink" href="#openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer" title="Permanent link">&para;</a></h1>
+<h1 id="copp-manager-feature-always_enabled">CoPP Manager 再設計テストプラン（feature テーブル整合性 + <code>always_enabled</code>）<a class="headerlink" href="#copp-manager-feature-always_enabled" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>openconfig-interfaces</code> / <code>openconfig-if-ethernet</code> / <code>openconfig-if-ip</code> を <strong>REST (RESTCONF) と gNMI</strong> で配信する仕組みを SONiC の Management Framework に追加する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>CoppMgr</code> は CONFIG_DB の <code>COPP_TRAP</code> と <code>FEATURE</code> を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI hostif trap として <strong>install / uninstall</strong> する。旧設計では「<code>FEATURE</code> に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように <strong>entry が削除された feature の trap が install されたままになる</strong> バグが発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>再設計では以下のルールに整理し、本テストプランはその振る舞いを ptf32 / ptf64 / t1 / t2 トポロジで検証する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>CLI（KLISH）はスコープ外</strong>。REST と gNMI のみ</li>
-<li>subinterface は <strong>index 0 のみ</strong> をエミュレート（subinterfaces 構成自体は対象外）</li>
-<li>gNMI <strong>subscription</strong> は対象外（GET / SET / DELETE のみ）</li>
-<li>secondary IP 構成は対象外</li>
-<li>既存の <strong>translib App ベース実装を transformer ベース実装に置き換える</strong> 方向性</li>
-<li><strong>CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマ追加なし</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig YANG → 既存 SONiC YANG への mapping だけで処理する</li>
+<li>feature が disabled 又は <code>FEATURE</code> に存在しない → install しない</li>
+<li>ただし <code>COPP_TRAP|&lt;name&gt;</code> に <strong><code>always_enabled: true</code></strong> がある trap は <code>FEATURE</code> を参照せず常に install する</li>
+<li>feature が enabled で対応 trap が <code>COPP_TRAP</code> にあれば install する</li>
+<li>feature が disabled でも <code>always_enabled: true</code> なら install する</li>
 </ul>
-<p>実装は <code>sonic-mgmt-common</code> リポジトリの <strong>Management Framework コンテナ</strong>（REST server + gnmi コンテナ）に入る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>arp</code> / <code>lacp</code> / <code>udld</code> / <code>ip2me</code> はデフォルト構成で <code>always_enabled: true</code> であり、<code>FEATURE</code> に該当エントリを持たない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    Cl1[REST client\n(curl/Postman)] --&gt;|RESTCONF\nyang-data+json| MF[Management Framework\nREST server]
-    Cl2[gNMI client\n(gnmi_get/set)] --&gt;|gRPC :8080| GN[sonic-gnmi]
-    MF --&gt; TR[sonic-mgmt-common\ntransformer]
-    GN --&gt; TR
-    TR --&gt;|attribute mapping| SY[sonic-port / sonic-interface YANG]
-    SY --&gt; CDB[(CONFIG_DB\nPORT / INTERFACE)]</code></pre>
-<p>OpenConfig パスを受けた Management Framework / sonic-gnmi は、<code>sonic-mgmt-common</code> の <strong>transformer</strong> に流す。transformer が attribute mapping（次節）で SONiC YANG（<code>sonic-port</code> / <code>sonic-interface</code>）に変換し、最終的に CONFIG_DB に書く<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="openconfig-yang">対応する OpenConfig YANG<a class="headerlink" href="#openconfig-yang" title="Permanent link">&para;</a></h3>
-<p>スコープにある主要ノード<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: openconfig-interfaces
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>+--rw interfaces
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   +--rw interface* [name]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      +--rw config { name, type, mtu, description, enabled }
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      +--ro state  { 上記 + ifindex, admin-status, oper-status, last-change, ... + counters }
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>      +--rw subinterfaces/subinterface[index=0]
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>      |  +--rw oc-ip:ipv4 { addresses/address[ip] { config/state ip,prefix-length } }
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>      |  +--rw oc-ip:ipv6 { addresses + config { enabled (default false) } }
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>      +--rw oc-eth:ethernet
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>      |  +--rw config { auto-negotiate, port-speed, oc-lag:aggregate-id }
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>      +--rw oc-lag:aggregation { config/state min-links }
-</span></code></pre></div>
-<h3 id="attribute-mapping">Attribute mapping<a class="headerlink" href="#attribute-mapping" title="Permanent link">&para;</a></h3>
-<p>OpenConfig → SONiC YANG の対応<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<p><strong><code>openconfig-interfaces</code> ⇄ <code>sonic-port</code></strong>:</p>
-<table>
-<thead>
-<tr>
-<th>OpenConfig</th>
-<th>sonic-port</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td><code>name</code></td>
-</tr>
-<tr>
-<td><code>auto-negotiate</code></td>
-<td><code>autoneg</code></td>
-</tr>
-<tr>
-<td><code>port-speed</code></td>
-<td><code>speed</code></td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td><code>description</code></td>
-</tr>
-<tr>
-<td><code>mtu</code></td>
-<td><code>mtu</code></td>
-</tr>
-<tr>
-<td><code>enabled</code></td>
-<td><code>admin_status</code></td>
-</tr>
-<tr>
-<td><code>ifindex</code></td>
-<td><code>index</code></td>
-</tr>
-<tr>
-<td><code>oper-status</code></td>
-<td><code>oper_status</code></td>
-</tr>
-<tr>
-<td><code>last-change</code></td>
-<td><code>last_up/down_time</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>openconfig-if-ip</code> ⇄ <code>sonic-interface</code></strong>:</p>
-<table>
-<thead>
-<tr>
-<th>OpenConfig</th>
-<th>sonic-interface</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td><code>name</code></td>
-</tr>
-<tr>
-<td><code>oc-ip:ipv6/config/enabled</code></td>
-<td><code>ipv6_use_link_local_only</code></td>
-</tr>
-<tr>
-<td><code>subinterface index</code></td>
-<td><code>index</code>（0 のみ）</td>
-</tr>
-<tr>
-<td><code>prefix-length</code></td>
-<td><code>ip-prefix</code> 内の長さ</td>
-</tr>
-</tbody>
-</table>
-<h3 id="identity">速度 identity の拡張<a class="headerlink" href="#identity" title="Permanent link">&para;</a></h3>
-<p><code>openconfig-if-ethernet.yang</code> に upstream OpenConfig コミュニティの speed identity を取り込む<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>SPEED_200GB</code></li>
-<li><code>SPEED_400GB</code></li>
-<li><code>SPEED_600GB</code></li>
-<li><code>SPEED_800GB</code></li>
-</ul>
-<h3 id="restgnmi">REST/gNMI 操作<a class="headerlink" href="#restgnmi" title="Permanent link">&para;</a></h3>
-<p>GET / PATCH / DELETE はすべて <strong>leaf レベルまで</strong> サポート。例<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># GET (leaf)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Ethernet104/config/mtu&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;accept: application/yang-data+json&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># PATCH (leaf)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>curl<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Ethernet104/config/mtu&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/yang-data+json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;openconfig-interfaces:mtu&quot;: 9150}&#39;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># DELETE (leaf)</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Ethernet104/config/mtu&quot;</span>
-</span></code></pre></div>
-<p>gNMI 側は GET / SET / DELETE のみ対応（Subscribe は <strong>対象外</strong>）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">判定フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+  A[COPP_TRAP|name 受信] --&gt; B{always_enabled&lt;br&gt;= true?}
+  B -- yes --&gt; I[install]
+  B -- no --&gt; C{FEATURE|name&lt;br&gt;あり?}
+  C -- no --&gt; U[install しない]
+  C -- yes --&gt; D{state = enabled?}
+  D -- yes --&gt; I
+  D -- no --&gt; U</code></pre>
 <!-- evidence:
-source: sonic-net/SONiC/doc/mgmt/OpenConfig_Interfaces.md#L271-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/copp/Copp_Manager_Redesign_test_plan.md#L10-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Mapping attributes between OpenConfig YANG and SONiC YANG:
-  | OpenConfig YANG | Sonic-port YANG |
-  | name | name |
-  | auto-negotiate | autoneg |
-  | port-speed | speed |
-  ...
-  | enabled | ipv6_use_link_local_only |
-reasoning: transformer の attribute mapping ルールの根拠。
+  + If the feature is disabled or does not have an entry in te features table, don't install the trap.
+  + If the trap name does not exist in the features table, but the trap has a field which called "always_enabled" and it's value is "true", install the trap.
+  + If there is a feature in the features table that is enabled, install the associated trap.
+  + If there is a feature which is in state 'disabled', but the associated trap has "always_enabled": "true" field, install the trap.
+reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 -->
 
-<h3 id="negative">Negative ケース（仕様上は禁止）<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
-<p>HLD の Negative Test Cases から派生する不可操作<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="copp_trap-etcsoniccopp_cfgjson"><code>COPP_TRAP</code> のサンプル（<code>/etc/sonic/copp_cfg.json</code>）<a class="headerlink" href="#copp_trap-etcsoniccopp_cfgjson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;COPP_TRAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;bgp&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bgp,bgpv6&quot;</span><span class="p">,</span><span class="w">                 </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue4_group1&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;arp&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arp_req,arp_resp,neigh_discovery&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue4_group2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;always_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;udld&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;udld&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue4_group3&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;always_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;ip2me&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ip2me&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue1_group1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;always_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;lacp&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lacp&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue4_group1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;always_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>bgp</code> は <code>always_enabled</code> を持たないので <code>FEATURE|bgp</code> の状態で install/uninstall が決まる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">テストケース<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>観点</th>
+<th>操作</th>
+<th>期待</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>デフォルト構成</td>
+<td>何もせず traffic 送出</td>
+<td>arp / lacp / udld / ip2me の 4 trap が install されている</td>
+</tr>
+<tr>
+<td>2</td>
+<td>trap 追加</td>
+<td><code>bgp</code> に <code>always_enabled: true</code> を <code>config load</code> で投入</td>
+<td>bgp trap が install される</td>
+</tr>
+<tr>
+<td>3</td>
+<td>feature 削除で uninstall</td>
+<td><code>bgp</code> の <code>always_enabled</code> を false にし、<code>redis-cli -n 4 hdel "FEATURE|bgp" ...</code> で entry ごと削除</td>
+<td>bgp trap が uninstall される</td>
+</tr>
+<tr>
+<td>4</td>
+<td>feature disable で uninstall</td>
+<td><code>config feature state bgp enabled</code> → install 確認後 <code>disabled</code></td>
+<td>bgp trap が install → uninstall</td>
+</tr>
+<tr>
+<td>5</td>
+<td>reboot 横断保持</td>
+<td><code>always_enabled: true</code> を save 後 reboot / fast-reboot / warm-reboot</td>
+<td>trap が install されたまま</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">トラフィック検証の閾値<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>interfaces</code> / <code>interface</code> / <code>interface/name</code> コンテナそのものへの <strong>DELETE 不可</strong></li>
-<li>Ethernet interface への <code>REPLACE</code> 不可（PATCH のみ）</li>
-<li><code>port-speed</code> の <strong>DELETE は not supported</strong>（再設定で上書き）</li>
-<li>subinterface index &gt; 0 の GET は <strong>empty</strong> を返す</li>
-<li>別 interface に既に振られている IP の <strong>重複設定不可</strong></li>
-<li><code>ipv4</code> / <code>ipv6</code> コンテナそのものへの DELETE 不可</li>
+<li>trap install 中: <code>rx_pps</code> ∈ <code>[PPS_LIMIT_MIN, PPS_LIMIT_MAX]</code></li>
+<li>trap 未 install: <code>rx_pps &lt; PPS_LIMIT_MIN</code></li>
+<li>削除した trap でも別 trap（例: BGP → IP2ME）で trap される可能性があるため <code>rx_pps == 0</code> は要求しない</li>
 </ul>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
 <th>Key</th>
-<th>OpenConfig 由来フィールド</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>PORT</code></td>
-<td><code>&lt;Ethernet&gt;</code></td>
-<td><code>mtu</code>, <code>admin_status</code>, <code>description</code>, <code>autoneg</code>, <code>speed</code>, <code>oper_status</code></td>
+<td><code>COPP_TRAP</code></td>
+<td><code>&lt;trap-name&gt;</code></td>
+<td><code>trap_ids</code> / <code>trap_group</code> / <code>always_enabled</code></td>
 </tr>
 <tr>
-<td><code>INTERFACE</code></td>
-<td><code>&lt;Ethernet&gt;\|&lt;ip-prefix&gt;</code></td>
-<td>IPv4 / IPv6 アドレス, <code>ipv6_use_link_local_only</code></td>
+<td><code>FEATURE</code></td>
+<td><code>&lt;feature-name&gt;</code></td>
+<td><code>state</code> 等。entry 削除も挙動の trigger</td>
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB <strong>スキーマ自体の変更は無い</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存テーブルへの read/write を transformer 経由で実施する。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>このページは REST/gNMI 専用。SONiC KLISH CLI は <strong>スコープ外</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>OpenConfig 公開モデル + 既存 SONiC YANG。マッピング先 / マッピング元の両方を記載。</p>
-<h3 id="gnmi">設定例（gNMI）<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># auto-negotiate を true に設定</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;openconfig-if-ethernet:config&quot;:{&quot;auto-negotiate&quot;:true}}&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>an.json
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>gnmi_set<span class="w"> </span>-insecure<span class="w"> </span>-username<span class="w"> </span>admin<span class="w"> </span>-password<span class="w"> </span>sonicadmin<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>-update<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/openconfig-if-ethernet:ethernet/config:@./an.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG
-</span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config feature state &lt;name&gt; enabled\|disabled</code></td>
+<td>feature の state を切り替え</td>
+</tr>
+<tr>
+<td><code>config load &lt;copp.json&gt; -y</code></td>
+<td>COPP_TRAP の上書き</td>
+</tr>
+<tr>
+<td><code>redis-cli -n 4 hdel "FEATURE|&lt;name&gt;" ...</code></td>
+<td>feature entry の削除（テスト用）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>subinterface index は 0 のみ</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。RFC 8343 のような 1+ 個の subinterface は非対応</li>
-<li><strong>gNMI Subscribe 非対応</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Secondary IP 非対応</strong><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>KLISH CLI 経由ではこれらの OC YANG は呼べない（REST/gNMI 限定）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>port-speed</code> は DELETE できない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>IPv6 <code>enabled</code> は <strong>デフォルト <code>false</code></strong><sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig の通常解釈と異なるので注意</li>
+<li>スケール / 性能テストは本プラン対象外<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Vendor ASIC によっては default で install される invisible な trap があるため、テスト前に当該 trap を抜く必要がある（例: bgp 動作確認時に ip2me を抜く）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 SONiC CLI / <code>config interface ...</code></strong>: KLISH は別経路で同じ CONFIG_DB を変更する。並行設定で競合する場合は最後の write が勝つ</li>
-<li><strong>portsyncd / IntfMgr</strong>: CONFIG_DB の <code>PORT</code> / <code>INTERFACE</code> を監視する既存 daemon。OpenConfig 経由の変更も同経路で APP_DB / kernel に反映される</li>
-<li><strong>SONiC YANG validation (sonic-mgmt-common)</strong>: transformer は SONiC YANG の制約を後段で適用するため、OpenConfig 側で valid でも SONiC YANG 側で reject される可能性</li>
-<li><strong>gNSI Pathz</strong>: 有効化されていれば、OC path 単位で gNMI read/write が認可で絞られる</li>
+<li><strong>fast-reboot / warm-reboot</strong>: <code>always_enabled</code> 状態が <code>config save</code> を通じて保持される必要がある</li>
+<li><strong>sflow</strong>: 本 redesign の発端となった例。<code>FEATURE|sflow</code> の delete でも trap が消えなければならない</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Resource Not Found</code> が <code>auto-negotiate</code> で返る: HLD いわく DELETE 後の GET は意図的に Not Found を返す<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>port-speed</code> を消そうとすると <code>not supported</code>: 仕様通り。代わりに上書き PATCH を使う</li>
-<li>subinterface index &gt; 0 で GET → 空配列: 仕様通り、<code>empty</code> を返す<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>重複 IP エラー: 別の interface に既に存在している。validation で reject される</li>
+<li><code>redis-cli -n 4 hgetall "COPP_TRAP|&lt;name&gt;"</code> で <code>always_enabled</code> の有無を確認</li>
+<li><code>redis-cli -n 4 hgetall "FEATURE|&lt;name&gt;"</code> で feature の state 確認</li>
+<li><code>aclshow</code> 相当の trap 表示は CLI 化されていない可能性があり、SAI hostif trap の状態は SAI debug 経由で確認</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- sonic-mgmt-common 内の transformer が openconfig-interfaces / -if-ethernet / -if-ip を実装しているか
-- subinterface index 0 のみ対応の実装方針確認
-- ipv6/config/enabled → ipv6_use_link_local_only マッピングの実装確認
-- SPEED_200/400/600/800GB identity の YANG 取り込み済みか
-- translib App から transformer への移行進捗
-- 重複 IP 検出の実装位置（transformer / SONiC YANG validator）
--->
-
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/OpenConfig_Interfaces.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/copp/Copp_Manager_Redesign_test_plan.md">sonic-net/SONiC doc/copp/Copp_Manager_Redesign_test_plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
