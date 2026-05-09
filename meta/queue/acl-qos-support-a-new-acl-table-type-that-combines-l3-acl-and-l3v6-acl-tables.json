@@ -10,5 +10,6 @@
     "config acl add table CLI \u3067 <table_type>=L3V4V6 \u304c\u53d7\u7406\u3055\u308c\u308b\u304b sonic-utilities \u5074\u3067\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 468
+  "issue": 468,
+  "pr": 469
 }

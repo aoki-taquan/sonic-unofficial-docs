@@ -467,7 +467,8 @@
         "config acl add table CLI で <table_type>=L3V4V6 が受理されるか sonic-utilities 側で確認"
       ],
       "priority": "medium",
-      "issue": 468
+      "issue": 468,
+      "pr": 469
     },
     {
       "page": "docs/acl-qos/watermark-counters-in-sonic.md",
