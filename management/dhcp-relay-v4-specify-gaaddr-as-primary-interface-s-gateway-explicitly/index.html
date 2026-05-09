@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/port-illegal-packets-drop-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">
       
       
         <link rel="prev" href="../">
       
       
-        <link rel="next" href="../../routing/">
+        <link rel="next" href="../save-on-set-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） - SONiC 非公式ドキュメント</title>
+        <title>DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interface-mib-l3" class="md-skip">
+        <a href="#dhcpv4-relay-giaddr-primary-vlan_interface-secondary" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+              DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -558,23 +556,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -592,13 +587,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -615,37 +610,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -661,181 +629,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ収集経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mib-sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIB エントリと SAI カウンタの対応
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iana-iftype" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        インタフェース種別と IANA ifType
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネント変更点
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1672,6 +1465,8 @@
       
   
   
+    
+  
   
   
     
@@ -1693,20 +1488,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1724,13 +1522,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1747,10 +1545,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1766,6 +1591,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primary-secondary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary / Secondary の意味
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcrelay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcrelay 起動引数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存環境からの移行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1778,7 +1822,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -1806,7 +1850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -1834,7 +1878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -2340,10 +2384,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#primary-secondary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary / Secondary の意味
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcrelay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcrelay 起動引数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        カウンタ収集経路
+        全体経路
       
     </span>
   </a>
@@ -2351,10 +2417,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mib-sai" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MIB エントリと SAI カウンタの対応
+        YANG 拡張
       
     </span>
   </a>
@@ -2362,10 +2428,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iana-iftype" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        インタフェース種別と IANA ifType
+        CONFIG_DB 例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 拡張
       
     </span>
   </a>
@@ -2376,7 +2453,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント変更点
+        既存環境からの移行
       
     </span>
   </a>
@@ -2401,7 +2478,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -2412,10 +2489,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
       
     </span>
   </a>
@@ -2488,7 +2576,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/port-illegal-packets-drop-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2498,182 +2586,158 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。実コード（<code>sonic-snmpagent</code> / <code>py-swsssdk</code> 等）での裏取りは未済。</p>
+<p>このページは公式 HLD のみを根拠に書かれている。<code>isc-dhcp</code> (dhcrelay) の <code>-pg</code> オプション実装、<code>docker-dhcp-relay</code> の supervisord 設定生成、<code>config interface ip add --secondary</code> 実装は未裏取り。</p>
 </div>
-<h1 id="interface-mib-l3">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）<a class="headerlink" href="#interface-mib-l3" title="Permanent link">&para;</a></h1>
+<h1 id="dhcpv4-relay-giaddr-primary-vlan_interface-secondary">DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）<a class="headerlink" href="#dhcpv4-relay-giaddr-primary-vlan_interface-secondary" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 RIF）や VLAN インタフェース、LAG などの L3 オブジェクトに対しても SAI 経由で独立したカウンタを保持している。本 HLD は、SNMP から見える <code>ifInOctets</code> などの値に <strong>L3 で観測される drop / error / 通過パケットを取り込み</strong>、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。</p>
-<p>主眼は次の 2 点に置かれている。</p>
-<ul>
-<li>RIF 単位の L3 SAI カウンタを、対応する物理ポートの L2 カウンタへ <strong>集約</strong> して MIB に返す。</li>
-<li>VLAN インタフェース（L3 IP-VLAN）を新しい Interface MIB エントリとして公開する。</li>
-</ul>
+<p>VLAN に <strong>複数のサブネット</strong> を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC <code>dhcrelay</code>）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に <strong><code>giaddr</code> 欄をどのサブネットの IP にするかが事実上ランダム</strong> になる問題があった。サーバ側 DHCP は <code>giaddr</code> をもとにスコープを選ぶため、毎回違う <code>giaddr</code> が来るとプール選択がブレてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は <code>VLAN_INTERFACE</code> テーブルに <strong><code>secondary</code> フラグ</strong> を追加し、<code>dhcrelay</code> の起動引数に <strong><code>-pg &lt;primary-gateway&gt;</code></strong> を渡すことで、リレーが常に primary サブネットの IP を <code>giaddr</code> に書き込むよう固定する。複数サブネットを持ちつつ DHCP は primary の 1 系統に集約する設計である。<strong>IPv4 限定</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">カウンタ収集経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>SONiC では <code>rifcounter</code> という flex counter グループが RIF の SAI カウンタを定期ポーリングして <code>COUNTERS_DB</code> に書き込む。SNMP エージェント (<code>sonic-snmpagent</code>) の <code>InterfacesUpdater</code> は <code>COUNTERS_DB</code> から値を読み出し、Interface MIB のレスポンスを構築する。RIF カウンタが当該プラットフォームで有効な場合は L2 値に L3 値を加算し、無効な場合は従来どおり L2 値のみを返す（ベンダーによっては L3 のドロップが L2 のドロップに既に含まれているとの前提）。</p>
+<h3 id="primary-secondary">Primary / Secondary の意味<a class="headerlink" href="#primary-secondary" title="Permanent link">&para;</a></h3>
+<p>VLAN 配下の各 IP プレフィックスは次のいずれかに分類される。</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>設定</th>
+<th>DHCP の対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary</td>
+<td>secondary 未設定（既定）</td>
+<td>DHCP リレーが処理する</td>
+</tr>
+<tr>
+<td>Secondary</td>
+<td><code>secondary: true</code></td>
+<td>DHCP リレーは処理しない（giaddr に使わない、サーバはこのレンジから払い出さない）</td>
+</tr>
+</tbody>
+</table>
+<p>理想は <strong>VLAN 配下に primary は 1 つ、それ以外を secondary</strong> にする運用。複数 primary がある場合の挙動は HLD では定義されないが、<code>-pg</code> で渡される 1 つの IP のみが <code>giaddr</code> に固定されるため、結局 primary は 1 つに絞られる。</p>
+<h3 id="dhcrelay">dhcrelay 起動引数<a class="headerlink" href="#dhcrelay" title="Permanent link">&para;</a></h3>
+<p><code>docker-dhcp-relay</code> の supervisord ファイルを生成する jinja で、Primary IP を <code>-pg</code> に渡す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>/usr/sbin/dhcrelay ... -pg &lt;primary_subnet_gateway_ip&gt; ...
+</span></code></pre></div>
+<p>ISC dhcrelay 側はこの <code>-pg</code> オプションをサポートする拡張が必要で、HLD は明示的に「<code>isc-dhcp/dhcrelay to support '-pg gateway' argument</code>」を要件として挙げている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI カウンタ\nport / RIF / VLAN] --&gt;|flex counter\n(rifcounter group)| CDB[(COUNTERS_DB)]
-    CDB --&gt; IU[InterfacesUpdater\n(sonic-snmpagent)]
-    PYSDK[py-swsssdk\nrif↔port マップ\nvlan if 一覧] --&gt; IU
-    IU --&gt; SNMP[SNMP\nInterface MIB\n(RFC1213)]</code></pre>
-<!-- evidence:
-source: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L37-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  The l3 counters are polled to the COUNTERS_DB by the rifcounter flex counter groups.
-  The RIF counters is not enabled/supported for every vendor (expected that l3 drops are counted in l2 drops for these platforms).
-  The MIB should work regardsless of RIF FC group is enabled or not.
-reasoning: 集約処理および「RIF FC が無効でも MIB は動く」という挙動の根拠。
--->
-
-<h3 id="mib-sai">MIB エントリと SAI カウンタの対応<a class="headerlink" href="#mib-sai" title="Permanent link">&para;</a></h3>
-<p>RFC1213 の各エントリは、ポート側 (L2) と RIF 側 (L3) の SAI カウンタを次のとおりマッピングする。L3 列が空欄のエントリは、加算対象が存在しないため L2 のみが反映される。</p>
-<table>
-<thead>
-<tr>
-<th>MIB エントリ</th>
-<th>L2 SAI カウンタ</th>
-<th>L3 SAI カウンタ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ifInOctets</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code></td>
-</tr>
-<tr>
-<td><code>ifInUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifInNUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifInDiscards</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_DISCARDS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifInErrors</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_ERRORS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifInUnknownProtos</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_UNKNOWN_PROTOS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutOctets</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutNUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutDiscards</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_DISCARDS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutErrors</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_ERRORS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutQLen</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_QLEN</code></td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<p>注目すべきは <code>ifInDiscards</code> / <code>ifOutDiscards</code> には L3 側カウンタが定義されていない点である。L3 で起きたドロップは、SAI レベルで <code>IN_ERROR_PACKETS</code> 系の方に流れ込み、結果として <code>ifInErrors</code> / <code>ifOutErrors</code> に集約される設計になっている。ここが本 HLD のタイトル「不正パケットドロップ」の意味である。</p>
-<h3 id="iana-iftype">インタフェース種別と IANA ifType<a class="headerlink" href="#iana-iftype" title="Permanent link">&para;</a></h3>
-<p>各種類のインタフェースは Interface MIB において次の <code>ifType</code> を返す。</p>
-<table>
-<thead>
-<tr>
-<th>インタフェース</th>
-<th>IANA ifType</th>
-<th>実装方針</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ポート</td>
-<td>6 (<code>ethernetCsmacd</code>)</td>
-<td>既実装</td>
-</tr>
-<tr>
-<td>RIF</td>
-<td>-</td>
-<td>物理ポートのカウンタに L3 値を加算（独立エントリは設けない）</td>
-</tr>
-<tr>
-<td>VLAN インタフェース</td>
-<td>136 (<code>l3ipvlan</code>)</td>
-<td>新規エントリとして実装</td>
-</tr>
-<tr>
-<td>LAG</td>
-<td>161 (<code>ieee8023adLag</code>)</td>
-<td>既実装</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_4">コンポーネント変更点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+    MG[Minigraph / config_db.json\nVLAN_INTERFACE.secondary] --&gt; CFG[(CONFIG_DB\nVLAN_INTERFACE)]
+    CFG --&gt; J2[docker-dhcp-relay の supervisord.conf 生成]
+    J2 --&gt; SUP[supervisord]
+    SUP --&gt; RELAY[/usr/sbin/dhcrelay -pg &lt;primary&gt;]
+    Client[DHCP DISCOVER from VM/host] --&gt; RELAY
+    RELAY --&gt;|giaddr := primary| Server[DHCP server]</code></pre>
+<h3 id="yang">YANG 拡張<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-vlan.yang</code> の <code>VLAN_INTERFACE_IPPREFIX_LIST</code> に boolean leaf <code>secondary</code> を追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">list</span><span class="w"> </span><span class="nv">VLAN_INTERFACE_IPPREFIX_LIST</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">secondary</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;Optional field to specify if the prefix is secondary subnet&quot;</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="k">type</span><span class="w"> </span><span class="nc">boolean</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="config_db">CONFIG_DB 例<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>Vlan1000|20.11.12.13/27</code> を secondary、<code>Vlan1000|20.11.10.13/27</code> を primary と扱う例<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;VLAN_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;Vlan1000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">&quot;Vlan1000|20.11.10.13/27&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="nt">&quot;Vlan1000|20.11.12.13/27&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;secondary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>Vlan1000|&lt;prefix&gt;</code> のキー単位で個別に <code>secondary</code> を持つことに注意。<code>secondary</code> 既定は <code>false</code>、未設定なら primary 扱い。</p>
+<h3 id="cli">CLI 拡張<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Vlan1000<span class="w"> </span><span class="m">20</span>.11.12.13/27<span class="w"> </span><span class="m">20</span>.11.12.254<span class="w"> </span>--secondary
+</span></code></pre></div>
+<p>ファイル <code>tests/ip_config_test.py</code> に対応するテストが追加され、以下が要件として明記されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong><code>py-swsssdk</code></strong>: <code>port_util.get_rif_port_map(db)</code> のような RIF OID ↔ ポート OID のマップ取得関数、および VLAN インタフェース OID 一覧取得関数を追加する。</li>
-<li><strong><code>sonic-snmpagent</code></strong>: <code>InterfacesUpdater</code> が上記マップを保持し、<code>COUNTERS_DB</code> 更新時に RIF OID があれば対応ポートのカウンタへ加算する。VLAN インタフェース用エントリ（ifType=136）を新設する。RIF エントリ自体を MIB に出すのではなく、ポート側へ折り畳んでいる点に注意。</li>
+<li><code>--secondary</code> / <code>-s</code> フラグの解釈</li>
+<li><strong>primary が既に存在しなければ secondary を追加できない</strong>（一貫性チェック）</li>
 </ul>
+<h3 id="_4">既存環境からの移行<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>secondary</code> は optional であり、既存 VLAN_INTERFACE にはアクションを取らずアップグレードできる。secondary を使わない場合は何も変わらない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L74-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/DHCPv4_Gateway/DHCPv4_gateway.md#L37-L47 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Interface MIB's `InterfacesUpdater` will contain port to rif map. When counters are updated if RIF oid is present in the "COUNTERS" table of COUNTERS_DB,
-  the counters are aggredated according to Table 3.
-  Vlan interface entry is introduced, with IANA ifType 136
-reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設という 2 点の設計判断の根拠。
+  1. Support a new member 'secondary' of VLAN_INTERFACE in config_db.
+  2. Support parsing and assignment of subnets from minigraph/json/cli to config_db.
+  3. Support specifying non-secondary interfaces' gateway address to command line arguments to /usr/sbin/dhcrelay as -pg (primary gateway).
+  4. isc-dhcp/dhcrelay to support '-pg gateway' argument.
+reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) の根拠。
 -->
 
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する CONFIG_DB エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。</p>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には記載なし。実装側で <code>FLEX_COUNTER_TABLE|RIF</code> 等が関連すると推測されるが未確認。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には記載なし。SNMP 経由 (<code>snmpwalk</code> 等) での参照を前提にしている。</p>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td><code>&lt;vlan&gt;\|&lt;prefix&gt;</code></td>
+<td><code>secondary</code></td>
+<td><code>"true"</code> で secondary（DHCP 対象外）。既定 <code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config interface ip add &lt;intf&gt; &lt;prefix&gt; &lt;gateway&gt; --secondary</code> (or <code>-s</code>)</td>
+<td>secondary IP 追加</td>
+</tr>
+<tr>
+<td><code>config interface ip add &lt;intf&gt; &lt;prefix&gt; &lt;gateway&gt;</code></td>
+<td>primary IP 追加（既存挙動）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang_1">関連する YANG<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
+<p><code>sonic-vlan</code> モジュール、<code>VLAN_INTERFACE_IPPREFIX_LIST</code> に <code>secondary: boolean</code> を追加。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># クライアント側からの参照例（HLD 範囲外のため参考）</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>snmpwalk<span class="w"> </span>-v2c<span class="w"> </span>-c<span class="w"> </span>&lt;community&gt;<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>ifInErrors
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Vlan1000 に primary とそれ以外を追加</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Vlan1000<span class="w"> </span><span class="m">20</span>.11.10.13/27<span class="w"> </span><span class="m">20</span>.11.10.1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Vlan1000<span class="w"> </span><span class="m">20</span>.11.12.13/27<span class="w"> </span><span class="m">20</span>.11.12.1<span class="w"> </span>--secondary
 </span></code></pre></div>
+<p><code>docker-dhcp-relay</code> を再生成（<code>config reload</code> 等）すると、dhcrelay は <code>-pg 20.11.10.1</code> 相当で起動し、すべての DHCP DISCOVER に対し <code>giaddr=20.11.10.13</code> を埋め込む。</p>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>RIF flex counter group</strong>: 当グループが無効なプラットフォームでは L3 加算が起きず、<code>ifInErrors</code> 等は L2 値のみを返す。</li>
-<li><strong>VLAN インタフェース</strong>: 本 HLD で初めて Interface MIB に出るため、既存 NMS の自動検出に影響する可能性がある。</li>
-<li><strong>LAG / ポートチャネル</strong>: ifType 161 として既実装。本 HLD では変更対象外。</li>
+<li><strong>Minigraph</strong>: <code>SecondarySubnets</code> 等の minigraph フィールドが追加される。<code>sonic-config-engine</code> のテストにそれを取り込む変更が入る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>DHCPv6 Relay</strong>: 本機能は IPv4 限定。IPv6 リレーには影響しない。</li>
+<li><strong>Routing / FRR</strong>: secondary プレフィックスも IP インタフェースとして OS には設定されるため、ルーティングプロトコルから見える経路に変化はない。secondary だからといって OS から消えるわけではない点に注意。</li>
+<li><strong>Warm/Fast boot</strong>: 影響なし（HLD 明記）。</li>
+<li><strong>メモリ</strong>: 機能 disabled 時の追加コスト無し（HLD 明記）。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3 ドロップが SNMP に出てこない場合、まず <code>COUNTERS_DB</code> 上に RIF の COUNTERS エントリが存在するか確認する。存在しない場合は <code>rifcounter</code> flex counter グループが当該プラットフォームで無効。</li>
-<li><code>ifType=136</code> の VLAN エントリが見えない場合、<code>sonic-snmpagent</code> のバージョンが本 HLD 反映前の可能性がある。</li>
-<li>テストは <code>test_snmp_interfaces.py</code> でカバーされている旨が HLD に記載されており、回帰確認の起点として有用<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>VM クライアントだけ DHCP が当たらない: secondary プレフィックスのレンジに居る可能性。サーバ側スコープが primary レンジで定義されていることを確認する。</li>
+<li>DHCP リクエストの giaddr が想定外: <code>tcpdump -ni &lt;ifc&gt; port 67</code> で <code>giaddr</code> を確認。<code>-pg</code> が dhcrelay に正しく渡っているかを <code>ps -ef | grep dhcrelay</code> で確認する。</li>
+<li><code>config interface ip add ... --secondary</code> が拒否される: primary の IP が同 VLAN にまだ無い可能性。CLI 側で「primary が無いと secondary を入れられない」一貫性チェックがあると HLD は記述している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>大量の secondary を入れたが反映されない: <code>docker-dhcp-relay</code> のサプライザード設定再生成（<code>systemctl restart dhcp_relay</code> 等）が必要なケースがある。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-illegal-packets/Port_illegal_packets_drop_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/DHCPv4_Gateway/DHCPv4_gateway.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
