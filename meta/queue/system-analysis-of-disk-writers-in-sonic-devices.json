@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/analysis-of-disk-writers-in-sonic-devices.md",
+  "verification": "hld-only",
+  "concerns": [
+    "bgpmon.py の vtysh -H /dev/null 化の sonic-buildimage / sonic-bgpcfgd 取り込み確認",
+    "/tmp の tmpfs 化が image 構成に反映されているか確認 (fstab / cloud-init / build_templates)",
+    "supervisor-proc-exit-listener の log 出力先 /dev/shm/supervisor/ への変更の sonic-buildimage 取り込み確認",
+    "monit / logrotate の state path 変更の取り込み確認",
+    "jbd2 無効化を採用しない方針の確認 (現行 master で journaling は有効維持か)",
+    "計測再現性 (新しい SKU での確認、recent OS バージョンでの再測)"
+  ],
+  "priority": "medium"
+}
