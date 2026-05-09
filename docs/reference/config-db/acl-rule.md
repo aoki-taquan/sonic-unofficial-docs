@@ -1,0 +1,101 @@
+---
+title: ACL_RULE テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db:
+    - ACL_RULE
+    - ACL_TABLE
+    - MIRROR_SESSION
+  cli:
+    - config acl
+  yang: []
+---
+
+# ACL_RULE テーブル
+
+## 概要
+
+`ACL_TABLE` 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ[^1]。`AclOrch` が `ACL_TABLE` 配下のルールを SAI ACL entry として展開する。
+
+!!! warning "YANG 未定義"
+    `ACL_RULE` テーブルは YANG モジュールで未定義。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}`。
+
+## key 構造
+
+```
+ACL_RULE|<table_name>|<rule_name>
+```
+
+`<table_name>` は `ACL_TABLE.name` を参照（実装上は名前一致のみで leafref はない）。
+
+## 共通フィールド
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `PRIORITY` | uint32 | ルール評価順位。値が大きいほど優先 |
+| `PACKET_ACTION` | enum `FORWARD`/`DROP`/`DO_NOT_NAT`/etc | 既定アクション |
+
+## match フィールド (代表)
+
+| 名前 | 値 |
+|------|----|
+| `IN_PORTS` / `OUT_PORT` / `OUT_PORTS` | カンマ区切り PORT 名 |
+| `SRC_IP` / `DST_IP` | IPv4 prefix |
+| `SRC_IPV6` / `DST_IPV6` | IPv6 prefix |
+| `L4_SRC_PORT` / `L4_DST_PORT` | TCP/UDP ポート |
+| `L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE` | range `<min>..<max>` |
+| `ETHER_TYPE` | uint16（hex 可） |
+| `IP_PROTOCOL` / `NEXT_HEADER` | uint8 |
+| `VLAN_ID` | uint16 |
+| `TCP_FLAGS` | `<flags>/<mask>` |
+| `IP_TYPE` | enum (`ANY`/`IP`/`NON_IP`/`IPV4ANY`/`IPV6ANY`/...) |
+| `DSCP` / `TC` | DSCP / TC 値 |
+| `ICMP_TYPE` / `ICMP_CODE` / `ICMPV6_TYPE` / `ICMPV6_CODE` | ICMP |
+| `TUNNEL_VNI` | VNI |
+| `INNER_ETHER_TYPE` / `INNER_IP_PROTOCOL` / `INNER_L4_SRC_PORT` / `INNER_L4_DST_PORT` | inner header |
+| `INNER_SRC_MAC` / `INNER_DST_MAC` / `INNER_SRC_IP` | inner header |
+| `BTH_OPCODE` / `AETH_SYNDROME` | RoCE 用 |
+| `TUNNEL_TERM` | bool |
+| `META_DATA` | uint32 |
+
+## action フィールド (代表)
+
+| 名前 | 説明 |
+|------|------|
+| `PACKET_ACTION` | `FORWARD` / `DROP` 等 |
+| `REDIRECT_ACTION` | redirect 先（next-hop / mirror セッション 等） |
+| `DO_NOT_NAT_ACTION` | NAT バイパス |
+| `DISABLE_TRIM_ACTION` | バッファ trim 無効化 |
+| `MIRROR_ACTION` / `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` | mirror セッション参照 |
+| `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` / `FLOW_SAMPLE_PERCENT` / `REPORT_ALL_PACKETS` | DTel (`DTEL_*`) |
+| `COUNTER` | カウンタ装着 |
+| `META_DATA_ACTION` | metadata 上書き |
+| `DSCP_ACTION` | DSCP 上書き |
+| `INNER_SRC_MAC_REWRITE_ACTION` | inner SRC MAC rewrite |
+
+ユーザ定義型 (`ACL_TABLE_TYPE`) を使う場合、ここで使える match / action は `ACL_TABLE_TYPE.MATCHES` / `.ACTIONS` で許可された集合に限られる。
+
+## 購読者
+
+- `orchagent` `AclOrch`: SAI ACL entry を生成
+- `mirrororch`: `MIRROR_*_ACTION` 経由で連動
+- `copporch`: `CTRLPLANE` 種別の `ACL_TABLE` 配下のルールに連動
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: `ACL_TABLE`、`MIRROR_SESSION`、`POLICER`
+- 関連 CLI: [`config acl`](../cli/config-acl.md)
+- 関連 YANG: なし
+
+## 引用元
+
+[^1]: match / action のキー名は `sonic-swss/orchagent/aclorch.h` の `MATCH_*` / `ACTION_*` マクロ定義から抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.h>
