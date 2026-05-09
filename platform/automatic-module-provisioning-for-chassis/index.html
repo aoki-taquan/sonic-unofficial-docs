@@ -8635,8 +8635,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 1.0, 2026-03）のみを根拠に書かれている。<code>sonic_platform_base/module_base.py</code> への新規 enum / API 追加、<code>sonic-provisiond</code> デーモンの実装、<code>chassisd</code> の連携は未確認。HLD は比較的新しいが、ベンダー側の実装事例は揃っていない可能性が高い。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 実装は未着手（提案段階）</p>
+<p>2026-05-09 時点で <code>sonic-net</code> org 全体を <code>MODULE_STATUS_PROVISION</code> / <code>provision_module</code> / <code>sonic-provisiond</code> で grep してもヒットは HLD 本体のみ。<code>sonic-platform-common</code> の <code>sonic_platform_base/module_base.py</code> には HLD 提案の 3 定数 (<code>MODULE_STATUS_PROVISION_READY</code> / <code>_PENDING</code> / <code>MODULE_STATUS_PROVISIONED</code>) も <code>provision_module()</code> API も存在せず、<code>sonic-platform-daemons</code> への <code>sonic-provisiond</code> デーモン追加もまだ無い。HLD は Rev 1.0（2026-03）と比較的新しいが、コード反映はこれからのフェーズ（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="chassis-line-card-sonic-provisiond-provision_module">Chassis Line Card 自動プロビジョニング（<code>sonic-provisiond</code> / <code>provision_module</code>）<a class="headerlink" href="#chassis-line-card-sonic-provisiond-provision_module" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
