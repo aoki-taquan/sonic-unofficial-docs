@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/byte-packet-rates-port-utilization-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-usid/">
       
       
-        <link rel="prev" href="../aggregate-voq-counters-in-sonic/">
+        <link rel="prev" href="../router-interface-counters-in-sonic/">
       
       
-        <link rel="next" href="../sonic-flexcounter-refactor/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>バイト/パケットレートとポート使用率（RATES テーブル + EMA） - SONiC 非公式ドキュメント</title>
+        <title>SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rates-ema" class="md-skip">
+        <a href="#srv6-usidsrv6orch-unuaudtudx" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              バイト/パケットレートとポート使用率（RATES テーブル + EMA）
+              SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -795,6 +795,8 @@
       
   
   
+    
+  
   
   
     
@@ -824,20 +826,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -855,13 +860,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -881,7 +886,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -909,7 +914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -937,7 +942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -965,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -993,7 +998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1021,7 +1026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1049,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1074,10 +1079,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1093,6 +1125,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#end-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加される end behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 側変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usid-carrier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        uSID carrier のフォーマット
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2423,8 +2630,6 @@
       
   
   
-    
-  
   
   
     
@@ -2448,23 +2653,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -2482,13 +2684,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2508,7 +2710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2533,37 +2735,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -2579,236 +2754,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI カウンタの選択
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        計算式（生レート）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EMA による平滑化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        COUNTERS_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flex Counter グループの動的登録
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI への影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counterpoll" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        counterpoll 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する COUNTERS_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2821,7 +2766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -2849,7 +2794,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -2877,7 +2822,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -3245,10 +3190,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#end-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        追加される end behavior
       
     </span>
   </a>
@@ -3256,10 +3201,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
+  <a href="#orchagent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI カウンタの選択
+        orchagent 側変更
       
     </span>
   </a>
@@ -3267,65 +3212,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#usid-carrier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        計算式（生レート）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EMA による平滑化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        COUNTERS_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flex Counter グループの動的登録
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI への影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counterpoll" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        counterpoll 拡張
+        uSID carrier のフォーマット
       
     </span>
   </a>
@@ -3338,7 +3228,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3361,18 +3251,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する COUNTERS_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -3383,7 +3262,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -3399,7 +3278,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3410,7 +3300,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3421,7 +3311,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3448,7 +3338,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/byte-packet-rates-port-utilization-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-usid.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3458,254 +3348,187 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>portsorch</code> / <code>intfsorch</code> の <code>addRifToFlexCounter</code> / Lua プラグインの存在と配置、<code>config rate smoothing_interval</code> CLI 実装、<code>counterpoll port_rates</code> / <code>rif_rates</code> トークン実装、<code>RATES</code> テーブルの実 schema は未裏取り。</p>
+<p>本ページは公式 HLD（2022-07）のみを根拠に書かれている。<code>srv6orch</code> 実装、SAI の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> 等の現行 master での利用可能性は未確認。</p>
 </div>
-<h1 id="rates-ema">バイト/パケットレートとポート使用率（RATES テーブル + EMA）<a class="headerlink" href="#rates-ema" title="Permanent link">&para;</a></h1>
+<h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>portstat</code> / <code>intfstat</code> が表示する <code>RX_BPS</code> / <code>RX_PPS</code> / <code>RX_UTIL</code> 等のレート列は、長らく <strong>CLI 側でカウンタの差分を計算する</strong> 方式で実装されていた。問題は次の通り<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ユーザが <code>sonic-clear counters</code> を打つとカウンタの基準点が動き、レート計算がガタつく。</li>
-<li>「ユーザ毎に独立したカウンタ」アプローチと組み合わせるとレートの定義が揺れる。</li>
-<li>計算間隔がユーザ操作に依存するため、ある瞬間のレートが固定的でない。</li>
-</ul>
-<p>本機能は <strong>Flex Counter インフラの上にレート計算用のグループ (<code>PORT_RATES</code>, <code>RIF_RATES</code>) を新設</strong> し、Lua プラグインが固定インターバルで生レートを算出 → <strong>指数移動平均 (EMA)</strong> で平滑化したうえで <code>COUNTERS_DB</code> の <strong><code>RATES</code> テーブル</strong> に保存する設計である。<code>portstat</code> / <code>intfstat</code> はそこを読むだけ。<code>sonic-clear counters</code> を打っても影響を受けない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>uSID（micro-SID）は IETF <a href="https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/">Compressed SRv6 Segment List Encoding</a> と <a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/">SRv6 uSID instructions</a> で定義される、SRv6 SID を <strong>16 bit などに圧縮</strong> する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に <strong>最大 6 個の uSID</strong> を詰められる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。</p>
+<p>本 HLD は SONiC の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張のみを定義する。SAI API は既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> ですべて表現できるため、SAI の変更は不要である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC の FRR 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    SAI[SAI port/RIF stats] --&gt; FC1[Flex Counter\n(既存 port/rif counters, 1s)]
-    FC1 --&gt; CDB1[(COUNTERS_DB\nCOUNTERS:vid)]
-    CDB1 --&gt;|新 FC group| FC2[Flex Counter\n(PORT_RATES / RIF_RATES)]
-    FC2 --&gt;|Lua plugin| CALC[計算\n(diff/delta + EMA)]
-    SP[(CONFIG_DB\nPORT speed / RIF speed)] --&gt; CALC
-    SCFG[(CONFIG_DB\nRATES.PORT_ALPHA, RIF_ALPHA)] --&gt; CALC
-    CALC --&gt; CDB2[(COUNTERS_DB\nRATES:vid)]
-    CDB2 --&gt; CLI[portstat / intfstat]</code></pre>
-<p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>既存の port / RIF 用 Flex Counter は元の SAI カウンタを <code>COUNTERS_DB:COUNTERS:vid</code> に書き続ける。</li>
-<li>新規 <code>PORT_RATES</code> / <code>RIF_RATES</code> グループは独自インターバル（既定 1s、設定可）で動き、対応 Lua プラグインが計算を行う。</li>
-<li>計算は <code>RATES:vid</code> というキーに保存される。<code>COUNTERS:vid</code> と同じ vid をキーに使うが、テーブル名で完全分離。</li>
-<li>Lua プラグインは前回値 (<code>*_last</code>) も <code>RATES:vid</code> 内に持ち、自分で更新する。</li>
-</ul>
-<h3 id="sai">SAI カウンタの選択<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<h3 id="end-behavior">追加される end behavior<a class="headerlink" href="#end-behavior" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>計算</th>
-<th>port 用 SAI カウンタ</th>
-<th>RIF 用 SAI カウンタ</th>
+<th>Behavior</th>
+<th>SAI mapping</th>
+<th>flavor</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>octets</td>
-<td><code>SAI_PORT_STAT_IF_IN/OUT_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN/OUT_OCTETS</code></td>
+<td><code>un</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code></td>
+<td><code>PSP_AND_USD</code></td>
 </tr>
 <tr>
-<td>packets</td>
-<td><code>SAI_PORT_STAT_IF_IN/OUT_UCAST_PKTS</code> + <code>SAI_PORT_STAT_IF_IN/OUT_NON_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN/OUT_PACKETS</code></td>
+<td><code>ua</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA</code></td>
+<td><code>PSP_AND_USD</code></td>
+</tr>
+<tr>
+<td><code>udt4</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</code></td>
+<td>(既存 End.DT4 と同じ)</td>
+</tr>
+<tr>
+<td><code>udt6</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</code></td>
+<td>同 End.DT6</td>
+</tr>
+<tr>
+<td><code>udt46</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</code></td>
+<td>同 End.DT46</td>
+</tr>
+<tr>
+<td><code>udx4</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</code></td>
+<td>同 End.DX4</td>
+</tr>
+<tr>
+<td><code>udx6</code></td>
+<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</code></td>
+<td>同 End.DX6</td>
 </tr>
 </tbody>
 </table>
-<p>port の PPS は <strong>UCAST と NON_UCAST の合算</strong> を使う点が独特<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。RIF はもともと <code>IN/OUT_PACKETS</code> が両方を含むためそのまま。</p>
-<h3 id="_4">計算式（生レート）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[RX|TX]_BPS = (octets - octets_last) / delta
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>[RX|TX]_PPS = (packets - packets_last) / delta   # port は UCAST + NON_UCAST の合算
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>[RX|TX]_UTIL = [RX|TX]_BPS / [PORT|RIF]_RATE     # PORT_RATE はリンク速度
+<p>要点:</p>
+<ul>
+<li><code>uN</code> / <code>uA</code> は <strong>PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>uDT*</code> / <code>uDX*</code> は SAI レイヤでは既存の End.DT<em> / End.DX</em> と完全に同じ。orchagent の文字列マッピングだけが追加される</li>
+</ul>
+<h3 id="orchagent">orchagent 側変更<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    APP[(APPL_DB\nSRV6_MY_SID_TABLE)] --&gt;|SET\naction=un/ua/udt*/udx*| ORCH[srv6orch]
+    ORCH --&gt;|behavior + flavor 解決| MAP{end_behavior_map\nend_flavor_map}
+    MAP --&gt; SAI[SAI my_sid_entry create]
+    SAI --&gt; ASIC[ASIC]</code></pre>
+<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> だけの変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。APPL_DB スキーマ自体に変更は無い。</p>
+<p>具体的なマップ追記内容（HLD 抜粋）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// end_behavior_map に追加</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s">&quot;udx6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</span><span class="p">},</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span><span class="s">&quot;udx4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</span><span class="p">},</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">{</span><span class="s">&quot;udt6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">{</span><span class="s">&quot;udt4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span><span class="s">&quot;udt46&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</span><span class="p">},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</span><span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA</span><span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">// end_flavor_map に追加（uN, uA は PSP_AND_USD）</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">},</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">}</span>
 </span></code></pre></div>
-<p><code>delta</code> は <strong>対応する FC グループのインターバル</strong>。port の場合は <code>PORT_RATES</code> の <code>POLL_INTERVAL</code>、RIF の場合は <code>RIF_RATES</code> の <code>POLL_INTERVAL</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ema">EMA による平滑化<a class="headerlink" href="#ema" title="Permanent link">&para;</a></h3>
-<p>瞬間値はマイクロバーストで揺れやすいため、EMA を適用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>N     = [PORT|RIF]_SMOOTH_INTERVAL  (CLI で設定可)
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ALPHA = 2 / (N + 1)
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>EMA   = ALPHA * VALUE + (1 - ALPHA) * EMA_last
-</span></code></pre></div>
-<p><code>ALPHA</code> は CONFIG_DB に <strong>事前計算した値</strong> を入れる設計。Lua プラグインから毎回計算しなくて済む。</p>
-<p><code>SMOOTH_INTERVAL</code> を変えると EMA の応答性が変わる: <code>N=1</code> で実質 EMA 無効、<code>N</code> を大きくすると遅延と引き換えに滑らかになる。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  ALPHA (precalculated):
-  N = [PORT|RIF]_SMOOTH_INTERVAL
-  ALPHA = 2/(N+1)
-  EMA = ALPHA * VALUE + (1 - ALPHA) * EMA_last
-reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。
+  Changes in orchagent,
+  - While processing MYSID entries, from SRV6_MY_SID_TABLE off of APPDB, handling of new actions uN, uA, uDT and uDX added in srv6orch. No APPDB schema changes required.
+reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。
 -->
 
-<h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
-<p><code>RATES:port_vid</code> / <code>RATES:rif_vid</code> に下記を保持<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>RATES:&lt;port_vid&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   # 前回値（Lua plugin が diff 計算に使う）
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   SAI_PORT_STAT_IF_IN_UCAST_PKTS_last
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS_last
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   SAI_PORT_STAT_IF_OUT_UCAST_PKTS_last
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS_last
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   SAI_PORT_STAT_IF_IN_OCTETS_last
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>   SAI_PORT_STAT_IF_OUT_OCTETS_last
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>   # 計算結果（CLI が参照）
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>RATES:&lt;rif_vid&gt;
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>   SAI_ROUTER_INTERFACE_STAT_IN_OCTETS_last
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>   SAI_ROUTER_INTERFACE_STAT_IN_PACKETS_last
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS_last
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS_last
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
+<h3 id="usid-carrier">uSID carrier のフォーマット<a class="headerlink" href="#usid-carrier" title="Permanent link">&para;</a></h3>
+<p>128bit IPv6 アドレスは次のレイアウトで uSID を詰める<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;uSID-Block&gt;&lt;Active-uSID&gt;&lt;Next-uSID&gt;...&lt;Last-uSID&gt;&lt;End-of-Carrier&gt;[&lt;End-of-Carrier&gt;...]
 </span></code></pre></div>
-<p>CONFIG_DB 側は次のキーで設定が入る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>RATES
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   PORT_SMOOTH_INTERVAL
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>   RIF_SMOOTH_INTERVAL
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>   PORT_ALPHA       # 事前計算
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   RIF_ALPHA        # 事前計算
-</span></code></pre></div>
-<h3 id="flex-counter">Flex Counter グループの動的登録<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h3>
-<p>ポートと RIF はそれぞれ <code>portsorch</code> / <code>intfsorch</code> がライフサイクルを管理する。RIF 側は <code>addRifToFlexCounter()</code> / <code>removeRifFromFlexCounter()</code> メソッドで動的に登録/解除する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新しい RIF が増えたタイミングで自動で <code>RIF_RATES</code> の対象になり、削除時に外れる。</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant ORCH as portsorch / intfsorch
-    participant FC as Flex Counter (PORT_RATES/RIF_RATES)
-    participant LUA as Lua plugin
-    participant CDB as COUNTERS_DB
-    Note over ORCH,FC: 起動 / RIF 追加
-    ORCH-&gt;&gt;FC: register vid
-    loop interval 毎
-        FC-&gt;&gt;CDB: read COUNTERS:&lt;vid&gt;
-        FC-&gt;&gt;LUA: invoke (vid, current, last)
-        LUA-&gt;&gt;CDB: read RATES:&lt;vid&gt;.*_last, port speed
-        LUA-&gt;&gt;LUA: diff / delta, EMA
-        LUA-&gt;&gt;CDB: write RATES:&lt;vid&gt; (rate values + new *_last)
-    end</code></pre>
-<h3 id="cli">CLI への影響<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>ユーザ向けの <code>show</code> 出力は <strong>既存と同じ列</strong> を返す。CLI は内部で <code>COUNTERS:vid</code> ではなく <code>RATES:vid</code> を参照するように切り替わるだけ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>-p / --period</code> オプションを使うと「指定期間で計算したレート」を見せる必要があるが、その場合は <strong>CLI 側でスナップショット差分を取る方式</strong> に切り替えるとされている<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。常用は RATES テーブル、<code>-p</code> 指定時のみスナップショット計算という二系統。</p>
-<h3 id="counterpoll">counterpoll 拡張<a class="headerlink" href="#counterpoll" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>counterpoll [port_rates|rif_rates] interval &lt;seconds&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll [port_rates|rif_rates] [enable|disable]
-</span></code></pre></div>
-<p>ガード条件<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>対応する <strong>counter polling</strong> (port / rif counters) が disable の状態で <code>port_rates</code> / <code>rif_rates</code> を enable しようとするとエラー。</li>
-<li><code>port_rates</code> の interval を <strong>counter polling の interval より短く</strong> 設定しようとすると <strong>警告</strong> を出し、counter polling と同じ interval にそろえる。</li>
-</ul>
-<p>EMA の窓だけは別 CLI で設定する:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span><span class="o">[</span>all<span class="p">|</span>port<span class="p">|</span>rif<span class="o">]</span><span class="w"> </span>&lt;interval&gt;
-</span></code></pre></div>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
 <th>フィールド</th>
-<th>説明</th>
+<th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>RATES</code></td>
-<td>（単一エントリ）</td>
-<td><code>PORT_SMOOTH_INTERVAL</code></td>
-<td>EMA の N（port 用）</td>
+<td>uSID Block</td>
+<td>uSID 群を含む IPv6 プレフィクス</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>RIF_SMOOTH_INTERVAL</code></td>
-<td>EMA の N（RIF 用）</td>
+<td>Active uSID</td>
+<td>現在処理対象の uSID</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>PORT_ALPHA</code></td>
-<td>事前計算: <code>2/(N+1)</code></td>
+<td>Next uSID</td>
+<td>Active の次に処理する uSID</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>RIF_ALPHA</code></td>
-<td>事前計算</td>
+<td>Last uSID</td>
+<td>End-of-Carrier 直前の最後の uSID</td>
 </tr>
 <tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>PORT_RATES</code></td>
-<td><code>FLEX_COUNTER_STATUS</code>, <code>POLL_INTERVAL</code></td>
-<td>port レート計算 FC group</td>
-</tr>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>RIF_RATES</code></td>
-<td>同上</td>
-<td>RIF レート計算 FC group</td>
+<td>End-of-Carrier</td>
+<td>終端マーカ。グローバル予約値 <code>0000</code>。128bit を埋めるために必要なだけ並べる</td>
 </tr>
 </tbody>
 </table>
-<h3 id="counters_db_1">関連する COUNTERS_DB<a class="headerlink" href="#counters_db_1" title="Permanent link">&para;</a></h3>
-<p><code>RATES:&lt;vid&gt;</code> に上述の前回値 + レート結果。CLI / telemetry は基本的にこれを読む。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>counterpoll port_rates {enable\|disable}</code></td>
-<td>PORT_RATES グループ ON/OFF</td>
-</tr>
-<tr>
-<td><code>counterpoll rif_rates {enable\|disable}</code></td>
-<td>RIF_RATES 同</td>
-</tr>
-<tr>
-<td><code>counterpoll port_rates interval &lt;sec&gt;</code></td>
-<td>port レート計算間隔</td>
-</tr>
-<tr>
-<td><code>counterpoll rif_rates interval &lt;sec&gt;</code></td>
-<td>RIF 同</td>
-</tr>
-<tr>
-<td><code>config rate smoothing_interval {all\|port\|rif} &lt;N&gt;</code></td>
-<td>EMA の窓を変更</td>
-</tr>
-<tr>
-<td><code>portstat</code> / <code>intfstat</code></td>
-<td>既存の表示 CLI（バックエンドが RATES に切替）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span>interval<span class="w"> </span><span class="m">1</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span>port<span class="w"> </span><span class="m">5</span><span class="w">    </span><span class="c1"># EMA N=5</span>
+<p>例（HLD 抜粋）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uSID block:    2001:41f0::
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Active uSID:   0100
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Next uSID:     0200
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Last uSID:     0A00
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>End-of-Carrier: 0000 (2 個並べて 128bit 充足)
 </span></code></pre></div>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>srv6orch</code> の locator パース長は既存どおり <code>locator_block_len:locator_node_len:function_len:args_len</code>（例: <code>16:8:8:8</code>）を再利用する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>HLD では新規 CONFIG_DB スキーマは導入されない。SRv6 全体としては既存の <code>SRV6_MY_SID_TABLE</code>（APPL_DB）と関連する CONFIG_DB スキーマ（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 参照）を使う。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>専用 CLI は本 HLD で提案されていない。</p>
+<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>uN（uSID transit）を持つノード:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;16:8:8:8:2001:41f0:0100::&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;un&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>uDT46（VRF にデキャプ）:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;16:8:8:8:2001:41f0:0100::&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;udt46&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;vrf&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VRF-1001&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>sonic-clear counters</code></strong>: 旧来は CLI 側で差分計算していたためカウンタクリアでレート初期化が起きていた。本機能では <code>RATES</code> テーブル経由となり <strong>影響を受けない</strong>。これは仕様上の意図。</li>
-<li><strong>counter polling との関係</strong>: <code>port_rates</code> の interval を counter polling より短くしても意味がない（生カウンタが更新されないため）。CLI が警告して合わせる仕様<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>EMA の応答性</strong>: 瞬間ピークを見たいユースケースでは <code>smoothing_interval</code> を 1 にするのが直感的。スパイクを丸めたい運用では大きめの値を。</li>
-<li><strong>port speed</strong>: <code>[RX|TX]_UTIL</code> は CONFIG_DB の <code>PORT.speed</code> を分母に使うため、<code>speed</code> 設定が誤っていると UTIL が % で歪む。</li>
-<li><strong><code>-p</code> オプション</strong>: 指定された期間で計算する場合は本機能の RATES テーブルではなく、CLI 内のスナップショット計算に切り替わる。意味的に別系統である点に注意。</li>
+<li>本 HLD のスコープは <strong>データプレーン programming のみ</strong>。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を BGP / IS-IS で配布する経路は別問題<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>uN / uA は flavor が <strong>PSP_AND_USD 固定</strong>。他の flavor を選びたいユースケースは現状非対応</li>
+<li>ベース SRv6 HLD 由来の制約（locator パース、locator_block_len 等の事前合意値）はそのまま継承する</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>portstat</code> で BPS / PPS が常に 0: <code>RATES:&lt;port_vid&gt;</code> が COUNTERS_DB に書かれているか <code>redis-cli -n 2 keys 'RATES*'</code> で確認。Lua プラグインが回っていない、または Flex Counter group が disable の可能性。</li>
-<li>値がガタつく: <code>smoothing_interval</code> を上げて EMA を効かせる。</li>
-<li><code>RATES</code> の値と <code>COUNTERS</code> の差分が合わない: EMA で平滑化されているため、瞬時カウンタの素差分とは一致しない。これが意図。</li>
-<li><code>counter poll port_rates enable</code> でエラー: 既存 <code>port</code> counter polling が disable の可能性。先にそちらを enable する。</li>
-<li>新しい RIF を作ったのに RATES に反映されない: <code>intfsorch</code> の <code>addRifToFlexCounter</code> が呼ばれていない可能性。<code>syslog</code> で SWSS 起動エラーを確認。</li>
+<li><strong>既存 SRv6 機能（End / End.X / End.DT<em> / End.DX</em> / End.B6.*）</strong>: 同じ <code>SRV6_MY_SID_TABLE</code> を共有する。<code>action</code> 文字列で区別する</li>
+<li><strong>VRF</strong>: <code>udt4</code> / <code>udt6</code> / <code>udt46</code> は <code>vrf</code> フィールドで宛先 VRF を指定する</li>
+<li><strong>SAI 実装</strong>: SAI 側に <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> / <code>UA</code> を実装していない ASIC では <code>un</code> / <code>ua</code> が拒否される</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>un</code> / <code>ua</code> を SET したのに ASIC に入らない場合、まず <code>srv6orch</code> のログで behavior マップヒットを確認。SAI から <code>SAI_STATUS_NOT_SUPPORTED</code> が返ってきている場合は ASIC ベンダーの SAI 実装が UN/UA 未対応の可能性</li>
+<li>uSID carrier の解釈ずれは locator_block_len 等の合意値が一致しているかを確認</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- srv6orch の end_behavior_map に un/ua/udt*/udx* が現行 master で追加されているか
+- SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か
+- FRR の SRv6 制御プレーン対応の進捗（HLD 後の状況）
+- locator パースの 16:8:8:8 デフォルトが現行コードでも有効か
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/rates-and-utilization/Rates_and_utilization_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/srv6/SRv6_uSID.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
