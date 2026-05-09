@@ -11,5 +11,6 @@
     "VLAN/LAG member \u5909\u66f4\u6642\u306e counter entry \u52d5\u7684\u66f4\u65b0\u306e\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
   ],
   "priority": "high",
-  "issue": 511
+  "issue": 511,
+  "pr": 512
 }

@@ -310,7 +310,8 @@
         "VLAN/LAG member 変更時の counter entry 動的更新の実装ステータス確認"
       ],
       "priority": "high",
-      "issue": 511
+      "issue": 511,
+      "pr": 512
     },
     {
       "page": "docs/routing/high-level-design-document.md",
