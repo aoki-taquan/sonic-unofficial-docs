@@ -1,7 +1,7 @@
 ---
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
 area: switching
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2019-04 改訂で **5 年以上前**。`FdbOrch` の per-port / per-VLAN flush API、MAC move event 取り扱い、CONFIG_DB の `FDB` table へ static MAC を保存する経路、`config mac` / `config vlan range` CLI、`SWITCH_TABLE` の aging time フィールド命名は実コードでの裏取り未済（priority=high）。
+!!! warning "裏取りステータス: Discrepancy-found"
+    主要 orchagent 実装は確認できたが、HLD で提案された CLI のうち `config mac (aging_time / add / del)` および `config vlan range` / `config vlan member range` は現行 sonic-utilities の `config/main.py` には存在しない。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
 
@@ -233,6 +233,17 @@ sonic-clear fdb port Ethernet0
 - `config vlan range add` が遅い → pipelining が効いているか、SET 数が多すぎていないかを確認
 - aging が効かない → `redis-cli -n 4 hgetall 'SWITCH_TABLE|switch'` で aging_time 値を確認、HW 側の aging 上限と比較
 - MAC move 後に古い port に packet が出続ける → MAC move event 通知の SAI 側サポート、`ASIC_DB` の FDB entry を確認
+
+## 実装との乖離
+
+実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+
+- **`config mac` / `config vlan range` CLI 未取り込み**: HLD は `config mac aging_time` / `config mac add` / `config mac del` / `config vlan range` / `config vlan member range` を提案するが、現行 master の `sonic-utilities/config/main.py` には `mac` グループおよび `vlan range` サブコマンドは存在しない。`show mac aging-time` (`show/main.py:1244`) は実装済みだが、CLI 経由での aging_time 設定 / static MAC 追加 / VLAN レンジ作成は **CONFIG_DB 直接書き込み（sonic-cfggen / config_db.json 編集）** か、`sonic-utilities/scripts/fdbclear`（旧来の `sonic-clear fdb` 相当）でのフラッシュ運用となっている。
+- **HLD と一致する実装**: `sonic-swss/orchagent/fdborch.cpp` 側は HLD どおり実装済み。具体的には:
+    - `fdborch.cpp:91-138` MAC move event ハンドリング（`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を使用）
+    - `fdborch.cpp:459,1254-1316,1754` `saved_fdb_entries` による「port が VLAN 未メンバの間に来た static MAC を保留 → 復活」の実装
+    - `fdborch.cpp:985,1006,1038,1090,1217` `flushFDBEntries(bridge_port_oid, vlan_oid)` による per-port / per-VLAN / per-(port,VLAN) flush API
+    - `sonic-swss/orchagent/switchorch.cpp:49,664,1674-1686` で `SWITCH_TABLE.fdb_aging_time` キーから `SAI_SWITCH_ATTR_FDB_AGING_TIME` への反映
 
 ## 引用元
 
