@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/port-illegal-packets-drop-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/wred-and-ecn-statistics/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../watermark-counters-in-sonic/">
       
       
-        <link rel="next" href="../../routing/">
+        <link rel="next" href="../../system/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） - SONiC 非公式ドキュメント</title>
+        <title>WRED / ECN 統計（per-queue / per-port、capability ベース） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interface-mib-l3" class="md-skip">
+        <a href="#wred-ecn-per-queue-per-portcapability" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+              WRED / ECN 統計（per-queue / per-port、capability ベース）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -337,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -558,23 +556,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -592,13 +587,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -615,37 +610,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -661,181 +629,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ収集経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mib-sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIB エントリと SAI カウンタの対応
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iana-iftype" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        インタフェース種別と IANA ifType
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネント変更点
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1314,6 +1107,8 @@
       
   
   
+    
+  
   
   
     
@@ -1333,20 +1128,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1364,13 +1162,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1390,7 +1188,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -1418,7 +1216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1443,10 +1241,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WRED / ECN 統計（per-queue / per-port、capability ベース）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1462,6 +1287,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capability 検出
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex Counter グループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB へのキー追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2163,7 +2196,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        カウンタ収集経路
+        全体フロー
       
     </span>
   </a>
@@ -2171,10 +2204,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mib-sai" class="md-nav__link">
+  <a href="#capability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MIB エントリと SAI カウンタの対応
+        Capability 検出
       
     </span>
   </a>
@@ -2182,10 +2215,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iana-iftype" class="md-nav__link">
+  <a href="#flex-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        インタフェース種別と IANA ifType
+        Flex Counter グループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB へのキー追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 拡張
       
     </span>
   </a>
@@ -2196,7 +2251,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント変更点
+        表示例
       
     </span>
   </a>
@@ -2232,10 +2287,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
       
     </span>
   </a>
@@ -2308,7 +2374,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/port-illegal-packets-drop-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/wred-and-ecn-statistics.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2318,182 +2384,221 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。実コード（<code>sonic-snmpagent</code> / <code>py-swsssdk</code> 等）での裏取りは未済。</p>
+<p>このページは公式 HLD のみを根拠に書かれている。<code>orchagent</code> の WRED capability discovery、<code>syncd</code> の Flex Counter group 拡張、<code>counterpoll</code> CLI の wredqueue/wredport トークン実装は未裏取り。</p>
 </div>
-<h1 id="interface-mib-l3">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）<a class="headerlink" href="#interface-mib-l3" title="Permanent link">&para;</a></h1>
+<h1 id="wred-ecn-per-queue-per-portcapability">WRED / ECN 統計（per-queue / per-port、capability ベース）<a class="headerlink" href="#wred-ecn-per-queue-per-portcapability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 RIF）や VLAN インタフェース、LAG などの L3 オブジェクトに対しても SAI 経由で独立したカウンタを保持している。本 HLD は、SNMP から見える <code>ifInOctets</code> などの値に <strong>L3 で観測される drop / error / 通過パケットを取り込み</strong>、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。</p>
-<p>主眼は次の 2 点に置かれている。</p>
-<ul>
-<li>RIF 単位の L3 SAI カウンタを、対応する物理ポートの L2 カウンタへ <strong>集約</strong> して MIB に返す。</li>
-<li>VLAN インタフェース（L3 IP-VLAN）を新しい Interface MIB エントリとして公開する。</li>
-</ul>
+<p>SONiC のキューイング設計で WRED と ECN は輻輳制御の主役だが、<code>portstat</code> 系では「<strong>WRED でドロップされた / ECN マークされたフレーム</strong> がどれだけあったか」を切り出して見ることができなかった。本機能は SAI が提供する WRED / ECN 専用カウンタを Flex Counter で拾って <code>COUNTERS_DB</code> に書き、新規 CLI <code>show queue wredcounters</code> および既存 <code>show interfaces counters detailed</code> の拡張で表示できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>設計上の特徴は <strong>capability ベース</strong> であること。プラットフォームによってサポートされるカウンタが異なるため、<code>orchagent</code> が起動時に SAI capability を問い合わせて <code>STATE_DB</code> に書き、CLI はそれを見て対応カウンタだけを取得・表示する。非対応カウンタは <code>N/A</code> で返す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code>（ポート単位 ECN マークパケット数）は本 HLD の <strong>次フェーズ</strong> で扱う旨が明記されている。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">カウンタ収集経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>SONiC では <code>rifcounter</code> という flex counter グループが RIF の SAI カウンタを定期ポーリングして <code>COUNTERS_DB</code> に書き込む。SNMP エージェント (<code>sonic-snmpagent</code>) の <code>InterfacesUpdater</code> は <code>COUNTERS_DB</code> から値を読み出し、Interface MIB のレスポンスを構築する。RIF カウンタが当該プラットフォームで有効な場合は L2 値に L3 値を加算し、無効な場合は従来どおり L2 値のみを返す（ベンダーによっては L3 のドロップが L2 のドロップに既に含まれているとの前提）。</p>
+<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI カウンタ\nport / RIF / VLAN] --&gt;|flex counter\n(rifcounter group)| CDB[(COUNTERS_DB)]
-    CDB --&gt; IU[InterfacesUpdater\n(sonic-snmpagent)]
-    PYSDK[py-swsssdk\nrif↔port マップ\nvlan if 一覧] --&gt; IU
-    IU --&gt; SNMP[SNMP\nInterface MIB\n(RFC1213)]</code></pre>
+    SAI[SAI\nsai_query_stats_capability] --&gt; ORCH[orchagent\n(起動時)]
+    ORCH --&gt;|capability| SDB[(STATE_DB\nQUEUE_COUNTER_CAPABILITIES\nPORT_COUNTER_CAPABILITIES)]
+    User[counterpoll wredqueue/wredport enable] --&gt; CDB[(CONFIG_DB\nFLEX_COUNTER_TABLE\nWRED_ECN_QUEUE / WRED_ECN_PORT)]
+    CDB --&gt; ORCH
+    ORCH --&gt;|stat-id 登録| FCDB[(FLEX_COUNTER_DB)]
+    FCDB --&gt; SYNCD[syncd]
+    SYNCD --&gt;|periodic poll| CNT[(COUNTERS_DB)]
+    CLI[show queue wredcounters\nshow interfaces counters detailed] --&gt;|capability lookup| SDB
+    CLI --&gt; CNT</code></pre>
+<h3 id="capability">Capability 検出<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
+<p><code>orchagent</code> は <code>sai_query_stats_capability()</code> でプラットフォーム対応を問い合わせ、<code>STATE_DB</code> に次のように書き込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>QUEUE_COUNTER_CAPABILITIES:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER  : isSupported = true/false
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER : ...
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER: ...
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER: ...
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>PORT_COUNTER_CAPABILITIES:
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER : ...
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER: ...
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  WRED_ECN_PORT_WRED_RED_DROP_COUNTER   : ...
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER : ...
+</span></code></pre></div>
+<p>既定値はすべて <code>false</code>。CLI はこれを引いて未対応列を <code>N/A</code> と表示する。すべての組み合わせが未対応のグループを <code>counterpoll</code> で <code>enable</code> した場合は <strong>syslog エラー</strong> を出す仕様<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L37-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/qos/ECN_and_WRED_statistics_HLD.md#L82-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  The l3 counters are polled to the COUNTERS_DB by the rifcounter flex counter groups.
-  The RIF counters is not enabled/supported for every vendor (expected that l3 drops are counted in l2 drops for these platforms).
-  The MIB should work regardsless of RIF FC group is enabled or not.
-reasoning: 集約処理および「RIF FC が無効でも MIB は動く」という挙動の根拠。
+  Orchagent fetches the platform statistics capability for WRED and ECN Statistics from SAI
+  The stats capability will be updated to STATE_DB by orchagent
+  Based on the stats capability and CONFIG_DB status of respective statistics, Orchagent sets stat-ids to FLEX_COUNTERS_DB
+reasoning: capability ベースで Flex Counter 登録が制御される設計の根拠。
 -->
 
-<h3 id="mib-sai">MIB エントリと SAI カウンタの対応<a class="headerlink" href="#mib-sai" title="Permanent link">&para;</a></h3>
-<p>RFC1213 の各エントリは、ポート側 (L2) と RIF 側 (L3) の SAI カウンタを次のとおりマッピングする。L3 列が空欄のエントリは、加算対象が存在しないため L2 のみが反映される。</p>
+<h3 id="flex-counter">Flex Counter グループ<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h3>
+<p>新規 2 グループ。<strong>既定では disable</strong>（ポーリングしない）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
-<th>MIB エントリ</th>
-<th>L2 SAI カウンタ</th>
-<th>L3 SAI カウンタ</th>
+<th>グループ</th>
+<th>既定 POLL_INTERVAL</th>
+<th>計測対象 SAI カウンタ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ifInOctets</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code></td>
+<td><code>WRED_ECN_QUEUE</code></td>
+<td>10000 ms</td>
+<td><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS</code> / <code>_BYTES</code>, <code>SAI_QUEUE_STAT_WRED_DROPPED_PACKETS</code> / <code>_BYTES</code></td>
 </tr>
 <tr>
-<td><code>ifInUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifInNUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifInDiscards</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_DISCARDS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifInErrors</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_ERRORS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifInUnknownProtos</code></td>
-<td><code>SAI_PORT_STAT_IF_IN_UNKNOWN_PROTOS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutOctets</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutNUcastPkts</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutDiscards</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_DISCARDS</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>ifOutErrors</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_ERRORS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code></td>
-</tr>
-<tr>
-<td><code>ifOutQLen</code></td>
-<td><code>SAI_PORT_STAT_IF_OUT_QLEN</code></td>
-<td>-</td>
+<td><code>WRED_ECN_PORT</code></td>
+<td>1000 ms</td>
+<td><code>SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS</code>, <code>_YELLOW_..</code>, <code>_RED_..</code>, <code>SAI_PORT_STAT_WRED_DROPPED_PACKETS</code>（合計）</td>
 </tr>
 </tbody>
 </table>
-<p>注目すべきは <code>ifInDiscards</code> / <code>ifOutDiscards</code> には L3 側カウンタが定義されていない点である。L3 で起きたドロップは、SAI レベルで <code>IN_ERROR_PACKETS</code> 系の方に流れ込み、結果として <code>ifInErrors</code> / <code>ifOutErrors</code> に集約される設計になっている。ここが本 HLD のタイトル「不正パケットドロップ」の意味である。</p>
-<h3 id="iana-iftype">インタフェース種別と IANA ifType<a class="headerlink" href="#iana-iftype" title="Permanent link">&para;</a></h3>
-<p>各種類のインタフェースは Interface MIB において次の <code>ifType</code> を返す。</p>
+<p>ポート側は将来 <code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code> を含める計画。</p>
+<h3 id="counters_db">COUNTERS_DB へのキー追加<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>COUNTERS:oid:port_oid
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>   SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>   SAI_PORT_STAT_WRED_DROPPED_PACKETS
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>COUNTERS:oid:queue_oid (egress queue)
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>   SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>   SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>   SAI_QUEUE_STAT_WRED_DROPPED_PACKETS
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>   SAI_QUEUE_STAT_WRED_DROPPED_BYTES
+</span></code></pre></div>
+<h3 id="cli">CLI 拡張<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>新規 / 変更される CLI。</p>
 <table>
 <thead>
 <tr>
-<th>インタフェース</th>
-<th>IANA ifType</th>
-<th>実装方針</th>
+<th>Command</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ポート</td>
-<td>6 (<code>ethernetCsmacd</code>)</td>
-<td>既実装</td>
+<td><code>counterpoll wredqueue {enable\|disable}</code></td>
+<td>WRED_ECN_QUEUE グループ ON/OFF</td>
 </tr>
 <tr>
-<td>RIF</td>
-<td>-</td>
-<td>物理ポートのカウンタに L3 値を加算（独立エントリは設けない）</td>
+<td><code>counterpoll wredport {enable\|disable}</code></td>
+<td>WRED_ECN_PORT グループ ON/OFF</td>
 </tr>
 <tr>
-<td>VLAN インタフェース</td>
-<td>136 (<code>l3ipvlan</code>)</td>
-<td>新規エントリとして実装</td>
+<td><code>counterpoll wredqueue interval &lt;ms&gt;</code></td>
+<td>キュー側ポーリング間隔</td>
 </tr>
 <tr>
-<td>LAG</td>
-<td>161 (<code>ieee8023adLag</code>)</td>
-<td>既実装</td>
+<td><code>counterpoll wredport interval &lt;ms&gt;</code></td>
+<td>ポート側ポーリング間隔</td>
+</tr>
+<tr>
+<td><code>counterpoll show</code></td>
+<td>既存。各 group の現状表示</td>
+</tr>
+<tr>
+<td><code>show queue wredcounters [&lt;intf&gt;]</code></td>
+<td>キュー単位 WRED/ECN 統計（<strong>新規</strong>）</td>
+</tr>
+<tr>
+<td><code>sonic-clear queue wredcounters</code></td>
+<td>キュー単位 WRED/ECN 統計クリア（<strong>新規</strong>）</td>
+</tr>
+<tr>
+<td><code>show interfaces counters detailed &lt;intf&gt;</code></td>
+<td>既存出力末尾に WRED Green/Yellow/Red/Total を追加</td>
+</tr>
+<tr>
+<td><code>sonic-clear counters</code></td>
+<td>既存。ポート側 WRED ドロップもクリア</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">コンポーネント変更点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong><code>py-swsssdk</code></strong>: <code>port_util.get_rif_port_map(db)</code> のような RIF OID ↔ ポート OID のマップ取得関数、および VLAN インタフェース OID 一覧取得関数を追加する。</li>
-<li><strong><code>sonic-snmpagent</code></strong>: <code>InterfacesUpdater</code> が上記マップを保持し、<code>COUNTERS_DB</code> 更新時に RIF OID があれば対応ポートのカウンタへ加算する。VLAN インタフェース用エントリ（ifType=136）を新設する。RIF エントリ自体を MIB に出すのではなく、ポート側へ折り畳んでいる点に注意。</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L74-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Interface MIB's `InterfacesUpdater` will contain port to rif map. When counters are updated if RIF oid is present in the "COUNTERS" table of COUNTERS_DB,
-  the counters are aggredated according to Table 3.
-  Vlan interface entry is introduced, with IANA ifType 136
-reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設という 2 点の設計判断の根拠。
--->
-
+<h3 id="_4">表示例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>WRED + ECN 両対応プラットフォーム<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-dut:~# show queue wredcounters Ethernet16
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>      Port    TxQ    WredDrp/pkts    WredDrp/bytes  EcnMarked/pkts EcnMarked/bytes
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet16    UC0               0                0               0               0
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet16    UC1               1              120               0               0
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>...
+</span></code></pre></div>
+<p>ECN 非対応プラットフォーム: <code>EcnMarked/*</code> 列が <code>N/A</code> で表示される。WRED 非対応プラットフォーム: <code>WredDrp/*</code> 列が <code>N/A</code>。<code>show interfaces counters detailed</code> の末尾に WRED 4 行が追加されるのも capability に従う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する CONFIG_DB エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。</p>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には記載なし。実装側で <code>FLEX_COUNTER_TABLE|RIF</code> 等が関連すると推測されるが未確認。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には記載なし。SNMP 経由 (<code>snmpwalk</code> 等) での参照を前提にしている。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_TABLE</code></td>
+<td><code>WRED_ECN_QUEUE</code></td>
+<td><code>FLEX_COUNTER_STATUS</code></td>
+<td><code>enable</code> / <code>disable</code>（既定 <code>disable</code>）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><code>POLL_INTERVAL</code></td>
+<td>ms 単位（既定 10000）</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE</code></td>
+<td><code>WRED_ECN_PORT</code></td>
+<td><code>FLEX_COUNTER_STATUS</code></td>
+<td>同上（既定 <code>disable</code>）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><code>POLL_INTERVAL</code></td>
+<td>ms 単位（既定 1000）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">関連する STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>QUEUE_COUNTER_CAPABILITIES</code> / <code>PORT_COUNTER_CAPABILITIES</code> は実コードでは状態保存テーブルだが、ユーザ設定対象ではない。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-flex_counter.yang</code> に <code>WRED_ECN_QUEUE</code> / <code>WRED_ECN_PORT</code> コンテナを追加する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">WRED_ECN_QUEUE</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">FLEX_COUNTER_STATUS</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">flex_status</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">FLEX_COUNTER_DELAY_STATUS</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">flex_delay_status</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">POLL_INTERVAL</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">poll_interval</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">container</span><span class="w"> </span><span class="nv">WRED_ECN_PORT</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c">/* 同様 */</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># クライアント側からの参照例（HLD 範囲外のため参考）</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>snmpwalk<span class="w"> </span>-v2c<span class="w"> </span>-c<span class="w"> </span>&lt;community&gt;<span class="w"> </span>&lt;switch&gt;<span class="w"> </span>ifInErrors
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>counterpoll<span class="w"> </span>wredqueue<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll<span class="w"> </span>wredport<span class="w">  </span><span class="nb">enable</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>queue<span class="w"> </span>wredcounters<span class="w"> </span>Ethernet16
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>detailed<span class="w"> </span>Ethernet16
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-clear<span class="w"> </span>queue<span class="w"> </span>wredcounters
 </span></code></pre></div>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>RIF flex counter group</strong>: 当グループが無効なプラットフォームでは L3 加算が起きず、<code>ifInErrors</code> 等は L2 値のみを返す。</li>
-<li><strong>VLAN インタフェース</strong>: 本 HLD で初めて Interface MIB に出るため、既存 NMS の自動検出に影響する可能性がある。</li>
-<li><strong>LAG / ポートチャネル</strong>: ifType 161 として既実装。本 HLD では変更対象外。</li>
+<li><strong><code>portstat</code> / <code>queuestat</code></strong>: 共通の Flex Counter インフラ上に並んで動く。<code>POLL_INTERVAL</code> を短くしすぎると syncd 全体のポーリング負荷が増える。</li>
+<li><strong>WRED 設定 (<code>WRED_PROFILE</code>)</strong>: 統計を取るには WRED が実際にプロファイルでキューに紐付いている必要がある。設定無しでは drop / mark カウンタは増えない。</li>
+<li><strong>ECN マーキング</strong>: ECN マーキングは WRED プロファイル内の <code>ecn</code> 設定でのみ発生する。<code>ecn</code> を無効にしているキューでは <code>EcnMarked/*</code> がゼロのままになる。</li>
+<li><strong>Warm/fast boot</strong>: HLD で「影響なし」と明記。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3 ドロップが SNMP に出てこない場合、まず <code>COUNTERS_DB</code> 上に RIF の COUNTERS エントリが存在するか確認する。存在しない場合は <code>rifcounter</code> flex counter グループが当該プラットフォームで無効。</li>
-<li><code>ifType=136</code> の VLAN エントリが見えない場合、<code>sonic-snmpagent</code> のバージョンが本 HLD 反映前の可能性がある。</li>
-<li>テストは <code>test_snmp_interfaces.py</code> でカバーされている旨が HLD に記載されており、回帰確認の起点として有用<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>show queue wredcounters</code> がそもそも値を出さない: <code>STATE_DB</code> の <code>QUEUE_COUNTER_CAPABILITIES</code> を確認。すべて <code>false</code> なら SAI 側が未対応。</li>
+<li>一部の列だけ <code>N/A</code>: capability の差異によるもので仕様。</li>
+<li><code>counterpoll wredqueue enable</code> 後にカウンタが 0 のまま: <code>FLEX_COUNTER_TABLE|WRED_ECN_QUEUE</code> の <code>FLEX_COUNTER_STATUS=enable</code> と <code>POLL_INTERVAL</code> の値、syncd ログで Flex Counter group が ready になっているかを確認。</li>
+<li>syslog にエラー: 「全カウンタ非対応のグループを enable」した場合の仕様。capability を直して再度 enable する。</li>
+<li>ポート側 WRED 行が <code>show interfaces counters detailed</code> に出ない: <code>WRED_ECN_PORT</code> グループが disable、または capability が false。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-illegal-packets/Port_illegal_packets_drop_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/qos/ECN_and_WRED_statistics_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
