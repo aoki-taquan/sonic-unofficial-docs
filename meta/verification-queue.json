@@ -793,45 +793,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/architecture/sonic-packet-trimming.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SwitchOrch の trimming 拡張と SAI switch trimming 属性の community SAI 取り込み確認",
-        "BufferOrch の per-buffer-profile trimming 制御の実装確認",
-        "ACL DISABLE_TRIMMING action の SAI / AclOrch 取り込み確認",
-        "SWITCH_TRIMMING / BUFFER_PROFILE.packet_trimming / ACL_RULE 関連の YANG 取り込み確認",
-        "v0.2 Asymmetric DSCP / v0.3 Drop counter の現行 master 取り込み確認",
-        "vendor 別 PT capability と STATE_DB capability 公開確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/architecture/sonic-policy-based-hashing.md",
-      "verification": "hld-only",
-      "concerns": [
-        "PbhOrch の sonic-swss 取り込み確認",
-        "PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の sonic-yang-models 取り込み確認",
-        "SAI fine-grained hash 関連属性 (SAI_HASH_ATTR_*, SAI_FINE_GRAINED_HASH_FIELD_*) の community SAI 取り込み確認",
-        "config pbh / show pbh CLI の sonic-utilities 取り込み確認",
-        "v0.3 (2021-11) field set/del modification flow の取り込み確認",
-        "CRM の PBH FG hash 監視 (out of scope) の補完ステータス確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/architecture/sonic-sub-port-interface-high-level-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "intfsmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認",
-        "VLAN_SUB_INTERFACE スキーマと sonic-yang-models 取り込み確認",
-        "SAI_ROUTER_INTERFACE_TYPE_SUB_PORT の community SAI 取り込み確認",
-        "config subinterface CLI の sonic-utilities 取り込み確認",
-        "v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認",
-        "PortChannel 上 sub-port の LAG hash 連携の現行実装確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
       "issue": 49,
       "verification": "code-verified",
@@ -1345,22 +1306,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/support-bmc-flows-in-sonic.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-platform-common への RedfishClient (redfish_client.py) と ComponentBMC の取り込み確認",
-        "sonic-py-common の device_info.get_bmc_data() 実装存在確認",
-        "sonic-cfggen による DEVICE_METADATA|bmc への書き込み確認",
-        "interfaces.j2 で usb0 static 設定を生成する経路の確認",
-        "generate-dump への BMC dump 非同期収集ロジック (trigger / collect / 60s timeout) 取り込み確認",
-        "show platform bmc summary / eeprom / config platform firmware install の sonic-utilities 取り込み確認",
-        "202605 branch の platform common API 統合フェーズ（phase 2）の進捗確認"
-      ],
-      "priority": "medium",
-      "issue": 189,
-      "pr": 190
-    },
-    {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
       "issue": 307,
       "verification": "discrepancy-found",
@@ -1448,14 +1393,9 @@
     },
     {
       "page": "docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドラ実装存在確認",
-        "NhgOrch の multipath NHG 拡張（v0.6 で追記）が現行 master に取り込まれているか確認",
-        "DEVICE_METADATA.fpm_use_nexthop_groups の sonic-yang-models 取り込み確認",
-        "libnl バージョン依存（NHG attribute サポート）の sonic-buildimage 解決確認",
-        "warm/fast boot での NEXTHOP_GROUP_TABLE 復元実装の有無確認",
-        "Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認"
+        "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドリング (sonic-swss fpmsyncd/routesync.cpp) と NhgOrch (sonic-swss orchagent/nhgorch.cpp) は master 取り込み済みだが、HLD が前提とする有効化キーが実装と一致しない: HLD / 本文は DEVICE_METADATA.localhost.fpm_use_nexthop_groups を要求するが、現行 sonic-buildimage の sonic-yang-models/yang-models/sonic-device_metadata.yang と dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2 は DEVICE_METADATA.localhost.nexthop_group = enabled で zebra に fpm use-next-hop-groups を出す方式 (別途 zebra_nexthop で zebra nexthop kernel enable も制御)。本文の CONFIG_DB スニペットを実装 key 名 (nexthop_group / zebra_nexthop) に合わせる修正が必要"
       ],
       "priority": "medium"
     },
@@ -1637,36 +1577,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt の test_vrf.py 実装存在確認",
-        "frr.conf.j2 の VRF テンプレート拡張 (router bgp <as> vrf <name> ブロック生成) の現行 master 確認",
-        "BGP_NEIGHBOR / BGP_PEER_RANGE の vrf_name 属性の Schema 取り込み確認",
-        "acl-loader の redirect:<ip>@<intf> action 構文の現行サポート確認",
-        "warm-reboot 中の VRF 連続トラフィック保証の現行挙動確認",
-        "1000 VRF 実機到達性の確認",
-        "TODO 項目 (fallback_lookup / route leak / everflow) の現行実装ステータス確認"
-      ],
-      "priority": "medium",
-      "issue": 509,
-      "pr": 510
-    },
-    {
-      "page": "docs/routing/vrf-vs-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "vrfmgrd / intfmgrd / Orchagent (VrfOrch / IntfOrch) の VS テストカバー範囲が現行 sonic-swss の test_vrf*.py 等で実装されているか確認",
-        "1000 VRF スケール上限が現行 ASIC で実機到達可能か確認 (HLD は VS 上限値)",
-        "VRF 跨ぎ nexthop (route leak) のサポート状況確認",
-        "vrfmgrd warm-restart の実装存在確認",
-        "neighsyncd / fpmsyncd が VRF 別 entry を APP_DB の VRF キーとともに publish するロジック確認"
-      ],
-      "priority": "medium",
-      "issue": 504,
-      "pr": 505
-    },
-    {
       "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
       "issue": 289,
       "verification": "code-verified",
@@ -1694,21 +1604,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/switching/lag-on-distributed-voq-system.md",
-      "verification": "hld-only",
-      "concerns": [
-        "portsorch の SYSTEM_LAG_TABLE / SYSTEM_LAG_MEMBER_TABLE 購読と remote LAG 作成経路の現行実装確認",
-        "SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID への system_lag_id 反映実装確認 (sonic-sairedis 側も含む)",
-        "supervisor 側 redis-server の Lua スクリプト（lag_id_add / delete / get）の取り込み確認",
-        "chassisdb.conf の SYSTEM_LAG_ID_START / END 読み込み + CHASSIS_APP_DB 反映実装確認",
-        "Port struct への system_lag_name / system_lag_id / switch_id フィールド追加の確認",
-        "VOQ system port object の OID と alias 表現が SYSTEM_LAG_MEMBER_TABLE と整合しているか確認"
-      ],
-      "priority": "medium",
-      "issue": 179,
-      "pr": 180
     },
     {
       "page": "docs/switching/link-event-damping-hld.md",
@@ -1815,21 +1710,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/system/dataplane-telemetry-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SAI_OBJECT_TYPE_DTEL_REPORT_SESSION / SAI_OBJECT_TYPE_DTEL_INT_SESSION / SAI_OBJECT_TYPE_DTEL_QUEUE_REPORT 等の DTel SAI 属性の community SAI 取り込み確認",
-        "DTEL_*_TABLE (DTEL_E_EVENT_TABLE 等) の CONFIG_DB スキーマと現行 swss orchagent サポート確認",
-        "sonic-mgmt の dtel.yml と dtel/sonic 二層モジュール構造の実装存在確認",
-        "INT instruction mask の DUT 側ハンドリングが Phase 別に対応されているか確認 (switch id / ports / latency / queue)",
-        "Postcard / Drop report / Queue report が対応 ASIC で実機検証済か確認",
-        "Barefoot 以外の ASIC (Broadcom 等) での DTel サポート状況確認"
-      ],
-      "priority": "medium",
-      "issue": 526,
-      "pr": 527
     },
     {
       "page": "docs/system/kdump-remote-ssh.md",
@@ -2005,30 +1885,6 @@
       "priority": "medium"
     },
     {
-      "page": "docs/acl-qos/asymmetric-pfc-test-plan.md",
-      "issue": 287,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt の tests/pfc_asym/pfc_asym.py 新規 test suite 取り込み確認",
-        "pfc_asym.py の multiprocessing 化と ARP responder 設定生成 1 回化の取り込み確認",
-        "pfc_gen.py の Mellanox / Arista 配備パスが現行 sonic-mgmt と整合するか確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/acl-qos/everflow-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt 上の Everflow Ansible / PTF テストスクリプトが本テストプランと一致しているか確認",
-        "Egress ACL / Egress mirror の sonic-swss / SAI 取り込み確認",
-        "aclshow rule counter 取得経路と本テストの assertion の整合確認",
-        "ACL rule IN_PORTS マッチの SAI 対応確認（platform 依存）",
-        "ICMP type/code マッチの SAI ACL field 取り込み確認",
-        "IPv6 Everflow の collector encap (IPv6-in-IPv6 / GRE 6to6) 対応確認"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/architecture/1-udev-rules-design-for-terminal-server.md",
       "verification": "hld-only",
       "concerns": [
@@ -2171,18 +2027,6 @@
         "if constexpr による per-instance stats_mode の分岐実装の有無確認",
         "BaseCounterContext の flag 設計（capability query 有無, getStats vs getStatsExt）が現行コードに存在するか確認",
         "POC からの最終実装の差分（HLD 上「demonstration only」と明記）"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/internals/swss-schema.md",
-      "issue": 334,
-      "verification": "hld-only",
-      "concerns": [
-        "swss-schema.md は生きたドキュメントで master 更新で常に変わる。コミット SHA 4305596 のスナップショット",
-        "本ページに列挙した中心テーブル名と sonic-swss-common/common/schema.h の整合確認",
-        "CONFIG_DB ↔ APPL_DB 投影を担う *Mgr プロセスのテーブル変換マッピングの最新性確認",
-        "本ページは概観のみで完全定義は元 HLD 参照という構成。詳細 verify は実装側 schema.h と突き合わせて行う"
       ],
       "priority": "low"
     },
