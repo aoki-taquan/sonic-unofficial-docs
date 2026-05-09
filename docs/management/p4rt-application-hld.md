@@ -1,0 +1,163 @@
+---
+title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/pins/p4rt_app_hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - P4RT
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD"
+    HLD は 2021-06 (Rev v0.1) で 4 年以上前。`p4rt-app` Docker / P4Orch / HashOrch / APPL_STATE_DB の実装存在、CONFIG_DB `P4RT` テーブルの取り込みは要裏取り。
+
+# P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+
+## 概要
+
+P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、**[P4Runtime v1.3.0](https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html) を実装する gRPC サービス**として TCP port **9559** で動く[^1]。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、SAI パイプラインを操作する。
+
+P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを APPL_DB の `P4RT_TABLE` 系エントリに翻訳する。下流の `P4Orch` が APPL_DB を購読して SAI 経由で ASIC に書き込む[^1]。
+
+## 動作仕様
+
+### コンポーネント関係
+
+```mermaid
+flowchart LR
+  Ctrl[SDN Controller] -->|gRPC :9559| P4RT[P4RT App]
+  P4RT --> APPLDB[(APPL_DB:<br>P4RT_TABLE / P4RT:DEFINITION)]
+  APPLDB --> P4O[P4Orch]
+  P4O --> SAI[SAI / syncd]
+  P4O --> APPLST[(APPL_STATE_DB)]
+  APPLST --> P4RT
+```
+
+### Arbitration とコントローラロール
+
+P4Runtime 仕様の **Client Arbitration** に従い、複数コントローラが同時接続できる[^1]。
+
+- 各コントローラは **role** を持つ。role はテーブルアクセス範囲を限定する。default role は全パイプラインアクセス。
+- 同一 role に複数接続が来た場合、**election ID** に基づき 1 接続を **primary** に選ぶ。primary だけが書き込み可能。残りは **backup**（read-only）。
+- role / primary 制約は Insert/Modify/Delete に強制される。Read は primary / backup どちらからも可能[^1]。
+
+### P4 program と P4Info
+
+PINS は SAI パイプラインを P4 program としてモデル化し、p4c コンパイラで **P4Info** ファイルを生成する。コントローラ初接続時に P4Info を push する想定[^1]。
+
+P4RT App は SONiC 固有要件を P4Info に課す[^1]:
+
+- PacketIO メタデータの形が期待値どおり
+- 固定 SAI コンポーネントが要求するフィールド型がサポート可能
+
+検証通過後、設定可能な情報は APPL_DB に書かれる。下層から失敗が返れば config を reject する。
+
+### ACL テーブル定義（@sai_action / @sai_field）
+
+ACL のような設定可能部はハードウェア依存（リソース・ステージ制約）で P4 段では検証しきれない。P4 program 内で **`@sai_action` / `@sai_field` アノテーション** を使って SAI の対応を明示し、P4Info push 時に P4RT App が APPL_DB の **`P4RT:DEFINITION`** に翻訳して書き出す。OA 層がこれを読んで SAI に反映を試み、結果を P4RT App に返す[^1]。
+
+例[^1]:
+
+```p4
+@sai_action(SAI_PACKET_ACTION_FORWARD)
+action forward() {
+  acl_ingress_meter.read(local_metadata.color);
+  acl_ingress_counter.count();
+}
+
+table acl_ingress_table {
+  key = {
+    headers.ipv4.isValid() : optional
+       @sai_field(SAI_ACL_TABLE_ATTR_FIELD_ACL_IP_TYPE/IPV4ANY);
+  }
+}
+```
+
+### Write / Read の流れ
+
+PI 形式の Write リクエスト（INSERT / MODIFY / DELETE）は **primary 接続** からのみ受付。P4RT App が APPL_DB の P4RT スキーマに変換して投入し、`P4Orch` が SAI に反映する[^1]。
+
+Read は primary/backup 双方から可能。Read 性能の最適化は別 HLD（[P4RT Read Cache](p4rt-read-cache-hld.md)）で扱う。
+
+### WCMP / Hashing
+
+WCMP は 2 段構成[^1]:
+
+- **ハッシュ対象フィールドとアルゴリズム**: P4Info で渡し、`HashOrch`（OrchAgent に新規追加）が `SWITCH_TABLE` の SAI ハッシュ属性を設定。
+- **WCMP グループ / メンバ / route 紐付け**: Write リクエストで投入。
+
+### Response path（APPL_STATE_DB）
+
+`syncd` は同期動作、OrchAgent はハードウェア結果を **別の通知チャネル** で P4RT App に返す。成功時は **`APPL_STATE_DB`** に成功エントリを書き、失敗時は P4RT App が APPL_DB の対応エントリを **元の値に戻す**（rollback）[^1]。
+
+これは既存 STATE_DB のような「定常状態の公開」とは違い、**アプリケーションレベルの応答チャネル** という新しい抽象である。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/pins/p4rt_app_hld.md#L152-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  syncd operates in synchronous mode and OrchAgent relays the hardware status of the operation back to P4RT application via a separate notification channel
+  and writes all successful responses into the APPL_STATE_DB.
+  P4RT application uses the APPL_STATE_DB to restore the entry in APPL_DB when a particular request fails.
+reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根拠。
+-->
+
+### APPL_DB スキーマ
+
+P4RT App は APPL_DB に新規テーブル群を書き出す。スキーマ詳細は **P4RT DB Schema HLD**（別ドキュメント）に分離されている[^1]。本ページでは `P4RT_TABLE`（テーブルエントリ）と `P4RT:DEFINITION`（ACL テーブル等の定義）の存在を押さえる。
+
+## 設定
+
+### 関連する CONFIG_DB
+
+P4RT 起動時に CONFIG_DB から `P4RT` テーブルを読む。設定変更時はコンテナの再起動が必要[^1]:
+
+```json
+"P4RT": {
+  "certs": {
+    "server_crt": "/keys/server_cert.lnk",
+    "server_key": "/keys/server_key.lnk",
+    "ca_crt":     "/keys/ca_cert.lnk",
+    "cert_crl_dir": "/keys/crl"
+  },
+  "p4rt_app": {
+    "port": "9559",
+    "use_genetlink": "false",
+    "use_port_ids": "false",
+    "save_forwarding_config_file": "/etc/sonic/p4rt_forwarding_config.pb.txt",
+    "authz_policy": "/keys/authorization_policy.json"
+  }
+}
+```
+
+### 関連する CLI
+
+HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は config_db.json 直接編集または gNMI 経由を想定[^1]。
+
+## 制限事項
+
+- **設定変更で再起動必須**: `P4RT` テーブルの変更後は P4RT コンテナを再起動しないと反映されない[^1]。
+- **無効な設定は config_db.json 直接編集** が前提。SONiC ネイティブ CLI は提供されない。
+- **PacketIO の詳細は別 HLD**: 本 HLD は punt rule を扱う旨だけ言及し、メタデータの具体仕様は別ドキュメント参照[^1]。
+- **proposal 段階**: HLD 自体に「Open/Action items: N/A」とあるが、Rev v0.1 のままの記述がある。
+
+## 干渉する機能
+
+- **P4Orch / HashOrch**: 本 App が APPL_DB に書く先。P4Orch は `P4RT_TABLE` を購読、HashOrch は P4Info 由来のハッシュ設定を SAI に流す。
+- **APPL_STATE_DB**: 本 HLD で導入される新しいレスポンスチャネル。他 SONiC コンポーネントと用途が違うため認識のズレに注意。
+- **gRPC 認証**: `cert_crl_dir` / `authz_policy` 等の鍵・権限ポリシーが PINS デプロイ前提。SONiC 標準の SSH/console 認証経路とは別系統。
+
+## トラブルシューティング
+
+- コントローラ接続が backup のままで書けない: election ID と role を確認。同一 role の primary が他接続にいる可能性。
+- Write が ASIC に反映されない: `APPL_STATE_DB` に成功が書かれているか確認。書かれていなければ `P4Orch` 側で失敗してロールバックされている可能性[^1]。
+- P4Info push が reject される: PacketIO メタデータと SAI フィールド型の互換性を確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
