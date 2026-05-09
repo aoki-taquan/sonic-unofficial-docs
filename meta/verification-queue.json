@@ -1017,7 +1017,8 @@
         "FRR upstream の dplane_fpm_nl の差分が dplane_fpm_sonic にどこまで取り込まれているか未確認"
       ],
       "priority": "medium",
-      "issue": 167
+      "issue": 167,
+      "pr": 168
     }
   ]
 }
