@@ -6718,9 +6718,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-01 初版（2020-10 改訂）であり、<code>SwitchOrch</code> の <code>sensorsPollerTimer</code> 実装、<code>ASIC_SENSORS</code> テーブルでの enable/disable 制御、<code>ASIC_TEMPERATURE_INFO</code> の <code>temperature_N</code> 列拡張、platform 側 <code>_thermal_list[]</code> への ASIC 内部センサ追加は実コードでの裏取り未済。CLI 制御は本 HLD では未定義。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/switchorch.h:12-14</code> で <code>DEFAULT_ASIC_SENSORS_POLLER_INTERVAL</code> / <code>ASIC_SENSORS_POLLER_STATUS</code> / <code>ASIC_SENSORS_POLLER_INTERVAL</code> 定数、<code>switchorch.h:170-179</code> で <code>m_asicSensorsTable</code> / <code>m_sensorsPollerTimer</code> / <code>m_sensorsPollerEnabled</code> / <code>m_numTempSensors</code> / <code>m_sensorsMaxTempSupported</code> / <code>m_sensorsAvgTempSupported</code> メンバ、<code>sonic-swss-common/common/schema.h:138</code> で <code>ASIC_TEMPERATURE_INFO_TABLE_NAME</code>、<code>sonic-swss/orchagent/switchorch.cpp:154,173,402,408,425-436</code> で SelectableTimer 実装と <code>ASIC_SENSORS</code> テーブルの ASIC_SENSORS_POLLER_STATUS/INTERVAL 動的反映を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="asic-asic_sensors-asic_temperature_info">ASIC 内部温度センサのポーリング（<code>ASIC_SENSORS</code> / <code>ASIC_TEMPERATURE_INFO</code>）<a class="headerlink" href="#asic-asic_sensors-asic_temperature_info" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
