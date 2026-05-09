@@ -1,7 +1,7 @@
 ---
 title: ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - sonic-acl
 ---
 
-!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
-    HLD は Rev 0.1（日付未記載）で Open Questions が複数残る Proposal 段階の文書。`AclOrch` の `AclTableType` データ構造、`ACL_TABLE_TYPE` CONFIG_DB スキーマ取り込み、`ACL_STAGE_CAPABILITY` STATE_DB 公開、CLI 検証は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/aclorch.h:214-292` で `AclTableType` / `AclTableTypeBuilder` / `AclTableTypeParser`、`aclorch.h:591-609` で `addAclTable` / `addAclTableType` / `addAclRule` / `updateAclRule` API、`sonic-swss-common/common/schema.h:95` で `APP_ACL_TABLE_TYPE_TABLE_NAME`、`schema.h:418` で `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME`、`aclorch.cpp:42,4014,4067` で `is_action_list_mandatory` フィールドの扱いを確認（verified at: 2026-05-09）。
 
 # ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
 
