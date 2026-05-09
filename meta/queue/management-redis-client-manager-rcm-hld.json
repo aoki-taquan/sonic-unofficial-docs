@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/redis-client-manager-rcm-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt-common/translib/db/ 配下への RCM 4 関数取り込み確認",
+    "既存 redis.NewClient / Close 直叩きの撲滅状況確認",
+    "DBStats への RCM counter 統合確認",
+    "pool size 20 default の現行コード確認",
+    "TransactionalRedisClient 利用箇所での close 完備確認（leak 検出）",
+    "ping ベースの早期 connection 失敗検出ロジックの実装確認"
+  ],
+  "priority": "medium"
+}
