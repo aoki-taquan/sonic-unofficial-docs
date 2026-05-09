@@ -323,20 +323,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/sonic-os-sonic-docker-images-versioning.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SONiC Application Extension Infrastructure 自体の現行採用状況（Proposal が採択されたか）の確認",
-        "sonic-package-manager の package.json depends 形式（並列 OR の '^1.0.0,^2.0.0' 表記）対応状況確認",
-        "components フィールドによる SDK component 単位の制約パースが現行 sonic-utilities にあるか未確認",
-        "SWSS_VERSION 等の環境変数注入による複数 API 並行サポートの現行 sonic-package-manager / docker 実装確認",
-        "HLD は 2021 年の Initial Proposal のため現行運用との乖離が大きい可能性"
-      ],
-      "priority": "high",
-      "issue": 161,
-      "pr": 162
-    },
-    {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
       "verification": "hld-only",
       "concerns": [
@@ -1177,6 +1163,19 @@
       "priority": "medium",
       "issue": 171,
       "pr": 172
+    },
+    {
+      "page": "docs/routing/srv6-vpn-hld.md",
+      "issue": 310,
+      "verification": "hld-only",
+      "concerns": [
+        "SRV6_POLICY_TABLE (APPL_DB) と ROUTE_TABLE への vpn_sid / policy フィールド追加が現行 master にあるか未確認",
+        "SRv6Orch の VPN routes / encap mapper / Prefix AGG_ID 実装の現行確認",
+        "SAI 側 SRv6 VPN 拡張属性 (SAI-IPv6-Segment-Routing-VPN.md) の community SAI 取り込み状況",
+        "FRR の SRV6_MY_SID anycast workaround が現行 sonic-frr に取り込まれているか未確認",
+        "End.X action での nexthop id 対応が現行 srv6orch にあるか未確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/routing/static-configuration-of-srv6-in-sonic-hld.md",

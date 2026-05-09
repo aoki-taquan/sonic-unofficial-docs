@@ -1,7 +1,7 @@
 ---
 title: SONiC OS と Docker イメージのセマンティックバージョニング
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
-    本ページは 2021-02 改訂の **Initial Proposal** ステータスの古い HLD（採用状況不確かなため `priority=high` で verification queue 登録）。SONiC Application Extension Infrastructure の現行実装、`package.json` の `depends` 表記、SDK component 単位のバージョン指定、`SWSS_VERSION` のような環境変数による複数 API 並行対応の現行サポート状況は実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified（一部例は未採用）"
+    Application Extension Infrastructure は `sonic-utilities/sonic_package_manager/` 配下に実装済み。`manifest.py:179-185` で `version` / `depends` フィールド、`constraint.py:80-99` で `ComponentConstraints` と `VersionConstraint.parse`、`constraint.py:120-181` で `PackageConstraint` の `components` フィールドのパースを確認。`version.py:5-26` で `semantic_version` ライブラリを利用。HLD 例 4 の `components` 制約は実装済み。一方、HLD 例 1 の `"^1.0.0,^2.0.0"` のような並列 OR 表記は semantic_version 標準ではカンマが AND なので採用されておらず、HLD 例 3 の `SWSS_VERSION` 環境変数注入も grep で見つからない（採用見送り）。基本枠組みは存在することを確認（verified at: 2026-05-09）。
 
 # SONiC OS と Docker イメージのセマンティックバージョニング
 
@@ -201,6 +201,17 @@ sudo sonic-package-manager show foo
 - パッケージインストールで version 制約エラー → `depends` の version 制約と現在 install 済み swss / syncd の version を比較
 - `sonic-package-manager show` で `depends` が複雑 → manifest の `^X.Y.Z,^A.B.C` 形式が想定通り解釈されているか CLI ログを確認
 - 新 swss にしたら docker が動かない → API 破壊（major bump）が起きている可能性。docker 側 manifest を更新
+
+## 実装との乖離
+
+2026-05-09 時点の `sonic-utilities/sonic_package_manager` を裏取り。
+
+- **採用済み**: `manifest.py:179-185` の `version` / `depends`、`constraint.py:120-181` の `PackageConstraint(name, version, components)` 構造、`components` ごとの `VersionConstraint`、`semantic_version` (https://pypi.org/project/semantic-version/) 経由の SemVer パース。
+- **採用されていない例（HLD 提案のうち）**:
+  - **HLD 例 1 の `"^1.0.0,^2.0.0"` のような並列 OR 表記**: `semantic_version` の `SimpleSpec` ではカンマは AND を意味する（例: `>=1.0.0,<2.0.0`）。OR を表す `||` は SimpleSpec 拡張で別途扱われる。HLD の意図する「複数 major を許容」表記は標準ライブラリでは expression パーサ次第になるため、現状の `sonic-package-manager` は OR 並列表記をそのまま受け付ける作りではない。
+  - **HLD 例 3 の `SWSS_VERSION` 等の環境変数注入で複数 API 並行対応**: `sonic_package_manager` で `SWSS_VERSION` の grep ヒットは 0。container 起動時の version 注入は採用されていない。
+
+枠組み（package manifest + components + semantic_version）は HLD 通りに実装されているが、HLD で例示した一部運用パターンは別形（`||` や `components`）に置き換わっている。
 
 ## 引用元
 
