@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-portchannel/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-kdump/">
       
       
-        <link rel="prev" href="../config-nat/">
+        <link rel="prev" href="../config-interface/">
       
       
-        <link rel="next" href="../config-route/">
+        <link rel="next" href="../config-mclag/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config portchannel サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>config kdump サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-portchannel" class="md-skip">
+        <a href="#config-kdump" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config portchannel サブコマンド
+              config kdump サブコマンド
             
           </span>
         </div>
@@ -6833,10 +6833,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../config-kdump/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config kdump サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -6852,6 +6879,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-enable-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump enable / disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-memory-kdump_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump memory &lt;kdump_memory&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-num_dumps-int" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump num_dumps &lt;int&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-remote-enable-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump remote enable / disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-add-ssh_string-userhost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump add ssh_string &lt;user@host&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-add-ssh_path-abs_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump add ssh_path &lt;abs_path&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-remove-ssh_string-remove-ssh_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump remove ssh_string / remove ssh_path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -6917,37 +7113,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config portchannel サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../config-portchannel/" class="md-nav__link">
         
   
   
@@ -6963,153 +7132,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド一覧
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各コマンドの詳細
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-add-portchannel_name-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel add &lt;portchannel_name&gt; [options]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-del-portchannel_name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel del &lt;portchannel_name&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-member-add-portchannel-port" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel member add &lt;portchannel&gt; &lt;port&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-member-del-portchannel-port" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel member del &lt;portchannel&gt; &lt;port&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-retry-count-get-portchannel_name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel retry-count get &lt;portchannel_name&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-portchannel-retry-count-set-portchannel_name-3-10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config portchannel retry-count set &lt;portchannel_name&gt; &lt;3-10&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -10339,10 +10361,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-add-portchannel_name-options" class="md-nav__link">
+  <a href="#config-kdump-enable-disable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel add &lt;portchannel_name&gt; [options]
+        config kdump enable / disable
       
     </span>
   </a>
@@ -10350,10 +10372,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-del-portchannel_name" class="md-nav__link">
+  <a href="#config-kdump-memory-kdump_memory" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel del &lt;portchannel_name&gt;
+        config kdump memory &lt;kdump_memory&gt;
       
     </span>
   </a>
@@ -10361,10 +10383,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-member-add-portchannel-port" class="md-nav__link">
+  <a href="#config-kdump-num_dumps-int" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel member add &lt;portchannel&gt; &lt;port&gt;
+        config kdump num_dumps &lt;int&gt;
       
     </span>
   </a>
@@ -10372,10 +10394,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-member-del-portchannel-port" class="md-nav__link">
+  <a href="#config-kdump-remote-enable-disable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel member del &lt;portchannel&gt; &lt;port&gt;
+        config kdump remote enable / disable
       
     </span>
   </a>
@@ -10383,10 +10405,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-retry-count-get-portchannel_name" class="md-nav__link">
+  <a href="#config-kdump-add-ssh_string-userhost" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel retry-count get &lt;portchannel_name&gt;
+        config kdump add ssh_string &lt;user@host&gt;
       
     </span>
   </a>
@@ -10394,10 +10416,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-portchannel-retry-count-set-portchannel_name-3-10" class="md-nav__link">
+  <a href="#config-kdump-add-ssh_path-abs_path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config portchannel retry-count set &lt;portchannel_name&gt; &lt;3-10&gt;
+        config kdump add ssh_path &lt;abs_path&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-remove-ssh_string-remove-ssh_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump remove ssh_string / remove ssh_path
       
     </span>
   </a>
@@ -10424,6 +10457,17 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -10448,7 +10492,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-portchannel.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-kdump.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -10456,10 +10500,10 @@
   
 
 
-<h1 id="config-portchannel">config portchannel サブコマンド<a class="headerlink" href="#config-portchannel" title="Permanent link">&para;</a></h1>
+<h1 id="config-kdump">config kdump サブコマンド<a class="headerlink" href="#config-kdump" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config portchannel</code> は LACP ベースの Link Aggregation (LAG) を設定する。LAG 本体の作成・削除（<code>add</code> / <code>del</code>）、メンバー Ethernet ポートの追加・削除、<code>teamd</code> の retry-count パラメータ取得・設定の 3 グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>LACP の実体は <strong><code>teamd</code> (libteam)</strong> で、SONiC の <code>teammgrd</code> が <code>PORTCHANNEL</code> テーブルを APPL_DB へ反映し、teamd 設定ファイルを生成する。<code>config portchannel</code> は <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルを CONFIG_DB に直接書き込む役割を担う。</p>
+<p><code>config kdump</code> は Linux kdump (panic 時のクラッシュダンプ機構) を CONFIG_DB の <code>KDUMP</code> テーブル経由で制御する CLI で、<code>config/kdump.py</code> の <code>@click.group(name='kdump')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。書き込み先キーは常に <code>KDUMP|config</code> の <strong>単一エントリ</strong> で、フィールドは <code>enabled</code> / <code>memory</code> / <code>num_dumps</code> / <code>remote</code> / <code>ssh_string</code> / <code>ssh_path</code> の 6 つ。</p>
+<p><code>hostcfgd</code> がこのテーブルを subscribe して <code>/etc/default/kdump-tools</code> を再生成し、<code>crashkernel=</code> カーネル引数や ssh 転送設定を反映する。<strong>反映には reboot が必要</strong> で、CLI は変更時に必ずその旨を警告する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -10470,161 +10514,97 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config portchannel add &lt;name&gt; [--min-links N] [--fallback true\|false] [--fast-rate true\|false]</code></td>
-<td>LAG を作成</td>
+<td><code>config kdump enable</code></td>
+<td>KDUMP 有効化 (<code>enabled=true</code>)</td>
 </tr>
 <tr>
-<td><code>config portchannel del &lt;name&gt;</code></td>
-<td>LAG を削除</td>
+<td><code>config kdump disable</code></td>
+<td>KDUMP 無効化 (<code>enabled=false</code>)</td>
 </tr>
 <tr>
-<td><code>config portchannel member add &lt;portchannel&gt; &lt;ethernet&gt;</code></td>
-<td>メンバ追加</td>
+<td><code>config kdump memory &lt;kdump_memory&gt;</code></td>
+<td>クラッシュカーネル用予約メモリ (例: <code>0M-2G:256M,2G-4G:320M,4G-8G:384M,8G-:448M</code>)</td>
 </tr>
 <tr>
-<td><code>config portchannel member del &lt;portchannel&gt; &lt;ethernet&gt;</code></td>
-<td>メンバ削除</td>
+<td><code>config kdump num_dumps &lt;int&gt;</code></td>
+<td>保持する vmcore 最大数</td>
 </tr>
 <tr>
-<td><code>config portchannel retry-count get &lt;name&gt;</code></td>
-<td>LACP retry-count 取得 (teamdctl)</td>
+<td><code>config kdump remote enable\|disable</code></td>
+<td>リモート (ssh 転送) モード on/off</td>
 </tr>
 <tr>
-<td><code>config portchannel retry-count set &lt;name&gt; &lt;3-10&gt;</code></td>
-<td>LACP retry-count 設定 (teamdctl)</td>
+<td><code>config kdump add ssh_string &lt;user@host&gt;</code></td>
+<td>ssh 送信先</td>
+</tr>
+<tr>
+<td><code>config kdump add ssh_path &lt;abs_path&gt;</code></td>
+<td>ssh 鍵などのパス</td>
+</tr>
+<tr>
+<td><code>config kdump remove ssh_string</code></td>
+<td>ssh 送信先削除</td>
+</tr>
+<tr>
+<td><code>config kdump remove ssh_path</code></td>
+<td>ssh パス削除</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-portchannel-add-portchannel_name-options"><code>config portchannel add &lt;portchannel_name&gt; [options]</code><a class="headerlink" href="#config-portchannel-add-portchannel_name-options" title="Permanent link">&para;</a></h3>
-<p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config portchannel [-n &lt;ns&gt;] add &lt;portchannel_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [--min-links &lt;1-1024&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [--fallback true|false]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    [--fast-rate true|false]
-</span></code></pre></div>
-<p><strong>オプション</strong>:</p>
+<h3 id="config-kdump-enable-disable"><code>config kdump enable</code> / <code>disable</code><a class="headerlink" href="#config-kdump-enable-disable" title="Permanent link">&para;</a></h3>
+<p><code>KDUMP|config</code> の <code>enabled</code> を <code>true</code> / <code>false</code> に書く。テーブル自体が無い場合は exit code 1 で終了 (<code>Unable to retrieve 'KDUMP' table from Config DB.</code>)。</p>
+<h3 id="config-kdump-memory-kdump_memory"><code>config kdump memory &lt;kdump_memory&gt;</code><a class="headerlink" href="#config-kdump-memory-kdump_memory" title="Permanent link">&para;</a></h3>
+<p><code>memory</code> フィールドを上書き。フォーマット検証は CLI 側では行わない (バリデーションは <code>kexec-tools</code> 側で行われ、誤った値は次回 boot で kdump 起動失敗となる)。</p>
+<h3 id="config-kdump-num_dumps-int"><code>config kdump num_dumps &lt;int&gt;</code><a class="headerlink" href="#config-kdump-num_dumps-int" title="Permanent link">&para;</a></h3>
+<p><code>num_dumps</code> フィールドを整数で上書き。Click 側で <code>type=int</code> のみ。</p>
+<h3 id="config-kdump-remote-enable-disable"><code>config kdump remote enable</code> / <code>disable</code><a class="headerlink" href="#config-kdump-remote-enable-disable" title="Permanent link">&para;</a></h3>
+<p><code>remote</code> フィールドを <code>true</code> / <code>false</code> に書く。冪等性あり (既に該当値ならメッセージのみで書き込みなし)。<strong><code>enable</code> 状態でないと <code>add ssh_string</code> / <code>add ssh_path</code> は実行できない</strong> (CLI 側で <code>current_status</code> を確認し、<code>false</code> なら <code>Remote feature is not enabled. Please enable the remote feature first.</code> を出力して終了する)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<h3 id="config-kdump-add-ssh_string-userhost"><code>config kdump add ssh_string &lt;user@host&gt;</code><a class="headerlink" href="#config-kdump-add-ssh_string-userhost" title="Permanent link">&para;</a></h3>
+<p>引数を <code>user@host</code> 形式 (英数字 user、IP もしくは hostname) でバリデートしてから <code>ssh_string</code> フィールドに書く。検証は:</p>
 <ul>
-<li><code>--min-links</code> ... 集約として up とみなす最小メンバー数（デフォルト 1）</li>
-<li><code>--fallback</code> ... LACP fallback（PDU 不達時にメンバ単独 up）デフォルト <code>false</code></li>
-<li><code>--fast-rate</code> ... LACP fast rate（1 秒間隔の PDU）デフォルト <code>false</code></li>
+<li><code>@</code> を含むこと</li>
+<li>user 部が <code>isalnum()</code></li>
+<li>host 部が IPv4 で <code>ipaddress.IPv4Address</code> で解釈できる、または <code>^[a-zA-Z0-9.-]+$</code> の hostname</li>
 </ul>
-<p><strong>動作</strong>:
-名前は <code>PortChannel</code> 接頭辞 + 数値（最大長 <code>IFACE_NAME_MAX_LEN</code>）でバリデート。<code>PORTCHANNEL|&lt;name&gt;</code> を以下のフィールドで作成:</p>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>admin_status</code></td>
-<td><code>up</code></td>
-</tr>
-<tr>
-<td><code>mtu</code></td>
-<td><code>9100</code></td>
-</tr>
-<tr>
-<td><code>lacp_key</code></td>
-<td><code>auto</code></td>
-</tr>
-<tr>
-<td><code>fast_rate</code></td>
-<td>オプションを小文字化した値</td>
-</tr>
-<tr>
-<td><code>min_links</code></td>
-<td><code>--min-links</code> 値 (0 なら省略)</td>
-</tr>
-<tr>
-<td><code>fallback</code></td>
-<td><code>true</code>（オプションが <code>false</code> 以外のとき）</td>
-</tr>
-</tbody>
-</table>
-<!-- evidence:
-source: sonic-net/sonic-utilities/config/main.py#L2832-L2867 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
-excerpt: |
-  fvs = {
-      'admin_status': 'up',
-      'mtu': '9100',
-      'lacp_key': 'auto',
-      'fast_rate': fast_rate.lower(),
-  }
-  if min_links != 0:
-      fvs['min_links'] = str(min_links)
-  if fallback != 'false':
-      fvs['fallback'] = 'true'
-  db.set_entry('PORTCHANNEL', portchannel_name, fvs)
--->
-
-<h3 id="config-portchannel-del-portchannel_name"><code>config portchannel del &lt;portchannel_name&gt;</code><a class="headerlink" href="#config-portchannel-del-portchannel_name" title="Permanent link">&para;</a></h3>
-<p><strong>動作</strong>:
-削除前に以下を確認し、いずれか引っかかれば失敗:</p>
-<ul>
-<li>名前が valid (<code>PortChannel</code> 接頭辞 + 数字)</li>
-<li>該当 LAG が存在する</li>
-<li>VLAN_MEMBER に <code>&lt;portchannel&gt;</code> が含まれていない (VLAN メンバ解除が先)</li>
-<li>PORTCHANNEL_MEMBER に当該 LAG のメンバが残っていない (空にしてから)</li>
-<li><code>dhcpv4_relay</code> の interface 依存に名指しされていない</li>
-</ul>
-<p>クリアされたら <code>set_entry('PORTCHANNEL', name, None)</code> で削除。</p>
-<h3 id="config-portchannel-member-add-portchannel-port"><code>config portchannel member add &lt;portchannel&gt; &lt;port&gt;</code><a class="headerlink" href="#config-portchannel-member-add-portchannel-port" title="Permanent link">&para;</a></h3>
-<p><strong>動作</strong>:
-ポート側の以下が満たされる必要がある:</p>
-<ul>
-<li>mirror destination port ではない</li>
-<li><code>Ethernet*</code> で始まる有効な物理ポート</li>
-<li><code>INTERFACE</code> テーブルに IP アドレスが付いていない</li>
-<li><code>VLAN_SUB_INTERFACE</code> の親 interface ではない</li>
-<li><code>VLAN_MEMBER</code> 配下にも入っていない</li>
-<li>別の <code>PORTCHANNEL_MEMBER</code> に組み込まれていない</li>
-</ul>
-<p>満たされれば <code>PORTCHANNEL_MEMBER|&lt;portchannel&gt;|&lt;port&gt;</code> を作成（フィールドは <code>NULL: NULL</code>）。</p>
-<h3 id="config-portchannel-member-del-portchannel-port"><code>config portchannel member del &lt;portchannel&gt; &lt;port&gt;</code><a class="headerlink" href="#config-portchannel-member-del-portchannel-port" title="Permanent link">&para;</a></h3>
-<p><code>PORTCHANNEL_MEMBER|&lt;portchannel&gt;|&lt;port&gt;</code> を削除。</p>
-<h3 id="config-portchannel-retry-count-get-portchannel_name"><code>config portchannel retry-count get &lt;portchannel_name&gt;</code><a class="headerlink" href="#config-portchannel-retry-count-get-portchannel_name" title="Permanent link">&para;</a></h3>
-<p><strong>動作</strong>:
-CONFIG_DB ではなく <code>teamdctl &lt;portchannel_name&gt; state item get runner.retry_count</code> を実行する。multi-ASIC 時は <code>-n asic&lt;N&gt;</code> を <code>teamdctl</code> に転送（<code>asic</code> プレフィックスは除去して数値のみを渡す）。</p>
-<p><code>runner.enable_retry_count_feature</code> が <code>false</code> の場合は機能未有効でエラー。</p>
-<h3 id="config-portchannel-retry-count-set-portchannel_name-3-10"><code>config portchannel retry-count set &lt;portchannel_name&gt; &lt;3-10&gt;</code><a class="headerlink" href="#config-portchannel-retry-count-set-portchannel_name-3-10" title="Permanent link">&para;</a></h3>
-<p><strong>動作</strong>:
-<code>teamdctl &lt;name&gt; state item set runner.retry_count &lt;N&gt;</code> を実行。範囲は <code>IntRange(3, 10)</code> で click が事前検証。CONFIG_DB は更新されず、teamd ランタイム上でのみ適用される（再起動後は config 由来のデフォルトに戻る）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="config-kdump-add-ssh_path-abs_path"><code>config kdump add ssh_path &lt;abs_path&gt;</code><a class="headerlink" href="#config-kdump-add-ssh_path-abs_path" title="Permanent link">&para;</a></h3>
+<p><code>os.path.isabs</code> かつ <code>os.path.exists</code> を満たす絶対パスのみを <code>ssh_path</code> フィールドに書く。<code>exists</code> チェックがあるので、CLI 実行ホスト上に実在しないパスは登録できない。</p>
+<h3 id="config-kdump-remove-ssh_string-remove-ssh_path"><code>config kdump remove ssh_string</code> / <code>remove ssh_path</code><a class="headerlink" href="#config-kdump-remove-ssh_string-remove-ssh_path" title="Permanent link">&para;</a></h3>
+<p>該当フィールドを <code>None</code> で削除。フィールドが無ければ「not found in KDUMP configuration.」を表示するだけで終了。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>テーブル</th>
-<th>操作</th>
-<th>操作するコマンド</th>
+<th>キー</th>
+<th>フィールド</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>PORTCHANNEL</code></td>
-<td>エントリ作成・削除</td>
-<td><code>add</code> / <code>del</code></td>
-</tr>
-<tr>
-<td><code>PORTCHANNEL_MEMBER</code></td>
-<td><code>&lt;portchannel&gt;|&lt;port&gt;</code> を作成・削除</td>
-<td><code>member add</code> / <code>del</code></td>
+<td><code>KDUMP</code></td>
+<td><code>config</code></td>
+<td><code>enabled</code>, <code>memory</code>, <code>num_dumps</code>, <code>remote</code>, <code>ssh_string</code>, <code>ssh_path</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>retry-count</code> はランタイム制御のみで CONFIG_DB を変更しない点に注意。</p>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li>いずれの操作も <strong><code>config save</code> + reboot を経ないと実機には効かない</strong>。<code>echo_reboot_warning</code> が enable / disable / memory / num_dumps の各コマンドで明示的に警告を出すのはこのため。</li>
+<li><code>config kdump</code> は CONFIG_DB しか触らない。<code>/etc/default/kdump-tools</code> や initramfs の rebuild は <code>hostcfgd</code> が担当する。</li>
+</ul>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>portchannel</code> グループは <code>config/main.py</code> L2817-L2830 で定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>kdump</code> グループ定義は <code>config/kdump.py</code> L11-L14。<code>config/main.py</code> 側で <code>config.add_command(kdump.kdump)</code> で登録される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/kdump.py#L11">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/kdump.py#L11</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>retry-count</code> は teamd ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>echo_reboot_warning</code> (<code>config/kdump.py</code> L35-L38)。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>add_ssh_key</code> / <code>add_ssh_path</code> の <code>remote</code> 必須チェックは <code>config/kdump.py</code> L171-L174 / L207-L209。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
