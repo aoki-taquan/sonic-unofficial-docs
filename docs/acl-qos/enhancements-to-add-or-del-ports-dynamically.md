@@ -1,7 +1,7 @@
 ---
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
 area: acl-qos
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,16 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021-09 (Rev 0.1)。`portsyncd` / `portmgrd` / `portsorch` の zero-port 起動対応、buffer ref counter による delete ガード、`lldpmgrd` の host-interface ステート確認の取り込みは要裏取り。
+!!! danger "裏取りステータス: Discrepancy-found（buffer ref counter PR は close、それ以外は merge 済み）"
+    HLD で参照されている関連 PR の現状を 2026-05-09 に確認:
+
+    | PR | 内容 | 状態 |
+    |----|------|----|
+    | sonic-swss #1808 | portsyncd を port 無しで動かす | ✅ MERGED (2021-07) |
+    | sonic-swss #2019 | flex counter 動的 add/del | ✅ MERGED (2022-04) |
+    | sonic-swss #2022 | port buffer cfg ref counter | ❌ CLOSED（未マージ） |
+
+    `dockers/docker-lldp/lldpmgrd:129-130` で `netdev_oper_status` チェック、`lldpmgrd:46-198` で `pending_cmds` の管理を確認。`sonic-swss/portsyncd/portsyncd.cpp` 配下に `PortConfigDone` も存在。**ただし HLD が要求する「buffer cfg per-port reference counter による delete ガード」は #2022 が close されており現行 master に未取り込み**。削除時 race の防御は HLD 設計通りには動かない（verified at: 2026-05-09）。
 
 !!! note "area の経緯"
     backlog 上では `acl-qos` カテゴリだが、実体はポートライフサイクル管理の話で他多くの章（routing / system / platform）とも干渉する。本ページは backlog の指定に従い `acl-qos` 配下に置く。
@@ -206,6 +214,14 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
 - ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
 - LLDP が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
+
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。
+
+- **取り込み済み**: `sonic-swss/portsyncd` の zero-port 対応 (#1808 MERGED)、`portsorch` の per-port flex counter 動的 add/del (#2019 MERGED)、`sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130,46-198` の `netdev_oper_status` チェックと `pending_cmds` 管理。
+- **未取り込み**: `sonic-swss` PR #2022 (port buffer cfg per-port reference counter) は **CLOSED で未マージ**。HLD で「ref-count > 0 のポート削除拒否」の核となる防御策が現行 master に存在しない。削除時 race の防御は HLD 設計通り動かず、ユーザは依存設定の事前削除順序を厳格に守る必要がある。
+- buffermgrd の加入時 race（APP_DB に port 存在チェック）の取り込み状況は未検証。
 
 ## 引用元
 
