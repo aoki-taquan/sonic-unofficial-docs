@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12227,9 +12287,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>sonic-mgmt-common</code> の transformer ベース OpenConfig PortChannel 実装、<code>oc-lag:aggregate-id</code> でメンバ Ethernet を PortChannel に紐付ける GET / SET 経路、<code>min-links</code> 属性のマッピングは実コードでの裏取り未済。subinterface 機能は本 HLD のスコープ外であり別途。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-mgmt-common/translib/transformer/sw_portchannel.go</code> で PortChannel transformer を確認。<code>sonic-mgmt-common/translib/transformer/portchannel_openconfig_test.go</code> L54-73 で <code>interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id</code> への PATCH と <code>interface[name=PortChannel111]/openconfig-if-aggregate:aggregation/config/min-links</code> への min-links 設定の REST テストを確認。<code>sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang</code> L87-90 で <code>min-links → min_links</code> の <code>lag_min_links_xfmr</code> field-transformer を、<code>sonic-mgmt-common/cvl/testdata/schema/sonic-portchannel.yang</code> L51 で SONiC 側 <code>min_links</code> フィールド定義を確認（verified at: 2026-05-09）。subinterface は本 HLD のスコープ外。</p>
 </div>
 <h1 id="portchannel-lag-openconfig-yang-rest-gnmi">PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）<a class="headerlink" href="#portchannel-lag-openconfig-yang-rest-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12149,9 +12209,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>hostcfgd</code> の <code>FIPS</code> テーブル handler、<code>/etc/fips/fips_enabled</code> の各 docker への mount、<code>telemetry</code> / <code>restapi</code> / <code>sshd</code> の再起動連動、<code>STATE_DB.FIPS_STAT|state</code> への <code>enabled</code> / <code>enforced</code> 反映、<code>ENABLE_FIPS</code> ビルドオプションの現行値は実コードでの裏取り未済。SymCrypt-OpenSSL engine 統合の現行ステータスも未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（実装名と HLD 記載に差異あり）</p>
+<p><code>sonic-host-services/scripts/hostcfgd</code> L100-103 / L1756-1809 で <code>FipsCfg</code> クラスが <code>FIPS</code> テーブルハンドラを実装、<code>DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']</code> の再起動連動を確認。<code>sonic-buildimage/slave.mk</code> L425 <code>export ENABLE_FIPS</code> でビルドオプション、<code>sonic-buildimage/rules/sonic-fips.mk</code> でパッケージビルド、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fips.yang</code> で YANG を確認（verified at: 2026-05-09）。<strong>HLD と現行 master の差異</strong>: (1) HLD の <code>/etc/fips/fips_enabled</code> は実装上 <code>/etc/fips/fips_enable</code>（<code>OPENSSL_FIPS_CONFIG_FILE = '/etc/fips/fips_enable'</code>, hostcfgd L102）。(2) HLD の <code>STATE_DB.FIPS_STAT|state</code> は実装上 <code>STATE_DB.FIPS_STATS|state</code>（hostcfgd L1792 <code>state_db_conn.hset('FIPS_STATS|state', ...)</code>）。本ページのキー名は HLD 表記のままなので参照時は実装側名を使うこと。</p>
 </div>
 <h1 id="sonic-fips-140-3-fips-table-etcfipsfips_enabled">SONiC FIPS 140-3 デプロイ（<code>FIPS</code> table と <code>/etc/fips/fips_enabled</code>）<a class="headerlink" href="#sonic-fips-140-3-fips-table-etcfipsfips_enabled" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

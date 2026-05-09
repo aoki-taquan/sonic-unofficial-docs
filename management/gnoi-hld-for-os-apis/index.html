@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12127,9 +12187,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2025-01 改訂 v0.1。<code>image_service.install</code> / <code>image_service.activate</code> / <code>image_service.verify</code> の DBUS エンドポイントの現行実装、デュアル supervisor 環境での同期挙動、<code>gnoi_client</code> の OS サブコマンドは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-gnmi/gnmi_server/gnoi_os.go</code> L25-441 で <code>OSServer.processTransferReq</code> / <code>processTransferEnd</code> / <code>Activate</code> / <code>Verify</code> のサーバ実装を確認。<code>sonic-gnmi/gnoi_client/os/os.go</code> L20-72 で OS Verify / Activate / Install のクライアント実装を、<code>sonic-gnmi/gnoi_client/gnoi_client.go</code> L73-77 で <code>--module OS --rpc {Verify,Activate,Install}</code> ディスパッチを確認。<code>sonic-host-services/host_modules/image_service.py</code> L81-99 で DBUS の <code>install</code> メソッド（<code>/usr/local/bin/sonic-installer install -y</code> 呼び出し）と L165 <code>set_next_boot</code> 実装を確認（verified at: 2026-05-09）。HostModule 側の gNOI 統合（L229-251 <code>installos</code>）は現行 master では <code>ERROR_UNIMPLEMENTED</code> だが、別経路の <code>OSServer</code> （sonic-gnmi 側）で機能する。</p>
 </div>
 <h1 id="gnoi-os-apiinstall-activate-verify-sonic-installer">gNOI OS API（Install / Activate / Verify と sonic-installer 連携）<a class="headerlink" href="#gnoi-os-apiinstall-activate-verify-sonic-installer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

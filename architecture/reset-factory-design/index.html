@@ -1453,6 +1453,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1550,6 +1554,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1802,6 +1834,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12149,9 +12209,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Phase 1, Rev 0.1, 2023-01）のみを根拠に書かれている。<code>/usr/bin/reset-factory</code> および <code>config-setup factory</code> の実装、<code>/etc/sonic/default_users.json</code>、overlayfs upperdir のクリア手順、<code>KEEP_BASIC_TABLES</code> の最新値は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/files/image_config/reset-factory/reset-factory</code> で <code>/usr/bin/reset-factory</code> スクリプト本体を確認。<code>sonic-buildimage/files/image_config/config-setup/config-setup</code> L245-251 で <code>KEEP_BASIC_TABLES</code> で指定された CONFIG_DB テーブルのみ <code>jq</code> でフィルタする keep-basic 実装、<code>sonic-buildimage/files/image_config/config-setup/config-setup.conf</code> L4 で <code>KEEP_BASIC_TABLES='["MGMT_PORT","MGMT_INTERFACE","MGMT_VRF_CONFIG","PASSW_HARDENING"]'</code> の現行値を確認。<code>sonic-buildimage/files/build_templates/default_users.json.j2</code> の存在を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="reset-factorykeep-basic-keep-all-config-only-config"><code>reset-factory</code>（keep-basic / keep-all-config / only-config）<a class="headerlink" href="#reset-factorykeep-basic-keep-all-config-only-config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

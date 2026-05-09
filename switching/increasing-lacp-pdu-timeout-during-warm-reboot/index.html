@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12105,9 +12165,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD のみを根拠に書かれている。<code>teamd</code> / libteam パッチの取り込み、<code>config portchannel retry-count</code> の sonic-utilities 反映状況は未確認。HLD には参考実装 PR が併記されているが、現行 master の最終形とのズレは別途検証が必要。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/libteam/patch/0015-add-support-for-custom-retry.patch</code> で libteam の retry count 拡張パッチ取り込みを、<code>0016-block-retry-count-changes.patch</code> で warm-reboot 中の保護を確認。<code>sonic-utilities/scripts/teamd_increase_retry_count.py</code> L39 で <code>version=0xf1</code> の LACPDU 拡張、L62-69 で <code>actor_retry_count_type=0x80</code> / <code>partner_retry_count_type=0x81</code> 新規 TLV scapy 定義を確認。<code>sonic-utilities/config/main.py</code> L3052 <code>portchannel_retry_count</code> クリックグループと L3061 で <code>teamdctl runner.enable_retry_count_feature</code> 状態取得、その後の get/set サブコマンドを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="warm-reboot-lacp-retry-count-lacp-version-0xf1-tlv">Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）<a class="headerlink" href="#warm-reboot-lacp-retry-count-lacp-version-0xf1-tlv" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12083,9 +12143,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は改訂日付未記載で、後続の <a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis HLD</a> のベースとなった文書。<code>docker-database-init.sh</code>、<code>supervisord.conf.j2</code>、<code>ping_pong_db_insts</code> スクリプトの実装存在は要裏取り。<strong>詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L55-61/L80-81 で <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> を <code>/var/run/redis/sonic-db/database_config.json</code> にコピーし、不在時は <code>database_config.json.j2</code> または <code>multi_database_config.json.j2</code> を <code>jinjanate</code> で展開する起動順を確認。<code>sonic-buildimage/dockers/docker-database/</code> 配下に <code>database_config.json.j2</code> / <code>multi_database_config.json.j2</code> / <code>supervisord.conf.j2</code> を確認。<code>sonic-swss-common/common/dbconnector.h</code> L90 <code>DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"</code>、<code>sonic-swss-common/common/database_config.json</code> で INSTANCES + DATABASES セクション仕様を、<code>tests/redis_multi_db_ut_config/database_config[0-5].json</code> で複数インスタンス UT 設定を確認（verified at: 2026-05-09）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。</p>
 </div>
 <h1 id="redis-database_configjson-db">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）<a class="headerlink" href="#redis-database_configjson-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

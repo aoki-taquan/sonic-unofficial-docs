@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12127,9 +12187,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (2025-07) で <code>port_flr.lua</code> 追加と FlexCounterOrch 拡張、speed → interleaving factor table、predicted FLR の線形回帰アルゴリズム。<strong>SAI 属性 <code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si</code> の community SAI / vendor SAI 提供状況</strong>は要確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（CLI 取り込み未済）</p>
+<p><code>sonic-swss/orchagent/port_flr.lua</code> L31 <code>FEC_FLR_POLL_INTERVAL = 120</code> / L443-452 で <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> / <code>FEC_FLR_R_SQUARED</code> を RATES テーブルへ書き込む実装を確認。<code>sonic-utilities/utilities_common/portstat.py</code> L48-50 で <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> / <code>FEC_FLR_R_SQUARED</code> / <code>FEC_MAX_T</code> カラム取り込み、<code>utilities_common/netstat.py</code> L144/L156 で <code>format_fec_flr</code> / <code>format_fec_flr_predicted</code> フォーマッタを確認。SAI <code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15</code> は <code>sonic-sairedis/unittest/saidump/dump.json</code> のサンプル出力に出現を確認（verified at: 2026-05-09）。<strong>HLD と現行 master の差異</strong>: HLD §New CLI で <code>counterpoll port flr-interval-factor FLR_INTERVAL_FACTOR</code> のサブコマンド追加が記載されているが、<code>sonic-utilities/counterpoll/main.py</code> および <code>config/</code> 配下に <code>flr-interval-factor</code> / <code>FLR_INTERVAL_FACTOR</code> の grep ヒットなし。CLI による polling factor 動的設定は現行 master では未取り込み（lua 側ハードコード <code>FEC_FLR_POLL_INTERVAL = 120</code> のみ）。</p>
 </div>
 <h1 id="fec-flrframe-loss-ratioport_flrlua-counterpoll-port-flr-interval-factor">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）<a class="headerlink" href="#fec-flrframe-loss-ratioport_flrlua-counterpoll-port-flr-interval-factor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

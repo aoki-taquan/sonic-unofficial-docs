@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12205,9 +12265,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は改訂日付未記載。<code>database.sh</code> の j2 テンプレ展開、<code>SonicDBConfig</code> / <code>SonicV2Connector</code> の namespace 対応、C++ <code>DBConnector</code> の <code>database_global.json</code> パーサ実装は要裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss-common/common/dbconnector.h</code> L44-49 で「namespace でコンテナ群を一意識別、空文字なら default(host) namespace」のコメント、L107 で <code>load_sonic_global_db_config(global_db_file_path=DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, namespace=None, ignore_nonexistent=False)</code> Python API、L149/L151 で <code>{containerName, namespace}</code> キーの instance / database マップ実装を確認。<code>sonic-swss-common/common/dbconnector.cpp</code> L225 で <code>database_global.json</code> 未ロード時 <code>initializeGlobalConfig</code> を要請するエラー処理を確認。<code>sonic-swss-common/tests/redis_multi_db_ut_config/database_global.json</code> L4-28 で <code>include</code> ディレクティブによる per-namespace <code>database_config*.json</code> の集約形式を、<code>sonic-buildimage/dockers/docker-database/database_global.json.j2</code> テンプレ存在を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="multi-asic-redisdatabase_globaljson-sonicdbconfig">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）<a class="headerlink" href="#multi-asic-redisdatabase_globaljson-sonicdbconfig" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

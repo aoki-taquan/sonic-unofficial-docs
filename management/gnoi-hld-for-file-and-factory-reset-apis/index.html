@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12139,9 +12199,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 0.1, 2025-01）のみを根拠に書かれている。<code>infra_host</code> / <code>gnoi_reset</code> ホストサービスモジュールの実装、<code>gnoi_client</code> CLI、<code>config_db.json</code> のみを許す string match の取り扱いは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-host-services/host_modules/gnoi_reset.py</code> L28-78 で <code>factoryOs</code> / <code>zeroFill</code> / <code>retainCerts</code> フラグの受領と <code>factory_os_unsupported</code> / <code>zero_fill_unsupported</code> のレスポンス分岐実装を確認。<code>sonic-gnmi/gnmi_server/gnoi_reset.go</code> L16-41 で <code>factory_reset.Start</code> ハンドラが DBus 経由 <code>FactoryReset</code> を呼ぶ実装を、<code>sonic-gnmi/sonic_service_client/dbus_client.go</code> L353 で <code>DbusClient.FactoryReset</code> を確認。<code>sonic-gnmi/pkg/gnoi/file/remove_test.go</code> L18-49 で File.Remove のパス検証（nil / config_db.json / <code>../../etc/passwd</code> リジェクト等）を確認。<code>sonic-gnmi/gnoi_client/file/file.go</code> L26-58 で File Stat/Get クライアント、<code>sonic-gnmi/gnoi_client/factory_reset/factory_reset.go</code> を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service">gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）<a class="headerlink" href="#gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

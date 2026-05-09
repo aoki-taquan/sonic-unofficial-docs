@@ -1202,6 +1202,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1299,6 +1303,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
   
 
     
@@ -1551,6 +1583,34 @@
     
   
     DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
   
 
     
@@ -12149,9 +12209,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (2025-05) で SPEED_200/400/600/800GB の identity 追加と new state leaves 追加が記載。translib App ベースから transformer ベースへの置換状態、subinterface index 0 のみサポートの実装、<code>oc-ip:enabled</code> から <code>ipv6_use_link_local_only</code> への mapping は実コード未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang</code> L162 <code>identity SPEED_400GB</code> / L172 <code>identity SPEED_800GB</code> を確認（200/600GB も同 yang 内）。<code>sonic-mgmt-common/translib/transformer/xfmr_intf.go</code> L3796-3828 で <code>ipv6_use_link_local_only</code> フィールドの YangToDb / DbToYang transformer 実装を確認（<code>oc-ip:enabled</code> ↔ <code>ipv6_use_link_local_only</code> mapping）。<code>sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang</code> L54-90 で <code>oc-eth:ethernet/state/oc-lag:aggregate-id</code> の deviation と PortChannel min-links field-transformer を確認。translib transformer 配下に統合済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）<a class="headerlink" href="#openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
