@@ -3599,6 +3599,8 @@
       
         
       
+        
+      
     
     
     
@@ -3976,6 +3978,34 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4455,6 +4485,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5308,6 +5342,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker warm restart（state restore / consistency / sync up）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
@@ -5372,6 +5434,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12331,9 +12421,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019 年（Rev 0.1）の初期提案。同様の目的を持つ後発 HLD（<a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a>）が dplane_fpm_nl ベースで標準化されているため、本 HLD の <code>ERROR_ROUTE_TABLE</code> 経路が現行 master に残っているかは要確認。<code>priority=high</code>。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（HLD 提案は現行 master に取り込まれていない）</p>
+<p><code>ERROR_ROUTE_TABLE</code> / <code>BGP_ERROR_CFG_TABLE</code> / <code>config bgp error-handling</code> CLI を <code>sonic-swss</code> / <code>sonic-utilities</code> / <code>sonic-buildimage</code> / <code>sonic-frr</code> / <code>sonic-buildimage/src/sonic-yang-models/</code> 全体に対して grep ヒット <strong>0 件</strong>（verified 2026-05-09）。本 HLD で提案された <code>ERROR_ROUTE_TABLE</code> 経由の FIB-install pending 機構は採用されず、後発の <strong><a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a></strong>（<code>dplane_fpm_nl</code> + <code>bgp suppress-fib-pending</code> コマンド）に置き換えられている。<code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> L107 で <code>bgp suppress-fib-pending</code> のデフォルト有効化を確認。本 HLD は歴史的設計提案として残し、実装裏取りは BGP Suppress FIB Pending ページで継続。</p>
 </div>
 <h1 id="bgp-route-install-error-handlingerror_route_table-fib-install-pending">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）<a class="headerlink" href="#bgp-route-install-error-handlingerror_route_table-fib-install-pending" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

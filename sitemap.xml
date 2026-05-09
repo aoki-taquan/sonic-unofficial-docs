@@ -57,6 +57,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/dynamically-headroom-calculation/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -1425,6 +1429,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-swss-docker-warm-restart/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-telemetry-in-dial-out-mode/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -1434,6 +1442,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/swss-docker-warm-restart-code-reference/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/system-wide-warmboot/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>

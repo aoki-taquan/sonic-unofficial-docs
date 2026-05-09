@@ -3615,6 +3615,8 @@
       
         
       
+        
+      
     
     
     
@@ -3992,6 +3994,34 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4471,6 +4501,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5324,6 +5358,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker warm restart（state restore / consistency / sync up）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
@@ -5388,6 +5450,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12363,9 +12453,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2023-2025 年に複数改訂。<code>dhcpmon</code> のマルチスレッド化、<code>dhcp6relay</code> から counter 機能の <code>dhcpmon</code> への分離、<code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> の <code>COUNTERS_DB</code> 反映、show/clear CLI、Dual-ToR 専用ルールの現行実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/dhcpmon/</code> で dhcpmon 実装を確認。<code>sonic-buildimage/dockers/docker-dhcp-relay/cli/show/plugins/show_dhcp_relay.py</code> で <code>show dhcp_relay ipv4/ipv6 counter</code> CLI、<code>cli/clear/plugins/clear_dhcp_relay.py</code> で sonic-clear、<code>cli-plugin-tests/test_show_dhcpmon_counters.py</code> / <code>test_clear_dhcp_relay.py</code> で UT を確認（verified 2026-05-09）。<code>sonic-dhcp-relay/dhcp4relay</code> / <code>dhcp6relay</code> で relay daemon 本体を確認。</p>
 </div>
 <h1 id="dhcp-relay-per-interface-counterdhcpmon-counters_db">DHCP Relay per-interface counter（<code>dhcpmon</code> マルチスレッド + COUNTERS_DB 永続化）<a class="headerlink" href="#dhcp-relay-per-interface-counterdhcpmon-counters_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

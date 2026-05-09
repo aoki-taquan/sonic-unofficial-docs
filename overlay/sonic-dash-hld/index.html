@@ -3632,6 +3632,8 @@
       
         
       
+        
+      
     
     
     
@@ -4009,6 +4011,34 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4488,6 +4518,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5341,6 +5375,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker warm restart（state restore / consistency / sync up）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
@@ -5405,6 +5467,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12397,9 +12487,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 巨大 HLD</p>
-<p>HLD は v2.6.1 / 2026-02 改訂、サイズ <strong>118KB 超</strong>。本ページは DASH の中核アーキテクチャと主要テーブルのみを抜粋する。<strong>完全な詳細仕様（packet flow / SAI mapping / metering / Service Tunnel / Private Link / FastPath / Floating NIC 等）は HLD <code>doc/dash/dash-sonic-hld.md</code> を参照すること。</strong> 章単位での分割解説ページは別 issue で逐次切り出すことを推奨。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（中核アーキテクチャの抜粋範囲のみ）</p>
+<p><code>sonic-swss/orchagent/dash/dashorch.h</code> L63 <code>class DashOrch : public ZmqOrch</code>、<code>dashvnetorch.cpp</code> L49-50 で <code>APP_DASH_VNET_TABLE_NAME</code> / <code>APP_DASH_VNET_MAPPING_TABLE_NAME</code> 操作、<code>dashaclorch.cpp</code> / <code>dashmeterorch.cpp</code> / <code>dashhaorch.cpp</code> / <code>dashhafloworch.cpp</code> / <code>dashenifwdorch.cpp</code> / <code>dashcounter.cpp</code> で各 Orch を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang</code> L36 <code>container DASH_VNET</code> / L119 <code>container DASH_ENI</code> で YANG を確認、<code>sonic-buildimage/src/sonic-dash-api</code> を確認（verified 2026-05-09）。<strong>詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない</strong>。章単位分割は別 issue で実施。</p>
 </div>
 <h1 id="sonic-dashdisaggregated-apis-for-sonic-hosts">SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観<a class="headerlink" href="#sonic-dashdisaggregated-apis-for-sonic-hosts" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

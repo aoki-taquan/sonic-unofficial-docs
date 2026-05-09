@@ -3392,6 +3392,8 @@
       
         
       
+        
+      
     
     
     
@@ -3769,6 +3771,34 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4248,6 +4278,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5101,6 +5135,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker warm restart（state restore / consistency / sync up）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
@@ -5165,6 +5227,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12275,9 +12365,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021 年 3 月版 (Rev 0.1, Status=Initial)。<code>generic_config_updater</code> 内の patch orderer 実装、<code>sonic-extension</code> への <code>create-only</code> 拡張、libyang ラッパー (<code>sonic_yang.find_data_dependencies</code> / <code>validate_data_tree</code>) 利用、メモ化付き探索、ACL_TABLE.ports 全置換のような最適化は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-utilities/generic_config_updater/patch_sorter.py</code> L2129 <code>PatchSorterPath</code> / L2178 <code>DfsSorter</code> / L2229 <code>BfsSorter</code> / L2268 <code>MemoizationSorter</code> / L2349 <code>StrictPatchSorter</code> / L2543 <code>NonStrictPatchSorter</code> で patch orderer 実装を確認。<code>sonic-buildimage/src/sonic-yang-mgmt/sonic_yang.py</code> L283 <code>validate_data_tree</code> / L676 <code>find_data_dependencies</code> で libyang ラッパーを確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-common.yang</code> L39 ほかで <code>import sonic-extension</code> を確認（verified 2026-05-09）。</p>
 </div>
 <h1 id="json-patch-orderingyang-apply-patch">JSON Patch ordering（YANG 制約に従う <code>apply-patch</code> のステップ分割）<a class="headerlink" href="#json-patch-orderingyang-apply-patch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
