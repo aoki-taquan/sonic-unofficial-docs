@@ -12503,9 +12503,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2021-10 改訂、4 年以上経過）</p>
-<p>HLD は v0.3 / 2021-10。<code>SAG</code> テーブルとオーケストレータ拡張、<code>config static-anycast-gateway ...</code> CLI が現行 master で同名で取り込まれているかは未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（master に SAG コード/YANG 未取り込み）</p>
+<p>Verifier 2026-05-09: <code>sonic-net/sonic-buildimage</code> master HEAD <code>9ea932e</code> を確認した時点で <code>src/sonic-sag</code> ディレクトリは存在せず、<code>src/sonic-yang-models/yang-models/</code> にも <code>sonic-static-anycast-gateway.yang</code> は無い（<code>sonic-static-route.yang</code> は別物）。HLD は v0.3 / 2021-10 で承認されているが、本ページが前提とする <code>SAG</code> テーブル / <code>IntfMgr</code> / <code>IntfsOrch</code> 拡張 / <code>config static-anycast-gateway</code> CLI は <strong>community master に統合されていない</strong>。本ページは HLD ベースの設計記述として参照する場合に限り有効で、現行 SONiC ビルドでは利用不可。</p>
 </div>
 <h1 id="sagstatic-anycast-gatewayfor-sonic">SAG（Static Anycast Gateway）for SONiC<a class="headerlink" href="#sagstatic-anycast-gatewayfor-sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

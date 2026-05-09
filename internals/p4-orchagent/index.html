@@ -12585,6 +12585,10 @@
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p><code>P4Orch</code> の <code>ObjectManagerInterface</code> 階層、<code>RouterInterfaceManager</code> / <code>NeighborManager</code> / <code>NexthopManager</code> / <code>WcmpManager</code> / <code>RouteManager</code> / <code>AclTableManager</code> / <code>AclRuleManager</code> の現行実装、<code>Centralized Mapper</code> の参照カウントと <code>CrmOrch</code> 連携、<code>PortsOrch</code> / <code>VrfOrch</code> への public method 経由の参照、<code>APPL_STATE_DB</code> 経由の応答経路は実コードでの裏取り未済（PINS 機能）。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="p4orchpins-p4runtime-orchagent">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）<a class="headerlink" href="#p4orchpins-p4runtime-orchagent" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>PINS (P4 Integrated Network Stack) は SONiC を <strong>P4 / P4Runtime で遠隔制御</strong> するためのコンポーネント群を追加する。本 HLD は中核となる <strong><code>P4Orch</code>（orchagent 内の新クラス）</strong> の設計を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

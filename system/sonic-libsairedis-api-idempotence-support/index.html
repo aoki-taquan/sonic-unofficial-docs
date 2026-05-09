@@ -12429,6 +12429,10 @@
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p>HLD は warm-reboot 議事系。<code>ATTR2OID_*</code> / <code>OID2ATTR_*</code> / <code>DEFAULT_*</code> 各キープレフィックスを RESTORE_DB (DB 7) に置く設計が現行 sairedis の master ブランチに採用されているかは未裏取り（<code>syncd view comparison</code> 案との競合あり）。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="libsairedis-api-idempotencewarm-restart-oid-duplicate">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）<a class="headerlink" href="#libsairedis-api-idempotencewarm-restart-oid-duplicate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>orchagent と syncd の間にある <strong>libsairedis API</strong> の <code>create</code> / <code>set</code> / <code>remove</code> / <code>get</code> を <strong>idempotent</strong> にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>get</code> は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。</p>

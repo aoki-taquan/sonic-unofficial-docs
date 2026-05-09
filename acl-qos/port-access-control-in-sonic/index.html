@@ -12529,6 +12529,10 @@ related:
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p><code>Authentication Manager</code> / <code>mabd</code> / <code>hostapdmgrd</code> の現行 master 取り込み、SAI Bridge port learning モード変更、PAC 用 host interface trap、各 CONFIG_DB スキーマ・CLI の sonic-utilities 取り込みは未確認。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="port-access-controlpac-8021x-mab-radius">Port Access Control（PAC: 802.1x / MAB / RADIUS）<a class="headerlink" href="#port-access-controlpac-8021x-mab-radius" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>物理ポート単位の <strong>クライアント認証</strong> （IEEE 802.1x + MAB）を SONiC に持ち込む機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。RADIUS で外部 AAA サーバに問合せ、結果に応じて当該 MAC をポートに「authorized / unauthorized」状態で許可する。authorized クライアントを VLAN に動的に割り当てる（VLAN assignment）こともできる。</p>

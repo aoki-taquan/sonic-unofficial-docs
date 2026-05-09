@@ -12507,6 +12507,10 @@
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p><code>UNDERLAY_SET_DSCP</code> / <code>MARK_META</code> / <code>EGR_SET_DSCP</code> の AclOrch 内部展開、SAI metadata 属性の community SAI 取り込み、CLI の sonic-utilities 取り込みは未確認。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp">Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）<a class="headerlink" href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>encapsulated 後の <strong>outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための ACL table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>

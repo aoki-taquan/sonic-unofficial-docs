@@ -12595,6 +12595,10 @@
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p><code>buffermgrd</code> の dynamic クラス、Lua plugin（vendor 提供）、<code>buffer_model</code> フィールド、<code>asic_table.json</code> / <code>peripheral_table.json</code> 経由の STATE_DB 公開、<code>SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE</code> の community SAI 取り込みは未確認。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="dynamic-headroom-calculationbuffer_model-dynamic">Dynamic Headroom Calculation（buffer_model = dynamic）<a class="headerlink" href="#dynamic-headroom-calculationbuffer_model-dynamic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>PFC headroom（lossless 用 PG の <code>xon</code> / <code>xoff</code> / <code>size</code>）を <code>pg_profile_lookup.ini</code> のテーブル lookup ではなく、<strong>式（cell size, MAC/PHY delay, peer response time, IPG, MTU, gearbox delay 等）から動的計算する</strong> 設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。任意の cable length に対応し、<code>pg_profile_lookup.ini</code> 整備の負荷を削減する。</p>

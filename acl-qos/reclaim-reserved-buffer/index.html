@@ -12507,6 +12507,10 @@
 <p class="admonition-title">裏取りステータス: HLD-only</p>
 <p><code>zero_profile</code> を含む BUFFER スキーマ拡張、buffermgrd / db_migrator / Mellanox SAI 側挙動は現行 master 未裏取り。</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
+<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+</div>
 <h1 id="reclaim-reserved-bufferadmin-down-zero_profile">Reclaim Reserved Buffer（admin-down ポートの zero_profile）<a class="headerlink" href="#reclaim-reserved-bufferadmin-down-zero_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、<strong><code>zero_profile</code> を admin-down ポートに明示的に紐付け、reserved buffer をゼロ化して shared pool に取り戻す</strong> 設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
