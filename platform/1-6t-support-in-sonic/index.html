@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/1-6t-support-in-sonic/">
       
       
-        <link rel="prev" href="../byte-packet-rates-port-utilization-in-sonic/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../p4-orchagent/">
+        <link rel="next" href="../automatic-module-provisioning-for-chassis/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp） - SONiC 非公式ドキュメント</title>
+        <title>1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp" class="md-skip">
+        <a href="#16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+              1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
             
           </span>
         </div>
@@ -401,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -3699,440 +3699,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    プラットフォーム
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    プラットフォーム
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICMP Hardware Offload（DualToR link prober の NPU 化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -4142,6 +3708,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -4176,7 +3750,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -4187,7 +3761,7 @@
   <span class="md-ellipsis">
     
   
-    内部実装
+    プラットフォーム
   
 
     
@@ -4198,79 +3772,23 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
-    内部実装
+    プラットフォーム
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
               
             
               
@@ -4296,7 +3814,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
   
 
     
@@ -4314,7 +3832,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
   
 
     
@@ -4363,22 +3881,44 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-arpnd-kernel-gc-tuning" class="md-nav__link">
+  <a href="#sff-8024-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. ARP/ND の枚数増（kernel gc tuning）
+        SFF-8024 の新 ID
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. ARP/ND の枚数増（kernel gc tuning）">
+    <nav class="md-nav" aria-label="SFF-8024 の新 ID">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#copp-arpnd" class="md-nav__link">
+  <a href="#host-electrical-interface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CoPP の ARP/ND 上限引き上げ
+        Host Electrical Interface（コネクタ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mmf-media-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MMF Media Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smf-media-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SMF Media Interface
       
     </span>
   </a>
@@ -4391,22 +3931,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-route-programming" class="md-nav__link">
+  <a href="#sonic-platform-daemons-xcvrd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Route programming 時間短縮
+        sonic-platform-daemons (xcvrd)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Route programming 時間短縮">
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-swss-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-swss (orchagent)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sonic-swss (orchagent)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sairedis-bulk-route-api" class="md-nav__link">
+  <a href="#portsorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 sairedis bulk route API の利用
+        PortsOrch の上限引き上げ
       
     </span>
   </a>
@@ -4414,32 +3965,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-fpmsyncd" class="md-nav__link">
+  <a href="#flr-port_rateslua" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 fpmsyncd の最適化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#23-sairedis-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.3 sairedis 内 JSON ライブラリ更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        期待効果
+        FLR 計算 (port_rates.lua)
       
     </span>
   </a>
@@ -4452,10 +3981,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-show-arp-show-ndp" class="md-nav__link">
+  <a href="#sonic-utilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. show arp / show ndp の高速化
+        sonic-utilities
       
     </span>
   </a>
@@ -4468,7 +3997,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4478,17 +4007,6 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
@@ -4502,7 +4020,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4518,7 +4058,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4529,7 +4069,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4540,7 +4080,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4551,7 +4091,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4577,7 +4117,489 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4-orchagent/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICMP Hardware Offload（DualToR link prober の NPU 化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sai-api-version-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../internals/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    内部実装
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    内部実装
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/l3-scaling-and-performance-enhancements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/p4-orchagent/" class="md-nav__link">
         
   
   
@@ -4605,7 +4627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-counter-initialization-optimization/" class="md-nav__link">
+      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
@@ -4633,7 +4655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -4661,7 +4683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -4689,7 +4711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -5057,22 +5079,44 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-arpnd-kernel-gc-tuning" class="md-nav__link">
+  <a href="#sff-8024-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. ARP/ND の枚数増（kernel gc tuning）
+        SFF-8024 の新 ID
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. ARP/ND の枚数増（kernel gc tuning）">
+    <nav class="md-nav" aria-label="SFF-8024 の新 ID">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#copp-arpnd" class="md-nav__link">
+  <a href="#host-electrical-interface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CoPP の ARP/ND 上限引き上げ
+        Host Electrical Interface（コネクタ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mmf-media-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MMF Media Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smf-media-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SMF Media Interface
       
     </span>
   </a>
@@ -5085,22 +5129,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-route-programming" class="md-nav__link">
+  <a href="#sonic-platform-daemons-xcvrd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Route programming 時間短縮
+        sonic-platform-daemons (xcvrd)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Route programming 時間短縮">
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-swss-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-swss (orchagent)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sonic-swss (orchagent)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sairedis-bulk-route-api" class="md-nav__link">
+  <a href="#portsorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 sairedis bulk route API の利用
+        PortsOrch の上限引き上げ
       
     </span>
   </a>
@@ -5108,32 +5163,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-fpmsyncd" class="md-nav__link">
+  <a href="#flr-port_rateslua" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 fpmsyncd の最適化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#23-sairedis-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.3 sairedis 内 JSON ライブラリ更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        期待効果
+        FLR 計算 (port_rates.lua)
       
     </span>
   </a>
@@ -5146,10 +5179,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-show-arp-show-ndp" class="md-nav__link">
+  <a href="#sonic-utilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. show arp / show ndp の高速化
+        sonic-utilities
       
     </span>
   </a>
@@ -5162,7 +5195,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5172,17 +5205,6 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
@@ -5196,7 +5218,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -5212,7 +5256,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5223,7 +5267,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5234,7 +5278,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5245,7 +5289,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5272,7 +5316,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/l3-scaling-and-performance-enhancements.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/1-6t-support-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5281,242 +5325,296 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-06 改訂で <strong>5 年以上前</strong>。kernel <code>gc_thresh1/2/3</code> 値、CoPP の ARP/ND 上限 8000pps、sairedis bulk route API 経由の RouteOrch、<code>fpmsyncd</code> の <code>rt_table=0</code> での master device lookup スキップ、JSON ライブラリ v3.6 への upgrade、<code>show arp</code> / <code>show ndp</code> の per-ARP FDB lookup 最適化は実コードでの裏取り未済（priority=high）。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 未来の HW 対応</p>
+<p>HLD は 2024-07 改訂 v1.0。<strong>HW がまだ存在しない時点で書かれた予定変更の列挙</strong> であり、HLD 末尾でも「実装は最終的に異なる可能性あり」と明記されている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。inner FEC や link training 等の追加検討点はオープンのまま。</p>
 </div>
-<h1 id="l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / <code>show arp</code>）<a class="headerlink" href="#l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp" title="Permanent link">&para;</a></h1>
+<h1 id="16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch">1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）<a class="headerlink" href="#16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC 201908 リリース時に行われた <strong>L3 のスケール拡大と性能改善</strong> をまとめた HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。スケールでは <strong>ARP/ND エントリ数</strong> と <strong>route 数 / ECMP 構成</strong> を引き上げ、性能では <strong>route programming 時間</strong> と <strong>show コマンド応答時間</strong> を短縮する。CLI / CONFIG_DB / YANG への新規追加は <strong>無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>スケール目標<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>目標</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>IPv4 ARP entry</td>
-<td>32k</td>
-</tr>
-<tr>
-<td>IPv6 ND entry</td>
-<td>16k</td>
-</tr>
-<tr>
-<td>IPv4 route</td>
-<td>200k</td>
-</tr>
-<tr>
-<td>IPv6 route</td>
-<td>65k</td>
-</tr>
-<tr>
-<td>ECMP</td>
-<td>512×32, 256×64, 128×128</td>
-</tr>
-</tbody>
-</table>
-<p>性能目標<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>IPv4 / IPv6 route programming 時間を短縮</li>
-<li>未知 ARP / ND 学習時間を短縮</li>
-<li><code>show arp</code> / <code>show ndp</code> の応答短縮</li>
-<li><strong>route programming 時間 30% 短縮</strong> を狙う</li>
-</ul>
+<p>IEEE P802.3dj が定める <strong>200 / 400 / 800 Gb/s と 1.6 Tb/s</strong> のインターフェース定義を SONiC に取り込むための変更点を列挙した HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本質は <strong>lane あたり 200G PAM4（GBd 106.25）</strong> という新しい SerDes レートを足元のコードに通すこと。</p>
+<p>主要変更点（4 リポジトリ横断）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>SFF-8024</strong>: 新しい host electrical / MMF / SMF interface ID の追加</li>
+<li><strong>sonic-platform-daemons / xcvrd</strong>: <code>1.6T</code> スピード認識</li>
+<li><strong>sonic-utilities</strong>: <code>show interfaces status</code> / <code>config interface speed</code> の表示・受理</li>
+<li><strong>sonic-swss / orchagent</strong>: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）</li>
+</ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="1-arpnd-kernel-gc-tuning">1. ARP/ND の枚数増（kernel gc tuning）<a class="headerlink" href="#1-arpnd-kernel-gc-tuning" title="Permanent link">&para;</a></h3>
-<p>旧 SONiC は ~2400 entry が上限だった。kernel ARP cache の <strong>garbage collector 閾値</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="sff-8024-id">SFF-8024 の新 ID<a class="headerlink" href="#sff-8024-id" title="Permanent link">&para;</a></h3>
+<h4 id="host-electrical-interface">Host Electrical Interface（コネクタ側）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#host-electrical-interface" title="Permanent link">&para;</a></h4>
+<p>すべて <strong>PAM4 / 106.25 GBd</strong>:</p>
 <table>
 <thead>
 <tr>
-<th>パラメータ</th>
-<th>既定</th>
-<th>提案 (IPv4)</th>
-<th>提案 (IPv6)</th>
+<th>ID</th>
+<th>名称</th>
+<th>速度</th>
+<th>レーン数</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>gc_thresh1</code></td>
+<td>30</td>
+<td>200GBASE-CR1</td>
+<td>212.5 Gb/s</td>
+<td>1</td>
+</tr>
+<tr>
+<td>31</td>
+<td>400GBASE-CR2</td>
+<td>425 Gb/s</td>
+<td>2</td>
+</tr>
+<tr>
+<td>87</td>
+<td>800GBASE-CR4</td>
+<td>850 Gb/s</td>
+<td>4</td>
+</tr>
+<tr>
+<td>88</td>
+<td>1.6TBASE-CR8</td>
+<td>1700 Gb/s</td>
+<td>8</td>
+</tr>
+<tr>
 <td>128</td>
-<td>16000</td>
-<td>8000</td>
+<td>200GAUI-1</td>
+<td>212.5 Gb/s</td>
+<td>1</td>
 </tr>
 <tr>
-<td><code>gc_thresh2</code></td>
-<td>512</td>
-<td>32000</td>
-<td>16000</td>
+<td>129</td>
+<td>400GAUI-2</td>
+<td>425 Gb/s</td>
+<td>2</td>
 </tr>
 <tr>
-<td><code>gc_thresh3</code></td>
-<td>1024</td>
-<td>48000</td>
-<td>32000</td>
+<td>130</td>
+<td>800GAUI-4</td>
+<td>850 Gb/s</td>
+<td>4</td>
+</tr>
+<tr>
+<td>131</td>
+<td>1.6TAUI-8</td>
+<td>1700 Gb/s</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>net.ipv4.neigh.default.gc_thresh1=16000
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>net.ipv4.neigh.default.gc_thresh2=32000
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>net.ipv4.neigh.default.gc_thresh3=48000
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>net.ipv6.neigh.default.gc_thresh1=8000
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>net.ipv6.neigh.default.gc_thresh2=16000
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>net.ipv6.neigh.default.gc_thresh3=32000
-</span></code></pre></div>
-<p>burst 時の add/remove ループで entry が満杯にならない問題を解消する。</p>
-<h4 id="copp-arpnd">CoPP の ARP/ND 上限引き上げ<a class="headerlink" href="#copp-arpnd" title="Permanent link">&para;</a></h4>
-<p>旧: ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。学習時間の短縮を狙う。<code>COPP_TABLE</code> の ARP/ND group の <code>cir</code>/<code>cbs</code> を変更する想定。</p>
-<h3 id="2-route-programming">2. Route programming 時間短縮<a class="headerlink" href="#2-route-programming" title="Permanent link">&para;</a></h3>
-<p>旧時計値（AS7712 / Tomahawk 上）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="mmf-media-interface">MMF Media Interface<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#mmf-media-interface" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
 <tr>
-<th>経路数</th>
-<th>IPv4 所要時間</th>
-<th>IPv6 所要時間</th>
+<th>ID</th>
+<th>名称</th>
+<th>速度</th>
+<th>信号速度</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>10k</td>
-<td>11s</td>
-<td>11s</td>
+<td>33</td>
+<td>800G-VR4.2</td>
+<td>850 Gb/s</td>
+<td>53.125 GBd PAM4</td>
 </tr>
 <tr>
-<td>30k</td>
-<td>30s</td>
-<td>30s</td>
-</tr>
-<tr>
-<td>60k</td>
-<td>48s</td>
-<td>-</td>
-</tr>
-<tr>
-<td>90k</td>
-<td>68s</td>
-<td>-</td>
+<td>34</td>
+<td>800G-SR4.2</td>
+<td>850 Gb/s</td>
+<td>53.125 GBd PAM4</td>
 </tr>
 </tbody>
 </table>
-<h4 id="21-sairedis-bulk-route-api">2.1 sairedis bulk route API の利用<a class="headerlink" href="#21-sairedis-bulk-route-api" title="Permanent link">&para;</a></h4>
-<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新: <strong>sairedis の bulk API</strong> を使う:</p>
-<ul>
-<li><code>RouteOrch</code> は 64 件まとめて bulk API に渡す</li>
-<li>meta_sai layer は内部で個別オブジェクトを作るが、<strong>Redis に流れる message は 1 件</strong> に集約</li>
-<li>ASIC 側は <strong>bulk route create を実装していない</strong> ため <code>syncd</code> は 1 件ずつ処理する → 純粋な節約は <strong>Redis message 数の削減</strong></li>
-</ul>
-<p><code>RouteOrch</code> に <strong>新 timer</strong> を追加し、未送信のバッチを <strong>1 秒ごとに flush</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant RO as RouteOrch
-    participant SA as sairedis (meta_sai)
-    participant ADB as ASIC_DB
-    participant SY as syncd
-    participant SAI
-    Note over RO: 64 経路を内部キューに溜める / 1秒 timer
-    RO-&gt;&gt;SA: bulk_create_routes([r1..r64])
-    SA-&gt;&gt;SA: meta object を 64 件作る
-    SA-&gt;&gt;ADB: 1 Redis message
-    ADB-&gt;&gt;SY: 通知
-    loop 各経路
-        SY-&gt;&gt;SAI: create_route_entry()
-    end</code></pre>
-<h4 id="22-fpmsyncd">2.2 <code>fpmsyncd</code> の最適化<a class="headerlink" href="#22-fpmsyncd" title="Permanent link">&para;</a></h4>
-<p>旧: 各経路の処理で <strong><code>rt_table</code> 属性から master device 名を kernel から取得</strong> する。これは VNET_ROUTE_TABLE 判定のため<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>問題: VNET が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
-<p>修正: <strong><code>route.rt_table == 0</code>（global routing table）</strong> なら lookup を <strong>skip</strong>。10k 経路の APP_DB 投入が <strong>7-8s → 4-5s</strong> に短縮<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="23-sairedis-json">2.3 sairedis 内 JSON ライブラリ更新<a class="headerlink" href="#23-sairedis-json" title="Permanent link">&para;</a></h4>
-<p><code>nlohmann/json</code> ライブラリの <strong>v2.0 → v3.6</strong> への更新で <code>dump()</code> 系最適化を取り込む<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_3">期待効果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
-<p>上記合算で <strong>route programming 時間 30% 削減</strong> を目標<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="3-show-arp-show-ndp">3. <code>show arp</code> / <code>show ndp</code> の高速化<a class="headerlink" href="#3-show-arp-show-ndp" title="Permanent link">&para;</a></h3>
-<p>旧: VLAN L3 interface 上の ARP の <strong>outgoing interface を求めるため FDB 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>修正: 該当 ARP/ND <strong>特定エントリだけの FDB lookup</strong> に変更。CLI スクリプト側の改修。</p>
+<h4 id="smf-media-interface">SMF Media Interface<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#smf-media-interface" title="Permanent link">&para;</a></h4>
+<p>代表例（同一表で 11 種登場）:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>名称</th>
+<th>速度</th>
+<th>信号速度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>115</td>
+<td>200GBASE-DR1</td>
+<td>212.5</td>
+<td>106.25 GBd</td>
+</tr>
+<tr>
+<td>117</td>
+<td>400GBASE-DR2</td>
+<td>425</td>
+<td>106.25 GBd</td>
+</tr>
+<tr>
+<td>119</td>
+<td>800GBASE-DR4</td>
+<td>850</td>
+<td>106.25 GBd</td>
+</tr>
+<tr>
+<td>122</td>
+<td>800GBASE-FR4</td>
+<td>850</td>
+<td>113.4375 GBd</td>
+</tr>
+<tr>
+<td>123</td>
+<td>800GBASE-LR4</td>
+<td>850</td>
+<td>113.4375 GBd</td>
+</tr>
+<tr>
+<td>127</td>
+<td>1.6TBASE-DR8</td>
+<td>1700</td>
+<td>106.25 GBd</td>
+</tr>
+<tr>
+<td>128</td>
+<td>1.6TBASE-DR8-2</td>
+<td>1700</td>
+<td>113.4375 GBd</td>
+</tr>
+</tbody>
+</table>
+<p><code>106.25</code> 系（IEEE Clause 180 系）と <code>113.4375</code> 系（Clause 181 / 183）の <strong>2 種類のシグナリングレート</strong> が共存する点に注意<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sonic-platform-daemons-xcvrd">sonic-platform-daemons (xcvrd)<a class="headerlink" href="#sonic-platform-daemons-xcvrd" title="Permanent link">&para;</a></h3>
+<p><code>xcvrd.py</code> の <code>get_interface_speed</code> に <strong><code>1.6T</code> 分岐を追加</strong>。HLD の patch 抜粋<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span> <span class="s1">&#39;1.6T&#39;</span> <span class="ow">in</span> <span class="n">ifname</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">speed</span> <span class="o">=</span> <span class="mi">1600000</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">elif</span> <span class="s1">&#39;800G&#39;</span> <span class="ow">in</span> <span class="n">ifname</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">speed</span> <span class="o">=</span> <span class="mi">800000</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">elif</span> <span class="s1">&#39;400G&#39;</span> <span class="ow">in</span> <span class="n">ifname</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">speed</span> <span class="o">=</span> <span class="mi">400000</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">...</span>
+</span></code></pre></div>
+<h3 id="sonic-swss-orchagent">sonic-swss (orchagent)<a class="headerlink" href="#sonic-swss-orchagent" title="Permanent link">&para;</a></h3>
+<h4 id="portsorch">PortsOrch の上限引き上げ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h4>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// orchagent/port/porthlpr.cpp</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">minPortSpeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="o">-</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">maxPortSpeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">800000</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="o">+</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">maxPortSpeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1600000</span><span class="p">;</span>
+</span></code></pre></div>
+<p>CONFIG_DB の <code>PORT.speed</code> 値検証で 1600000 を許容するための変更。</p>
+<h4 id="flr-port_rateslua">FLR 計算 (<code>port_rates.lua</code>)<a class="headerlink" href="#flr-port_rateslua" title="Permanent link">&para;</a></h4>
+<p>レーン速度 → SerDes クロックのテーブルに <strong>200000 → 212.5e9</strong> を追加<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">-- orchagent/port_rates.lua</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kr">elseif</span><span class="w"> </span><span class="nv">lane_speed</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">100000</span><span class="w"> </span><span class="kr">then</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nv">serdes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">106.25e+9</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="o">+</span><span class="w"> </span><span class="kr">elseif</span><span class="w"> </span><span class="nv">lane_speed</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">200000</span><span class="w"> </span><span class="kr">then</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="o">+</span><span class="w">    </span><span class="nv">serdes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">212.5e+9</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="kr">else</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nf">logit</span><span class="p">(</span><span class="s2">&quot;Invalid serdes speed&quot;</span><span class="p">)</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="kr">end</span>
+</span></code></pre></div>
+<p>これは Frame Loss Ratio 計算で <strong>シンボル時間</strong> を求めるための係数。レーン 200G PAM4 の symbol rate が 106.25 Gsym/s で実効ビットレートが 212.5 Gb/s となるため、Lua 側でも反映する必要がある<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    OLD[show arp 旧] --&gt;|FDB 全件取得| F1[1 entry 解決]
-    NEW[show arp 新] --&gt;|"FDB 個別 GET (mac, vlan)"| F2[1 entry 解決]</code></pre>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
-<p><strong>新規 CLI / CONFIG_DB / YANG なし</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値、内部実装の改善のみ。</p>
+    PORT[CONFIG_DB.PORT.speed] --&gt;|&lt;= 1600000?| PO[PortsOrch porthlpr]
+    PO --&gt;|valid| AOR[ASIC config]
+    PO --&gt; COUNTERS[port_rates.lua]
+    COUNTERS --&gt;|lane 200000 → 212.5GBd| FLR[FLR 計算]</code></pre>
+<h3 id="sonic-utilities">sonic-utilities<a class="headerlink" href="#sonic-utilities" title="Permanent link">&para;</a></h3>
+<p><code>show interfaces status</code> の表示と <code>config interface speed &lt;ifname&gt; 1600000</code>（または <code>1.6T</code>）受理を更新<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なソースの変更点は HLD には書かれていない（要件のみ）。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/port-1.6t-support/port-1.6t-support.md#L114-L145 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  - Orchagent will need to update the FLR calculation to support SerDes rates of 212.50.
+  - PortsOrch will need to define 1.6T as the maximum allowed speed for config parsing.
+  ...
+  - static const std::uint32_t maxPortSpeed = 800000;
+  + static const std::uint32_t maxPortSpeed = 1600000;
+  ...
+  + elseif lane_speed == 200000 then
+  +    serdes = 212.5e+9
+reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン対応の根拠。
+-->
+
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
+<th>Key</th>
 <th>フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT</code></td>
+<td><code>&lt;Ethernet&gt;</code></td>
+<td><code>speed</code>（1600000 を受理させる必要）</td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB <strong>スキーマ自体の変更は無い</strong>（速度値の受理上限が変わるだけ）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>COPP_TABLE</code></td>
-<td>ARP/ND group の <code>cir</code> / <code>cbs</code></td>
-<td>600 → 8000 pps</td>
+<td><code>config interface speed &lt;ifname&gt; 1600000</code></td>
+<td>1.6T 設定（または <code>1.6T</code> の文字列受理）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>(<code>/etc/sysctl.d/...</code>)</td>
-<td><code>net.ipv4.neigh.default.gc_thresh1/2/3</code> 等</td>
-<td>kernel ARP cache</td>
+<td><code>show interfaces status</code></td>
+<td>1.6T が正しく表示されること<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># kernel ARP/ND threshold は image 側 sysctl で適用される想定</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># 必要に応じユーザが上書き</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv4.neigh.default.gc_thresh3<span class="o">=</span><span class="m">48000</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv6.neigh.default.gc_thresh3<span class="o">=</span><span class="m">32000</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># show 高速化はバージョンに含まれる</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>show<span class="w"> </span>arp<span class="w">     </span><span class="c1"># 短縮された応答時間</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>show<span class="w"> </span>ndp
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-port</code> の <code>speed</code> 制約に 1600000 を許容する更新が必要（HLD では明示無し、PortsOrch 側のみ言及）。</p>
+<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1600000</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD は 2019 年改訂</strong>。kernel sysctl 値や CoPP 値は <strong>その後の SONiC で更に調整</strong> されている可能性<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>gc_thresh3</code> を上げると <strong>kernel メモリ使用量</strong> が増える。低スペック CPU 機では注意</li>
-<li>CoPP の ARP/ND 上限を 8000 pps に上げると <strong>CPU 負荷増</strong>。他の trap との合算で CPU 飽和に注意</li>
-<li>sairedis bulk API は <strong>ASIC 側 bulk 未対応の場合 syncd 内で逐次処理</strong> されるため、改善幅は Redis message 削減分に留まる</li>
-<li><code>RouteOrch</code> の 1 秒 timer flush は <strong>大量経路投入時のみ効果</strong>。少量更新では遅延がむしろ増える可能性</li>
-<li><code>fpmsyncd</code> の VNET 判定スキップは <strong>VNET 利用時の挙動変更ではない</strong>（<code>rt_table != 0</code> の経路には従来通り lookup）</li>
-<li>HLD は AS7712 (Tomahawk) で測定。他 ASIC では <strong>異なる timing</strong> になる</li>
+<li><strong>HW がまだ存在しない</strong>ことを前提に書かれた spec 先行 HLD。実 HW での挙動は未確認<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>DSP 付きの両端光モジュール接続では <strong>inner FEC 追加</strong> の議論が必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>link training</strong> や <strong>新 FEC タイプ</strong> の取扱いは追加検討事項としてオープン<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>IEEE 802.3dj は HLD 時点では <strong>未確定（taskforce が finalize 作業中）</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>HLD 全体が <strong>必要変更点の列挙レベル</strong>。詳細設計や API 互換性は実装フェーズで詰める必要あり</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>RouteOrch</code></strong>: bulk API + timer 化</li>
-<li><strong><code>fpmsyncd</code></strong>: master device lookup 最適化</li>
-<li><strong><code>sairedis</code> (meta_sai + JSON)</strong>: bulk API + JSON 更新</li>
-<li><strong><code>syncd</code></strong>: bulk 受け取り側（ASIC SDK 個別 call）</li>
-<li><strong>kernel ARP/ND</strong>: gc_thresh による cache サイズ</li>
-<li><strong><code>COPP_TABLE</code></strong>: ARP/ND の到達 pps</li>
-<li><strong><code>show arp</code> / <code>show ndp</code> CLI</strong>: 個別 FDB lookup 化</li>
-<li><strong><code>warm boot</code></strong>: 本機能では明示変更なしだが速度向上の影響評価が必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>既存 800G 関連の入り口</strong>: PortsOrch / xcvrd / port_rates.lua の同じパスに追加するため、800G 既存機能の regression に注意</li>
+<li><strong>CONFIG_DB validation</strong>: <code>sonic-port</code> YANG / <code>port_config.ini</code> などで speed 値の上限が別箇所に出ている場合、それぞれ更新が必要</li>
+<li><strong>CMIS / xcvrd 上の transceiver 種別判定</strong>: SFF-8024 ID の新規追加は xcvrd の transceiver 情報パーサにも波及</li>
+<li><strong>link FLR 系の機能（DPB / fec mode 設定）</strong>: lane 200000 のレートが他箇所の lane speed テーブルにも必要</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>大量経路の programming が遅い → <code>RouteOrch</code> の bulk timer ログ、Redis message 数を確認</li>
-<li>ARP entry が 32k に達しない → <code>sysctl net.ipv4.neigh.default.gc_thresh*</code> の現在値、CoPP の ARP rate limiter</li>
-<li><code>show arp</code> が遅い → <code>show arp</code> 実装が <strong>個別 FDB lookup 版</strong> か、古い版で全件取得していないかを確認</li>
-<li>VNET ありで route 反映が遅い → 本最適化の対象外（<code>rt_table != 0</code> の lookup は従来通り）</li>
+<li><code>config interface speed</code> が <code>Invalid speed</code> を返す: PortsOrch の <code>maxPortSpeed</code> か utilities の検証テーブルが未更新</li>
+<li><code>port_rates.lua</code> で <code>Invalid serdes speed</code> ログ: lane 200000 分岐が未追加</li>
+<li>xcvrd が 1.6T インタフェースを <code>0</code> 速度で扱う: <code>get_interface_speed</code> の分岐未追加</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- /etc/sysctl.d 配下の SONiC default で net.ipv4/ipv6.neigh.default.gc_thresh* が設定されているか未確認
-- COPP_TABLE の ARP/ND group の cir/cbs が 600 → 8000 pps に上がっているか未確認
-- RouteOrch の bulk route API + 1 秒 timer flush の現行 master 実装確認
-- fpmsyncd の rt_table=0 での master device lookup スキップ実装確認
-- sonic-sairedis の nlohmann/json バージョン現行確認
-- show arp / show ndp の個別 FDB lookup 化が sonic-utilities に取り込まれているか確認
-- HLD は 2019 年改訂のため現行 master との乖離リスクあり
+- xcvrd の get_interface_speed に 1.6T 分岐が現行 master に取り込まれているか
+- PortsOrch porthlpr の maxPortSpeed = 1600000 への引き上げ取り込み確認
+- port_rates.lua の lane_speed=200000 → 212.5e9 取り込み確認
+- sonic-utilities の config/show 1.6T 対応確認
+- sonic-port YANG の speed 制約 1600000 受理確認
+- SFF-8024 新 ID (30/31/87/88/128/129/130/131 等) の sonic-platform-common 取り込み
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-1.6t-support/port-1.6t-support.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
