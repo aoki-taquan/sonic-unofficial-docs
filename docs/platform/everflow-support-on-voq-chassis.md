@@ -1,0 +1,177 @@
+---
+title: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+area: platform
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/voq/everflow.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - MIRROR_SESSION
+  cli:
+    - config mirror_session
+    - show mirror_session
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD"
+    本ページは公式 HLD（Rev 1, 2020-12）のみを根拠に書かれている。`mirrororch` / `neighorch` の VoQ 拡張、SYSTEM_PORT 対応の SAI 実装、recycle port のセットアップは未確認。HLD は 2020 年で 3 年以上経過しており、Option 1 / Option 2 のどちらが採用されたかは別途検証が必要。
+
+# VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+
+## 概要
+
+[Everflow](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design) は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。**通常スイッチ** では `mirrororch` が `routeorch` / `neighorch` に問い合わせ、出力 IF と DST MAC を決定し、SAI `create_mirror_session` を呼ぶ[^1]。
+
+VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、**ミラー送信元と宛先が別 LC** という構成が普通に発生する[^1]:
+
+- 各 FSI（line card 上の SONiC instance）からは「他 LC のポートは `SYSTEM_PORT` としてのみ見える」
+- パケットの egress rewrite は宛先 LC の egress ASIC で行う
+- そのままでは `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` に他 LC のポートを指定できない
+
+本 HLD はこの問題を **「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」** 方式で解く[^1]。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。
+
+## 動作仕様
+
+### 問題の所在
+
+```mermaid
+flowchart LR
+    SRC[ミラー対象パケット\n(LC0 ingress)] --> M0[LC0 mirrororch]
+    M0 --> Q{宛先 LC}
+    Q -->|local| LOCAL[同 LC で完結]
+    Q -->|remote LC1| RFAIL[× 通常パスでは MONITOR_PORT に\n他 LC のポートを指定できない]
+```
+
+「LC0 にミラー設定を入れて、宛先が LC1 のポート」というケースを成り立たせる仕組みが必要。
+
+### 解決アイデア: Recycle port 経由
+
+```mermaid
+flowchart LR
+    PKT[原パケット] --> IN[Ingress ASIC]
+    IN -->|GRE encap 済みに rewrite| RP[Recycle port]
+    RP --> IN2[Ingress ASIC を再通過]
+    IN2 -->|switch fabric| EG[Egress LC ASIC]
+    EG --> OUT[Mirror destination port]
+```
+
+`mirrororch` が GRE encap 済みの新パケットを **ingress ASIC で完成させ recycle port に流す**。再注入後は **既存の switch fabric forwarding** に乗るため、宛先 LC への到達は通常パケットと同じ機構で済む[^1]。recycle port の有効化方法自体は HLD のスコープ外。
+
+### Option 1: Implicit Recycle（SAI 主導）
+
+SAI 側に手を入れる方式[^1]:
+
+- `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` 属性が **`SYSTEM_PORT` を受理できるよう拡張** する
+- `mirrororch` は普段どおり destination IP → routeorch / neighorch で解決
+- `neighorch` が「remote neighbor の場合、interface alias まで返せる」ように拡張
+- `mirrororch` は remote neighbor だと判定したら **その remote IF の SYSTEM_PORT** を MONITOR_PORT として SAI に渡す
+- SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。FDB も SAI 側で適切に設定
+
+つまり SONiC 側の変更は最小で、ASIC ベンダーの SAI 実装に責任が寄る。
+
+「destination port が同 LC（local）の場合は recycle するメリットが無いので **local では recycle しない**」のが推奨[^1]。
+
+### Option 2: Explicit Recycle（SONiC 主導）
+
+SAI 側変更を最小化する代わり、`mirrororch` が頑張る方式[^1]:
+
+- recycle port を **L3 port として作成可能** であることが前提
+- `neighorch` の拡張は Option 1 と同じ
+- `mirrororch` は remote neighbor だと判定したら **MONITOR_PORT に「recycle port」、DST MAC に「router MAC」** を設定
+- SAI から見れば普通の single-chip ミラーと同じ。GRE encap 済みパケットが recycle port から出る
+- 再注入時は DST MAC が router MAC のため **routing される**。GRE の destination IP に対するルーティングが効くので、複数 nexthop なら **load balance** されるおまけ付き
+
+local 宛のときも recycle を使う方が `mirrororch` の実装が両ケース共通になり単純化する。さらに local でも複数 nexthop で LB できるメリットがある[^1]。
+
+### Option 1 vs Option 2 の比較
+
+| 観点 | Option 1（SAI 主導） | Option 2（SONiC 主導） |
+|------|---------------------|----------------------|
+| SAI 変更 | 大（SYSTEM_PORT 受理＋recycle ロジック） | 小（recycle port を L3 として持てれば良い） |
+| SONiC 変更 | 小 | 大（mirrororch が recycle port + router MAC 設定） |
+| local 宛で recycle | 非推奨 | 推奨（実装統一・LB） |
+| パケットの再注入時動作 | bridging（FDB 経由） | routing（router MAC + DST IP） |
+| LB（複数 nexthop） | 不可 | 可（routing なので ECMP 効く）[^1] |
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  This option can be implemented with minimal changes to SAI as long as a recycle port can be created.
+  ... mirrororch needs to use the recycle port as the mirror destination port and the router mac as the destination MAC address.
+  ... When the mirror destination port is a local port, it's recommended to recycle mirror packets too
+  for the following reasons: The implementation of mirrororch is simplified ... mirrored packets can be load-balanced
+reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
+-->
+
+### 対象 orchagent の責務
+
+| 役割 | コンポーネント | 拡張 |
+|-----|--------------|------|
+| neighbor 解決 | `neighorch` | remote neighbor の interface alias / system port を返せるようにする |
+| route 解決 | `routeorch` | 既存どおり |
+| ミラーセッション SAI 化 | `mirrororch` | SYSTEM_PORT or recycle port + router MAC への切替 |
+| ASIC 側パケット処理 | SAI | （Option 1）SYSTEM_PORT 受理・recycle・FDB 設定 |
+
+### Future work / 未確定事項
+
+- HLD の `3 Testing` と `4 Future Work` 節は **TBD**[^1]
+- recycle port 自体の作成方法はスコープ外
+
+## 設定
+
+### 関連する CONFIG_DB
+
+通常の Everflow と同じく `MIRROR_SESSION` テーブル（destination IP・GRE 情報など）を使う。VoQ chassis 固有の追加スキーマは HLD で提案されていない。
+
+### 関連する CLI
+
+VoQ chassis 固有 CLI は提案されていない。`config mirror_session` / `show mirror_session` 等の既存 CLI を流用する想定。
+
+### 関連する YANG
+
+該当 YANG モジュールは HLD で言及されていない。
+
+### 設定例
+
+```bash
+# LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）
+config mirror_session add Everflow1 10.0.0.10 10.0.0.11 0x88be 0x6 0
+```
+
+VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Option 2 で recycle 経由の経路が組まれる。
+
+## 制限事項
+
+- **本 HLD は 2020 年版で TBD が多い**。Option 1 / Option 2 のどちらが master に採択されたか、recycle port の作成手順、テスト計画は未記載[^1]
+- パケットが ASIC を 2 度通過する（ingress → recycle → ingress → fabric → egress）ため、**スループットや遅延に影響**
+- recycle port の帯域がボトルネックになり得る
+- `SYSTEM_PORT` を `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` で受理する SAI 拡張（Option 1）は ASIC 依存
+
+## 干渉する機能
+
+- **VoQ chassis architecture**: 各 LC の FSI / SYSTEM_PORT 抽象に依存
+- **`routeorch` / `neighorch`**: remote neighbor 情報を返す経路の整備
+- **既存 Everflow（[Everflow HLD](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design)）**: 通常スイッチ向けの mirror セッション設計をベースとする
+- **Recycle port**: 本機能の前提となるハード資源
+
+## トラブルシューティング
+
+- ミラーパケットが宛先 LC に届かない場合、recycle port が enable されているか・L3 化されているか（Option 2）を確認
+- mirror destination が remote のとき `mirrororch` ログで MONITOR_PORT に何（SYSTEM_PORT / recycle）が選ばれているかを確認
+- パケットは出るが宛先で受からない場合、`neighorch` の remote neighbor 情報が正しいか確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/voq/everflow.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- Option 1 / Option 2 のどちらが master に取り込まれたか
+- mirrororch / neighorch の VoQ 向け拡張コード
+- SYSTEM_PORT を受理する SAI mirror 実装の community 提供状況
+- recycle port のセットアップ手順（SONiC 側 / ベンダー SAI 側）
+- 帯域・遅延への影響評価
+- HLD の TBD 節（テスト・future work）の現状
+-->
