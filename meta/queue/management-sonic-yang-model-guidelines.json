@@ -9,5 +9,6 @@
     "ABNF.json \u3068 sonic-yang-models \u306e\u30c9\u30ea\u30d5\u30c8\u691c\u51fa\u30c4\u30fc\u30eb\u306e\u5b58\u5728\u78ba\u8a8d"
   ],
   "priority": "low",
-  "issue": 479
+  "issue": 479,
+  "pr": 480
 }

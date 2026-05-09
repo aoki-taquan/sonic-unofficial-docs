@@ -1797,7 +1797,8 @@
         "ABNF.json と sonic-yang-models のドリフト検出ツールの存在確認"
       ],
       "priority": "low",
-      "issue": 479
+      "issue": 479,
+      "pr": 480
     },
     {
       "page": "docs/overlay/nvgre-tunnel-in-sonic.md",
