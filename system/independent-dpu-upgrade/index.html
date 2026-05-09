@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/alpine-high-level-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/independent-dpu-upgrade/">
       
       
-        <link rel="prev" href="../1-udev-rules-design-for-terminal-server/">
+        <link rel="prev" href="../generic-sai-extension-critical-resource-monitoring-crm/">
       
       
-        <link rel="next" href="../build-profiles/">
+        <link rel="next" href="../kdump-remote-ssh/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Alpine 仮想 SONiC（ALViS / KNE デプロイ） - SONiC 非公式ドキュメント</title>
+        <title>Independent dpu upgrade - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#alpine-sonicalvis-kne" class="md-skip">
+        <a href="#smart-switch-dpu-gnoi" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Alpine 仮想 SONiC（ALViS / KNE デプロイ）
+              Independent dpu upgrade
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -614,23 +612,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -648,13 +643,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -674,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -699,37 +694,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alpine 仮想 SONiC（ALViS / KNE デプロイ）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
         
   
   
@@ -745,175 +713,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#2-container" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2-container 構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-container_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2 container にする理由
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-platform" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Build / Platform
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ports" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ports
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kne-akd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        KNE デプロイ (AKD)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        リソース要件
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#warmboot-fastboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warmboot / Fastboot
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -926,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -954,7 +753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-system-improvements/" class="md-nav__link">
+      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
         
   
   
@@ -982,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../clock-managment-design/" class="md-nav__link">
+      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
         
   
   
@@ -1010,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -1038,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv6-relay-agent/" class="md-nav__link">
+      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
         
   
   
@@ -1066,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -1094,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/error-handling-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -1122,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-change-application/" class="md-nav__link">
+      <a href="../../architecture/json-change-application/" class="md-nav__link">
         
   
   
@@ -1150,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -1178,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-profile-init-hld/" class="md-nav__link">
+      <a href="../../architecture/port-profile-init-hld/" class="md-nav__link">
         
   
   
@@ -1206,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-factory-design/" class="md-nav__link">
+      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
         
   
   
@@ -1234,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -1262,7 +1061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -1290,7 +1089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow-test-plan/" class="md-nav__link">
+      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -1318,7 +1117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
+      <a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
         
   
   
@@ -1346,7 +1145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -1374,7 +1173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1402,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-generic-hash/" class="md-nav__link">
+      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1430,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1458,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1486,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-packet-trimming/" class="md-nav__link">
+      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1514,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1542,7 +1341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1570,7 +1369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1598,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1626,7 +1425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1654,7 +1453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -4952,6 +4751,8 @@
       
   
   
+    
+  
   
   
     
@@ -5049,20 +4850,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -5080,13 +4884,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5106,7 +4910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -5134,7 +4938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -5162,7 +4966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -5190,7 +4994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5218,7 +5022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5246,7 +5050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -5274,7 +5078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -5302,7 +5106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -5330,7 +5134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -5355,10 +5159,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Independent dpu upgrade
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -5374,6 +5205,131 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        影響範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-goals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5386,7 +5342,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -5414,7 +5370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -5442,7 +5398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -5470,7 +5426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -5498,7 +5454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5526,7 +5482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5554,7 +5510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -5582,7 +5538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -5610,7 +5566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -5638,7 +5594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -5666,7 +5622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5694,7 +5650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5722,7 +5678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5750,7 +5706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5778,7 +5734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5806,7 +5762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5834,7 +5790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5862,7 +5818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5890,7 +5846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5918,7 +5874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -5946,7 +5902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -5974,7 +5930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -6002,7 +5958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -6030,7 +5986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -6058,7 +6014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -6086,7 +6042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -6114,7 +6070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -6142,7 +6098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -6170,7 +6126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -6198,7 +6154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -6226,7 +6182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -6254,7 +6210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -13399,10 +13355,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#2-container" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2-container 構成
+        コンポーネント
       
     </span>
   </a>
@@ -13410,10 +13366,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-container_1" class="md-nav__link">
+  <a href="#upgrade-sequence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2 container にする理由
+        Upgrade Sequence
       
     </span>
   </a>
@@ -13421,10 +13377,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#build-platform" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build / Platform
+        影響範囲
       
     </span>
   </a>
@@ -13432,21 +13388,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ports" class="md-nav__link">
+  <a href="#non-goals" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ports
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kne-akd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        KNE デプロイ (AKD)
+        Non-goals
       
     </span>
   </a>
@@ -13459,40 +13404,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        リソース要件
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#warmboot-fastboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warmboot / Fastboot
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13503,7 +13415,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13514,7 +13426,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13541,7 +13453,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/alpine-high-level-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/independent-dpu-upgrade.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13549,129 +13461,142 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">裏取りステータス: code-verified（部分）</p>
-<p><code>sonic-buildimage</code> master に <code>platform/alpinevs</code> サブモジュール（<code>url=https://github.com/sonic-net/sonic-alpine/</code>、<code>.gitmodules</code>）と <code>.azure-pipelines/azure-pipelines-build-alpinevs.yml</code> が登録され、<code>build_image.sh</code> で <code>TARGET_MACHINE=alpinevs</code> が分岐される。一方、<code>libsai-grpc</code> 等の syncd 連携実体は <code>sonic-alpine</code> 配下に集約されており本リポジトリ単体では追跡できない（submodule のため）。<code>alpinevs-init</code> サービスや <code>hwsku=alpine_vs</code> の記述は HLD 由来であり、buildimage 単体では確認できない。</p>
+<hr />
+<p>title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/smart-switch/upgrade/dpu-upgrade-hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []</p>
+<hr />
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.1 (2025-01) Initial Proposal。NPU 側 GNMI/GNOI Splitter、Offloader、<code>Containerz.*</code> GNOI 拡張、DPU Host Services の現行 master 取り込みは未裏取り。priority=high で queue 登録。</p>
 </div>
-<h1 id="alpine-sonicalvis-kne">Alpine 仮想 SONiC（ALViS / KNE デプロイ）<a class="headerlink" href="#alpine-sonicalvis-kne" title="Permanent link">&para;</a></h1>
+<h1 id="smart-switch-dpu-gnoi">Smart Switch: DPU 独立アップグレード（gNOI 経路）<a class="headerlink" href="#smart-switch-dpu-gnoi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ALPINE は Google が提案した SONiC のスイッチスタックシミュレーションフレームワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。仮想スイッチ本体である <strong>ALViS (Alpine Virtual Switch)</strong> と、KNE (Kubernetes Network Emulation) ベースのデプロイモデル <strong>AKD (Alpine KNE Deployment)</strong> から成る。既存の <code>sonic-vs</code> と異なり、SONiC VM とソフトウェア dataplane を <strong>2 つの container に分離</strong> して実機に近い挙動（特に warm reboot 時に dataplane を維持）を再現する点がコア設計。</p>
+<p>SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を <strong>NPU に offload</strong> している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <strong>gNOI API 駆動で 1 台ずつ DPU を独立アップグレード</strong> する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として <strong>DPU と NPU の SONiC Host Services / GNMI が健全</strong> であること（不応答 DPU の復旧用途ではない）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="2-container">2-container 構成<a class="headerlink" href="#2-container" title="Permanent link">&para;</a></h3>
+<h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    subgraph Pod[KNE Pod]
-        SS[SwitchStack Container&lt;br/&gt;qemu で SONiC VM 起動]
-        DP[ASIC Simulation Container&lt;br/&gt;Lucius / vendor sim]
-    end
-    SS -- libsai-grpc --&gt; DP
-    SS -- UPM(packet I/O) --&gt; DP
-    DP -- KNE links --&gt; Other[他 ALViS / Host]</code></pre>
-<p><code>SwitchStack Container</code> は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> は <strong>gRPC ベースの SAI クライアント</strong> (<code>libsai-grpc</code>) で別 container の dataplane と通信する。CPU port の packet in/out は <strong>UPM (Userspace Packet Module)</strong> が担う。</p>
-<p><code>ASIC Simulation Container</code> がソフトウェア dataplane。デフォルトは OpenConfig 由来の <strong>Lucius</strong> (lemming プロジェクト)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。vendor は (1) ASIC sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。</p>
-<h3 id="2-container_1">2 container にする理由<a class="headerlink" href="#2-container_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Warm reboot 模擬</strong>: VM だけ再起動して dataplane を維持できる。SAI/SDK reconciliation のテストが実機前に可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Dynamic Port Breakout</strong>: VM 起動時に lane を確定させず、<code>create_hostif</code>/<code>create_port</code> 呼び出し時にポート生成</li>
-<li><strong>HW 模擬度</strong>: VM 内に余分な veth が無く、<code>ip addr</code> で見える netdev は SAI が作った hostif と完全一致</li>
-</ul>
-<h3 id="build-platform">Build / Platform<a class="headerlink" href="#build-platform" title="Permanent link">&para;</a></h3>
-<p><code>sonic-buildimage</code> に新プラットフォーム <code>alpinevs</code> が追加される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PLATFORM=alpinevs make configure
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make target/sonic-alpinevs.img.gz
-</span></code></pre></div>
-<p>ランタイム時は <code>alpinevs-init</code> サービスが <code>config_db.json</code> の <code>DEVICE_METADATA.hwsku</code> を見て platform を選択する。<code>hwsku=alpine_vs</code> 指定で:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>HwSKU: alpine_vs
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ASIC: alpinevs
-</span></code></pre></div>
-<p>無指定なら sonic_vs と同じ <code>Force10-S6000</code> がデフォルト。</p>
-<h3 id="ports">Ports<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>
+  CLI[External client&lt;br/&gt;gNOI client]
+  subgraph NPU[NPU]
+    NGMI[NPU GNMI Server]
+    SPL[GNMI/GNOI Splitter]
+    OFFL[Offloader&lt;br/&gt;GNOI client]
+    CT[Offloaded containers&lt;br/&gt;(Database / GNMI / HA)]
+  end
+  subgraph DPU[DPU]
+    DGMI[DPU GNMI Server]
+    DHOST[DPU Host Services]
+  end
+  CLI -- gNOI --&gt; SPL
+  SPL -- GNMI --&gt; NGMI
+  SPL -- GNOI --&gt; DGMI
+  DGMI --&gt; DHOST
+  OFFL -- gNOI --&gt; NGMI
+  NGMI --&gt; CT</code></pre>
+<p>NPU 側の <strong>GNMI/GNOI Splitter</strong> は GNMI 要求を NPU GNMI Server へ、GNOI 要求を DPU GNMI Server へ振り分ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。NPU 上の <strong>Offloader</strong> が DPU の代理で offloaded container 群を <code>Containerz</code> 経由で操作する。</p>
+<h3 id="upgrade-sequence">Upgrade Sequence<a class="headerlink" href="#upgrade-sequence" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant C as Client
+    participant N as NPU
+    participant D as DPU
+    C-&gt;&gt;D: System.SetPackage (新 SONiC image)
+    C-&gt;&gt;D: OS.Activate
+    C-&gt;&gt;N: Containerz.Deploy (新 container image)
+    C-&gt;&gt;D: System.Reboot
+    D--&gt;&gt;C: System.RebootStatus
+    C-&gt;&gt;N: Containerz.ListImage / StopContainer / StartContainer
+    Note over C,D: 失敗時は OS.Activate(old) / Containerz.RemoveImage(old)</code></pre>
+<p>主要 step とロールバック<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>用途</th>
+<th>Phase</th>
+<th>gNOI API</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Data ports</td>
-<td>dataplane 内のスイッチング。KNE topology の links から生成</td>
+<td>1. Image 準備</td>
+<td><code>System.SetPackage</code>, <code>OS.Activate</code>, <code>Containerz.Deploy</code></td>
+<td>DPU に新 SONiC image を deploy / activate、NPU に offloaded 新 container image を deploy</td>
 </tr>
 <tr>
-<td>Management port</td>
-<td>container 間通信および外部 test runner との接続</td>
+<td>2. DPU upgrade</td>
+<td><code>System.Reboot</code>, <code>System.RebootStatus</code></td>
+<td>DPU を再起動し新 image で立ち上げ</td>
 </tr>
 <tr>
-<td>HostIF</td>
-<td>VM 内に hostif として作られ、ASIC ⇄ CPU の packet I/O。genetlink / send-to-ingress も対応</td>
+<td>2b. Container 切替</td>
+<td><code>Containerz.ListImage</code>, <code>Containerz.StopContainer</code>, <code>Containerz.StartContainer</code></td>
+<td>offloaded container を新版で起動</td>
+</tr>
+<tr>
+<td>Rollback</td>
+<td><code>OS.Activate</code>(old) / <code>Containerz.RemoveImage</code>(old)</td>
+<td>失敗時の復旧</td>
 </tr>
 </tbody>
 </table>
-<h3 id="kne-akd">KNE デプロイ (AKD)<a class="headerlink" href="#kne-akd" title="Permanent link">&para;</a></h3>
-<p>KNE のノード type <code>ALPINE</code>（<a href="https://github.com/openconfig/kne/tree/main">openconfig/kne の topo/node/alpine</a>）を使う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。topology 例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nodes: {
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  name: &quot;alpine-dut&quot;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  vendor: ALPINE
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  config: {
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    image: &quot;...alpine-vs:ga&quot;
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    vendor_data {
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>      [type.googleapis.com/alpine.AlpineConfig] {
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        containers: { name: &quot;dataplane&quot;
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>                      image: &quot;...lucius:ga&quot;
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>                      command: &quot;/lucius/lucius&quot; }
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>      }
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    }
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  }
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>}
-</span></code></pre></div>
-<p><code>vendor_data</code> の <code>containers</code> で別 vendor の sim を差し替え可能。services は ssh(22) / gnmi+gnoi(9339) / p4rt(9559) を露出する。</p>
+<h3 id="_4">影響範囲<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>他 DPU</strong>: 影響なし（前提）</li>
+<li><strong>NPU</strong>: 該当 DPU 用 offloaded container の停止・起動はあるが NPU 自身は再起動しない</li>
+<li><strong>front panel network</strong>: 該当 DPU が処理していたフロー以外には影響しない（前提）</li>
+</ul>
+<h3 id="non-goals">Non-goals<a class="headerlink" href="#non-goals" title="Permanent link">&para;</a></h3>
+<ul>
+<li>DPU fatal error / 不応答 DPU の復旧（BIOS から image 投入する経路は別 process）</li>
+<li>GNMI 自体の bootstrap</li>
+<li>DPU/NPU image <strong>互換性</strong>（client 責任）</li>
+<li>完全自動化: upgrade と rollback の両方が失敗した場合は <strong>手動介入</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/smart-switch/upgrade/dpu-upgrade-hld.md#L74-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  At a high level, the Alpine Virtual Switch (ALViS) is composed of 2 foundational Docker containers:
-  1. SwitchStack Container which runs a SONiC VM, and
-  2. ASIC Simulation Container which runs the virtual ASIC.
-reasoning: 2-container 構成と各 container の役割の根拠。
+  Prepare Relevant Images: ... GNOI API: 'System.SetPackage', 'OS.Activate', 'Containerz.Deploy'
+  Upgrade DPU: ... 'System.Reboot', 'System.RebootStatus', 'Containerz.ListImage', 'Containerz.StopContainer', 'Containerz.StartContainer'
+reasoning: gNOI API 系列と各 phase の根拠。
 -->
 
-<h2 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
-<p>SAI 仕様自体への変更は無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dataplane への接続方式は vendor 実装次第。Lucius の場合は <strong>gRPC 経由で SAI 呼び出しを auto-generated client が転送</strong> する（<a href="https://github.com/openconfig/lemming/blob/main/dataplane/docs/protoforsai.md">lemming の protoforsai</a> 参照）。</p>
-<h2 id="_3">リソース要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>VM は qemu で <code>-m 32768</code>（32GB RAM）<code>-smp 12</code>（12 vCPU）で起動する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実測例では qemu プロセスが ~4.2GB RES、Lucius が ~230MB RES。<strong>開発者ワークステーションでも動かせる規模</strong> が要件の 1 つ。</p>
-<h2 id="warmboot-fastboot">Warmboot / Fastboot<a class="headerlink" href="#warmboot-fastboot" title="Permanent link">&para;</a></h2>
-<p>設計に変更は無い<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。むしろ ALViS は <strong>warm reboot 開発のためのツール</strong>として位置づけられる（VM 再起動中も dataplane container が forwarding を続ける）。</p>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>現行は AKD 環境でしか動かない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>KVM 有効ホストが必須。VM 内で動かす場合は nested virtualization が必要</li>
-<li><code>docker-sonic-alpinevs</code>（VM 抜きで apps + dataplane を直接動かす派生）は Open/Action 項目で検討中</li>
+<li>DPU / NPU の SONiC Host Services / GNMI が <strong>健全な状態</strong> が前提</li>
+<li>提案段階（v0.1 Initial）。<code>Containerz</code> 系 gNOI 拡張は upstream で進行中</li>
+<li>互換性チェックは client 責任</li>
+<li>DPU graceful shutdown HLD（同 SmartSwitch 系）と STATE_DB の race を考慮する必要</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>sonic-vs</strong>: 同じ仮想スイッチ枠だが、<code>sonic-vs</code> は SAI に bcm 等の実装無しの単純 sim。ALViS は SAI を gRPC で外出しする点が異なる</li>
-<li><strong>KNE / ondatra</strong>: トポロジ・テスト用 control framework として直接連携</li>
+<li><strong>DPU graceful shutdown</strong>: 同 STATE_DB <code>CHASSIS_MODULE_INFO_TABLE</code> に書き込む可能性</li>
+<li><strong>smartswitch HA / hamgrd</strong>: HA scope の状態は upgrade 中も維持されるべき</li>
+<li><strong>gNMI / sonic-telemetry</strong>: GNMI/GNOI Splitter 経由のため依存</li>
+<li><strong>Offloader / Containerz</strong>: NPU 側 container 制御の標準 API</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- evidence (verifier-batch-18):
-- sonic-buildimage `.gitmodules` に `[submodule "platform/alpinevs"] url = https://github.com/sonic-net/sonic-alpine/` が登録済（HEAD 確認）
-- `sonic-buildimage/.azure-pipelines/azure-pipelines-build-alpinevs.yml` 存在
-- `sonic-buildimage/build_image.sh` に `if [ "$TARGET_MACHINE" = "alpinevs" ]` 分岐あり
-- libsai-grpc / Lucius / alpinevs-init の実体は `sonic-alpine` サブモジュール（本リポでは展開していない）
--->
-
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- alpinevs platform の sonic-buildimage 取り込み確認 → 取り込み済（submodule + pipeline + build_image.sh 分岐）
-- libsai-grpc / UPM の syncd 連携の現行実装確認 → sonic-alpine submodule に集約、本リポでは確認不能
-- Lucius (lemming) との互換 commit pin の確認 → submodule 側で確認のこと
-- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認 → 別 repo
-- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認 → buildimage 側は採用済
+- DPU Host Services / NPU Offloader バイナリの sonic-host-services 取り込み確認
+- GNMI/GNOI Splitter 実装と path-based 振分けの sonic-gnmi 取り込み確認
+- Containerz gNOI service の openconfig/gnoi 取り込みと SONiC 側ハンドラ確認
+- System.SetPackage / OS.Activate / System.Reboot の DPU 側 gNOI ハンドラ確認
+- v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認
+- DPU graceful shutdown / HA との race condition の整合確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/alpine/alpine_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/upgrade/dpu-upgrade-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -13681,9 +13606,6 @@ reasoning: 2-container 構成と各 container の役割の根拠。
 
 
 
-
-  
-  
 
 
 
