@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/acl-user-defined-table-type-support/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/enhanced-lpo-debug-registers-hld/">
       
       
-        <link rel="prev" href="../acl-support-in-sonic/">
+        <link rel="prev" href="../dump-on-sai-failure/">
       
       
-        <link rel="next" href="../align-watermark-flow-with-port-configuration-hld/">
+        <link rel="next" href="../everflow-support-on-voq-chassis/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType） - SONiC 非公式ドキュメント</title>
+        <title>拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#acl-acl_table_type-acltabletype" class="md-skip">
+        <a href="#lpo-vma-oma-per-lane-redis" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
+              拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
             
           </span>
         </div>
@@ -335,13 +335,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3057,8 +3057,6 @@
       
   
   
-    
-  
   
   
     
@@ -3120,23 +3118,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -3154,13 +3149,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3180,7 +3175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-flex-counters-support/" class="md-nav__link">
+      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -3208,7 +3203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-ingress-egress-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/acl-ingress-egress-test-plan/" class="md-nav__link">
         
   
   
@@ -3236,7 +3231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-support-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -3261,37 +3256,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
         
   
   
@@ -3307,236 +3275,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コントロールプレーン ACL の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB の Capability 公開
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#init_cfgjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        init_cfg.json の活用
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent-acltabletype" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orchagent: AclTableType データ構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL ルールオブジェクトモデルの統合
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aclorch-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AclOrch 公開 API
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（既出）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3549,7 +3287,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -3577,7 +3315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asymmetric-pfc-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/asymmetric-pfc-test-plan/" class="md-nav__link">
         
   
   
@@ -3605,7 +3343,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configurable-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/configurable-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3633,7 +3371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-manager-redesign-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/copp-manager-redesign-test-plan/" class="md-nav__link">
         
   
   
@@ -3661,7 +3399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -3689,7 +3427,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-acl-tags/" class="md-nav__link">
+      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -3717,7 +3455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -3745,7 +3483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
+      <a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
         
   
   
@@ -3773,7 +3511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -3801,7 +3539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -3829,7 +3567,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
+      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
         
   
   
@@ -3857,7 +3595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pfc-historical-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/pfc-historical-statistics/" class="md-nav__link">
         
   
   
@@ -3885,7 +3623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3913,7 +3651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -3941,7 +3679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-mirroring-hld/" class="md-nav__link">
+      <a href="../../acl-qos/sonic-port-mirroring-hld/" class="md-nav__link">
         
   
   
@@ -3969,7 +3707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-qos-scheduler-and-shaping/" class="md-nav__link">
+      <a href="../../acl-qos/sonic-qos-scheduler-and-shaping/" class="md-nav__link">
         
   
   
@@ -3997,7 +3735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
+      <a href="../../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
         
   
   
@@ -4025,7 +3763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
+      <a href="../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
         
   
   
@@ -4053,7 +3791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -4081,7 +3819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -6211,6 +5949,8 @@
       
   
   
+    
+  
   
   
     
@@ -6270,20 +6010,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -6301,13 +6044,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6327,7 +6070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -6355,7 +6098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -6383,7 +6126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -6411,7 +6154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -6439,7 +6182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -6464,10 +6207,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -6483,6 +6253,131 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        拡張レジスタの所在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-8-lane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監視項目（per 8 lane）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis への公開
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xcvr_api_factory-vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        xcvr_api_factory の vendor 分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -6495,7 +6390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6523,7 +6418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -6551,7 +6446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -6579,7 +6474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -6607,7 +6502,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -6635,7 +6530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -6663,7 +6558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -6691,7 +6586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -6719,7 +6614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -6747,7 +6642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6775,7 +6670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -6803,7 +6698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -6831,7 +6726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -6859,7 +6754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -6887,7 +6782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -6915,7 +6810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -6943,7 +6838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -11810,98 +11705,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コントロールプレーン ACL の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB の Capability 公開
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#init_cfgjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        init_cfg.json の活用
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent-acltabletype" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orchagent: AclTableType データ構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL ルールオブジェクトモデルの統合
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aclorch-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AclOrch 公開 API
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フロー
+        拡張レジスタの所在
       
     </span>
   </a>
@@ -11909,10 +11716,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#per-8-lane" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI
+        監視項目（per 8 lane）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis への公開
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xcvr_api_factory-vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        xcvr_api_factory の vendor 分岐
       
     </span>
   </a>
@@ -11928,34 +11757,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（既出）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -11964,7 +11765,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11975,18 +11776,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12013,7 +11803,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/acl-user-defined-table-type-support.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/enhanced-lpo-debug-registers-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12021,182 +11811,139 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/aclorch.h:214-292</code> で <code>AclTableType</code> / <code>AclTableTypeBuilder</code> / <code>AclTableTypeParser</code>、<code>aclorch.h:591-609</code> で <code>addAclTable</code> / <code>addAclTableType</code> / <code>addAclRule</code> / <code>updateAclRule</code> API、<code>sonic-swss-common/common/schema.h:95</code> で <code>APP_ACL_TABLE_TYPE_TABLE_NAME</code>、<code>schema.h:418</code> で <code>STATE_ACL_STAGE_CAPABILITY_TABLE_NAME</code>、<code>aclorch.cpp:42,4014,4067</code> で <code>is_action_list_mandatory</code> フィールドの扱いを確認（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は 2025 年 2 月 (Rev 1.0) Arista 提案。<code>CmisEnhancedLpoApi</code> クラスと <code>xcvr_api_factory.py</code> の vendor 分岐、<code>TRANSCEIVER_INFO</code> / <code>TRANSCEIVER_DOM_SENSOR</code> / <code>TRANSCEIVER_DOM_THRESHOLD</code> / <code>TRANSCEIVER_DOM_FLAG*</code> への新キー追加の現行実装は未裏取り。</p>
 </div>
-<h1 id="acl-acl_table_type-acltabletype">ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）<a class="headerlink" href="#acl-acl_table_type-acltabletype" title="Permanent link">&para;</a></h1>
+<h1 id="lpo-vma-oma-per-lane-redis">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）<a class="headerlink" href="#lpo-vma-oma-per-lane-redis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の ACL は <code>L3</code> / <code>L3V6</code> / <code>MIRROR</code> / <code>PFC_WD</code> 等の <strong>事前定義テーブルタイプ</strong> を <code>AclOrch</code> 内に持っており、新機能追加のたびに orchagent を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で <strong>必要以上の HW リソースを消費</strong> していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は <strong>ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを CONFIG_DB から作れる</strong> ようにする。新タイプは <code>ACL_TABLE_TYPE</code> テーブルに定義し、<code>ACL_TABLE</code> の <code>TYPE</code> フィールドからその名前を参照する。</p>
-<p>組み込みタイプ（<code>L3</code>、<code>MIRROR</code> 等）は <strong>特殊扱いが必要なため</strong> orchagent 側に残る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（特に <code>MIRROR</code> / <code>MIRRORV6</code>）。</p>
+<p>LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には <strong>TX 側 VMA</strong>（電気振幅）と <strong>RX 側 OMA</strong>（光振幅）の監視が決定的。本 HLD は CMIS LPO 上に <strong>拡張デバッグレジスタ</strong>を新設し、SONiC から Redis に公開する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-abnf highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nc">key</span>:<span class="w">           </span>ACL_TABLE_<span class="nc">TYPE</span>:&lt;<span class="nc">name</span>&gt;<span class="w">     </span><span class="c1">; ユーザ任意の名前</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nc">matches</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nc">match-list</span><span class="w">                </span><span class="c1">; ACL_RULE と同じマッチ識別子</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nc">actions</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nc">action-list</span><span class="w">               </span><span class="c1">; ACL_RULE と同じアクション識別子</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>bind_<span class="nc">points</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nc">bind-points-list</span><span class="w">          </span><span class="c1">; &quot;PORT&quot; / &quot;PORTCHANNEL&quot;</span>
-</span></code></pre></div>
-<p>具体例<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;CUSTOM_L3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;MATCHES&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">[</span><span class="s2">&quot;IN_PORTS&quot;</span><span class="p">,</span><span class="s2">&quot;OUT_PORTS&quot;</span><span class="p">,</span><span class="s2">&quot;SRC_IP&quot;</span><span class="p">],</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">&quot;ACTIONS&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">[</span><span class="s2">&quot;PACKET_ACTION&quot;</span><span class="p">,</span><span class="s2">&quot;MIRROR_INGRESS_ACTION&quot;</span><span class="p">],</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;BIND_POINTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span><span class="s2">&quot;PORTCHANNEL&quot;</span><span class="p">]</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">&quot;DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;STAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INGRESS&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CUSTOM_L3&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PORTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span><span class="s2">&quot;PortChannel1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">&quot;DATAACL|RULE0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;999&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.1.1/32&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>ACL_TABLE_TYPE</code> 用コンテナを追加し、<code>ACL_TABLE.type</code> を <strong><code>union(leafref to ACL_TABLE_TYPE_NAME, builtin acl_table_type)</code></strong> に拡張する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。組み込み名と任意名を共存させるため。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">ACL_TABLE_TYPE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">list</span><span class="w"> </span><span class="nv">ACL_TABLE_TYPE_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;ACL_TABLE_TYPE_NAME&quot;</span><span class="p">;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">MATCHES</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">ACTIONS</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">BIND_POINTS</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">PORT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">PORTCHANNEL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="acl">コントロールプレーン ACL の分離<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h3>
-<p>データプレーン（HW）ACL と紛らわしいので、<code>CTRL_PLANE_ACL_TABLE</code> を <strong>別テーブル</strong> として独立させる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;CTRL_PLANE_ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;SSH_ONLY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SSH only&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;services&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;SSH&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ingress&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="state_db-capability">STATE_DB の Capability 公開<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
-<p><code>AclOrch</code> 起動時に SAI から取得した capability を STATE_DB に書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL_STAGE_CAPABILITY|&lt;INGRESS|EGRESS&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  is_action_list_mandatory = true|false
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  action_list = &quot;PACKET_ACTION,MIRROR_INGRESS_ACTION,REDIRECT_ACTION&quot;
-</span></code></pre></div>
-<p><code>is_action_list_mandatory=true</code> のステージでは、ACL テーブル作成時に <code>actions</code> リスト指定が必須となる。orchagent はテーブル作成時に <strong>action 一覧と capability を突合</strong> する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="init_cfgjson"><code>init_cfg.json</code> の活用<a class="headerlink" href="#init_cfgjson" title="Permanent link">&para;</a></h3>
-<p><code>L3</code> / <code>L3V6</code> 等の従来タイプを将来的に <strong><code>init_cfg.json</code> に移植</strong> することで「組み込みハードコード」を減らす方針が言及されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。当面は orchagent 側にコードとして残る。</p>
-<h3 id="orchagent-acltabletype">Orchagent: <code>AclTableType</code> データ構造<a class="headerlink" href="#orchagent-acltabletype" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">AclTableType</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w">                             </span><span class="n">m_name</span><span class="p">;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_acl_bind_point_type_t</span><span class="o">&gt;</span><span class="w">     </span><span class="n">m_bpoint_types</span><span class="p">;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_attribute_id_t</span><span class="o">&gt;</span><span class="w">            </span><span class="n">m_matches</span><span class="p">;</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_acl_action_type_t</span><span class="o">&gt;</span><span class="w">         </span><span class="n">m_acl_actions</span><span class="p">;</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">};</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">AclTable</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="k">public</span><span class="o">:</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="n">AclTable</span><span class="p">(</span><span class="n">AclOrch</span><span class="w"> </span><span class="o">*</span><span class="n">pAclOrch</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AclTableType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">validateAddType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclTableType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">private</span><span class="o">:</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="n">AclTableType</span><span class="w"> </span><span class="n">m_type</span><span class="p">;</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">};</span>
-</span></code></pre></div>
-<p><code>AclOrch</code> は <code>ACL_TABLE_TYPE</code> を購読し、<code>AclTable</code> 生成時にこの型を渡す<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="acl_1">ACL ルールオブジェクトモデルの統合<a class="headerlink" href="#acl_1" title="Permanent link">&para;</a></h3>
-<p>従来は <code>AclRuleL3</code> / <code>AclRuleL3V6</code> 等の派生クラスがマッチ/アクションごとの validation を持っていた。ユーザ定義タイプではこれが事前に決まらないため、<strong>1 つの汎用 <code>AclRuleBase</code> がすべてのマッチ・アクションを扱い、<code>AclTable</code> の SAI 属性集合に対して generic validate</strong> する設計に統合する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AclRule</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">public</span><span class="o">:</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">create</span><span class="p">();</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">remove</span><span class="p">();</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclRule</span><span class="o">&amp;</span><span class="w"> </span><span class="n">updatedRule</span><span class="p">);</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclCapabilities</span><span class="o">&amp;</span><span class="w"> </span><span class="n">capabilities</span><span class="p">);</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">protected</span><span class="o">:</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w">          </span><span class="n">m_priority</span><span class="p">;</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="n">AclEntryAttrMap</span><span class="w">   </span><span class="n">m_matches</span><span class="p">;</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="n">AclEntryAttrMap</span><span class="w">   </span><span class="n">m_actions</span><span class="p">;</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="k">private</span><span class="o">:</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w">       </span><span class="n">m_name</span><span class="p">;</span>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w">   </span><span class="n">m_oid</span><span class="w"> </span><span class="p">{</span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">};</span>
-</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">AclTable</span><span class="o">&amp;</span><span class="w">   </span><span class="n">m_table</span><span class="p">;</span>
-</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">};</span>
-</span></code></pre></div>
-<p>create/update/remove は protected で、外部からは AclOrch の public API（<code>addAclRule</code> 等）経由でしか呼べない。これにより CRM / Flex Counter 管理が AclOrch に集約される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="aclorch-api">AclOrch 公開 API<a class="headerlink" href="#aclorch-api" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">addAclTable</span><span class="w">   </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclTable</span><span class="p">);</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">removeAclTable</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">);</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">updateAclTable</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclTable</span><span class="p">);</span><span class="w">   </span><span class="c1">// 注: 更新できるのはバインドされた port のみ</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">addAclRule</span><span class="w">    </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclRule</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclRule</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">);</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">removeAclRule</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">aclRuleName</span><span class="p">);</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">updateAclRule</span><span class="w"> </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclRule</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updatedAclRule</span><span class="p">);</span>
-</span></code></pre></div>
-<p><code>updateAclRule</code> は他 orch（<code>pfcwdorch</code> / <code>pbhorch</code> / <code>macsecorch</code>）の用途向け。CONFIG_DB から来る ACL ルール変更は <strong>remove + recreate</strong> で扱われる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  The create/update/remove methods are protected allowing the child classes to be overwritten for custom behavior...
-  bool addAclTable(shared_ptr<AclTable> aclTable); ...
-  NOTE: Updating ACL table allows only for updating ports bound to it.
-  NOTE: ACL rules coming from CONFIG DB are updated by removal and re-creation, an updateAclRule is mostly used for other orch's use cases.
-reasoning: 公開 API と更新セマンティクスの根拠。
--->
-
-<h3 id="_3">フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">拡張レジスタの所在<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>CMIS Page 01h Byte 195 = <code>0x4C</code> (<code>'L'</code>) でモジュールが拡張対応を宣言。Byte 196 で仕様バージョン。実体レジスタは Upper Page <strong>C1h / C2h</strong> に集約。Page 01h Byte 195 != 0x4C のモジュールは従来 CMIS 扱い。</p>
+<h3 id="per-8-lane">監視項目（per 8 lane）<a class="headerlink" href="#per-8-lane" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>フロー</th>
-<th>概要</th>
+<th>カテゴリ</th>
+<th>主な register</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Create</td>
-<td><code>ACL_TABLE_TYPE</code> 受領 → <code>AclTableType</code> 作成 → 該当 <code>ACL_TABLE</code> の <code>validateAddType</code> 通過 → SAI ACL テーブル作成</td>
+<td>Polarity</td>
+<td><code>LPOTxPolarityInverted</code> / <code>LPORxPolarityInverted</code></td>
 </tr>
 <tr>
-<td>Update</td>
-<td>テーブルタイプ自体の更新は <strong>未サポート</strong>（matches / actions / bind points の変更不可）。port バインドのみ更新可</td>
+<td>TX Host VMA</td>
+<td><code>LPOTxHostInputVMAMonAccuracySupported</code>、High/Low の Alarm/Warning <strong>Threshold + Flag + Mask</strong>、<code>LPOHostInputVMATx1..8</code></td>
 </tr>
 <tr>
-<td>Remove</td>
-<td>参照する <code>ACL_TABLE</code> が無くなったら type も削除可。orchagent はキャッシュからも消す</td>
+<td>RX Optical OMA</td>
+<td><code>LPORxInputOMAMonAccuracySupported</code>、High/Low の Alarm/Warning <strong>Threshold + Flag + Mask</strong>、<code>LPOInputOMARx1..8</code></td>
+</tr>
+<tr>
+<td>Tx 拡張</td>
+<td><code>LPOTxOuterExtinctionRatioMax</code>（PAM4 OER 上限）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
+<p>VMA は 5 mV 刻みで 0〜1275 mV、OMA は 0.1 µW 刻みで 0〜6.5535 mW (≈ -40〜+8.2 dBm)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="redis">Redis への公開<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Mod[(LPO module&lt;br&gt;page C1h/C2h)] --&gt;|i2c| Xcvrd[xcvrd in PMON]
+  Xcvrd --&gt;|CmisEnhancedLpoApi| State[(STATE_DB)]
+  subgraph STATE_DB
+    TI[TRANSCEIVER_INFO|EthernetX]
+    TD[TRANSCEIVER_DOM_SENSOR|EthernetX]
+    TT[TRANSCEIVER_DOM_THRESHOLD|EthernetX]
+    TF[TRANSCEIVER_DOM_FLAG|EthernetX&lt;br&gt;+SET/CLEAR_TIME / CHANGE_COUNT]
+  end
+  State --&gt; TI
+  State --&gt; TD
+  State --&gt; TT
+  State --&gt; TF</code></pre>
+<p>各テーブルへの追加キー<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>追加 key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TRANSCEIVER_INFO</code></td>
+<td>LPO[Tx,Rx]PolarityInverted、LPO[Tx,Rx]MonAccuracySupported、LPOTxOuterExtinctionRatioMax</td>
+</tr>
+<tr>
+<td><code>TRANSCEIVER_DOM_SENSOR</code></td>
+<td>LPOHostInputVMATx1-8、LPOInputOMARx1-8</td>
+</tr>
+<tr>
+<td><code>TRANSCEIVER_DOM_THRESHOLD</code></td>
+<td>VMA / OMA の High/Low × Alarm/Warning Threshold</td>
+</tr>
+<tr>
+<td><code>TRANSCEIVER_DOM_FLAG</code> ほか</td>
+<td>VMA / OMA の Alarm/Warning Flag（<code>SET_TIME</code> / <code>CLEAR_TIME</code> / <code>CHANGE_COUNT</code> 系のメタ table 込み）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="xcvr_api_factory-vendor"><code>xcvr_api_factory</code> の vendor 分岐<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#xcvr_api_factory-vendor" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">CmisEnhancedLpoApi</span><span class="p">(</span><span class="n">CmisApi</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transceiver_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="n">x</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_transceiver_info</span><span class="p">();</span> <span class="n">x</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="o">...</span><span class="n">new</span> <span class="n">keys</span><span class="o">...</span><span class="p">});</span> <span class="k">return</span> <span class="n">x</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transceiver_dom_real_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transceiver_status_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transceiver_threshold_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
 </span></code></pre></div>
-<p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 HLD では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / config_db.json 直接編集または gNMI から作る前提。</p>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="_5">設定例（既出）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>CUSTOM_L3</code> を定義して <code>DATAACL</code> テーブルがそれを使うパターンを参照。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p><code>xcvr_api_factory.py._create_cmis_api()</code> に Arista 拡張 LPO 用の分岐を追加:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">elif</span> <span class="n">vendor_name</span> <span class="o">==</span> <span class="s1">&#39;Arista&#39;</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ARISTA_ENHANCED_LPO</span><span class="p">,</span> <span class="n">vendor_pn</span><span class="p">):</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_api</span><span class="p">(</span><span class="n">CmisEnhancedLpoCodes</span><span class="p">,</span> <span class="n">CmisEnhancedLpoMemMap</span><span class="p">,</span> <span class="n">CmisEnhancedLpoApi</span><span class="p">)</span>
+</span></code></pre></div>
+<p>ファイル配置（<code>sonic-platform-common/sonic_platform_base/sonic_xcvr/</code>）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codes</td>
+<td><code>./codes/arista/cmis_enhanced_lpo.py</code></td>
+</tr>
+<tr>
+<td>Api</td>
+<td><code>./api/arista/cmis_enhanced_lpo.py</code></td>
+</tr>
+<tr>
+<td>MemMap</td>
+<td><code>./mem_maps/arista/cmis_enhanced_lpo.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>他モジュールベンダは Arista 実装を継承して上書きしてもよい<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>table type の matches / actions / bind_points は CREATE-only</strong>: テーブルタイプを変えるには、テーブル＋ルールも作り直しが必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>組み込みタイプは残る</strong>: <code>L3</code> / <code>MIRROR</code> 等は依然 orchagent ハードコード。完全な汎用化ではない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>CLI からカスタムタイプは作れない</strong>: CLI 改修は本 HLD のスコープ外。<code>config_db.json</code> 直接編集または gNMI ルート<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>YANG validation の限界</strong>: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>マッチ capability の SAI クエリ</strong>: <code>sai_query_attribute_capability</code> は CREATE/SET/GET 実装の有無は返すが「サポートか否か」を直接返さない。HLD は Open Question として残している<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>対象は <strong>CMIS LPO のみ</strong>。CMIS DSP 付き / coherent (C-CMIS) 等とは別 Api クラス</li>
+<li>レジスタの advertise バイト (Page 01h Byte 195) が <code>'L'</code> でないモジュールでは旧 CMIS 扱い</li>
+<li>VMA は 5 mV、OMA は 0.1 µW の量子化精度</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>pfcwdorch</code> / <code>pbhorch</code> / <code>macsecorch</code></strong>: 公開 API（<code>addAclRule</code> 等）を使う想定。これら orch のコードパスにも影響。</li>
-<li><strong>Everflow (Mirror)</strong>: <code>MIRROR</code> / <code>MIRRORV6</code> 組み込みタイプは独立扱いのまま。User-defined と混ぜて使うときの作法に注意<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>CRM / Flex Counter</strong>: AclOrch が ACL counter / range オブジェクトのライフサイクルも管理する。AclRule の create/update/remove で連動して作成・破棄される<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>init_cfg.json</code></strong>: 既定の組み込みタイプを <code>init_cfg.json</code> に移すと、新規プラットフォームでもデフォルトタイプが揃う。</li>
+<li><strong>xcvrd / TRANSCEIVER_INFO</strong>: 既存スキーマに新 key を追加。テレメトリ / sonic-mgmt の telemetry テスト側の更新が必要</li>
+<li><strong>CmisApi / CCmisApi</strong>: 同階層の sibling</li>
+<li><strong>vendor 個別 PN マッチ</strong>: vendor が増えるほど factory 分岐が増える</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li>ACL テーブル作成が失敗: STATE_DB の <code>ACL_STAGE_CAPABILITY|&lt;stage&gt;</code> を見て、要求した actions が <code>action_list</code> に入っているか確認。<code>is_action_list_mandatory=true</code> で actions が空ならエラー<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>table type 削除できない: 参照する <code>ACL_TABLE</code> が残っている可能性。YANG validation または orchagent ログで確認。</li>
-<li>ルール挙動が古い派生クラス通りでない: 新方式は単一 <code>AclRuleBase</code> で動的に validate する設計。古い <code>AclRuleL3</code> 等の挙動を期待しないこと<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/acl/ACL-Table-Type-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md">sonic-net/SONiC doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
