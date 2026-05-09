@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dscp-to-tc-map/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-syslog/">
       
       
-        <link rel="prev" href="../dhcpv4-relay/">
+        <link rel="prev" href="../config-snmp/">
       
       
-        <link rel="next" href="../feature/">
+        <link rel="next" href="../config-vlan/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DSCP_TO_TC_MAP テーブル - SONiC 非公式ドキュメント</title>
+        <title>config syslog サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dscp_to_tc_map" class="md-skip">
+        <a href="#config-syslog" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DSCP_TO_TC_MAP テーブル
+              config syslog サブコマンド
             
           </span>
         </div>
@@ -6565,6 +6565,8 @@
                 
   
   
+    
+  
   
   
     
@@ -6572,1060 +6574,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../cli/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    CLI
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/clear/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    clear (sonic-clear) コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-aaa/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config aaa / tacacs / radius サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-dhcp-relay/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config dhcp_relay / dhcpv4_relay サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config interface サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-kdump/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config kdump サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-mclag/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config mclag サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-muxcable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config muxcable サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-nat/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config nat サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-portchannel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config portchannel サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-route/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config route サブコマンド（static route）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-sflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config sflow サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-snmp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config snmp / snmpagentaddress / snmptrap サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-syslog/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config syslog サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vrf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vrf サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vxlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vxlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show bgp / show ip bgp / show ipv6 bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show interfaces サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-ip/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show ip サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show platform サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-route-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show route-map コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-running-config/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show runningconfiguration / startupconfiguration サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-system-health/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show system-health サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-techsupport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show techsupport コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-cfggen/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-cfggen コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-installer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-installer コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-package-manager/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-package-manager コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -7706,7 +6654,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -7717,7 +6665,7 @@
   <span class="md-ellipsis">
     
   
-    CONFIG_DB
+    CLI
   
 
     
@@ -7728,18 +6676,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    CONFIG_DB
+    CLI
   
 
           </label>
@@ -7754,14 +6702,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-rule/" class="md-nav__link">
+      <a href="../clear/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_RULE テーブル
+    clear (sonic-clear) コマンド
   
 
     
@@ -7782,14 +6730,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-table/" class="md-nav__link">
+      <a href="../config-aaa/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_TABLE テーブル
+    config aaa / tacacs / radius サブコマンド
   
 
     
@@ -7810,14 +6758,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../auto-techsupport/" class="md-nav__link">
+      <a href="../config-acl/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    AUTO_TECHSUPPORT テーブル
+    config acl サブコマンド
   
 
     
@@ -7838,14 +6786,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-aggregate-address/" class="md-nav__link">
+      <a href="../config-bgp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_AGGREGATE_ADDRESS テーブル
+    config bgp サブコマンド
   
 
     
@@ -7866,14 +6814,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-device-global/" class="md-nav__link">
+      <a href="../config-dhcp-relay/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_DEVICE_GLOBAL テーブル
+    config dhcp_relay / dhcpv4_relay サブコマンド
   
 
     
@@ -7894,14 +6842,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-globals/" class="md-nav__link">
+      <a href="../config-interface/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_GLOBALS テーブル
+    config interface サブコマンド
   
 
     
@@ -7922,14 +6870,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-neighbor/" class="md-nav__link">
+      <a href="../config-kdump/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_NEIGHBOR テーブル
+    config kdump サブコマンド
   
 
     
@@ -7950,14 +6898,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-peer-group/" class="md-nav__link">
+      <a href="../config-mclag/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_PEER_GROUP テーブル
+    config mclag サブコマンド
   
 
     
@@ -7978,14 +6926,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pg/" class="md-nav__link">
+      <a href="../config-muxcable/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_PG テーブル
+    config muxcable サブコマンド
   
 
     
@@ -8006,14 +6954,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pool/" class="md-nav__link">
+      <a href="../config-nat/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_POOL テーブル
+    config nat サブコマンド
   
 
     
@@ -8034,14 +6982,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-profile/" class="md-nav__link">
+      <a href="../config-portchannel/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_PROFILE テーブル
+    config portchannel サブコマンド
   
 
     
@@ -8062,14 +7010,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-queue/" class="md-nav__link">
+      <a href="../config-route/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_QUEUE テーブル
+    config route サブコマンド（static route）
   
 
     
@@ -8090,14 +7038,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-group/" class="md-nav__link">
+      <a href="../config-sflow/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    COPP_GROUP テーブル
+    config sflow サブコマンド
   
 
     
@@ -8118,126 +7066,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-trap/" class="md-nav__link">
+      <a href="../config-snmp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    COPP_TRAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../crm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CRM テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../device-metadata/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DEVICE_METADATA テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dhcp-server-ipv4/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCP_SERVER_IPV4 テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dhcpv4-relay/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPV4_RELAY テーブル
+    config snmp / snmpagentaddress / snmptrap サブコマンド
   
 
     
@@ -8274,7 +7110,7 @@
   <span class="md-ellipsis">
     
   
-    DSCP_TO_TC_MAP テーブル
+    config syslog サブコマンド
   
 
     
@@ -8292,7 +7128,7 @@
   <span class="md-ellipsis">
     
   
-    DSCP_TO_TC_MAP テーブル
+    config syslog サブコマンド
   
 
     
@@ -8329,21 +7165,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールド一覧
+        コマンド一覧
       
     </span>
   </a>
@@ -8354,18 +7179,90 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-add-server_ip-source-port-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-del-server_ip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        config syslog del &lt;server_ip&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-host-i-interval-b-burst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -8374,6 +7271,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8399,7 +7307,1171 @@
   
   
     <li class="md-nav__item">
-      <a href="../feature/" class="md-nav__link">
+      <a href="../config-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vrf サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-vxlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show acl サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show bgp / show ip bgp / show ipv6 bgp サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show interfaces サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show ip サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show platform サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-route-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show route-map コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-running-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show runningconfiguration / startupconfiguration サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-system-health/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show system-health サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show techsupport コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show vlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-cfggen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-cfggen コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-installer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-installer コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-package-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-package-manager コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../config-db/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CONFIG_DB
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CONFIG_DB
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_RULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/auto-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AUTO_TECHSUPPORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-aggregate-address/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_AGGREGATE_ADDRESS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-device-global/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_DEVICE_GLOBAL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-globals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_GLOBALS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-neighbor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_NEIGHBOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-peer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_PEER_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-pg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_POOL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PROFILE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_QUEUE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/copp-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/copp-trap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_TRAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CRM テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/device-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEVICE_METADATA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dhcp-server-ipv4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP_SERVER_IPV4 テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dhcpv4-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPV4_RELAY テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dscp-to-tc-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_TC_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/feature/" class="md-nav__link">
         
   
   
@@ -8427,7 +8499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fg-nhg/" class="md-nav__link">
+      <a href="../../config-db/fg-nhg/" class="md-nav__link">
         
   
   
@@ -8455,7 +8527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../flex-counter-table/" class="md-nav__link">
+      <a href="../../config-db/flex-counter-table/" class="md-nav__link">
         
   
   
@@ -8483,7 +8555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../interface/" class="md-nav__link">
+      <a href="../../config-db/interface/" class="md-nav__link">
         
   
   
@@ -8511,7 +8583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump/" class="md-nav__link">
+      <a href="../../config-db/kdump/" class="md-nav__link">
         
   
   
@@ -8539,7 +8611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kubernetes-master/" class="md-nav__link">
+      <a href="../../config-db/kubernetes-master/" class="md-nav__link">
         
   
   
@@ -8567,7 +8639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ldap-server/" class="md-nav__link">
+      <a href="../../config-db/ldap-server/" class="md-nav__link">
         
   
   
@@ -8595,7 +8667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../loopback-interface/" class="md-nav__link">
+      <a href="../../config-db/loopback-interface/" class="md-nav__link">
         
   
   
@@ -8623,7 +8695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mgmt-interface/" class="md-nav__link">
+      <a href="../../config-db/mgmt-interface/" class="md-nav__link">
         
   
   
@@ -8651,7 +8723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mgmt-port/" class="md-nav__link">
+      <a href="../../config-db/mgmt-port/" class="md-nav__link">
         
   
   
@@ -8679,7 +8751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mirror-session/" class="md-nav__link">
+      <a href="../../config-db/mirror-session/" class="md-nav__link">
         
   
   
@@ -8707,7 +8779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mux-cable/" class="md-nav__link">
+      <a href="../../config-db/mux-cable/" class="md-nav__link">
         
   
   
@@ -8735,7 +8807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ntp-server/" class="md-nav__link">
+      <a href="../../config-db/ntp-server/" class="md-nav__link">
         
   
   
@@ -8763,7 +8835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pfc-wd/" class="md-nav__link">
+      <a href="../../config-db/pfc-wd/" class="md-nav__link">
         
   
   
@@ -8791,7 +8863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port/" class="md-nav__link">
+      <a href="../../config-db/port/" class="md-nav__link">
         
   
   
@@ -8819,7 +8891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel-interface/" class="md-nav__link">
+      <a href="../../config-db/portchannel-interface/" class="md-nav__link">
         
   
   
@@ -8847,7 +8919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel-member/" class="md-nav__link">
+      <a href="../../config-db/portchannel-member/" class="md-nav__link">
         
   
   
@@ -8875,7 +8947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel/" class="md-nav__link">
+      <a href="../../config-db/portchannel/" class="md-nav__link">
         
   
   
@@ -8903,7 +8975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../queue/" class="md-nav__link">
+      <a href="../../config-db/queue/" class="md-nav__link">
         
   
   
@@ -8931,7 +9003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../route-map/" class="md-nav__link">
+      <a href="../../config-db/route-map/" class="md-nav__link">
         
   
   
@@ -8959,7 +9031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scheduler/" class="md-nav__link">
+      <a href="../../config-db/scheduler/" class="md-nav__link">
         
   
   
@@ -8987,7 +9059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow/" class="md-nav__link">
+      <a href="../../config-db/sflow/" class="md-nav__link">
         
   
   
@@ -9015,7 +9087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../syslog-server/" class="md-nav__link">
+      <a href="../../config-db/syslog-server/" class="md-nav__link">
         
   
   
@@ -9043,7 +9115,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-defaults/" class="md-nav__link">
+      <a href="../../config-db/system-defaults/" class="md-nav__link">
         
   
   
@@ -9071,7 +9143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacplus-server/" class="md-nav__link">
+      <a href="../../config-db/tacplus-server/" class="md-nav__link">
         
   
   
@@ -9099,7 +9171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tc-to-queue-map/" class="md-nav__link">
+      <a href="../../config-db/tc-to-queue-map/" class="md-nav__link">
         
   
   
@@ -9127,7 +9199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../telemetry/" class="md-nav__link">
+      <a href="../../config-db/telemetry/" class="md-nav__link">
         
   
   
@@ -9155,7 +9227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-interface/" class="md-nav__link">
+      <a href="../../config-db/vlan-interface/" class="md-nav__link">
         
   
   
@@ -9183,7 +9255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-member/" class="md-nav__link">
+      <a href="../../config-db/vlan-member/" class="md-nav__link">
         
   
   
@@ -9211,7 +9283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan/" class="md-nav__link">
+      <a href="../../config-db/vlan/" class="md-nav__link">
         
   
   
@@ -9239,7 +9311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf/" class="md-nav__link">
+      <a href="../../config-db/vrf/" class="md-nav__link">
         
   
   
@@ -9267,7 +9339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel-map/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel-map/" class="md-nav__link">
         
   
   
@@ -9295,7 +9367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel/" class="md-nav__link">
         
   
   
@@ -9323,7 +9395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-profile/" class="md-nav__link">
+      <a href="../../config-db/wred-profile/" class="md-nav__link">
         
   
   
@@ -10345,21 +10417,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールド一覧
+        コマンド一覧
       
     </span>
   </a>
@@ -10370,18 +10431,90 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-add-server_ip-source-port-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-del-server_ip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        config syslog del &lt;server_ip&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-host-i-interval-b-burst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -10390,6 +10523,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10416,7 +10560,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/dscp-to-tc-map.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-syslog.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -10424,62 +10568,122 @@
   
 
 
-<h1 id="dscp_to_tc_map">DSCP_TO_TC_MAP テーブル<a class="headerlink" href="#dscp_to_tc_map" title="Permanent link">&para;</a></h1>
+<h1 id="config-syslog">config syslog サブコマンド<a class="headerlink" href="#config-syslog" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DSCP 値 (0..63) を Traffic Class へマップする ingress QoS 分類定義<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が SAI QoS map (<code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code>) を生成し、ポートにバインドする (<code>PORT_QOS_MAP.dscp_to_tc_map</code>)。</p>
-<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DSCP_TO_TC_MAP|&lt;name&gt;|&lt;dscp&gt;
-</span></code></pre></div>
-<p><code>&lt;name&gt;</code> はマップ名（1..32 文字、<code>[a-zA-Z0-9][-a-zA-Z0-9_]*</code>）。<code>&lt;dscp&gt;</code> は 0..63。</p>
-<h2 id="_2">フィールド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>config syslog</code> は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、<code>config/syslog.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>hostcfgd</code> および各 feature コンテナの supervisord ラッパが CONFIG_DB を購読して <code>rsyslog</code> 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。</p>
+<h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>型</th>
-<th>必須</th>
-<th>説明</th>
+<th>コマンド</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>name</code> (key)</td>
-<td>string (1..32)</td>
-<td>✅</td>
-<td>マップ名</td>
+<td><code>config syslog add &lt;server_ip&gt; [--source &lt;src&gt;] [--port &lt;p&gt;] [--vrf &lt;vrf&gt;]</code></td>
+<td>リモート syslog サーバ追加</td>
 </tr>
 <tr>
-<td><code>dscp</code> (key)</td>
-<td>string <code>0..63</code></td>
-<td>✅</td>
-<td>DSCP 値</td>
+<td><code>config syslog del &lt;server_ip&gt;</code></td>
+<td>リモートサーバ削除</td>
 </tr>
 <tr>
-<td><code>tc</code></td>
-<td><code>tc_type</code> (0..7)</td>
-<td>-</td>
-<td>対応 TC</td>
+<td><code>config syslog rate-limit-host [-i &lt;sec&gt;] [-b &lt;num&gt;]</code></td>
+<td>ホスト rsyslog のレート制限 (interval / burst)</td>
+</tr>
+<tr>
+<td><code>config syslog rate-limit-container &lt;service&gt; [-i &lt;sec&gt;] [-b &lt;num&gt;] [-n &lt;ns&gt;]</code></td>
+<td>feature コンテナのレート制限</td>
+</tr>
+<tr>
+<td><code>config syslog rate-limit-feature enable [&lt;service&gt;] [-n &lt;ns&gt;]</code></td>
+<td>feature 単位でレート制限機能を on</td>
+</tr>
+<tr>
+<td><code>config syslog rate-limit-feature disable [&lt;service&gt;] [-n &lt;ns&gt;]</code></td>
+<td>レート制限を off</td>
+</tr>
+<tr>
+<td><code>config syslog level -i &lt;id&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]</code></td>
+<td>サブコンポーネントのログレベル設定</td>
 </tr>
 </tbody>
 </table>
-<p>YANG 上は親子 list 構造。Redis に展開すると <code>DSCP_TO_TC_MAP|&lt;name&gt;</code> の hash field として <code>&lt;dscp&gt;: &lt;tc&gt;</code> ペアが格納される。</p>
-<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="config-syslog-add-server_ip-source-port-vrf"><code>config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]</code><a class="headerlink" href="#config-syslog-add-server_ip-source-port-vrf" title="Permanent link">&para;</a></h3>
+<p><strong>引数 / オプション</strong>:</p>
 <ul>
-<li><code>qosorch</code>: SAI QoS map 生成</li>
-<li><code>bufferorch</code> 経由でポート PG への影響あり</li>
+<li><code>&lt;server_ip_address&gt;</code> ... IPv4 / IPv6。<code>ip_addr_validator</code> で検証。</li>
+<li><code>--source &lt;ip&gt;</code> ... 送信元 IP (Loopback 等を想定)。<code>source_validator</code> がアドレス整合と存在検査を行う。</li>
+<li><code>--port &lt;port&gt;</code> ... 送信先 UDP port (省略時 514)。</li>
+<li><code>--vrf &lt;vrf&gt;</code> ... 出力 VRF。<code>mgmt</code> (mgmt-vrf) または CONFIG_DB の <code>VRF</code> テーブルに存在する VRF。<code>source</code> と組み合わせる場合 <code>source_to_vrf_validator</code> で同 VRF 内のインタフェースかをチェックする。</li>
 </ul>
-<h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
+<p><strong>動作</strong>:
+<code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="config-syslog-del-server_ip"><code>config syslog del &lt;server_ip&gt;</code><a class="headerlink" href="#config-syslog-del-server_ip" title="Permanent link">&para;</a></h3>
+<p><code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を削除。存在しないアドレスを与えるとエラー終了。</p>
+<h3 id="config-syslog-rate-limit-host-i-interval-b-burst"><code>config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-host-i-interval-b-burst" title="Permanent link">&para;</a></h3>
+<p><code>SYSLOG_CONFIG|GLOBAL</code> (または同等のグローバル key) に <code>rate_limit_interval</code> / <code>rate_limit_burst</code> を書く。<code>interval</code> <code>burst</code> の <code>IntRange(0, 2147483647)</code> 制約だけ CLI 側で適用される。</p>
+<h3 id="config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace"><code>config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" title="Permanent link">&para;</a></h3>
+<p><code>SYSLOG_CONFIG_FEATURE|&lt;service&gt;</code> に同フィールドを書く。<code>-n</code> を付けると multi-ASIC namespace の CONFIG_DB に書き込む。</p>
+<h3 id="config-syslog-rate-limit-feature-enabledisable-service-n-ns"><code>config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" title="Permanent link">&para;</a></h3>
+<p><code>get_feature_names_to_proceed</code> がサービス名を解決し、各 <code>SYSLOG_CONFIG_FEATURE</code> エントリの rate-limit 機能 on/off フラグを更新する。<code>&lt;service&gt;</code> 省略時は全 feature を一括処理する。</p>
+<h3 id="config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns"><code>config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]</code><a class="headerlink" href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" title="Permanent link">&para;</a></h3>
+<p><code>LOGGER</code> テーブル (またはサブシステム別の logger テーブル) に <code>severity</code> を書く。識別子は <code>(container, program, pid)</code> の組み合わせで、<code>--container</code> / <code>--program</code> を併用すると特定の rsyslog ログタグだけを対象にする。<code>--pid</code> は実行中プロセスの PID にひもづけたい場合のオプション。</p>
+<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー</th>
+<th>主なフィールド</th>
+<th>操作するコマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSLOG_SERVER</code></td>
+<td><code>&lt;server_ip&gt;</code></td>
+<td><code>source</code>, <code>port</code>, <code>vrf</code></td>
+<td><code>add</code> / <code>del</code></td>
+</tr>
+<tr>
+<td><code>SYSLOG_CONFIG</code></td>
+<td><code>GLOBAL</code></td>
+<td><code>rate_limit_interval</code>, <code>rate_limit_burst</code></td>
+<td><code>rate-limit-host</code></td>
+</tr>
+<tr>
+<td><code>SYSLOG_CONFIG_FEATURE</code></td>
+<td><code>&lt;service&gt;</code></td>
+<td><code>rate_limit_interval</code>, <code>rate_limit_burst</code>, enable/disable</td>
+<td><code>rate-limit-container</code> / <code>rate-limit-feature</code></td>
+</tr>
+<tr>
+<td><code>LOGGER</code></td>
+<td><code>&lt;identifier&gt;</code> 等</td>
+<td><code>LOGLEVEL</code>, <code>LOGOUTPUT</code></td>
+<td><code>level</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT_QOS_MAP</code>、<code>TC_TO_QUEUE_MAP</code>、<code>TC_TO_PRIORITY_GROUP_MAP</code></li>
-<li>関連 CLI: なし</li>
-<li>関連 YANG: <code>sonic-dscp-tc-map</code></li>
+<li>VRF を指定する場合、mgmt-vrf を使うには <code>is_mgmt_vrf_enabled</code> で <code>MGMT_VRF_CONFIG</code> の有効性が確認される。mgmt-vrf 未設定で <code>--vrf mgmt</code> を渡すとエラー。</li>
+<li><code>add</code> コマンドは IPv4 / IPv6 両対応だが、CLI 引数では区別せず、<code>ipaddress.ip_address()</code> で自動判別する。</li>
+<li>レート制限の単位は <strong>rsyslog の <code>imuxsock</code> ratelimit</strong> (interval 秒間に burst 件まで) であり、CLI が指定するのはそれの interval / burst パラメータそのまま。</li>
 </ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-dscp-tc-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>syslog</code> グループは <code>config/syslog.py</code> L361-L368。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>add</code> / <code>delete</code> は <code>config/syslog.py</code> L370-L454。重複検査は <code>is_exist_in_db</code>。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
