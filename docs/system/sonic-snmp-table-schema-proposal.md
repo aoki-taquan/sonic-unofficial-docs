@@ -1,0 +1,153 @@
+---
+title: SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/snmp/snmp-schema-addition.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - SNMP
+    - SNMP_COMMUNITY
+    - SNMP_USER
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 提案文書"
+    本ドキュメントはスキーマ提案であり、実装ステータスは Initial Proposal 相当。`SNMP_COMMUNITY.TYPE` の `RW` は当時未実装（Read-only のみ実効）であると HLD に明記されている[^1]。現行 master で 3 テーブル全てが yang モデルに含まれているか、`docker-snmp` の `snmpd.conf.j2` が CONFIG_DB のみを読むよう変更されているかは未確認。
+
+# SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+
+## 概要
+
+SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が `/etc/sonic/snmp.yml` と `config_db.json` の `SNMP_ACL` に分散していた状態を解消し、CONFIG_DB に **SNMP / SNMP_COMMUNITY / SNMP_USER** の 3 テーブルとして集約するためのスキーマ提案[^1]。具体的な移行手順や CLI は別 HLD（`snmp-configdb-migration-hld.md`）が扱う。
+
+## 動作仕様
+
+### スキーマ詳細
+
+#### SNMP（グローバル）
+
+```text
+SNMP|LOCATION
+    Location = "<location string>"     ; default ""
+
+SNMP|CONTACT
+    <contact_name> = "<contact email>" ; default "" or backward-compat hardcoded value
+```
+
+#### SNMP_COMMUNITY
+
+```text
+SNMP_COMMUNITY|<community>
+    TYPE = "RO" | "RW"          ; OPTIONAL, default RO
+                                ; RO = read-only（実装唯一の有効値）
+                                ; RW = 将来用、当時は未実装
+```
+
+#### SNMP_USER（SNMPv3）
+
+```text
+SNMP_USER|<user>
+    SNMP_USER_TYPE              = "noAuthNoPriv" | "AuthNoPriv" | "Priv"
+    SNMP_USER_PERMISSION        = "RO" | "RW"
+    SNMP_USER_AUTH_TYPE         = "MD5" | "SHA" | "HMAC-SHA-2"
+    SNMP_USER_AUTH_PASSWORD     = "<auth password>"
+    SNMP_USER_ENCRYPTION_TYPE   = "DES" | "AES"
+    SNMP_USER_ENCRYPTION_PASSWORD = "<enc password>"
+```
+
+### 関連リポジトリへの影響
+
+HLD は次のファイル変更を要求している[^1]：
+
+- `sonic-buildimage/dockers/docker-snmp-v2/snmpd.conf.j2`: SNMP テーブル存在時は新パスを使い、無ければ旧パスにフォールバック（後方互換）
+- `sonic-buildimage/dockers/docker-snmp-v2/snmpd-config-updater`: 近く caclmgrd で代替されるため変更不要
+- `sonic-swss-common/common/schema.h`: `#define CFG_SNMP_TABLE_NAME "SNMP"` を追加
+- `sonic-swss/doc/swss-schema.md`: スキーマ定義を追加
+
+### 後方互換
+
+```mermaid
+flowchart LR
+    YML[snmp.yml] -.->|legacy| J2[snmpd.conf.j2]
+    CDB[(CONFIG_DB SNMP*)] -->|new| J2
+    J2 --> SCONF[/etc/snmp/snmpd.conf]
+```
+
+j2 テンプレート側で `SNMP` テーブルの存在チェックを行い、存在すれば新スキーマ、未定義なら従来 yaml をそのまま使う設計のため、既存デプロイは即座に壊れない[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/snmp/snmp-schema-addition.md#L114-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In repo *sonic-buildimage*:
+  * *dockers/docker-snmp-v2/snmpd.conf.j2*:
+    * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
+reasoning: 後方互換のための j2 内分岐が HLD で明示されている根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | 説明 |
+|-------|------|
+| `SNMP` | LOCATION / CONTACT グローバル属性 |
+| `SNMP_COMMUNITY` | community とアクセスタイプ |
+| `SNMP_USER` | SNMPv3 ユーザ |
+
+### 関連する CLI
+
+本 HLD は CLI を扱わない。CLI は `snmp-configdb-migration-hld.md` 側で `config snmp ...` / `show run snmp ...` として定義される。
+
+### 関連する YANG
+
+HLD には YANG モデルの記述は無い。
+
+### 設定例
+
+```bash
+sonic-cfggen -a '{
+  "SNMP": {
+    "LOCATION": {"Location": "Emerald City"},
+    "CONTACT":  {"joe": "joe@contoso.com"}
+  },
+  "SNMP_COMMUNITY": {
+    "Jack": {"TYPE": "RW"}
+  },
+  "SNMP_USER": {
+    "Travis": {
+      "SNMP_USER_TYPE": "Priv",
+      "SNMP_USER_PERMISSION": "RO",
+      "SNMP_USER_AUTH_TYPE": "SHA",
+      "SNMP_USER_AUTH_PASSWORD": "TravisAuthPass",
+      "SNMP_USER_ENCRYPTION_TYPE": "AES",
+      "SNMP_USER_ENCRYPTION_PASSWORD": "TravisEncryptPass"
+    }
+  }
+}' --write-to-db
+```
+
+## 制限事項
+
+- `SNMP_COMMUNITY.TYPE = RW` は HLD 時点で未実装（コードでは未使用、Read-only のみ有効）と明記されている[^1]。
+- パスワードは平文格納。
+- `snmpd-config-updater` は caclmgrd への移行予定のため対象外と HLD で明言されている。
+
+## 干渉する機能
+
+- **SNMP_ACL（既存）**: 本提案は ACL 部分を扱わない。引き続き既存の `SNMP_ACL` テーブルが ACL を表す。
+- **`docker-snmp` 起動順**: CONFIG_DB が起動済みである必要がある（既存 SONiC 設計と同じ）。
+- **caclmgrd**: HLD は `snmpd-config-updater` の caclmgrd 置き換えを前提としているため、ACL 反映ルートが将来変わる可能性に注意。
+
+## トラブルシューティング
+
+- 新スキーマを書いても snmpd.conf に反映されない → j2 テンプレートが新パスにフォールバックしているか、`SNMP` テーブル存在チェックが想定どおり動いているかを確認する。
+- 値が `redis-cli -n 4 hgetall SNMP|LOCATION` で見えるが community が効かない → `SNMP_COMMUNITY` のキーは小文字大文字を区別する点に注意。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/snmp/snmp-schema-addition.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
