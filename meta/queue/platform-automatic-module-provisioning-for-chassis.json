@@ -3,12 +3,15 @@
   "issue": 121,
   "verification": "hld-only",
   "concerns": [
-    "module_base.py に MODULE_STATUS_PROVISION_* 定数が追加されたか",
-    "provision_module() API の sonic-platform-common 取り込み",
-    "sonic-provisiond デーモンのコード追加 (pmon docker)",
-    "chassisd の oper_status 同期と sonic-provisiond の責務分離",
-    "ベンダー provision_module リファレンス実装事例",
-    "失敗時のリトライ戦略"
+    "module_base.py に MODULE_STATUS_PROVISION_READY / PENDING / MODULE_STATUS_PROVISIONED の 3 定数が未追加（2026-05-09 時点）",
+    "sonic-platform-common 側の provision_module() API が未実装",
+    "sonic-platform-daemons 配下に sonic-provisiond デーモンのコードが未追加",
+    "chassisd の oper_status 同期と sonic-provisiond の責務分離は HLD 設計のみ存在し、実装は未着手",
+    "ベンダー provision_module リファレンス実装事例は未確認（実装が無いので存在しえない）",
+    "失敗時のリトライ戦略は HLD でも未規定"
   ],
-  "priority": "high"
+  "verified_concerns": [
+    "2026-05-09 時点で sonic-net org を MODULE_STATUS_PROVISION / provision_module / sonic-provisiond で grep してヒットは HLD 本体のみであることを確認"
+  ],
+  "priority": "low"
 }

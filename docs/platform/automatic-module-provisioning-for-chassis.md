@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 1.0, 2026-03）のみを根拠に書かれている。`sonic_platform_base/module_base.py` への新規 enum / API 追加、`sonic-provisiond` デーモンの実装、`chassisd` の連携は未確認。HLD は比較的新しいが、ベンダー側の実装事例は揃っていない可能性が高い。
+!!! warning "裏取りステータス: HLD-only / 実装は未着手（提案段階）"
+    2026-05-09 時点で `sonic-net` org 全体を `MODULE_STATUS_PROVISION` / `provision_module` / `sonic-provisiond` で grep してもヒットは HLD 本体のみ。`sonic-platform-common` の `sonic_platform_base/module_base.py` には HLD 提案の 3 定数 (`MODULE_STATUS_PROVISION_READY` / `_PENDING` / `MODULE_STATUS_PROVISIONED`) も `provision_module()` API も存在せず、`sonic-platform-daemons` への `sonic-provisiond` デーモン追加もまだ無い。HLD は Rev 1.0（2026-03）と比較的新しいが、コード反映はこれからのフェーズ（verified at: 2026-05-09）。
 
 # Chassis Line Card 自動プロビジョニング（`sonic-provisiond` / `provision_module`）
 
