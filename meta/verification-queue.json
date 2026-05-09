@@ -874,6 +874,20 @@
       "priority": "medium",
       "issue": 147,
       "pr": 148
+    },
+    {
+      "page": "docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "PortsOrch::generateQueueMap / generatePriorityGroupMap の関数分離が現行 master に取り込まれているか未確認",
+        "addQueueFlexCounters / addQueueWatermarkFlexCounters / addPriorityGroupDropFlexCounters / addPriorityGroupWatermarkFlexCounters の存在確認",
+        "m_isPriorityGroupMapGenerated 等のキャッシュフラグによる重複生成抑止の実装確認",
+        "watermark enable 状態での port 動的追加時に watermark stats が自動追加されるパスの確認",
+        "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか未確認"
+      ],
+      "priority": "medium",
+      "issue": 149,
+      "pr": 150
     }
   ]
 }
