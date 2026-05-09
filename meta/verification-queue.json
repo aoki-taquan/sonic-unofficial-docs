@@ -35,6 +35,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
+      "verification": "hld-only",
+      "concerns": [
+        "counterpoll queue/watermark/pg-drop enable 時の COUNTERS_DB マップ生成・削除ロジック (FlexCounterOrch / BufferOrch) の現行 master 実装確認",
+        "FLEX_COUNTER_DB 上の QUEUE_STAT_COUNTER / QUEUE_WATERMARK_STAT_COUNTER / PG_WATERMARK_STAT_COUNTER / PG_DROP_STAT_COUNTER の group key 命名整合性確認",
+        "watermark enable 時に PG / QUEUE 両マップを生成する実装が現存するか確認",
+        "config save / reload / reboot 横断で counterpoll の enable/disable 状態が保持されるか確認",
+        "本テスト (sonic-mgmt) の存在と PR Merge 状況確認",
+        "本 HLD は 2022 年 10 月版で 3 年以上経過しており現行 master との乖離リスクあり"
+      ],
+      "priority": "high",
+      "issue": 440
+    },
+    {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
       "verification": "hld-only",
