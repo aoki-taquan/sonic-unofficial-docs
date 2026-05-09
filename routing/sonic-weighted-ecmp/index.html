@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/sonic-nos-configuration-methods/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-weighted-ecmp/">
       
       
-        <link rel="prev" href="../sonic-gnmi-server-interface-design/">
+        <link rel="prev" href="../sonic-vrf-support-design-spec-draft/">
       
       
-        <link rel="next" href="../sonic-tacacs-improvement/">
+        <link rel="next" href="../srv6-sid-l3adj/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch） - SONiC 非公式ドキュメント</title>
+        <title>Weighted ECMP（WCMP / BGP link-bandwidth ext community） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch" class="md-skip">
+        <a href="#weighted-ecmpwcmp-bgp-link-bandwidth-ext-community" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
+              Weighted ECMP（WCMP / BGP link-bandwidth ext community）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -1485,6 +1485,8 @@
       
   
   
+    
+  
   
   
     
@@ -1584,20 +1586,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1615,13 +1620,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1641,7 +1646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1669,7 +1674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1697,7 +1702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -1725,7 +1730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
+      <a href="../bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
         
   
   
@@ -1753,7 +1758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1781,7 +1786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
         
   
   
@@ -1809,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1837,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1865,7 +1870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -1893,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1921,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
+      <a href="../bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
         
   
   
@@ -1949,7 +1954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1977,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -2005,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -2033,7 +2038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -2061,7 +2066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -2089,7 +2094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2117,7 +2122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2145,7 +2150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -2173,7 +2178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -2201,7 +2206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -2229,7 +2234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -2257,7 +2262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -2285,7 +2290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -2313,7 +2318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -2341,7 +2346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -2369,7 +2374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2397,7 +2402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -2425,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
+      <a href="../segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
         
   
   
@@ -2453,7 +2458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2481,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+      <a href="../sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
         
   
   
@@ -2509,7 +2514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -2537,7 +2542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2565,7 +2570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -2593,7 +2598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -2618,10 +2623,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/sonic-weighted-ecmp/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weighted ECMP（WCMP / BGP link-bandwidth ext community）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2637,6 +2669,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-l3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 設定 (L3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-evpn-type-5l2vpn-evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 設定 (EVPN Type-5、L2VPN evpn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration daemon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight の正規化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warm-fast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm / Fast boot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2649,7 +2850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2677,7 +2878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2705,7 +2906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2733,7 +2934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2761,7 +2962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2789,7 +2990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2817,7 +3018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -5995,8 +6196,6 @@
       
   
   
-    
-  
   
   
     
@@ -6088,23 +6287,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -6122,13 +6318,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6148,7 +6344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aaa-improvements/" class="md-nav__link">
+      <a href="../../management/aaa-improvements/" class="md-nav__link">
         
   
   
@@ -6176,7 +6372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -6204,7 +6400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -6232,7 +6428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -6260,7 +6456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -6288,7 +6484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -6316,7 +6512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -6344,7 +6540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -6372,7 +6568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -6400,7 +6596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -6428,7 +6624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -6456,7 +6652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -6484,7 +6680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -6512,7 +6708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -6540,7 +6736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -6568,7 +6764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -6596,7 +6792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -6624,7 +6820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -6652,7 +6848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -6680,7 +6876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pins-hld/" class="md-nav__link">
+      <a href="../../management/pins-hld/" class="md-nav__link">
         
   
   
@@ -6708,7 +6904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -6736,7 +6932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../radius-management-user-authentication/" class="md-nav__link">
+      <a href="../../management/radius-management-user-authentication/" class="md-nav__link">
         
   
   
@@ -6764,7 +6960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../redis-client-manager-rcm-hld/" class="md-nav__link">
+      <a href="../../management/redis-client-manager-rcm-hld/" class="md-nav__link">
         
   
   
@@ -6792,7 +6988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -6820,7 +7016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -6848,7 +7044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6876,7 +7072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -6904,7 +7100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -6932,7 +7128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -6960,7 +7156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -6988,7 +7184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-console-switch/" class="md-nav__link">
+      <a href="../../management/sonic-console-switch/" class="md-nav__link">
         
   
   
@@ -7016,7 +7212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -7041,37 +7237,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -7087,275 +7256,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-config-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 config CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#12-show-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.2 show CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-sonic-cfggen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. sonic-cfggen
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-etcsonicconfig_dbjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. /etc/sonic/config_db.json 直編集
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-restconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. RESTCONF
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. gNMI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. 自動化フレームワーク
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#7-zero-touch-provisioning-ztp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Zero-Touch Provisioning (ZTP)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#8-vtysh-frrouting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        8. vtysh (FRRouting)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#9-redis-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9. redis-cli 直接操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#10-config-apply-patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        10. config apply-patch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各手段の比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（用途別）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7368,7 +7268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -7396,7 +7296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -7424,7 +7324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -7452,7 +7352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -7480,7 +7380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -7508,7 +7408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -13409,22 +13309,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-cli" class="md-nav__link">
+  <a href="#dataflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-config-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 config CLI
+        Dataflow
       
     </span>
   </a>
@@ -13432,10 +13320,65 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#12-show-cli" class="md-nav__link">
+  <a href="#frr-l3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.2 show CLI
+        FRR 設定 (L3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-evpn-type-5l2vpn-evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 設定 (EVPN Type-5、L2VPN evpn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration daemon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight の正規化
       
     </span>
   </a>
@@ -13446,152 +13389,20 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-sonic-cfggen" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#warm-fast-boot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. sonic-cfggen
+        Warm / Fast boot
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3-etcsonicconfig_dbjson" class="md-nav__link">
-    <span class="md-ellipsis">
       
-        3. /etc/sonic/config_db.json 直編集
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-restconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. RESTCONF
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. gNMI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. 自動化フレームワーク
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#7-zero-touch-provisioning-ztp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Zero-Touch Provisioning (ZTP)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#8-vtysh-frrouting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        8. vtysh (FRRouting)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#9-redis-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9. redis-cli 直接操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#10-config-apply-patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        10. config apply-patch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各手段の比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（用途別）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13602,7 +13413,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13613,18 +13424,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13651,7 +13451,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/sonic-nos-configuration-methods.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-weighted-ecmp.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13660,264 +13460,122 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 概観文書</p>
-<p>本 HLD は SONiC の設定手段を <strong>概観する文書</strong> であり、各機構の挙動詳細は別 HLD / 既存実装に依存する。<code>config apply-patch</code> の <code>--dry-run</code> / checkpoint / rollback フラグの現行 sonic-utilities 実装、ZTP の DHCP option 67 / USB 起動経路、RESTCONF / gNMI server 化の有効化方法などは別途裏取りが必要。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.1 (2024-01)。<code>DeviceGlobalCfgMgr.set_wcmp</code> 拡張、<code>bgpd.wcmp.conf.j2</code> テンプレート (<code>docker-fpm-frr/frr/bgpd/wcmp</code>) 配置、<code>BGP_DEVICE_GLOBAL|STATE.wcmp_enabled</code> の sonic-yang-models 反映、initial config の <code>init_cfg.json.j2</code> への注入は未裏取り。</p>
 </div>
-<h1 id="sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）<a class="headerlink" href="#sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch" title="Permanent link">&para;</a></h1>
+<h1 id="weighted-ecmpwcmp-bgp-link-bandwidth-ext-community">Weighted ECMP（WCMP / BGP link-bandwidth ext community）<a class="headerlink" href="#weighted-ecmpwcmp-bgp-link-bandwidth-ext-community" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は設定の入口を <strong>複数提供</strong> する。本 HLD は各手段の <strong>目的と適用範囲</strong> を比較整理する概観文書である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>手作業: <code>config</code> / <code>show</code> CLI</li>
-<li>スクリプト: <code>sonic-cfggen</code></li>
-<li>ファイル直編集: <code>config_db.json</code></li>
-<li>リモート / 標準 API: RESTCONF / gNMI</li>
-<li>自動化: Ansible / NAPALM / CI/CD</li>
-<li>工場出荷時 / 大量展開: ZTP</li>
-<li>上級者の routing 操作: <code>vtysh</code></li>
-<li>低レベル: <code>redis-cli</code></li>
-<li>構造化変更: <code>config apply-patch</code></li>
-</ul>
-<pre class="mermaid"><code>graph TD
-    USER[Operator] --&gt; CFG[config CLI]
-    USER --&gt; SHOW[show CLI]
-    USER --&gt; CFGGEN[sonic-cfggen]
-    USER --&gt; JSON[config_db.json 直編集]
-    USER --&gt; VTYSH[vtysh]
-    USER --&gt; REDIS[redis-cli]
-    AUTO[Automation] --&gt; ANS[Ansible / NAPALM]
-    AUTO --&gt; REST[RESTCONF]
-    AUTO --&gt; GNMI[gNMI]
-    AUTO --&gt; PATCH[config apply-patch]
-    DEPLOY[ZTP] --&gt; JSON
-    CFG --&gt; CDB[CONFIG_DB Redis db 4]
-    CFGGEN --&gt; CDB
-    JSON --&gt; CDB
-    REST --&gt; CDB
-    GNMI --&gt; CDB
-    PATCH --&gt; CDB
-    REDIS --&gt; CDB
-    VTYSH --&gt; FRR[FRR daemon (bgpd, zebra, ...)]</code></pre>
+<p>各 ToR-Spine リンクが部分故障した際、ECMP は <strong>生存 link の容量差を反映できない</strong> ため均等分散して輻輳を起こす。<strong>Weighted ECMP (WCMP, W-ECMP, UCMP)</strong> は <strong>BGP link bandwidth 拡張コミュニティ</strong> で各 path の利用可能帯域を運び、FRR / Zebra が 1〜255 に正規化した weight で NHG member を作る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 側 SWSS / SAI は既に NHG member weight をサポートしているので、本 HLD は <strong>FRR を WCMP モードで動かすための CLI / CONFIG_DB / templates</strong> の整備が中心。L3 用途を <strong>In scope</strong>、EVPN Type-5 は <strong>Out of scope</strong>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="1-cli">1. CLI<a class="headerlink" href="#1-cli" title="Permanent link">&para;</a></h3>
-<h4 id="11-config-cli">1.1 <code>config</code> CLI<a class="headerlink" href="#11-config-cli" title="Permanent link">&para;</a></h4>
-<p><code>CONFIG_DB</code> (Redis db 4) に直接書き、永続化は <code>config save</code> で <code>/etc/sonic/config_db.json</code> に書き戻す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y<span class="w">                      </span><span class="c1"># /etc/sonic/config_db.json に保存</span>
-</span></code></pre></div>
-<p>操作者の手動配備や軽微な変更に向く。</p>
-<h4 id="12-show-cli">1.2 <code>show</code> CLI<a class="headerlink" href="#12-show-cli" title="Permanent link">&para;</a></h4>
-<p>read-only。<code>STATE_DB</code> / <code>APPL_DB</code> 等の運用状態を表示。設定確認やトラブルシューティング用<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="2-sonic-cfggen">2. <code>sonic-cfggen</code><a class="headerlink" href="#2-sonic-cfggen" title="Permanent link">&para;</a></h3>
-<p>JSON ↔ Redis のブリッジ。<strong>スクリプト / 自動化</strong> で使う<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>入力 JSON は SONiC schema に従う必要がある</li>
-<li>不適合だと書き込み時にエラー</li>
-</ul>
-<h3 id="3-etcsonicconfig_dbjson">3. <code>/etc/sonic/config_db.json</code> 直編集<a class="headerlink" href="#3-etcsonicconfig_dbjson" title="Permanent link">&para;</a></h3>
-<p>オフライン編集の元締め<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>vi<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>reload<span class="w"> </span>-y
-</span></code></pre></div>
-<p>利点: 全設定を 1 ファイルで Git バージョン管理可。リスク: <strong>構文エラーで起動不能</strong> を招きうるため適用前検証を推奨。</p>
-<h3 id="4-restconf">4. RESTCONF<a class="headerlink" href="#4-restconf" title="Permanent link">&para;</a></h3>
-<p>YANG モデルに基づく REST API。OpenConfig YANG にも対応するため <strong>マルチベンダ環境</strong> に向く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>明示的に enable + 認証 / アクセス制御の構成が必須</li>
-<li>クラウドコントローラ統合 / リモート監視 / ダッシュボード構築</li>
-</ul>
-<h3 id="5-gnmi">5. gNMI<a class="headerlink" href="#5-gnmi" title="Permanent link">&para;</a></h3>
-<p>gRPC ベース。<strong>リアルタイム設定 + telemetry streaming</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>gnmic</code> 等のクライアント</li>
-<li>ONCE / STREAM の両モード</li>
-<li>Prometheus 等との接続</li>
-</ul>
-<h3 id="6">6. 自動化フレームワーク<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
-<p>Ansible / NAPALM 等<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。playbook で interface / BGP / VLAN / ACL を宣言的に管理。CI/CD pipeline 統合。</p>
-<h3 id="7-zero-touch-provisioning-ztp">7. Zero-Touch Provisioning (ZTP)<a class="headerlink" href="#7-zero-touch-provisioning-ztp" title="Permanent link">&para;</a></h3>
-<p>工場出荷後の初回 boot で <strong>DHCP option 67 または USB drive</strong> からスクリプトを取得し自動設定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>設定取得 + 適用、CONFIG_DB の編集、サービス起動 / 設定が可能</li>
-<li>ログは <code>/var/log/ztp.log</code></li>
-</ul>
-<h3 id="8-vtysh-frrouting">8. <code>vtysh</code> (FRRouting)<a class="headerlink" href="#8-vtysh-frrouting" title="Permanent link">&para;</a></h3>
-<p>BGP / OSPF 等 routing 上級設定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong>vtysh だけの変更は永続化されない</strong>（CONFIG_DB に反映する必要あり）</li>
-<li>ライブ診断・障害切り分け向け</li>
-</ul>
-<h3 id="9-redis-cli">9. <code>redis-cli</code> 直接操作<a class="headerlink" href="#9-redis-cli" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB (db 4) を直接いじる手段<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status<span class="w"> </span>up
-</span></code></pre></div>
-<p><strong>SONiC のバリデーションをバイパス</strong> するため整合性破壊リスク。デバッグ / 低レベル検証用途。</p>
-<h3 id="10-config-apply-patch">10. <code>config apply-patch</code><a class="headerlink" href="#10-config-apply-patch" title="Permanent link">&para;</a></h3>
-<p>JSON / YAML パッチを <strong>CONFIG_DB に動的適用</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>&lt;patch.json&gt;
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>--dry-run<span class="w"> </span>&lt;patch.json&gt;<span class="w">     </span><span class="c1"># 検証のみ</span>
-</span></code></pre></div>
-<p>特徴<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>反映は <strong>即時</strong>（reboot / reload 不要）</li>
-<li><code>--dry-run</code> で <strong>構文 / キー検証</strong></li>
-<li><strong>Checkpoint + Rollback</strong> をサポート（直前の checkpoint に戻せる）</li>
-</ul>
+<h3 id="dataflow">Dataflow<a class="headerlink" href="#dataflow" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    P[patch.json/yaml] --&gt; DR{--dry-run?}
-    DR --&gt;|yes| V[validate only]
-    DR --&gt;|no| C[checkpoint 自動取得]
-    C --&gt; A[apply to CONFIG_DB]
-    A --&gt; S{success?}
-    S --&gt;|yes| OK[完了]
-    S --&gt;|no| RB[rollback to checkpoint]</code></pre>
-<h3 id="_3">各手段の比較<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>手段</th>
-<th>永続化</th>
-<th>検証</th>
-<th>大規模対応</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config</code> CLI</td>
-<td>save 後</td>
-<td>あり (CLI 内)</td>
-<td>×</td>
-<td>手動</td>
-</tr>
-<tr>
-<td><code>show</code> CLI</td>
-<td>-</td>
-<td>-</td>
-<td>-</td>
-<td>閲覧</td>
-</tr>
-<tr>
-<td><code>sonic-cfggen</code></td>
-<td>save 経由</td>
-<td>schema 依存</td>
-<td>△</td>
-<td>スクリプト</td>
-</tr>
-<tr>
-<td><code>config_db.json</code> 直編集</td>
-<td>reload 後</td>
-<td>起動時のみ</td>
-<td>×</td>
-<td>オフライン管理</td>
-</tr>
-<tr>
-<td>RESTCONF</td>
-<td>即時</td>
-<td>YANG 検証</td>
-<td>○</td>
-<td>コントローラ</td>
-</tr>
-<tr>
-<td>gNMI</td>
-<td>即時</td>
-<td>YANG 検証</td>
-<td>◎</td>
-<td>大規模 + telemetry</td>
-</tr>
-<tr>
-<td>Ansible / NAPALM</td>
-<td>playbook 設計次第</td>
-<td>playbook 内</td>
-<td>◎</td>
-<td>IaC</td>
-</tr>
-<tr>
-<td>ZTP</td>
-<td>初回起動時</td>
-<td>スクリプト次第</td>
-<td>◎</td>
-<td>工場出荷</td>
-</tr>
-<tr>
-<td><code>vtysh</code></td>
-<td>しない（要転記）</td>
-<td>FRR 内</td>
-<td>×</td>
-<td>routing 詳細</td>
-</tr>
-<tr>
-<td><code>redis-cli</code></td>
-<td>しない</td>
-<td><strong>無し</strong></td>
-<td>×</td>
-<td>デバッグ</td>
-</tr>
-<tr>
-<td><code>config apply-patch</code></td>
-<td>即時</td>
-<td>dry-run / 構文</td>
-<td>○</td>
-<td>構造化変更</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>本 HLD 自身は <strong>CONFIG_DB / CLI / YANG / SAI を変更しない</strong>。各手段の <strong>入り口の集合</strong> を整理する文書。</p>
-<h3 id="_5">設定例（用途別）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 手動運用: CLI で IP を付与し永続化</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 自動化: sonic-cfggen で JSON から CONFIG_DB を上書き</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-cfggen<span class="w"> </span>-j<span class="w"> </span>/tmp/changes.json<span class="w"> </span>--write-to-db
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 動的構造化変更: apply-patch + dry-run</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>--dry-run<span class="w"> </span>/tmp/patch.json
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>/tmp/patch.json
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># 上級者ルーティング</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;configure terminal&#39;</span><span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;router bgp 65000&#39;</span><span class="w"> </span>...
+  TOR[ToR (server側)&lt;br/&gt;route-map wcmp-map&lt;br/&gt;set extcommunity bandwidth num-multipaths] -- BGP advertise --&gt; SP[Spine]
+  SP --&gt; RTOR[Remote ToR]
+  RTOR -. link 故障 .- SP
+  SP -- updated bandwidth --&gt; ZEBRA[FRR / Zebra]
+  ZEBRA --&gt; NHG[NHG member weights&lt;br/&gt;(normalized 1-255)]
+  NHG --&gt; FPM[fpmsyncd]
+  FPM --&gt; RO[Route OA / orchagent]
+  RO --&gt; SD[syncd]
+  SD --&gt; SAI[SAI: NHG member weight]</code></pre>
+<ul>
+<li>入口 ToR（anycast / ECMP server 側）が <code>route-map wcmp-map permit 100</code> で <code>set extcommunity bandwidth num-multipaths</code> を付与<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>受信 BGP は default 動作で <strong>link bandwidth ext community を weight に変換</strong>。一部 path が community 不持ちなら <strong>通常 ECMP に fallback</strong></li>
+<li>Zebra が NHG を再計算 → fpmsyncd → orchagent (Route OA) → SAI</li>
+</ul>
+<h3 id="frr-l3">FRR 設定 (L3)<a class="headerlink" href="#frr-l3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>route-map wcmp-map permit 100
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  set extcommunity bandwidth num-multipaths
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>exit
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>router bgp 65100
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  ...
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  address-family ipv4 unicast
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    neighbor SPINE route-map wcmp-map out
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    neighbor SPINE activate
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  exit-address-family
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>end
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="frr-evpn-type-5l2vpn-evpn">FRR 設定 (EVPN Type-5、L2VPN evpn)<a class="headerlink" href="#frr-evpn-type-5l2vpn-evpn" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>address-family l2vpn evpn
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  advertise ipv4 unicast route-map wcmp-map
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  neighbor SPINE activate
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>exit-address-family
+</span></code></pre></div>
+<p>EVPN は <code>docker_routing_config_mode</code> が <code>split</code> / <code>split-unified</code> のときのみ有効<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>BGP_DEVICE_GLOBAL|STATE:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  wcmp_enabled = &quot;true&quot; | &quot;false&quot;
+</span></code></pre></div>
+<p>initial config（<code>init_cfg.json.j2</code>）で <strong>default <code>false</code></strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="configuration-daemon">Configuration daemon<a class="headerlink" href="#configuration-daemon" title="Permanent link">&para;</a></h3>
+<p><code>DeviceGlobalCfgMgr</code> クラスに <code>set_wcmp</code> API を追加。CONFIG_DB の <code>BGP_DEVICE_GLOBAL|STATE</code> 変更を受けて jinja2 template <code>bgpd.wcmp.conf.j2</code>（<code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/wcmp/</code>）を反映する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="x">! template: bgpd/wcmp/bgpd.wcmp.conf.j2</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cp">{%</span>- <span class="k">if</span> <span class="nv">wcmp_enabled</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="cp">%}</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="x">  set extcommunity bandwidth num-multipaths</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="cp">{%</span>- <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="x">  no set extcommunity bandwidth</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="cp">{%</span>- <span class="k">endif</span> <span class="cp">%}</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="x">! end of template</span>
+</span></code></pre></div>
+<p><strong>SWSS OA は変更不要</strong>: NHG member weight は既存仕様で通る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="https://github.com/sonic-net/SONiC/pull/738">WCMP SWSS HLD #738</a>）。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config bgp device-global wcmp &lt;enabled|disabled&gt;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show bgp device-global [-j|--json]
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ show bgp device-global
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>TSA        WCMP
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>---------  --------
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Disabled   Enabled
+</span></code></pre></div>
+<h3 id="weight">Weight の正規化<a class="headerlink" href="#weight" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>vtysh</code> の変更は永続化されない</strong>。CONFIG_DB / <code>bgp</code> 系 frr.conf テンプレートに転記しないと再起動で失われる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong><code>redis-cli</code> 直接操作はバリデーションをバイパス</strong> するため、不整合状態で起動失敗する可能性<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ZTP は <strong>スクリプトの品質に依存</strong>。boot failure を起こすスクリプトはリカバリが面倒<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>RESTCONF / gNMI server 機能は <strong>明示的に有効化</strong> 必要、認証も別設定<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>config apply-patch</code> のサポート機能（<code>--dry-run</code> / checkpoint / rollback）は実装段階により差がある可能性</li>
-<li>手段が 10 種類あるため、<strong>運用上どれが正の正解か</strong> は組織のポリシー次第（HLD は併用禁止を規定しない）</li>
+<li>各 NHG 内で <code>bw / total_bw</code> 比を <strong>1..255</strong> に正規化<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>すべて 0 / 同一値の場合は通常 ECMP と等価</li>
+<li>multipath の一部に bandwidth コミュニティが無い場合は <strong>全体 ECMP fallback</strong></li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+source: sonic-net/SONiC/doc/wcmp/wcmp-design.md#L211-L223 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  FRR converts the incoming BGP link bandwidth extended community values into proportionated weight
+  among the ecmp members in such a way that the cumulative value of individual weights is normalized to 255
+  ... NH weights on routes are reported to fpmsyncd and further via Redis DB to Route OA
+reasoning: 1-255 正規化と fpmsyncd 経由で SAI に下る経路の根拠。
+-->
+
+<h2 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Redis (<code>CONFIG_DB</code>)</strong>: 全手段の最終収束先</li>
-<li><strong><code>hostcfgd</code></strong>: CONFIG_DB の変更を OS 側設定（systemd / 各種 conf）に反映</li>
-<li><strong><code>bgpcfgd</code> 等の orchestration daemon</strong>: CONFIG_DB → daemon 設定生成 + reload</li>
-<li><strong><code>config_db.json</code></strong>: 永続化フォーマットの真実の相</li>
-<li><strong><code>vtysh</code> ↔ <code>frr.conf</code> の整合</strong>: 永続化に手作業が必要</li>
+<li>CONFIG_DB の <code>wcmp_enabled</code> を再読込して FRR を再起動 / reload する想定</li>
+<li>詳細は本 HLD では別途扱われていない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定が再起動で消える → <code>config save -y</code> を忘れていないか確認、<code>config_db.json</code> の更新時刻を見る</li>
-<li><code>vtysh</code> の変更が消える → CONFIG_DB / FRR テンプレートに反映されているか</li>
-<li>patch apply が即時反映されない → 対応 daemon (<code>hostcfgd</code> / <code>bgpcfgd</code> 等) のログ確認</li>
-<li>redis-cli で書いた値が無視される → SONiC 側 listener が再 normalize / reject している可能性</li>
-<li>ZTP が起動しない → <code>/var/log/ztp.log</code> を確認、DHCP option 67 / USB 検出を確認</li>
-<li>gNMI / RESTCONF に繋がらない → server 有効化と認証設定 (証明書、ユーザ) を確認</li>
+<li><strong>EVPN Type-5 は scope 外</strong>（本 HLD では将来）</li>
+<li>一部 multipath が link-bandwidth コミュニティを持たないと ECMP fallback</li>
+<li>normalize の精度は 8bit (1-255) 内なので極端な比は表現できない</li>
+<li>ASIC によっては NHG member weight の resource 制約あり（HLD には未明記、SWSS HLD 側参照）</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>BGP PIC</strong>: NHG を共有</li>
+<li><strong>EVPN over L2VPN</strong>: 将来 scope の Type-5</li>
+<li><strong><code>local-ars-hld</code></strong> 等の他 multipath 系: weight 計算ロジックは独立</li>
+<li><strong>fpmsyncd / Route OA</strong>: 既存 NHG member weight の経路を流用</li>
+</ul>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- config apply-patch の --dry-run / checkpoint / rollback フラグの sonic-utilities 取り込み確認
-- ZTP の DHCP option 67 / USB 起動経路の現行実装確認
-- RESTCONF / gNMI server 有効化手順 (sonic-mgmt-common / gnmi container) の現行確認
-- sonic-cfggen が許容する schema の現行整合確認
-- vtysh ↔ frr.conf テンプレート ↔ CONFIG_DB の整合経路（bgpcfgd 等）の現行確認
+- DeviceGlobalCfgMgr.set_wcmp の sonic-buildimage / sonic-bgpcfgd 取り込み確認
+- bgpd.wcmp.conf.j2 (docker-fpm-frr/frr/bgpd/wcmp) の存在確認
+- BGP_DEVICE_GLOBAL|STATE wcmp_enabled の sonic-yang-models 反映確認
+- init_cfg.json.j2 デフォルト wcmp_enabled=false 確認
+- FRR 側の link-bandwidth ext community → NHG weight 1-255 正規化動作の検証
+- show bgp device-global / config bgp device-global wcmp の sonic-utilities 取り込み確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/configuration/SONiC_NOS_Configuration_Methods.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/wcmp/wcmp-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
