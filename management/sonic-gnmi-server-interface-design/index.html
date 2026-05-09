@@ -3392,8 +3392,6 @@
       
         
       
-        
-      
     
     
     
@@ -3771,34 +3769,6 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4278,8 +4248,6 @@
       
         
           
-        
-      
         
       
         
@@ -5197,34 +5165,6 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12467,9 +12407,9 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-gnmi/gnmi_server/server.go</code> L925 で <code>origin == "sonic-db"</code> 判定、L60/L646 で <code>enableConfigDbJournal</code> フラグを確認。<code>sonic-gnmi/sonic_data_client/mixed_db_client.go</code> L65 <code>Name: "sonic-db"</code> / L1255-1267 で <code>import sonic_yang</code> Python 連携、L1433 <code>c.origin == "sonic-db"</code> の分岐を確認。<code>sonic-gnmi/sonic_service_client/dbus_client_test.go</code> L233-313 で <code>ConfigReload</code> dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は 2022 年 5 月版 (Rev 0.1) で 4 年経過、Status=Initial。<code>sonic-gnmi</code> (旧 <code>sonic-telemetry</code>) における Set/Get RPC、Generic Config Updater 連携、host service (dbus 経由 <code>config apply-patch</code> / <code>config reload</code>)、<code>origin: sonic_db</code> / <code>sonic_yang</code> の分岐実装、heartbeat / reset status 公開は未裏取り。</p>
 </div>
 <h1 id="sonic-gnmi-server-config_db-sonic-yang-generic-config-updater">SONiC gNMI Server インタフェース設計（<code>CONFIG_DB</code> / SONiC YANG / Generic Config Updater 連携）<a class="headerlink" href="#sonic-gnmi-server-config_db-sonic-yang-generic-config-updater" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

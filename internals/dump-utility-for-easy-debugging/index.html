@@ -3392,8 +3392,6 @@
       
         
       
-        
-      
     
     
     
@@ -3771,34 +3769,6 @@
     
   
     VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Dynamic Headroom Calculation（buffer_model = dynamic）
   
 
     
@@ -4278,8 +4248,6 @@
       
         
           
-        
-      
         
       
         
@@ -5197,34 +5165,6 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12335,9 +12275,9 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-utilities/dump/</code> ディレクトリで <code>main.py</code> / <code>match_infra.py</code> / <code>helper.py</code> / <code>plugins/</code> を確認。<code>match_infra.py</code> L35 <code>class MatchRequest</code> / L346 <code>class MatchEngine</code> / L454 <code>class MatchRequestOptimizer</code>、<code>plugins/executor.py</code> L5 <code>class Executor(ABC)</code> を確認（verified 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>本 HLD は 2021 年 5 月版 (Rev 1.0)。Status は Initial。<code>sonic-utilities</code> 側 <code>dump/</code> モジュール、<code>Executor</code> 抽象基底クラス、<code>MatchEngine</code> / <code>MatchRequest</code>、<code>acl_table</code> / <code>acl_rule</code> モジュール、TechSupport への組込みは未裏取り。</p>
 </div>
 <h1 id="dump-utility-db-key-debug-cli"><code>dump utility</code>（モジュール単位で複数 DB から関連 key を集約する debug CLI）<a class="headerlink" href="#dump-utility-db-key-debug-cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
