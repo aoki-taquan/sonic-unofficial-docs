@@ -1,7 +1,7 @@
 ---
 title: IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021-06 改訂の v0.3 で 4 年以上経過している。`ipv6_use_link_local_only` の CONFIG_DB スキーマと SONiC CLI は当時から実装されていたものだが、現行 master の `IntfMgr` / `IntfOrch` / `NeighOrch` の挙動が記述と一致するか、`fe80::/10` のサブネットルートが現在も IP2ME として使われているかは未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/cfgmgr/intfmgr.cpp:817` で `ipv6_use_link_local_only` フィールドのハンドリング、`intfmgr.cpp:926` で APP_DB への伝搬。`sonic-swss/orchagent/nexthopkey.h:27-28` で `NextHopKey` が `(IpAddress, alias)` 構造であることを確認。`sonic-swss/orchagent/routeorch.cpp:176-190` で /128 IP2ME ルートと `fe80::/10` サブネットルートの両方を `addLinkLocalRouteToMe` でプログラムする処理を確認。CLI は `sonic-utilities/show/main.py` に存在（verified at: 2026-05-09）。
 
 # IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
 
