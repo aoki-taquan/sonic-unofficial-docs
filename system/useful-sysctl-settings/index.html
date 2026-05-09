@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/platform-capability-file-enhancement/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/useful-sysctl-settings/">
       
       
-        <link rel="prev" href="../icmp-hardware-offload/">
+        <link rel="prev" href="../static-dns-configuration/">
       
       
-        <link rel="next" href="../sai-api-version-check/">
+        <link rel="next" href="../../management/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable） - SONiC 非公式ドキュメント</title>
+        <title>FRR 用 sysctl チューニングのデフォルト - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#platformjson-capabilities-led-fan-speed-controllable" class="md-skip">
+        <a href="#frr-sysctl" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
+              FRR 用 sysctl チューニングのデフォルト
             
           </span>
         </div>
@@ -357,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1631,6 +1631,8 @@
       
   
   
+    
+  
   
   
     
@@ -1654,20 +1656,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1685,13 +1690,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1711,7 +1716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -1739,7 +1744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -1767,7 +1772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -1795,7 +1800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -1820,10 +1825,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR 用 sysctl チューニングのデフォルト
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1839,6 +1871,247 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipv4-ipv6-forwarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv4 / IPv6 forwarding を有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルート関連
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-unnumbered-ospf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP unnumbered / OSPF 向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6-admin-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6 アドレスを admin down で残す
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#igmp-mld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IGMP / MLD のスケール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arp-neighbor-gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARP / Neighbor GC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP の neighbor 利用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-tcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF と TCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        適用方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2049,8 +2322,6 @@
       
   
   
-    
-  
   
   
     
@@ -2074,23 +2345,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -2108,13 +2376,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2134,7 +2402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -2162,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2187,37 +2455,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2233,192 +2474,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#platformjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        現状の platform.json の役割
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加される capabilities フィールド
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スキーマ例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        値が無いときの振る舞い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        想定ユースケース
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2431,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2459,7 +2514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3051,21 +3106,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#platformjson" class="md-nav__link">
+  <a href="#ipv4-ipv6-forwarding" class="md-nav__link">
     <span class="md-ellipsis">
       
-        現状の platform.json の役割
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加される capabilities フィールド
+        IPv4 / IPv6 forwarding を有効化
       
     </span>
   </a>
@@ -3076,7 +3120,73 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ例
+        ルート関連
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-unnumbered-ospf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP unnumbered / OSPF 向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6-admin-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6 アドレスを admin down で残す
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#igmp-mld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IGMP / MLD のスケール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arp-neighbor-gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARP / Neighbor GC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP の neighbor 利用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-tcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF と TCP
       
     </span>
   </a>
@@ -3087,18 +3197,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        値が無いときの振る舞い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        想定ユースケース
+        適用方法
       
     </span>
   </a>
@@ -3111,7 +3210,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3138,6 +3237,17 @@
     <span class="md-ellipsis">
       
         関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認方法
       
     </span>
   </a>
@@ -3210,7 +3320,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/platform-capability-file-enhancement.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/useful-sysctl-settings.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3220,169 +3330,147 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-platform-common</code> の Platform API 側で <code>capabilities</code> を読む経路、ベンダ固有 <code>platform.json</code> への実装反映状況、<code>controllable=false</code> の場合の上位アプリ振る舞いは未裏取り。</p>
+<p>このページは sonic-frr の上流 FRR ドキュメントを再構成している。SONiC 側のイメージで実際に投入されている sysctl（<code>sonic-buildimage</code> の <code>etc/sysctl.d/</code> または起動スクリプトでの set）は未裏取り。SONiC が同等の値を採用しているとは限らないため、本ページは「FRR が推奨する出発点」として読むこと。</p>
 </div>
-<h1 id="platformjson-capabilities-led-fan-speed-controllable">platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）<a class="headerlink" href="#platformjson-capabilities-led-fan-speed-controllable" title="Permanent link">&para;</a></h1>
+<h1 id="frr-sysctl">FRR 用 sysctl チューニングのデフォルト<a class="headerlink" href="#frr-sysctl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに <strong>制御可能性と取りうる値の範囲</strong> が異なる。たとえば<strong>ステータス LED の色</strong>は機種により <code>off/amber/green</code> だったり <code>red/green</code> だったり、<strong>fan speed</strong> には推奨される <code>minimum/maximum</code> の範囲があったり、<strong>PSU の LED は NOS から触れない</strong>（BMC 専管）こともある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>SONiC は従来 <code>platform.json</code> を <strong>コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報</strong> に使ってきたが、各属性の <strong>「能力情報（capability）」を上位アプリへ渡す手段が無かった</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <code>platform.json</code> に <strong><code>capabilities</code> フィールド</strong> を追加して、この情報を取り出せるようにする拡張を定義する。</p>
+<p>SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。Linux カーネルの sysctl は <strong>forwarding 有効化、ARP 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など</strong> を細かく制御でき、FRR の挙動を大きく左右する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>このページは sonic-frr 同梱の <code>doc/user/Useful_Sysctl_Settings.md</code> が示す <strong>「論理的なデフォルト set」</strong> を整理したもの。BGP unnumbered や OSPF を素直に動かすのに有用な値が並ぶ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>注意: これは <strong>FRR 上流の推奨値</strong>。SONiC のリリースイメージが同じ値を採用しているかは別途確認が必要。本ページの値を直接 <code>/etc/sysctl.d/99frr_defaults.conf</code> に流し込むなら、SONiC 既定値との差分を意識する必要がある。</p>
+</blockquote>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="platformjson">現状の <code>platform.json</code> の役割<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
-<p>HLD 当時の用途<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>platform components の構造定義（chassis 配下の fan_drawers / psus / thermals 等）</li>
-<li>dynamic port breakout 用の interface 情報</li>
-</ul>
-<h3 id="capabilities">追加される <code>capabilities</code> フィールド<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h3>
-<p>各属性ごとに、共通フィールド <code>controllable</code> と <strong>属性固有のフィールド</strong> を入れる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>キー</th>
-<th>型</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>controllable</code></td>
-<td>bool</td>
-<td>NOS から制御可能なら <code>true</code>、不可なら <code>false</code>。既定 <code>true</code></td>
-</tr>
-<tr>
-<td>status LED の <code>colors</code></td>
-<td>list of string</td>
-<td>取りうる LED 色のリスト</td>
-</tr>
-<tr>
-<td>fan speed の <code>minimum</code></td>
-<td>number</td>
-<td>設定可能な fan speed の推奨最小値</td>
-</tr>
-<tr>
-<td>fan speed の <code>maximum</code></td>
-<td>number</td>
-<td>設定可能な fan speed の推奨最大値</td>
-</tr>
-</tbody>
-</table>
-<p><code>controllable=false</code> の例として <strong>PSU の LED</strong>（BMC 専管で NOS から書けない）、<strong>PSU 内蔵 fan の speed</strong>（同様に NOS 不可）、<strong>Thermal</strong>（読み取り専用）などが挙げられる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">スキーマ例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD のサンプル<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;chassis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PLATFORM&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;status_led&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;colors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;off&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;amber&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;green&quot;</span><span class="p">]</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;fan_drawers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FanTray1&quot;</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="nt">&quot;status_led&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">          </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">          </span><span class="nt">&quot;colors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;green&quot;</span><span class="p">]</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">        </span><span class="nt">&quot;fans&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">          </span><span class="p">{</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FanTray1-Fan&quot;</span><span class="p">,</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">            </span><span class="nt">&quot;speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">              </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">              </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">              </span><span class="nt">&quot;maximum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">            </span><span class="p">}</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">          </span><span class="p">}</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">        </span><span class="p">]</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">    </span><span class="p">],</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="nt">&quot;psus&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PSU1&quot;</span><span class="p">,</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">        </span><span class="nt">&quot;status_led&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">        </span><span class="nt">&quot;fans&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">          </span><span class="p">{</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PSU1 Fan&quot;</span><span class="p">,</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">            </span><span class="nt">&quot;speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">          </span><span class="p">}</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">        </span><span class="p">]</span>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">    </span><span class="p">],</span>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">    </span><span class="nt">&quot;thermals&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Thermal 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Thermal 2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;controllable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="p">}</span>
+<h3 id="ipv4-ipv6-forwarding">IPv4 / IPv6 forwarding を有効化<a class="headerlink" href="#ipv4-ipv6-forwarding" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>net.ipv4.ip_forward = 1
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>net.ipv6.conf.all.forwarding = 1
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>net.ipv4.conf.all.forwarding = 1
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>net.ipv4.conf.default.forwarding = 1
 </span></code></pre></div>
-<p>要点<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>ルータとして使う以上、forwarding は ON 必須<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>all</code> と <code>default</code> の両方を立てるのは、新規生成 interface にも自動でデフォルト適用させる典型構成。</p>
+<h3 id="_3">ルート関連<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>net.ipv6.route.max_size = 131072
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>net.ipv4.conf.all.ignore_routes_with_linkdown = 1
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>net.ipv6.conf.all.ignore_routes_with_linkdown = 1
+</span></code></pre></div>
 <ul>
-<li>chassis 直下の <code>status_led</code> は <code>colors</code> 列を持つ。これでアプリは「この機種で <code>red</code> を指定して良いか」を事前にバリデーションできる。</li>
-<li>fan_drawer / fan には <code>controllable</code> と <code>speed.{minimum, maximum}</code> が並ぶ。speed の単位は <strong>percentage（%）</strong> が一般的（HLD のサンプル <code>40-100</code> から推測。HLD 本文には単位の明示はない）。</li>
-<li>PSU 配下の LED / fan は <code>controllable=false</code> の例として明示的にリストアップされる。NOS 側に書く API があっても <strong>適用しない / エラーにする</strong> べき、という属性メタデータになる。</li>
-<li>thermal は読み取り専用と分かるよう <code>controllable=false</code>。</li>
+<li>IPv6 ルート最大数を 128K に拡張<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 規模のフルテーブルを抱えるには既定値だと不足。</li>
+<li>リンクダウンしたインターフェース経由のルートを <strong>無視</strong> する。FRR が link state に追従して経路を切替えるための前提<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
+<h3 id="bgp-unnumbered-ospf">BGP unnumbered / OSPF 向け<a class="headerlink" href="#bgp-unnumbered-ospf" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>net.ipv4.conf.all.rp_filter = 0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>net.ipv4.conf.default.rp_filter = 0
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>net.ipv4.conf.lo.rp_filter = 0
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>net.ipv4.conf.default.arp_announce = 2
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>net.ipv4.conf.default.arp_notify = 1
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>net.ipv4.conf.default.arp_ignore = 1
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>net.ipv4.conf.all.arp_announce = 2
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>net.ipv4.conf.all.arp_notify = 1
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>net.ipv4.conf.all.arp_ignore = 1
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>net.ipv4.icmp_errors_use_inbound_ifaddr = 1
+</span></code></pre></div>
+<ul>
+<li><strong><code>rp_filter = 0</code></strong>: uRPF を無効化。BGP unnumbered のように非対称経路や IPv6 link-local 経由 nexthop を扱う構成では、strict mode の uRPF が誤って drop することがある<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ARP 系</strong>:</li>
+<li><code>arp_announce = 2</code>: best local address only を announce。loopback アドレスを意図せず ARP しないため。</li>
+<li><code>arp_notify = 1</code>: link up やアドレス追加時に GARP を送出。</li>
+<li><code>arp_ignore = 1</code>: 入力 interface 上のアドレス向けの ARP のみ応答<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
+  これらは <strong>アドレスをループバックに集約</strong> する SONiC のような設計と相性が良い。</li>
+<li><code>icmp_errors_use_inbound_ifaddr = 1</code>: ICMP エラーの送信元アドレスに <strong>入力インターフェースのアドレス</strong> を使う。traceroute の見え方が直感的になる<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h3 id="ipv6-admin-down">IPv6 アドレスを admin down で残す<a class="headerlink" href="#ipv6-admin-down" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>net.ipv6.conf.all.keep_addr_on_down = 1
+</span></code></pre></div>
+<p>interface を admin down にしても、permanent な IPv6 アドレスを <strong>残す</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR の動作中に link を上げ下げしても link-local の neighborship を壊さないようにする。</p>
+<h3 id="igmp-mld">IGMP / MLD のスケール<a class="headerlink" href="#igmp-mld" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>net.ipv4.igmp_max_memberships = 1000
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>net.ipv4.neigh.default.mcast_solicit = 10
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>net.ipv6.mld_max_msf = 512
+</span></code></pre></div>
+<p>multicast 関連の上限を引き上げる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトのままでは多数の (S,G) を扱う運用で詰まりやすい。</p>
+<h3 id="arp-neighbor-gc">ARP / Neighbor GC<a class="headerlink" href="#arp-neighbor-gc" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>net.ipv4.neigh.default.gc_thresh2 = 7168
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>net.ipv4.neigh.default.gc_thresh3 = 8192
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>net.ipv4.neigh.default.base_reachable_time_ms = 14400000
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>net.ipv6.neigh.default.gc_thresh2 = 3584
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>net.ipv6.neigh.default.gc_thresh3 = 4096
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>net.ipv6.neigh.default.base_reachable_time_ms = 14400000
+</span></code></pre></div>
+<ul>
+<li><code>gc_thresh2/3</code>: neighbor table の <strong>soft / hard 上限</strong>。SONiC 規模のスイッチでは neighbor が数千になりがちなので緩める<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>base_reachable_time_ms = 14400000</code>（4 時間）: neighbor が reachable として扱われる時間。長めに取って probe 頻度を下げる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h3 id="ecmp-neighbor">ECMP の neighbor 利用<a class="headerlink" href="#ecmp-neighbor" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>net.ipv4.fib_multipath_use_neigh = 1
+</span></code></pre></div>
+<p>multipath ECMP の nexthop 選択に <strong>neighbor 情報を使う</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="vrf-tcp">VRF と TCP<a class="headerlink" href="#vrf-tcp" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>net.ipv4.tcp_l3mdev_accept = 1
+</span></code></pre></div>
+<p>VRF（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC で management VRF を使う場合などに有用。</p>
+<h3 id="_4">適用方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>ファイルとして <code>/etc/sysctl.d/99frr_defaults.conf</code> に配置し、再起動するか以下で即時反映する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/99frr_defaults.conf
+</span></code></pre></div>
+<p>ファイル名の <code>99</code> プレフィックスは sysctl ファイルの読み込み順を <strong>遅らせて、他の設定を上書きする</strong> ための慣習。</p>
 <pre class="mermaid"><code>flowchart LR
-    PJ[platform.json\n(ベンダ提供)] --&gt; PAPI[Platform API\nsonic-platform-common]
-    PAPI --&gt; APP1[thermalctld]
-    PAPI --&gt; APP2[pmon / fan control]
-    PAPI --&gt; APP3[CLI / show platform *]
-    APP1 -.read capability.-&gt; PJ
-    APP2 -.controllable check.-&gt; PJ</code></pre>
-<h3 id="_4">値が無いときの振る舞い<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>controllable</code> の <strong>既定値は <code>true</code></strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。すなわち capability セクションが書かれていない / 一部欠落している場合は <strong>「制御可能」前提で動く</strong> 後方互換動作になる。新フィールド未対応のプラットフォームでもクラッシュしない設計。</p>
-<p><code>colors</code> / <code>minimum</code> / <code>maximum</code> の既定は HLD 内では明示されていない。実装側で「指定が無ければ任意値を許容する」または「<code>controllable=true</code> で <code>colors</code> 未記載なら API 既定色のみ」のような扱いになる想定（裏取り課題）。</p>
+    F[/etc/sysctl.d/99frr_defaults.conf/] --&gt;|boot or sysctl -p| K[Linux kernel\nsysctl values]
+    K --&gt; FRR[FRR\nbgpd / ospfd / zebra]
+    K --&gt; KERNEL[Forwarding plane\n(Linux netdev / RIB)]</code></pre>
 <!-- evidence:
-source: sonic-net/SONiC/doc/platform-json/platform_json_enhancement.md#L40-L49 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/sonic-frr/doc/user/Useful_Sysctl_Settings.md#L1-L60 (sha: 799f47f215e4266063c4ebde0041a0c7dd2d11d0)
 excerpt: |
-  For each component's attribute, the defined `capabilities` fields are as follows:
-  - "controllable" : A boolean, 'true' if the given attribute can be controlled from the NOS, 'false' otherwise. Defaults to 'true'.
-  - Attribute specific fields:
-      - status led - "color" - A list of the supported colors.
-      - speed
-          - "minimum" - Minimum recommended fan speed that can be set.
-          - "maximum" - Maximum recommended fan speed that can be set.
-reasoning: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
+  # /etc/sysctl.d/99frr_defaults.conf
+  net.ipv6.route.max_size=131072
+  net.ipv4.conf.all.rp_filter = 0
+  net.ipv6.conf.all.keep_addr_on_down=1
+  net.ipv4.fib_multipath_use_neigh=1
+  net.ipv4.tcp_l3mdev_accept=1
+reasoning: 推奨デフォルト群の出典・キー名の根拠。
 -->
 
-<h3 id="_5">想定ユースケース<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>status LED 色のバリデーション</strong>: ユーザが <code>config platform led set &lt;color&gt;</code> のような操作を試みた際、<code>platform.json</code> の <code>colors</code> リストに無い色なら CLI が拒否する。</li>
-<li><strong>fan 速度の上下限</strong>: thermal control daemon (<code>thermalctld</code>) が PWM 制御で fan speed を計算する際、<code>minimum/maximum</code> を超えないようクランプする。</li>
-<li><strong>BMC 管理コンポーネントの自動スキップ</strong>: PSU LED / PSU fan のように <code>controllable=false</code> のものは NOS の制御コードパスから外す。</li>
-</ul>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い。<code>platform.json</code> は <strong>CONFIG_DB の上流</strong> にあるベンダ提供静的ファイルであり、ランタイムで Redis に乗るデータではない。</p>
+<p>該当なし。sysctl は Linux カーネルの設定で、SONiC の CONFIG_DB は通らない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は HLD 内では定義されていない。<code>show platform *</code> 系のコマンドや <code>config platform *</code> 系が capability を参照することは想定されるが、本 HLD では具体的な CLI 拡張に踏み込んでいない。</p>
+<p>該当なし。SONiC の <code>config</code> 系から sysctl を直接編集する CLI は無い。Linux 標準の <code>sysctl</code> / <code>/etc/sysctl.d/</code> を使う。</p>
+<h3 id="_6">確認方法<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># 全 sysctl を確認</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sysctl<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;forward|rp_filter|gc_thresh|keep_addr_on_down&#39;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># 個別確認</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sysctl<span class="w"> </span>net.ipv6.route.max_size
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>sysctl<span class="w"> </span>net.ipv4.tcp_l3mdev_accept
+</span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>controllable</code> の <strong>既定値が <code>true</code></strong>。記述が無いプラットフォームでは「制御可能」と仮定して上位アプリが動く。<strong>実機が制御できない属性に書くと SAI / プラットフォームドライバ側でエラー</strong>になる可能性がある<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>colors</code> / <code>minimum</code> / <code>maximum</code> の <strong>未指定時の挙動が HLD で明文化されていない</strong>。後方互換のため任意値を許容する方向と思われるが、実装で確認が必要。</li>
-<li>単位（fan speed の <code>%</code> か <code>RPM</code> か）が HLD 内で明示されていない。サンプルの <code>40-100</code> は % と読める。</li>
-<li><code>capabilities</code> フィールドはあくまで <strong>メタデータ</strong>。NOS が <code>controllable=false</code> を尊重しないコード経路があれば抜け穴になる。</li>
+<li>これは <strong>FRR 上流の推奨</strong>。SONiC 側で同じ値が既に投入されているか、別の値が好まれているかは別途確認が必要<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>rp_filter = 0</code> はセキュリティ機能（spoof 防止）を弱める方向の変更。<strong>意図的に外して unnumbered / 非対称ルーティングを許容する</strong> 性格の設定。要件次第で <code>loose mode (1)</code> を選ぶ判断もありうる。</li>
+<li><code>gc_thresh2/3</code> の数値はスイッチ規模に応じて調整する。データセンタ向けにはここよりさらに大きくしたい場合がある。</li>
+<li><code>base_reachable_time_ms = 14400000</code> は <code>4h</code> で長め。stale neighbor の検知が遅くなる副作用があるが、neighbor フラッピングを抑える狙いで意図された値<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>keep_addr_on_down</code> は IPv6 link-local の挙動を変える。link-local を再生成して欲しい運用と衝突する可能性がある。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Platform API（<code>sonic-platform-common</code> の <code>chassis_base.py</code> 等）</strong>: 既存 API の戻り値を <code>platform.json</code> の capability から導出するよう拡張する想定。HLD 自体は API 仕様の詳細には踏み込んでいない。</li>
-<li><strong><code>thermalctld</code> / fan control</strong>: <code>speed.minimum/maximum</code> を尊重する責務を持つ。BMC 制御の fan については <code>controllable=false</code> を見て制御をスキップする<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>CLI <code>config / show platform</code></strong>: status LED 色のバリデーション、fan speed 上下限の表示などで capability を参照する想定。</li>
-<li><strong>dynamic port breakout</strong>: 既存の <code>platform.json</code> 用途と同居する。capability セクションは新規 sibling として加わるだけで、既存 interface セクションには影響しない。</li>
-<li><strong>ベンダ実装</strong>: 各ベンダが <code>device/&lt;vendor&gt;/platform/platform.json</code> に capability を埋める責任を持つ。空でも後方互換は壊れない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>BGP unnumbered</strong>: <code>rp_filter=0</code>、<code>keep_addr_on_down=1</code>、<code>arp_*</code> 群と整合的な構成<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらが揃わないと unnumbered の neighborship が安定しないことがある。</li>
+<li><strong>management VRF</strong>: <code>tcp_l3mdev_accept=1</code> がないと、VRF 上のサービス（mgmt VRF 経由 SSH 等）に bind しないアプリから接続できないケースが出る<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ECMP</strong>: <code>fib_multipath_use_neigh=1</code> が無いと multipath で実 reachable な nexthop に偏らせる挙動が弱まる<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>IGMP / MLD scale</strong>: マルチキャストを使う運用で <code>igmp_max_memberships</code> / <code>mld_max_msf</code> が既定だとカウンタ詰まりが起きる。<code>mcast_solicit=10</code> は応答性のチューニング。</li>
+<li><strong>大規模 IPv6 RIB</strong>: <code>net.ipv6.route.max_size=131072</code> を超える RIB を扱うとカーネル側でルートが落ち始める。フルテーブルの IPv6 を扱うなら更に拡張が必要。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>LED 色が反映されない: <code>platform.json</code> の該当コンポーネントの <code>colors</code> に当該色が入っているか確認。<code>controllable=false</code> だと NOS からは触れない<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>fan speed を 30% に設定したが 40% になる: <code>speed.minimum=40</code> の制約に従って上位アプリがクランプしている可能性。<code>platform.json</code> を確認<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>PSU の LED 制御が無視される: 仕様どおり。BMC 管理のため <code>controllable=false</code>。NOS から触らない設計<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>古いプラットフォームで動かない: <code>capabilities</code> セクション未記述でも <code>controllable</code> の既定 <code>true</code> で従来挙動になる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それでも動かない場合は他の HLD（dynamic port breakout 等）の互換性問題を疑う。</li>
+<li>BGP unnumbered の neighborship が成立しない: <code>rp_filter</code>, <code>arp_*</code>, <code>keep_addr_on_down</code> を確認。<code>sysctl -a | grep -E 'rp_filter|arp_'</code> で値を点検<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>IPv6 ルートが受け取れない / 一部 drop される: <code>net.ipv6.route.max_size</code> の上限に達している可能性。<code>dmesg</code> に該当メッセージがないか確認<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>neighbor が大量に消える: <code>gc_thresh2/3</code> を超過。値を上げる<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>traceroute の "から" の IP が想定と違う: <code>icmp_errors_use_inbound_ifaddr=1</code> の有無を確認<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>mgmt VRF 上のアプリで bind 失敗: <code>tcp_l3mdev_accept=1</code> の有無を確認<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/platform-json/platform_json_enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-frr</code> <code>doc/user/Useful_Sysctl_Settings.md</code> @ <code>799f47f215e4266063c4ebde0041a0c7dd2d11d0</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
