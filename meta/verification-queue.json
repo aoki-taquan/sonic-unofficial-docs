@@ -298,6 +298,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/dhcp-relay-per-interface-counter.md",
+      "verification": "hld-only",
+      "concerns": [
+        "dhcpmon マルチスレッド化 (main thread + DB update thread) と context interface map ロジックの現行実装確認",
+        "DHCPv6 counter の dhcp6relay → dhcpmon への分離リファクタの取り込み確認",
+        "COUNTERS_DB の DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE スキーマ (uplink キーの Vlan プレフィックス付き形式) の現行確認",
+        "show dhcp_relay ipv4/v6 counter / sonic-clear dhcp_relay ipv4/v6 counter CLI の sonic-utilities 取り込み確認",
+        "Dual-ToR 特殊ルール (standby IF drop / Loopback gateway / Option 18 Vlan LLA) の dhcpmon 実装確認",
+        "Option 53 / dst-ip / DHCP gateway の RX/TX 加算条件マトリクスが現行コードと一致するか確認",
+        "VLAN/LAG member 変更時の counter entry 動的更新の実装ステータス確認"
+      ],
+      "priority": "high",
+      "issue": 511
+    },
+    {
       "page": "docs/routing/high-level-design-document.md",
       "verification": "hld-only",
       "concerns": [

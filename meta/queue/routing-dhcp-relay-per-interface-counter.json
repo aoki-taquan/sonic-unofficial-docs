@@ -1,0 +1,15 @@
+{
+  "page": "docs/routing/dhcp-relay-per-interface-counter.md",
+  "verification": "hld-only",
+  "concerns": [
+    "dhcpmon \u30de\u30eb\u30c1\u30b9\u30ec\u30c3\u30c9\u5316 (main thread + DB update thread) \u3068 context interface map \u30ed\u30b8\u30c3\u30af\u306e\u73fe\u884c\u5b9f\u88c5\u78ba\u8a8d",
+    "DHCPv6 counter \u306e dhcp6relay \u2192 dhcpmon \u3078\u306e\u5206\u96e2\u30ea\u30d5\u30a1\u30af\u30bf\u306e\u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "COUNTERS_DB \u306e DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE \u30b9\u30ad\u30fc\u30de (uplink \u30ad\u30fc\u306e Vlan \u30d7\u30ec\u30d5\u30a3\u30c3\u30af\u30b9\u4ed8\u304d\u5f62\u5f0f) \u306e\u73fe\u884c\u78ba\u8a8d",
+    "show dhcp_relay ipv4/v6 counter / sonic-clear dhcp_relay ipv4/v6 counter CLI \u306e sonic-utilities \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "Dual-ToR \u7279\u6b8a\u30eb\u30fc\u30eb (standby IF drop / Loopback gateway / Option 18 Vlan LLA) \u306e dhcpmon \u5b9f\u88c5\u78ba\u8a8d",
+    "Option 53 / dst-ip / DHCP gateway \u306e RX/TX \u52a0\u7b97\u6761\u4ef6\u30de\u30c8\u30ea\u30af\u30b9\u304c\u73fe\u884c\u30b3\u30fc\u30c9\u3068\u4e00\u81f4\u3059\u308b\u304b\u78ba\u8a8d",
+    "VLAN/LAG member \u5909\u66f4\u6642\u306e counter entry \u52d5\u7684\u66f4\u65b0\u306e\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
+  ],
+  "priority": "high",
+  "issue": 511
+}
