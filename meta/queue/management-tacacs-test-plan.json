@@ -10,5 +10,6 @@
     "test plan \u306e sonic-mgmt \u5074\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 477
+  "issue": 477,
+  "pr": 478
 }

@@ -879,7 +879,8 @@
         "test plan の sonic-mgmt 側実装存在確認"
       ],
       "priority": "medium",
-      "issue": 477
+      "issue": 477,
+      "pr": 478
     },
     {
       "page": "docs/overlay/dash-sonic-kvm.md",
