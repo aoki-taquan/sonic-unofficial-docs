@@ -1,0 +1,18 @@
+{
+  "title": "Enhancements to add or del ports dynamically",
+  "slug": "enhancements-to-add-or-del-ports-dynamically",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/port-add-del-dynamically/dynamic_port_add_del_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Design'?"
+  ],
+  "notes": "size_bytes=15343"
+}

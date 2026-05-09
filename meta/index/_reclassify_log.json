@@ -1,0 +1,1201 @@
+[
+  {
+    "slug": "local-ars-hld",
+    "title": "Local ARS HLD",
+    "path": "doc/ARS/Local_ARS_HLD.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:ARS-routing"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly",
+    "title": "DHCP Relay (v4) - Specify gaaddr as Primary Interface's Gateway explicitly",
+    "path": "doc/DHCPv4_Gateway/DHCPv4_gateway.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "gNMI",
+      "CLI",
+      "command[- ]line",
+      "config_db",
+      "CONFIG_DB",
+      "YANG"
+    ],
+    "confidence": "high",
+    "note": "scores={'routing': 18, 'switching': 18, 'system': 5, 'management': 68, 'platform': 9, 'internals': 17, 'architecture': 23}"
+  },
+  {
+    "slug": "dhcp-relay-for-ipv6-hld",
+    "title": "DHCP Relay for IPv6 HLD",
+    "path": "doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "DHCP relay",
+      "DHCPv6"
+    ],
+    "confidence": "high",
+    "note": "scores={'routing': 58, 'switching': 39, 'management': 4, 'architecture': 6}"
+  },
+  {
+    "slug": "dhcp-dos-mitigation-in-sonic",
+    "title": "DHCP DoS Mitigation in SONiC",
+    "path": "doc/Dhcp_Mitigation/DHCP Mitigation.md",
+    "old_area": "unknown",
+    "new_area": "acl-qos",
+    "matched_terms": [
+      "DoS",
+      "DHCP DoS"
+    ],
+    "confidence": "medium",
+    "note": "scores={'switching': 21, 'acl-qos': 125, 'management': 76, 'platform': 12, 'internals': 6, 'architecture': 17}"
+  },
+  {
+    "slug": "twamp-light-hld",
+    "title": "TWAMP Light HLD",
+    "path": "doc/TWAMP/SONiC-TWAMP-Ligth-HLD.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:twamp"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "introduction-4",
+    "title": "Introduction",
+    "path": "doc/arp/Proxy Arp.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:arp-routing"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "banner-messages-hld",
+    "title": "Banner messages HLD",
+    "path": "doc/banner/banner_hld.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:banner"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "support-bmc-flows-in-sonic",
+    "title": "Support BMC flows in SONiC",
+    "path": "doc/bmc/bmc_hld.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:bmc"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "liquid-cooling-leakage-detection-in-sonic",
+    "title": "Liquid Cooling leakage detection in SONiC",
+    "path": "doc/bmc/leakage_detection_hld.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:bmc"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-bum-storm-control",
+    "title": "SONiC BUM Storm Control",
+    "path": "doc/bum_storm_control/bum_storm_control_hld.md",
+    "old_area": "unknown",
+    "new_area": "switching",
+    "matched_terms": [
+      "strong-path:bum-storm"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "class-based-forwarding-enhancement",
+    "title": "Class Based Forwarding Enhancement",
+    "path": "doc/cbf/cbf_hld.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "next[- ]hop",
+      "MPLS",
+      "class[- ]based forwarding"
+    ],
+    "confidence": "high",
+    "note": "scores={'routing': 88, 'acl-qos': 42, 'management': 37, 'platform': 27, 'internals': 36, 'architecture': 3, 'reference': 2}"
+  },
+  {
+    "slug": "enhanced-lpo-debug-registers-hld",
+    "title": "Enhanced LPO Debug Registers HLD",
+    "path": "doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "config-reload-enhancement",
+    "title": "Config reload Enhancement",
+    "path": "doc/config_reload/config_reload_enhancement.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:cli-mgmt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-nos-configuration-methods",
+    "title": "",
+    "path": "doc/configuration/SONiC_NOS_Configuration_Methods.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:cli-mgmt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-dash-hld",
+    "title": "SONiC-DASH HLD",
+    "path": "doc/dash/dash-sonic-hld.md",
+    "old_area": "unknown",
+    "new_area": "overlay",
+    "matched_terms": [
+      "strong-path:dash"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "dash-sonic-kvm",
+    "title": "DASH SONiC KVM",
+    "path": "doc/dash/dash-sonic-kvm.md",
+    "old_area": "unknown",
+    "new_area": "overlay",
+    "matched_terms": [
+      "strong-path:dash"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "dhcp-relay-per-interface-counter",
+    "title": "DHCP Relay Per-Interface Counter",
+    "path": "doc/dhcp_relay/DHCP-per-interface-counter.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:dhcp-relay"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "configurable-drop-counters-in-sonic",
+    "title": "Configurable Drop Counters in SONiC",
+    "path": "doc/drop_counters/drop_counters_HLD.md",
+    "old_area": "unknown",
+    "new_area": "acl-qos",
+    "matched_terms": [
+      "strong-path:acl-qos"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "icmp-hardware-offload",
+    "title": "ICMP Hardware Offload",
+    "path": "doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:icmp-offload"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "active-active-dual-tor",
+    "title": "Active-Active Dual ToR",
+    "path": "doc/dualtor/active_active_hld.md",
+    "old_area": "unknown",
+    "new_area": "overlay",
+    "matched_terms": [
+      "strong-path:dualtor"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "active-standby-dual-tor",
+    "title": "Active-Standby Dual ToR",
+    "path": "doc/dualtor/dualtor_active_standby_hld.md",
+    "old_area": "unknown",
+    "new_area": "overlay",
+    "matched_terms": [
+      "strong-path:dualtor"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "dump-utility-for-easy-debugging",
+    "title": "Dump Utility for Easy Debugging",
+    "path": "doc/dump-utility/Dump-Utility.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:dump-util"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-fast-link-up",
+    "title": "SONiC Fast Link-Up",
+    "path": "doc/fast-linkup/fast-link-up-hld.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:fast-link-up"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-fips-deployment",
+    "title": "SONiC FIPS Deployment",
+    "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:security"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-openssl-fips-140-3-hld",
+    "title": "SONIC OpenSSL FIPS 140-3 HLD",
+    "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:security"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-flexcounter-refactor",
+    "title": "SONiC FlexCounter Refactor",
+    "path": "doc/flex_counter/flex_counter_refactor.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "syncd",
+      "swss",
+      "redis",
+      "sairedis",
+      "flexcounter",
+      "counter"
+    ],
+    "confidence": "high",
+    "note": "scores={'acl-qos': 2, 'platform': 21, 'internals': 119, 'architecture': 6}"
+  },
+  {
+    "slug": "sonic-counter-initialization-optimization",
+    "title": "SONiC Counter Initialization Optimization",
+    "path": "doc/flex_counter/optimize-counter-initialization.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:counter-internals"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-fw-utility",
+    "title": "SONiC FW utility",
+    "path": "doc/fwutil/fwutil.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "QSFP",
+      "thermal",
+      "fan",
+      "psu",
+      "firmware",
+      "FW utility"
+    ],
+    "confidence": "high",
+    "note": "scores={'management': 1, 'platform': 142, 'architecture': 12}"
+  },
+  {
+    "slug": "hld-name",
+    "title": "HLD Name",
+    "path": "doc/guidelines/hld_template.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "title:hld-template"
+    ],
+    "confidence": "medium",
+    "note": "title-fallback"
+  },
+  {
+    "slug": "sonic-test-ingress-discards-hld",
+    "title": "",
+    "path": "doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md",
+    "old_area": "unknown",
+    "new_area": "acl-qos",
+    "matched_terms": [
+      "strong-path:acl-qos"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "routing-and-next-hop-table-enhancement",
+    "title": "Routing and Next Hop Table Enhancement",
+    "path": "doc/ip/next_hop_group_hld.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "BGP",
+      "next[- ]hop"
+    ],
+    "confidence": "medium",
+    "note": "scores={'routing': 140, 'acl-qos': 3, 'management': 7, 'platform': 36, 'internals': 138, 'architecture': 5, 'reference': 5}"
+  },
+  {
+    "slug": "ipv6-link-local-enhancements",
+    "title": "IPv6 Link-local enhancements",
+    "path": "doc/ipv6/ipv6_link_local.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:ipv6-ll"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "introduction-5",
+    "title": "Introduction",
+    "path": "doc/kubernetes/Kubernetes-support.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:kubernetes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "why-need-health-check",
+    "title": "Why need health-check",
+    "path": "doc/kubernetes/health-check.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:kubernetes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "l3-scaling-and-performance-enhancements",
+    "title": "L3 Scaling and Performance Enhancements",
+    "path": "doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "orchagent",
+      "syncd",
+      "APP_DB",
+      "ASIC_DB",
+      "redis",
+      "sairedis"
+    ],
+    "confidence": "high",
+    "note": "scores={'routing': 16, 'switching': 12, 'management': 3, 'platform': 6, 'internals': 80, 'architecture': 7}"
+  },
+  {
+    "slug": "meeting-recordings",
+    "title": "Meeting Recordings",
+    "path": "doc/layer1/l1-meetings.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:layer1"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "layer-2-forwarding-enhancements",
+    "title": "Layer 2 Forwarding Enhancements",
+    "path": "doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md",
+    "old_area": "unknown",
+    "new_area": "switching",
+    "matched_terms": [
+      "strong-path:l2-fwd"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "link-event-damping-hld",
+    "title": "Link Event Damping HLD",
+    "path": "doc/link_event_damping/Link-event-damping-HLD.md",
+    "old_area": "unknown",
+    "new_area": "switching",
+    "matched_terms": [
+      "strong-path:link-damping"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "media-based-port-settings-in-sonic",
+    "title": "Media based port settings in SONIC",
+    "path": "doc/media-settings/Media-based-Port-settings.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "port-access-control-in-sonic",
+    "title": "Port Access Control in SONiC",
+    "path": "doc/pac/Port Access Control.md",
+    "old_area": "unknown",
+    "new_area": "acl-qos",
+    "matched_terms": [
+      "strong-path:port-access-control"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "reset-local-users-passwords-during-init-hld",
+    "title": "Reset local users passwords during init - HLD",
+    "path": "doc/password-reset/SONiC_local_users_password_reset_hld.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:user-password"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "path-tracing-midpoint",
+    "title": "Path Tracing Midpoint",
+    "path": "doc/path_tracing/path_tracing_midpoint.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:path-tracing"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "packetio",
+    "title": "**PacketIO**",
+    "path": "doc/pins/Packet_io.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "pins-supplementary-hld",
+    "title": "PINS Supplementary HLD",
+    "path": "doc/pins/in_progress.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "p4rt-application-hld",
+    "title": "P4RT Application HLD",
+    "path": "doc/pins/p4rt_app_hld.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "p4rt-read-cache-hld",
+    "title": "P4RT Read Cache HLD",
+    "path": "doc/pins/p4rt_app_read_cache_hld.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "pins-hld",
+    "title": "PINS HLD",
+    "path": "doc/pins/pins_hld.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "send-to-ingress-hld",
+    "title": "Send to Ingress HLD",
+    "path": "doc/pins/send_to_ingress_hld.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:pins-p4rt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "1-6t-support-in-sonic",
+    "title": "1.6T Support in SONiC",
+    "path": "doc/port-1.6t-support/port-1.6t-support.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "enhancements-to-add-or-del-ports-dynamically",
+    "title": "Enhancements to add or del ports dynamically",
+    "path": "doc/port-add-del-dynamically/dynamic_port_add_del_hld.md",
+    "old_area": "unknown",
+    "new_area": "acl-qos",
+    "matched_terms": [
+      "ACL",
+      "PFC",
+      "buffer",
+      "drop counter",
+      "drop[- ]counter"
+    ],
+    "confidence": "medium",
+    "note": "scores={'switching': 19, 'acl-qos': 75, 'management': 6, 'platform': 46, 'internals': 75, 'architecture': 16, 'reference': 1}"
+  },
+  {
+    "slug": "sonic-port-fec-ber",
+    "title": "Sonic Port FEC BER",
+    "path": "doc/port_fec-ber/port_fec_ber.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "fec-flr-support-in-sonic",
+    "title": "FEC FLR support in SONiC",
+    "path": "doc/port_fec_flr/port_fec_flr.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-boot-chart",
+    "title": "SONiC Boot Chart",
+    "path": "doc/profiling/sonic_bootchart.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "systemd",
+      "boot chart"
+    ],
+    "confidence": "high",
+    "note": "scores={'system': 48, 'management': 17, 'platform': 9, 'architecture': 20}"
+  },
+  {
+    "slug": "introduction-3",
+    "title": "Introduction",
+    "path": "doc/ptp/ptp.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:ptp"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "byte-packet-rates-port-utilization-in-sonic",
+    "title": "Byte, packet rates, port utilization in SONiC",
+    "path": "doc/rates-and-utilization/Rates_and_utilization_HLD.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:rates-counters"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-201904-release-notes",
+    "title": "SONiC 201904 Release Notes",
+    "path": "doc/release-notes/SONiC 201904 Release Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-201911-release-notes",
+    "title": "SONiC 201911 Release Notes",
+    "path": "doc/release-notes/SONiC_201911_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202006-release-notes",
+    "title": "SONiC 202006 Release Notes",
+    "path": "doc/release-notes/SONiC_202006_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202012-release-notes",
+    "title": "SONiC 202012 Release Notes",
+    "path": "doc/release-notes/SONiC_202012_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202106-release-notes",
+    "title": "SONiC 202106 Release Notes",
+    "path": "doc/release-notes/SONiC_202106_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202111-release-notes",
+    "title": "SONiC 202111 Release Notes",
+    "path": "doc/release-notes/SONiC_202111_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202205-release-notes",
+    "title": "SONiC 202205 Release Notes",
+    "path": "doc/release-notes/SONiC_202205_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202211-release-notes",
+    "title": "SONiC 202211 Release Notes",
+    "path": "doc/release-notes/SONiC_202211_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202305-release-notes",
+    "title": "SONiC 202305 Release Notes",
+    "path": "doc/release-notes/SONiC_202305_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202311-release-notes",
+    "title": "SONiC 202311 Release Notes",
+    "path": "doc/release-notes/SONiC_202311_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202405-release-notes",
+    "title": "SONiC 202405 Release Notes",
+    "path": "doc/release-notes/SONiC_202405_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202411-release-notes",
+    "title": "SONiC 202411 Release Notes",
+    "path": "doc/release-notes/SONiC_202411_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-202505-release-notes",
+    "title": "SONiC 202505 Release Notes",
+    "path": "doc/release-notes/SONiC_202505_Release_Notes.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:release-notes"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "s3ip-sysfs-specification",
+    "title": "S3IP sysfs specification",
+    "path": "doc/s3ip_sysfs/s3ip_sysfs_specification.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:hardware"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "hld-secure-boot",
+    "title": "HLD Secure Boot",
+    "path": "doc/secure_boot/hld_secure_boot.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:security"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sflow-test-plan",
+    "title": "SFlow Test Plan",
+    "path": "doc/sflow/Sflow_test_plan.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:test-plan"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "smartswitch-dpu-graceful-shutdown",
+    "title": "SmartSwitch DPU Graceful Shutdown",
+    "path": "doc/smart-switch/graceful-shutdown/graceful-shutdown.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:graceful-shutdown"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "smartswitch-eni-based-forwarding",
+    "title": "SmartSwitch ENI Based Forwarding",
+    "path": "doc/smart-switch/high-availability/eni-based-forwarding.md",
+    "old_area": "unknown",
+    "new_area": "overlay",
+    "matched_terms": [
+      "strong-path:smartswitch"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "smart-switch-ip-address-assignment",
+    "title": "Smart Switch IP address assignment",
+    "path": "doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:ip-assign"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-application-extension-guide",
+    "title": "SONiC Application Extension Guide",
+    "path": "doc/sonic-application-extension/sonic-application-extension-guide.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:cli-mgmt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "build-profiles",
+    "title": "",
+    "path": "doc/sonic-build-system/Build-Profiles.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:build"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-reproduceable-build",
+    "title": "SONiC Reproduceable Build",
+    "path": "doc/sonic-build-system/SONiC-Reproduceable-Build.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:repro-build"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "build-improvements-hld-2",
+    "title": "Build Improvements HLD",
+    "path": "doc/sonic-build-system/build-enhancements.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:build"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "build-system-improvements",
+    "title": "Build system improvements",
+    "path": "doc/sonic-build-system/build_system_improvements.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:build"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "rfs-split-build-improvements-hld",
+    "title": "RFS split build improvements HLD",
+    "path": "doc/sonic-build-system/rfs-split-build-improvement.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "split build"
+    ],
+    "confidence": "high",
+    "note": "scores={'architecture': 6}"
+  },
+  {
+    "slug": "sonic-on-gns3-vm",
+    "title": "SONiC on GNS3 VM",
+    "path": "doc/sonic-gns3/GNS3 VM for SONiC.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:vm-test"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-port-naming-convention-change",
+    "title": "SONiC port naming convention change",
+    "path": "doc/sonic-port-name/sonic-port-name.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "port naming"
+    ],
+    "confidence": "high",
+    "note": "scores={'platform': 15, 'architecture': 1}"
+  },
+  {
+    "slug": "analysis-of-disk-writers-in-sonic-devices",
+    "title": "Analysis of Disk Writers in SONiC Devices",
+    "path": "doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:disk-io"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "static-dns-configuration",
+    "title": "Static DNS configuration",
+    "path": "doc/static-dns/static_dns.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:static-dns"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "1-scope",
+    "title": "1. Scope",
+    "path": "doc/synchronous-mode/synchronous-mode-cfg.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:internals"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "steps-to-bring-up-sonic-vs",
+    "title": "Steps to Bring-Up SONiC-VS",
+    "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:vm-test"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-test-plan-template",
+    "title": "",
+    "path": "doc/test-plans/SONiC Test Plan Template.md",
+    "old_area": "unknown",
+    "new_area": "architecture",
+    "matched_terms": [
+      "strong-path:test-plan"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonictpidsettinghld1",
+    "title": "",
+    "path": "doc/tpid/SonicTPIDSettingHLD1.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:port-naming"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-user-manual",
+    "title": "SONiC USER MANUAL",
+    "path": "doc/user-manual/SONiC-User-Manual.md",
+    "old_area": "unknown",
+    "new_area": "management",
+    "matched_terms": [
+      "strong-path:cli-mgmt"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "reliable-tsa",
+    "title": "Reliable TSA",
+    "path": "doc/voq/Reliable_TSA.md",
+    "old_area": "unknown",
+    "new_area": "routing",
+    "matched_terms": [
+      "strong-path:tsa-routing"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "aggregate-voq-counters-in-sonic",
+    "title": "Aggregate VOQ Counters in SONiC",
+    "path": "doc/voq/aggregate_voq_counters.md",
+    "old_area": "unknown",
+    "new_area": "internals",
+    "matched_terms": [
+      "strong-path:voq-counter"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "fabric-port-support-on-sonic",
+    "title": "Fabric port support on SONiC",
+    "path": "doc/voq/fabric.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:voq"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "voq-sonic",
+    "title": "VOQ SONiC",
+    "path": "doc/voq/voq_hld.md",
+    "old_area": "unknown",
+    "new_area": "platform",
+    "matched_terms": [
+      "strong-path:voq"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "wake-on-lan-in-sonic",
+    "title": "Wake-on-LAN in SONiC",
+    "path": "doc/wol/Wake-on-LAN-HLD.md",
+    "old_area": "unknown",
+    "new_area": "switching",
+    "matched_terms": [
+      "strong-path:wol"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "zero-touch-provisioning-ztp",
+    "title": "Zero Touch Provisioning (ZTP)",
+    "path": "doc/ztp/ztp.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:ztp"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  },
+  {
+    "slug": "sonic-command-line-interface-guide",
+    "title": "SONiC Command Line Interface Guide",
+    "path": "doc/Command-Reference.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "syslog",
+      "SNMP",
+      "NTP",
+      "TACACS",
+      "RADIUS",
+      "AAA"
+    ],
+    "confidence": "high",
+    "note": "scores={'routing': 58, 'switching': 66, 'overlay': 87, 'acl-qos': 95, 'system': 191, 'management': 28, 'platform': 70, 'internals': 3, 'architecture': 39, 'reference': 2}"
+  },
+  {
+    "slug": "useful-sysctl-settings",
+    "title": "Useful Sysctl Settings",
+    "path": "doc/user/Useful_Sysctl_Settings.md",
+    "old_area": "unknown",
+    "new_area": "system",
+    "matched_terms": [
+      "strong-path:sysctl"
+    ],
+    "confidence": "high",
+    "note": "strong-path-override"
+  }
+]

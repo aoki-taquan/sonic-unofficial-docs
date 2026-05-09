@@ -1,0 +1,20 @@
+{
+  "title": "SONiC FIPS Deployment",
+  "slug": "sonic-fips-deployment",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-fips-deployment.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?",
+    "What is described in 'Scopes'?"
+  ],
+  "notes": "size_bytes=6999"
+}

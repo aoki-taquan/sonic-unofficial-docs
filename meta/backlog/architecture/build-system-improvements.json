@@ -1,0 +1,16 @@
+{
+  "title": "Build system improvements",
+  "slug": "build-system-improvements",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/build-system-improvements.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-build-system/build_system_improvements.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=6671"
+}

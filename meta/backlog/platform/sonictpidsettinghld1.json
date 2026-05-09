@@ -1,0 +1,16 @@
+{
+  "title": "SonicTPIDSettingHLD1",
+  "slug": "sonictpidsettinghld1",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/sonictpidsettinghld1.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/tpid/SonicTPIDSettingHLD1.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=17135"
+}

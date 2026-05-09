@@ -4,7 +4,7 @@
     "path": "doc/ARS/Local_ARS_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Local ARS HLD",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 49741
   },
   {
@@ -68,7 +68,7 @@
     "path": "doc/DHCPv4_Gateway/DHCPv4_gateway.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "DHCP Relay (v4) - Specify gaaddr as Primary Interface's Gateway explicitly",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 7647
   },
   {
@@ -84,7 +84,7 @@
     "path": "doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "DHCP Relay for IPv6 HLD",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 5345
   },
   {
@@ -100,7 +100,7 @@
     "path": "doc/Dhcp_Mitigation/DHCP Mitigation.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "DHCP DoS Mitigation in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "acl-qos",
     "size_bytes": 15175
   },
   {
@@ -148,7 +148,7 @@
     "path": "doc/TWAMP/SONiC-TWAMP-Ligth-HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "TWAMP Light HLD",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 40188
   },
   {
@@ -300,7 +300,7 @@
     "path": "doc/arp/Proxy Arp.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Introduction",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 3145
   },
   {
@@ -324,7 +324,7 @@
     "path": "doc/banner/banner_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Banner messages HLD",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 9884
   },
   {
@@ -388,7 +388,7 @@
     "path": "doc/bmc/bmc_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Support BMC flows in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 8489
   },
   {
@@ -396,7 +396,7 @@
     "path": "doc/bmc/leakage_detection_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Liquid Cooling leakage detection in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 6712
   },
   {
@@ -452,7 +452,7 @@
     "path": "doc/bum_storm_control/bum_storm_control_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC BUM Storm Control",
-    "area_hint": "unknown",
+    "area_hint": "switching",
     "size_bytes": 18480
   },
   {
@@ -460,7 +460,7 @@
     "path": "doc/cbf/cbf_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Class Based Forwarding Enhancement",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 15639
   },
   {
@@ -484,7 +484,7 @@
     "path": "doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Enhanced LPO Debug Registers HLD",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 28400
   },
   {
@@ -524,7 +524,7 @@
     "path": "doc/config_reload/config_reload_enhancement.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Config reload Enhancement",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 7512
   },
   {
@@ -540,7 +540,7 @@
     "path": "doc/configuration/SONiC_NOS_Configuration_Methods.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 9091
   },
   {
@@ -636,7 +636,7 @@
     "path": "doc/dash/dash-sonic-hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC-DASH HLD",
-    "area_hint": "unknown",
+    "area_hint": "overlay",
     "size_bytes": 118843
   },
   {
@@ -644,7 +644,7 @@
     "path": "doc/dash/dash-sonic-kvm.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "DASH SONiC KVM",
-    "area_hint": "unknown",
+    "area_hint": "overlay",
     "size_bytes": 8801
   },
   {
@@ -692,7 +692,7 @@
     "path": "doc/dhcp_relay/DHCP-per-interface-counter.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "DHCP Relay Per-Interface Counter",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 24898
   },
   {
@@ -716,7 +716,7 @@
     "path": "doc/drop_counters/drop_counters_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Configurable Drop Counters in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "acl-qos",
     "size_bytes": 28429
   },
   {
@@ -724,7 +724,7 @@
     "path": "doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "ICMP Hardware Offload",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 19624
   },
   {
@@ -732,7 +732,7 @@
     "path": "doc/dualtor/active_active_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Active-Active Dual ToR",
-    "area_hint": "unknown",
+    "area_hint": "overlay",
     "size_bytes": 33254
   },
   {
@@ -740,7 +740,7 @@
     "path": "doc/dualtor/dualtor_active_standby_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Active-Standby Dual ToR",
-    "area_hint": "unknown",
+    "area_hint": "overlay",
     "size_bytes": 42646
   },
   {
@@ -764,7 +764,7 @@
     "path": "doc/dump-utility/Dump-Utility.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Dump Utility for Easy Debugging",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 68448
   },
   {
@@ -852,7 +852,7 @@
     "path": "doc/fast-linkup/fast-link-up-hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Fast Link-Up",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 19081
   },
   {
@@ -868,7 +868,7 @@
     "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC FIPS Deployment",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 6999
   },
   {
@@ -876,7 +876,7 @@
     "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONIC OpenSSL FIPS 140-3 HLD",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 9145
   },
   {
@@ -892,7 +892,7 @@
     "path": "doc/flex_counter/flex_counter_refactor.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC FlexCounter Refactor",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 9325
   },
   {
@@ -900,7 +900,7 @@
     "path": "doc/flex_counter/optimize-counter-initialization.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Counter Initialization Optimization",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 10474
   },
   {
@@ -932,7 +932,7 @@
     "path": "doc/fwutil/fwutil.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC FW utility",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 45477
   },
   {
@@ -980,7 +980,7 @@
     "path": "doc/guidelines/hld_template.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "HLD Name",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 6561
   },
   {
@@ -1020,7 +1020,7 @@
     "path": "doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
-    "area_hint": "unknown",
+    "area_hint": "acl-qos",
     "size_bytes": 26614
   },
   {
@@ -1028,7 +1028,7 @@
     "path": "doc/ip/next_hop_group_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Routing and Next Hop Table Enhancement",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 11983
   },
   {
@@ -1044,7 +1044,7 @@
     "path": "doc/ipv6/ipv6_link_local.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "IPv6 Link-local enhancements",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 23887
   },
   {
@@ -1068,7 +1068,7 @@
     "path": "doc/kubernetes/Kubernetes-support.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Introduction",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 45190
   },
   {
@@ -1076,7 +1076,7 @@
     "path": "doc/kubernetes/health-check.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Why need health-check",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 3408
   },
   {
@@ -1084,7 +1084,7 @@
     "path": "doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "L3 Scaling and Performance Enhancements",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 12417
   },
   {
@@ -1116,7 +1116,7 @@
     "path": "doc/layer1/l1-meetings.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Meeting Recordings",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 5922
   },
   {
@@ -1124,7 +1124,7 @@
     "path": "doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Layer 2 Forwarding Enhancements",
-    "area_hint": "unknown",
+    "area_hint": "switching",
     "size_bytes": 22719
   },
   {
@@ -1132,7 +1132,7 @@
     "path": "doc/link_event_damping/Link-event-damping-HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Link Event Damping HLD",
-    "area_hint": "unknown",
+    "area_hint": "switching",
     "size_bytes": 27824
   },
   {
@@ -1204,7 +1204,7 @@
     "path": "doc/media-settings/Media-based-Port-settings.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Media based port settings in SONIC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 18193
   },
   {
@@ -1452,7 +1452,7 @@
     "path": "doc/pac/Port Access Control.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Port Access Control in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "acl-qos",
     "size_bytes": 44847
   },
   {
@@ -1476,7 +1476,7 @@
     "path": "doc/password-reset/SONiC_local_users_password_reset_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Reset local users passwords during init - HLD",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 11715
   },
   {
@@ -1484,7 +1484,7 @@
     "path": "doc/path_tracing/path_tracing_midpoint.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Path Tracing Midpoint",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 25902
   },
   {
@@ -1548,7 +1548,7 @@
     "path": "doc/pins/Packet_io.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "**PacketIO**",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 9023
   },
   {
@@ -1556,7 +1556,7 @@
     "path": "doc/pins/in_progress.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "PINS Supplementary HLD",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 73
   },
   {
@@ -1572,7 +1572,7 @@
     "path": "doc/pins/p4rt_app_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "P4RT Application HLD",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 11691
   },
   {
@@ -1580,7 +1580,7 @@
     "path": "doc/pins/p4rt_app_read_cache_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "P4RT Read Cache HLD",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 5878
   },
   {
@@ -1588,7 +1588,7 @@
     "path": "doc/pins/pins_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "PINS HLD",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 21395
   },
   {
@@ -1596,7 +1596,7 @@
     "path": "doc/pins/send_to_ingress_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Send to Ingress HLD",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 7404
   },
   {
@@ -1716,7 +1716,7 @@
     "path": "doc/port-1.6t-support/port-1.6t-support.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "1.6T Support in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 6707
   },
   {
@@ -1724,7 +1724,7 @@
     "path": "doc/port-add-del-dynamically/dynamic_port_add_del_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Enhancements to add or del ports dynamically",
-    "area_hint": "unknown",
+    "area_hint": "acl-qos",
     "size_bytes": 15343
   },
   {
@@ -1796,7 +1796,7 @@
     "path": "doc/port_fec-ber/port_fec_ber.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Sonic Port FEC BER",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 9061
   },
   {
@@ -1804,7 +1804,7 @@
     "path": "doc/port_fec_flr/port_fec_flr.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "FEC FLR support in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 15040
   },
   {
@@ -1820,7 +1820,7 @@
     "path": "doc/profiling/sonic_bootchart.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Boot Chart",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 7491
   },
   {
@@ -1836,7 +1836,7 @@
     "path": "doc/ptp/ptp.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Introduction",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 2071
   },
   {
@@ -1916,7 +1916,7 @@
     "path": "doc/rates-and-utilization/Rates_and_utilization_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Byte, packet rates, port utilization in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 8825
   },
   {
@@ -1940,7 +1940,7 @@
     "path": "doc/release-notes/SONiC 201904 Release Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 201904 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 25326
   },
   {
@@ -1948,7 +1948,7 @@
     "path": "doc/release-notes/SONiC_201911_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 201911 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 17922
   },
   {
@@ -1956,7 +1956,7 @@
     "path": "doc/release-notes/SONiC_202006_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202006 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 13226
   },
   {
@@ -1964,7 +1964,7 @@
     "path": "doc/release-notes/SONiC_202012_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202012 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 30612
   },
   {
@@ -1972,7 +1972,7 @@
     "path": "doc/release-notes/SONiC_202106_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202106 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 16773
   },
   {
@@ -1980,7 +1980,7 @@
     "path": "doc/release-notes/SONiC_202111_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202111 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 28580
   },
   {
@@ -1988,7 +1988,7 @@
     "path": "doc/release-notes/SONiC_202205_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202205 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 32953
   },
   {
@@ -1996,7 +1996,7 @@
     "path": "doc/release-notes/SONiC_202211_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202211 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 21653
   },
   {
@@ -2004,7 +2004,7 @@
     "path": "doc/release-notes/SONiC_202305_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202305 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 15169
   },
   {
@@ -2012,7 +2012,7 @@
     "path": "doc/release-notes/SONiC_202311_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202311 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 16221
   },
   {
@@ -2020,7 +2020,7 @@
     "path": "doc/release-notes/SONiC_202405_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202405 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 16222
   },
   {
@@ -2028,7 +2028,7 @@
     "path": "doc/release-notes/SONiC_202411_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202411 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 7338
   },
   {
@@ -2036,7 +2036,7 @@
     "path": "doc/release-notes/SONiC_202505_Release_Notes.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC 202505 Release Notes",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 13805
   },
   {
@@ -2068,7 +2068,7 @@
     "path": "doc/s3ip_sysfs/s3ip_sysfs_specification.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "S3IP sysfs specification",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 15485
   },
   {
@@ -2084,7 +2084,7 @@
     "path": "doc/secure_boot/hld_secure_boot.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "HLD Secure Boot",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 24632
   },
   {
@@ -2100,7 +2100,7 @@
     "path": "doc/sflow/Sflow_test_plan.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SFlow Test Plan",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 8322
   },
   {
@@ -2180,7 +2180,7 @@
     "path": "doc/smart-switch/graceful-shutdown/graceful-shutdown.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SmartSwitch DPU Graceful Shutdown",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 11436
   },
   {
@@ -2188,7 +2188,7 @@
     "path": "doc/smart-switch/high-availability/eni-based-forwarding.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SmartSwitch ENI Based Forwarding",
-    "area_hint": "unknown",
+    "area_hint": "overlay",
     "size_bytes": 10676
   },
   {
@@ -2236,7 +2236,7 @@
     "path": "doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Smart Switch IP address assignment",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 17193
   },
   {
@@ -2316,7 +2316,7 @@
     "path": "doc/sonic-application-extension/sonic-application-extension-guide.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Application Extension Guide",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 19345
   },
   {
@@ -2348,7 +2348,7 @@
     "path": "doc/sonic-build-system/Build-Profiles.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 2885
   },
   {
@@ -2356,7 +2356,7 @@
     "path": "doc/sonic-build-system/SONiC-Reproduceable-Build.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Reproduceable Build",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 25663
   },
   {
@@ -2364,7 +2364,7 @@
     "path": "doc/sonic-build-system/build-enhancements.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Build Improvements HLD",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 27768
   },
   {
@@ -2372,7 +2372,7 @@
     "path": "doc/sonic-build-system/build_system_improvements.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Build system improvements",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 6671
   },
   {
@@ -2388,7 +2388,7 @@
     "path": "doc/sonic-build-system/rfs-split-build-improvement.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "RFS split build improvements HLD",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 3456
   },
   {
@@ -2428,7 +2428,7 @@
     "path": "doc/sonic-gns3/GNS3 VM for SONiC.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC on GNS3 VM",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 5197
   },
   {
@@ -2444,7 +2444,7 @@
     "path": "doc/sonic-port-name/sonic-port-name.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC port naming convention change",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 1696
   },
   {
@@ -2452,7 +2452,7 @@
     "path": "doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Analysis of Disk Writers in SONiC Devices",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 10477
   },
   {
@@ -2524,7 +2524,7 @@
     "path": "doc/static-dns/static_dns.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Static DNS configuration",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 7820
   },
   {
@@ -2580,7 +2580,7 @@
     "path": "doc/synchronous-mode/synchronous-mode-cfg.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "1. Scope",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 4555
   },
   {
@@ -2668,7 +2668,7 @@
     "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Steps to Bring-Up SONiC-VS",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 2401
   },
   {
@@ -2676,7 +2676,7 @@
     "path": "doc/test-plans/SONiC Test Plan Template.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
-    "area_hint": "unknown",
+    "area_hint": "architecture",
     "size_bytes": 3053
   },
   {
@@ -2708,7 +2708,7 @@
     "path": "doc/tpid/SonicTPIDSettingHLD1.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 17135
   },
   {
@@ -2724,7 +2724,7 @@
     "path": "doc/user-manual/SONiC-User-Manual.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC USER MANUAL",
-    "area_hint": "unknown",
+    "area_hint": "management",
     "size_bytes": 41315
   },
   {
@@ -2740,7 +2740,7 @@
     "path": "doc/voq/Reliable_TSA.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Reliable TSA",
-    "area_hint": "unknown",
+    "area_hint": "routing",
     "size_bytes": 5966
   },
   {
@@ -2748,7 +2748,7 @@
     "path": "doc/voq/aggregate_voq_counters.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Aggregate VOQ Counters in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "internals",
     "size_bytes": 8749
   },
   {
@@ -2780,7 +2780,7 @@
     "path": "doc/voq/fabric.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Fabric port support on SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 27037
   },
   {
@@ -2804,7 +2804,7 @@
     "path": "doc/voq/voq_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "VOQ SONiC",
-    "area_hint": "unknown",
+    "area_hint": "platform",
     "size_bytes": 47227
   },
   {
@@ -2972,7 +2972,7 @@
     "path": "doc/wol/Wake-on-LAN-HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Wake-on-LAN in SONiC",
-    "area_hint": "unknown",
+    "area_hint": "switching",
     "size_bytes": 8584
   },
   {
@@ -3020,7 +3020,7 @@
     "path": "doc/ztp/ztp.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Zero Touch Provisioning (ZTP)",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 118947
   },
   {
@@ -3028,7 +3028,7 @@
     "path": "doc/Command-Reference.md",
     "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9",
     "title": "SONiC Command Line Interface Guide",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 607576
   },
   {
@@ -3084,7 +3084,7 @@
     "path": "doc/user/Useful_Sysctl_Settings.md",
     "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
     "title": "Useful Sysctl Settings",
-    "area_hint": "unknown",
+    "area_hint": "system",
     "size_bytes": 1910
   }
 ]

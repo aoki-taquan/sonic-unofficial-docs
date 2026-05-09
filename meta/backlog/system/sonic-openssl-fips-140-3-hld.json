@@ -1,0 +1,20 @@
+{
+  "title": "SONIC OpenSSL FIPS 140-3 HLD",
+  "slug": "sonic-openssl-fips-140-3-hld",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-openssl-fips-140-3-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/fips/SONiC-OpenSSL-FIPS-140-3.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirement'?",
+    "What is described in 'Scopes:'?",
+    "What is described in 'OpenSSL configuration for SymCrypt Engine'?"
+  ],
+  "notes": "size_bytes=9145"
+}

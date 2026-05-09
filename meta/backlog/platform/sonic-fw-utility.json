@@ -1,0 +1,20 @@
+{
+  "title": "SONiC FW utility",
+  "slug": "sonic-fw-utility",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/sonic-fw-utility.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/fwutil/fwutil.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'High Level Design document'?",
+    "What is described in '1.1 Feature overview'?",
+    "What is described in '1.2 Requirements'?"
+  ],
+  "notes": "size_bytes=45477"
+}

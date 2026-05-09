@@ -1,0 +1,19 @@
+{
+  "title": "SONiC 202205 Release Notes",
+  "slug": "sonic-202205-release-notes",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/sonic-202205-release-notes.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/release-notes/SONiC_202205_Release_Notes.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'hostcfgd Redesign | split hostcfgd into multiple services'?",
+    "What is described in 'Queue statistics based on queue configurations and not max'?"
+  ],
+  "notes": "size_bytes=32953"
+}

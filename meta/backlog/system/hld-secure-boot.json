@@ -1,0 +1,20 @@
+{
+  "title": "HLD Secure Boot",
+  "slug": "hld-secure-boot",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/hld-secure-boot.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/secure_boot/hld_secure_boot.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.2. <a name='Scope'></a>Scope'?",
+    "What is described in '1.4. <a name='Overview'></a>Overview'?",
+    "What is described in '1.5. <a name='Requirements'></a>Requirements'?"
+  ],
+  "notes": "size_bytes=24632"
+}

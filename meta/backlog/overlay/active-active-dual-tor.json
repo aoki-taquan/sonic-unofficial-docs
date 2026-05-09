@@ -1,0 +1,20 @@
+{
+  "title": "Active-Active Dual ToR",
+  "slug": "active-active-dual-tor",
+  "area": "overlay",
+  "type": "hld-port",
+  "target_path": "docs/overlay/active-active-dual-tor.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dualtor/active_active_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in '2 Requrement Overview'?",
+    "What is described in '2.1 Server Requirements'?"
+  ],
+  "notes": "size_bytes=33254"
+}
