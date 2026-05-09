@@ -1,13 +1,14 @@
 {
   "page": "docs/platform/sonic-port-naming-convention-change.md",
   "issue": 119,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "本提案 (et[sX]pY[abcd]) のうちどの Stage まで master に取り込まれたか",
-    "port_config.ini alias 列の運用ガイドライン現況",
-    "chassis での ets<X>p<Y> 命名事例",
-    "PortChannel 命名の最終決定",
-    "breakout 表記 (a/b/c/d) と CONFIG_DB.PORT キーの整合"
+    "HLD 提案 (et[sX]pY[abcd]) は master に未採用。device/*/port_config.ini は依然として EthernetN + alias 列の形式",
+    "chassis での ets<X>p<Y> 命名事例も device ツリー内に出現せず",
+    "本ページは採用されなかったプロポーザルの参考資料として残置（実装乖離注記済み）"
+  ],
+  "verified_concerns": [
+    "verifier-batch-18: sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini ほかで EthernetN 命名を確認、etsXpY 命名は未使用"
   ],
   "priority": "low"
 }

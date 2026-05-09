@@ -35,38 +35,31 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/architecture/alpine-high-level-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "alpinevs platform の sonic-buildimage 取り込み確認",
-        "libsai-grpc / UPM の syncd 連携の現行実装確認",
-        "Lucius (lemming) との互換 commit pin の確認",
-        "KNE alpine node type 取り込みの upstream openconfig/kne 状況確認",
-        "v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/architecture/debug-framework-in-sonic.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "libswsscommon に Debugframework クラス / linkWithFramework が現行で存在するか確認",
-        "DebugDumpOrch / addDbgCompMap の orchagent 取り込み確認",
-        "APPL_DB Dump table / Dump done table の sonic-yang-models 反映確認",
-        "show debug / show interfaces pktdrop CLI の sonic-utilities 取り込み確認",
-        "2019-07 v0.3 HLD で 6 年以上経過、現行実装との乖離可能性 高"
+        "HLD v0.3 (2019-07) は master 未取り込み。Debugframework クラス / linkWithFramework / SWSS_DEBUG_PRINT は sonic-swss-common に存在せず",
+        "natorch.cpp の gDebugDumpOrch / addDbgCompMap は #ifdef DEBUG_FRAMEWORK 内の dead code（マクロ未定義）",
+        "show debug / show interfaces pktdrop CLI は sonic-utilities/show/ に未実装",
+        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
+      ],
+      "verified_concerns": [
+        "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認"
       ],
       "priority": "high"
     },
     {
       "page": "docs/architecture/error-handling-framework-in-sonic.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE が現行 swss-common で定義されているか確認",
-        "SWSS_RC_* error code 体系の libswsscommon 取り込み確認",
-        "ErrorListener / Error Reporter クラスの sonic-swss 取り込み確認",
-        "show error-database / sonic-clear error-database CLI の sonic-utilities 取り込み確認",
-        "2019-05 v0.1 Initial で 6 年以上経過、master への取り込み・採否未確認"
+        "HLD v0.1 (2019-05) Initial Proposal の大部分は master 未取り込み",
+        "ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は sonic-swss-common にも sonic-swss にも未登録",
+        "ErrorListener / ErrorReporter クラスは sonic-swss / sonic-swss-common に未定義",
+        "show error-database / sonic-clear error-database CLI は sonic-utilities に未実装",
+        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
+      ],
+      "verified_concerns": [
+        "verifier-batch-18: SWSS_RC_* enum のみ sonic-swss-common/common/status_code_util.h で実装確認、その他は未取り込み"
       ],
       "priority": "high"
     },
@@ -772,19 +765,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/architecture/dhcpv6-relay-agent.md",
-      "verification": "hld-only",
-      "concerns": [
-        "dhcp6relay バイナリの sonic-dhcpv6relay リポジトリでの実装存在確認",
-        "DHCP|<intf-i> の dhcpv6_servers / rfc6939_support フィールドの sonic-yang-models 反映確認",
-        "show dhcp6relay_counters / config dhcp6relay の sonic-utilities 取り込み確認",
-        "dual ToR loopback source IP モードの linkmgrd 連動の確認",
-        "CoPP manager の DHCPv6 trap 動的切替の実装確認",
-        "RFC 6939 Option 79 の server 互換性および default on 妥当性"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/architecture/json-change-application.md",
@@ -2019,21 +1999,6 @@
       "priority": "low"
     },
     {
-      "page": "docs/architecture/sflow-test-plan.md",
-      "verification": "hld-only",
-      "concerns": [
-        "hsflowd の SFLOW / SFLOW_COLLECTOR / SFLOW_SESSION テーブル subscribe 実装の現行 master 確認",
-        "config sflow * CLI 群の sonic-utilities 取り込み確認",
-        "collector 最大 2 個の上限が現行 hsflowd / CLI に強制されているか確認",
-        "agent-id del 時の挙動 (前値継続 vs 完全削除) の現行実装確認",
-        "config save → reboot / fast-reboot 横断での sflow 設定永続化確認",
-        "sonic-mgmt 配下 sflow テストの実装存在確認"
-      ],
-      "priority": "low",
-      "issue": 534,
-      "pr": 535
-    },
-    {
       "page": "docs/architecture/sonic-on-gns3-vm.md",
       "issue": 268,
       "verification": "hld-only",
@@ -2089,18 +2054,6 @@
         "sonicv2connector / sonic-py-swsssdk の host IP 引数受付 API の現状確認",
         "show queue counters --voq の supervisor aggregate モード実装の存在確認",
         "single ASIC linecard 例外と clear 未対応が現行コードどおりか確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/internals/sonic-flexcounter-refactor.md",
-      "issue": 57,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-sairedis の syncd/FlexCounter.{h,cpp} に CounterContext / AttrContext テンプレートが導入されているか確認",
-        "if constexpr による per-instance stats_mode の分岐実装の有無確認",
-        "BaseCounterContext の flag 設計（capability query 有無, getStats vs getStatsExt）が現行コードに存在するか確認",
-        "POC からの最終実装の差分（HLD 上「demonstration only」と明記）"
       ],
       "priority": "low"
     },
@@ -2194,17 +2147,6 @@
       "priority": "low",
       "issue": 479,
       "pr": 480
-    },
-    {
-      "page": "docs/overlay/nvgre-tunnel-in-sonic.md",
-      "issue": 21,
-      "verification": "hld-only",
-      "concerns": [
-        "nvgreorch の存在と実装状況 (orchdaemon 登録) が未確認",
-        "NVGRE_TUNNEL / NVGRE_TUNNEL_MAP スキーマ追加が sonic-swss-common にあるか未確認",
-        "config nvgre-tunnel CLI が sonic-utilities に追加済みか未確認"
-      ],
-      "priority": "low"
     },
     {
       "page": "docs/platform/automatic-module-provisioning-for-chassis.md",
@@ -2325,26 +2267,14 @@
     {
       "page": "docs/platform/sonic-port-naming-convention-change.md",
       "issue": 119,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "本提案 (et[sX]pY[abcd]) のうちどの Stage まで master に取り込まれたか",
-        "port_config.ini alias 列の運用ガイドライン現況",
-        "chassis での ets<X>p<Y> 命名事例",
-        "PortChannel 命名の最終決定",
-        "breakout 表記 (a/b/c/d) と CONFIG_DB.PORT キーの整合"
+        "HLD 提案 (et[sX]pY[abcd]) は master に未採用。device/*/port_config.ini は依然として EthernetN + alias 列の形式",
+        "chassis での ets<X>p<Y> 命名事例も device ツリー内に出現せず",
+        "本ページは採用されなかったプロポーザルの参考資料として残置（実装乖離注記済み）"
       ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/routing/mpls-tc-to-tc-map.md",
-      "issue": 73,
-      "verification": "hld-only",
-      "concerns": [
-        "MPLS_TC_TO_TC_MAP テーブル名が sonic-swss-common の CFG_*_TABLE_NAME に追加済みか確認",
-        "QoS orch の MPLS_EXP_TO_TC ハンドラ実装の存在確認",
-        "PORT_QOS_MAP.mpls_tc_to_tc_map フィールドの認識ロジック確認",
-        "config reload / config clear が新マップを扱うか確認",
-        "YANG モデル (sonic-port-qos-map?) への追加状況"
+      "verified_concerns": [
+        "verifier-batch-18: sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini ほかで EthernetN 命名を確認、etsXpY 命名は未使用"
       ],
       "priority": "low"
     },
@@ -2368,17 +2298,6 @@
         "WolRequest proto に -u / -a / -t に相当するフィールドが追加済みか未確認",
         "sonic-host-service 側 D-Bus ハンドラの実装存在確認",
         "wol CLI スクリプトが UDP モードで実装されているか未確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/system/banner-messages-hld.md",
-      "issue": 29,
-      "verification": "hld-only",
-      "concerns": [
-        "hostcfgd の BANNER_MESSAGE ハンドラ実装の存在確認",
-        "banner-config systemd unit の配置と起動順序 (sshd 前) の実装確認",
-        "config banner CLI の sonic-utilities への追加確認"
       ],
       "priority": "low"
     },
@@ -2417,20 +2336,6 @@
         "Future 要件 (LED 統一 / sensors 移行 / Generic console) の進捗追跡"
       ],
       "priority": "low"
-    },
-    {
-      "page": "docs/system/sonic-boot-chart.md",
-      "verification": "hld-only",
-      "concerns": [
-        "INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage 取り込み確認",
-        "sonic-bootchart CLI の sonic-utilities scripts/ 配下への取り込み確認",
-        "/etc/systemd/bootchart.conf の SONiC default 値（Samples=4500, Frequency=25）が現行 image に反映されているか未確認",
-        "/run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認",
-        "sonic-installer の bootchart 設定 migration（HLD Open Item）が解消されているか未確認"
-      ],
-      "priority": "low",
-      "issue": 159,
-      "pr": 160
     },
     {
       "page": "docs/system/sonic-feature-quality-definition.md",
@@ -2486,17 +2391,6 @@
         "RedisClient の hmset / hgetallordered が現行 sonic-swss-common にあるか未確認",
         "libsairedis の Redis API 冪等性パッチが現行 master に取り込まれているか未確認",
         "swss-flushdb スクリプトの sonic-utilities 取り込み確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/system/useful-sysctl-settings.md",
-      "issue": 85,
-      "verification": "hld-only",
-      "concerns": [
-        "SONiC ビルド時に sonic-buildimage 内 /etc/sysctl.d/ もしくは起動スクリプトで設定される実 sysctl 値の確認",
-        "FRR 上流推奨と SONiC 採用値の差分整理",
-        "rp_filter / keep_addr_on_down / tcp_l3mdev_accept の SONiC イメージでの実値"
       ],
       "priority": "low"
     }

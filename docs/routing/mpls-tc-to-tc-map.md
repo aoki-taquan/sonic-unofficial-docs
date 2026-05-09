@@ -1,7 +1,7 @@
 ---
 title: MPLS TC → TC map（MPLS パケットの QoS classification）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,12 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`MPLS_TC_TO_TC_MAP` の sonic-swss-common スキーマ追加、QoS orch のハンドラ拡張、`PORT_QOS_MAP.mpls_tc_to_tc_map` フィールドの実装、SAI 経由の `SAI_QOS_MAP_MPLS_EXP_TO_TC` 設定は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-swss/orchagent/qosorch.cpp:82, 101, 1330` で `CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME` を `m_qos_handler_map` に登録し、`mpls_tc_to_tc_field_name` を PORT_QOS_MAP のフィールド名として参照、`QosOrch::handleMplsTcToTcTable` をハンドラとして紐付け
+    - テストは `sonic-swss/tests/test_qos_map.py:45,483` および `tests/mock_tests/qosorch_ut.cpp:439` で `MPLS_TC_TO_TC_MAP` table を直接操作
+    - YANG モデル（sonic-port-qos-map）追加状況は sonic-yang-models 側で別途確認のこと
 
 # MPLS TC → TC map（MPLS パケットの QoS classification）
 

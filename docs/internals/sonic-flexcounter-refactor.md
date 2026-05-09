@@ -1,7 +1,7 @@
 ---
 title: FlexCounter リファクタ（CounterContext テンプレート化）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,12 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-sairedis` 内 `syncd/FlexCounter.{h,cpp}` の現行コード構造（CounterContext / AttrContext テンプレートの導入状況、`if constexpr` の使用、`m_counterContext` マップの存在）は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-sairedis/syncd/FlexCounter.h:43-` に `class BaseCounterContext` を定義、`std::map<std::string, std::shared_ptr<BaseCounterContext>> m_counterContext;`（223 行目）も実装済
+    - `sonic-sairedis/syncd/FlexCounter.cpp:1664-` に `template ... class AttrContext : public CounterContext<AttrType>` を定義、派生として `PortPhyAttrContext`（1769）・`PortPhySerdesAttrContext`（2204）等を実装
+    - `getCounterContext` / `createCounterContext` / `removeCounterContext` / `hasCounterContext` の API も `FlexCounter.h:162-172` に存在し、HLD POC が master に取り込まれていることを確認
 
 # FlexCounter リファクタ（CounterContext テンプレート化）
 

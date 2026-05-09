@@ -1,7 +1,7 @@
 ---
 title: バナーメッセージ（login / motd / logout）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,12 @@ related:
     - sonic-banner
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`hostcfgd` の BANNER_MESSAGE ハンドラ、`banner-config` systemd サービスの実装、CLI 実装、YANG レビジョンは未裏取り。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-host-services/scripts/hostcfgd` に `BANNER_MESSAGE` テーブル変更ハンドラがあり、変更時に `systemctl restart banner-config` を実行
+    - `sonic-utilities/config/main.py:10004-` に `config banner` group と `state` / `login` / `motd` / `logout` サブコマンド定義
+    - 起動順序 / sshd before constraint の systemd unit 配置詳細は sonic-buildimage build_templates 側で個別確認のこと
 
 # バナーメッセージ（login / motd / logout）
 

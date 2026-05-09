@@ -1,7 +1,7 @@
 ---
 title: NVGRE トンネル（nvgreorch / decap mapper）
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,12 @@ related:
     - sonic-nvgre-tunnel
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-swss` の `nvgreorch` 実装、`sonic-swss-common` のスキーマ追加、`sonic-utilities` の CLI 追加は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-swss/orchagent/orchdaemon.cpp:361-` で `NvgreTunnelOrch(m_configDb, CFG_NVGRE_TUNNEL_TABLE_NAME)` および `NvgreTunnelMapOrch(m_configDb, CFG_NVGRE_TUNNEL_MAP_TABLE_NAME)` を生成
+    - `sonic-swss/orchagent/nvgreorch.{cpp,h}` 実体が存在
+    - `sonic-utilities/config/plugins/nvgre_tunnel.py` に `config nvgre-tunnel add/del` 等の自動生成 CLI
 
 # NVGRE トンネル（nvgreorch / decap mapper）
 

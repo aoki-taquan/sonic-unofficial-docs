@@ -1,7 +1,7 @@
 ---
 title: Alpine 仮想 SONiC（ALViS / KNE デプロイ）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    ALPINE は v0.1（2025-05、Google 提案）の比較的新しい設計。`PLATFORM=alpinevs` ターゲット、`alpinevs-init` サービス、Lucius dataplane の `libsai-grpc` 連携が現行 master に取り込まれているかは未裏取り。
+!!! note "裏取りステータス: code-verified（部分）"
+    `sonic-buildimage` master に `platform/alpinevs` サブモジュール（`url=https://github.com/sonic-net/sonic-alpine/`、`.gitmodules`）と `.azure-pipelines/azure-pipelines-build-alpinevs.yml` が登録され、`build_image.sh` で `TARGET_MACHINE=alpinevs` が分岐される。一方、`libsai-grpc` 等の syncd 連携実体は `sonic-alpine` 配下に集約されており本リポジトリ単体では追跡できない（submodule のため）。`alpinevs-init` サービスや `hwsku=alpine_vs` の記述は HLD 由来であり、buildimage 単体では確認できない。
 
 # Alpine 仮想 SONiC（ALViS / KNE デプロイ）
 
@@ -133,10 +133,17 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 
 [^1]: `sonic-net/SONiC` `doc/alpine/alpine_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-18):
+- sonic-buildimage `.gitmodules` に `[submodule "platform/alpinevs"] url = https://github.com/sonic-net/sonic-alpine/` が登録済（HEAD 確認）
+- `sonic-buildimage/.azure-pipelines/azure-pipelines-build-alpinevs.yml` 存在
+- `sonic-buildimage/build_image.sh` に `if [ "$TARGET_MACHINE" = "alpinevs" ]` 分岐あり
+- libsai-grpc / Lucius / alpinevs-init の実体は `sonic-alpine` サブモジュール（本リポでは展開していない）
+-->
+
 <!-- concerns hint:
-- alpinevs platform の sonic-buildimage 取り込み確認
-- libsai-grpc / UPM の syncd 連携の現行実装確認
-- Lucius (lemming) との互換 commit pin の確認
-- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認
-- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認
+- alpinevs platform の sonic-buildimage 取り込み確認 → 取り込み済（submodule + pipeline + build_image.sh 分岐）
+- libsai-grpc / UPM の syncd 連携の現行実装確認 → sonic-alpine submodule に集約、本リポでは確認不能
+- Lucius (lemming) との互換 commit pin の確認 → submodule 側で確認のこと
+- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認 → 別 repo
+- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認 → buildimage 側は採用済
 -->

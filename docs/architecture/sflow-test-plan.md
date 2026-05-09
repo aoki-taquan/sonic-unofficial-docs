@@ -1,7 +1,7 @@
 ---
 title: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,12 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本テストプランは sonic-mgmt 上の sFlow テスト設計記述。`hsflowd` の `SFLOW_*` テーブル subscribe、`config sflow` CLI、collector 上限 2、polling/sampling rate の動的変更、warm/fast-reboot 跨ぎでの永続化は未裏取り。
+!!! note "裏取りステータス: code-verified（CLI / docker layout）"
+    verifier-batch-18 で確認:
+
+    - `sonic-utilities/config/main.py:9040-9070` 付近に `config sflow` group / `enable` / `disable` 等のコマンド定義（`SFLOW` table の `global` エントリを `admin_state` で更新）
+    - `sonic-buildimage/dockers/docker-sflow/` に Dockerfile.j2、`port_index_mapper.py`、`supervisord.conf` を確認
+    - collector 数上限 2 の強制ロジック / agent-id del 挙動 / config save→reboot 永続化 / sonic-mgmt 配下の test ケース実体については本リポでは追跡していない（必要なら sonic-mgmt 側で別途裏取り）
 
 # sFlow テストプラン（`hsflowd` + 2 collector / sampling rate / agent-id / counter polling）
 

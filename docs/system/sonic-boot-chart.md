@@ -1,7 +1,7 @@
 ---
 title: SONiC Boot Chart（systemd-bootchart 統合）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,12 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `INCLUDE_BOOTCHART` ビルドフラグの sonic-buildimage への取り込み、`sonic-bootchart` CLI utility の sonic-utilities への取り込み、`/etc/systemd/bootchart.conf` の生成 / 更新パスは実コードでの裏取り未済。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-buildimage/rules/config` に `INCLUDE_BOOTCHART = y`（systemd-bootchart のインストール有効）と `ENABLE_BOOTCHART = n`（boot 時自動起動は default off）を確認
+    - `sonic-utilities/scripts/sonic-bootchart` に CLI 実装、`tests/sonic_bootchart_test.py` に単体テストを確認
+    - `/etc/systemd/bootchart.conf` の Samples=4500 / Frequency=25 のデフォルト値、`/run/log` への SVG 出力パス、sonic-installer の migration 詳細は本リポでは追跡していない（HLD 記述準拠）
 
 # SONiC Boot Chart（`systemd-bootchart` 統合）
 

@@ -1,7 +1,7 @@
 ---
 title: DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,13 @@ related:
     - sonic-dhcpv6-relay
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    SONiC 独自の DHCPv6 relay agent (ISC dhcrelay 置換) について、Option 79 / dual ToR loopback / RADV M/O bit 連携の現行実装と CONFIG_DB 名 (`DHCP|<intf>` / `dhcpv6_servers` / `rfc6939_support`) は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    verifier-batch-18 で確認:
+
+    - `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` で `DHCP_RELAY|<intf>` の `dhcpv6_servers`、`dhcpv6_option|rfc6939_support` フィールドを解釈
+    - `sonic-buildimage/dockers/docker-dhcp-relay/cli/clear/plugins/clear_dhcp_relay.py` に `DHCPV6_COUNTER_TABLE_PREFIX = "DHCPV6_COUNTER_TABLE"` と `sonic-clear dhcp6relay_counters` サブコマンドを実装
+    - `sonic-dhcp-relay` リポジトリに `dhcp6relay/src/{main.cpp, config_interface.cpp, sender.h}` 等が存在
+    - dual ToR loopback / linkmgrd 連動 / CoPP 動的切替の細部は本リポでは追跡できず、HLD 記述に依存（要 follow-up）
 
 # DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
 
@@ -129,6 +134,12 @@ DHCP packet の到着頻度は低く、CPU 経由処理でも転送パフォー�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-18):
+- sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp: `dhcpv6_servers` / `dhcpv6_option|rfc6939_support` のキー解釈
+- sonic-buildimage/dockers/docker-dhcp-relay/cli/clear/plugins/clear_dhcp_relay.py: `DHCPV6_COUNTER_TABLE_PREFIX="DHCPV6_COUNTER_TABLE"`, `sonic-clear dhcp6relay_counters` 定義
+- dual ToR loopback / linkmgrd 連動 / CoPP は別 repo（sonic-linkmgrd, sonic-host-services）で別途裏取り要
+-->
 
 <!-- concerns hint:
 - dhcp6relay バイナリの sonic-dhcpv6relay リポジトリでの実装存在確認

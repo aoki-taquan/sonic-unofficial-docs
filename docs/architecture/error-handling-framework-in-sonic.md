@@ -1,7 +1,7 @@
 ---
 title: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,15 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は v0.1 (2019-05) で 6 年以上前。**Initial Proposal のまま**で現行 master に取り込まれているか不確か。priority=high で queue 登録。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD v0.1 (2019-05) **Initial Proposal の大部分は master に取り込まれていない**。verifier-batch-18 で確認:
+
+    - `SWSS_RC_*` enum は `sonic-swss-common/common/status_code_util.h` に存在（`SWSS_RC_SUCCESS`, `SWSS_RC_INVALID_PARAM`, `SWSS_RC_DEADLINE_EXCEEDED`, `SWSS_RC_UNAVAIL`, `SWSS_RC_NOT_FOUND`, `SWSS_RC_NO_MEMORY`, `SWSS_RC_EXISTS`, `SWSS_RC_PERMISSION_DENIED` 他）→ **error code 体系のみ採用済**
+    - `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は swss-common にも sonic-swss にも存在しない（`LAG_ID_ALLOCATOR_ERROR_DB_ERROR` 等の無関係 token のみ）
+    - `ErrorListener` / `ErrorReporter` クラスは sonic-swss / sonic-swss-common にいずれも未定義
+    - `show error-database` / `sonic-clear error-database` CLI も sonic-utilities に存在しない
+
+    本ページは HLD 仕様の参考資料として残すが、現行 master では SAI 失敗の app 通知は実装されていない（依然として fail-fast / orchagent crash 系）。
 
 # Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
 
@@ -146,6 +153,13 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/error-handling/error_handling_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-18, discrepancy):
+- sonic-swss-common/common/status_code_util.h: `SWSS_RC_SUCCESS|INVALID_PARAM|DEADLINE_EXCEEDED|UNAVAIL|NOT_FOUND|NO_MEMORY|EXISTS|PERMISSION_DENIED` 等の enum 確認済
+- sonic-swss-common, sonic-swss: `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は未登録
+- sonic-swss: `ErrorListener` / `ErrorReporter` クラス未定義
+- sonic-utilities: `show error-database` / `sonic-clear error-database` CLI 未実装
+-->
 
 <!-- concerns hint:
 - ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE が現行 swss-common で定義されているか確認",
