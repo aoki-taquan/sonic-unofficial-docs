@@ -1135,6 +1135,19 @@
       "priority": "medium",
       "issue": 183,
       "pr": 184
+    },
+    {
+      "page": "docs/management/sonic-nos-configuration-methods.md",
+      "verification": "hld-only",
+      "concerns": [
+        "config apply-patch の --dry-run / checkpoint / rollback フラグの sonic-utilities 取り込み確認",
+        "ZTP の DHCP option 67 / USB 起動経路の現行実装確認",
+        "RESTCONF / gNMI server 有効化手順 (sonic-mgmt-common / gnmi container) の現行確認",
+        "sonic-cfggen が許容する schema の現行整合確認",
+        "vtysh ↔ frr.conf テンプレート ↔ CONFIG_DB の整合経路（bgpcfgd 等）の現行確認"
+      ],
+      "priority": "low",
+      "issue": 185
     }
   ]
 }
