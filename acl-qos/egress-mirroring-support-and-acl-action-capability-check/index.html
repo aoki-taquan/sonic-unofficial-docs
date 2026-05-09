@@ -3577,6 +3577,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -9799,6 +9810,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -9831,9 +9853,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本ページは 2019-05 改訂の古い HLD を根拠に書かれている。実装は HLD 提案の上に <strong><code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> キー</strong> や <strong><code>SWITCH_CAPABILITY</code> テーブル</strong> として現行 master に取り込まれているが、<code>acl-loader --mirror_stage</code> オプションや <code>SWITCH_CAPABILITY</code> のキー命名（<code>ACL_ACTIONS|INGRESS</code> 等）が現行版どおりかは未確認。HLD 末尾の TODO（<code>sai_query_attribute_enum_values_capability</code> の libsairedis 対応）が解消されているかも未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>HLD で提案された主要要素は現行 master に取り込まれている: <code>ACTION_MIRROR_INGRESS_ACTION</code> / <code>ACTION_MIRROR_EGRESS_ACTION</code> 定数（<code>aclorch.h:70-71</code>）、<code>AclOrch::queryAclActionCapability()</code> と <code>putAclActionCapabilityInDB()</code>（<code>aclorch.cpp:3975</code>, <code>4056</code>）、<code>SWITCH_CAPABILITY</code> テーブルへの <code>ACL_ACTIONS|&lt;stage&gt;</code> フィールド書き込み（<code>aclorch.cpp:4061</code>）、<code>acl-loader full --mirror_stage {ingress,egress}</code> オプション（<code>acl_loader/main.py:1209,1238</code>）、libsairedis の <code>queryAttributeEnumValuesCapability</code>（<code>RedisRemoteSaiInterface.cpp:1245</code>、各 SAI 層に実装あり）。詳細は後段「実装との乖離 / 補足」。</p>
 </div>
 <h1 id="acl-egress-mirror-sai-action-capability">ACL の egress mirror 対応と SAI ベース action capability 問い合わせ<a class="headerlink" href="#acl-egress-mirror-sai-action-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -10088,7 +10110,15 @@ reasoning: HLD は SAI API の制約と未実装事項を明記している。�
 <li><code>MIRROR_EGRESS_ACTION</code> を入れても効かない → vslib / ベンダ SAI 側で <code>SAI_SWITCH_ATTR_ACL_STAGE_EGRESS</code> の戻り値に <code>MIRROR_EGRESS</code> が含まれているかを確認</li>
 <li>旧 <code>PACKET_ACTION: redirect:&lt;port&gt;</code> を使いつつ新 <code>REDIRECT_ACTION</code> も書く → 両者の扱いは互換ルートが優先されるため、片方に統一する</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>現行 master（2026-05 時点）の実コード裏取り結果:</p>
+<ul>
+<li><strong><code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> キー</strong>: <code>sonic-swss/orchagent/aclorch.h:70-71</code> にマクロ定義、<code>aclorch.cpp:124-125</code> で SAI ACL_ENTRY ATTR にマッピング済み。</li>
+<li><strong>AclOrch capability 問い合わせ</strong>: 関数名は HLD の <code>queryAclCapabilities</code> ではなく <code>AclOrch::queryAclActionCapability()</code>（<code>aclorch.cpp:3975</code>）。<code>putAclActionCapabilityInDB()</code>（<code>aclorch.cpp:4056</code>）が <code>SWITCH_CAPABILITY|switch</code> HSET に <code>ACL_ACTIONS|INGRESS</code> / <code>ACL_ACTIONS|EGRESS</code> フィールドを書き込む（<code>aclorch.cpp:4061</code>）。HLD 想定どおりの key 命名。</li>
+<li><strong><code>sai_query_attribute_enum_values_capability</code> の libsairedis 対応</strong>: HLD 末尾の TODO は解消済み。<code>sonic-sairedis/lib/{ClientSai,ServerSai,ClientServerSai,RedisRemoteSaiInterface}</code> に <code>queryAttributeEnumValuesCapability</code> メソッドが実装されている。<code>aclorch.cpp:4156</code> で実際に呼び出している。</li>
+<li><strong>acl-loader <code>--mirror_stage</code></strong>: <code>sonic-utilities/acl_loader/main.py:1209,1238</code> の <code>full</code> / <code>update full</code> サブコマンドに <code>click.Choice(["ingress","egress"])</code> で実装済み。<code>set_mirror_stage()</code> が ACL_RULE 書き込み時にどちらの mirror action キーを使うか分岐する（<code>main.py:491-496</code>）。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - AclOrch::queryAclCapabilities の現行 master 実装存在確認
 - SWITCH_CAPABILITY テーブルのキー命名（ACL_ACTIONS|INGRESS 等）が現行版に取り込まれているか未確認
