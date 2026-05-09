@@ -1,0 +1,200 @@
+---
+title: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+area: architecture
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/ssdhealth/ssdhealth_design.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - show platform ssdhealth
+    - ssdhealth
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    このページは公式 HLD のみを根拠にしている。`sonic-utilities/scripts/ssdhealth`、`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`、ベンダ別 `ssdutil.py`、Pmon `ssdmond` のいずれも実装裏取り未済。
+
+# SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+
+## 概要
+
+SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、**ストレージの寿命と健全性を運用者が把握できる** 必要がある[^1]。本機能は基本機能として **`show platform ssdhealth`** という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。
+
+実装は `sonic-utilities` 側のスクリプト + `sonic-platform-common` 側の **抽象クラス `SsdBase`** + 各ベンダ実装の **`SsdUtil` プラグイン** の三層構成。汎用情報は `smartctl`（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の `iSmart`、StorFly/Virtium の `SmartCmd` 等）から拾う[^1]。
+
+オプションで pmon に常駐する `ssdmond` デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）[^1]。
+
+## 動作仕様
+
+### CLI
+
+```text
+show platform ssdhealth [verbose|vendor]
+```
+
+3 つの表示モード[^1]:
+
+#### Brief（既定）
+
+```text
+admin@sonic-switch: ~$ show platform ssdhealth
+Device Model : InnoDisk Corp. - mSATA 3ME
+Health: 72.9%
+Temperature: N/A
+```
+
+#### Verbose
+
+`FW Version` / `Serial Number` / `Capacity` / `Power On Hours` / `Power Cycle count` 等を追加表示。
+
+#### Vendor
+
+ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら `iSmart V3.9.41` の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る[^1]。
+
+### コマンドのチェーン
+
+```mermaid
+flowchart LR
+    USER[user] --> SHOW[show platform ssdhealth\n(show/main.py)]
+    SHOW -->|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
+    UTIL --> BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
+    BASE --> VENDOR[SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)]
+    BASE -.fallback.-> SCTL[smartctl]
+    VENDOR --> ISMART[iSmart / SmartCmd 等\nベンダ純正]
+    UTIL --> OUT[stdout]
+```
+
+`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ。コア処理は `ssdhealth` スクリプト側にある[^1]。
+
+### `ssdhealth` ユーティリティ
+
+新規スクリプト。配置は `sonic-utilities/scripts/`[^1]:
+
+```text
+usage: ssdhealth -d DEVICE [-h] [-v] [-e]
+
+  -d, --device          disk device to get information for
+  -v, --verbose         show verbose output (more parameters)
+  -e, --vEndor          show vendor specific disk information
+```
+
+中で `SsdUtil` プラグインを import し、後述の API を呼んで結果を整形する設計。`-d` で device path を取るので `show` 側で `/dev/sda` 等を渡す[^1]。
+
+### プラグイン構造
+
+二段で抽象化する[^1]:
+
+#### 抽象クラス `SsdBase`
+
+- 配置: `sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`
+- 役割: 汎用 API のジェネリック実装。既知の disk なら専用ユーティリティ、それ以外は `smartctl` 系へフォールバック。**smartctl の DB に無いモデル** は情報の一部が取得不能 or 不完全になりうる[^1]。
+
+#### ベンダ実装 `SsdUtil`（`SsdBase` を継承）
+
+- 配置: `sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py`
+- 役割: ベンダ提供ツールの出力をパースして API を実装。InnoDisk なら `iSmart`、StorFly / Virtium なら `SmartCmd` を呼ぶ前提[^1]。
+
+```mermaid
+classDiagram
+    class SsdBase {
+        +get_disk_health(diskdev) float
+        +get_temperature(diskdev) string
+        +get_model(diskdev) string
+        +get_firmware(diskdev) string
+        +get_serial(diskdev) string
+        +get_vendor_output(diskdev) string
+    }
+    class SsdUtil
+    SsdBase <|-- SsdUtil
+```
+
+### API 仕様
+
+`SsdBase` / `SsdUtil` が公開する API[^1]:
+
+| メソッド | 戻り値 | 取得不可時 |
+|---------|--------|-----------|
+| `get_disk_health(diskdev)` | float（0〜100、% 表現）| `-1` |
+| `get_temperature(diskdev)` | string（摂氏）| `0` |
+| `get_model(diskdev)` | string（人読 model）| 空文字 |
+| `get_firmware(diskdev)` | string（FW バージョン）| 空文字 |
+| `get_serial(diskdev)` | string（シリアル）| 空文字 |
+| `get_vendor_output(diskdev)` | string（ベンダツール出力そのまま）| 空文字 |
+
+引数はいずれも `diskdev:string`（例: `/dev/sda`）。
+
+### 利用するユーティリティ
+
+HLD で挙げられているもの[^1]:
+
+| ツール | 用途 | サイズ感 | 備考 |
+|--------|------|---------|------|
+| `smartctl` (smartmontools) | 汎用 SMART 取得 | 約 1.9M | `SsdBase` の fallback |
+| `iSmart` | InnoDisk 製 SSD | <120K | InnoDisk 公式配布のバイナリ |
+| `SmartCmd` | StorFly / Virtium | 約 2.2M | ベンダ専用 |
+
+`smartctl` 同梱は `sonic-net/sonic-buildimage` PR 2703 で提案されている[^1]。
+
+### Optional: pmon `ssdmond`
+
+HLD は **オプション** として、pmon に常駐するデーモン `ssdmond` を提案している[^1]:
+
+- 周期的に `get_health()` を呼び出す。
+- 値が **クリティカルしきい値を割った時にアラート** を上げる。
+- HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Class SsdBase
+  Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
+  Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
+  Class SsdUtil
+  Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
+  Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
+reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB
+
+該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。
+
+### 関連する CLI
+
+| Command | 用途 |
+|---------|------|
+| `show platform ssdhealth` | 簡易表示 |
+| `show platform ssdhealth verbose` | 詳細表示 |
+| `show platform ssdhealth vendor` | ベンダツール生出力 |
+| `ssdhealth -d /dev/sdX [-v|-e]` | 内部ラッパが呼ぶスクリプトを直接実行 |
+
+## 制限事項
+
+- **smartctl のデータベースに無い disk** は health / 温度の取得が **N/A** になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している[^1]。
+- ベンダプラグインが用意されていないプラットフォームは `SsdBase` の fallback（smartctl）に依存。`vendor` モードの出力は基本的に空。
+- pmon デーモン (`ssdmond`) は **オプション** であり、HLD では Open Question として残っている。常時監視・アラート発火が必要なら別途実装の確認が必要[^1]。
+- 値が取れない場合の表現が API ごとに異なる（health=`-1`、temp=`0`、文字列系=空）。`0 ℃` と「取得不可」が同義になり得る点に注意[^1]。
+
+## 干渉する機能
+
+- **pmon (Platform Monitor)**: `ssdmond` を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。
+- **smartmontools / smartctl パッケージ**: ビルドイメージに 1.9M 程度の追加。`sonic-buildimage` 側のパッケージ取り込みに依存[^1]。
+- **plugin 配置規約**: `device/{{vendor}}/platform/plugins/ssdutil.py` は **プラットフォームプラグインの一般則** に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。
+- **SNMP**: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外[^1]。
+
+## トラブルシューティング
+
+- `Health: N/A`: smartctl が当該 disk を識別できていない可能性。`smartctl -i /dev/sdX` で raw に確認。ベンダプラグインが装備されているか `device/<vendor>/platform/plugins/ssdutil.py` の存在を確認。
+- `vendor` モードが空: `SsdUtil` の `get_vendor_output()` が未実装、もしくはベンダツールバイナリが image に含まれていない。
+- `Temperature: 0` と `N/A` の区別: API の戻り値仕様上、温度の取得不可は `0` となる。`0℃` と取得不可が見分けにくい点は HLD の制約[^1]。
+- `show platform ssdhealth` が `command not found`: `show/main.py` の `platform` メニューに項目が登録されているか、`ssdhealth` スクリプトが PATH にあるかを確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
