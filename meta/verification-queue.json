@@ -895,7 +895,8 @@
         "本 HLD は 2021 年版 (Phase 1)。実装ドリフトの可能性あり"
       ],
       "priority": "medium",
-      "issue": 497
+      "issue": 497,
+      "pr": 498
     },
     {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",

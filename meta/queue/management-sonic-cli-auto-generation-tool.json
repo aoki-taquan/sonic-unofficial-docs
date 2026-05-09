@@ -11,5 +11,6 @@
     "\u672c HLD \u306f 2021 \u5e74\u7248 (Phase 1)\u3002\u5b9f\u88c5\u30c9\u30ea\u30d5\u30c8\u306e\u53ef\u80fd\u6027\u3042\u308a"
   ],
   "priority": "medium",
-  "issue": 497
+  "issue": 497,
+  "pr": 498
 }
