@@ -113,6 +113,17 @@
         "config banner CLI の sonic-utilities への追加確認"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/system/static-dns-configuration.md",
+      "issue": 31,
+      "verification": "hld-only",
+      "concerns": [
+        "resolv-config.service / resolv-config.sh / resolv.conf.j2 の存在とパス確認",
+        "update-containers resolvconf プラグインの存在と Docker への反映方式確認",
+        "sonic-cfggen の DnsNameserverResources -> DNS_NAMESERVER 変換ロジック確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
