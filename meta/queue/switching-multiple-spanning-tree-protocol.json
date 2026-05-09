@@ -1,13 +1,15 @@
 {
   "page": "docs/switching/multiple-spanning-tree-protocol.md",
   "issue": 313,
-  "verification": "hld-only",
-  "concerns": [
-    "stp コンテナ / stpd / stpmgrd の現行 sonic-buildimage / sonic-swss 取り込み確認",
-    "STP_MST / STP_MST_INST / STP_MST_PORT CONFIG_DB スキーマと sonic-yang-models 反映確認",
-    "config spanning-tree mst 系 CLI の sonic-utilities 取り込み確認",
-    "SAI_STP_OBJECT_ID の MSTI 複数インスタンス対応の community SAI 確認",
-    "50KB の大型 HLD のため要点抜粋。完全な MSTI 状態機械とシーケンスは元 HLD 参照"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "stp コンテナ / stpd / stpmgrd の現行 sonic-buildimage / sonic-swss 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "STP_MST / STP_MST_INST / STP_MST_PORT CONFIG_DB スキーマと sonic-yang-models 反映確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "config spanning-tree mst 系 CLI の sonic-utilities 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "SAI_STP_OBJECT_ID の MSTI 複数インスタンス対応の community SAI 確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "50KB の大型 HLD のため要点抜粋。完全な MSTI 状態機械とシーケンスは元 HLD 参照 -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

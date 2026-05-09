@@ -1,7 +1,7 @@
 ---
 title: 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v1.1 / 2024-09 改訂（v1.0 は 2019-11）。`DEBUG_COUNTER` 型 SAI 抽象化と `flexcounter` 経由の集計、`config dropcounters install` 系 CLI、persistent drop counter monitoring 拡張（v1.1）が現行 master の `sonic-swss` / `sonic-utilities` でこの仕様どおりかは未確認。**詳細は HLD `doc/drop_counters/drop_counters_HLD.md` を参照（28KB 超のため要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/debugcounterorch.cpp` で `DebugCounterOrch` クラスと `STATE_DEBUG_COUNTER_CAPABILITIES` テーブル登録 (debugcounterorch.cpp:31) を確認。`sonic-utilities` 側に `config dropcounters install/...` (config/main.py:8163-)、`show dropcounters persistent_drops` (show/dropcounters.py) が存在し、v1.1 の persistent drop monitoring まで取り込み済み。`sonic-yang-models/yang-models/sonic-debug-counter.yang` も存在。詳細属性は元 HLD 参照（verified at: 2026-05-09）。
 
 # 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
 

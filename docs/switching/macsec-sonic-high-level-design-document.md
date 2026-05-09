@@ -1,7 +1,7 @@
 ---
 title: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大型 HLD"
-    HLD は v0.2 で 60KB 超。`wpa_supplicant` 拡張 (XPN / proactive SAK refresh / 可変 max-SA-per-SC)、`MACsec Mgr` / `MACsec Orch` 経由の APPL_DB / STATE_DB スキーマ、SAI MACsec オブジェクトのフロー、PFC との相互作用が現行 master でこの仕様どおりかは未確認。**詳細は HLD `doc/macsec/MACsec_hld.md` を参照（要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`、`PFC_MODE_BYPASS` を確認（PFC バイパス ACL の実装）。`macsecmgr` / `macsecorch` モジュール、`docker-macsec/etc/wpa_supplicant.conf` も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。
 
 # MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
 

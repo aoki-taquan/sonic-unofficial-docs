@@ -1,12 +1,14 @@
 {
   "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
   "issue": 325,
-  "verification": "hld-only",
-  "concerns": [
-    "MirrorOrch の port-based SPAN/ERSPAN 実装の現行 master 確認",
-    "Mirror Capability Discovery（v0.2 追加）の syncd / orchagent 取り込み確認",
-    "MIRROR_SESSION CONFIG_DB スキーマの sonic-yang-models 反映確認",
-    "config mirror_session CLI の sonic-utilities 取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "MirrorOrch の port-based SPAN/ERSPAN 実装の現行 master 確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "Mirror Capability Discovery（v0.2 追加）の syncd / orchagent 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "MIRROR_SESSION CONFIG_DB スキーマの sonic-yang-models 反映確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "config mirror_session CLI の sonic-utilities 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

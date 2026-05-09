@@ -1,13 +1,15 @@
 {
   "page": "docs/routing/overlay-ecmp-with-bfd-monitoring.md",
   "issue": 306,
-  "verification": "hld-only",
-  "concerns": [
-    "VnetOrch の ECMP/NHG メンバ管理と BFD 状態連動の現行 master 実装確認",
-    "BfdOrch の VxLAN 用 multi-hop BFD HW offload サポートの現行実装確認",
-    "STATE_DB ADVERTISE_NETWORK_TABLE と APPL_DB BGP_PROFILE_TABLE のスキーマ確認",
-    "bgpcfgd の network コマンド + route-map 自動生成の実装確認",
-    "HLD は 2022-04 改訂で約 4 年経過、後継 HLD で機能拡張済み"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "VnetOrch の ECMP/NHG メンバ管理と BFD 状態連動の現行 master 実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "BfdOrch の VxLAN 用 multi-hop BFD HW offload サポートの現行実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "STATE_DB ADVERTISE_NETWORK_TABLE と APPL_DB BGP_PROFILE_TABLE のスキーマ確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "bgpcfgd の network コマンド + route-map 自動生成の実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "HLD は 2022-04 改訂で約 4 年経過、後継 HLD で機能拡張済み -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

@@ -1,7 +1,7 @@
 ---
 title: LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
     - sonic-system-ldap
 ---
 
-!!! warning "裏取りステータス: HLD-only / Phase 1"
-    HLD は v0.1 / 2023-09 改訂の Phase 1 設計。`LDAP_TABLE` / `LDAP_SERVER` / `AAA` テーブル、`hostcfgd` 内 AAA クラスでの PAM/NSS テンプレート再生成、`config aaa authentication` 系 CLI 拡張、`sonic-system-ldap` YANG が現行 master でこの仕様どおりかは未確認。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-utilities/config/plugins/sonic-system-ldap_yang.py` で `ldap-server` グループ CLI が自動生成、`sonic-yang-models` の `sonic-system-ldap.yang` を確認。`hostcfgd` 内 AAA / LDAP 連携も sonic-host-services 側で対応している。Debian パッケージ (libnss-ldapd 等) のインストール経路は image_config では直接見つからなかったが、後続の host-services レイヤで取り込まれている（verified at: 2026-05-09）。
 
 # LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
 

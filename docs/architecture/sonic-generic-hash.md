@@ -1,7 +1,7 @@
 ---
 title: Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - sonic-switch-hash
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.4 / 2025-01 改訂。`SwitchOrch` の Generic Hash ハンドリング、`SWITCH_HASH` CONFIG_DB スキーマ、`SWITCH_HASH_CAPABILITIES` STATE_DB 公開、`config/show switch-hash` CLI が現行 master でこの仕様どおりかは未確認。**詳細は HLD `doc/hash/hash-design.md` を参照（31KB のため要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/switchorch.cpp:1507` で `CFG_SWITCH_HASH_TABLE_NAME` 処理を確認、`sonic-swss/orchagent/switch/switch_helper.cpp` に `SAI_NATIVE_HASH_FIELD_IPV6_FLOW_LABEL` を含むフィールド対応表が存在（v0.4 の IPV6_FLOW_LABEL 追加が反映済み）。`sonic-utilities/show/plugins/sonic-hash.py` で `show switch-hash` CLI、`sonic-yang-models` の `sonic-hash.yang` も確認（verified at: 2026-05-09）。
 
 # Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
 
