@@ -61,6 +61,16 @@ issue のラベルにより、以下のサブタイプに分岐する。
 - **古い HLD**: 改訂履歴 (Revision Table) や最終更新日が 3 年以上前。`verification-queue.priority = high`
 - **upstream 由来**: SONiC 独自仕様ではなく upstream 文書（`sonic-frr/doc/` の FRR 上流文書、SAI 仕様書 等）。差分が分かるなら併記
 - **採否不明な提案**: 「Proposal」「Future Work」等のステータスで、現行 master に取り込まれているか不確かな HLD。本文の主要な記述に対して「（採択されたか未確認）」を併記し、`priority = high` で `verification-queue` に登録
+- **2 年以上前 + Initial Proposal**: 改訂 2 年以上経過していて Status が "Initial" / "Proposal" のままの HLD は、未採用の可能性が高いため上記の "採否不明な提案" と同様に扱う
+
+## 大きな HLD (>25KB) の扱い
+
+- 1 ページに無理やり押し込まない。**主要な architecturally distinctive な要素**（仕組みのコア・他機能との境界・CONFIG_DB / SAI 属性追加）に絞り、詳細フローや edge case は概要のみで本文 H1 末に「詳細は HLD `<path>` を参照」と書く
+- 章単位で分割ページ化したい場合は backlog にまだ無い派生 slug を別 issue として立ててもよい
+
+## ソースファイルの読み方
+
+- HLD のパス・ディレクトリ名にスペースや特殊文字が含まれる場合（例: `doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md`）、シェルの `cat` ではなく Read ツールで開く。`bash` 経由だとクォート漏れで読めないことがある
 - `related.config_db` `related.cli` `related.yang` に **HLD で言及されていない実装由来の項目を推測で書かない**。確実なもののみ列挙し、不明なら空配列にして本文側に注記する
 
 ## 裏取りキューへの登録
