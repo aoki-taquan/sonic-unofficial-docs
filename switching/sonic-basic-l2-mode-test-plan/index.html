@@ -13237,9 +13237,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>sonic-cfggen -H -p -k &lt;HWSKU&gt; --preset l2</code> の現行サポート、sonic-mgmt 配下の sanity_check / fdb / vlan / snmp テストの現行カバレッジは未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（preset l2 部分）</p>
+<p><code>sonic-buildimage/src/sonic-config-engine/sonic-cfggen</code> (l.354) で <code>--preset</code> 引数が <code>get_available_config()</code>（<code>config_samples</code> モジュール）の choices として取り込まれ、l.551 で <code>generate_sample_config(data, args.preset)</code> が呼ばれる。<code>data/l2switch.j2</code> テンプレートが同梱。<code>tests/test_j2files.py</code> で <code>--preset l2</code> 引数のテストもあり。sonic-mgmt 側 fdb / vlan / snmp テストは別 repo（本 cache 対象外）のためカバレッジは未裏取り。</p>
 </div>
 <h1 id="sonic-basic-l2-fdb-vlan-snmp">SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）<a class="headerlink" href="#sonic-basic-l2-fdb-vlan-snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13301,6 +13301,13 @@
 <li><strong>SNMP</strong>: <code>public</code> community 設定（<a href="https://github.com/sonic-net/SONiC/wiki/How-to-Check-SNMP-Configuration">How-to-Check-SNMP-Configuration</a>）</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `src/sonic-config-engine/sonic-cfggen` l.354 `--preset` 引数（choices=`get_available_config()`）と l.551 `generate_sample_config(data, args.preset)`
+- 同 `src/sonic-config-engine/data/l2switch.j2` テンプレート存在
+- 同 `tests/test_j2files.py` l.308, 379 で `--preset l2` 引数のテスト
+- sonic-mgmt fdb / vlan / snmp テストカバレッジは別 repo (本 cache 未取得) で未裏取り
+-->
+
 <div class="footnote">
 <hr />
 <ol>

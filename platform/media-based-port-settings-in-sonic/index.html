@@ -13391,9 +13391,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>media_settings_parser、<code>SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION</code> の opencomputeproject/SAI 取り込み、PortsOrch の <code>custom_serdes_attrs</code> 経路は未裏取り。HLD は 2019 初版 + 後年の Custom SerDes 拡張がパッチで追加された形。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py</code> に <code>CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'</code> (l.175) と <code>CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'</code> (l.177) を確認。<code>sonic-swss/orchagent/port/portschema.h</code> に <code>PORT_CUSTOM_SERDES_ATTRS = "custom_serdes_attrs"</code> (l.94)。<code>portsorch.cpp</code> line 559 で <code>map[SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION] = SerdesValue(serdes.custom_collection.value)</code> の pass-through 実装あり。<code>tests/test_xcvrd.py</code> で <code>CUSTOM:XYZ</code> / <code>CUSTOM:ABC</code> 例も網羅。</p>
 </div>
 <h1 id="media-based-port-settingsmedia_settingsjson-serdes">Media-based Port Settings（media_settings.json による SerDes プロファイル）<a class="headerlink" href="#media-based-port-settingsmedia_settingsjson-serdes" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13513,12 +13513,19 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 <li><strong>gearbox / port-link-training</strong>: 同じく serdes 系設定との潜在競合</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py` 存在: `CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'` (l.175), `CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'` (l.177)
+- sonic-swss `orchagent/port/portschema.h` `PORT_CUSTOM_SERDES_ATTRS "custom_serdes_attrs"` (l.94)
+- sonic-swss `orchagent/portsorch.cpp` l.559 で `SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION` への pass-through
+- tests `test_xcvrd.py` に `CUSTOM:XYZ` / `CUSTOM:ABC` の lane mapping テスト
+-->
+
 <!-- concerns hint:
-- xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認
-- SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認
-- PortsOrch の custom_serdes_attrs pass-through 実装確認
-- preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認
-- 2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性
+- xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認 → 取り込み済
+- SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認 → SAI submodule + sonic-swss で参照済（vendor 側は別 repo）
+- PortsOrch の custom_serdes_attrs pass-through 実装確認 → portsorch.cpp で確認済
+- preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認 → portsorch.cpp 内 SerdesAttrType マッピング参照
+- 2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性 → CUSTOM 系は後年追加と整合
 -->
 
 <div class="footnote">

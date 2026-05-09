@@ -13381,9 +13381,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>docker_image_ctl.j2</code> の midplane 公開、<code>sonicv2connector</code> の新 API、<code>sonic-py-swsssdk</code> の dbconnector、<code>show queue counters --voq</code> 集約モードのいずれも実装裏取り未済。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> で <code>midplane_ip</code> 取得（chassis 系）と <code>redis-cli ... config set bind "$bound_ips $midplane_ip"</code> (l.370-373) を確認。<code>sonic-utilities/scripts/queuestat</code> に <code>voq</code> モード（<code>QUEUE_TYPE_VOQ</code>, <code>voq_header</code>, <code>voq_counter_bucket_dict</code>）あり。<code>sonic-swss-common/common/dbconnector.h</code> に <code>DBConnector(int dbId, const std::string &amp;hostname, int port, ...)</code> の hostname/port 引数コンストラクタが存在し、midplane IP 経由接続に使える。</p>
 </div>
 <h1 id="voq-chassis-supervisor-aggregate">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）<a class="headerlink" href="#voq-chassis-supervisor-aggregate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13521,6 +13521,12 @@ reasoning: midplane IP に Redis を公開してから supervisor の queuestat 
 <li>aggregate 値を clear したい: 現状 unsupported。各 linecard / namespace で個別に <code>sonic-clear</code> する必要がある。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `files/build_templates/docker_image_ctl.j2` で `midplane_ip` 変数（l.196〜265）と `redis-cli -h $ip -p $port config set bind "$bound_ips $midplane_ip"` + `config rewrite` (l.370-373) を確認
+- sonic-utilities `scripts/queuestat` に `QUEUE_TYPE_VOQ='VOQ'`, `SAI_QUEUE_TYPE_UNICAST_VOQ`, `COUNTERS_VOQ_NAME_MAP`, `voq_header` テーブル、`Queuestat(... voq=...)` 引数 (l.71-206)
+- sonic-swss-common `common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, unsigned int timeout_ms);` (l.217) の hostname/port 直指定コンストラクタあり
+-->
+
 <div class="footnote">
 <hr />
 <ol>

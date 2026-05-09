@@ -13347,9 +13347,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>PortsOrch の bulk create / set 経路、<code>syncd -l/--enableBulk</code> フラグ、SAI PR #1460 の取り込みコミットは未裏取り。bulk 非対応 vendor の legacy fallback も実コード未確認。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss/orchagent/portsorch.cpp</code> で <code>sai_port_api-&gt;create_ports(...)</code> (l.1445) と <code>sai_port_api-&gt;remove_ports(...)</code> (l.1549) を bulk 呼出。<code>sonic-sairedis/syncd/CommandLineOptionsParser.cpp</code> に <code>-l --enableBulk</code> オプションあり（<code>unittest/syncd/TestCommandLineOptions.cpp</code> も同オプションをテスト）。SAI 側 <code>create_ports</code> / <code>remove_ports</code> シンボルは sonic-sairedis SAI submodule 経由で利用可能。</p>
 </div>
 <h1 id="port-profile-initsai-bulk-port-api-fast-boot">Port Profile Init（SAI bulk port API による fast-boot 高速化）<a class="headerlink" href="#port-profile-initsai-bulk-port-api-fast-boot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13431,12 +13431,18 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 <li><strong>route / vlan の bulk</strong>: 同 <code>--enableBulk</code> フラグで一括制御</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-swss `orchagent/portsorch.cpp` line 1445: `sai_port_api->create_ports(...)`、line 1549: `sai_port_api->remove_ports(...)` 確認
+- sonic-sairedis `syncd/CommandLineOptionsParser.cpp` line 208: `-l --enableBulk`、`unittest/syncd/TestCommandLineOptions.cpp` line 29 でテスト対象
+- 空 list NOT_IMPLEMENTED 判定や vendor `syncd_init_common.sh` 反映は vendor リポ側 (sonic-buildimage の platform/* 配下にも明示同期 sh は未確認)
+-->
+
 <!-- concerns hint:
-- PortsOrch の bulk create_ports / remove_ports / set_ports_attribute 経路の sonic-swss 取り込み確認
-- syncd の -l / --enableBulk フラグ実装と vendor syncd_init_common.sh への反映確認
-- SAI PR #1460 の opencomputeproject/SAI への merge / 各 vendor SAI への波及確認
-- 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認
-- Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認
+- PortsOrch の bulk create_ports / remove_ports / set_ports_attribute 経路の sonic-swss 取り込み確認 → 取り込み済
+- syncd の -l / --enableBulk フラグ実装と vendor syncd_init_common.sh への反映確認 → syncd 側は確認済、vendor sh は別 vendor リポ
+- SAI PR #1460 の opencomputeproject/SAI への merge / 各 vendor SAI への波及確認 → 別 repo
+- 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認 → vendor SAI 側
+- Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認 → 別途調査
 -->
 
 <div class="footnote">

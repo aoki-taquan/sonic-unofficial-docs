@@ -13325,9 +13325,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>sonic-utilities の <code>config reload / save / apply-patch / override-config-table</code> における multi-ASIC 用 <code>localhost</code> / <code>asicN</code> 階層対応の現行 master 実装、ループ展開された patch の実装は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/show/main.py</code> の <code>runningconfiguration all</code> は multi-ASIC で <code>output['localhost'] = ...</code> + <code>for ns in ns_list: output[ns] = ...</code> の Golden Config 形式で出力する実装を確認。<code>config/main.py</code> に <code>apply-patch</code> コマンドと <code>override-config-table</code> の呼び出し（<code>load_minigraph --override_config</code>）が存在。namespace ごとのループ展開と YANG validate は generic_config_updater 側で扱われる。</p>
 </div>
 <h1 id="multi-asic-single-json-configurationgolden-config-namespace-layer">Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）<a class="headerlink" href="#multi-asic-single-json-configurationgolden-config-namespace-layer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13446,12 +13446,18 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 <li><strong>multi-asic ConfigDB redis instance</strong>: namespace ごとに別インスタンス</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-utilities `show/main.py` `runningconfiguration all`: multi-ASIC 時 `output['localhost']` + `for ns in ns_list: output[ns] = get_config_json_by_namespace(ns)` で Golden Config 形式を出力
+- sonic-utilities `config/main.py` line 1917 に `@config.command('apply-patch')` 定義、`apply_patch_from_file as _gcu_apply_patch_from_file` を import
+- `load_minigraph --override_config` (l.2345) で `override_config_by(golden_config_path)` → `config override-config-table <path>` を呼び出し
+-->
+
 <!-- concerns hint:
-- sonic-utilities config_main の reload / save / override で localhost / asicN 階層対応の取り込み確認
-- apply-patch の patch ループ展開実装の sonic-utilities 取り込み確認
-- show runningconfiguration all の出力 schema 切替の実装確認
-- YANG validation を namespace 単位に分割する helper 実装確認
-- minigraph 廃止フェーズの進捗と Golden Config 採用の現行スコープ確認
+- sonic-utilities config_main の reload / save / override で localhost / asicN 階層対応の取り込み確認 → show / override 経路は取り込み済
+- apply-patch の patch ループ展開実装の sonic-utilities 取り込み確認 → apply-patch 取り込み済（namespace ループは generic_config_updater 側）
+- show runningconfiguration all の出力 schema 切替の実装確認 → 確認済
+- YANG validation を namespace 単位に分割する helper 実装確認 → generic_config_updater で分担
+- minigraph 廃止フェーズの進捗と Golden Config 採用の現行スコープ確認 → load_minigraph に override_config オプションが残存（共存フェーズ）
 -->
 
 <div class="footnote">

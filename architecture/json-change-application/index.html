@@ -13369,9 +13369,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>Generic Config Update and Rollback の change-applier 部分（v0.1, 2021-03）。<code>apply-patch</code> の sonic-utilities 実装、metadata ファイルの format / 配置、service 側 absorb 検証コマンドの拡張は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/generic_config_updater/</code> 配下に <code>change_applier.py</code>（<code>for tbl in sorted(...)</code> で alphabetical 適用）、<code>gcu_services_validator.conf.json</code> / <code>gcu_field_operation_validators.conf.json</code> が存在。<code>config apply-patch</code> は <code>sonic-utilities/config/main.py</code> および <code>config/hft.py</code> から <code>apply_patch_from_file</code> 経由で呼ばれる。<code>generic_updater.py</code> で <code>ChangeApplier</code> / <code>DryRunChangeApplier</code> をディスパッチ。</p>
 </div>
 <h1 id="json-change-applicationapply-change-table-alphabetical">JSON Change Application（apply-change / table 単位 alphabetical 適用）<a class="headerlink" href="#json-change-applicationapply-change-table-alphabetical" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13483,12 +13483,19 @@ reasoning: alphabetical order と per-table の (write → restart → validate)
 <li><strong>個別 service</strong>: <code>swss</code>, <code>bgp</code>, <code>dhcp_relay</code>, <code>rsyslog</code>, <code>ntp</code>, <code>restapi</code> 等。restart vs subscribe で処理が分岐</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-19):
+- sonic-utilities `generic_config_updater/change_applier.py` 存在、`for tbl in sorted(set(run_data.keys()).union(...))` で table を alphabetical に処理
+- metadata は `gcu_services_validator.conf.json`（service ごとの validate 関数 dotted path）として同梱
+- `generic_updater.py` で `ChangeApplier` / `DryRunChangeApplier` を切替
+- `config apply-patch` は `sonic-utilities/config/main.py` で定義され `apply_patch_from_file` を呼ぶ
+-->
+
 <!-- concerns hint:
-- generic_config_updater (sonic-utilities) 内の change_applier 実装の現行 master 確認
-- metadata ファイル (table → services-to-validate) の配置と format 確認
-- alphabetical order が現行実装でも維持されているか確認 (依存解決ロジック追加可能性)
-- post-update validation (Stage 3) の diff 計算実装確認
-- apply-patch CLI の sonic-utilities 取り込みおよび rollback flow の連動確認
+- generic_config_updater (sonic-utilities) 内の change_applier 実装の現行 master 確認 → 取り込み済
+- metadata ファイル (table → services-to-validate) の配置と format 確認 → gcu_services_validator.conf.json として同梱
+- alphabetical order が現行実装でも維持されているか確認 → sorted() で維持
+- post-update validation (Stage 3) の diff 計算実装確認 → change_applier 内に diff 比較ロジックあり
+- apply-patch CLI の sonic-utilities 取り込みおよび rollback flow の連動確認 → 取り込み済
 -->
 
 <div class="footnote">
