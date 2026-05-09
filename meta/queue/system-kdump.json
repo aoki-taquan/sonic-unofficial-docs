@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/kdump.md",
+  "verification": "hld-only",
+  "concerns": [
+    "config kdump / show kdump CLI の sonic-utilities 取り込み確認",
+    "KDUMP CONFIG_DB スキーマと sonic-yang-models 反映確認",
+    "build_debian.sh での kdump-tools / makedumpfile 同梱確認",
+    "/etc/default/kdump-tools の USE_KDUMP 連動と crashkernel cmdline 反映確認",
+    "sonic-installer での kdump 状態継承確認",
+    "kernel debug image (linux-image-*-dbg) のビルドターゲット確認",
+    "secure boot 環境での kexec 二段起動の整合確認"
+  ],
+  "priority": "medium"
+}
