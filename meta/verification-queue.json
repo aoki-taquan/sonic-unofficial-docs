@@ -44,6 +44,18 @@
         "wol CLI スクリプトが UDP モードで実装されているか未確認"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/overlay/dscp-remapping-for-tunnel-traffic.md",
+      "issue": 19,
+      "verification": "hld-only",
+      "concerns": [
+        "tunneldecaporch / muxorch::create_tunnel が新 SAI 属性を投入しているか裏取り",
+        "qos_config.j2 が AZURE_TUNNEL マップを Dual-ToR 限定で出力しているか裏取り",
+        "db_migrator が pfc_enable から pfc_wd_sw_enable を派生するロジックの存在確認",
+        "MuxTunnel terminator が P2P で作成されているか実装確認"
+      ],
+      "priority": "high"
     }
   ]
 }
