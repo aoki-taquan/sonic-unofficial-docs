@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/overlay-ecmp-enhancements.md",
+  "issue": 305,
+  "verification": "hld-only",
+  "concerns": [
+    "VnetOrch の primary/secondary 切替ロジック実装存在確認",
+    "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか未確認",
+    "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認",
+    "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認",
+    "pinned_state による BFD 状態オーバーライド実装存在確認"
+  ],
+  "priority": "medium"
+}
