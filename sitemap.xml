@@ -185,6 +185,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/dump-utility-for-easy-debugging/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -494,6 +498,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-mclag/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-muxcable/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
