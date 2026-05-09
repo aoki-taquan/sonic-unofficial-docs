@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/secure-upgrade.md",
+  "verification": "hld-only",
+  "concerns": [
+    "build_image.sh の SECURE_UPGRADE_MODE 分岐実装の sonic-buildimage 取り込み確認",
+    "sign_image_dev.sh / sign_image_${platform}.sh の同梱と sign_image_prod 規約確認",
+    "sharch.sh prefix と sha1 / size 検証の実装確認",
+    "sonic-installer main.py での verification 経路の取り込み確認",
+    "ONIE 側 PR #11862 / #2337 の merge 状況と互換性確認",
+    "Secure Boot との chain of trust 整合確認"
+  ],
+  "priority": "medium"
+}
