@@ -10,29 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/everflow-support-on-voq-chassis/">
       
       
+        <link rel="prev" href="../dump-on-sai-failure/">
       
-        <link rel="next" href="architecture/">
+      
+        <link rel="next" href="../icmp-hardware-offload/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>SONiC 非公式ドキュメント - SONiC 非公式ドキュメント</title>
+        <title>VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite） - SONiC 非公式ドキュメント</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic" class="md-skip">
+        <a href="#voq-chassis-everflow-recycle-port-rewrite" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -90,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
-    <a href="." title="SONiC 非公式ドキュメント" class="md-header__button md-logo" aria-label="SONiC 非公式ドキュメント" data-md-component="logo">
+    <a href="../.." title="SONiC 非公式ドキュメント" class="md-header__button md-logo" aria-label="SONiC 非公式ドキュメント" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC 非公式ドキュメント
+              VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
             
           </span>
         </div>
@@ -226,11 +228,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -251,7 +251,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="architecture/" class="md-tabs__link">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -273,7 +273,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="routing/" class="md-tabs__link">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -295,7 +295,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="switching/" class="md-tabs__link">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -317,7 +317,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="overlay/" class="md-tabs__link">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -339,7 +339,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="acl-qos/" class="md-tabs__link">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -361,7 +361,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="system/" class="md-tabs__link">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -383,7 +383,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="management/" class="md-tabs__link">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -401,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -427,7 +429,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="internals/" class="md-tabs__link">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -449,7 +451,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="reference/" class="md-tabs__link">
+        <a href="../../reference/" class="md-tabs__link">
           
   
   
@@ -485,7 +487,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="SONiC 非公式ドキュメント" class="md-nav__button md-logo" aria-label="SONiC 非公式ドキュメント" data-md-component="logo">
+    <a href="../.." title="SONiC 非公式ドキュメント" class="md-nav__button md-logo" aria-label="SONiC 非公式ドキュメント" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -512,37 +514,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC 非公式ドキュメント
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -558,70 +533,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sonic_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SONiC とは
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        このドキュメントの方針
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        目次
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ライセンス
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -668,7 +579,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="architecture/" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -712,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -740,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -768,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -796,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -824,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -852,7 +763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -928,7 +839,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="routing/" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -972,7 +883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1000,7 +911,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1028,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1056,7 +967,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1084,7 +995,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1112,7 +1023,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1140,7 +1051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1168,7 +1079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1196,7 +1107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="routing/sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1272,7 +1183,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="switching/" class="md-nav__link ">
+            <a href="../../switching/" class="md-nav__link ">
               
   
   
@@ -1316,7 +1227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -1344,7 +1255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -1372,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -1400,7 +1311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -1428,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
         
   
   
@@ -1456,7 +1367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -1484,7 +1395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -1512,7 +1423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -1540,7 +1451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="switching/wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -1610,7 +1521,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="overlay/" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -1654,7 +1565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/dash-sonic-kvm/" class="md-nav__link">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -1682,7 +1593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -1710,7 +1621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -1738,7 +1649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -1766,7 +1677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -1794,7 +1705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overlay/vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -1862,7 +1773,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="acl-qos/" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -1906,7 +1817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="acl-qos/acl-support-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -1934,7 +1845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -1962,7 +1873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1990,7 +1901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2018,7 +1929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -2088,7 +1999,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="system/" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -2132,7 +2043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2160,7 +2071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -2188,7 +2099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -2216,7 +2127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -2244,7 +2155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -2272,7 +2183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -2346,7 +2257,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="management/" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -2390,7 +2301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -2418,7 +2329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -2446,7 +2357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -2474,7 +2385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -2502,7 +2413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -2530,7 +2441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -2558,7 +2469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -2586,7 +2497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -2618,6 +2529,8 @@
       
   
   
+    
+  
   
   
     
@@ -2647,20 +2560,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2678,13 +2594,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2704,7 +2620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -2732,7 +2648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -2757,10 +2673,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2776,6 +2719,236 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        問題の所在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recycle-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決アイデア: Recycle port 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-implicit-recyclesai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Implicit Recycle（SAI 主導）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-explicit-recyclesonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Explicit Recycle（SONiC 主導）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-vs-option-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 vs Option 2 の比較
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対象 orchagent の責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future work / 未確定事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2788,7 +2961,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2816,7 +2989,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2844,7 +3017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2872,7 +3045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -2900,7 +3073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -2968,7 +3141,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="internals/" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -3012,7 +3185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3040,7 +3213,7 @@
   
   
     <li class="md-nav__item">
-      <a href="internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -3068,7 +3241,7 @@
   
   
     <li class="md-nav__item">
-      <a href="internals/sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -3096,7 +3269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="internals/why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -3124,7 +3297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -3188,7 +3361,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="reference/" class="md-nav__link ">
+            <a href="../../reference/" class="md-nav__link ">
               
   
   
@@ -3255,7 +3428,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="reference/cli/" class="md-nav__link ">
+            <a href="../../reference/cli/" class="md-nav__link ">
               
   
   
@@ -3325,7 +3498,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="reference/config-db/" class="md-nav__link ">
+            <a href="../../reference/config-db/" class="md-nav__link ">
               
   
   
@@ -3395,7 +3568,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="reference/yang/" class="md-nav__link ">
+            <a href="../../reference/yang/" class="md-nav__link ">
               
   
   
@@ -3469,21 +3642,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sonic_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SONiC とは
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        このドキュメントの方針
+        概要
       
     </span>
   </a>
@@ -3494,7 +3656,162 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        目次
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        問題の所在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recycle-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決アイデア: Recycle port 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-implicit-recyclesai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Implicit Recycle（SAI 主導）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-explicit-recyclesonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Explicit Recycle（SONiC 主導）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1-vs-option-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 vs Option 2 の比較
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対象 orchagent の責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future work / 未確定事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
       
     </span>
   </a>
@@ -3502,10 +3819,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ライセンス
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
       
     </span>
   </a>
@@ -3529,7 +3868,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/index.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/everflow-support-on-voq-chassis.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3537,42 +3876,191 @@
   
 
 
-<h1 id="sonic">SONiC 非公式ドキュメント<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h1>
-<p><a href="https://github.com/sonic-net/SONiC">SONiC NOS</a> の日本語非公式ドキュメントへようこそ。</p>
 <div class="admonition warning">
-<p class="admonition-title">非公式ドキュメントについて</p>
-<p>このドキュメントは有志による非公式ドキュメントです。SONiC プロジェクトおよび SONiC Foundation とは関係ありません。
-内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は <a href="https://github.com/sonic-net/SONiC">公式リポジトリ</a> を参照してください。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>本ページは公式 HLD（Rev 1, 2020-12）のみを根拠に書かれている。<code>mirrororch</code> / <code>neighorch</code> の VoQ 拡張、SYSTEM_PORT 対応の SAI 実装、recycle port のセットアップは未確認。HLD は 2020 年で 3 年以上経過しており、Option 1 / Option 2 のどちらが採用されたかは別途検証が必要。</p>
 </div>
-<h2 id="sonic_1">SONiC とは<a class="headerlink" href="#sonic_1" title="Permanent link">&para;</a></h2>
-<p>SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベースのオープンソースなネットワーク OS（NOS）です。Microsoft と Open Compute Project（OCP）によって開発され、現在は Linux Foundation 配下のオープンソースプロジェクトとして運営されています。</p>
-<p>主要な構成要素:</p>
+<h1 id="voq-chassis-everflow-recycle-port-rewrite">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）<a class="headerlink" href="#voq-chassis-everflow-recycle-port-rewrite" title="Permanent link">&para;</a></h1>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow</a> は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。<strong>通常スイッチ</strong> では <code>mirrororch</code> が <code>routeorch</code> / <code>neighorch</code> に問い合わせ、出力 IF と DST MAC を決定し、SAI <code>create_mirror_session</code> を呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、<strong>ミラー送信元と宛先が別 LC</strong> という構成が普通に発生する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>SAI (Switch Abstraction Interface)</strong>: ASIC ベンダーを抽象化する標準 API</li>
-<li><strong>コンテナ化されたマイクロサービス群</strong>: BGP（FRR）、LLDP、SNMP、PMON など機能ごとに Docker コンテナで分離</li>
-<li><strong>Redis を中央データベースとした状態管理</strong>: CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB など</li>
+<li>各 FSI（line card 上の SONiC instance）からは「他 LC のポートは <code>SYSTEM_PORT</code> としてのみ見える」</li>
+<li>パケットの egress rewrite は宛先 LC の egress ASIC で行う</li>
+<li>そのままでは <code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> に他 LC のポートを指定できない</li>
 </ul>
-<h2 id="_1">このドキュメントの方針<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>本 HLD はこの問題を <strong>「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」</strong> 方式で解く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">問題の所在<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    SRC[ミラー対象パケット\n(LC0 ingress)] --&gt; M0[LC0 mirrororch]
+    M0 --&gt; Q{宛先 LC}
+    Q --&gt;|local| LOCAL[同 LC で完結]
+    Q --&gt;|remote LC1| RFAIL[× 通常パスでは MONITOR_PORT に\n他 LC のポートを指定できない]</code></pre>
+<p>「LC0 にミラー設定を入れて、宛先が LC1 のポート」というケースを成り立たせる仕組みが必要。</p>
+<h3 id="recycle-port">解決アイデア: Recycle port 経由<a class="headerlink" href="#recycle-port" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    PKT[原パケット] --&gt; IN[Ingress ASIC]
+    IN --&gt;|GRE encap 済みに rewrite| RP[Recycle port]
+    RP --&gt; IN2[Ingress ASIC を再通過]
+    IN2 --&gt;|switch fabric| EG[Egress LC ASIC]
+    EG --&gt; OUT[Mirror destination port]</code></pre>
+<p><code>mirrororch</code> が GRE encap 済みの新パケットを <strong>ingress ASIC で完成させ recycle port に流す</strong>。再注入後は <strong>既存の switch fabric forwarding</strong> に乗るため、宛先 LC への到達は通常パケットと同じ機構で済む<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。recycle port の有効化方法自体は HLD のスコープ外。</p>
+<h3 id="option-1-implicit-recyclesai">Option 1: Implicit Recycle（SAI 主導）<a class="headerlink" href="#option-1-implicit-recyclesai" title="Permanent link">&para;</a></h3>
+<p>SAI 側に手を入れる方式<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>公式 HLD の翻訳ではなく、<strong>再構成</strong>された解説</li>
-<li>HLD・実コード・issue を横断して引用し、各ページの末尾に出典を明示</li>
-<li>各ページに裏取りステータス（HLD-only / Issue-confirmed / Code-verified）を付与</li>
+<li><code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> 属性が <strong><code>SYSTEM_PORT</code> を受理できるよう拡張</strong> する</li>
+<li><code>mirrororch</code> は普段どおり destination IP → routeorch / neighorch で解決</li>
+<li><code>neighorch</code> が「remote neighbor の場合、interface alias まで返せる」ように拡張</li>
+<li><code>mirrororch</code> は remote neighbor だと判定したら <strong>その remote IF の SYSTEM_PORT</strong> を MONITOR_PORT として SAI に渡す</li>
+<li>SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。FDB も SAI 側で適切に設定</li>
 </ul>
-<h2 id="_2">目次<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>つまり SONiC 側の変更は最小で、ASIC ベンダーの SAI 実装に責任が寄る。</p>
+<p>「destination port が同 LC（local）の場合は recycle するメリットが無いので <strong>local では recycle しない</strong>」のが推奨<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="option-2-explicit-recyclesonic">Option 2: Explicit Recycle（SONiC 主導）<a class="headerlink" href="#option-2-explicit-recyclesonic" title="Permanent link">&para;</a></h3>
+<p>SAI 側変更を最小化する代わり、<code>mirrororch</code> が頑張る方式<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><a href="architecture/">アーキテクチャ</a></li>
-<li><a href="routing/">ルーティング</a></li>
-<li><a href="switching/">スイッチング</a></li>
-<li><a href="overlay/">オーバーレイ</a></li>
-<li><a href="acl-qos/">ACL &amp; QoS</a></li>
-<li><a href="system/">システム</a></li>
-<li><a href="management/">マネジメント</a></li>
-<li><a href="platform/">プラットフォーム</a></li>
-<li><a href="internals/">内部実装</a></li>
-<li><a href="reference/">リファレンス</a></li>
+<li>recycle port を <strong>L3 port として作成可能</strong> であることが前提</li>
+<li><code>neighorch</code> の拡張は Option 1 と同じ</li>
+<li><code>mirrororch</code> は remote neighbor だと判定したら <strong>MONITOR_PORT に「recycle port」、DST MAC に「router MAC」</strong> を設定</li>
+<li>SAI から見れば普通の single-chip ミラーと同じ。GRE encap 済みパケットが recycle port から出る</li>
+<li>再注入時は DST MAC が router MAC のため <strong>routing される</strong>。GRE の destination IP に対するルーティングが効くので、複数 nexthop なら <strong>load balance</strong> されるおまけ付き</li>
 </ul>
-<h2 id="_3">ライセンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>本ドキュメントの内容は、特に断りのない限り <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> のもとで提供されます。</p>
+<p>local 宛のときも recycle を使う方が <code>mirrororch</code> の実装が両ケース共通になり単純化する。さらに local でも複数 nexthop で LB できるメリットがある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="option-1-vs-option-2">Option 1 vs Option 2 の比較<a class="headerlink" href="#option-1-vs-option-2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>Option 1（SAI 主導）</th>
+<th>Option 2（SONiC 主導）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI 変更</td>
+<td>大（SYSTEM_PORT 受理＋recycle ロジック）</td>
+<td>小（recycle port を L3 として持てれば良い）</td>
+</tr>
+<tr>
+<td>SONiC 変更</td>
+<td>小</td>
+<td>大（mirrororch が recycle port + router MAC 設定）</td>
+</tr>
+<tr>
+<td>local 宛で recycle</td>
+<td>非推奨</td>
+<td>推奨（実装統一・LB）</td>
+</tr>
+<tr>
+<td>パケットの再注入時動作</td>
+<td>bridging（FDB 経由）</td>
+<td>routing（router MAC + DST IP）</td>
+</tr>
+<tr>
+<td>LB（複数 nexthop）</td>
+<td>不可</td>
+<td>可（routing なので ECMP 効く）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<!-- evidence:
+source: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  This option can be implemented with minimal changes to SAI as long as a recycle port can be created.
+  ... mirrororch needs to use the recycle port as the mirror destination port and the router mac as the destination MAC address.
+  ... When the mirror destination port is a local port, it's recommended to recycle mirror packets too
+  for the following reasons: The implementation of mirrororch is simplified ... mirrored packets can be load-balanced
+reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
+-->
+
+<h3 id="orchagent">対象 orchagent の責務<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>役割</th>
+<th>コンポーネント</th>
+<th>拡張</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>neighbor 解決</td>
+<td><code>neighorch</code></td>
+<td>remote neighbor の interface alias / system port を返せるようにする</td>
+</tr>
+<tr>
+<td>route 解決</td>
+<td><code>routeorch</code></td>
+<td>既存どおり</td>
+</tr>
+<tr>
+<td>ミラーセッション SAI 化</td>
+<td><code>mirrororch</code></td>
+<td>SYSTEM_PORT or recycle port + router MAC への切替</td>
+</tr>
+<tr>
+<td>ASIC 側パケット処理</td>
+<td>SAI</td>
+<td>（Option 1）SYSTEM_PORT 受理・recycle・FDB 設定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="future-work">Future work / 未確定事項<a class="headerlink" href="#future-work" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD の <code>3 Testing</code> と <code>4 Future Work</code> 節は <strong>TBD</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>recycle port 自体の作成方法はスコープ外</li>
+</ul>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>通常の Everflow と同じく <code>MIRROR_SESSION</code> テーブル（destination IP・GRE 情報など）を使う。VoQ chassis 固有の追加スキーマは HLD で提案されていない。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>VoQ chassis 固有 CLI は提案されていない。<code>config mirror_session</code> / <code>show mirror_session</code> 等の既存 CLI を流用する想定。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>Everflow1<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span><span class="m">10</span>.0.0.11<span class="w"> </span>0x88be<span class="w"> </span>0x6<span class="w"> </span><span class="m">0</span>
+</span></code></pre></div>
+<p>VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Option 2 で recycle 経由の経路が組まれる。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>本 HLD は 2020 年版で TBD が多い</strong>。Option 1 / Option 2 のどちらが master に採択されたか、recycle port の作成手順、テスト計画は未記載<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>パケットが ASIC を 2 度通過する（ingress → recycle → ingress → fabric → egress）ため、<strong>スループットや遅延に影響</strong></li>
+<li>recycle port の帯域がボトルネックになり得る</li>
+<li><code>SYSTEM_PORT</code> を <code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> で受理する SAI 拡張（Option 1）は ASIC 依存</li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>VoQ chassis architecture</strong>: 各 LC の FSI / SYSTEM_PORT 抽象に依存</li>
+<li><strong><code>routeorch</code> / <code>neighorch</code></strong>: remote neighbor 情報を返す経路の整備</li>
+<li><strong>既存 Everflow（<a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow HLD</a>）</strong>: 通常スイッチ向けの mirror セッション設計をベースとする</li>
+<li><strong>Recycle port</strong>: 本機能の前提となるハード資源</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ミラーパケットが宛先 LC に届かない場合、recycle port が enable されているか・L3 化されているか（Option 2）を確認</li>
+<li>mirror destination が remote のとき <code>mirrororch</code> ログで MONITOR_PORT に何（SYSTEM_PORT / recycle）が選ばれているかを確認</li>
+<li>パケットは出るが宛先で受からない場合、<code>neighorch</code> の remote neighbor 情報が正しいか確認</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- Option 1 / Option 2 のどちらが master に取り込まれたか
+- mirrororch / neighorch の VoQ 向け拡張コード
+- SYSTEM_PORT を受理する SAI mirror 実装の community 提供状況
+- recycle port のセットアップ手順（SONiC 側 / ベンダー SAI 側）
+- 帯域・遅延への影響評価
+- HLD の TBD 節（テスト・future work）の現状
+-->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/SONiC</code> <code>doc/voq/everflow.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -3649,10 +4137,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.action.edit", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
