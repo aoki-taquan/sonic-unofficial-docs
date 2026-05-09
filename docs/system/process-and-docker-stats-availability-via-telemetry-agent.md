@@ -1,7 +1,7 @@
 ---
 title: Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2019-09 改訂、6 年以上経過）"
-    HLD は v0.1 / 2019-09-12 改訂のまま。`PROCESS_STATS` / `DOCKER_STATS` を STATE_DB に書く 2 分間隔のデーモン実装が現行 master にあるか、テーブル名やフィールドが当時の設計通りかは大きく乖離している可能性がある。Verifier の高優先度確認対象。
+!!! success "裏取りステータス: Code-verified（一部位置に乖離）"
+    現行 master で実装済みを確認。デーモンは `sonic-host-services/scripts/procdockerstatsd`（HLD では `sonic-buildimage/files/image_config` 配下と記載されていたが、実際は sonic-host-services リポジトリに移管）。`procdockerstatsd:138` で `top_processes = sorted_processes[:1024]`、`procdockerstatsd:174` で `STATE_DB` の `PROCESS_STATS|*` 全削除、`procdockerstatsd:234-236` で `DOCKER_STATS|LastUpdateTime` / `PROCESS_STATS|LastUpdateTime` 更新、`procdockerstatsd:240-241` で `time.sleep(120)`（2 分周期）を確認（verified at: 2026-05-09）。
 
 # Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
 
@@ -111,7 +111,11 @@ gnmic -a <switch>:8080 subscribe \
 - 取得対象プロセスは **CPU 消費 top 1024** に絞られる。実装上の理由（STATE_DB サイズ抑制）と思われるが、しきい値の根拠は HLD には明記なし。
 - 周期 2 分は固定で、外部から調整するインタフェースは HLD に無い。
 - デーモン実装の場所が `sonic-buildimage/files/image_config` 配下と指定されているのみで、プロセス名・サービス名は HLD で確定していない。
-- HLD は 2019 年で実装が現行 master にどこまで残っているかは未確認（高優先で裏取り対象）。
+- HLD は 2019 年で実装が現行 master にどこまで残っているかは未確認（高優先で裏取り対象） → 2026-05-09 裏取り済み。実装は `sonic-host-services` リポジトリ側 (`scripts/procdockerstatsd`) に移管されているが、テーブル名・フィールド・top-1024・2 分周期は HLD 記載通り。
+
+## 実装との乖離
+
+- HLD では「デーモン実装は `sonic-buildimage/files/image_config` 配下」と記載されているが、現行 master の実装は `sonic-net/sonic-host-services` リポジトリの `scripts/procdockerstatsd`（Python daemon）として独立配置されている。これは HLD 起草時 (2019-09) 以降に sonic-host-services が分離・スクリプトが移管された経緯による。動作仕様（top-1024、2 分間隔、PROCESS_STATS / DOCKER_STATS / LastUpdateTime キー）は HLD 通り。
 
 ## 干渉する機能
 
