@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/dash-sonic-kvm/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-active-dual-tor/">
       
       
-        <link rel="prev" href="../active-active-dual-tor/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../dscp-remapping-for-tunnel-traffic/">
+        <link rel="next" href="../dash-sonic-kvm/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DASH SONiC KVM（BMv2 ベース仮想 DPU） - SONiC 非公式ドキュメント</title>
+        <title>Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dash-sonic-kvmbmv2-dpu" class="md-skip">
+        <a href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DASH SONiC KVM（BMv2 ベース仮想 DPU）
+              Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
             
           </span>
         </div>
@@ -1629,34 +1629,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../active-active-dual-tor/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1676,7 +1648,7 @@
   <span class="md-ellipsis">
     
   
-    DASH SONiC KVM（BMv2 ベース仮想 DPU）
+    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
   
 
     
@@ -1694,7 +1666,7 @@
   <span class="md-ellipsis">
     
   
-    DASH SONiC KVM（BMv2 ベース仮想 DPU）
+    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
   
 
     
@@ -1746,7 +1718,85 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モジュール構成
+        クラスタトポロジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サーバ NIC 側要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-app_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APP_DB / STATE_DB 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linkmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linkmgrd の役割
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="linkmgrd の役割">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#link-prober-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Link Prober の 4 状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-operational-forwarding-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin / operational forwarding state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#active-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        active-active 状態決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default route 監視
       
     </span>
   </a>
@@ -1757,7 +1807,35 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート種別
+        状態決定表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent 側
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Orchagent 側">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP tunnel + MuxOrch
       
     </span>
   </a>
@@ -1765,10 +1843,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dpu-mode-single-device-mode" class="md-nav__link">
+  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モード（DPU mode / single device mode）
+        prefix-based neighbor architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transceiver-daemon-grpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transceiver Daemon と gRPC
       
     </span>
   </a>
@@ -1776,10 +1870,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#grpc-traffic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データプレーン経路
+        gRPC traffic の特殊扱い
       
     </span>
   </a>
@@ -1787,10 +1881,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#bgp-update-delay" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コントロールプレーン経路
+        BGP update delay
       
     </span>
   </a>
@@ -1798,32 +1892,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kvm-testbed-single-device" class="md-nav__link">
+  <a href="#ingress-drop-acl-skip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KVM testbed セットアップ（single device モード）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNMI クライアント
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpu-vpp-npu-testbed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPU + VPP NPU testbed
+        ingress drop ACL の skip
       
     </span>
   </a>
@@ -1836,7 +1908,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -1870,10 +1942,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
+        設定例
       
     </span>
   </a>
@@ -1886,7 +1958,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -1897,7 +1969,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -1908,7 +1980,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -1919,7 +1991,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -1933,6 +2005,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dash-sonic-kvm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DASH SONiC KVM（BMv2 ベース仮想 DPU）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -4088,7 +4188,85 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モジュール構成
+        クラスタトポロジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サーバ NIC 側要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-app_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APP_DB / STATE_DB 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linkmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linkmgrd の役割
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="linkmgrd の役割">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#link-prober-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Link Prober の 4 状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-operational-forwarding-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin / operational forwarding state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#active-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        active-active 状態決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default route 監視
       
     </span>
   </a>
@@ -4099,7 +4277,35 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート種別
+        状態決定表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent 側
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Orchagent 側">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP tunnel + MuxOrch
       
     </span>
   </a>
@@ -4107,10 +4313,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dpu-mode-single-device-mode" class="md-nav__link">
+  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モード（DPU mode / single device mode）
+        prefix-based neighbor architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transceiver-daemon-grpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transceiver Daemon と gRPC
       
     </span>
   </a>
@@ -4118,10 +4340,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#grpc-traffic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データプレーン経路
+        gRPC traffic の特殊扱い
       
     </span>
   </a>
@@ -4129,10 +4351,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#bgp-update-delay" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コントロールプレーン経路
+        BGP update delay
       
     </span>
   </a>
@@ -4140,32 +4362,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kvm-testbed-single-device" class="md-nav__link">
+  <a href="#ingress-drop-acl-skip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KVM testbed セットアップ（single device モード）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNMI クライアント
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpu-vpp-npu-testbed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPU + VPP NPU testbed
+        ingress drop ACL の skip
       
     </span>
   </a>
@@ -4178,7 +4378,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4212,10 +4412,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
+        設定例
       
     </span>
   </a>
@@ -4228,7 +4428,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4239,7 +4439,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4250,7 +4450,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4261,7 +4461,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4288,7 +4488,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/dash-sonic-kvm.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/active-active-dual-tor.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4298,227 +4498,403 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD のみを根拠に書かれている。BMv2 / VPP / dashsai / saidash の現行 master 取り込み状況、<code>vms-kvm-dpu</code> トポロジの ansible playbook、<code>gnmi_cli_py</code> の Python 2 依存等は未確認。HLD は 「DPU SONiC KVM image with dataplane will be released at the next stage」と記載しており、書きかけの段階でドキュメント化された設計である。</p>
+<p><code>linkmgrd</code> の active-active 用 state machine、<code>MuxOrch</code> の prefix-based neighbor 実装（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> + 別 prefix route）、<code>HW_FORWARDING_STATE_PEER</code> などの新規 APP_DB / STATE_DB テーブル、<code>config mux mode detach</code> の <code>xcvrd</code> への取り込みは実コードでの裏取り未済。warm reboot 対応は HLD では TBD。</p>
 </div>
-<h1 id="dash-sonic-kvmbmv2-dpu">DASH SONiC KVM（BMv2 ベース仮想 DPU）<a class="headerlink" href="#dash-sonic-kvmbmv2-dpu" title="Permanent link">&para;</a></h1>
+<h1 id="active-active-dual-torgrpc-cable-control-prefix-based-neighbor">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）<a class="headerlink" href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DASH SONiC KVM は <strong>物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）の検証ができる仮想スイッチイメージ</strong> である。目的は 2 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>POC 兼検証用</strong>: 物理ハードウェアを用意せずに DASH のコントロールプレーン・データプレーンを開発・テストできる testbed を提供</li>
-<li><strong>CI</strong>: <code>sonic-buildimage</code> / <code>sonic-swss</code> などの SONiC 系リポジトリの Azure Pipelines CI に DASH を組み込む</li>
-</ol>
-<p>データプレーンは <strong>BMv2（P4 simple_switch）</strong> をベースに、フロー作成や resimulation など BMv2 単体では弱い部分を <strong>VPP</strong> で補強する構成。SAI 互換は <code>dashsai</code>（リモート shim サーバ + クライアント）で sairedis から見えるようにしている。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph DPU_KVM[DPU SONiC KVM]
-      direction TB
-      ETH0[Ethernet0,1,...\nsystem port] --&gt; DAPP[Dataplane APP\n(VPP + saidash.so)]
-      LINE[eth1, eth2, ...\nline port] --&gt; BMV2
-      DAPP -- DPDK / CPU port --&gt; BMV2[BMv2 simple_switch\n(P4 dataplane)]
-      DAPP -- gRPC --&gt; BMV2
-      DAPP -- shim --&gt; SAIRED[SAIRedis\n(remote dashsai client)]
-      SAIRED --&gt; SWSS[SWSS]
-      SWSS --&gt; APPDB[(APP_DB)]
-      GNMI[GNMI] --&gt; APPDB
-      OTHER[BGP / LLDP / etc.]
-    end
-    EXT[gNMI client]&lt;--&gt;|midplane / mgmt port| GNMI</code></pre>
+<p>active-active dual ToR は <strong>active-standby dual ToR の進化形</strong> であり、<strong>両 ToR が常時トラフィックを処理する</strong> 設計である。サーバ NIC は 2 本の 100Gbps DAC を介して上下 2 つの ToR (UT0 / LT0) と接続し、ToR は同じ VLAN IP / MAC を提示する。NIC は 5-tuple 単位でフローを 2 リンクに分散し、ToR から <code>gRPC</code> 経由で「どのリンクを active にするか」の指示を受ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>active-standby との主な違い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>モジュール</th>
+<th>項目</th>
+<th>active-standby</th>
+<th>active-active</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>帯域</td>
+<td>1 リンク分</td>
+<td>2 リンク分</td>
+</tr>
+<tr>
+<td>Northbound</td>
+<td>両 ToR に複製</td>
+<td>NIC が分散</td>
+</tr>
+<tr>
+<td>cable control</td>
+<td>I2C (smart y-cable)</td>
+<td>gRPC over DAC (ToR ⇔ SoC NIC)</td>
+</tr>
+<tr>
+<td>MuxOrch ingress drop</td>
+<td>必要</td>
+<td>不要（NIC 側が制御）</td>
+</tr>
+<tr>
+<td>state machine</td>
+<td>y-cable 方向ベース</td>
+<td>リンク健全性ベース（独立判断）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">クラスタトポロジ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    T1A[T1] &amp; T1B[T1] &amp; T1C[T1] &amp; T1D[T1]
+    UT0[ToR UT0] --&gt;|VLAN 同じ IP/MAC| T1A &amp; T1B &amp; T1C &amp; T1D
+    LT0[ToR LT0] --&gt;|VLAN 同じ IP/MAC| T1A &amp; T1B &amp; T1C &amp; T1D
+    UT0 ---|100G DAC| NIC[Server NIC&lt;br/&gt;200G に見える]
+    LT0 ---|100G DAC| NIC
+    NIC --- HOST[Server Host]</code></pre>
+<p>両 ToR が <strong>同じ VLAN IP / MAC</strong> を T1 に広告し、T1 から見ると 2 つの ECMP next hop が存在する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="nic">サーバ NIC 側要件<a class="headerlink" href="#nic" title="Permanent link">&para;</a></h3>
+<p>NIC は <strong>同一 IP / MAC を 2 リンクで受ける</strong> 前提で southbound を上位スタックに渡し、northbound は <strong>5-tuple ベースで 2 リンクへ分散</strong> する。一部のパケットは <strong>両リンクへ複製</strong> する必要がある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>パケット種別</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ARP / IPv6 RS / NS / NA (133/135/136)</td>
+<td><strong>両ポート複製</strong></td>
+</tr>
+<tr>
+<td>ICMP / ICMPv6 heartbeat (Loopback2 宛)</td>
+<td><strong>両ポート複製</strong></td>
+</tr>
+<tr>
+<td>gRPC reply (Loopback3_Port0_IP / Port1_IP 宛)</td>
+<td><strong>対応ポートにのみ送信</strong>（Port が UP の場合）</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>NIC が任意のリンクを選択</td>
+</tr>
+</tbody>
+</table>
+<p>各 ToR は <strong>個別の loopback IP</strong> を持ち、NIC はそれを基に gRPC 応答先を決定する。</p>
+<h3 id="config_db-app_db-state_db">CONFIG_DB / APP_DB / STATE_DB 拡張<a class="headerlink" href="#config_db-app_db-state_db" title="Permanent link">&para;</a></h3>
+<p>新規スキーマ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
 <th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>BMv2</td>
-<td>P4 でデータプレーン処理。元々ハードウェア DPU が担う層</td>
+<td><code>CONFIG_DB.MUX_CABLE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>cable_type: active-standby \| active-active</code></td>
+<td>cable 種別</td>
 </tr>
 <tr>
-<td>Dataplane APP</td>
-<td>VPP フレームワーク + <code>saidash</code> 共有ライブラリ。BMv2 と gRPC で会話。BMv2 が苦手なフロー処理を VPP で補う</td>
+<td><code>APP_DB.FORWARDING_STATE_COMMAND</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>command: probe / set_active_self / set_standby_self / set_standby_peer</code></td>
+<td>linkmgrd → xcvrd への問い合わせ・設定要求</td>
 </tr>
 <tr>
-<td><code>saidash</code> / <code>dashsai</code></td>
-<td>SAI の DASH 部分を BMv2 にマッピングする実装。<strong>dashsai client/server は shim</strong> で sairedis を BMv2 に繋ぐ</td>
+<td><code>APP_DB.FORWARDING_STATE_RESPONSE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>response</code>, <code>response_peer ∈ {active, standby, unknown, error}</code></td>
+<td>xcvrd の応答</td>
 </tr>
 <tr>
-<td>SAIRedis</td>
-<td>物理仮想 SONiC では <code>saivs</code> を読むが、本構成では <strong>remote dashsai client</strong> をロードする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>APP_DB.PORT_TABLE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>oper_status: up/down</code></td>
+<td>xcvrd が peer link 状態を linkmgrd に通知</td>
 </tr>
 <tr>
-<td>SWSS</td>
-<td>物理 DPU と <strong>ほぼ同一</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。特別変更不要</td>
+<td><code>APP_DB.HW_FORWARDING_STATE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>state: active/standby/unknown</code></td>
+<td>linkmgrd → xcvrd: peer の admin forwarding state 設定要求</td>
 </tr>
 <tr>
-<td>GNMI / APP_DB</td>
-<td>物理 DPU と同一構造。後述の 2 モードで動作</td>
-</tr>
-<tr>
-<td>その他</td>
-<td>BGP, LLDP, etc. を物理 DPU と同じ構成で残す<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>STATE_DB.HW_MUX_CABLE_TABLE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>state</code></td>
+<td>xcvrd が peer の admin forwarding state を linkmgrd に書き戻し</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">ポート種別<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>KVM 内のインタフェースは 3 種類に分かれる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="linkmgrd">linkmgrd の役割<a class="headerlink" href="#linkmgrd" title="Permanent link">&para;</a></h3>
+<p>linkmgrd は active-standby から <strong>link prober</strong> をそのまま流用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>default 100ms</strong> で ICMP heartbeat を送出（src MAC = SVI MAC、payload TLV に ToR GUID を載せる）</li>
+<li><strong>3 連続損失</strong> で unhealthy と判定</li>
+<li>ICMP reply は NIC が両 ToR に複製するため <strong>peer の health も観測可能</strong></li>
+</ul>
+<h4 id="link-prober-4">Link Prober の 4 状態<a class="headerlink" href="#link-prober-4" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>用途</th>
-<th>備考</th>
+<th>状態</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>Ethernet0</code>, <code>Ethernet1</code>, ...</td>
-<td>system port</td>
-<td>BGP / LLDP 等のプロトコルが send/recv に使う</td>
+<td><code>LinkProberUnknown</code></td>
+<td>初期 / ICMP reply 受信なし</td>
 </tr>
 <tr>
-<td><code>eth1</code>, <code>eth2</code>, ...</td>
-<td>line port</td>
-<td>KVM の実 IF。Ethernet と <strong>1 対 1 対応</strong></td>
+<td><code>LinkProberActive</code></td>
+<td>self ToR ID 入りの reply を受信</td>
 </tr>
 <tr>
-<td>CPU port (DPDK)</td>
-<td>Dataplane APP 用</td>
-<td>BMv2 から CPU パスでパケットが上がる</td>
+<td><code>LinkProberPeerUnknown</code></td>
+<td>peer ToR ID 入りの reply 未受信（peer link 不調の可能性）</td>
+</tr>
+<tr>
+<td><code>LinkProberPeerActive</code></td>
+<td>peer ToR ID 入りの reply を受信</td>
 </tr>
 </tbody>
 </table>
-<h3 id="dpu-mode-single-device-mode">モード（DPU mode / single device mode）<a class="headerlink" href="#dpu-mode-single-device-mode" title="Permanent link">&para;</a></h3>
-<p>GNMI と APP_DB は物理デバイスと同一だが、KVM では 2 つの動かし方が想定される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="admin-operational-forwarding-state">admin / operational forwarding state<a class="headerlink" href="#admin-operational-forwarding-state" title="Permanent link">&para;</a></h4>
+<p>ToR は NIC に <strong>admin forwarding state</strong> (active/standby) を gRPC で通知する。NIC 側は別途 <strong>operational forwarding state</strong> を持ち、自身が link down を検知した場合は admin が <code>active</code> であってもそのリンクへの送信を停止する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これで「ToR 側の制御権」と「NIC の即時反応」を両立する。</p>
+<h4 id="active-active">active-active 状態決定<a class="headerlink" href="#active-active" title="Permanent link">&para;</a></h4>
+<p>active-standby のように y-cable 方向で同期せず、<strong>self / peer をそれぞれ独立に判定</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>DPU モード</strong>: 物理 SmartSwitch と同様、設定は外部 NPU の GNMI 経由で midplane（<code>eth-midplane</code>）に流れる</li>
-<li><strong>Single device モード</strong>: KVM 内に GNMI サーバを立てて、外部から直接 set すれば SWSS にローカル forward される</li>
+<li>self: link prober が active かつ link state が up → admin = active、それ以外 → standby</li>
+<li>peer rescue: 自身 active かつ peer の heartbeat reply が無い → peer を standby と判定</li>
+<li>gRPC unreachable: forwarding は止めず、定期的に gRPC server health を確認しつつ admin state を再同期</li>
 </ul>
-<h3 id="_5">データプレーン経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>BMv2 上の P4 logic がパケットの出口を決める。HLD 例<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart TB
-    eth1 --&gt; PD{Packet dispatcher}
-    PD --&gt;|LLDP| Eth0[Ethernet0]
-    Eth0 --&gt; LLDPP[LLDP プロセス]
-    PD --&gt;|DASH| DP{DASH Pipeline}
-    DP --&gt;|VNet| eth2
-    DP --&gt;|TCP SYN| CPU0[CPU0]
-    CPU0 --&gt; DAPP[Dataplane APP]
-    DAPP --&gt; CPU0
-    CPU0 --&gt; DP</code></pre>
-<p>ポイント:</p>
+<h4 id="default-route">default route 監視<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h4>
+<p>T1 への default route が消えると northbound パケロスが起きるため、<strong>linkmgrd は default route 監視を行い、消失中は ICMP probing を停止し unhealthy を fake する</strong>（無効化可）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="_4">状態決定表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Default Route</th>
+<th>Link State</th>
+<th>LP self</th>
+<th>LP peer</th>
+<th>Link Manager State</th>
+<th>gRPC self</th>
+<th>gRPC peer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Available</td>
+<td>Up</td>
+<td>Active</td>
+<td>Active</td>
+<td>Active</td>
+<td>set active</td>
+<td>no-op</td>
+</tr>
+<tr>
+<td>Available</td>
+<td>Up</td>
+<td>Active</td>
+<td>Unknown</td>
+<td>Active</td>
+<td>set active</td>
+<td>set standby</td>
+</tr>
+<tr>
+<td>Available</td>
+<td>Up</td>
+<td>Unknown</td>
+<td>*</td>
+<td>Standby</td>
+<td>set standby</td>
+<td>no-op</td>
+</tr>
+<tr>
+<td>Available</td>
+<td>Down</td>
+<td>*</td>
+<td>*</td>
+<td>Standby</td>
+<td>set standby</td>
+<td>no-op</td>
+</tr>
+<tr>
+<td>Missing</td>
+<td>*</td>
+<td>*</td>
+<td>*</td>
+<td>Standby</td>
+<td>set standby</td>
+<td>no-op</td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchagent">Orchagent 側<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<h4 id="ipinip-tunnel-muxorch">IPinIP tunnel + MuxOrch<a class="headerlink" href="#ipinip-tunnel-muxorch" title="Permanent link">&para;</a></h4>
+<p>orchagent 起動時に <strong>peer ToR への IPinIP tunnel</strong> を作る。<code>MuxOrch</code> は linkmgrd の状態変化を購読し、neighbor prefix route の next hop を <strong>直接 next hop ↔ tunnel next hop</strong> で切り替える<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>通常 VNet トラフィックは BMv2 内の DASH Pipeline で完結し <code>eth2</code> に出る</li>
-<li>TCP SYN など <strong>フロー作成が必要なパケット</strong> は CPU0 で Dataplane APP に上がり、VPP 側でフローを作って戻す</li>
-<li>LLDP のような制御プレーン向けは Ethernet ポートに dispatch して上位プロセスに渡す</li>
+<li><code>MuxCfgOrch</code>: <code>MUX_CABLE</code> を読み port ↔ server IP マップを <code>MuxOrch</code> に渡す</li>
+<li><code>TunnelOrch</code>: <code>MUX_TUNNEL</code> を購読し、tunnel object と termination / decap entry を作成（<code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を MuxOrch が next hop として参照）</li>
+<li><code>MuxOrch</code>: linkmgrd の state 変化に応じ neighbor prefix route の next hop を更新</li>
 </ul>
-<h3 id="_6">コントロールプレーン経路<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CL as gNMI client
-    participant MID as eth-midplane
-    participant GN as gnmi (KVM)
-    participant DB as APP_DB
-    participant SW as SWSS
-    participant SR as SAIRedis (remote dashsai)
-    participant BM as BMv2 + Dataplane APP
-    CL-&gt;&gt;MID: gNMI Set
-    MID-&gt;&gt;GN: gNMI request
-    GN-&gt;&gt;DB: APP_DB 更新
-    DB--&gt;&gt;SW: 通知
-    SW-&gt;&gt;SR: SAI 呼び出し
-    SR-&gt;&gt;BM: dashsai shim 経由</code></pre>
-<p>Single device モードでは <code>MID</code> を経由せず、KVM 内の GNMI に直接接続する経路もある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Due to the P4 and BMv2 limitation, such as flow creation, flow resimulation and etc, in this virtual DPU,
-  our implementation is based on the VPP framework with the CPU interface to enhance the dataplane engine ...
-  this dataplane APP loads the generated shared library, saidash, which communicates with BMv2 via GRPC.
-reasoning: 「BMv2 単体では DASH 機能が足りないので VPP + saidash で補う」「SAIRedis は remote dashsai client をロードする」という構成根拠。
--->
-
-<h3 id="kvm-testbed-single-device">KVM testbed セットアップ（single device モード）<a class="headerlink" href="#kvm-testbed-single-device" title="Permanent link">&para;</a></h3>
-<p><code>sonic-mgmt</code> を使って <code>vms-kvm-dpu</code> トポロジを立てる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic-mgmt コンテナ内</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>/data/sonic-mgmt/ansible
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>add-topo<span class="w">  </span>vms-kvm-dpu<span class="w"> </span>password.txt
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>deploy-mg<span class="w"> </span>vms-kvm-dpu<span class="w"> </span>veos_vtb<span class="w"> </span>password.txt
-</span></code></pre></div>
-<p>DPU への SSH:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sshpass<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="w"> </span>ssh<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">TCPKeepAlive</span><span class="o">=</span>yes<span class="w"> </span>-o<span class="w"> </span><span class="nv">ServerAliveInterval</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">UserKnownHostsFile</span><span class="o">=</span>/dev/null<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>no<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>admin@10.250.0.101
-</span></code></pre></div>
-<p>デフォルト管理 IP は <code>10.250.0.101</code>、デフォルトパスワードは <code>password</code>。</p>
-<h3 id="gnmi">gNMI クライアント<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
-<p>DASH テスト実行時、<code>sonic-mgmt</code> 内の <code>/tmp/&lt;UUID&gt;/</code> に CA / クライアント証明書が生成される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。クライアントとして <code>gnmi_cli_py</code>（Python 2 依存）を使い、PTF コンテナにデフォルトでインストールされている。</p>
-<p>DUT 側では gnmi-native を停止して証明書付きで起動し直す必要がある:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>supervisorctl<span class="w"> </span>stop<span class="w"> </span>gnmi-native
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/sbin/telemetry -logtostderr --port 50052 \</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s2">  --server_crt /etc/sonic/telemetry/gnmiserver.crt \</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s2">  --server_key /etc/sonic/telemetry/gnmiserver.key \</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s2">  --ca_crt /etc/sonic/telemetry/gnmiCA.pem \</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">  -gnmi_native_write=true -v=10 &gt;/root/gnmi.log 2&gt;&amp;1 &amp;&quot;</span>
-</span></code></pre></div>
-<p>クライアント例（DASH テーブル更新）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python2<span class="w"> </span>/root/gnxi/gnmi_cli_py/py_gnmicli.py<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--timeout<span class="w"> </span><span class="m">30</span><span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.0.0.88<span class="w"> </span>-p<span class="w"> </span><span class="m">50052</span><span class="w"> </span>-xo<span class="w"> </span>sonic-db<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-rcert<span class="w"> </span>/root/gnmiCA.pem<span class="w"> </span>-pkey<span class="w"> </span>/root/gnmiclient.key<span class="w"> </span>-cchain<span class="w"> </span>/root/gnmiclient.crt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-m<span class="w"> </span>set-update<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--xpath<span class="w"> </span>/APPL_DB/localhost/DASH_APPLIANCE_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span><span class="m">123</span><span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">          </span>/APPL_DB/localhost/DASH_VNET_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span>Vnet1<span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>--value<span class="w"> </span>$/root/update1<span class="w"> </span>$/root/update2
-</span></code></pre></div>
-<p><code>update1</code>, <code>update2</code> は対応 protobuf。</p>
-<h3 id="dpu-vpp-npu-testbed">DPU + VPP NPU testbed<a class="headerlink" href="#dpu-vpp-npu-testbed" title="Permanent link">&para;</a></h3>
-<p>HLD では <code>5.2 DPU with VPP NPU testbed</code> 節は <strong>TBD</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h4 id="prefix-based-neighbor-architecture">prefix-based neighbor architecture<a class="headerlink" href="#prefix-based-neighbor-architecture" title="Permanent link">&para;</a></h4>
+<p>従来は SAI neighbor + nexthop で <strong>暗黙的 host route (/32 or /128)</strong> が SDK に作られ、active/standby 切替で neighbor を <strong>add/remove</strong> していた。これを以下に変更する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>neighbor entry は <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true</code> で作る（<strong>暗黙 host route なし</strong>）</li>
+<li>別途 <code>server_ip/32</code> (または <code>/128</code>) <strong>prefix route</strong> を明示的に作る</li>
+<li>prefix route の next hop を直接 neighbor next hop ↔ tunnel next hop で <strong>更新するだけ</strong> にする</li>
+<li>neighbor entry 自体は <strong>永続化</strong> され、状態遷移で削除しない</li>
+</ul>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Active
+      A1[incoming pkt] --&gt; A2[prefix route lookup&lt;br/&gt;server_ip/32]
+      A2 --&gt; A3[direct neighbor nexthop]
+      A3 --&gt; A4[Server]
+    end
+    subgraph Standby
+      S1[incoming pkt] --&gt; S2[prefix route lookup&lt;br/&gt;server_ip/32]
+      S2 --&gt; S3[tunnel nexthop]
+      S3 --&gt; S4[IPinIP encap → Peer ToR]
+      S4 --&gt; S5[Server]
+    end</code></pre>
+<p>利点<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>状態遷移で neighbor add/remove を行わないため <strong>stability + 性能</strong> 改善</li>
+<li>next hop 変更だけなので <strong>mux toggle latency が短い</strong></li>
+</ul>
+<h3 id="transceiver-daemon-grpc">Transceiver Daemon と gRPC<a class="headerlink" href="#transceiver-daemon-grpc" title="Permanent link">&para;</a></h3>
+<p>SoC NIC 側で gRPC server が動作。linkmgrd は xcvrd 経由で以下の RPC を発行する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>DualToRActive</code><ul>
+<li>port 単位で self / peer の forwarding state を query</li>
+<li>port 単位で self / peer のサーバ側 link state を query</li>
+<li>port 単位で self / peer の forwarding state を set</li>
+</ul>
+</li>
+<li><code>GracefulRestart</code>: SoC からの shutdown / restart 通知</li>
+</ul>
+<h3 id="grpc-traffic">gRPC traffic の特殊扱い<a class="headerlink" href="#grpc-traffic" title="Permanent link">&para;</a></h3>
+<p>両 ToR が standby になると gRPC traffic も tunnel 経由で投げられ blackhole する。これを防ぐため <code>MuxOrch</code> は <strong>neighbor が NIC IP の場合 Tunnelmgrd への通知を skip</strong> し、kernel route を tunnel 化させない。これで standby 中でも <strong>gRPC 制御プレーン traffic は local で送出</strong> され、NIC に到達できる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="bgp-update-delay">BGP update delay<a class="headerlink" href="#bgp-update-delay" title="Permanent link">&para;</a></h3>
+<p>active-active T0 は BGP セッション確立後、T1 に default route が広告される前に T1 から traffic が降りてくる時期がある。standby T0 は tunnel 経由で peer に投げるが、自身に default route が無ければ tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong> を導入し、T0 が T1 から default を学習する時間を確保する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="ingress-drop-acl-skip">ingress drop ACL の skip<a class="headerlink" href="#ingress-drop-acl-skip" title="Permanent link">&para;</a></h3>
+<p>旧設計では standby 移行時に <code>MuxOrch</code> が <strong>ingress drop ACL</strong> を貼っていたが、NIC 側の admin state 切替が gRPC 経由で完了する前に upstream traffic が drop される間隙が問題だった。新設計では <strong>standby 切替時の ingress drop ACL を貼らない</strong> ことで、その間隙でも best effort で forwarding する<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>KVM 自体の追加 CONFIG_DB スキーマは無い。物理 DPU と同じ DASH 系テーブル（<code>DASH_VNET_TABLE</code>, <code>DASH_APPLIANCE_TABLE</code> 等）を APP_DB / CONFIG_DB に投入する。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MUX_CABLE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>cable_type=active-active</code> で本機能を選択。<code>server_ipv4 / ipv6 / soc_ipv4</code> も保持</td>
+</tr>
+<tr>
+<td><code>MUX_TUNNEL</code></td>
+<td>(定義)</td>
+<td>TunnelOrch が IPinIP tunnel を作る根拠</td>
+</tr>
+</tbody>
+</table>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>KVM testbed 用の CLI は <code>testbed-cli.sh</code>（sonic-mgmt 側）。SONiC 内部の DASH CLI は本 HLD のスコープ外。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当なし（KVM 環境固有のスキーマは無い）。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show mux status</code></td>
+<td>port / status / server_status / health / hwstatus / last_switchover_time</td>
+</tr>
+<tr>
+<td><code>show mux config</code></td>
+<td>peer ToR / cable_type / mux state / soc_ipv4</td>
+</tr>
+<tr>
+<td><code>show mux tunnel-route [--json] &lt;port&gt;</code></td>
+<td>server_ipv4 / server_ipv6 / soc_ipv4 の tunnel route が kernel / asic に存在するか</td>
+</tr>
+<tr>
+<td><code>config mux mode &lt;auto\|manual\|active\|standby\|detach&gt; &lt;port&gt;</code></td>
+<td>mux 動作モード設定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 既定動作（auto: self / peer 双方の failover を有効化）</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>auto<span class="w"> </span>Ethernet4
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># メンテナンス時に self の failover のみ有効・peer 側を触らない</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>detach<span class="w"> </span>Ethernet4
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 強制 active 化（toggle 後 manual モードで固定）</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>active<span class="w"> </span>Ethernet4
+</span></code></pre></div>
+<p><code>show mux status</code> 例<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT        STATUS    SERVER_STATUS    HEALTH    HWSTATUS    LAST_SWITCHOVER_TIME
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:43
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet8   active    active           healthy   consistent  2023-Mar-27 07:59:33
+</span></code></pre></div>
+<p><code>HEALTH</code> は以下を満たすと <code>healthy</code><sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>データプレーン付き DPU SONiC KVM image は HLD 時点で未公開</strong>。通常の <code>sonic-vs.img.gz</code> のみ取得可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>BMv2 の限界（フロー作成・resimulation）を VPP で補う実装は <strong>dashsai に強く依存</strong>。dashsai 未対応の SAI API は <strong>mock 実装</strong>される（<code>DTEL</code> 等）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>gNMI クライアント <code>gnmi_cli_py</code> は <strong>Python 2 依存</strong>。PTF 以外の環境ではインストールが面倒<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>DPU + VPP NPU testbed は HLD 時点で <strong>TBD</strong></li>
+<li>port status が up</li>
+<li>self link probe の reply 受信</li>
+<li><code>STATUS</code> と <code>SERVER_STATUS</code> 一致 or <code>SERVER_STATUS=unknown</code></li>
+<li>T1 への default route 存在</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>物理 SmartSwitch</strong>: SWSS / GNMI / APP_DB は物理 DPU と互換のため、両者でテスト共通化が可能</li>
-<li><strong><code>sonic-mgmt</code></strong>: <code>vms-kvm-dpu</code> トポロジが必要。EOS コンテナや veos_vtb の前提条件あり</li>
-<li><strong>CI（Azure Pipelines）</strong>: 本 KVM が CI のターゲット。BMv2 / VPP の build 時間が CI に影響する</li>
-<li><strong>DASH 系 HLD（VNet, ENI Forwarding 等）</strong>: 本 KVM はそれらの検証実装</li>
+<li><strong>warm reboot</strong> は HLD で TBD<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>gRPC server (SoC) と ToR の信頼関係 / 認証は HLD では詳細未定</li>
+<li><strong>両 ToR が standby</strong> の状況では tunneled control plane traffic も blackhole する。NIC IP 宛 traffic を local で送る特別扱いに依存</li>
+<li>BGP update delay (10 秒) は active-active 専用設定。session 確立後の routing convergence が遅延する</li>
+<li>ingress drop ACL を貼らない方針は <strong>standby 期の上り traffic が ToR に届く</strong> ため、ベストエフォート前提</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>testbed 起動が失敗する場合、<code>sonic-mgmt</code> の前提（cEOS イメージ・SSH 鍵）が揃っているか確認</li>
-<li>DPU に SSH できない場合、デフォルト IP <code>10.250.0.101</code> と <code>password</code> を確認</li>
-<li><code>gnmi_cli_py</code> がエラーになる場合、Python 2 環境で実行しているか確認</li>
-<li>DASH テーブル更新が反映されない場合、KVM 内の GNMI が証明書付きで再起動されているかを確認</li>
+<li><strong><code>linkmgrd</code> (sonic-linkmgrd)</strong>: state machine + link prober + default route 監視</li>
+<li><strong><code>xcvrd</code> (transceiver daemon)</strong>: gRPC client / server の橋渡し</li>
+<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>TunnelOrch</code> / <code>MuxOrch</code>)</strong>: prefix route と tunnel next hop の切替</li>
+<li><strong><code>bgpd</code></strong>: 両 ToR が同じ VLAN を広告。update delay の追加</li>
+<li><strong>NIC ファームウェア</strong>: 5-tuple 分散 + ARP/NDP 複製 + gRPC reply 振り分けの仕様遵守</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show mux status</code> の <code>HEALTH=unhealthy</code> → port up / link probe reply / default route の有無を順に確認</li>
+<li><code>HWSTATUS=inconsistent</code> → ToR 側 admin state と NIC 側 admin state が乖離。gRPC 通信ログ / xcvrd ログ確認</li>
+<li>standby 切替で traffic 断 → prefix route の next hop が tunnel に切り替わっているか <code>show mux tunnel-route &lt;port&gt;</code> で確認</li>
+<li>両 ToR が standby 化して通信不能 → linkmgrd の rescue ロジック / default route 状態を確認</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- BMv2 / VPP / saidash / dashsai server-client の現行 master 取り込み状況
-- vms-kvm-dpu トポロジ ansible playbook の所在
-- gnmi_cli_py の Python 2 依存（移行計画）
-- DPU SONiC KVM image (with dataplane) のリリース有無
-- DPU + VPP NPU testbed (5.2) の進捗
-- saivs / dashsai client の SAIRedis ロード切替の実装
+- linkmgrd の active-active state machine 実装存在確認（sonic-linkmgrd）
+- MuxOrch の prefix-based neighbor (SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true + prefix route) 実装確認
+- 新規 APP_DB / STATE_DB テーブル（FORWARDING_STATE_COMMAND, PORT_TABLE_PEER, HW_FORWARDING_STATE_PEER, HW_MUX_CABLE_TABLE_PEER）の現行スキーマ確認
+- config mux mode detach の sonic-utilities / xcvrd 取り込み確認
+- BGP update delay 10s 設定の現行 master 取り込み確認
+- ingress drop ACL skip の MuxOrch 実装確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dash/dash-sonic-kvm.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dualtor/active_active_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
