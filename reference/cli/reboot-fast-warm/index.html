@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-device-global/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/reboot-fast-warm/">
       
       
-        <link rel="prev" href="../bgp-aggregate-address/">
+        <link rel="prev" href="../config-vxlan/">
       
       
-        <link rel="next" href="../bgp-globals/">
+        <link rel="next" href="../show-acl/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>BGP_DEVICE_GLOBAL テーブル - SONiC 非公式ドキュメント</title>
+        <title>reboot / fast-reboot / warm-reboot コマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bgp_device_global" class="md-skip">
+        <a href="#reboot-fast-reboot-warm-reboot" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              BGP_DEVICE_GLOBAL テーブル
+              reboot / fast-reboot / warm-reboot コマンド
             
           </span>
         </div>
@@ -6685,6 +6685,8 @@
                 
   
   
+    
+  
   
   
     
@@ -6692,1200 +6694,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../cli/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    CLI
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/clear/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    clear (sonic-clear) コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-aaa/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config aaa / tacacs / radius サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-dhcp-relay/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config dhcp_relay / dhcpv4_relay サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config interface サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-kdump/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config kdump サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-mclag/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config mclag サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-muxcable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config muxcable サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-nat/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config nat サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-portchannel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config portchannel サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-route/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config route サブコマンド（static route）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-sflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config sflow サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-snmp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config snmp / snmpagentaddress / snmptrap サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-syslog/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config syslog サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vrf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vrf サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vxlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vxlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/reboot-fast-warm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reboot / fast-reboot / warm-reboot コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show bgp / show ip bgp / show ipv6 bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-feature/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show feature サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show interfaces サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-ip/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show ip サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-mclag/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show mclag (mclagdctl) コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-muxcable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show muxcable サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-nat/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show nat サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show platform サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-route-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show route-map コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-running-config/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show runningconfiguration / startupconfiguration サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-system-health/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show system-health サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-techsupport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show techsupport コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-cfggen/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-cfggen コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-installer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-installer コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-package-manager/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-package-manager コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -7976,7 +6784,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -7987,7 +6795,7 @@
   <span class="md-ellipsis">
     
   
-    CONFIG_DB
+    CLI
   
 
     
@@ -7998,18 +6806,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    CONFIG_DB
+    CLI
   
 
           </label>
@@ -8024,14 +6832,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-rule/" class="md-nav__link">
+      <a href="../clear/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_RULE テーブル
+    clear (sonic-clear) コマンド
   
 
     
@@ -8052,14 +6860,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-table/" class="md-nav__link">
+      <a href="../config-aaa/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_TABLE テーブル
+    config aaa / tacacs / radius サブコマンド
   
 
     
@@ -8080,14 +6888,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../auto-techsupport/" class="md-nav__link">
+      <a href="../config-acl/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    AUTO_TECHSUPPORT テーブル
+    config acl サブコマンド
   
 
     
@@ -8108,14 +6916,406 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-aggregate-address/" class="md-nav__link">
+      <a href="../config-bgp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_AGGREGATE_ADDRESS テーブル
+    config bgp サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-dhcp-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config dhcp_relay / dhcpv4_relay サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-kdump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config kdump サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config mclag サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-muxcable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config muxcable サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-portchannel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config portchannel サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config route サブコマンド（static route）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-sflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config sflow サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-snmp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config snmp / snmpagentaddress / snmptrap サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-syslog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config syslog サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vrf サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-vxlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config vxlan サブコマンド
   
 
     
@@ -8152,7 +7352,7 @@
   <span class="md-ellipsis">
     
   
-    BGP_DEVICE_GLOBAL テーブル
+    reboot / fast-reboot / warm-reboot コマンド
   
 
     
@@ -8170,7 +7370,7 @@
   <span class="md-ellipsis">
     
   
-    BGP_DEVICE_GLOBAL テーブル
+    reboot / fast-reboot / warm-reboot コマンド
   
 
     
@@ -8207,43 +7407,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE のフィールド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#confed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFED のフィールド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        共通の動作概要
       
     </span>
   </a>
@@ -8251,10 +7418,138 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+  <a href="#reboot-cold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        reboot (cold)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="reboot (cold)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getopts-hvfpdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション (getopts "h?vfpd:b")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast-reboot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fast-reboot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getopts-vfidhrkxcsdunnm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション (getopts "vfidh?rkxc:sDunNm:")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="warm-reboot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot で増える動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        終了コード
       
     </span>
   </a>
@@ -8262,7 +7557,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8288,7 +7594,807 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-globals/" class="md-nav__link">
+      <a href="../show-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show acl サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show bgp / show ip bgp / show ipv6 bgp サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-feature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show feature サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show interfaces サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show ip サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show mclag (mclagdctl) コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-muxcable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show muxcable サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show nat サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show platform サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-route-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show route-map コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-running-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show runningconfiguration / startupconfiguration サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-system-health/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show system-health サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show techsupport コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show vlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-cfggen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-cfggen コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-installer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-installer コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-package-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-package-manager コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../config-db/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CONFIG_DB
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CONFIG_DB
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_RULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/auto-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AUTO_TECHSUPPORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-aggregate-address/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_AGGREGATE_ADDRESS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-device-global/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_DEVICE_GLOBAL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-globals/" class="md-nav__link">
         
   
   
@@ -8316,7 +8422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-neighbor/" class="md-nav__link">
+      <a href="../../config-db/bgp-neighbor/" class="md-nav__link">
         
   
   
@@ -8344,7 +8450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-peer-group/" class="md-nav__link">
+      <a href="../../config-db/bgp-peer-group/" class="md-nav__link">
         
   
   
@@ -8372,7 +8478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pg/" class="md-nav__link">
+      <a href="../../config-db/buffer-pg/" class="md-nav__link">
         
   
   
@@ -8400,7 +8506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pool/" class="md-nav__link">
+      <a href="../../config-db/buffer-pool/" class="md-nav__link">
         
   
   
@@ -8428,7 +8534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-profile/" class="md-nav__link">
+      <a href="../../config-db/buffer-profile/" class="md-nav__link">
         
   
   
@@ -8456,7 +8562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-queue/" class="md-nav__link">
+      <a href="../../config-db/buffer-queue/" class="md-nav__link">
         
   
   
@@ -8484,7 +8590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-group/" class="md-nav__link">
+      <a href="../../config-db/copp-group/" class="md-nav__link">
         
   
   
@@ -8512,7 +8618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-trap/" class="md-nav__link">
+      <a href="../../config-db/copp-trap/" class="md-nav__link">
         
   
   
@@ -8540,7 +8646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../crm/" class="md-nav__link">
+      <a href="../../config-db/crm/" class="md-nav__link">
         
   
   
@@ -8568,7 +8674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../device-metadata/" class="md-nav__link">
+      <a href="../../config-db/device-metadata/" class="md-nav__link">
         
   
   
@@ -8596,7 +8702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-server-ipv4/" class="md-nav__link">
+      <a href="../../config-db/dhcp-server-ipv4/" class="md-nav__link">
         
   
   
@@ -8624,7 +8730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv4-relay/" class="md-nav__link">
+      <a href="../../config-db/dhcpv4-relay/" class="md-nav__link">
         
   
   
@@ -8652,7 +8758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-to-tc-map/" class="md-nav__link">
+      <a href="../../config-db/dscp-to-tc-map/" class="md-nav__link">
         
   
   
@@ -8680,7 +8786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../feature/" class="md-nav__link">
+      <a href="../../config-db/feature/" class="md-nav__link">
         
   
   
@@ -8708,7 +8814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fg-nhg/" class="md-nav__link">
+      <a href="../../config-db/fg-nhg/" class="md-nav__link">
         
   
   
@@ -8736,7 +8842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../flex-counter-table/" class="md-nav__link">
+      <a href="../../config-db/flex-counter-table/" class="md-nav__link">
         
   
   
@@ -8764,7 +8870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../interface/" class="md-nav__link">
+      <a href="../../config-db/interface/" class="md-nav__link">
         
   
   
@@ -8792,7 +8898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump/" class="md-nav__link">
+      <a href="../../config-db/kdump/" class="md-nav__link">
         
   
   
@@ -8820,7 +8926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kubernetes-master/" class="md-nav__link">
+      <a href="../../config-db/kubernetes-master/" class="md-nav__link">
         
   
   
@@ -8848,7 +8954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ldap-server/" class="md-nav__link">
+      <a href="../../config-db/ldap-server/" class="md-nav__link">
         
   
   
@@ -8876,7 +8982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../loopback-interface/" class="md-nav__link">
+      <a href="../../config-db/loopback-interface/" class="md-nav__link">
         
   
   
@@ -8904,7 +9010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mgmt-interface/" class="md-nav__link">
+      <a href="../../config-db/mgmt-interface/" class="md-nav__link">
         
   
   
@@ -8932,7 +9038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mgmt-port/" class="md-nav__link">
+      <a href="../../config-db/mgmt-port/" class="md-nav__link">
         
   
   
@@ -8960,7 +9066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mirror-session/" class="md-nav__link">
+      <a href="../../config-db/mirror-session/" class="md-nav__link">
         
   
   
@@ -8988,7 +9094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mux-cable/" class="md-nav__link">
+      <a href="../../config-db/mux-cable/" class="md-nav__link">
         
   
   
@@ -9016,7 +9122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ntp-server/" class="md-nav__link">
+      <a href="../../config-db/ntp-server/" class="md-nav__link">
         
   
   
@@ -9044,7 +9150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pfc-wd/" class="md-nav__link">
+      <a href="../../config-db/pfc-wd/" class="md-nav__link">
         
   
   
@@ -9072,7 +9178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port/" class="md-nav__link">
+      <a href="../../config-db/port/" class="md-nav__link">
         
   
   
@@ -9100,7 +9206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel-interface/" class="md-nav__link">
+      <a href="../../config-db/portchannel-interface/" class="md-nav__link">
         
   
   
@@ -9128,7 +9234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel-member/" class="md-nav__link">
+      <a href="../../config-db/portchannel-member/" class="md-nav__link">
         
   
   
@@ -9156,7 +9262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portchannel/" class="md-nav__link">
+      <a href="../../config-db/portchannel/" class="md-nav__link">
         
   
   
@@ -9184,7 +9290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../queue/" class="md-nav__link">
+      <a href="../../config-db/queue/" class="md-nav__link">
         
   
   
@@ -9212,7 +9318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../route-map/" class="md-nav__link">
+      <a href="../../config-db/route-map/" class="md-nav__link">
         
   
   
@@ -9240,7 +9346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scheduler/" class="md-nav__link">
+      <a href="../../config-db/scheduler/" class="md-nav__link">
         
   
   
@@ -9268,7 +9374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow/" class="md-nav__link">
+      <a href="../../config-db/sflow/" class="md-nav__link">
         
   
   
@@ -9296,7 +9402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../syslog-server/" class="md-nav__link">
+      <a href="../../config-db/syslog-server/" class="md-nav__link">
         
   
   
@@ -9324,7 +9430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-defaults/" class="md-nav__link">
+      <a href="../../config-db/system-defaults/" class="md-nav__link">
         
   
   
@@ -9352,7 +9458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacplus-server/" class="md-nav__link">
+      <a href="../../config-db/tacplus-server/" class="md-nav__link">
         
   
   
@@ -9380,7 +9486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tc-to-queue-map/" class="md-nav__link">
+      <a href="../../config-db/tc-to-queue-map/" class="md-nav__link">
         
   
   
@@ -9408,7 +9514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../telemetry/" class="md-nav__link">
+      <a href="../../config-db/telemetry/" class="md-nav__link">
         
   
   
@@ -9436,7 +9542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-interface/" class="md-nav__link">
+      <a href="../../config-db/vlan-interface/" class="md-nav__link">
         
   
   
@@ -9464,7 +9570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-member/" class="md-nav__link">
+      <a href="../../config-db/vlan-member/" class="md-nav__link">
         
   
   
@@ -9492,7 +9598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan/" class="md-nav__link">
+      <a href="../../config-db/vlan/" class="md-nav__link">
         
   
   
@@ -9520,7 +9626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf/" class="md-nav__link">
+      <a href="../../config-db/vrf/" class="md-nav__link">
         
   
   
@@ -9548,7 +9654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel-map/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel-map/" class="md-nav__link">
         
   
   
@@ -9576,7 +9682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel/" class="md-nav__link">
         
   
   
@@ -9604,7 +9710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-profile/" class="md-nav__link">
+      <a href="../../config-db/wred-profile/" class="md-nav__link">
         
   
   
@@ -10626,43 +10732,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE のフィールド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#confed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFED のフィールド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        共通の動作概要
       
     </span>
   </a>
@@ -10670,10 +10743,138 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+  <a href="#reboot-cold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        reboot (cold)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="reboot (cold)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getopts-hvfpdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション (getopts "h?vfpd:b")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast-reboot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fast-reboot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getopts-vfidhrkxcsdunnm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション (getopts "vfidh?rkxc:sDunNm:")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="warm-reboot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot で増える動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        終了コード
       
     </span>
   </a>
@@ -10681,7 +10882,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10708,7 +10920,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/bgp-device-global.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/reboot-fast-warm.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -10716,85 +10928,220 @@
   
 
 
-<h1 id="bgp_device_global">BGP_DEVICE_GLOBAL テーブル<a class="headerlink" href="#bgp_device_global" title="Permanent link">&para;</a></h1>
+<h1 id="reboot-fast-reboot-warm-reboot">reboot / fast-reboot / warm-reboot コマンド<a class="headerlink" href="#reboot-fast-reboot-warm-reboot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。<code>BGP_GLOBALS</code> が VRF 単位なのに対し、<code>BGP_DEVICE_GLOBAL</code> は装置全体スコープ。TSA (Traffic-Shift-Away)、W-ECMP (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_DEVICE_GLOBAL|STATE
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP_DEVICE_GLOBAL|CONFED
+<p>SONiC の再起動コマンドは Click ベースではなく <strong>bash スクリプト</strong> として実装されており、<code>sonic-utilities/scripts/</code> 配下に置かれる。本ページは以下の 3 系統を一括して扱う:</p>
+<ul>
+<li><strong><code>reboot</code></strong> ... 通常 (cold) reboot。<code>scripts/reboot</code></li>
+<li><strong><code>fast-reboot</code></strong> ... fast-reboot。<code>scripts/fast-reboot</code></li>
+<li><strong><code>warm-reboot</code></strong> ... warm-reboot。<strong><code>fast-reboot</code> への symlink</strong> であり、起動時の <code>$0</code> (= <code>REBOOT_SCRIPT_NAME</code>) によって warm モードに分岐する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<p>3 つとも <code>setup.py</code> の <code>data_files</code> で <code>/usr/local/bin/</code> 配下にインストールされる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h2 id="_2">共通の動作概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>vmcore</code> (前回の kernel panic dump) があれば、そのまま再 reboot して OS を起動するだけのリカバリ経路に入る (<code>reboot</code> script 冒頭)。</li>
+<li><code>sonic-cfggen</code> で platform / asic_type / subtype / asan を取得し、platform-specific な <code>platform_reboot</code> / <code>platform_reboot_pre_check</code> バイナリを呼び出せるようにする。</li>
+<li><code>sonic-installer verify-next-image</code> で次回 boot 用イメージを検証 (失敗時 <code>EXIT_SONIC_INSTALLER_VERIFY_REBOOT=21</code> で終了)。</li>
+</ul>
+<h2 id="reboot-cold"><code>reboot</code> (cold)<a class="headerlink" href="#reboot-cold" title="Permanent link">&para;</a></h2>
+<h3 id="_3">用法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>reboot [-h|-?] [-v] [-f] [-d &lt;DPU&gt;] [-p] [-b]
 </span></code></pre></div>
-<p>二つの固定キーを持つ container 型。</p>
-<h2 id="state">STATE のフィールド<a class="headerlink" href="#state" title="Permanent link">&para;</a></h2>
+<h3 id="getopts-hvfpdb">オプション (<code>getopts "h?vfpd:b"</code>)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup><a class="headerlink" href="#getopts-hvfpdb" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>型</th>
-<th>デフォルト</th>
-<th>説明</th>
+<th>オプション</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>tsa_enabled</code></td>
-<td>boolean</td>
-<td><code>false</code></td>
-<td>true で外部隣接へ経路広告を停止 (TSA)</td>
+<td><code>-h</code> / <code>-?</code></td>
+<td>ヘルプ表示</td>
 </tr>
 <tr>
-<td><code>wcmp_enabled</code></td>
-<td>boolean</td>
-<td><code>false</code></td>
-<td>BGP link-bandwidth W-ECMP 有効化</td>
+<td><code>-v</code></td>
+<td>verbose (詳細ログ + blocking モードでは進捗ドット出力)</td>
 </tr>
 <tr>
-<td><code>idf_isolation_state</code></td>
-<td>enum <code>isolated_no_export</code> / <code>isolated_withdraw_all</code> / <code>unisolated</code></td>
-<td><code>unisolated</code></td>
-<td>IDF 隔離状態</td>
+<td><code>-f</code></td>
+<td>内部 reboot コマンドに <code>-f</code> を引き継ぐ (force)</td>
+</tr>
+<tr>
+<td><code>-d &lt;DPU&gt;</code></td>
+<td>smart switch の特定 DPU module 名を指定して DPU だけ reboot</td>
+</tr>
+<tr>
+<td><code>-p</code></td>
+<td>DPU 上での pre-shutdown 段階</td>
+</tr>
+<tr>
+<td><code>-b</code></td>
+<td>blocking モード (タイムアウト 180 秒)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="confed">CONFED のフィールド<a class="headerlink" href="#confed" title="Permanent link">&para;</a></h2>
+<h3 id="_4">動作<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>reboot_pre_check</code> … <code>/host</code> の書込みテスト、platform pre-check、<code>sonic-installer verify-next-image</code>。</li>
+<li><code>check_conflict_boot_in_fw_update</code> … FW auto update が他種 reboot に予約済みでないことを確認。</li>
+<li><code>linecard_reboot_notify_supervisor</code> … chassis のラインカードの場合、CHASSIS_STATE_DB に <code>reboot=expected</code> を書いてスーパーバイザに通知。</li>
+<li><code>stop_sonic_services</code> … DualToR なら <code>mux</code> を停止、syncd を <code>syncd_request_shutdown --cold</code> でクリーンシャットダウン、PMon を停止。</li>
+<li>platform-specific <code>platform_reboot</code> を <code>exec</code> する。存在しない場合は <code>/sbin/reboot</code>、それでもダメなら <code>echo b &gt; /proc/sysrq-trigger</code>。</li>
+</ol>
+<p><code>reboot</code> は <strong>データプレーン断絶を伴う通常の電源再投入</strong>。BGP / LACP セッションも一旦落ちる。</p>
+<h2 id="fast-reboot"><code>fast-reboot</code><a class="headerlink" href="#fast-reboot" title="Permanent link">&para;</a></h2>
+<h3 id="_5">用法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c &lt;ip_list&gt;] [-s] [-D] [-u] [-n|-N] [-m &lt;asic_list&gt;]
+</span></code></pre></div>
+<h3 id="getopts-vfidhrkxcsdunnm">オプション (<code>getopts "vfidh?rkxc:sDunNm:"</code>)<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><a class="headerlink" href="#getopts-vfidhrkxcsdunnm" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>型</th>
-<th>説明</th>
+<th>オプション</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>asn</code></td>
-<td>uint32 (1..2^32-1)</td>
-<td>confederation AS 番号</td>
+<td><code>-h</code> / <code>-?</code></td>
+<td>ヘルプ</td>
 </tr>
 <tr>
-<td><code>peers</code></td>
-<td>string</td>
-<td>confederation 内の sub-AS をセミコロン区切りで列挙</td>
+<td><code>-v</code></td>
+<td>verbose</td>
+</tr>
+<tr>
+<td><code>-f</code></td>
+<td>Orchagent RESTARTCHECK の失敗を無視</td>
+</tr>
+<tr>
+<td><code>-i</code></td>
+<td>ASIC MD5 検証を無視</td>
+</tr>
+<tr>
+<td><code>-d</code></td>
+<td>DB integrity check を無視</td>
+</tr>
+<tr>
+<td><code>-r</code></td>
+<td><code>/sbin/reboot</code> で再起動</td>
+</tr>
+<tr>
+<td><code>-k</code></td>
+<td><code>/sbin/kexec -e</code> (デフォルト)</td>
+</tr>
+<tr>
+<td><code>-x</code></td>
+<td>スクリプトを <code>set -x</code> で実行</td>
+</tr>
+<tr>
+<td><code>-c &lt;ip_list&gt;</code></td>
+<td>control plane assistant (CPA) IP リスト</td>
+</tr>
+<tr>
+<td><code>-s</code></td>
+<td>strict モード (CPA リスト無しでは進めない)</td>
+</tr>
+<tr>
+<td><code>-t</code></td>
+<td>kube image を <code>latest</code> タグ付けしない (注: <code>getopts</code> 文字列に含まれず実際は無効。コードコメントに <code>TODO "t" is missing</code> あり)</td>
+</tr>
+<tr>
+<td><code>-D</code></td>
+<td>detached モード (端末切断で reboot を中断しない)</td>
+</tr>
+<tr>
+<td><code>-u</code></td>
+<td>boot オプションに ssd-upgrader-part を含める</td>
+</tr>
+<tr>
+<td><code>-n</code></td>
+<td>peer device に SONiC retry-count 機能を要求しない (デフォルト)</td>
+</tr>
+<tr>
+<td><code>-N</code></td>
+<td>peer device に retry-count 機能を要求する</td>
+</tr>
+<tr>
+<td><code>-m &lt;list&gt;</code></td>
+<td>カンマ区切り ASIC 番号を warm-reboot 対象から除外 (multi-ASIC 専用)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_2">購読者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_6">動作<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><code>kexec</code> ベースで kernel を切り替えてダウンタイムを数秒〜十数秒に抑える。warm 系とは異なり data plane / control plane も停止するが、syncd の DB を保存して新カーネル起動後に <code>wb</code> 復元する経路を持つ。</p>
+<h2 id="warm-reboot"><code>warm-reboot</code><a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
+<p><code>fast-reboot</code> への symlink。スクリプト先頭で <code>REBOOT_SCRIPT_NAME=$(basename $0)</code> を取り、<code>warm-reboot</code> の場合は warm モード (<code>pre-shutdown</code> / <code>request_pre_shutdown</code> / <code>init_warm_reboot_states</code> / data plane を保ったままの <code>kexec</code>) に分岐する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<p>オプションは <code>fast-reboot</code> と共通。warm-specific な制御 (<code>-m</code> での ASIC スキップ、<code>-N</code> での peer 検査強化など) も同じ getopts で受け付ける。</p>
+<h3 id="warm-reboot_1">warm-reboot で増える動作<a class="headerlink" href="#warm-reboot_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>bgpcfgd</code>: STATE / CONFED を読み出し vtysh コマンドに変換</li>
-<li><code>frr-mgmt-framework</code> (<code>frr_mgmt_framework_config = true</code> 時)</li>
-<li>TSA / W-ECMP は <code>bgpcfgd</code> の <code>TsaHandler</code> / <code>WcmpHandler</code> が直接担当</li>
+<li><code>initialize_pre_shutdown</code> … syncd / orchagent に warm-shutdown 準備を要求。</li>
+<li><code>request_pre_shutdown</code> + <code>wait_for_pre_shutdown_complete_or_fail</code> … pre-shutdown ACK を 待つ。</li>
+<li><code>setup_control_plane_assistant</code> … <code>-c</code> で指定された外部 CPA に対して ARP/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。</li>
+<li><code>backup_database</code> … STATE_DB / APPL_DB のスナップショット保存 (warm boot 時の差分 reconcile 用)。</li>
+<li>失敗時 <code>clear_boot</code> で <code>kexec -u -a</code> を呼んで kexec slot を解放し、CPA も撤去する。</li>
 </ul>
-<h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
+<h2 id="_7">終了コード<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>成功</td>
+</tr>
+<tr>
+<td>1</td>
+<td>一般エラー</td>
+</tr>
+<tr>
+<td>2</td>
+<td>timeout</td>
+</tr>
+<tr>
+<td>4</td>
+<td>次回 boot イメージが存在しない (<code>EXIT_NEXT_IMAGE_NOT_EXISTS</code>)</td>
+</tr>
+<tr>
+<td>21</td>
+<td><code>sonic-installer verify-next-image</code> 失敗 (<code>EXIT_SONIC_INSTALLER_VERIFY_REBOOT</code>)</td>
+</tr>
+<tr>
+<td>22</td>
+<td>platform FW auto-update reboot 失敗 (<code>EXIT_PLATFORM_FW_AU_FAILURE</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">注意<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>DEVICE_METADATA</code></li>
-<li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp device-global tsa</code></a>、<code>config bgp device-global w-ecmp</code></li>
-<li>関連 YANG: <code>sonic-bgp-device-global</code></li>
+<li><code>warm-reboot</code> で BGP セッションを保持するには <strong>GR (Graceful Restart) が peer 側で有効</strong> なことが前提。</li>
+<li><code>fast-reboot</code> / <code>warm-reboot</code> は <strong>data plane traffic loss</strong> をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。<code>-c</code> の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。</li>
+<li>chassis (multi-asic + supervisor + linecard) では <code>reboot</code> が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-bgp-device-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>warm-reboot</code> は <code>fast-reboot</code> への symlink (<code>scripts/warm-reboot -&gt; fast-reboot</code>)。スクリプト中で <code>REBOOT_SCRIPT_NAME=$(basename $0)</code> を分岐に使う。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/warm-reboot">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/warm-reboot</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>setup.py</code> の <code>data_files</code> に 3 つとも登録 (<code>scripts/reboot</code>, <code>scripts/fast-reboot</code>, <code>scripts/warm-reboot</code>)。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>reboot</code> の <code>parse_options</code> (<code>scripts/reboot</code> L205-L234) と <code>show_help_and_exit</code> (L145-L159)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/reboot#L205">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/reboot#L205</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>fast-reboot</code> の <code>parseOptions</code> (<code>scripts/fast-reboot</code> L253-L307) と <code>showHelpAndExit</code> (L229-L251)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/fast-reboot#L229">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/fast-reboot#L229</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>warm 専用の補助関数 <code>initialize_pre_shutdown</code> / <code>request_pre_shutdown</code> / <code>wait_for_pre_shutdown_complete_or_fail</code> (<code>scripts/fast-reboot</code> L385-L449)。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
