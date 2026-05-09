@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/banner-messages-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-os-sonic-docker-images-versioning/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sonic-optional-feature-control-enhancement/">
       
       
-        <link rel="next" href="../critical-resource-monitoring/">
+        <link rel="next" href="../sonic-python-logger-enhancement/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>バナーメッセージ（login / motd / logout） - SONiC 非公式ドキュメント</title>
+        <title>SONiC OS と Docker イメージのセマンティックバージョニング - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#login-motd-logout" class="md-skip">
+        <a href="#sonic-os-docker" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              バナーメッセージ（login / motd / logout）
+              SONiC OS と Docker イメージのセマンティックバージョニング
             
           </span>
         </div>
@@ -2389,37 +2389,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バナーメッセージ（login / motd / logout）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2435,203 +2408,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態遷移
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        マルチライン文字列
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2837,10 +2613,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC OS と Docker イメージのセマンティックバージョニング
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2856,6 +2659,264 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sonic-package-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC Package API の定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バージョン番号の繰り上げ規則
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conventional-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conventional Commits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package のリリースフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base-os-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base OS API への依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packagejson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        package.json の依存表記例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="package.json の依存表記例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 1: 互換 API 内のバージョン更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-swss-api-foo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 2: swss API が変わり foo も追従
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 3: 環境変数で複数 API に並行対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sdk-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 4: SDK component 単位の制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バージョン関係まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manifest 例（インストール）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4202,13 +4263,118 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#sonic-package-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        SONiC Package API の定義
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バージョン番号の繰り上げ規則
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conventional-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conventional Commits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package のリリースフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base-os-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base OS API への依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packagejson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        package.json の依存表記例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="package.json の依存表記例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 1: 互換 API 内のバージョン更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-swss-api-foo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 2: swss API が変わり foo も追従
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 3: 環境変数で複数 API に並行対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sdk-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例 4: SDK component 単位の制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -4216,29 +4382,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        マルチライン文字列
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時シーケンス
+        バージョン関係まとめ
       
     </span>
   </a>
@@ -4251,7 +4395,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4263,10 +4407,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CLI / CONFIG_DB / YANG
       
     </span>
   </a>
@@ -4274,43 +4418,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#manifest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
+        Manifest 例（インストール）
       
     </span>
   </a>
@@ -4323,7 +4434,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4334,7 +4456,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4345,7 +4467,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4372,7 +4494,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/banner-messages-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-os-sonic-docker-images-versioning.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4381,206 +4503,199 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>hostcfgd</code> の BANNER_MESSAGE ハンドラ、<code>banner-config</code> systemd サービスの実装、CLI 実装、YANG レビジョンは未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
+<p>本ページは 2021-02 改訂の <strong>Initial Proposal</strong> ステータスの古い HLD（採用状況不確かなため <code>priority=high</code> で verification queue 登録）。SONiC Application Extension Infrastructure の現行実装、<code>package.json</code> の <code>depends</code> 表記、SDK component 単位のバージョン指定、<code>SWSS_VERSION</code> のような環境変数による複数 API 並行対応の現行サポート状況は実コードでの裏取り未済。</p>
 </div>
-<h1 id="login-motd-logout">バナーメッセージ（login / motd / logout）<a class="headerlink" href="#login-motd-logout" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-os-docker">SONiC OS と Docker イメージのセマンティックバージョニング<a class="headerlink" href="#sonic-os-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>業務スイッチには、ログイン前後やログアウト時に <strong>法的注意文・運用情報・MOTD</strong> を表示する要件が頻繁にある。SONiC 既定の Debian バナー（<code>Debian GNU/Linux 11</code>）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は <strong>CONFIG_DB → hostcfgd → banner-config systemd サービス → Linux ファイル</strong> という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC Application Extension Infrastructure は <strong>SONiC docker (= SONiC Package) と Base OS の独立配布</strong> を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより docker と OS / docker 同士の <strong>互換性</strong> をどう担保するかが課題となり、Semantic Versioning (<a href="https://semver.org">semver.org</a>) を SONiC docker 群に適用するためのガイドラインが本 HLD である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主旨<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>各 SONiC Package は独自の <code>major.minor.patch</code> を持つ</li>
+<li>API 互換性の判定基準を <strong>Redis DB スキーマ</strong> に置く</li>
+<li>依存先パッケージのバージョン制約を <code>package.json</code> の <code>depends</code> で表現</li>
+</ul>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="sonic-package-api">SONiC Package API の定義<a class="headerlink" href="#sonic-package-api" title="Permanent link">&para;</a></h3>
+<p>「Package API」は本 HLD では <strong>Redis DB インタフェース</strong> と定義される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>CONFIG_DB</code> / <code>APPL_DB</code> / <code>STATE_DB</code> の <strong>当該パッケージが提供するテーブル schema</strong></li>
+<li>それ以外に何か API を露出するならそれも含む</li>
+</ul>
+<p>ASIC SDK / SAI / カーネルレベルの API は別カテゴリ（後述）。</p>
+<h3 id="_3">バージョン番号の繰り上げ規則<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>タイミング</th>
-<th>反映先ファイル</th>
+<th>変更種別</th>
+<th>影響箇所</th>
+<th>増分する部分</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>login</code></td>
-<td>ログインプロンプト前（ローカル / SSH 共通）</td>
-<td><code>/etc/issue.net</code> と <code>/etc/issue</code></td>
+<td>後方互換を破る変更</td>
+<td>API（Redis schema 等）</td>
+<td><strong>major</strong></td>
 </tr>
 <tr>
-<td><code>motd</code></td>
-<td>ログイン後</td>
-<td><code>/etc/motd</code></td>
+<td>新機能（後方互換あり）</td>
+<td>新 API 追加</td>
+<td><strong>minor</strong></td>
 </tr>
 <tr>
-<td><code>logout</code></td>
-<td>ログアウト時</td>
-<td><code>/etc/logout_message</code></td>
+<td>バグ修正 / 改善</td>
+<td>既存 API 不変</td>
+<td><strong>patch</strong></td>
 </tr>
 </tbody>
 </table>
-<p>機能既定値は <strong>disabled</strong>。<code>disabled</code> の間は CONFIG_DB を編集しても Linux 側のファイルは書き換わらず、SONiC OS の標準バナーが表示され続ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    CLI[config banner ...] --&gt; CDB[(CONFIG_DB\nBANNER_MESSAGE|MESSAGE)]
-    CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|systemctl restart| BC[banner-config service]
-    BC --&gt;|read CONFIG_DB| CDB
-    BC --&gt;|/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message| FS[Linux fs]
-    Login[SSH/local login] --&gt; FS</code></pre>
-<p><code>banner-config</code> は <strong>SSH を受け付ける前段階で起動する単発サービス</strong> として設計されており、CONFIG_DB から現在の値を読んで対応するファイルに書き出す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> は CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読しており、変更があれば <code>banner-config</code> を再実行する。</p>
-<h3 id="_4">状態遷移<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; disabled: 既定
-    disabled --&gt; enabled: config banner state enabled
-    enabled --&gt; disabled: config banner state disabled
-    note right of disabled
-        CONFIG_DB の値は保存されるが
-        Linux 側のファイルは触らない
-        既定 SONiC バナーのまま
-    end note
-    note right of enabled
-        banner-config が CONFIG_DB の値を
-        Linux ファイルに書き出す
-    end note</code></pre>
-<p><code>disabled</code> の状態でも CLI で個別の <code>login</code> / <code>motd</code> / <code>logout</code> メッセージを設定できる。これは CONFIG_DB のみに保存され、<code>enabled</code> に遷移した時点で Linux に適用される設計である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">マルチライン文字列<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>config banner login "Hello!\nWelcome to SONiC CLI!"</code> のように <code>\n</code> を含めることで複数行バナーを設定できる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Hello!
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Welcome to SONiC CLI!
+<p>例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1.2.3 → 2.0.0   # API 互換破壊（任意の追加変更を含んでよい）
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1.2.3 → 1.3.0   # 新 API 追加 + 任意の改善
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>1.2.3 → 1.2.4   # 改善 / バグ修正 / SDK 更新 / manifest 更新
 </span></code></pre></div>
-<h3 id="_6">起動時シーケンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant Sys as systemd
-    participant BC as banner-config
-    participant CDB as CONFIG_DB
-    participant FS as /etc/...
-    Sys-&gt;&gt;BC: start banner-config (before sshd)
-    BC-&gt;&gt;CDB: read BANNER_MESSAGE|MESSAGE
-    alt state == enabled
-        BC-&gt;&gt;FS: write /etc/issue.net, /etc/issue, /etc/motd, /etc/logout_message
-    else state == disabled
-        BC-&gt;&gt;BC: no-op (default SONiC banner remains)
-    end
-    Sys-&gt;&gt;Sys: start sshd</code></pre>
-<p>設定変更時のシーケンスは <code>hostcfgd</code> が変更を検知して <code>banner-config</code> を再起動する点が異なる。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/banner/banner_hld.md#L84-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Hostcfgd will listen for the configuration changes in corresponding tables and restart banner-config service.
-  Banner config service - it is simple SystemD service which runs before we get SSH connection.
-  ...
-  /etc/issue.net and /etc/issue - Login message
-  /etc/motd - Message of the day
-  /etc/logout_message - Logout message
-reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前段で動くという挙動の根拠。
+<h3 id="conventional-commits">Conventional Commits<a class="headerlink" href="#conventional-commits" title="Permanent link">&para;</a></h3>
+<p>メンテナの変更検知を助けるため、各 SONiC リポは <strong>Conventional Commits</strong> 形式 (https://www.conventionalcommits.org/) を採用してもよい<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>feat: Introduce new methods in ConsumerTable
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>BREAKING CHANGE: this feature breaks the Consumer/Producer based IPC
+</span></code></pre></div>
+<p><code>feat:</code> / <code>fix:</code> などのプレフィクスと <code>BREAKING CHANGE:</code> フッタにより、commit から minor / major / patch の判定が機械的に可能になる。</p>
+<h3 id="package">Package のリリースフロー<a class="headerlink" href="#package" title="Permanent link">&para;</a></h3>
+<ol>
+<li>メンテナが任意のタイミングでバグ修正 / 機能追加をリリース</li>
+<li><strong>手動でバージョン更新が必須</strong> （自動増分しない）</li>
+<li>リリース時に <strong>前リリースとの API 互換性をチェック</strong></li>
+<li>前リリースから API が変わる場合 <strong>major</strong> を増やす</li>
+<li>互換変更のみなら <strong>minor</strong> を増やす</li>
+<li>API 不変の改善 / 修正なら <strong>patch</strong> を増やす</li>
+<li>必要なら依存先のバージョン制約も更新</li>
+</ol>
+<p>注意点<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>SONiC package version と SONiC release バージョンは独立</strong>。依存 API が互換である限り 1 つの package が複数 release を跨いで動作可能</li>
+<li>メンテナは <strong>「単一リポでマルチリリース対応」</strong> か <strong>「リリースごとにリポを分ける」</strong> かを選べる</li>
+<li><code>package.json</code> の <code>default-reference</code> を更新すると、ユーザの新規インストール時に既定で参照されるバージョンが変わる</li>
+</ul>
+<h3 id="base-os-api">Base OS API への依存<a class="headerlink" href="#base-os-api" title="Permanent link">&para;</a></h3>
+<p>パッケージが SONiC Base OS の API に依存する場合の責務<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>依存先</th>
+<th>責務</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-utilities</code></td>
+<td>sonic-utilities contributor が API 互換性を維持</td>
+</tr>
+<tr>
+<td>新カーネル機能（例: 3-tuple conntrack）</td>
+<td>パッケージ側が <strong>minor 版で記録</strong>（例: NAT docker）</td>
+</tr>
+<tr>
+<td>SONiC host service (D-Bus)</td>
+<td>host service 側 / パッケージ側双方の合意</td>
+</tr>
+</tbody>
+</table>
+<h3 id="packagejson"><code>package.json</code> の依存表記例<a class="headerlink" href="#packagejson" title="Permanent link">&para;</a></h3>
+<h4 id="1-api">例 1: 互換 API 内のバージョン更新<a class="headerlink" href="#1-api" title="Permanent link">&para;</a></h4>
+<p><code>foo</code> が <code>swss ^1.0.0</code> に依存:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.2.3&quot;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;depends&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;swss&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^1.0.0&quot;</span><span class="w"> </span><span class="p">}]</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>swss</code> が 2.0.0 へ上がったが <code>foo</code> が使う APPL_DB テーブルは未変更 → <code>foo</code> は <strong>patch</strong> を上げて両 swss を許容<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.2.4&quot;</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;depends&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;swss&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^1.0.0,^2.0.0&quot;</span><span class="w"> </span><span class="p">}]</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="2-swss-api-foo">例 2: swss API が変わり foo も追従<a class="headerlink" href="#2-swss-api-foo" title="Permanent link">&para;</a></h4>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.2.4&quot;</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&quot;depends&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;swss&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^2.0.0&quot;</span><span class="w"> </span><span class="p">}]</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="3-api">例 3: 環境変数で複数 API に並行対応<a class="headerlink" href="#3-api" title="Permanent link">&para;</a></h4>
+<p>infrastructure が container 起動時に依存バージョンを env として注入する。<code>foo</code> は <code>SWSS_VERSION</code> を読んで使う API を選ぶ。これにより <code>foo</code> 1 バージョンで <code>^1.0.0</code> / <code>^2.0.0</code> 両方をサポートできる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="4-sdk-component">例 4: SDK component 単位の制約<a class="headerlink" href="#4-sdk-component" title="Permanent link">&para;</a></h4>
+<p><code>swss</code> の本体 API は ^1.0.0 互換だが <code>swss::ProducerStateTable</code> だけ破壊的変更。<code>foo</code> は libswsscommon の major を <strong>components</strong> で指定<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.2.4&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;depends&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;swss&quot;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^1.0.0&quot;</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;libswsscommon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^1.0.0,^2.0.0&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="p">}]</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>infrastructure 側で <strong>依存 component の major と foo が指定する major を自動チェック</strong> できる。明示的な <code>components</code> 指定は粒度の細かい制御用。</p>
+<h3 id="_4">バージョン関係まとめ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    A[package commit] --&gt; B{commit type&lt;br/&gt;conventional commits}
+    B --&gt;|"feat: ... + BREAKING CHANGE:"| MAJOR[major +1]
+    B --&gt;|"feat: ..."| MINOR[minor +1]
+    B --&gt;|"fix: / chore: / SDK 更新"| PATCH[patch +1]
+    MAJOR --&gt; R[release with new version]
+    MINOR --&gt; R
+    PATCH --&gt; R
+    R --&gt; DC{依存先のバージョン制約も更新?}
+    DC --&gt;|yes| UM[package.json depends を編集]
+    DC --&gt;|no| OK[公開]
+    UM --&gt; OK</code></pre>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config_db-yang">関連する CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
+<p>本 HLD は <strong>CLI / CONFIG_DB / YANG への変更を伴わない</strong>。<code>package.json</code> の manifest と Conventional Commits の運用ガイドラインのみ規定する。</p>
+<h3 id="manifest">Manifest 例（インストール）<a class="headerlink" href="#manifest" title="Permanent link">&para;</a></h3>
+<p><code>sonic-package-manager</code> (sonic-utilities) を経由して docker package を install する想定。本 HLD は manifest 内の <strong><code>version</code> と <code>depends</code> 表記</strong> を主に定義する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 想定 (HLD 上の例ではなく一般運用)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>install<span class="w"> </span>foo
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>foo
+</span></code></pre></div>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>手動でのバージョン更新が必須</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。自動 bump は CI スクリプト次第（規定なし）</li>
+<li><strong>Open Questions</strong> が HLD 末尾に残っている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（Base OS のバージョニング、Base OS API の責務分担の細部など）</li>
+<li>API 互換判定の根拠を Redis DB スキーマに依拠するため、<strong>コード内 enum / クラス API の互換性</strong> は別途意識が必要</li>
+<li>HLD は 2021-02 の Initial Proposal。SONiC Application Extension Infrastructure 自体の現行採用状況も裏取り対象</li>
+<li><code>package.json</code> の <code>version</code> フィールド書式（<code>^1.0.0,^2.0.0</code> のような並列 OR）は HLD の表記であり、現行 sonic-package-manager のパーサが解釈する書式かは要確認</li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>sonic-package-manager</code> (sonic-utilities)</strong>: manifest 解釈と version 制約検証</li>
+<li><strong>SONiC Application Extension Infrastructure</strong>: docker 独立配布の前提</li>
+<li><strong><code>swss</code> / <code>syncd</code> / <code>bgp</code> 等 SONiC default docker</strong>: 依存先となる主要パッケージ</li>
+<li><strong>CI / リリース自動化</strong>: Conventional Commits 採用時に commit ログから version 増分を計算するパイプライン</li>
+<li><strong><code>config_db.json</code> schema migration</strong>: API 破壊変更（major bump）時にユーザ設定の移行が必要</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>パッケージインストールで version 制約エラー → <code>depends</code> の version 制約と現在 install 済み swss / syncd の version を比較</li>
+<li><code>sonic-package-manager show</code> で <code>depends</code> が複雑 → manifest の <code>^X.Y.Z,^A.B.C</code> 形式が想定通り解釈されているか CLI ログを確認</li>
+<li>新 swss にしたら docker が動かない → API 破壊（major bump）が起きている可能性。docker 側 manifest を更新</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- SONiC Application Extension Infrastructure 自体の現行採用状況確認（Proposal が採択されたか）
+- sonic-package-manager の package.json depends 形式（"^1.0.0,^2.0.0" 並列 OR）対応状況確認
+- components フィールドによる SDK 単位の制約パースが現行 sonic-utilities にあるか未確認
+- SWSS_VERSION 等の環境変数注入による複数 API 並行サポートの現行実装確認
+- HLD は 2021 年の Initial Proposal のため現行運用と乖離している可能性が高い
 -->
 
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>BANNER_MESSAGE</code></td>
-<td><code>MESSAGE</code></td>
-<td><code>state</code></td>
-<td><code>enabled</code> / <code>disabled</code>（既定 <code>disabled</code>）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>login</code></td>
-<td>ログインプロンプト前メッセージ</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>motd</code></td>
-<td>ログイン後 MOTD</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>logout</code></td>
-<td>ログアウト時メッセージ</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config banner state {enabled\|disabled}</code></td>
-<td>機能オン / オフ</td>
-</tr>
-<tr>
-<td><code>config banner login &lt;message&gt;</code></td>
-<td>login バナー設定</td>
-</tr>
-<tr>
-<td><code>config banner logout &lt;message&gt;</code></td>
-<td>logout バナー設定</td>
-</tr>
-<tr>
-<td><code>config banner motd &lt;message&gt;</code></td>
-<td>MOTD 設定</td>
-</tr>
-<tr>
-<td><code>show banner</code></td>
-<td>現在の設定を一覧表示（state / login / motd / logout の表）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-banner.yang</code> モジュールに <code>BANNER_MESSAGE.MESSAGE</code> コンテナを定義<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">BANNER_MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">state</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;enabled|disabled&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">disabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">login</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;Debian GNU/Linux 11&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">motd</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;You are on ____   ___  _   _ _  ____ ...&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">logout</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>YANG 既定値: <code>state=disabled</code>, <code>login=Debian GNU/Linux 11</code>, <code>motd=</code> SONiC ASCII art (HLD 中の長文), <code>logout=""</code>.</p>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>banner<span class="w"> </span>state<span class="w"> </span>enabled
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s2">&quot;Authorized access only. All activity is monitored.&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>banner<span class="w"> </span>motd<span class="w"> </span><span class="s2">&quot;Welcome to ToR-A1 (SONiC).&quot;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>config<span class="w"> </span>banner<span class="w"> </span><span class="nb">logout</span><span class="w"> </span><span class="s2">&quot;Bye!&quot;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show<span class="w"> </span>banner
-</span></code></pre></div>
-<h3 id="_9">永続化<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。HLD の Test Plan は <code>do not save → reboot → 既定</code> / <code>save → reboot → 設定維持</code> を明示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。永続化したい場合は <code>config save</code> を別途実行する。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>/etc/issue</code> / <code>/etc/motd</code></strong>: 他の systemd サービスや Debian メンテナンスでこれらのファイルを再生成すると、<code>banner-config</code> の出力と競合する。基本的には <code>banner-config</code> が後勝ちで上書きする想定。</li>
-<li><strong><code>hostcfgd</code></strong>: 既存の他テーブル監視（NTP / SNMP / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。</li>
-<li><strong>SSH (<code>sshd</code>)</strong>: <code>/etc/issue.net</code> の変更は次回接続から反映される。既存セッションには影響しない。</li>
-</ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<ul>
-<li>設定したバナーが表示されない: 機能 <code>state</code> が <code>enabled</code> か確認。<code>disabled</code> のままだと CONFIG_DB の値は反映されない。</li>
-<li>一部だけ反映される: <code>/etc/issue</code> と <code>/etc/issue.net</code> は同じ login メッセージで両方更新される設計。片方だけ反映されている場合は <code>banner-config</code> のサービスログ (<code>journalctl -u banner-config</code>) を確認。</li>
-<li>リブート後に消えた: <code>config save</code> 未実行。CONFIG_DB スナップショットを永続化する必要がある。</li>
-<li>マルチライン: <code>\n</code> をシェル経由で渡す際にクォートを正しくしないと改行が消える。<code>config banner login "line1\nline2"</code> のようにダブルクォート + <code>\n</code> で渡す。</li>
-<li><code>show banner</code> でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。</li>
-</ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/banner/banner_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-application-extension/sonic-versioning-strategy.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
