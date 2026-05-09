@@ -956,6 +956,8 @@
       
         
       
+        
+      
     
     
     
@@ -1025,6 +1027,34 @@
     
   
     BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
   
 
     
@@ -5384,9 +5414,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>hostcfgd</code> の <code>delayed</code> field 対応、APPL_DB <code>PORT_TABLE:PortInitDone</code> の購読、<code>has_timer</code> → <code>delayed</code> への db_migrator 移行、warm/fast boot の <code>waitAdvancedBootDone</code> 連携、既存 systemd timer の削除はすべて未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master の <code>sonic-host-services/scripts/featured</code>（<code>delayed</code> フィールド処理 / <code>enable_delayed_services</code> / PORT_TABLE 購読 + PortInitDone ハンドラ / <code>handle_port_table_timeout</code> / <code>waitAdvancedBootDone</code>）、<code>sonic-utilities/scripts/db_migrator.py:719-726</code> の <code>has_timer</code>→<code>delayed</code> 移行、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67</code> の <code>delayed</code> leaf、<code>sonic-swss/portsyncd/portsyncd.cpp:134</code> の <code>PortInitDone</code> publish を確認済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="config-reload-event-driven-featuredelayed-portinitdone">config reload の event-driven 化（FEATURE.delayed + PortInitDone）<a class="headerlink" href="#config-reload-event-driven-featuredelayed-portinitdone" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
