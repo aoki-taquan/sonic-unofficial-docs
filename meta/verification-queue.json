@@ -462,6 +462,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md",
+      "verification": "hld-only",
+      "concerns": [
+        "AclOrch::initDefaultTableTypes() に TABLE_TYPE_L3V4V6 を追加する実装の現行 master 取り込み確認",
+        "STATE_DB の ACL_STAGE_CAPABILITY_TABLE に supported_L3V4V6 フィールドが INGRESS/EGRESS 両方で公開されているか確認",
+        "platform 検出ロジック（Marvell など対応 ASIC 群）が orchagent にハードコードされているか、SAI capability で判定されているか確認",
+        "Phase 2（非対応 ASIC で内部 2 テーブル分割）の実装存在確認",
+        "sonic-acl YANG の type enum に L3V4V6 が追加されているか確認",
+        "config acl add table CLI で <table_type>=L3V4V6 が受理されるか sonic-utilities 側で確認"
+      ],
+      "priority": "medium",
+      "issue": 468,
+      "pr": 469
+    },
+    {
       "page": "docs/acl-qos/watermark-counters-in-sonic.md",
       "issue": 25,
       "verification": "hld-only",
