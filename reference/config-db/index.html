@@ -9254,6 +9254,69 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ粒度
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verification の扱い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要テーブル一覧（順次拡充中）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -9278,10 +9341,75 @@
 
 
 <h1 id="config_db">CONFIG_DB リファレンス<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h1>
-<p><code>CONFIG_DB</code> の全テーブル・全フィールドのリファレンス。<code>sonic-yang-models</code> および <code>sonic-buildimage/src/sonic-yang-models</code> を一次情報として、各テーブル間の参照・干渉関係まで含めて記載する。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-</div>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>CONFIG_DB</code> は SONiC における <strong>中央設定 DB</strong>。Redis instance の <code>DB 4</code> 上に置かれ、CLI (<code>config ...</code>) や gNMI / REST API、<code>config_db.json</code> のロードによって書き込まれる。各 Orch / daemon (orchagent, bgpcfgd, intfmgrd, vlanmgrd, portmgrd, teammgrd, ...) が CONFIG_DB の対象テーブルを <strong>subscribe</strong> し、APPL_DB やシステム設定（FRR・kernel・docker）に反映する。</p>
+<p>ユーザの設定は <strong>YANG モデル</strong> (<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang</code>) で記述された制約に従う必要がある。CLI / REST 経由の入力は <code>sonic-mgmt-common</code> の translib / transformer を通って YANG 検証されるが、<code>config_db.json</code> の直接ロード経路では <code>DEVICE_METADATA.localhost.yang_config_validation = enable</code> のときだけ検証が走る。</p>
+<h2 id="_2">ページ粒度<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>このリファレンスは <strong>1 テーブル = 1 ページ</strong> で構成する。ファイル名は <code>&lt;TABLE_NAME&gt;</code> を kebab-case 化したもの。</p>
+<table>
+<thead>
+<tr>
+<th>例</th>
+<th>ファイル名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR</code></td>
+<td><code>bgp-neighbor.md</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>device-metadata.md</code></td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL_MEMBER</code></td>
+<td><code>portchannel-member.md</code></td>
+</tr>
+<tr>
+<td><code>VXLAN_TUNNEL_MAP</code></td>
+<td><code>vxlan-tunnel-map.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>各ページは以下を含む。</p>
+<ul>
+<li><strong>テーブルの役割</strong>: 何の設定を表すか / どこから書かれ、誰が読むか</li>
+<li><strong>key 構造</strong>: Redis 上のキー形式（<code>&lt;TABLE&gt;|&lt;key1&gt;[|&lt;key2&gt;...]</code>）</li>
+<li><strong>フィールド一覧</strong>: フィールド名 / 型 / 必須かどうか / デフォルト / enum 値 / 説明</li>
+<li><strong>購読する Orch / daemon</strong>: 値の変化をトリガに動くプロセス</li>
+<li><strong>関連 CONFIG_DB / YANG / CLI</strong>: 相互参照（FK 的な依存、外部キー leafref、関連 CLI コマンド）</li>
+<li><strong>引用元</strong>: YANG モジュール / <code>init_cfg.json.j2</code> / <code>db_migrator.py</code> / orch ソース</li>
+</ul>
+<h2 id="verification">verification の扱い<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<ul>
+<li>YANG にテーブル定義があるもの → <code>verification: code-verified</code></li>
+<li>YANG に未定義 (<code>init_cfg.json.j2</code> や orch のコードからのみ確認できる) → <code>code-verified</code> のまま、本文で「YANG 未定義」と注記</li>
+<li>HLD のみ参照したものはこのリファレンスには載せない（リファレンス系は実装一致が前提）</li>
+</ul>
+<h2 id="_3">主要テーブル一覧（順次拡充中）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB のテーブル数は YANG モジュール 100 超に対し 200 以上ある。本リファレンスは利用頻度の高いテーブルから順次ページ化していく。</p>
+<ul>
+<li><code>DEVICE_METADATA</code> ... 装置全体のメタ情報（hostname / ASN / role / hwsku 等）</li>
+<li><code>PORT</code> ... 物理ポート設定（admin/oper、speed、MTU、FEC、autoneg 等）</li>
+<li><code>INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> / <code>MGMT_INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> ... L3 インタフェース上の IP アサイン</li>
+<li><code>VLAN</code> / <code>VLAN_MEMBER</code> ... VLAN 定義とポートメンバ</li>
+<li><code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> ... LAG 定義とメンバ</li>
+<li><code>BGP_NEIGHBOR</code> / <code>BGP_GLOBALS</code> / <code>BGP_DEVICE_GLOBAL</code> ... BGP セッション・ルータ全体・スイッチ全体スコープの BGP 状態</li>
+<li><code>ACL_TABLE</code> / <code>ACL_RULE</code> ... ACL コンテナとルール</li>
+<li><code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> ... EVPN VXLAN トンネルと VNI マップ</li>
+<li><code>MGMT_PORT</code> ... 管理ポート L1/L2 設定</li>
+<li><code>VRF</code> ... VRF (Virtual Routing and Forwarding) インスタンス</li>
+<li><code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> ... QoS バッファ階層</li>
+<li><code>QUEUE</code> / <code>SCHEDULER</code> ... キュー設定とスケジューラ</li>
+<li><code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code> ... QoS マッピング</li>
+<li><code>DHCP_SERVER_IPV4</code> / <code>DHCP_RELAY</code> ... DHCP サーバ / リレー</li>
+<li><code>FLEX_COUNTER_TABLE</code> ... カウンタポーリングのオン／オフ・周期</li>
+<li><code>FEATURE</code> ... 機能 docker のオン／オフ・autorestart</li>
+<li><code>SYSLOG_SERVER</code> / <code>NTP_SERVER</code> ... ログ送信先 / NTP 参照先</li>
+</ul>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB の正本は YANG モデル群 (<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang</code>) と、初期値テンプレート (<code>sonic-buildimage/dockers/*/init_cfg.json.j2</code>)、CLI 配下の入力検証 (<code>sonic-utilities/config/</code>)、Orch 側のテーブル名定数 (<code>sonic-swss-common/common/schema.h</code>) で構成される。各ページの frontmatter <code>sources</code> に commit SHA で固定して記載する。</p>
 
 
 
