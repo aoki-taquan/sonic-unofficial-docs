@@ -1,0 +1,18 @@
+{
+  "title": "SAI API version check",
+  "slug": "sai-api-version-check",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/sai-api-version-check.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-build-system/saiversioncheck.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'SONiC buildsystem overview'?"
+  ],
+  "notes": "size_bytes=3456"
+}

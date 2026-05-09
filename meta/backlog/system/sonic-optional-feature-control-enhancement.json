@@ -1,0 +1,18 @@
+{
+  "title": "SONiC Optional Feature Control Enhancement",
+  "slug": "sonic-optional-feature-control-enhancement",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-optional-feature-control-enhancement.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/optional-feature-control/Optional-Feature-Control.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?"
+  ],
+  "notes": "size_bytes=1115"
+}

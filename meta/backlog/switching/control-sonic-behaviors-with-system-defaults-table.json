@@ -1,0 +1,20 @@
+{
+  "title": "Control SONiC behaviors with SYSTEM_DEFAULTS table",
+  "slug": "control-sonic-behaviors-with-system-defaults-table",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/control-sonic-behaviors-with-system-defaults-table.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2 Scope'?",
+    "What is described in '4 Overview'?",
+    "What is described in '5 Design'?"
+  ],
+  "notes": "size_bytes=6911"
+}

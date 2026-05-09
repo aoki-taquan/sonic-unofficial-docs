@@ -1,0 +1,20 @@
+{
+  "title": "Build Improvements HLD",
+  "slug": "build-improvements-hld",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/build-improvements-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-build-system/images/build-enhancements.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Functional Requirements'?",
+    "What is described in 'Configuration and Management Requirements'?",
+    "What is described in 'Scalability Requirements'?"
+  ],
+  "notes": "size_bytes=23770"
+}

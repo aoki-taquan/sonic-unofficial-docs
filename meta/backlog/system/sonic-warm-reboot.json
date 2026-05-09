@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Warm Reboot",
+  "slug": "sonic-warm-reboot",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-warm-reboot.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/SONiC_Warmboot.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirements on LibSAI and ASIC'?",
+    "What is described in 'Requirements on syncd'?",
+    "What is described in 'Requirement on network applications and orch data'?"
+  ],
+  "notes": "size_bytes=27550"
+}

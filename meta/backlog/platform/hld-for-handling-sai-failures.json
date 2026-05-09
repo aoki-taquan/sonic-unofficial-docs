@@ -1,0 +1,20 @@
+{
+  "title": "HLD for handling SAI failures",
+  "slug": "hld-for-handling-sai-failures",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/hld-for-handling-sai-failures.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/SAI_failure_handling/SAI_failure_handling.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Scope'?",
+    "What is described in '2.1 Requirements for failure handling functions in orchagent'?",
+    "What is described in '2.2 An overview of the failure handling framework'?"
+  ],
+  "notes": "size_bytes=7173"
+}

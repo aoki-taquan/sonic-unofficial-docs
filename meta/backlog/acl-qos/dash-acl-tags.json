@@ -1,0 +1,20 @@
+{
+  "title": "DASH ACL Tags",
+  "slug": "dash-acl-tags",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/dash-acl-tags.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dash/dash-acl-tags/dash-acl-tags.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Functional requirements for stage 1'?",
+    "What is described in 'CLI requirements'?",
+    "What is described in 'Warm/fast boot requirements'?"
+  ],
+  "notes": "size_bytes=13747"
+}

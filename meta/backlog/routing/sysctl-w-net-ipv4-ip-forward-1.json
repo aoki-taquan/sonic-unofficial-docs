@@ -1,0 +1,18 @@
+{
+  "title": "sysctl -w net.ipv4.ip_forward=1",
+  "slug": "sysctl-w-net-ipv4-ip-forward-1",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/sysctl-w-net-ipv4-ip-forward-1.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/sonic-frr",
+      "path": "doc/developer/ldpd-basic-test-setup.md",
+      "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Configuration'?"
+  ],
+  "notes": "size_bytes=18821"
+}

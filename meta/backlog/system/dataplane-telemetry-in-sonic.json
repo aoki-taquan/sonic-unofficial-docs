@@ -1,0 +1,20 @@
+{
+  "title": "Dataplane Telemetry in SONiC",
+  "slug": "dataplane-telemetry-in-sonic",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/dataplane-telemetry-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/barefoot_dtel/Dtel-SONiC.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'New tables in Config DB for Dataplane Telemetry configuration'?",
+    "What is described in 'Minimum configuration'?",
+    "What is described in 'Application to configure DTel via SONiC'?"
+  ],
+  "notes": "size_bytes=19667"
+}

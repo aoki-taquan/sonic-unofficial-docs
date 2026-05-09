@@ -1,0 +1,18 @@
+{
+  "title": "Process and docker stats availability via telemetry agent",
+  "slug": "process-and-docker-stats-availability-via-telemetry-agent",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/process-and-docker-stats-availability-via-telemetry-agent.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/system-telemetry/process-docker-stats.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?"
+  ],
+  "notes": "size_bytes=2710"
+}

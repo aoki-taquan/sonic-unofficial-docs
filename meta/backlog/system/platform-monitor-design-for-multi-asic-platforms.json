@@ -1,0 +1,19 @@
+{
+  "title": "**Platform Monitor design for Multi-Asic platforms**",
+  "slug": "platform-monitor-design-for-multi-asic-platforms",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/platform-monitor-design-for-multi-asic-platforms.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pmon/pmon_multiasic_design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '**Design Approach**'?",
+    "What is described in '**Design changes for multi-asic Architecture**'?"
+  ],
+  "notes": "size_bytes=12989"
+}

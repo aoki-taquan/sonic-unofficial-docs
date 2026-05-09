@@ -1,0 +1,16 @@
+{
+  "title": "reclaim-reserved-buffer-sequence-flow",
+  "slug": "reclaim-reserved-buffer-sequence-flow",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=11591"
+}

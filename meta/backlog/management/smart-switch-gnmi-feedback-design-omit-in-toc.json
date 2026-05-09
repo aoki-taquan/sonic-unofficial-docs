@@ -1,0 +1,19 @@
+{
+  "title": "Smart Switch GNMI feedback design <!-- omit in toc -->",
+  "slug": "smart-switch-gnmi-feedback-design-omit-in-toc",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/smart-switch-gnmi-feedback-design-omit-in-toc.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Requirement'?"
+  ],
+  "notes": "size_bytes=4821"
+}

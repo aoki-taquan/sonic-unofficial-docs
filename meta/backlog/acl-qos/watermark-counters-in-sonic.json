@@ -1,0 +1,19 @@
+{
+  "title": "Watermark counters in SONiC",
+  "slug": "watermark-counters-in-sonic",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/watermark-counters-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/buffer-watermark/watermarks_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.1 Watermark counters requirements'?",
+    "What is described in '3.1.2.3 Show/configure telemetry interval'?"
+  ],
+  "notes": "size_bytes=17364"
+}

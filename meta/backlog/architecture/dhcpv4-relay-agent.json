@@ -1,0 +1,20 @@
+{
+  "title": "DHCPv4 Relay Agent",
+  "slug": "dhcpv4-relay-agent",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/dhcpv4-relay-agent.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/DHCPv4_relay/DHCPv4-relay-agent-High-Level-Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2. Scope'?",
+    "What is described in '4. Overview'?",
+    "What is described in '5. Requirements'?"
+  ],
+  "notes": "size_bytes=46922"
+}

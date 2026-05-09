@@ -1,0 +1,19 @@
+{
+  "title": "Bgpcfgd Dynamic Peer Modification Support",
+  "slug": "bgpcfgd-dynamic-peer-modification-support",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/BGP/Bgpcfgd-dyn-peer-modification-support.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Functional requirements'?",
+    "What is described in '1.2 Scalability requirements'?"
+  ],
+  "notes": "size_bytes=10326"
+}

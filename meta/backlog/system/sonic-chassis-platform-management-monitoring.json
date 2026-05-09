@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Chassis Platform Management & Monitoring",
+  "slug": "sonic-chassis-platform-management-monitoring",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-chassis-platform-management-monitoring.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pmon/pmon-chassis-design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.1. Functional Requirements'?",
+    "What is described in 'Functional Requirements'?",
+    "What is described in 'Configuration'?"
+  ],
+  "notes": "size_bytes=37596"
+}

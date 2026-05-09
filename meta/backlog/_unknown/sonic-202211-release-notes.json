@@ -1,0 +1,16 @@
+{
+  "title": "SONiC 202211 Release Notes",
+  "slug": "sonic-202211-release-notes",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/sonic-202211-release-notes.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/release-notes/SONiC_202211_Release_Notes.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=21653"
+}

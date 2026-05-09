@@ -1,0 +1,20 @@
+{
+  "title": "SmartSwitch High Availability High Level Design",
+  "slug": "smartswitch-high-availability-high-level-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/smartswitch-high-availability-high-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/high-availability/smart-switch-ha-hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '3. Requirements, Assumptions and SLA'?",
+    "What is described in '4.3.3. ENI-level HA scope'?",
+    "What is described in '5.2. HA control plane overview'?"
+  ],
+  "notes": "size_bytes=149477"
+}

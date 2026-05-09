@@ -1,0 +1,20 @@
+{
+  "title": "design_doc",
+  "slug": "design-doc",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/design-doc.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/grpc_client/design_doc.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'gRPC client for active-actve DualToR scenario design'?",
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?"
+  ],
+  "notes": "size_bytes=30914"
+}

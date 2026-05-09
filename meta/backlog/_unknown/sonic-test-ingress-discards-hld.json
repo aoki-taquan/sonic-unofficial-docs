@@ -1,0 +1,20 @@
+{
+  "title": "SONIC_Test_Ingress_Discards_HLD",
+  "slug": "sonic-test-ingress-discards-hld",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/sonic-test-ingress-discards-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Scope'?",
+    "What is described in 'step #2 - Execute test scenario for all available port types depends on run topology (VLAN, LAG, Router)'?"
+  ],
+  "notes": "size_bytes=26614"
+}

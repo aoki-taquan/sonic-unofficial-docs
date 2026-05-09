@@ -1,0 +1,18 @@
+{
+  "title": "1. udev rules design for terminal server",
+  "slug": "1-udev-rules-design-for-terminal-server",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/1-udev-rules-design-for-terminal-server.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/udev-terminalserver/udev rules for Terminal Server.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.4 rules design principle'?"
+  ],
+  "notes": "size_bytes=8816"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "CiscoBgp4MIB implementation changes",
+  "slug": "ciscobgp4mib-implementation-changes",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/ciscobgp4mib-implementation-changes.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/snmp/snmp_ciscobgp4mib.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Current Design'?",
+    "What is described in 'Design considerations for multi-asic platform'?",
+    "What is described in 'Extending current design'?"
+  ],
+  "notes": "size_bytes=5070"
+}

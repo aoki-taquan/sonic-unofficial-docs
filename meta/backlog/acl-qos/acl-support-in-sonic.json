@@ -1,0 +1,20 @@
+{
+  "title": "ACL support in SONiC",
+  "slug": "acl-support-in-sonic",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/acl-support-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/acl/acl.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirements'?",
+    "What is described in 'Design'?",
+    "What is described in 'Configuration'?"
+  ],
+  "notes": "size_bytes=6851"
+}

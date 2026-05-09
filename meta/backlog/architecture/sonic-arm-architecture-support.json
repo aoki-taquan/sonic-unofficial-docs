@@ -1,0 +1,16 @@
+{
+  "title": "SONIC ARM Architecture support",
+  "slug": "sonic-arm-architecture-support",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/sonic-arm-architecture-support.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-multi-architecture/sonic_arm_support.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=7402"
+}

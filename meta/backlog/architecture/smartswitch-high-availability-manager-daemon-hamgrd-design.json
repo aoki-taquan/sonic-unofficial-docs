@@ -1,0 +1,20 @@
+{
+  "title": "SmartSwitch High Availability Manager Daemon (HAMgrD) Design",
+  "slug": "smartswitch-high-availability-manager-daemon-hamgrd-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Overview'?",
+    "What is described in '6. HA scope workflows'?",
+    "What is described in '6.1.1. HA scope initialization'?"
+  ],
+  "notes": "size_bytes=9545"
+}

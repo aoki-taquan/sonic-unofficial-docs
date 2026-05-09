@@ -1,0 +1,18 @@
+{
+  "title": "Egress ACL Bug Fix Description",
+  "slug": "egress-acl-bug-fix-description",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/egress-acl-bug-fix-description.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/acl/egress-acl-bug-fix-description.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'this part need to be revised due to insufficient design consideration'?"
+  ],
+  "notes": "size_bytes=3397"
+}

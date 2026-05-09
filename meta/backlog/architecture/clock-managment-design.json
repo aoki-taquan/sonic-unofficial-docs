@@ -1,0 +1,20 @@
+{
+  "title": "Clock Managment Design",
+  "slug": "clock-managment-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/clock-managment-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/Clock commands/clock_managment_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.2. <a name='Scope'></a>Scope'?",
+    "What is described in '1.4 Overview'?",
+    "What is described in '1.5 Requirements'?"
+  ],
+  "notes": "size_bytes=7536"
+}

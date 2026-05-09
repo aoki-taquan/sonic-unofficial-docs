@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Fine Grained ECMP",
+  "slug": "sonic-fine-grained-ecmp",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/sonic-fine-grained-ecmp.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ecmp/fine_grained_next_hop_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Functional requirements'?",
+    "What is described in '1.2 Orchagent requirements'?",
+    "What is described in '1.3 CLI requirements'?"
+  ],
+  "notes": "size_bytes=32441"
+}

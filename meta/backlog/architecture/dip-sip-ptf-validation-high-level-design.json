@@ -1,0 +1,18 @@
+{
+  "title": "DIP=SIP PTF Validation High Level Design",
+  "slug": "dip-sip-ptf-validation-high-level-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dip-sip/DIP=SIP_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?"
+  ],
+  "notes": "size_bytes=4294"
+}

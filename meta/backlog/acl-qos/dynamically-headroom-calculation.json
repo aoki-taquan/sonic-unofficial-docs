@@ -1,0 +1,20 @@
+{
+  "title": "Dynamically Headroom Calculation",
+  "slug": "dynamically-headroom-calculation",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/dynamically-headroom-calculation.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/qos/dynamically-headroom-calculation.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Introduction'?",
+    "What is described in 'The Requirement'?",
+    "What is described in 'The behavior of the dynamically headroom calculation solution'?"
+  ],
+  "notes": "size_bytes=77566"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "VNET Local Endpoint Forwarding",
+  "slug": "vnet-local-endpoint-forwarding",
+  "area": "overlay",
+  "type": "hld-port",
+  "target_path": "docs/overlay/vnet-local-endpoint-forwarding.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?"
+  ],
+  "notes": "size_bytes=3630"
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Global platform-specific psuutil class instance",
+  "slug": "global-platform-specific-psuutil-class-instance",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/global-platform-specific-psuutil-class-instance.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/platform_api/new_platform_api.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'SONiC Design Principles'?"
+  ],
+  "notes": "size_bytes=7161"
+}

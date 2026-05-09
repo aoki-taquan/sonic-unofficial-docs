@@ -1,0 +1,16 @@
+{
+  "title": "S3IP sysfs specification",
+  "slug": "s3ip-sysfs-specification",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/s3ip-sysfs-specification.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/s3ip_sysfs/s3ip_sysfs_specification.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=15485"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Sonic Basic L2 Mode Test plan",
+  "slug": "sonic-basic-l2-mode-test-plan",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/sonic-basic-l2-mode-test-plan.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/test-plans/Sonic Basic L2 Mode Test plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Scope'?",
+    "What is described in 'Setup configuration'?"
+  ],
+  "notes": "size_bytes=3400"
+}

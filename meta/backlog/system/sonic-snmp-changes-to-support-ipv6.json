@@ -1,0 +1,18 @@
+{
+  "title": "SONiC SNMP Changes to support IPv6",
+  "slug": "sonic-snmp-changes-to-support-ipv6",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-snmp-changes-to-support-ipv6.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/snmp/snmp-changes-to-support-ipv6.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Current configuration for SNMP'?"
+  ],
+  "notes": "size_bytes=8293"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Support a new ACL Table Type that combines L3 ACL and L3V6 ACL Tables",
+  "slug": "support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/acl/Extend-L3V6ACLs.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Introduction to L3 and L3V6 ACL Table Types'?",
+    "What is described in 'Problem overview'?",
+    "What is described in 'Scope'?"
+  ],
+  "notes": "size_bytes=22178"
+}

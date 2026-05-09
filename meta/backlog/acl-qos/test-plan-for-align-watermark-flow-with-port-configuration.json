@@ -1,0 +1,20 @@
+{
+  "title": "Test Plan for Align watermark flow with port configuration",
+  "slug": "test-plan-for-align-watermark-flow-with-port-configuration",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Test configuration'?",
+    "What is described in 'Port buffer configuration'?"
+  ],
+  "notes": "size_bytes=12351"
+}

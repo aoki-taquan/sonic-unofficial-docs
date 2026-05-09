@@ -1,0 +1,18 @@
+{
+  "title": "Reboot-cause information via telemetry agent",
+  "slug": "reboot-cause-information-via-telemetry-agent",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/reboot-cause-information-via-telemetry-agent.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/system-telemetry/reboot-cause.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?"
+  ],
+  "notes": "size_bytes=5511"
+}

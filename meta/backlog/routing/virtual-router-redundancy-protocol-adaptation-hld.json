@@ -1,0 +1,20 @@
+{
+  "title": "Virtual Router Redundancy Protocol Adaptation HLD",
+  "slug": "virtual-router-redundancy-protocol-adaptation-hld",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/virtual-router-redundancy-protocol-adaptation-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/vrrp/VRRP_Adaptation_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=31042"
+}

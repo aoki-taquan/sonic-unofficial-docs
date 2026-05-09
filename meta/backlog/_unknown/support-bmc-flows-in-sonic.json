@@ -1,0 +1,19 @@
+{
+  "title": "Support BMC flows in SONiC",
+  "slug": "support-bmc-flows-in-sonic",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/support-bmc-flows-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/bmc/bmc_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '4.2 BMC api scope'?",
+    "What is described in '6.1. Overview'?"
+  ],
+  "notes": "size_bytes=8489"
+}

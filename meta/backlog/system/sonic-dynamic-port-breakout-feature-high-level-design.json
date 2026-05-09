@@ -1,0 +1,20 @@
+{
+  "title": "SONiC dynamic port breakout feature high level design",
+  "slug": "sonic-dynamic-port-breakout-feature-high-level-design",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'In scope'?",
+    "What is described in 'Out of scope'?",
+    "What is described in 'Platform capability design'?"
+  ],
+  "notes": "size_bytes=61927"
+}

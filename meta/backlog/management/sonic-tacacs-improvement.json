@@ -1,0 +1,16 @@
+{
+  "title": "SONiC TACACS+ improvement",
+  "slug": "sonic-tacacs-improvement",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/sonic-tacacs-improvement.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/aaa/TACACS+ Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=25135"
+}

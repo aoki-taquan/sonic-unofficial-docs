@@ -1,0 +1,18 @@
+{
+  "title": "Egress mirroring support and ACL action capability check",
+  "slug": "egress-mirroring-support-and-acl-action-capability-check",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/acl/acl_stage_capability.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Design'?"
+  ],
+  "notes": "size_bytes=7529"
+}

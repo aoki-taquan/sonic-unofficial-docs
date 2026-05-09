@@ -1,0 +1,20 @@
+{
+  "title": "Increasing LACP PDU timeout during warm-reboot",
+  "slug": "increasing-lacp-pdu-timeout-during-warm-reboot",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/lag/Increasing LACP PDU timeout during warm-reboot.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=9587"
+}

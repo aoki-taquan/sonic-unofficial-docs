@@ -1,0 +1,19 @@
+{
+  "title": "Introduction",
+  "slug": "introduction",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/introduction.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pmon/sonic_platform_test_plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.4 Check SFP status and configure SFP'?",
+    "What is described in '1.7 Reload configuration'?"
+  ],
+  "notes": "size_bytes=39886"
+}

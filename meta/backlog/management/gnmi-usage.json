@@ -1,0 +1,16 @@
+{
+  "title": "gNMI Usage:",
+  "slug": "gnmi-usage",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/gnmi-usage.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/sonic-gnmi",
+      "path": "doc/gNMI_usage_examples.md",
+      "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=4945"
+}

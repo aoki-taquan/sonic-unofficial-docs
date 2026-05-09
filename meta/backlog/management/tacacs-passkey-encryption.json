@@ -1,0 +1,20 @@
+{
+  "title": "TACACS+ Passkey Encryption",
+  "slug": "tacacs-passkey-encryption",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/tacacs-passkey-encryption.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?",
+    "What is described in 'High-Level Design'?"
+  ],
+  "notes": "size_bytes=8976"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "New FRR-SONiC Communication Channel",
+  "slug": "new-frr-sonic-communication-channel",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/new-frr-sonic-communication-channel.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/sonic-fpm-module/frr_sonic_communication_channel.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '3. Scope'?",
+    "What is described in '4. Overview'?",
+    "What is described in '5. High-Level Design'?"
+  ],
+  "notes": "size_bytes=9038"
+}

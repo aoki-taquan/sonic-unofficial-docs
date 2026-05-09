@@ -1,0 +1,19 @@
+{
+  "title": "SONiC Logging & System Dumps Arch Spec",
+  "slug": "sonic-logging-system-dumps-arch-spec",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-logging-system-dumps-arch-spec.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/logging/Logging_and_sysdump_arch_spec.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirements'?",
+    "What is described in 'Configuration flow'?"
+  ],
+  "notes": "size_bytes=2757"
+}

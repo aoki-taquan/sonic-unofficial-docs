@@ -1,0 +1,20 @@
+{
+  "title": "SONiC YANG MODEL GUIDELINES",
+  "slug": "sonic-yang-model-guidelines",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/sonic-yang-model-guidelines.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/mgmt/SONiC_YANG_Model_Guidelines.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in '15.  All must, when, pattern and enumeration constraints can be derived from .h files or from code. If code has the possibility to have unknown behavior with some config, then we should put a constraint in YANG models objects. Also, Developer can put any additional constraint to stop invalid configuration. For new features, constraints may be derived based on low-level design document.'?",
+    "What is described in '20. Define custom RPC for executing command like clear, reset etc. No configuration should change through such RPCs. Define 'input' and 'output' as needed, however they are optional. This step applies when SONiC YANG is used as Northbound YANG.'?"
+  ],
+  "notes": "size_bytes=25919"
+}

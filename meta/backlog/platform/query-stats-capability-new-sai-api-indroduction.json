@@ -1,0 +1,16 @@
+{
+  "title": "Query Stats Capability new SAI API indroduction",
+  "slug": "query-stats-capability-new-sai-api-indroduction",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/query-stats-capability-new-sai-api-indroduction.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=4468"
+}

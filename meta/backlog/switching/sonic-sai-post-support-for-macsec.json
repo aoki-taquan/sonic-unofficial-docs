@@ -1,0 +1,19 @@
+{
+  "title": "SONiC SAI POST support for MACSec",
+  "slug": "sonic-sai-post-support-for-macsec",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/sonic-sai-post-support-for-macsec.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/fips/SONiC-SAI-POST.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Design requirements'?"
+  ],
+  "notes": "size_bytes=5948"
+}

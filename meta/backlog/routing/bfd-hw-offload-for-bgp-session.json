@@ -1,0 +1,20 @@
+{
+  "title": "BFD HW Offload for BGP session",
+  "slug": "bfd-hw-offload-for-bgp-session",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/bfd-hw-offload-for-bgp-session.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/bfd/BFD HW Offload for BGP session HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Functional requirements'?",
+    "What is described in '1.2 CLI requirements'?",
+    "What is described in '1.4 Warm Restart requirements'?"
+  ],
+  "notes": "size_bytes=25926"
+}

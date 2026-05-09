@@ -1,0 +1,20 @@
+{
+  "title": "LAG on Distributed VOQ System",
+  "slug": "lag-on-distributed-voq-system",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/lag-on-distributed-voq-system.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/voq/lag_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.2 LAG Requirements for VOQ SAI'?",
+    "What is described in '3 Design Details'?",
+    "What is described in '3.1 Configuration'?"
+  ],
+  "notes": "size_bytes=23188"
+}

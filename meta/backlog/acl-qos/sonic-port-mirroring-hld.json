@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Port Mirroring HLD",
+  "slug": "sonic-port-mirroring-hld",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/sonic-port-mirroring-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/port-mirroring/SONiC_Port_Mirroring_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Functional Requirements'?",
+    "What is described in '1.2 Configuration and Management Requirements'?",
+    "What is described in '1.3 Scalability Requirements'?"
+  ],
+  "notes": "size_bytes=30947"
+}

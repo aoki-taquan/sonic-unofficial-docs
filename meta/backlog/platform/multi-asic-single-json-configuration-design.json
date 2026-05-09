@@ -1,0 +1,20 @@
+{
+  "title": "Multi-Asic Single JSON Configuration Design",
+  "slug": "multi-asic-single-json-configuration-design",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/multi-asic-single-json-configuration-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirements'?",
+    "What is described in 'Designs: Add Another Layer of ASIC Info'?",
+    "What is described in '3.1 DB Schema Design'?"
+  ],
+  "notes": "size_bytes=9161"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Memory Statistics Feature in SONiC",
+  "slug": "memory-statistics-feature-in-sonic",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/memory-statistics-feature-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/memory_statistics/memory_statistics_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Introduction'?"
+  ],
+  "notes": "size_bytes=23201"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "BGP Suppress Announcements of Routes Not Installed in HW",
+  "slug": "bgp-suppress-announcements-of-routes-not-installed-in-hw",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/BGP/BGP-supress-fib-pending.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Scope'?",
+    "What is described in '3. Overview'?",
+    "What is described in 'Figure 1. Use case scenario'?"
+  ],
+  "notes": "size_bytes=37368"
+}

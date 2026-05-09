@@ -1,0 +1,18 @@
+{
+  "title": "SNMP Transceiver Monitoring Testbed Test Plan",
+  "slug": "snmp-transceiver-monitoring-testbed-test-plan",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/snmp-transceiver-monitoring-testbed-test-plan.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/xrcvd/xcvrd-snmp-testbed-test-plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?"
+  ],
+  "notes": "size_bytes=2737"
+}

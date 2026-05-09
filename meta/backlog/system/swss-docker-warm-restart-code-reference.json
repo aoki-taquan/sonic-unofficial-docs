@@ -1,0 +1,16 @@
+{
+  "title": "SWSS docker warm restart code reference",
+  "slug": "swss-docker-warm-restart-code-reference",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/swss-docker-warm-restart-code-reference.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/code_implementation.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=16499"
+}

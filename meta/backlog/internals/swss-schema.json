@@ -1,0 +1,19 @@
+{
+  "title": "swss-schema",
+  "slug": "swss-schema",
+  "area": "internals",
+  "type": "hld-port",
+  "target_path": "docs/internals/swss-schema.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/sonic-swss",
+      "path": "doc/swss-schema.md",
+      "ref": "4305596156d70e9797e8a881b3d19b46de0bce0d"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Configuration DB schema'?",
+    "What is described in 'Configuration files'?"
+  ],
+  "notes": "size_bytes=53703"
+}

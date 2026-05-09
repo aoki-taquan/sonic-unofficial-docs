@@ -1,0 +1,20 @@
+{
+  "title": "Dump Utility for Easy Debugging",
+  "slug": "dump-utility-for-easy-debugging",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/dump-utility-for-easy-debugging.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dump-utility/Dump-Utility.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in '**1 Requirements**'?",
+    "What is described in '**2 Design**'?"
+  ],
+  "notes": "size_bytes=68448"
+}

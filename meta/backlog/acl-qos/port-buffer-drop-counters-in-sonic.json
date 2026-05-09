@@ -1,0 +1,19 @@
+{
+  "title": "Port buffer drop counters in SONiC",
+  "slug": "port-buffer-drop-counters-in-sonic",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.1 Functional Requirements'?",
+    "What is described in '3.1.1 Displaying the FC configuration'?"
+  ],
+  "notes": "size_bytes=3815"
+}

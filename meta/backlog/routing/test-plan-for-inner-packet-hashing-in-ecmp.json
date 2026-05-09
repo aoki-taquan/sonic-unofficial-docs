@@ -1,0 +1,20 @@
+{
+  "title": "Test Plan for inner packet hashing in ECMP",
+  "slug": "test-plan-for-inner-packet-hashing-in-ecmp",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ecmp/inner_packet_hashing_test_plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Test configuration'?",
+    "What is described in 'PBH table configuration'?"
+  ],
+  "notes": "size_bytes=8812"
+}

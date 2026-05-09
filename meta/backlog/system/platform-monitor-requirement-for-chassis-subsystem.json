@@ -1,0 +1,19 @@
+{
+  "title": "Platform Monitor Requirement for Chassis Subsystem",
+  "slug": "platform-monitor-requirement-for-chassis-subsystem",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/platform-monitor-requirement-for-chassis-subsystem.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pmon/pmon-chassis-requirements.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Mandatory/Needed Requirements:'?",
+    "What is described in '2. Future Requirements/Enhancements:'?"
+  ],
+  "notes": "size_bytes=3712"
+}

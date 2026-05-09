@@ -1,0 +1,20 @@
+{
+  "title": "Handle ASIC/SDK health event",
+  "slug": "handle-asic-sdk-health-event",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/handle-asic-sdk-health-event.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/handle-ASIC-SDK-health-event/handle-ASIC-SDK-health-event.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=36170"
+}

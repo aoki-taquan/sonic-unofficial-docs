@@ -1,0 +1,20 @@
+{
+  "title": "CMIS Diagnostic Monitoring Overview in SONiC",
+  "slug": "cmis-diagnostic-monitoring-overview-in-sonic",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/cmis-diagnostic-monitoring-overview-in-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/platform_api/CMIS_Diagnostic_Monitoring_Overview_in_SONiC.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Overview'?",
+    "What is described in '2. Requirements, future enhancements Non-goals'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=220979"
+}

@@ -1,0 +1,19 @@
+{
+  "title": "What are the development phases and scope for Warm reboot",
+  "slug": "what-are-the-development-phases-and-scope-for-warm-reboot",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/open_issues.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Design doc:'?",
+    "What is described in 'Design doc:'?"
+  ],
+  "notes": "size_bytes=5697"
+}
