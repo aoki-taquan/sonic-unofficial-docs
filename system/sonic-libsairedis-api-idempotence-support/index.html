@@ -12545,13 +12545,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は warm-reboot 議事系。<code>ATTR2OID_*</code> / <code>OID2ATTR_*</code> / <code>DEFAULT_*</code> 各キープレフィックスを RESTORE_DB (DB 7) に置く設計が現行 sairedis の master ブランチに採用されているかは未裏取り（<code>syncd view comparison</code> 案との競合あり）。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>Verifier 2026-05-09: 本 HLD で提案された <strong><code>ATTR2OID_*</code> / <code>OID2ATTR_*</code> / <code>DEFAULT_ATTR2OID_*</code> / <code>DEFAULT_OID2ATTR_*</code> / <code>DEFAULT_OBJ_*</code> キープレフィックス、および RESTORE_DB (DB 7)</strong> は現行 <code>sonic-sairedis</code> master に存在しない（<code>grep -rn 'RESTORE_DB\|ATTR2OID_\|DEFAULT_ATTR2OID' .cache/sonic-sources/sonic-sairedis/</code> で 0 件）。<code>g_objectOwner</code> / <code>UNDERLAY_INTERFACE_</code> / <code>OVERLAY_INTERFACE_</code> も <code>sonic-swss/orchagent/</code> に存在しない。一方、競合案であった <strong>syncd 側 view comparison</strong> は <code>sonic-sairedis/syncd/ComparisonLogic.{cpp,h}</code> および <code>Syncd.{cpp,h}</code> の <code>applyView</code> 経路として採用済み。よって本ページの提案設計は <strong>採用されておらず</strong>、現行 warm restart の同等機能は syncd の view comparison が担う。本ページは歴史的設計案として保持。</p>
 </div>
 <h1 id="libsairedis-api-idempotencewarm-restart-oid-duplicate">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）<a class="headerlink" href="#libsairedis-api-idempotencewarm-restart-oid-duplicate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

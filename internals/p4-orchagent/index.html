@@ -12701,13 +12701,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>P4Orch</code> の <code>ObjectManagerInterface</code> 階層、<code>RouterInterfaceManager</code> / <code>NeighborManager</code> / <code>NexthopManager</code> / <code>WcmpManager</code> / <code>RouteManager</code> / <code>AclTableManager</code> / <code>AclRuleManager</code> の現行実装、<code>Centralized Mapper</code> の参照カウントと <code>CrmOrch</code> 連携、<code>PortsOrch</code> / <code>VrfOrch</code> への public method 経由の参照、<code>APPL_STATE_DB</code> 経由の応答経路は実コードでの裏取り未済（PINS 機能）。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09 で <code>sonic-swss/orchagent/p4orch/</code> に <code>p4orch.cpp</code> 本体と各 Manager（<code>router_interface_manager</code>, <code>neighbor_manager</code>, <code>next_hop_manager</code>, <code>wcmp_manager</code>, <code>route_manager</code>, <code>acl_table_manager</code>, <code>acl_rule_manager</code>, <code>mirror_session_manager</code>, <code>l3_admit_manager</code>, <code>gre_tunnel_manager</code>, <code>tunnel_decap_group_manager</code>, <code>ext_tables_manager</code>, <code>tables_definition_manager</code>, <code>ip_multicast_manager</code>, <code>l3_multicast_manager</code>）が実装されていることを確認。<code>object_manager_interface.h</code> で <code>enqueue</code> / <code>drain</code> / <code>drainWithNotExecuted</code> 抽象が定義され、<code>p4oidmapper.h</code> の <code>P4OidMapper</code> クラスが <code>(sai_object_type_t, key) → (oid, ref_count)</code> を保持し、<code>getRefCount</code> 等の API を public 公開している。HLD 当初の 7 Manager から実装は更に拡張されている。</p>
 </div>
 <h1 id="p4orchpins-p4runtime-orchagent">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）<a class="headerlink" href="#p4orchpins-p4runtime-orchagent" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

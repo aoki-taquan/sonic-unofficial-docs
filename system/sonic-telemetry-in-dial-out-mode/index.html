@@ -12623,9 +12623,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>dialout_client_cli</code> バイナリ（旧 <code>sonic-telemetry</code>、現 <code>sonic-gnmi</code> リポジトリ）の現行 master 取り込み、<code>TELEMETRY_CLIENT</code> テーブルの YANG / CLI、OpenConfig telemetry yang model との互換性は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-gnmi/dialout/dialout_client_cli/dialout_client_cli.go</code> バイナリと <code>dialout/dialout_client/dialout_client.go</code> 内の <code>TELEMETRY_CLIENT|Global</code> / <code>TELEMETRY_CLIENT|DestinationGroup_&lt;name&gt;</code> / <code>TELEMETRY_CLIENT|Subscription_&lt;name&gt;</code> 各キー定義（同ファイル L414, L421, L428）、<code>proto/dial_out.proto</code> (<code>gNMIDialOut.Publish</code>)、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang</code> を確認。OpenConfig 互換は YANG 単独では未確認だがテーブル定義は HLD と整合。</p>
 </div>
 <h1 id="gnmi-dial-out-dialout_client_cli-gnmidialoutpublish">gNMI dial-out モード（<code>dialout_client_cli</code> + <code>gNMIDialOut.Publish</code>）<a class="headerlink" href="#gnmi-dial-out-dialout_client_cli-gnmidialoutpublish" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

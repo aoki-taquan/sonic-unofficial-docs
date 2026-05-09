@@ -12645,9 +12645,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは <code>doc/ecmp/fine_grained_next_hop_hld.md</code>（Rev 1.5, 2024-09 改訂）に基づき再構成した。<code>fgnhgorch</code> の現行 master 実装、<code>FG_NHG*</code> テーブルの YANG 取り込み、SAI <code>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP</code> の community SAI 取り込みは未確認である。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-swss/orchagent/fgnhgorch.{cpp,h}</code> の現行実装、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang</code>（<code>match_mode</code> に <code>prefix-based</code> を含む Rev 1.5 後の追加分も収容）、<code>sonic-sairedis/vslib/SwitchStateBase.cpp:4165</code> の <code>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP</code> capability 列挙を確認し HLD と整合。</p>
 </div>
 <h1 id="fine-grained-ecmpfg_nhg-fgnhgorch">Fine Grained ECMP（FG_NHG / fgnhgorch）<a class="headerlink" href="#fine-grained-ecmpfg_nhg-fgnhgorch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

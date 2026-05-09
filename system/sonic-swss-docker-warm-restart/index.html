@@ -12567,9 +12567,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は SONiC 初期の swss container 単体 warm restart 設計。<code>m_toSync</code> 空判定や ProducerStateTable の consumer-only modify などは現行 master と差分の可能性。<code>priority=high</code>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-swss/orchagent/orch.cpp:606</code> <code>if (!m_toSync.empty())</code> の同期チェック、<code>sonic-swss-common/common/warm_restart.h:13</code> <code>class WarmStart</code>、<code>sonic-swss-common/common/producerstatetable.h:10</code> / <code>consumerstatetable.h:10</code> の <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> 実装、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang</code> の <code>WARM_RESTART</code> テーブル、<code>sonic-buildimage/dockers/docker-pde/syncd_init_common.sh</code> の warm 起動分岐を確認。HLD の枠組みは現行 master に取り込み済み。</p>
 </div>
 <h1 id="swss-docker-warm-restartstate-restore-consistency-sync-up">SWSS docker warm restart（state restore / consistency / sync up）<a class="headerlink" href="#swss-docker-warm-restartstate-restore-consistency-sync-up" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

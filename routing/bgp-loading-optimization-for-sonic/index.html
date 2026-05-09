@@ -12567,9 +12567,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>fpmsyncd の PUBLISH 削減・pipeline サイズ拡大・遅延 flush タイマ、orchagent ring buffer / assistant thread、sairedis の async 化、<code>PerformanceTimer</code> の現行 master 取り込み状況は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-swss/fpmsyncd/fpmsyncd.h:6</code> <code>#define ROUTE_SYNC_PPL_SIZE 50000</code>、<code>fpmsyncd.cpp:25</code> <code>FLUSH_TIMEOUT 500</code>（500ms）、<code>SMALL_TRAFFIC 500</code>、<code>pipeline.flush()</code> 経路を確認。<code>sonic-swss/orchagent/orch.cpp:19-</code> で <code>RingBuffer</code> クラス（<code>Orch::gRingBuffer</code> / <code>Executor::gRingBuffer</code> の static、<code>pauseThread</code> / <code>notify</code> / <code>IsIdle</code> / <code>IsFull</code> / <code>push</code>）を確認。<code>sonic-swss-common/common/performancetimer.h</code> で <code>PerformanceTimer</code> クラスを確認。</p>
 </div>
 <h1 id="bgp-loading-optimizationfpmsyncd-flush-orchagent-ring-buffer-async-sairedis">BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）<a class="headerlink" href="#bgp-loading-optimizationfpmsyncd-flush-orchagent-ring-buffer-async-sairedis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

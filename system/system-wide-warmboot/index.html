@@ -12545,13 +12545,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は SONiC 初期の system-wide warmboot 設計メモ。後発の <code>Warmboot Manager</code>（Google 2023, Rev 0.1）が同領域を再設計しているため、<code>/host/warmboot/dump.rdb</code> 経路や <code>SONIC_BOOT_TYPE</code> カーネル引数の現行有効性は要確認。<code>priority=high</code>。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-buildimage/files/build_templates/docker_image_ctl.j2:105</code> <code>WARM_DIR=/host/warmboot$DEV</code> と L107/L292 の <code>BOOT_TYPE</code> チェック（<code>warm</code> / <code>fastfast</code> / <code>express</code> / <code>fast</code> の 4 値、<code>-f $WARM_DIR/dump.rdb</code> ロード）、L737 の <code>-v /host/warmboot$DEV:/var/warmboot</code> bind mount を確認。<code>sonic-buildimage/dockers/docker-pde/syncd_init_common.sh:28-33</code> の <code>*SONIC_BOOT_TYPE=fastfast*</code> / <code>*SONIC_BOOT_TYPE=fast*|*fast-reboot*</code> 分岐、L169-170 の <code>SAI_KEY_WARM_BOOT_WRITE_FILE=/var/warmboot/sai-warmboot.bin</code> を確認（コンテナ内パスは <code>/var/warmboot/</code>、host 側は <code>/host/warmboot$DEV/</code>）。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang:46</code> <code>container WARM_RESTART</code> を確認。HLD と整合（<code>express</code> boot type は HLD 後追加されている）。</p>
 </div>
 <h1 id="system-wide-warmbootgoing-down-up-path-sai">System-wide Warmboot（going down / up path / SAI 期待値）<a class="headerlink" href="#system-wide-warmbootgoing-down-up-path-sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

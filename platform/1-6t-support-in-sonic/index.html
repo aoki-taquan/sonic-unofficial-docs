@@ -12779,9 +12779,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 未来の HW 対応</p>
-<p>HLD は 2024-07 改訂 v1.0。<strong>HW がまだ存在しない時点で書かれた予定変更の列挙</strong> であり、HLD 末尾でも「実装は最終的に異なる可能性あり」と明記されている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。inner FEC や link training 等の追加検討点はオープンのまま。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: 主要 4 リポジトリへの取り込みを確認。<code>sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/common.py:201</code> <code>get_interface_speed</code> で <code>'1.6T' in ifname → 1600000</code> 分岐、<code>sonic-swss/orchagent/port/porthlpr.cpp:32</code> <code>static const std::uint32_t maxPortSpeed = 1600000;</code>、<code>sonic-swss/orchagent/port_rates.lua:110</code> <code>serdes = 212.5e+9</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:102,133</code> で <code>range 1..1600000</code>、<code>sonic-swss/orchagent/port_flr.lua:78</code> で <code>['1600000_8'] = 4</code> まで実装済み。HLD と整合。inner FEC / link training 等の検討点はオープンのまま。</p>
 </div>
 <h1 id="16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch">1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）<a class="headerlink" href="#16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13020,11 +13020,11 @@ reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン�
 <tbody>
 <tr>
 <td><code>config interface speed &lt;ifname&gt; 1600000</code></td>
-<td>1.6T 設定（または <code>1.6T</code> の文字列受理）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>1.6T 設定（または <code>1.6T</code> の文字列受理）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>show interfaces status</code></td>
-<td>1.6T が正しく表示されること<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>1.6T が正しく表示されること<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -13036,10 +13036,10 @@ reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン�
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HW がまだ存在しない</strong>ことを前提に書かれた spec 先行 HLD。実 HW での挙動は未確認<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>DSP 付きの両端光モジュール接続では <strong>inner FEC 追加</strong> の議論が必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>link training</strong> や <strong>新 FEC タイプ</strong> の取扱いは追加検討事項としてオープン<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>IEEE 802.3dj は HLD 時点では <strong>未確定（taskforce が finalize 作業中）</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>HW がまだ存在しない</strong>ことを前提に書かれた spec 先行 HLD。実 HW での挙動は未確認<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>DSP 付きの両端光モジュール接続では <strong>inner FEC 追加</strong> の議論が必要<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>link training</strong> や <strong>新 FEC タイプ</strong> の取扱いは追加検討事項としてオープン<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>IEEE 802.3dj は HLD 時点では <strong>未確定（taskforce が finalize 作業中）</strong><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>HLD 全体が <strong>必要変更点の列挙レベル</strong>。詳細設計や API 互換性は実装フェーズで詰める必要あり</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -13069,7 +13069,7 @@ reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン�
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-1.6t-support/port-1.6t-support.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-1.6t-support/port-1.6t-support.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -12501,13 +12501,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021 年版 (Rev 1.1) で 4 年経過。<code>config pbh table/hash-field/hash/rule add/delete</code> CLI、PBH (Policy Based Hashing) Orchagent / SAI 連携、<code>SET_ECMP_HASH</code> action、warm-boot 跨ぎ動作は未裏取り。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-swss/orchagent/pbhorch.{cpp,h}</code> と <code>sonic-swss/orchagent/pbh/pbhmgr.cpp</code> を確認。<code>pbhmgr.cpp:36-42</code> で <code>INNER_DST_IPV4</code> / <code>INNER_SRC_IPV4</code> / <code>INNER_DST_IPV6</code> / <code>INNER_SRC_IPV6</code> / <code>INNER_L4_DST_PORT</code> / <code>INNER_L4_SRC_PORT</code> / <code>INNER_IP_PROTOCOL</code> の <code>SAI_NATIVE_HASH_FIELD_*</code> マッピングと VxLAN/NVGRE 用 case が実装済み。CLI は <code>sonic-utilities/config/plugins/pbh.py</code> および <code>utilities_common.helper.get_port_pbh_binding</code> で取り込み済み。HLD と整合。</p>
 </div>
 <h1 id="ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）<a class="headerlink" href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

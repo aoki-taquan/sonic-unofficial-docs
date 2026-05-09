@@ -12623,13 +12623,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-2021 年（Rev 0.1〜0.9）の SONiC Management Framework 経由で FRR-BGP を扱う設計案。<code>frrcfgd</code> daemon の現行 master 採用状況、<code>bgpcfgd</code>（template）/ <code>frrcfgd</code>（config-DB drive）の使い分け、OpenConfig BGP の transformer 経路の取り込みは要再確認。<code>priority=high</code>。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>Verifier 2026-05-09: <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> 本体、<code>rules/sonic-frr-mgmt-framework.{mk,dep}</code> ビルドルールを確認。<code>sonic-buildimage/dockers/docker-fpm-frr/docker_init.sh:68</code> で <code>MGMT_FRAMEWORK_CONFIG=$(echo $FRR_VARS | jq -r '.frr_mgmt_framework_config')</code> の分岐により bgpcfgd / frrcfgd を切替えている。YANG は <code>sonic-bgp-{global,neighbor,peergroup,common,...}.yang</code> 群が community sonic-yang-models に存在。<code>bgpcfgd</code> と <code>frrcfgd</code> の併用は <code>frr_mgmt_framework_config</code> キーで一元的に制御される構成。HLD と整合。</p>
 </div>
 <h1 id="frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp">FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）<a class="headerlink" href="#frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
