@@ -787,6 +787,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/smart-switch-database-design.md",
+      "issue": 673,
+      "verification": "hld-only",
+      "concerns": [
+        "featured daemon が has_per_dpu_scope を解釈し per-DPU の database container を systemctl で起動する実装存在確認",
+        "FEATURE.has_per_dpu_scope の YANG / CONFIG_DB 取り込みが現行 master にあるか未確認",
+        "database_global.json の include/container_name 解決ロジックが multi-ASIC コードパスから流用されているか未確認",
+        "DPU_APPL_DB / DPU_APPL_STATE_DB / DPU_STATE_DB / DPU_COUNTERS_DB (id 15-18) の database_config.json 取り込み確認",
+        "platform_env.conf の NUM_DPU 直読みフォールバックと将来的な platform API 化の進捗確認",
+        "HLD は Revision 0.1 で日付欄空欄。現行 master との乖離リスクあり"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/sonic-generic-hash.md",
       "issue": 333,
       "verification": "code-verified",
