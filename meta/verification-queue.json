@@ -1170,6 +1170,19 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/enhanced-lpo-debug-registers-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap の sonic-platform-common 取り込み確認",
+        "xcvr_api_factory.py に Arista enhanced LPO 用 vendor 分岐が追加されたか確認",
+        "Page 01h Byte 195 = 0x4C 検出ロジックの実装確認",
+        "TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_DOM_THRESHOLD / TRANSCEIVER_DOM_FLAG への新 LPO* キー追加が現行 schema に反映されているか確認",
+        "他 vendor (Innolight / Eoptolink 等) の override 実装存在確認"
+      ],
+      "priority": "medium",
+      "issue": 530
+    },
+    {
       "page": "docs/platform/everflow-support-on-voq-chassis.md",
       "issue": 123,
       "verification": "hld-only",
