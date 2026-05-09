@@ -1,7 +1,7 @@
 ---
 title: gNMI Master Arbitration（election ID と SetRequest 拡張）
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い Initial Proposal"
-    HLD は 2023-02 改訂の v0.1（Initial 版）で 2 年以上経過している。現行 master の `sonic-gnmi` 実装に取り込まれているか、`--with-master-arbitration` フラグや `TELEMETRY|gnmi:master_arbitration_enabled` スキーマがそのまま採用されているかは未確認。**Open / Action items は HLD 上 N/A だが、Restrictions に「default role 以外は無視」と記載がある点に注意**。
+!!! warning "裏取りステータス: Discrepancy-found"
+    現行 master (`sonic-gnmi` @ eb635b76) で `--with-master-arbitration` フラグおよび `ReqFromMasterEnabledMA` の主要ロジック（128-bit EID 比較・末尾 MA 採用・PermissionDenied 返却）は実装済み。ただし HLD と実装の間で **(1) Role 指定時の挙動 (2) CONFIG_DB 駆動の有効化** に関して 2 点の乖離があり、本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # gNMI Master Arbitration（election ID と SetRequest 拡張）
 
@@ -197,6 +197,15 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - 全クライアントの `Set` が `PermissionDenied "Not a master"` で落ちる: 起動フラグが ON のまま EID を載せていないクライアントが古い `masterEID` に負けている。各クライアントの `MasterArbitration` 拡張の EID 値とサーバの DEBUG ログを突き合わせる
 - 一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で `masterEID` をリセットするしかない（HLD 仕様）[^1]
 - `Get` は通るのに `Set` だけ落ちる: 仕様通り。Master Arbitration は `Set` のみ対象[^1]
+
+## 実装との乖離
+
+実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
+
+- **Role.id の扱い**: HLD Restrictions は「default role 以外は **無視** する」と記載しているが、現行 master の `sonic-gnmi/gnmi_server/server.go:1329-1331` は `ma.Role != nil` の場合 `codes.Unimplemented "MA: Role is not implemented"` を返して **拒否** している。HLD どおり「ヘッダに Role を付けても通る」想定でクライアントを実装すると `Set` がエラーになるため注意。
+- **CONFIG_DB スキーマ**: HLD は `TELEMETRY|gnmi:master_arbitration_enabled` を提案しているが、現行 master の `sonic-gnmi` には対応する CONFIG_DB 駆動の有効化パスは存在せず、`sonic-buildimage` 側にも `master_arbitration_enabled` 名のスキーマは見当たらない。実際の有効化はもっぱら `--with-master-arbitration` 起動フラグ (`sonic-gnmi/telemetry/telemetry.go:188,587-588`) であり、CONFIG_DB 経由の動的 ON/OFF はサポートされていない。
+
+主要な合致点として、`sonic-gnmi/gnmi_server/server.go:1310-1351` の `ReqFromMasterEnabledMA`（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の `masterEID`・`PermissionDenied` 返却）、`server.go:1070` の `Set` 内での認証前 `ReqFromMaster` 呼び出し、`telemetry/telemetry.go:62,188` の `--with-master-arbitration` フラグは HLD どおり実装されていることを確認した。
 
 ## 引用元
 

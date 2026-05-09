@@ -1,13 +1,15 @@
 {
   "page": "docs/management/gnmi-master-arbitration-hld.md",
   "issue": 201,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
+  "verified_concerns": [
+    "sonic-gnmi/gnmi_server/server.go:1310-1351 で ReqFromMasterEnabledMA が実装済み（extension 走査・末尾 MA 採用・128-bit EID 比較・PermissionDenied 返却）を確認",
+    "sonic-gnmi/telemetry/telemetry.go:62,188,587-588 で --with-master-arbitration フラグから ReqFromMaster をスイッチする実装を確認",
+    "sonic-gnmi/gnmi_server/server.go:1070 で Set 内の認証前 MA チェック（ReqFromMaster 呼び出し）を確認"
+  ],
   "concerns": [
-    "sonic-gnmi telemetry サーバに ReqFromMasterEnabledMA / --with-master-arbitration フラグが実装されているか未確認",
-    "TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマ存否未確認",
-    "Role.id を無視する仕様（default role のみ）が実装に反映されているか未確認",
-    "HLD は 2023-02 v0.1 Initial で 2 年超経過、現行 master 実装との乖離リスクあり",
-    "openconfig 上流の gnmi-master-arbitration.md との差分有無未確認"
+    "Role.id 取扱いの乖離: HLD は default role 以外を無視と記載するが、実装は ma.Role != nil で codes.Unimplemented を返して拒否する (sonic-gnmi/gnmi_server/server.go:1329-1331)",
+    "TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマは sonic-gnmi / sonic-buildimage いずれにも存在せず、有効化は --with-master-arbitration フラグのみ"
   ],
   "priority": "high"
 }
