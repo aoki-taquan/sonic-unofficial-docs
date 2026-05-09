@@ -1195,6 +1195,20 @@
       "priority": "medium",
       "issue": 191,
       "pr": 192
+    },
+    {
+      "page": "docs/architecture/sonic-arm-architecture-support.md",
+      "verification": "hld-only",
+      "concerns": [
+        "PLATFORM_ARCH / CONFIGURED_ARCH 変数の現行 Makefile 命名と amd64 ハードコード残存の確認",
+        "sonic-slave-armhf / sonic-slave-arm64 の現行 Dockerfile 構成と qemu-static 連携確認",
+        "onie-image-armhf.conf / onie-image-arm64.conf / installer/<arch>/install.sh の現行存在確認",
+        "sonic-installer.main の uboot 連携経路実装確認",
+        "src/sonic-linux-kernel の ARM 向けパッチと .config 生成 (dpkg 環境変数) の現行確認",
+        "platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認"
+      ],
+      "priority": "high",
+      "issue": 193
     }
   ]
 }
