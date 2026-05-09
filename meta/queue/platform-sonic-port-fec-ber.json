@@ -1,0 +1,12 @@
+{
+  "page": "docs/platform/sonic-port-fec-ber.md",
+  "issue": 331,
+  "verification": "hld-only",
+  "concerns": [
+    "port_rates.lua への Pre/Post FEC BER 計算ロジック追加が現行 sonic-swss にあるか未確認",
+    "portstat.py の -f 出力に FEC_PRE_BER / FEC_POST_BER 列が含まれるか未確認",
+    "SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS / SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES のプラットフォーム対応状況",
+    "serdes 速度 lookup テーブルが現行 lua で網羅されているか未確認"
+  ],
+  "priority": "low"
+}
