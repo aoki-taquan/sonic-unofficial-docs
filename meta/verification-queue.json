@@ -1282,6 +1282,20 @@
       ],
       "priority": "medium",
       "pr": 204
+    },
+    {
+      "page": "docs/management/gnoi-hld-for-healthz-api.md",
+      "issue": 205,
+      "pr": 206,
+      "verification": "hld-only",
+      "concerns": [
+        "UMF/sonic-gnmi の Healthz FE 実装存在確認",
+        "host service debug_info モジュール (collect / check) の実装確認",
+        "3 つの Get path (alert-info / critical-info / all-info) の解釈実装確認",
+        "gnoi_client CLI への healthz サブコマンド対応確認",
+        "artifact 永続化と GC ポリシーの現行実装確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
