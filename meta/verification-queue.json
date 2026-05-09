@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/system/platform-monitor-requirement-for-chassis-subsystem.md",
+      "issue": 297,
+      "verification": "hld-only",
+      "concerns": [
+        "chassisd の CHASSIS_MODULE_TABLE / CHASSIS_ASIC_TABLE 生成実装の現状確認",
+        "psud のシャーシ向けパワーアルゴリズムと thermalctld のシャーシ FAN アルゴリズム実装確認",
+        "show chassis module status の hostname 表示拡張 (要件 #21) 取り込み確認",
+        "Future 要件 (LED 統一 / sensors 移行 / Generic console) の進捗追跡"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/system/sonic-logging-system-dumps-arch-spec.md",
       "issue": 295,
       "verification": "hld-only",
