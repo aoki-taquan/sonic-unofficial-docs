@@ -1133,7 +1133,8 @@
         "P4Runtime / PINS スタックの SONiC master 取り込み状況確認"
       ],
       "priority": "medium",
-      "issue": 183
+      "issue": 183,
+      "pr": 184
     }
   ]
 }
