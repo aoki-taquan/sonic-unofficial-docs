@@ -1,7 +1,7 @@
 ---
 title: バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -22,8 +22,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`PortsOrch` の watermark flex counter group、`watermarkorch` の存在、Lua plugin 配置、`syncd` の `STATS_MODE_READ_AND_CLEAR` 拡張、telemetry virtual path の最終仕様は未裏取り。
+!!! success "裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）"
+    `sonic-swss/orchagent/watermarkorch.{h,cpp}` で `WatermarkOrch` クラスの存在、`DEFAULT_TELEMETRY_INTERVAL=120` (cpp L9) と CFG_WATERMARK_TABLE 連動 `handleWmConfigUpdate` の `TELEMETRY_INTERVAL` キー処理 (cpp L97) を確認。Lua plugin として `orchagent/watermark_bufferpool.lua`, `watermark_pg.lua`, `watermark_queue.lua` を確認。`STATS_MODE_READ_AND_CLEAR` は `bufferorch.cpp` L334 / `portsorch.cpp` L868/L874 で利用、`hftelutils.cpp` で `SAI_STATS_MODE_READ_AND_CLEAR` が SAI 側へ受け渡し。**HLD で混在していた `TELEMETRY_PERIOD` ではなく実装は `TELEMETRY_INTERVAL`** (verified at: 2026-05-09)。
 
 # バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
 

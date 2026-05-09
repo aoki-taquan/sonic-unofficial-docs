@@ -1,11 +1,14 @@
 {
   "page": "docs/routing/router-interface-counters-in-sonic.md",
   "issue": 13,
-  "verification": "hld-only",
-  "concerns": [
-    "IntfsOrch の RIF flex counter 登録/解除と COUNTERS_RIF_NAME_MAP 更新が HLD どおりか未確認",
-    "FLEX_COUNTER_TABLE への RIF グループ登録（CONFIG_DB 側スキーマ）が未確認",
-    "rifstat / sonic-clear interface rifcounters の実装存在確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "IntfsOrch の RIF flex counter 登録/解除と COUNTERS_RIF_NAME_MAP 更新が HLD どおりか未確認 -> orchagent/intfsorch.cpp L70 (COUNTERS_RIF_NAME_MAP) / L96 (setFlexCounterGroupParameter) / L1573 (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP) 確認 (verified 2026-05-09)",
+    "FLEX_COUNTER_TABLE への RIF グループ登録（CONFIG_DB 側スキーマ）が未確認 -> intfsorch のコンストラクタで FlexCounter group 登録を確認 (verified 2026-05-09)",
+    "rifstat / sonic-clear interface rifcounters の実装存在確認 -> sonic-utilities/scripts/intfstat (実体名は intfstat) と clear/main.py L175 rifcounters を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
 }

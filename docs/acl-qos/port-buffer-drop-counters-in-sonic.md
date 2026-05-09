@@ -1,7 +1,7 @@
 ---
 title: ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`PORT_BUFFER_DROP` Flex Counter group の sonic-swss / sonic-utilities への取り込み状況、`counterpoll port-buffer-drop` CLI 実装、interval バリデーション（30s–5m）の実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/portsorch.h` L31 で `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"`、`portsorch.cpp` L88 で `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000`（HLD のデフォルト 60s と一致）、`flexcounterorch.cpp` L75 で flex counter テーブル登録を確認。`sonic-utilities/counterpoll/main.py` L146-178 に `counterpoll port-buffer-drop` グループ、interval バリデーションは `click.IntRange(30000, 300000)` で実装 (verified at: 2026-05-09)。
 
 # ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
 

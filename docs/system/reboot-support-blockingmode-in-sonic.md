@@ -1,7 +1,7 @@
 ---
 title: reboot コマンドの blocking mode（reboot.conf / -b / -v）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 1.0, 2025-06）のみを根拠に書かれている。`reboot` スクリプト本体（sonic-buildimage）の `-b` / `-v` フラグ実装、`/etc/sonic/reboot.conf` パーサ、平台固有 reboot との関係は未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-utilities/scripts/reboot` で実装を確認: `REBOOT_CONFIG_FILE="/etc/sonic/reboot.conf"` (L17)、デフォルト `BLOCKING_MODE="no"` / `BLOCKING_MODE_TIMEOUT_IN_SECOND=180` (L58-59)、`-b` で blocking mode、`-v` で verbose dot 出力 (L155-156, L230)、reboot.conf パーサで `blocking_mode` / `blocking_mode_timeout` キー処理 (L257-275)、blocking mode 時の deadloop と timeout 検出 (L390-408) を確認 (verified at: 2026-05-09)。
 
 # `reboot` コマンドの blocking mode（`reboot.conf` / `-b` / `-v`）
 

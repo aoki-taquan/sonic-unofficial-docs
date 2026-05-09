@@ -1,7 +1,7 @@
 ---
 title: ルータインタフェース (RIF) カウンタ
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-swss` の `IntfsOrch` および `flex_counter` グループ、`sonic-utilities` の `rifstat` 実装での裏取りは未済。
+!!! success "裏取りステータス: Code-verified（CLI 実体名差分あり）"
+    `sonic-swss/orchagent/intfsorch.cpp` で `COUNTERS_RIF_NAME_MAP` の生成 (L70)、`RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` 経由の flex counter 登録 (L96, L1573) と `generateInterfaceMap()` (L1576) を確認。`sonic-utilities/clear/main.py` の `rifcounters` (L175) と RIF 統計表示スクリプト `sonic-utilities/scripts/intfstat`（`SAI_ROUTER_INTERFACE_STAT_*` 8 種を扱う）を確認。**HLD 本文での実体スクリプト名は `rifstat` ではなく `intfstat` が現行実装** (verified at: 2026-05-09)。
 
 # ルータインタフェース (RIF) カウンタ
 

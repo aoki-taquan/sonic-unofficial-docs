@@ -1,7 +1,7 @@
 ---
 title: IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -23,8 +23,8 @@ related:
     - sonic-vlan-sub-interface
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`intfmgrd` / `intfsorch` の `loopback_action` ハンドラ実装、SAI 1.x の `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` 対応状況、CLI 実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/cfgmgr/intfmgr.cpp` L782-896 で CONFIG_DB の `loopback_action` フィールド読み取りと APP_DB への伝播、`sonic-swss/orchagent/intfsorch.cpp` で `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` (L441) と `setIntfLoopbackAction` (L1001)、`loopbackActionMap` (L1148-) を確認。`sonic-utilities/config/main.py` L5881-5905 に `config interface loopback-action` CLI、`sonic-utilities/show/main.py` L1413-1438 に `show ip interfaces loopback-action` を確認 (verified at: 2026-05-09)。
 
 # IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
 

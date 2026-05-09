@@ -1,12 +1,14 @@
 {
   "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
   "issue": 67,
-  "verification": "hld-only",
-  "concerns": [
-    "PORT_BUFFER_DROP FC group が sonic-swss で flex counter インフラに登録されているか確認",
-    "counterpoll port-buffer-drop CLI 実装の存在確認 (sonic-utilities)",
-    "interval バリデーション範囲 30000〜300000 が CLI で実装されているか確認",
-    "default 60000ms が orchagent / sonic-buildimage init に反映されているか確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "PORT_BUFFER_DROP FC group が sonic-swss で flex counter インフラに登録されているか確認 -> portsorch.h L31, flexcounterorch.cpp L75 で確認 (verified 2026-05-09)",
+    "counterpoll port-buffer-drop CLI 実装の存在確認 (sonic-utilities) -> counterpoll/main.py L146-178 で確認 (verified 2026-05-09)",
+    "interval バリデーション範囲 30000〜300000 が CLI で実装されているか確認 -> click.IntRange(30000, 300000) を確認 (verified 2026-05-09)",
+    "default 60000ms が orchagent / sonic-buildimage init に反映されているか確認 -> portsorch.cpp L88 PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000 を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

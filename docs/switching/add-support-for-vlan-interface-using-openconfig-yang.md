@@ -1,7 +1,7 @@
 ---
 title: VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - openconfig-vlan
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2025-05 (Rev 0.1)。`sonic-mgmt-common` の transformer 経路、REST/gNMI ハンドラ実装、エラーハンドリングは要裏取り。**詳細な REST/gNMI ペイロード例や全テストケースは原文 HLD `doc/mgmt/OpenConfig_VLAN_Interface.md` を参照**。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-mgmt-common/translib/transformer/sw_vlan.go`, `xfmr_intf.go`, `vlan_openconfig_test.go` で OpenConfig VLAN transformer 実装を確認。`xfmr_intf.go` には `Subscribe_routed_vlan_ip_addr_xfmr`, `YangToDb_intf_routed_vlan_name_xfmr`, `routed_vlan_ip_addr_del`、`VLAN_INTERFACE_TN` (CONFIG_DB key) などが揃っており、switched-vlan / routed-vlan の双方が CONFIG_DB の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` テーブルにマップされる。**詳細 REST/gNMI ペイロード例は原文 HLD 参照** (verified at: 2026-05-09)。
 
 # VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
 

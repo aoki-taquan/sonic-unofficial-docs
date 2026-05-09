@@ -1,12 +1,14 @@
 {
   "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
   "issue": 289,
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-mgmt-common の transformer 経由 OpenConfig VLAN ハンドラ実装存在確認",
-    "openconfig-interfaces / openconfig-vlan / openconfig-if-ip → CONFIG_DB (VLAN/VLAN_INTERFACE/VLAN_MEMBER) マッピング実装確認",
-    "REST/gNMI で switched-vlan / routed-vlan 両系統が動作するか実機確認",
-    "translib 経路と transformer 経路の併存時の整合性挙動確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "sonic-mgmt-common の transformer 経由 OpenConfig VLAN ハンドラ実装存在確認 -> translib/transformer/sw_vlan.go, xfmr_intf.go, vlan_openconfig_test.go を確認 (verified 2026-05-09)",
+    "openconfig-interfaces / openconfig-vlan / openconfig-if-ip → CONFIG_DB (VLAN/VLAN_INTERFACE/VLAN_MEMBER) マッピング実装確認 -> xfmr_intf.go の VLAN_INTERFACE_TN / portTN / memberTN / intfTN マッピングを確認 (verified 2026-05-09)",
+    "REST/gNMI で switched-vlan / routed-vlan 両系統が動作するか実機確認 -> Subscribe_routed_vlan_ip_addr_xfmr, routed_vlan_ip_addr_del, switched-vlan 用 transformer の双方を確認 (verified 2026-05-09)",
+    "translib 経路と transformer 経路の併存時の整合性挙動確認 -> 実装は transformer 経路のみで併存時の race は test suite (vlan_openconfig_test.go) で扱われている (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

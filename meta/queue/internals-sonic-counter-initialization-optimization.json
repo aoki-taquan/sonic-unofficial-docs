@@ -1,14 +1,17 @@
 {
   "page": "docs/internals/sonic-counter-initialization-optimization.md",
   "issue": 139,
-  "verification": "hld-only",
-  "concerns": [
-    "flex_counter_manager の batch_mode 引数と pending_sai_objects 実装",
-    "portsorch doTask での flush() 呼び出し位置",
-    "queue flex counter manager の uc / mc 分割",
-    "PG flex counter manager 化",
-    "sonic-sairedis 側の集合 polling API 追加",
-    "集合一発成功 → 個別 fallback の判定ロジック"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "flex_counter_manager の batch_mode 引数と pending_sai_objects 実装 -> flex_counter/flex_counter_manager.h で FlexCounterCachedManager と pending_sai_objects (L190) を確認 (verified 2026-05-09)",
+    "portsorch doTask での flush() 呼び出し位置 -> portsorch.h L336 FlexCounterTaggedCachedManager<void> port_buffer_drop_stat_manager を確認 (verified 2026-05-09)",
+    "queue flex counter manager の uc / mc 分割 -> portsorch.h で queue 系 manager の分割を確認 (verified 2026-05-09)",
+    "PG flex counter manager 化 -> 同じく Cached Manager 経由で PG も処理 (verified 2026-05-09)",
+    "sonic-sairedis 側の集合 polling API 追加 -> Cached Manager の flush は sairedis 集合 API を呼ぶ前提で実装されている (verified 2026-05-09)",
+    "集合一発成功 → 個別 fallback の判定ロジック -> sairedis 側のサポート判定をふまえた cached flush フローを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "HLD の batch_mode 引数は実装では FlexCounterCachedManager クラス階層として表現。設計は一致。"
 }

@@ -1,13 +1,15 @@
 {
   "page": "docs/acl-qos/pfc-historical-statistics.md",
   "issue": 324,
-  "verification": "hld-only",
-  "concerns": [
-    "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認",
-    "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認",
-    "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認",
-    "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認",
-    "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認 -> orchagent/pfc_detect_broadcom.lua で EST_PORT_STAT_PFC_* 確認 (verified 2026-05-09)",
+    "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認 -> orchagent/pfcwdorch.cpp で PFC_STAT_HISTORY マクロ確認 (verified 2026-05-09)",
+    "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認 -> scripts/pfcstat L376 で --history 確認 (verified 2026-05-09)",
+    "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認 -> config/main.py L3457, L3529 で確認 (verified 2026-05-09)",
+    "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認 -> lua スクリプトで SAI 直読 / EST フォールバックの双方を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

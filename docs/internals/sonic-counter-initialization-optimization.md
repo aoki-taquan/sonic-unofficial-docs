@@ -1,7 +1,7 @@
 ---
 title: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.2, 2024-12）のみを根拠に書かれている。`flex_counter_manager` の batch mode 引数、`pending_sai_objects` キャッシュ、`flush` メソッド、`portsorch` の queue/PG 用 manager 分割の現行 master 取り込みは未確認。
+!!! success "裏取りステータス: Code-verified（命名は FlexCounterCachedManager）"
+    `sonic-swss/orchagent/flex_counter/flex_counter_manager.h` で `FlexCounterCachedManager` テンプレートと `flush(group_name, cached_objects)` (L228, L233-235), `pending_sai_objects` 参照 (L190), 派生クラス `FlexCounterTaggedCachedManager` の `flush()` (L304, L345) を確認。`portsorch.h` L336 で `port_buffer_drop_stat_manager` が `FlexCounterTaggedCachedManager<void>` 型として実装。**HLD で言及される `batch_mode` 引数は実装上は専用クラス `FlexCounterCachedManager` で表現** されており、構造設計は HLD どおり。queue UC/MC 分割や PG 系の cached 化も同ヘッダで対応 (verified at: 2026-05-09)。
 
 # flex counter 初期化最適化（`pending_sai_objects` + バッチ `bulk_get_stats`）
 

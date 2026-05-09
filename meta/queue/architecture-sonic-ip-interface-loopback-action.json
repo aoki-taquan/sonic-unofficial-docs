@@ -1,11 +1,13 @@
 {
   "page": "docs/architecture/sonic-ip-interface-loopback-action.md",
   "issue": 47,
-  "verification": "hld-only",
-  "concerns": [
-    "intfmgrd / intfsorch の loopback_action ハンドラ実装の存在確認",
-    "config interface loopback-action / show ip interfaces loopback-action CLI の sonic-utilities 実装確認",
-    "TX_ERR 計上が本機能の drop パケットを含むか実測検証"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "intfmgrd / intfsorch の loopback_action ハンドラ実装の存在確認 -> cfgmgr/intfmgr.cpp L782-896 と orchagent/intfsorch.cpp L441/L1001/L1148 (loopbackActionMap) を確認 (verified 2026-05-09)",
+    "config interface loopback-action / show ip interfaces loopback-action CLI の sonic-utilities 実装確認 -> config/main.py L5881-5905 と show/main.py L1413-1438 を確認 (verified 2026-05-09)",
+    "TX_ERR 計上が本機能の drop パケットを含むか実測検証 -> SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION による drop は SAI 内部で処理され OUT_ERROR_PACKETS 系に計上される実装。実機計測は本リポジトリ範囲外 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }
