@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/sonic-generic-hash.md",
+  "issue": 333,
+  "verification": "hld-only",
+  "concerns": [
+    "SwitchOrch の SWITCH_HASH ハンドリング実装の現行 master 確認",
+    "SWITCH_HASH_CAPABILITIES STATE_DB 公開の syncd 起動時 query 実装確認",
+    "config switch-hash / show switch-hash CLI の sonic-utilities 取り込み確認",
+    "sonic-switch-hash YANG モジュールの sonic-yang-models 取り込み確認",
+    "IPV6_FLOW_LABEL フィールド (v0.4 追加) の現行 master サポート確認"
+  ],
+  "priority": "medium"
+}
