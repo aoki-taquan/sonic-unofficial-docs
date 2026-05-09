@@ -1,0 +1,63 @@
+---
+title: DEVICE_NEIGHBOR テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-device_neighbor.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - DEVICE_NEIGHBOR
+    - DEVICE_NEIGHBOR_METADATA
+    - PORT
+  cli: []
+  yang:
+    - sonic-device_neighbor
+---
+
+# DEVICE_NEIGHBOR テーブル
+
+## 概要
+
+直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル[^1]。LLDP の正解値 (expected neighbor) として `lldp` / `lldpmgrd` が利用するほか、minigraph 取り込み時にも生成される。隣接機器の hwsku 等のメタデータは [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md) 側で管理する。
+
+## key 構造
+
+```
+DEVICE_NEIGHBOR|<peer_name>
+```
+
+- `<peer_name>`: 自由文字列（length 1..255）。通常は隣接機器のホスト名と同値だが、key 重複回避のための識別子として独立して使われる。
+
+## フィールド
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `peer_name` | string (1..255) | エントリ識別子（key） |
+| `name` | string (1..255) | 隣接機器のホスト名 |
+| `mgmt_addr` | inet:ip-address | 隣接機器の管理 IP |
+| `local_port` | leafref → `PORT.name` | 自スイッチ側ポート名 |
+| `port` | string (1..255) | 隣接側ポート名 |
+| `type` | string (1..255) | 隣接機器タイプ（`ToRRouter`、`LeafRouter` 等の運用ロール文字列） |
+
+## 制約
+
+- `local_port` は `PORT_LIST.name` への leafref。存在しないポートを指定するとバリデーションで弾かれる
+- `name` は `DEVICE_NEIGHBOR_METADATA_LIST.name` と慣習的に一致させ、メタデータ側を joins する運用が一般的（YANG レベルでは leafref 化されていない）
+
+## 購読者
+
+- `lldpmgrd`: 期待 neighbor として LLDP の判定に利用
+- minigraph パーサ (sonic-cfggen): `minigraph.xml` から生成
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)、`PORT`
+- 関連 YANG: `sonic-device_neighbor`、`sonic-device_neighbor_metadata`
+- 関連 CLI: なし（minigraph または `config_db.json` 経由で投入）
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-device_neighbor.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-device_neighbor.yang>
