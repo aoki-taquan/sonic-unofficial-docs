@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md",
+  "verification": "hld-only",
+  "concerns": [
+    "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドラ実装存在確認",
+    "NhgOrch の multipath NHG 拡張（v0.6 で追記）が現行 master に取り込まれているか確認",
+    "DEVICE_METADATA.fpm_use_nexthop_groups の sonic-yang-models 取り込み確認",
+    "libnl バージョン依存（NHG attribute サポート）の sonic-buildimage 解決確認",
+    "warm/fast boot での NEXTHOP_GROUP_TABLE 復元実装の有無確認",
+    "Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認"
+  ],
+  "priority": "medium"
+}
