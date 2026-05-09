@@ -109,6 +109,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/management/enhancement-of-cmis-module-management.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE / SAI_PORT_ATTR_HOST_TX_READY_STATUS / SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY が community SAI に取り込まれているか確認",
+        "PortsOrch の init 時 capability 問い合わせと TRANSCEIVER_INFO subscribe ロジックの現行 master 実装存在確認",
+        "INSERTION/REMOVAL イベント受信時の HOST_TX_SIGNAL_ENABLE 設定処理が PortsOrch に実装されているか確認",
+        "PortsOrch::initializePort() で warm-boot 後 HOST_TX_READY_STATUS query → host_tx_ready 再構築が実装されているか確認",
+        "ポート作成時に HOST_TX_SIGNAL_ENABLE を明示 FALSE にする初期化が実装されているか確認 (SAI default TRUE のため)",
+        "xcvrd 側 CMIS ステートマシン (host_tx_ready 待ち) は本拡張により挙動変更されていないか確認",
+        "本 HLD は 2023 年版で Status=Initial。実装ステータスは要確認"
+      ],
+      "priority": "high",
+      "issue": 486
+    },
+    {
       "page": "docs/management/gnmi-master-arbitration-hld.md",
       "issue": 201,
       "verification": "discrepancy-found",
