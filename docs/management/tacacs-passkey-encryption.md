@@ -1,7 +1,7 @@
 ---
 title: TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-system-tacacs
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2023-11）のみを根拠に書かれている。`hostcfgd` の暗号化 passkey 復号処理、`sonic-utilities` の `--encrypt` フラグ、`/etc/cipher_pass` の取り扱い、共通暗号化インフラ（RADIUS / LDAP 共通化）は未確認。
+!!! danger "裏取りステータス: Discrepancy-found（YANG / cipher 基盤のみ取り込み済み、CLI / hostcfgd 取り込みは未完了）"
+    取り込み済み: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang` L47/L100-101/L148-149 で `key_encrypt_type` typedef と `TACPLUS_SERVER` / `TACPLUS|global` への `key_encrypt` leaf を確認。`sonic-buildimage/src/sonic-py-common/sonic_py_common/security_cipher.py` L18 で `CIPHER_PASS_FILE = "/etc/cipher_pass.json"` 定数、L41/L67 で読み書き API、L222/L237 で「`cipher_pass` registry からのパスワード取得」基盤を確認。`/etc/cipher_pass.json` の保全は `sonic-buildimage/files/image_config/config-setup/01-pre-security-cipher` / `01-post-security-cipher` で確認（HLD では `/etc/cipher_pass` と表記、現行実装では **`.json` 拡張子付きの `/etc/cipher_pass.json`**）。未取り込み: `sonic-utilities/config/aaa.py` L248-256 の `tacacs passkey` サブコマンドに `--encrypt` フラグは無い（現状は平文 secret をそのまま `add_table_kv(db, 'TACPLUS', 'global', 'passkey', secret)` する）。`sonic-host-services` 配下の `hostcfgd` にも `cipher_pass` / `key_encrypt` / 復号処理を行う実装は確認できない（grep でヒットなし、`PASSWORD_HARDENING` 関連のみ）。設計の中核である「CLI で `--encrypt` を付けて暗号化保存し hostcfgd で復号して PAM に渡す」フローは現行 master では **未取り込み**。`show tacacs` の passkey マスキング・RADIUS / LDAP の共通化も未確認 (verified at: 2026-05-09)。
 
 # TACACS+ passkey 暗号化（`key_encrypt` + master key `/etc/cipher_pass`）
 
@@ -191,6 +191,22 @@ TACPLUS global passkey configured Yes
 - `--encrypt` で設定したが SSH 認証が失敗する場合、`hostcfgd` が `/etc/cipher_pass` を読めているか（root 権限・パーミッション）を確認
 - `common-auth-sonic` に書かれた passkey が暗号化のままになっていないか確認（書き込み直前の復号で失敗している可能性）
 - `key_encrypt=true` のまま平文 `passkey` が混在しているケースは復号失敗で PAM が動かなくなる。一旦 `key_encrypt=false` で平文に揃えてから再暗号化する
+
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。
+
+| 項目 | HLD | 現行 master |
+|------|-----|-------------|
+| YANG `key_encrypt` leaf | 必須 | ✅ 取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149) |
+| master key ファイルパス | `/etc/cipher_pass` | ⚠️ 実体は **`/etc/cipher_pass.json`**（`sonic_py_common/security_cipher.py` L18） |
+| 共通暗号化 API | 必須 | ✅ `security_cipher.py` で encrypt/decrypt API を実装 |
+| `config tacacs passkey ... --encrypt` CLI | 必須 | ❌ **未実装**。`sonic-utilities/config/aaa.py` L248-256 は単に平文 secret をそのまま CONFIG_DB に書く |
+| `hostcfgd` で `key_encrypt=true` を見て復号 → PAM へ | 必須 | ❌ **未実装**（hostcfgd 配下に該当する復号処理が無い） |
+| `show tacacs` から passkey 削除 | 必須 | ❌ 未確認（CLI 取り込みが無いため意味なし） |
+| RADIUS / LDAP との共通化 | future | 未取り込み |
+
+YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json` 永続化スクリプト）は揃っているが、**運用フローの中核である CLI と hostcfgd 取り込みが未完了**であり、現状ユーザは `--encrypt` 経路で TACACS+ passkey を保護できない。HLD は `/etc/cipher_pass` と表記しているが実装上の正は `/etc/cipher_pass.json`。
 
 ## 引用元
 

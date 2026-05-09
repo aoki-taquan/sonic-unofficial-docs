@@ -1,7 +1,7 @@
 ---
 title: P4Runtime PacketIO（generic netlink + send_to_ingress）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `CoppOrch` の user-defined trap + genetlink hostif 生成、`SEND_TO_INGRESS_PORT` の `PortsOrch` での処理、SAI `SAI_HOSTIF_TYPE_GENETLINK` / `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` の community SAI 取り込み、ベンダ kernel ドライバ側の `genl_packet` フィルタ実装は実コードでの裏取り未済（PINS 関連）。
+!!! success "裏取りステータス: Code-verified（SONiC 共通基盤）"
+    `sonic-swss/orchagent/copporch.h` L44-46 で `genetlink_name` / `genetlink_mcgrp_name` フィールドを確認、`copporch.cpp` L446 (`SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK`)、L657-669 `CoppOrch::createGenetlinkHostIf()`、L833-844 で trap_group ごとに genetlink hostif 作成する経路を確認。`sonic-swss/orchagent/portsorch.cpp` L771 (`APP_SEND_TO_INGRESS_PORT_TABLE_NAME` の Table 登録)、L7106-7120 `PortsOrch::addSendToIngressHostIf()`、`orchdaemon.cpp` L219 でテーブル登録優先度も確認。`sonic-buildimage/files/image_config/copp/copp_cfg.j2` L76-83 で `queue2_group1` に `genetlink_mcgrp_name: "packets"` / `genetlink_name: "psample"` の trap group 定義を確認。ベンダ依存の kernel `genl_packet` filter 実装は SONiC リポジトリ範囲外で本ページのスコープ外 (verified at: 2026-05-09)。
 
 # P4Runtime PacketIO（generic netlink + send_to_ingress）
 

@@ -1,7 +1,7 @@
 ---
 title: SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（2022-07）のみを根拠に書かれている。`srv6orch` 実装、SAI の `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` 等の現行 master での利用可能性は未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/srv6orch.cpp` L41-62 の `end_behavior_map` に `un / ua / udt4 / udt6 / udt46 / udx4 / udx6` 等が登録され、`SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN`・`UA`・`UDT*`・`UDX*` を参照していることを確認。L1369-1410 で behavior 別の VRF / nexthop バリデーションも分岐済み（verified at: 2026-05-09）。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。
 
 # SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
 

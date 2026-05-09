@@ -1,7 +1,7 @@
 ---
 title: CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD のみを根拠に書かれている。`bgpmon` 実装、`STATE_DB.NEIGH_STATE_TABLE` のスキーマ確定、`snmp_ax_impl` 側の取り込みは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` L15-17 で 15 秒ポーリングと `/var/log/frr/frr.log` mtime 監視、L51/131-179/203 で `STATE_DB.NEIGH_STATE_TABLE|<peer_ip>` への `state` フィールド書き込みを確認。supervisord 登録は `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L198-199 (`/usr/local/bin/bgpmon`) を確認。読み手側は `sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py` L22/L30 で `Namespace.init_namespace_dbs()` + `STATE_DB.NEIGH_STATE_TABLE|*` を全 namespace から束ねる実装 (verified at: 2026-05-09)。
 
 # CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
 

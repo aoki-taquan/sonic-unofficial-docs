@@ -1,7 +1,7 @@
 ---
 title: gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/sonic-gnmi
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは `sonic-gnmi` リポジトリの使い方ドキュメントを根拠にしており、現行 master の telemetry コンテナで配布される実バイナリの引数仕様や、`-xpath_target` の有効値（`OC-YANG` / `CONFIG_DB` / `COUNTERS_DB` 等）の最新リストは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-gnmi/patches/gnmi_get.patch` L25 で `pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")` を確認（`gnmi_set.patch` / `gnmi_cli.all.patch` も同等）。サーバ側 `sonic-gnmi/gnmi_server/server.go` L975-988 で `target == "OPERATIONAL" / "OTHERS" / "SHOW"` の特殊分岐と `sdc.IsTargetDb(target)` による `CONFIG_DB / COUNTERS_DB` 等 SONiC DB 名分岐を確認。`sonic-gnmi/sonic_data_client/db_client.go` L647 で `COUNTERS_DB` 専用処理を確認 (verified at: 2026-05-09)。
 
 # gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
 

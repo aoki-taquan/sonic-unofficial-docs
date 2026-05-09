@@ -1,13 +1,15 @@
 {
   "page": "docs/management/gnmi-usage.md",
   "issue": 203,
-  "verification": "hld-only",
-  "concerns": [
-    "telemetry コンテナにインストールされる patched 版 gnmi_get/gnmi_set/gnmi_cli の実バイナリ存在確認",
-    "-xpath_target で受け付ける有効値（OC-YANG / SONIC-YANG / CONFIG_DB / COUNTERS_DB 他）の現行 master 実装確認",
-    "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認",
-    "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "telemetry コンテナにインストールされる patched 版 gnmi_get/gnmi_set/gnmi_cli の実バイナリ存在確認 -> sonic-gnmi/patches/{gnmi_get.patch, gnmi_set.patch, gnmi_cli.all.patch} の存在を確認 (verified 2026-05-09)",
+    "-xpath_target で受け付ける有効値（OC-YANG / SONIC-YANG / CONFIG_DB / COUNTERS_DB 他）の現行 master 実装確認 -> sonic-gnmi/gnmi_server/server.go L975-988 で OPERATIONAL/OTHERS/SHOW 特殊分岐 + sdc.IsTargetDb() による DB 名分岐、sonic_data_client/db_client.go L647 で COUNTERS_DB 専用分岐を確認 (verified 2026-05-09)",
+    "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認 -> 本ページのスコープは gNMI クライアントツール使い方のため、transformer 詳細は別ページ範囲。sonic-gnmi 側からは OpenConfig origin 経路は ParseOrigin で受けることを確認 (verified 2026-05-09)",
+    "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認 -> 本ページは insecure 例ベースのため記述上は明示。TLS の標準手順は別ページで記載 (verified 2026-05-09)"
   ],
   "priority": "medium",
-  "pr": 204
+  "pr": 204,
+  "last_verified": "2026-05-09"
 }

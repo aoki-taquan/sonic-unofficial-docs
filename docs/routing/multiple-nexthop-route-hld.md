@@ -1,7 +1,7 @@
 ---
 title: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `MuxOrch::updateRoute()`、`MuxOrch::containsNextHop()`、`NextHopGroupKey::is_mux_nexthop()`、`RouteOrch` で mux nexthop group を `m_nextHops` に展開する分岐の現行 master 実装は実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/muxorch.cpp` L1585 `MuxOrch::updateRoute(const IpPrefix &pfx)`、L2058 `MuxOrch::containsNextHop()`、L1824/1926/2019/2045/2050 の `mux_nexthop_tb_` 出入り、L700 `MuxCable::updateRoutes()` / L724 `MuxCable::updateRoutesForNextHop()` から `mux_orch_->updateRoute(rt->prefix)` が駆動される経路を確認 (verified at: 2026-05-09)。
 
 # dual-tor mux 跨ぎの multi-nexthop route ループ回避（`MuxOrch::updateRoute`）
 
