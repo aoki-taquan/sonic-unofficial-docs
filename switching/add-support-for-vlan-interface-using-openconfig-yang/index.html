@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/brief-introduction-of-iccp-code/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/add-support-for-vlan-interface-using-openconfig-yang/">
       
       
-        <link rel="prev" href="../add-support-for-vlan-interface-using-openconfig-yang/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../control-sonic-behaviors-with-system-defaults-table/">
+        <link rel="next" href="../brief-introduction-of-iccp-code/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） - SONiC 非公式ドキュメント</title>
+        <title>VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#iccpd-mc-lag-mlacp-fsm" class="md-skip">
+        <a href="#vlan-openconfig-yang-rest-gnmi" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+              VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
             
           </span>
         </div>
@@ -1747,34 +1747,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../add-support-for-vlan-interface-using-openconfig-yang/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1794,7 +1766,7 @@
   <span class="md-ellipsis">
     
   
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+    VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
   
 
     
@@ -1812,7 +1784,7 @@
   <span class="md-ellipsis">
     
   
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+    VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
   
 
     
@@ -1861,10 +1833,71 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#openconfig-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サポートされる OpenConfig YANG ツリー（追加分）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構造
+        バックエンドマッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="REST API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-put-post-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PATCH / PUT / POST / DELETE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI
       
     </span>
   </a>
@@ -1875,84 +1908,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態機械
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ロード経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / 表示経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MC-LAG リンクイベント処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ピア整合性検査（iccp_consistency_check.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
+        エラーハンドリング
       
     </span>
   </a>
@@ -1965,7 +1921,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -1988,7 +1944,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -1999,10 +1955,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
+        設定例（REST）
       
     </span>
   </a>
@@ -2015,7 +1971,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2026,7 +1982,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2037,7 +1993,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2048,7 +2004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2062,6 +2018,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -6201,10 +6185,71 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#openconfig-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サポートされる OpenConfig YANG ツリー（追加分）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構造
+        バックエンドマッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="REST API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-put-post-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PATCH / PUT / POST / DELETE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI
       
     </span>
   </a>
@@ -6215,84 +6260,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態機械
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ロード経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / 表示経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MC-LAG リンクイベント処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ピア整合性検査（iccp_consistency_check.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
+        エラーハンドリング
       
     </span>
   </a>
@@ -6305,7 +6273,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -6328,7 +6296,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -6339,10 +6307,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#rest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
+        設定例（REST）
       
     </span>
   </a>
@@ -6355,7 +6323,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -6366,7 +6334,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -6377,7 +6345,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -6388,7 +6356,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6415,7 +6383,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/brief-introduction-of-iccp-code.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6425,280 +6393,138 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（コードイントロドキュメント）のみを根拠に書かれている。各ファイルの関数名・状態遷移名は記載時点のもので、現行 master の <code>sonic-buildimage/dockers/docker-iccp/</code> 以下の実コードとは差異がある可能性がある。</p>
+<p>HLD は 2025-05 (Rev 0.1)。<code>sonic-mgmt-common</code> の transformer 経路、REST/gNMI ハンドラ実装、エラーハンドリングは要裏取り。<strong>詳細な REST/gNMI ペイロード例や全テストケースは原文 HLD <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> を参照</strong>。</p>
 </div>
-<h1 id="iccpd-mc-lag-mlacp-fsm">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）<a class="headerlink" href="#iccpd-mc-lag-mlacp-fsm" title="Permanent link">&para;</a></h1>
+<h1 id="vlan-openconfig-yang-rest-gnmi">VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）<a class="headerlink" href="#vlan-openconfig-yang-rest-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン <strong>ICCPd</strong>（ICCP daemon、<code>docker-iccp</code> コンテナ内）で実装されている。ICCPd は IETF <a href="https://www.rfc-editor.org/rfc/rfc7275">RFC 7275</a> の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは ICCPd ソースコードのファイル別役割を、HLD のコード解説ドキュメントから再構成した <strong>読み手のためのコードマップ</strong> である。実装を追う際の入口に使う。</p>
+<p>SONiC は従来 VLAN インタフェース設定を <strong>SONiC 独自 YANG</strong> 経由で REST / gNMI に公開していた。本機能はこれに加えて <strong>OpenConfig YANG モデル</strong> (<code>openconfig-interfaces</code> + <code>openconfig-vlan</code> + <code>openconfig-if-ip</code>) でも同等の操作（GET / SET / DELETE）を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装は <code>sonic-mgmt-common</code> の <strong>transformer</strong> 経路を使う（translib ベースではない）。コード追加対象は Management Framework / gnmi コンテナ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スコープと非スコープ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>✅ VLAN interface / VLAN member の設定・取得</li>
+<li>✅ Ethernet / PortChannel を VLAN メンバとして add/del</li>
+<li>✅ VLAN インタフェース上の IPv4 / IPv6 アドレス設定</li>
+<li>❌ KLISH CLI（既存 SONiC CLI に変更なし）</li>
+<li>❌ Subinterface 設定</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph 入口
-      MAIN[iccp_main.c\nmain()]
-      SCHED[scheduler.c\nscheduler_loop()]
-    end
-    subgraph 設定/CLI
-      CONF[iccp_cmd.c\n/etc/iccpd/iccpd.conf 読み込み]
-      CLI[iccp_cli.c\nパラメータ設定]
-      SHOW[iccp_cmd_show.c\nmclagdctl 表示応答]
-    end
-    subgraph 状態機械
-      ICCP_CSM[iccp_csm.c\nICCP CSM (RFC7275 4.2.1)]
-      APP_CSM[app_csm.c\nApp State Machine]
-      MLACP[mlacp_fsm.c\nMLACP FSM]
-    end
-    subgraph 同期
-      PREP[mlacp_sync_prepare.c\n送信ペイロード組立]
-      UPD[mlacp_sync_update.c\n受信処理]
-    end
-    subgraph 反映
-      LINK[mlacp_link_handler.c\nlink up/down/iso]
-      NET[iccp_netlink.c\nnetlink 経由カーネル操作]
-      PORT[port.c\nlocal/peer port 事象]
-      IFM[iccp_ifm.c\nIF / ARP 取得]
-      CHECK[iccp_consistency_check.c\nピア整合性検査]
-    end
-    MAIN --&gt; SCHED
-    CONF --&gt; MAIN
-    CLI --&gt; CONF
-    SCHED --&gt; ICCP_CSM
-    ICCP_CSM --&gt; APP_CSM
-    APP_CSM --&gt; MLACP
-    MLACP --&gt; PREP
-    MLACP --&gt; UPD
-    MLACP --&gt; LINK
-    LINK --&gt; NET
-    LINK --&gt; PORT
-    IFM --&gt; NET
-    SHOW -.-&gt; APP_CSM
-    CHECK -.-&gt; ICCP_CSM</code></pre>
-<h3 id="_4">状態機械<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ICCPd は <strong>3 階層の状態機械</strong> で構成される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>階層</th>
-<th>ファイル</th>
-<th>状態数</th>
-<th>概要</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ICCP Connection SM</td>
-<td><code>iccp_csm.c</code></td>
-<td>6 状態（RFC 7275 §4.2.1）</td>
-<td>TCP コネクションと ICCP セッションのライフサイクル</td>
-</tr>
-<tr>
-<td>Application SM</td>
-<td><code>app_csm.c</code></td>
-<td>OPERATIONAL に追随</td>
-<td>ICCP CSM が OPERATIONAL になると即 OPERATIONAL<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>MLACP FSM</td>
-<td><code>mlacp_fsm.c</code></td>
-<td>4 状態</td>
-<td>MC-LAG 同期のメイン</td>
-</tr>
-</tbody>
-</table>
-<p>MLACP FSM の 4 状態:</p>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; INIT
-    INIT --&gt; STAGE1: peer connection 確立
-    STAGE1 --&gt; STAGE2: ARP/MAC 同期完了\n(active が要求)
-    STAGE2 --&gt; EXCHANGE: 同期完了
-    EXCHANGE --&gt; EXCHANGE: 通常運用
-    EXCHANGE --&gt; INIT: peer 切断</code></pre>
-<ul>
-<li><strong>INIT</strong>: ピア未接続</li>
-<li><strong>STAGE1</strong>: ピア接続確立直後。最初に ARP / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期</li>
-<li><strong>STAGE2</strong>: active 側が standby へ sync request を投げ、standby が応答すると active へ全同期</li>
-<li><strong>EXCHANGE</strong>: 定常状態。<code>mlacp_exchange_handler()</code> が動く</li>
-</ul>
-<h3 id="_5">設定ロード経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    CFG[(CONFIG_DB)] --&gt; CFGGEN[sonic-cfggen -d -t iccpd.j2]
-    CFGGEN --&gt; ICCPCONF[/etc/iccpd/iccpd.conf]
-    ICCPCONF --&gt; CMD[iccp_cmd.c]
-    CMD --&gt; SYS[ICCPd 内部構造]
-    CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --&gt; SYS</code></pre>
-<p>ICCPd 起動時、CONFIG_DB から <code>iccpd.j2</code> テンプレートを通じて <code>/etc/iccpd/iccpd.conf</code> を生成し、<code>iccp_cmd.c</code> がそれを読む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>system-id</code> は <code>localhost.mac</code>（DEVICE_METADATA 配下）を使う <strong>グローバル設定</strong> であり、CLI で変えるものではない。</p>
-<h3 id="cli">CLI / 表示経路<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mclagdctl -i &lt;MC-LAG-id&gt; dump arp
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   │
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   ▼ TCP 接続
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
+<h3 id="openconfig-yang">サポートされる OpenConfig YANG ツリー（追加分）<a class="headerlink" href="#openconfig-yang" title="Permanent link">&para;</a></h3>
+<p><code>openconfig-interfaces:interfaces/interface[&lt;name&gt;]</code> 配下に次のノードを実装する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc-eth:ethernet/oc-vlan:switched-vlan/config
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  interface-mode  : ACCESS | TRUNK
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  access-vlan     : vlan-id
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  trunk-vlans*    : vlan-id (list)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>oc-lag:aggregation/oc-vlan:switched-vlan/config
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  (Ethernet と同じ 3 フィールド、PortChannel 用)
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>oc-vlan:routed-vlan/config
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  vlan          : &quot;Vlan&lt;id&gt;&quot;
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  oc-ip:ipv4/addresses/address[&lt;ip&gt;]/config { ip, prefix-length }
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  oc-ip:ipv6/addresses/address[&lt;ip&gt;]/config { ip, prefix-length }
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  oc-ip:ipv6/config/enabled
 </span></code></pre></div>
-<p><code>mclagdctl</code> プロセスが ICCPd へ TCP で接続し、コマンドを送って結果を受け取る。表示系の応答は <code>iccp_cmd_show.c</code> がまとめて担当<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="mc-lag">MC-LAG リンクイベント処理<a class="headerlink" href="#mc-lag" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_link_handler.c</code> がリンク状態変化時の主要動作を担う。代表的な分岐は次のとおり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>イベント</th>
-<th>動作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MC-LAG link add</td>
-<td>peer-link との <strong>isolation を必ず付ける</strong>（自リンクと peer-link で二重経路にならないように）</td>
-</tr>
-<tr>
-<td>MC-LAG link delete</td>
-<td>peer-link からの isolation を解除</td>
-</tr>
-<tr>
-<td>自 MC-LAG link up</td>
-<td>ピア側で同名 portchannel が up なら自リンクを peer-link から isolate（down なら isolation 解除）。同名ポート学習 MAC を ASIC へ、同名 IF 学習 ARP を Linux kernel へ追加</td>
-</tr>
-<tr>
-<td>自 MC-LAG link down</td>
-<td>peer-link と peer 側同名 LAG が共に up なら、同名ポート学習 MAC を peer-link 経由にリダイレクト。同名 IF 学習 ARP を kernel から削除</td>
-</tr>
-<tr>
-<td>Peer link up</td>
-<td>peer-link を経路とする MAC エントリを ASIC に登録</td>
-</tr>
-<tr>
-<td>Peer link down</td>
-<td>同 MAC エントリを ASIC から削除</td>
-</tr>
-</tbody>
-</table>
-<p>「peer-link を経由する MAC を ASIC で操作する」のが peer-link のキーアクションである。</p>
-<h3 id="iccp_consistency_checkc">ピア整合性検査（<code>iccp_consistency_check.c</code>）<a class="headerlink" href="#iccp_consistency_checkc" title="Permanent link">&para;</a></h3>
-<p>接続受理時に <code>scheduler_server_accept()</code> 経路で次を検査する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>switched-vlan</code> は L2 メンバ（access / trunk）、<code>routed-vlan</code> は VLAN にぶら下がる L3 IP の表現。</p>
+<h3 id="_3">バックエンドマッピング<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CTL[Client&lt;br&gt;REST / gNMI] --&gt; MF[Management Framework&lt;br&gt;REST / gnmi コンテナ]
+  MF --&gt; XF[transformer&lt;br&gt;(sonic-mgmt-common)]
+  XF --&gt; CDB[(CONFIG_DB:&lt;br&gt;VLAN / VLAN_INTERFACE /&lt;br&gt;VLAN_MEMBER)]</code></pre>
+<p>CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマには <strong>変更が無い</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。透過的に既存テーブルにマップする transformer ロジックだけが追加される。</p>
+<h3 id="rest-api">REST API<a class="headerlink" href="#rest-api" title="Permanent link">&para;</a></h3>
+<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">&para;</a></h4>
+<p>leaf レベルでも GET 可能<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。原文 HLD に出力例多数（IPv4 設定済 / IPv6 設定済 / メンバ trunk 単一・複数 / access 等）。代表例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>curl<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Vlan10&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;accept: application/yang-data+json&quot;</span>
+</span></code></pre></div>
+<p>応答（IPv4 あり）:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="nt">&quot;openconfig-interfaces:interface&quot;</span><span class="p">:[{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;config&quot;</span><span class="p">:{</span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Vlan10&quot;</span><span class="p">},</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;openconfig-vlan:routed-vlan&quot;</span><span class="p">:{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;config&quot;</span><span class="p">:{</span><span class="nt">&quot;vlan&quot;</span><span class="p">:</span><span class="s2">&quot;Vlan10&quot;</span><span class="p">},</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;openconfig-if-ip:ipv4&quot;</span><span class="p">:{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;addresses&quot;</span><span class="p">:{</span><span class="nt">&quot;address&quot;</span><span class="p">:[{</span><span class="nt">&quot;config&quot;</span><span class="p">:{</span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;133.3.3.4&quot;</span><span class="p">,</span><span class="nt">&quot;prefix-length&quot;</span><span class="p">:</span><span class="mi">24</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;ip&quot;</span><span class="p">:</span><span class="s2">&quot;133.3.3.4&quot;</span><span class="p">}]}}},</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:{</span><span class="nt">&quot;admin-status&quot;</span><span class="p">:</span><span class="s2">&quot;UP&quot;</span><span class="p">,</span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="nt">&quot;mtu&quot;</span><span class="p">:</span><span class="mi">9100</span><span class="p">,</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Vlan10&quot;</span><span class="p">}}]}</span>
+</span></code></pre></div>
+<h4 id="patch-put-post-delete">PATCH / PUT / POST / DELETE<a class="headerlink" href="#patch-put-post-delete" title="Permanent link">&para;</a></h4>
+<p>それぞれ標準 RESTCONF セマンティクス。各操作の対応 OpenConfig path は HLD 内に表で網羅されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="gnmi">gNMI<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
+<p><code>Set</code> / <code>Get</code> / <code>Subscribe</code> をサポートする<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ピアの local-IP / peer-IP がローカル設定と一致するか（不一致なら接続拒否）</li>
-<li>MC-LAG portchannel のモード（L2 / L3）が両ピアで揃っているか</li>
-<li>L3 構成なら IP アドレスが一致するか</li>
-<li>VLAN メンバなら同じ VLAN に属しているか</li>
+<li><code>Set</code>: REPLACE / UPDATE / DELETE のいずれも OpenConfig パスで指定</li>
+<li><code>Get</code>: leaf / container / list のいずれも可</li>
+<li><code>Subscribe</code>: ON_CHANGE / SAMPLE モード対応（state ノード中心）</li>
 </ul>
-<h3 id="mlacp">MLACP 同期コンテンツ<a class="headerlink" href="#mlacp" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_sync_prepare.c</code>（送信側）/ <code>mlacp_sync_update.c</code>（受信側）が以下を交換する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>System ID</td>
-<td>standby 側を active の system ID に揃える</td>
-</tr>
-<tr>
-<td>MC-LAG portchannel state</td>
-<td>port isolation / MAC redirect 判定</td>
-</tr>
-<tr>
-<td>portchannel 名と MAC</td>
-<td>peer interface 作成に使用</td>
-</tr>
-<tr>
-<td>MAC エントリ</td>
-<td>MC-LAG / orphan を問わず全 MAC を同期</td>
-</tr>
-<tr>
-<td>ARP エントリ</td>
-<td>MC-LAG IF または MC-LAG メンバ VLAN IF 由来のみ同期</td>
-</tr>
-<tr>
-<td>portchannel 設定</td>
-<td>mode / IPv4 / 参加 VLAN（整合性検査用）</td>
-</tr>
-<tr>
-<td>peer-link 情報</td>
-<td>種別（VLAN / VXLAN）と VXLAN 名</td>
-</tr>
-<tr>
-<td>Warm reboot 情報</td>
-<td>local 側の warm-reboot 開始通知</td>
-</tr>
-</tbody>
-</table>
-<h3 id="warm-reboot">Warm reboot 経路<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<p><code>iccp_main.c</code> の <code>iccpd_signal_init()</code> / <code>iccpd_signal_handler()</code> が <code>SIGUSR1</code> を warm-reboot トリガとして扱う<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant SUP as supervisor
-    participant ICCP as iccpd
-    participant PEER as peer iccpd
-    SUP-&gt;&gt;ICCP: SIGUSR1
-    ICCP-&gt;&gt;PEER: warm-reboot 通知メッセージ
-    ICCP-&gt;&gt;ICCP: system_finalize() でクリーンアップ</code></pre>
-<h3 id="netlink-arp-iccp_ifmc-iccp_netlinkc">netlink / ARP の扱い（<code>iccp_ifm.c</code> / <code>iccp_netlink.c</code>）<a class="headerlink" href="#netlink-arp-iccp_ifmc-iccp_netlinkc" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ICCPd は <strong>MC-LAG enabled IF または MC-LAG メンバが入っている VLAN IF 由来の ARP のみ</strong> を保持する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ポートチャネルメンバの取得、リンク MAC の付け替え（standby 側の IP/MAC を active と整合させる <code>update_if_ipmac_on_standby()</code> / <code>recover_if_ipmac_on_standby()</code>）、リンク作成・削除イベント処理を netlink 経由で実装</li>
-</ul>
+<h3 id="_4">エラーハンドリング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>許されない操作（例: Vlan が存在しないのにメンバ追加、IPv4 アドレスに IPv6 を入れる等）は transformer 段で検出して RESTCONF / gRPC エラーで返す<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。詳細なエラーカタログは原文 HLD §5 を参照。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/mgmt/OpenConfig_VLAN_Interface.md#L150-L175 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  There are four states in MCLAG finite state machine:
-  - MLACP_STATE_INIT: Peer connection is not established.
-  - MLACP_STATE_STAGE1: ... first sync up ARP and MAC info with peer ...
-  - MLACP_STATE_STAGE2: ...
-  - MLACP_STATE_EXCHANGE: This is the steady state. Function mlacp_exchange_handler() handle some events in this switch.
-reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
+  This feature adds support for OpenConfig based YANG models using transformer based implementation instead of translib infra.
+  ... There are no changes to CONFIG DB schema definition.
+reasoning: transformer 実装と CONFIG_DB 不変の根拠。
 -->
 
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MC_LAG_DOMAIN</code>, <code>MC_LAG_INTERFACE</code> 等）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
+<th>Table</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>mclagdctl -i &lt;id&gt; dump arp</code> 等</td>
-<td>ICCPd 内部の ARP / MAC / state を表示（ICCPd へ TCP 接続して取得）</td>
+<td><code>VLAN</code></td>
+<td>VLAN 自体（<code>Vlan&lt;id&gt;</code>、<code>mtu</code>、<code>admin_status</code> 等）</td>
+</tr>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td>VLAN インタフェース上の IPv4 / IPv6 アドレス</td>
+</tr>
+<tr>
+<td><code>VLAN_MEMBER</code></td>
+<td>port / portchannel と VLAN の関連付け（access / trunk）</td>
 </tr>
 </tbody>
 </table>
-<p><code>config mclag ...</code> 等のユーザ向け CLI は本ドキュメントの守備範囲外（MC-LAG HLD 側）。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>本ドキュメントでは YANG モジュールに言及していない。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>switched-vlan.interface-mode</code> (<code>ACCESS</code> / <code>TRUNK</code>) は <code>VLAN_MEMBER.tagging_mode</code> (<code>untagged</code> / <code>tagged</code>) にマップされる想定。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>CLI に変更はない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config vlan add/del/member</code> 等の既存 SONiC ネイティブ CLI と OpenConfig 経路は <strong>同じ CONFIG_DB を共有</strong> する。</p>
+<h3 id="rest">設定例（REST）<a class="headerlink" href="#rest" title="Permanent link">&para;</a></h3>
+<p>PATCH で trunk メンバ追加:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-k<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Ethernet0/openconfig-if-ethernet:ethernet/openconfig-vlan:switched-vlan&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/yang-data+json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;openconfig-vlan:switched-vlan&quot;:{&quot;config&quot;:{&quot;interface-mode&quot;:&quot;TRUNK&quot;,&quot;trunk-vlans&quot;:[10,20]}}}&#39;</span>
+</span></code></pre></div>
+<p>詳細なペイロード例は原文 HLD <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> の §3.3 / §6 を参照<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本ドキュメントは ICCPd の <strong>コード概略を解説</strong> したもので、CLI / CONFIG_DB / 運用手順を完全に網羅するものではない</li>
-<li>関数名・ファイル名は HLD 記載時点のもの。リファクタやリネームが入っている可能性</li>
+<li><strong>subinterface 非対応</strong>: 本 HLD のスコープ外<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>CLI から OpenConfig 経路は呼ばれない</strong>: 既存 KLISH CLI は SONiC YANG 経由のまま。OpenConfig は REST / gNMI 専用。</li>
+<li><strong>transformer 経由のため、translib との並走に注意</strong>: SONiC YANG 経路と OpenConfig 経路で同じ CONFIG_DB に書くため、両系統からの同時更新で一時的な不整合が起こりうる。</li>
+<li><strong>詳細仕様は原文必読</strong>: 本ページは概要のみ。テーブル形式の OpenConfig→SONiC YANG マッピング、エラーケース 20 種等は原文 HLD §3〜§6 にある<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>peer-link</strong>: peer-link の up/down が ASIC 側 MAC エントリのテーブル化に直接影響する</li>
-<li><strong>VXLAN tunnel</strong>: peer-link が VXLAN tunnel の場合、両ピアで同じ VXLAN tunnel 名が必要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Warm reboot</strong>: <code>SIGUSR1</code> で <code>system_finalize()</code> が走り、peer に warm-reboot 状態を通知</li>
+<li><strong>既存の SONiC YANG 経路</strong>: <code>sonic-vlan</code> / <code>sonic-vlan-interface</code> を経由した REST / gNMI と CONFIG_DB を共有。両経路で同一エンティティを操作する場合の最終整合性に注意<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>VLAN 機能本体（VlanMgr / orchagent）</strong>: CONFIG_DB 経由なので本機能から透過的に動く。スキーマ変更なし。</li>
+<li><strong>interface-mode の trunk/access 切替</strong>: 既存メンバの mode 変更は CONFIG_DB レベルで <code>tagging_mode</code> を書き換えるが、TRUNK の VLAN リスト操作は <code>VLAN_MEMBER</code> キーの追加・削除で表現される。</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ICCP セッションが上がらない場合、まず <code>iccp_consistency_check.c</code> 的な観点（local/peer IP 設定、MC-LAG IF mode 一致、L3 IP 一致、VLAN 一致）を確認</li>
-<li>MLACP FSM が STAGE1/STAGE2 で止まる場合、ARP/MAC 同期メッセージの欠落・サイズ過大を疑う</li>
-<li>standby 側の system-id が active と異なる場合、MLACP の system-id 同期段が完了していない可能性</li>
+<li>PATCH が 4xx で失敗: OpenConfig YANG パスのスペル、<code>Vlan&lt;id&gt;</code> の表記、許可されないモード組合せを確認。</li>
+<li>操作は通るが反映されない: CONFIG_DB を直接 redis で見て <code>VLAN_MEMBER</code> / <code>VLAN_INTERFACE</code> の状態を確認。VlanMgr のログ参照。</li>
+<li>gNMI Subscribe が来ない: state コンテナを subscribe しているか、ON_CHANGE / SAMPLE のモード設定を確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- 各ファイル名・関数名が現行 master の sonic-buildimage/src/iccpd 配下と一致するか
-- iccpd.j2 テンプレートと CONFIG_DB スキーマの最新形
-- mclagdctl CLI の sonic-utilities 取り込み状況
-- Warm-reboot シグナル経路 (SIGUSR1) の現行実装
--->
-
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mclag/iccpd-code-introduction.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
