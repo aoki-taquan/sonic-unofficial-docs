@@ -1045,7 +1045,8 @@
         "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認"
       ],
       "priority": "medium",
-      "issue": 171
+      "issue": 171,
+      "pr": 172
     }
   ]
 }
