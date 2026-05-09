@@ -1,7 +1,7 @@
 ---
 title: P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`p4rt-app` (PINS) の `P4RuntimeImpl::table_entry_cache_` 実装、cache/AppDb 検証ロジックは要裏取り。
+!!! success "裏取りステータス: Code-verified（命名差分あり）"
+    `sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc` および `p4runtime_read.cc` で実装を確認。HLD の `table_entry_cache_` は実装では `entity_cache_`（type は `absl::flat_hash_map<pdpi::EntityKey, p4::v1::Entity>`）に汎化されており、TableEntry に加え PacketReplicationEngineEntry も保持する。Write 連動更新は `UpdateCacheAndUtilizationState`（INSERT/MODIFY 反映 + DELETE で `erase`）、Read は `entity_cache_` 走査で AppDb を見ない経路 (`p4runtime_read.cc` AppendTableEntryReads)、検証ロジックは `P4RuntimeImpl::VerifyState()` で `VerifyP4rtTableWithCacheEntities` を呼ぶ実装を確認。warm boot は `warm_boot_state_adapter_` でフレームワーク化済み（HLD 記載の事前充填案を踏まえた基盤）(verified at: 2026-05-09)。
 
 # P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
 

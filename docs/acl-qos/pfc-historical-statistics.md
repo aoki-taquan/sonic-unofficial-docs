@@ -1,7 +1,7 @@
 ---
 title: PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / プラットフォーム限定"
-    HLD は **Broadcom 限定実装** と明記。`pfc_detect_broadcom.lua` の estimate ロジック、`pfcstat.py` への `--history` オプション、`config pfcwd pfc_stat_history` 等の CLI が現行 master の `sonic-swss` / `sonic-utilities` に取り込まれているかは未確認。
+!!! success "裏取りステータス: Code-verified（Broadcom 限定）"
+    現行 master で実装を確認: `sonic-swss/orchagent/pfc_detect_broadcom.lua` に `EST_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` / `EST_PORT_STAT_PFC_*_RECENT_PAUSE_TIME_US` 等の estimate フィールド (L20-45)、`sonic-swss/orchagent/pfcwdorch.cpp` に `PFC_STAT_HISTORY` 設定キー (L18)、`sonic-utilities/scripts/pfcstat` に `--history` オプション (L376) と `collect_history` / `get_history` 実装 (L154-)、`sonic-utilities/config/main.py` に `config pfcwd pfc_stat_history` (L3529-) と `config pfcwd start --pfc-stat-history` (L3457) を確認 (verified at: 2026-05-09)。
 
 # PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
 

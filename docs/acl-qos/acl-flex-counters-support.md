@@ -1,7 +1,7 @@
 ---
 title: ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - sonic-flex-counter
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `AclOrch` の `m_acl_fc_mgr (FlexCounterManager)`、`COUNTERS_ACL_COUNTER_RULE_MAP` のキー命名、`counterpoll acl interval` の現行 CLI 文法、ミラー rule 再生成時の counter 維持ロジック、YANG `sonic-flex-counter` への ACL group 追加状況は実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified（命名差分あり）"
+    現行 master で実装を確認: `sonic-swss/orchagent/aclorch.cpp` に `COUNTERS_ACL_COUNTER_RULE_MAP` 定義 (L45)、`ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS=10000`, `ACL_COUNTER_FLEX_COUNTER_GROUP` 経由の登録 (L4209)、SAI ACL counter 属性マッピング (L517-518)、CRM 連動 (L1940/L1982)。`sonic-utilities/counterpoll/main.py` に `counterpoll acl` グループと `acl interval/enable/disable` (L361-)、`sonic-utilities/scripts/aclshow` も存在。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang` L363 に `container ACL`（コメントで `ACL_STAT_COUNTER_FLEX_COUNTER_GROUP` を明示）。**HLD で言及される `m_acl_fc_mgr` メンバ名は実装上は generic な `m_flex_counter_manager`** (verified at: 2026-05-09)。
 
 # ACL カウンタの flex counter 化（`ACL_COUNTER` + `COUNTERS_ACL_COUNTER_RULE_MAP`）
 

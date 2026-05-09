@@ -1,15 +1,18 @@
 {
   "page": "docs/acl-qos/acl-flex-counters-support.md",
-  "verification": "hld-only",
-  "concerns": [
-    "AclOrch の m_acl_fc_mgr (FlexCounterManager) と CounterType::ACL_COUNTER の現行 master 実装存在確認",
-    "COUNTERS_ACL_COUNTER_RULE_MAP のキー区切り文字とフォーマット確認",
-    "counterpoll acl interval の単位（HLD は ms / sec が混在）と現行 CLI 文法確認",
-    "mirror session deactivate 時に ACL_COUNTER を維持し再 bind するロジック実装確認",
-    "syncd/FlexCounter.cpp の ACL group サポート取り込み確認",
-    "sonic-flex-counter YANG への ACL container 追加状況確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "AclOrch の m_acl_fc_mgr (FlexCounterManager) と CounterType::ACL_COUNTER の現行 master 実装存在確認 -> aclorch.h L720 m_flex_counter_manager (generic 化) と L116 ACL_COUNTER_FLEX_COUNTER_GROUP=ACL_STAT_COUNTER を確認 (verified 2026-05-09)",
+    "COUNTERS_ACL_COUNTER_RULE_MAP のキー区切り文字とフォーマット確認 -> aclorch.cpp L45 で定数定義を確認 (verified 2026-05-09)",
+    "counterpoll acl interval の単位（HLD は ms / sec が混在）と現行 CLI 文法確認 -> counterpoll/main.py L373 acl interval (ms 単位) を確認 (verified 2026-05-09)",
+    "mirror session deactivate 時に ACL_COUNTER を維持し再 bind するロジック実装確認 -> aclorch.cpp L1923/L1940/L1982 の counter table OID 管理と CRM カウントを確認 (verified 2026-05-09)",
+    "syncd/FlexCounter.cpp の ACL group サポート取り込み確認 -> orchagent/aclorch.cpp L4209 setFlexCounterGroupParameter で ACL_COUNTER_FLEX_COUNTER_GROUP を登録、syncd 側はこれを受けて polling (verified 2026-05-09)",
+    "sonic-flex-counter YANG への ACL container 追加状況確認 -> sonic-yang-models/yang-models/sonic-flex_counter.yang L363 container ACL を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 145,
-  "pr": 146
+  "pr": 146,
+  "last_verified": "2026-05-09",
+  "notes": "HLD で言及される m_acl_fc_mgr 名は実装上は m_flex_counter_manager (generic) に変更されているが機能は一致。"
 }

@@ -1,13 +1,15 @@
 {
   "page": "docs/system/reboot-support-blockingmode-in-sonic.md",
   "issue": 131,
-  "verification": "hld-only",
-  "concerns": [
-    "reboot スクリプト (sonic-buildimage) の -b / -v 引数実装",
-    "/etc/sonic/reboot.conf パーサ実装",
-    "blocking_mode_timeout デフォルト値",
-    "platform reboot 検出ロジック",
-    "fast-reboot / warm-reboot への適用可否"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "reboot スクリプト (sonic-buildimage) の -b / -v 引数実装 -> sonic-utilities/scripts/reboot L155-156, L230 で確認 (verified 2026-05-09)",
+    "/etc/sonic/reboot.conf パーサ実装 -> reboot L17 (REBOOT_CONFIG_FILE) と L257-275 のパーサで確認 (verified 2026-05-09)",
+    "blocking_mode_timeout デフォルト値 -> BLOCKING_MODE_TIMEOUT_IN_SECOND=180 (L59) を確認 (verified 2026-05-09)",
+    "platform reboot 検出ロジック -> blocking deadloop + timeout 検出 (L383-408) を確認 (verified 2026-05-09)",
+    "fast-reboot / warm-reboot への適用可否 -> reboot/soft-reboot を主対象とし、fast/warm 系は別スクリプト (sonic-utilities/scripts/{fast,warm}-reboot) のため本機能はスコープ外 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

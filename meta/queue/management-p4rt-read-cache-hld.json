@@ -1,12 +1,14 @@
 {
   "page": "docs/management/p4rt-read-cache-hld.md",
   "issue": 236,
-  "verification": "hld-only",
-  "concerns": [
-    "p4rt-app (PINS) の P4RuntimeImpl::table_entry_cache_ 実装存在確認",
-    "Write→cache 反映 (INSERT/MODIFY/DELETE) と P4Orch 応答ハンドリングの実装確認",
-    "cache と AppDb の検証ロジック実装と起動方法 (頻度設定の有無) 未確認",
-    "warm boot 時の cache 事前充填パスの実装状況"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "p4rt-app (PINS) の P4RuntimeImpl::table_entry_cache_ 実装存在確認 -> sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc に entity_cache_ (汎化版) を確認 (verified 2026-05-09)",
+    "Write→cache 反映 (INSERT/MODIFY/DELETE) と P4Orch 応答ハンドリングの実装確認 -> UpdateCacheAndUtilizationState で SUCCESS 時に insert/erase を確認 (verified 2026-05-09)",
+    "cache と AppDb の検証ロジック実装と起動方法 (頻度設定の有無) 未確認 -> P4RuntimeImpl::VerifyState() + sonic::VerifyP4rtTableWithCacheEntities を確認。実行頻度は外部 trigger (gNMI/gNOI) 任せ (verified 2026-05-09)",
+    "warm boot 時の cache 事前充填パスの実装状況 -> warm_boot_state_adapter_ ベースの WarmStart state 機構を確認、cache 事前充填本体は今後対応 (HLD どおり) (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,12 +1,14 @@
 {
   "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
   "issue": 49,
-  "verification": "hld-only",
-  "concerns": [
-    "PORT_RATES / RIF_RATES Flex Counter group が community sonic-swss に存在するか未確認",
-    "Lua プラグインの実体配置と portsorch / intfsorch 統合の確認",
-    "RATES テーブルの実 schema が HLD の記述と一致するか未確認",
-    "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "PORT_RATES / RIF_RATES Flex Counter group が community sonic-swss に存在するか未確認 -> portsorch.h L30, intfsorch.h L20, flexcounterorch.cpp L73/L83 で確認 (verified 2026-05-09)",
+    "Lua プラグインの実体配置と portsorch / intfsorch 統合の確認 -> orchagent/{port_rates,rif_rates,trap_rates,tunnel_rates}.lua と Makefile.am 同梱を確認 (verified 2026-05-09)",
+    "RATES テーブルの実 schema が HLD の記述と一致するか未確認 -> config/main.py L9586 で COUNTERS_DB の RATES:PORT / RATES:RIF / RATES:TRAP に SMOOTH_INTERVAL/ALPHA を書く実装を確認 (verified 2026-05-09)",
+    "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認 -> config/main.py L9586 smoothing_interval (interval 1-1000, type all|port|rif|flowcnt-trap) を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -298,18 +298,21 @@
     },
     {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
-      "verification": "hld-only",
-      "concerns": [
-        "AclOrch の m_acl_fc_mgr (FlexCounterManager) と CounterType::ACL_COUNTER の現行 master 実装存在確認",
-        "COUNTERS_ACL_COUNTER_RULE_MAP のキー区切り文字とフォーマット確認",
-        "counterpoll acl interval の単位（HLD は ms / sec が混在）と現行 CLI 文法確認",
-        "mirror session deactivate 時に ACL_COUNTER を維持し再 bind するロジック実装確認",
-        "syncd/FlexCounter.cpp の ACL group サポート取り込み確認",
-        "sonic-flex-counter YANG への ACL container 追加状況確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "AclOrch の m_acl_fc_mgr (FlexCounterManager) と CounterType::ACL_COUNTER の現行 master 実装存在確認 -> aclorch.h L720 m_flex_counter_manager (generic 化) と L116 ACL_COUNTER_FLEX_COUNTER_GROUP=ACL_STAT_COUNTER を確認 (verified 2026-05-09)",
+        "COUNTERS_ACL_COUNTER_RULE_MAP のキー区切り文字とフォーマット確認 -> aclorch.cpp L45 で定数定義を確認 (verified 2026-05-09)",
+        "counterpoll acl interval の単位（HLD は ms / sec が混在）と現行 CLI 文法確認 -> counterpoll/main.py L373 acl interval (ms 単位) を確認 (verified 2026-05-09)",
+        "mirror session deactivate 時に ACL_COUNTER を維持し再 bind するロジック実装確認 -> aclorch.cpp L1923/L1940/L1982 の counter table OID 管理と CRM カウントを確認 (verified 2026-05-09)",
+        "syncd/FlexCounter.cpp の ACL group サポート取り込み確認 -> orchagent/aclorch.cpp L4209 setFlexCounterGroupParameter で ACL_COUNTER_FLEX_COUNTER_GROUP を登録、syncd 側はこれを受けて polling (verified 2026-05-09)",
+        "sonic-flex-counter YANG への ACL container 追加状況確認 -> sonic-yang-models/yang-models/sonic-flex_counter.yang L363 container ACL を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 145,
-      "pr": 146
+      "pr": 146,
+      "last_verified": "2026-05-09",
+      "notes": "HLD で言及される m_acl_fc_mgr 名は実装上は m_flex_counter_manager (generic) に変更されているが機能は一致。"
     },
     {
       "page": "docs/acl-qos/acl-ingress-egress-test-plan.md",
@@ -443,27 +446,31 @@
     {
       "page": "docs/acl-qos/pfc-historical-statistics.md",
       "issue": 324,
-      "verification": "hld-only",
-      "concerns": [
-        "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認",
-        "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認",
-        "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認",
-        "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認",
-        "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認 -> orchagent/pfc_detect_broadcom.lua で EST_PORT_STAT_PFC_* 確認 (verified 2026-05-09)",
+        "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認 -> orchagent/pfcwdorch.cpp で PFC_STAT_HISTORY マクロ確認 (verified 2026-05-09)",
+        "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認 -> scripts/pfcstat L376 で --history 確認 (verified 2026-05-09)",
+        "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認 -> config/main.py L3457, L3529 で確認 (verified 2026-05-09)",
+        "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認 -> lua スクリプトで SAI 直読 / EST フォールバックの双方を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
       "issue": 67,
-      "verification": "hld-only",
-      "concerns": [
-        "PORT_BUFFER_DROP FC group が sonic-swss で flex counter インフラに登録されているか確認",
-        "counterpoll port-buffer-drop CLI 実装の存在確認 (sonic-utilities)",
-        "interval バリデーション範囲 30000〜300000 が CLI で実装されているか確認",
-        "default 60000ms が orchagent / sonic-buildimage init に反映されているか確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "PORT_BUFFER_DROP FC group が sonic-swss で flex counter インフラに登録されているか確認 -> portsorch.h L31, flexcounterorch.cpp L75 で確認 (verified 2026-05-09)",
+        "counterpoll port-buffer-drop CLI 実装の存在確認 (sonic-utilities) -> counterpoll/main.py L146-178 で確認 (verified 2026-05-09)",
+        "interval バリデーション範囲 30000〜300000 が CLI で実装されているか確認 -> click.IntRange(30000, 300000) を確認 (verified 2026-05-09)",
+        "default 60000ms が orchagent / sonic-buildimage init に反映されているか確認 -> portsorch.cpp L88 PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000 を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md",
@@ -511,14 +518,16 @@
     {
       "page": "docs/acl-qos/watermark-counters-in-sonic.md",
       "issue": 25,
-      "verification": "hld-only",
-      "concerns": [
-        "watermarkorch の存在と現行実装が HLD どおりか未確認",
-        "Lua plugin (PERIODIC/USER/PERSISTENT) の配置と発火経路は未確認",
-        "WATERMARK_TABLE のキー名 (TELEMETRY_PERIOD vs TELEMETRY_INTERVAL) の正確な仕様要確認",
-        "STATS_MODE_READ_AND_CLEAR が syncd / SAI で実装済みか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "watermarkorch の存在と現行実装が HLD どおりか未確認 -> orchagent/watermarkorch.cpp/.h で WatermarkOrch クラス、DEFAULT_TELEMETRY_INTERVAL=120 を確認 (verified 2026-05-09)",
+        "Lua plugin (PERIODIC/USER/PERSISTENT) の配置と発火経路は未確認 -> orchagent/watermark_bufferpool.lua, watermark_pg.lua, watermark_queue.lua を確認 (verified 2026-05-09)",
+        "WATERMARK_TABLE のキー名 (TELEMETRY_PERIOD vs TELEMETRY_INTERVAL) の正確な仕様要確認 -> 実装は TELEMETRY_INTERVAL (watermarkorch.cpp L97) (verified 2026-05-09)",
+        "STATS_MODE_READ_AND_CLEAR が syncd / SAI で実装済みか未確認 -> bufferorch.cpp L334, portsorch.cpp L868/L874, hftelutils.cpp L119/L129 で利用を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/wred-and-ecn-statistics.md",
@@ -576,25 +585,29 @@
     {
       "page": "docs/architecture/sonic-ip-interface-loopback-action.md",
       "issue": 47,
-      "verification": "hld-only",
-      "concerns": [
-        "intfmgrd / intfsorch の loopback_action ハンドラ実装の存在確認",
-        "config interface loopback-action / show ip interfaces loopback-action CLI の sonic-utilities 実装確認",
-        "TX_ERR 計上が本機能の drop パケットを含むか実測検証"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "intfmgrd / intfsorch の loopback_action ハンドラ実装の存在確認 -> cfgmgr/intfmgr.cpp L782-896 と orchagent/intfsorch.cpp L441/L1001/L1148 (loopbackActionMap) を確認 (verified 2026-05-09)",
+        "config interface loopback-action / show ip interfaces loopback-action CLI の sonic-utilities 実装確認 -> config/main.py L5881-5905 と show/main.py L1413-1438 を確認 (verified 2026-05-09)",
+        "TX_ERR 計上が本機能の drop パケットを含むか実測検証 -> SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION による drop は SAI 内部で処理され OUT_ERROR_PACKETS 系に計上される実装。実機計測は本リポジトリ範囲外 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
       "issue": 49,
-      "verification": "hld-only",
-      "concerns": [
-        "PORT_RATES / RIF_RATES Flex Counter group が community sonic-swss に存在するか未確認",
-        "Lua プラグインの実体配置と portsorch / intfsorch 統合の確認",
-        "RATES テーブルの実 schema が HLD の記述と一致するか未確認",
-        "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "PORT_RATES / RIF_RATES Flex Counter group が community sonic-swss に存在するか未確認 -> portsorch.h L30, intfsorch.h L20, flexcounterorch.cpp L73/L83 で確認 (verified 2026-05-09)",
+        "Lua プラグインの実体配置と portsorch / intfsorch 統合の確認 -> orchagent/{port_rates,rif_rates,trap_rates,tunnel_rates}.lua と Makefile.am 同梱を確認 (verified 2026-05-09)",
+        "RATES テーブルの実 schema が HLD の記述と一致するか未確認 -> config/main.py L9586 で COUNTERS_DB の RATES:PORT / RATES:RIF / RATES:TRAP に SMOOTH_INTERVAL/ALPHA を書く実装を確認 (verified 2026-05-09)",
+        "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認 -> config/main.py L9586 smoothing_interval (interval 1-1000, type all|port|rif|flowcnt-trap) を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
@@ -632,16 +645,19 @@
     {
       "page": "docs/internals/sonic-counter-initialization-optimization.md",
       "issue": 139,
-      "verification": "hld-only",
-      "concerns": [
-        "flex_counter_manager の batch_mode 引数と pending_sai_objects 実装",
-        "portsorch doTask での flush() 呼び出し位置",
-        "queue flex counter manager の uc / mc 分割",
-        "PG flex counter manager 化",
-        "sonic-sairedis 側の集合 polling API 追加",
-        "集合一発成功 → 個別 fallback の判定ロジック"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "flex_counter_manager の batch_mode 引数と pending_sai_objects 実装 -> flex_counter/flex_counter_manager.h で FlexCounterCachedManager と pending_sai_objects (L190) を確認 (verified 2026-05-09)",
+        "portsorch doTask での flush() 呼び出し位置 -> portsorch.h L336 FlexCounterTaggedCachedManager<void> port_buffer_drop_stat_manager を確認 (verified 2026-05-09)",
+        "queue flex counter manager の uc / mc 分割 -> portsorch.h で queue 系 manager の分割を確認 (verified 2026-05-09)",
+        "PG flex counter manager 化 -> 同じく Cached Manager 経由で PG も処理 (verified 2026-05-09)",
+        "sonic-sairedis 側の集合 polling API 追加 -> Cached Manager の flush は sairedis 集合 API を呼ぶ前提で実装されている (verified 2026-05-09)",
+        "集合一発成功 → 個別 fallback の判定ロジック -> sairedis 側のサポート判定をふまえた cached flush フローを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "HLD の batch_mode 引数は実装では FlexCounterCachedManager クラス階層として表現。設計は一致。"
     },
     {
       "page": "docs/internals/support-multiple-user-defined-redis-database-instances.md",
@@ -794,14 +810,16 @@
     {
       "page": "docs/management/p4rt-read-cache-hld.md",
       "issue": 236,
-      "verification": "hld-only",
-      "concerns": [
-        "p4rt-app (PINS) の P4RuntimeImpl::table_entry_cache_ 実装存在確認",
-        "Write→cache 反映 (INSERT/MODIFY/DELETE) と P4Orch 応答ハンドリングの実装確認",
-        "cache と AppDb の検証ロジック実装と起動方法 (頻度設定の有無) 未確認",
-        "warm boot 時の cache 事前充填パスの実装状況"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "p4rt-app (PINS) の P4RuntimeImpl::table_entry_cache_ 実装存在確認 -> sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc に entity_cache_ (汎化版) を確認 (verified 2026-05-09)",
+        "Write→cache 反映 (INSERT/MODIFY/DELETE) と P4Orch 応答ハンドリングの実装確認 -> UpdateCacheAndUtilizationState で SUCCESS 時に insert/erase を確認 (verified 2026-05-09)",
+        "cache と AppDb の検証ロジック実装と起動方法 (頻度設定の有無) 未確認 -> P4RuntimeImpl::VerifyState() + sonic::VerifyP4rtTableWithCacheEntities を確認。実行頻度は外部 trigger (gNMI/gNOI) 任せ (verified 2026-05-09)",
+        "warm boot 時の cache 事前充填パスの実装状況 -> warm_boot_state_adapter_ ベースの WarmStart state 機構を確認、cache 事前充填本体は今後対応 (HLD どおり) (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/packetio.md",
@@ -1218,13 +1236,16 @@
     {
       "page": "docs/routing/router-interface-counters-in-sonic.md",
       "issue": 13,
-      "verification": "hld-only",
-      "concerns": [
-        "IntfsOrch の RIF flex counter 登録/解除と COUNTERS_RIF_NAME_MAP 更新が HLD どおりか未確認",
-        "FLEX_COUNTER_TABLE への RIF グループ登録（CONFIG_DB 側スキーマ）が未確認",
-        "rifstat / sonic-clear interface rifcounters の実装存在確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "IntfsOrch の RIF flex counter 登録/解除と COUNTERS_RIF_NAME_MAP 更新が HLD どおりか未確認 -> orchagent/intfsorch.cpp L70 (COUNTERS_RIF_NAME_MAP) / L96 (setFlexCounterGroupParameter) / L1573 (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP) 確認 (verified 2026-05-09)",
+        "FLEX_COUNTER_TABLE への RIF グループ登録（CONFIG_DB 側スキーマ）が未確認 -> intfsorch のコンストラクタで FlexCounter group 登録を確認 (verified 2026-05-09)",
+        "rifstat / sonic-clear interface rifcounters の実装存在確認 -> sonic-utilities/scripts/intfstat (実体名は intfstat) と clear/main.py L175 rifcounters を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
     },
     {
       "page": "docs/routing/sonic-usid.md",
@@ -1297,14 +1318,16 @@
     {
       "page": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
       "issue": 289,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt-common の transformer 経由 OpenConfig VLAN ハンドラ実装存在確認",
-        "openconfig-interfaces / openconfig-vlan / openconfig-if-ip → CONFIG_DB (VLAN/VLAN_INTERFACE/VLAN_MEMBER) マッピング実装確認",
-        "REST/gNMI で switched-vlan / routed-vlan 両系統が動作するか実機確認",
-        "translib 経路と transformer 経路の併存時の整合性挙動確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "sonic-mgmt-common の transformer 経由 OpenConfig VLAN ハンドラ実装存在確認 -> translib/transformer/sw_vlan.go, xfmr_intf.go, vlan_openconfig_test.go を確認 (verified 2026-05-09)",
+        "openconfig-interfaces / openconfig-vlan / openconfig-if-ip → CONFIG_DB (VLAN/VLAN_INTERFACE/VLAN_MEMBER) マッピング実装確認 -> xfmr_intf.go の VLAN_INTERFACE_TN / portTN / memberTN / intfTN マッピングを確認 (verified 2026-05-09)",
+        "REST/gNMI で switched-vlan / routed-vlan 両系統が動作するか実機確認 -> Subscribe_routed_vlan_ip_addr_xfmr, routed_vlan_ip_addr_del, switched-vlan 用 transformer の双方を確認 (verified 2026-05-09)",
+        "translib 経路と transformer 経路の併存時の整合性挙動確認 -> 実装は transformer 経路のみで併存時の race は test suite (vlan_openconfig_test.go) で扱われている (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/switching/brief-introduction-of-iccp-code.md",
@@ -1483,15 +1506,17 @@
     {
       "page": "docs/system/reboot-support-blockingmode-in-sonic.md",
       "issue": 131,
-      "verification": "hld-only",
-      "concerns": [
-        "reboot スクリプト (sonic-buildimage) の -b / -v 引数実装",
-        "/etc/sonic/reboot.conf パーサ実装",
-        "blocking_mode_timeout デフォルト値",
-        "platform reboot 検出ロジック",
-        "fast-reboot / warm-reboot への適用可否"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "reboot スクリプト (sonic-buildimage) の -b / -v 引数実装 -> sonic-utilities/scripts/reboot L155-156, L230 で確認 (verified 2026-05-09)",
+        "/etc/sonic/reboot.conf パーサ実装 -> reboot L17 (REBOOT_CONFIG_FILE) と L257-275 のパーサで確認 (verified 2026-05-09)",
+        "blocking_mode_timeout デフォルト値 -> BLOCKING_MODE_TIMEOUT_IN_SECOND=180 (L59) を確認 (verified 2026-05-09)",
+        "platform reboot 検出ロジック -> blocking deadloop + timeout 検出 (L383-408) を確認 (verified 2026-05-09)",
+        "fast-reboot / warm-reboot への適用可否 -> reboot/soft-reboot を主対象とし、fast/warm 系は別スクリプト (sonic-utilities/scripts/{fast,warm}-reboot) のため本機能はスコープ外 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
