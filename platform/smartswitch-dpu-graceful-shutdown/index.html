@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/smartswitch-dpu-graceful-shutdown/">
       
       
-        <link rel="prev" href="../sonic-sub-port-interface-high-level-design/">
+        <link rel="prev" href="../single-asic-voq-fixed-system-sonic/">
       
       
-        <link rel="next" href="../steps-to-bring-up-sonic-vs/">
+        <link rel="next" href="../sonic-fast-link-up/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） - SONiC 非公式ドキュメント</title>
+        <title>Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ssd-show-platform-ssdhealth-ssdutil" class="md-skip">
+        <a href="#smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+              Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -614,23 +612,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -648,13 +643,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -674,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -702,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alpine-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
         
   
   
@@ -730,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -758,7 +753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-system-improvements/" class="md-nav__link">
+      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
         
   
   
@@ -786,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../clock-managment-design/" class="md-nav__link">
+      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
         
   
   
@@ -814,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -842,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv6-relay-agent/" class="md-nav__link">
+      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
         
   
   
@@ -870,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -898,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/error-handling-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -926,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-change-application/" class="md-nav__link">
+      <a href="../../architecture/json-change-application/" class="md-nav__link">
         
   
   
@@ -954,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -982,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-profile-init-hld/" class="md-nav__link">
+      <a href="../../architecture/port-profile-init-hld/" class="md-nav__link">
         
   
   
@@ -1010,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-factory-design/" class="md-nav__link">
+      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
         
   
   
@@ -1038,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -1066,7 +1061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -1094,7 +1089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow-test-plan/" class="md-nav__link">
+      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -1122,7 +1117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
+      <a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
         
   
   
@@ -1150,7 +1145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -1178,7 +1173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1206,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-generic-hash/" class="md-nav__link">
+      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1234,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1262,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1290,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-packet-trimming/" class="md-nav__link">
+      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1318,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1346,7 +1341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1374,7 +1369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1402,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1427,37 +1422,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1473,281 +1441,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンドのチェーン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ssdhealth ユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1760,7 +1453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -7426,6 +7119,8 @@
       
   
   
+    
+  
   
   
     
@@ -7493,20 +7188,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -7524,13 +7222,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -7550,7 +7248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7578,7 +7276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -7606,7 +7304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -7634,7 +7332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -7662,7 +7360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -7690,7 +7388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -7718,7 +7416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -7746,7 +7444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -7774,7 +7472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -7802,7 +7500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -7830,7 +7528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -7858,7 +7556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -7886,7 +7584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -7914,7 +7612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -7942,7 +7640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -7970,7 +7668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -7998,7 +7696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -8026,7 +7724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -8054,7 +7752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -8082,7 +7780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -8110,7 +7808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -8135,10 +7833,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -8154,6 +7879,153 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module_info_table-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE_INFO_TABLE スキーマ（STATE_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#race-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        並列実行と race condition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints の妙味
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -8166,7 +8038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -8194,7 +8066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -8222,7 +8094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -8250,7 +8122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -8278,7 +8150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -13145,60 +13017,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンドのチェーン
+        コンポーネント関係
       
     </span>
   </a>
@@ -13206,10 +13028,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
+  <a href="#sequence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ssdhealth ユーティリティ
+        Sequence
       
     </span>
   </a>
@@ -13217,123 +13039,56 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#chassis_module_info_table-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE_INFO_TABLE スキーマ（STATE_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#race-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        並列実行と race condition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints の妙味
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13344,7 +13099,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13355,18 +13110,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13393,7 +13137,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/ssdhealth-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/smartswitch-dpu-graceful-shutdown.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13403,223 +13147,169 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-utilities/scripts/ssdhealth</code>、<code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code>、ベンダ別 <code>ssdutil.py</code>、Pmon <code>ssdmond</code> のいずれも実装裏取り未済。</p>
+<p>HLD は v0.1 (2025-12) Initial Proposal。<code>gnoi_reboot_daemon.py</code> / <code>module_base.py</code> の graceful 経路、<code>CHASSIS_MODULE_INFO_TABLE</code> の <code>state_transition_in_progress</code> / <code>transition_type</code> フィールド、PMON 制限下での gNOI HALT 起動経路は未裏取り。priority=high で queue 登録。</p>
 </div>
-<h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
+<h1 id="smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）<a class="headerlink" href="#smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
-<p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SmartSwitch では DPU の graceful reboot に続き <strong>graceful shutdown</strong> をサポートする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。"reboot の前半" に見えるが、CLI 起動経路、コードパス、PMON container の制限（<code>docker</code> / <code>bash</code> / <code>hostexec</code> 不可）から実装が分離される。chassisd が NPU 側で動き、各 DPU には gNOI Reboot RPC (<code>HALT</code>) を発行する <code>gnoi_reboot_daemon.py</code> 経由で並列に shutdown を投げる構成。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
-</span></code></pre></div>
-<p>3 つの表示モード<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="brief">Brief（既定）<a class="headerlink" href="#brief" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic-switch: ~$ show platform ssdhealth
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Device Model : InnoDisk Corp. - mSATA 3ME
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Health: 72.9%
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Temperature: N/A
-</span></code></pre></div>
-<h4 id="verbose">Verbose<a class="headerlink" href="#verbose" title="Permanent link">&para;</a></h4>
-<p><code>FW Version</code> / <code>Serial Number</code> / <code>Capacity</code> / <code>Power On Hours</code> / <code>Power Cycle count</code> 等を追加表示。</p>
-<h4 id="vendor">Vendor<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h4>
-<p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">コマンドのチェーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    USER[user] --&gt; SHOW[show platform ssdhealth\n(show/main.py)]
-    SHOW --&gt;|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
-    UTIL --&gt; BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
-    BASE --&gt; VENDOR[SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)]
-    BASE -.fallback.-&gt; SCTL[smartctl]
-    VENDOR --&gt; ISMART[iSmart / SmartCmd 等\nベンダ純正]
-    UTIL --&gt; OUT[stdout]</code></pre>
-<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ。コア処理は <code>ssdhealth</code> スクリプト側にある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ssdhealth"><code>ssdhealth</code> ユーティリティ<a class="headerlink" href="#ssdhealth" title="Permanent link">&para;</a></h3>
-<p>新規スクリプト。配置は <code>sonic-utilities/scripts/</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>usage: ssdhealth -d DEVICE [-h] [-v] [-e]
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -d, --device          disk device to get information for
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  -v, --verbose         show verbose output (more parameters)
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -e, --vEndor          show vendor specific disk information
-</span></code></pre></div>
-<p>中で <code>SsdUtil</code> プラグインを import し、後述の API を呼んで結果を整形する設計。<code>-d</code> で device path を取るので <code>show</code> 側で <code>/dev/sda</code> 等を渡す<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">プラグイン構造<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>二段で抽象化する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="ssdbase">抽象クラス <code>SsdBase</code><a class="headerlink" href="#ssdbase" title="Permanent link">&para;</a></h4>
-<ul>
-<li>配置: <code>sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code></li>
-<li>役割: 汎用 API のジェネリック実装。既知の disk なら専用ユーティリティ、それ以外は <code>smartctl</code> 系へフォールバック。<strong>smartctl の DB に無いモデル</strong> は情報の一部が取得不能 or 不完全になりうる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h4 id="ssdutilssdbase">ベンダ実装 <code>SsdUtil</code>（<code>SsdBase</code> を継承）<a class="headerlink" href="#ssdutilssdbase" title="Permanent link">&para;</a></h4>
-<ul>
-<li>配置: <code>sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py</code></li>
-<li>役割: ベンダ提供ツールの出力をパースして API を実装。InnoDisk なら <code>iSmart</code>、StorFly / Virtium なら <code>SmartCmd</code> を呼ぶ前提<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<pre class="mermaid"><code>classDiagram
-    class SsdBase {
-        +get_disk_health(diskdev) float
-        +get_temperature(diskdev) string
-        +get_model(diskdev) string
-        +get_firmware(diskdev) string
-        +get_serial(diskdev) string
-        +get_vendor_output(diskdev) string
-    }
-    class SsdUtil
-    SsdBase &lt;|-- SsdUtil</code></pre>
-<h3 id="api">API 仕様<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p><code>SsdBase</code> / <code>SsdUtil</code> が公開する API<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    CLI["config chassis module shutdown DPUx"] --&gt; CD[chassisd]
+    CD --&gt; MB[module_base.py]
+    MB --&gt;|set_admin_state(down) /&lt;br/&gt;graceful_shutdown_handler| ST[(STATE_DB&lt;br/&gt;CHASSIS_MODULE_INFO_TABLE)]
+    ST -- watch --&gt; GD[gnoi_reboot_daemon.py]
+    GD --&gt;|gNOI Reboot HALT| DPU[DPUx sysmgr]
+    DPU --&gt;|DBUS reboot -p| KERN[DPU kernel]
+    GD --&gt;|RebootStatus poll| DPU
+    GD --&gt; ST
+    MB --&gt;|poll until False| ST
+    MB --&gt; MOD[module.py]
+    MOD --&gt; PAPI[Platform API power_down]</code></pre>
+<h3 id="sequence">Sequence<a class="headerlink" href="#sequence" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>gnoi_reboot_daemon.py</code> 起動時に <code>CHASSIS_MODULE_INFO_TABLE</code> を subscribe（startup 系の遷移は no-op）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ユーザが <code>config chassis module shutdown DPUx</code> を発行</li>
+<li><code>chassisd</code> → <code>module_base.set_admin_state(down)</code> を呼出</li>
+<li><code>module_base.py</code> は <strong>DEVICE_METADATA の <code>subtype="SmartSwitch"</code> かつ <code>switch_type != dpu</code></strong> を確認。条件成立で <code>graceful_shutdown_handler()</code> 経路へ。それ以外は通常の <code>module.set_admin_state(down)</code></li>
+<li><code>graceful_shutdown_handler()</code> が STATE_DB の <code>CHASSIS_MODULE_INFO_TABLE|DPUx</code> に <code>state_transition_in_progress=True</code>, <code>transition_type=shutdown</code> を書き込む</li>
+<li><code>gnoi_reboot_daemon</code> は変化を検出し DPUx の sysmgr に <strong>gNOI Reboot RPC <code>HALT</code></strong> を送る。sysmgr は DBUS で <code>reboot -p</code> を発行</li>
+<li>daemon が <code>gnoi_client -rpc RebootStatus</code> で polling</li>
+<li>DPU が kernel shutdown 完了後、daemon が <code>state_transition_in_progress=False</code> に戻す（タイムアウト時は失敗結果を書く）</li>
+<li><code>module_base.py</code> は 5 秒間隔で polling し False を確認、ログ出力</li>
+<li>最後に <code>module.py.set_admin_state(down)</code> で platform API による power-down</li>
+</ol>
+<h3 id="chassis_module_info_table-state_db">CHASSIS_MODULE_INFO_TABLE スキーマ（STATE_DB）<a class="headerlink" href="#chassis_module_info_table-state_db" title="Permanent link">&para;</a></h3>
+<p>key: <code>CHASSIS_MODULE_INFO_TABLE|&lt;MODULE&gt;</code></p>
 <table>
 <thead>
 <tr>
-<th>メソッド</th>
-<th>戻り値</th>
-<th>取得不可時</th>
+<th>Field</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>get_disk_health(diskdev)</code></td>
-<td>float（0〜100、% 表現）</td>
-<td><code>-1</code></td>
+<td><code>state_transition_in_progress</code></td>
+<td><code>"True"</code> で遷移中、<code>"False"</code>/不在で停止中</td>
 </tr>
 <tr>
-<td><code>get_temperature(diskdev)</code></td>
-<td>string（摂氏）</td>
-<td><code>0</code></td>
+<td><code>transition_start_time</code></td>
+<td>UTC 文字列</td>
 </tr>
 <tr>
-<td><code>get_model(diskdev)</code></td>
-<td>string（人読 model）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_firmware(diskdev)</code></td>
-<td>string（FW バージョン）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_serial(diskdev)</code></td>
-<td>string（シリアル）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_vendor_output(diskdev)</code></td>
-<td>string（ベンダツール出力そのまま）</td>
-<td>空文字</td>
+<td><code>transition_type</code></td>
+<td><code>"shutdown"</code> / <code>"none"</code>（reboot/startup は <code>none</code>）</td>
 </tr>
 </tbody>
 </table>
-<p>引数はいずれも <code>diskdev:string</code>（例: <code>/dev/sda</code>）。</p>
-<h3 id="_5">利用するユーティリティ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>HLD で挙げられているもの<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>ツール</th>
-<th>用途</th>
-<th>サイズ感</th>
-<th>備考</th>
+<th>種別</th>
+<th>設定者</th>
+<th>解除者</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>smartctl</code> (smartmontools)</td>
-<td>汎用 SMART 取得</td>
-<td>約 1.9M</td>
-<td><code>SsdBase</code> の fallback</td>
+<td>Startup</td>
+<td>CLI / config load</td>
+<td>online 到達時</td>
 </tr>
 <tr>
-<td><code>iSmart</code></td>
-<td>InnoDisk 製 SSD</td>
-<td>&lt;120K</td>
-<td>InnoDisk 公式配布のバイナリ</td>
+<td>Shutdown</td>
+<td>CLI / config load</td>
+<td><code>gnoi_reboot_daemon</code> が platform API 完了時</td>
 </tr>
 <tr>
-<td><code>SmartCmd</code></td>
-<td>StorFly / Virtium</td>
-<td>約 2.2M</td>
-<td>ベンダ専用</td>
+<td>Reboot</td>
+<td><code>smartswitch_reboot_helper</code></td>
+<td>同左</td>
 </tr>
 </tbody>
 </table>
-<p><code>smartctl</code> 同梱は <code>sonic-net/sonic-buildimage</code> PR 2703 で提案されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="optional-pmon-ssdmond">Optional: pmon <code>ssdmond</code><a class="headerlink" href="#optional-pmon-ssdmond" title="Permanent link">&para;</a></h3>
-<p>HLD は <strong>オプション</strong> として、pmon に常駐するデーモン <code>ssdmond</code> を提案している<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="race-condition">並列実行と race condition<a class="headerlink" href="#race-condition" title="Permanent link">&para;</a></h3>
+<p>複数 DPU の graceful shutdown は並列に実行される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>module_base.py</code> と <code>smartswitch_reboot_helper</code> が同 module の <code>state_transition_in_progress</code> に書き込みを競った場合、<strong>先に True に書いた側が勝つ</strong>。負け側は失敗扱いで再投を要求される。</p>
+<p>主要シナリオ（HLD 抜粋）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reboot 進行中に shutdown/startup</td>
+<td>後者が失敗。reboot 完了後再投</td>
+</tr>
+<tr>
+<td>graceful shutdown 進行中に reboot 要求</td>
+<td>reboot 失敗。shutdown 完走で目的達成のため reboot 不要</td>
+</tr>
+<tr>
+<td>startup 進行中に reboot</td>
+<td>reboot 失敗</td>
+</tr>
+<tr>
+<td>switch-level reboot 進行中</td>
+<td>全 module の <code>True</code> を一括取得。module-level 操作は失敗</td>
+</tr>
+<tr>
+<td>switch-level reboot が module-level 進行中に発行</td>
+<td>進行中 module は skip、他は switch reboot で処理</td>
+</tr>
+</tbody>
+</table>
+<h3 id="constraints">Constraints の妙味<a class="headerlink" href="#constraints" title="Permanent link">&para;</a></h3>
 <ul>
-<li>周期的に <code>get_health()</code> を呼び出す。</li>
-<li>値が <strong>クリティカルしきい値を割った時にアラート</strong> を上げる。</li>
-<li>HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>PMON container には <code>docker</code>, <code>hostexec</code>, <code>bash</code> が無い → gNOI 呼び出しを <strong>PMON 内 daemon</strong> に閉じる必要があった<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>gNOI 自体は host 側で <code>docker exec</code> ベースに実行される設計だが、PMON は host に直接命令できないため <strong>STATE_DB IPC</strong> を介する pub/sub 経由で実行を委譲する形を採る</li>
 </ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md#L93-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Class SsdBase
-  Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
-  Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
-  Class SsdUtil
-  Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
-  Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
-reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
+  This design enables the chassisd process running in the PMON container to invoke a gNOI-based reboot
+  when it triggers the "set_admin_state(down)" API of a DPU module, without relying on docker, bash,
+  or hostexec within the container.
+reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根拠。
 -->
 
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show platform ssdhealth</code></td>
-<td>簡易表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth verbose</code></td>
-<td>詳細表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth vendor</code></td>
-<td>ベンダツール生出力</td>
-</tr>
-<tr>
-<td><code>ssdhealth -d /dev/sdX [-v|-e]</code></td>
-<td>内部ラッパが呼ぶスクリプトを直接実行</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>smartctl のデータベースに無い disk</strong> は health / 温度の取得が <strong>N/A</strong> になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダプラグインが用意されていないプラットフォームは <code>SsdBase</code> の fallback（smartctl）に依存。<code>vendor</code> モードの出力は基本的に空。</li>
-<li>pmon デーモン (<code>ssdmond</code>) は <strong>オプション</strong> であり、HLD では Open Question として残っている。常時監視・アラート発火が必要なら別途実装の確認が必要<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>値が取れない場合の表現が API ごとに異なる（health=<code>-1</code>、temp=<code>0</code>、文字列系=空）。<code>0 ℃</code> と「取得不可」が同義になり得る点に注意<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>CLI: <code>config chassis module shutdown DPUx</code>（既存 chassis CLI 流用）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>CONFIG_DB は本 HLD では追加なし。STATE_DB の <code>CHASSIS_MODULE_INFO_TABLE</code> のフィールドが拡張される</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>pmon (Platform Monitor)</strong>: <code>ssdmond</code> を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。</li>
-<li><strong>smartmontools / smartctl パッケージ</strong>: ビルドイメージに 1.9M 程度の追加。<code>sonic-buildimage</code> 側のパッケージ取り込みに依存<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>plugin 配置規約</strong>: <code>device/{{vendor}}/platform/plugins/ssdutil.py</code> は <strong>プラットフォームプラグインの一般則</strong> に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。</li>
-<li><strong>SNMP</strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>module-level と switch-level の reboot/shutdown が衝突した場合、明示的な失敗で再投が必要</li>
+<li><code>module_base.py</code> は 5 秒 poll で完了確認</li>
+<li>DPU 側の sysmgr が gNOI HALT を受け DBUS → <code>reboot -p</code> で完了する経路に依存</li>
+<li>v0.1 (2025-12) Initial で master 取り込み未確認</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Health: N/A</code>: smartctl が当該 disk を識別できていない可能性。<code>smartctl -i /dev/sdX</code> で raw に確認。ベンダプラグインが装備されているか <code>device/&lt;vendor&gt;/platform/plugins/ssdutil.py</code> の存在を確認。</li>
-<li><code>vendor</code> モードが空: <code>SsdUtil</code> の <code>get_vendor_output()</code> が未実装、もしくはベンダツールバイナリが image に含まれていない。</li>
-<li><code>Temperature: 0</code> と <code>N/A</code> の区別: API の戻り値仕様上、温度の取得不可は <code>0</code> となる。<code>0℃</code> と取得不可が見分けにくい点は HLD の制約<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>show platform ssdhealth</code> が <code>command not found</code>: <code>show/main.py</code> の <code>platform</code> メニューに項目が登録されているか、<code>ssdhealth</code> スクリプトが PATH にあるかを確認。</li>
+<li><strong>Smart Switch Reboot (<code>smartswitch_reboot_helper</code>)</strong>: 同じ STATE_DB フィールドで race</li>
+<li><strong>smartswitch-pmon HLD</strong>: chassisd / pmon の親設計</li>
+<li><strong>Independent DPU Upgrade</strong>: shutdown 経路を再利用する可能性</li>
+<li><strong>gNOI / gNMI</strong>: HALT を含む reboot RPC の依存</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認
+- module_base.py の graceful_shutdown_handler 実装と subtype/switch_type 判定確認
+- CHASSIS_MODULE_INFO_TABLE の state_transition_in_progress / transition_type フィールド sonic-yang-models 反映確認
+- smartswitch_reboot_helper との STATE_DB 排他ロジックの実装一致確認
+- DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認
+- v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/ssdhealth/ssdhealth_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/graceful-shutdown/graceful-shutdown.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
