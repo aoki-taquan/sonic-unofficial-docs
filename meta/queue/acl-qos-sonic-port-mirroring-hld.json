@@ -1,0 +1,12 @@
+{
+  "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
+  "issue": 325,
+  "verification": "hld-only",
+  "concerns": [
+    "MirrorOrch の port-based SPAN/ERSPAN 実装の現行 master 確認",
+    "Mirror Capability Discovery（v0.2 追加）の syncd / orchagent 取り込み確認",
+    "MIRROR_SESSION CONFIG_DB スキーマの sonic-yang-models 反映確認",
+    "config mirror_session CLI の sonic-utilities 取り込み確認"
+  ],
+  "priority": "medium"
+}
