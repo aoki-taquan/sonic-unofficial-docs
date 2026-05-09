@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-usage/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/reclaim-reserved-buffer/">
       
       
-        <link rel="prev" href="../gnmi-master-arbitration-hld/">
+        <link rel="prev" href="../reclaim-reserved-buffer-sequence-flow/">
       
       
-        <link rel="next" href="../gnoi-hld-for-file-and-factory-reset-apis/">
+        <link rel="next" href="../sonic-port-mirroring-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli） - SONiC 非公式ドキュメント</title>
+        <title>Reclaim Reserved Buffer（admin-down ポートの zero_profile） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" class="md-skip">
+        <a href="#reclaim-reserved-bufferadmin-down-zero_profile" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+              Reclaim Reserved Buffer（admin-down ポートの zero_profile）
             
           </span>
         </div>
@@ -335,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -3327,6 +3327,8 @@
       
   
   
+    
+  
   
   
     
@@ -3392,20 +3394,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3423,13 +3428,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3449,7 +3454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
+      <a href="../acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -3477,7 +3482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-ingress-egress-test-plan/" class="md-nav__link">
+      <a href="../acl-ingress-egress-test-plan/" class="md-nav__link">
         
   
   
@@ -3505,7 +3510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -3533,7 +3538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
+      <a href="../acl-user-defined-table-type-support/" class="md-nav__link">
         
   
   
@@ -3561,7 +3566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -3589,7 +3594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/asymmetric-pfc-test-plan/" class="md-nav__link">
+      <a href="../asymmetric-pfc-test-plan/" class="md-nav__link">
         
   
   
@@ -3617,7 +3622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/configurable-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../configurable-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3645,7 +3650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/copp-manager-redesign-test-plan/" class="md-nav__link">
+      <a href="../copp-manager-redesign-test-plan/" class="md-nav__link">
         
   
   
@@ -3673,7 +3678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -3701,7 +3706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
+      <a href="../dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -3729,7 +3734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -3757,7 +3762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
+      <a href="../distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
         
   
   
@@ -3785,7 +3790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -3813,7 +3818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -3841,7 +3846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
+      <a href="../enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
         
   
   
@@ -3869,7 +3874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/everflow-test-plan/" class="md-nav__link">
+      <a href="../everflow-test-plan/" class="md-nav__link">
         
   
   
@@ -3897,7 +3902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/pfc-historical-statistics/" class="md-nav__link">
+      <a href="../pfc-historical-statistics/" class="md-nav__link">
         
   
   
@@ -3925,7 +3930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3953,7 +3958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -3978,10 +3983,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reclaim Reserved Buffer（admin-down ポートの zero_profile）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3997,6 +4029,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        「単純削除」では起きる不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        zero_profile 解（採用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#database-migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database migrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendor 別
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4009,7 +4227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/sonic-port-mirroring-hld/" class="md-nav__link">
+      <a href="../sonic-port-mirroring-hld/" class="md-nav__link">
         
   
   
@@ -4037,7 +4255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/sonic-qos-scheduler-and-shaping/" class="md-nav__link">
+      <a href="../sonic-qos-scheduler-and-shaping/" class="md-nav__link">
         
   
   
@@ -4065,7 +4283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
+      <a href="../support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
         
   
   
@@ -4093,7 +4311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
+      <a href="../test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
         
   
   
@@ -4121,7 +4339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -4149,7 +4367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -5185,8 +5403,6 @@
       
   
   
-    
-  
   
   
     
@@ -5268,23 +5484,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -5302,13 +5515,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5328,7 +5541,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -5356,7 +5569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -5384,7 +5597,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -5412,7 +5625,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -5440,7 +5653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -5465,37 +5678,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -5511,214 +5697,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        認証
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Set
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capabilities
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subscribe
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5731,7 +5709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -5759,7 +5737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -5787,7 +5765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -5815,7 +5793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -5843,7 +5821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -5871,7 +5849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -5899,7 +5877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -5927,7 +5905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -5955,7 +5933,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -5983,7 +5961,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -6011,7 +5989,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -6039,7 +6017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -6067,7 +6045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -6095,7 +6073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -6123,7 +6101,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -6151,7 +6129,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6179,7 +6157,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -6207,7 +6185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -6235,7 +6213,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -6263,7 +6241,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -6291,7 +6269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -6319,7 +6297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -6347,7 +6325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -6375,7 +6353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -6403,7 +6381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6431,7 +6409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -6459,7 +6437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -6487,7 +6465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -12151,7 +12129,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        「単純削除」では起きる不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        zero_profile 解（採用）
       
     </span>
   </a>
@@ -12162,7 +12151,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        認証
+        起動条件
       
     </span>
   </a>
@@ -12170,10 +12159,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get" class="md-nav__link">
+  <a href="#database-migrator" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Get
+        Database migrator
       
     </span>
   </a>
@@ -12181,32 +12170,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#set" class="md-nav__link">
+  <a href="#vendor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Set
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capabilities
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subscribe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subscribe
+        Vendor 別
       
     </span>
   </a>
@@ -12231,21 +12198,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        CLI
       
     </span>
   </a>
@@ -12253,10 +12209,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
+        CONFIG_DB
       
     </span>
   </a>
@@ -12329,7 +12285,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnmi-usage.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/reclaim-reserved-buffer.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12337,136 +12293,126 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-gnmi/patches/gnmi_get.patch</code> L25 で <code>pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")</code> を確認（<code>gnmi_set.patch</code> / <code>gnmi_cli.all.patch</code> も同等）。サーバ側 <code>sonic-gnmi/gnmi_server/server.go</code> L975-988 で <code>target == "OPERATIONAL" / "OTHERS" / "SHOW"</code> の特殊分岐と <code>sdc.IsTargetDb(target)</code> による <code>CONFIG_DB / COUNTERS_DB</code> 等 SONiC DB 名分岐を確認。<code>sonic-gnmi/sonic_data_client/db_client.go</code> L647 で <code>COUNTERS_DB</code> 専用処理を確認 (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>zero_profile</code> を含む BUFFER スキーマ拡張、buffermgrd / db_migrator / Mellanox SAI 側挙動は現行 master 未裏取り。</p>
 </div>
-<h1 id="gnmi-gnmi_get-gnmi_set-gnmi_cli">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）<a class="headerlink" href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" title="Permanent link">&para;</a></h1>
+<h1 id="reclaim-reserved-bufferadmin-down-zero_profile">Reclaim Reserved Buffer（admin-down ポートの zero_profile）<a class="headerlink" href="#reclaim-reserved-bufferadmin-down-zero_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の telemetry コンテナには <strong>3 つの gNMI クライアントツール</strong> が <code>/usr/bin</code> に同梱されており、運用検証や疎通確認に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、<strong><code>zero_profile</code> を admin-down ポートに明示的に紐付け、reserved buffer をゼロ化して shared pool に取り戻す</strong> 設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>対象は次の SONiC buffer config 全体<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>gnmi_get</code>: 単一または複数パスの取得（<code>Get</code> RPC）</li>
-<li><code>gnmi_set</code>: <code>update</code> / <code>replace</code> / <code>delete</code> 操作（<code>Set</code> RPC）</li>
-<li><code>gnmi_cli</code>: <code>Subscribe</code> RPC（streaming / polling / once）と <code>Capabilities</code> 取得</li>
+<li><code>BUFFER_PG</code></li>
+<li><code>BUFFER_QUEUE</code></li>
+<li><code>BUFFER_PORT_INGRESS_PROFILE_LIST</code> / <code>BUFFER_PORT_EGRESS_PROFILE_LIST</code></li>
 </ul>
-<p>これらは upstream の <a href="https://github.com/google/gnxi">google/gnxi</a> と <a href="https://github.com/openconfig/gnmi">openconfig/gnmi</a> のツールに、SONiC 用の追加機能を載せた <strong>patched 版</strong> である。パッチは <code>sonic-gnmi/patches/</code> で管理される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ターゲットモデルとして以下を <code>-xpath_target</code> で切り替えられる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>OC-YANG</code>: OpenConfig YANG モデル</li>
-<li><code>SONIC-YANG</code>: SONiC 独自 YANG（CONFIG_DB を YANG で抽象化したもの）</li>
-<li>非 YANG: <code>CONFIG_DB</code> / <code>COUNTERS_DB</code> などの <strong>redis DB を直接</strong> 参照するモード（YANG なしの raw アクセス）</li>
-</ul>
+<p>ポートの admin-down 契機は 2 通り<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>deployment で利用しないポート（INACTIVE port）</li>
+<li>メンテナンスのため一時的 shut down</li>
+</ol>
+<p>両方で reclaim が走る。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    A[client tool\n(gnmi_get / gnmi_set / gnmi_cli)] --&gt;|gRPC :8080\nuser/pass or cert| B[telemetry container\nsonic-gnmi server]
-    B --&gt;|target=OC-YANG| C[transformer\n→ sonic-mgmt-common]
-    B --&gt;|target=SONIC-YANG| D[sonic YANG → CONFIG_DB]
-    B --&gt;|target=CONFIG_DB / COUNTERS_DB| E[redis DB 直接アクセス]</code></pre>
-<h3 id="_4">認証<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>例ではすべて <code>-insecure -username admin -password sonicadmin</code> で TLS 無し + Basic 認証を使っている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本番では証明書ベースの認証を使う想定で、<code>-insecure</code> は検証用フラグ。</p>
-<h3 id="get">Get<a class="headerlink" href="#get" title="Permanent link">&para;</a></h3>
-<p>OpenConfig YANG パス指定で <code>Get</code> する例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gnmi_get<span class="w"> </span>-insecure<span class="w"> </span>-username<span class="w"> </span>admin<span class="w"> </span>-password<span class="w"> </span>sonicadmin<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>-target_addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG
-</span></code></pre></div>
-<p>レスポンスは <code>JSON_IETF</code> エンコードで返り、<code>mtu</code> / <code>name</code> / <code>enabled</code> / <code>type</code> が含まれる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="set">Set<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
-<p>ペイロードは <strong>JSON ファイル</strong> として渡す。<code>-update &lt;path&gt;:@&lt;file&gt;</code> の構文を使う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;mtu&quot;: 9108}&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>mtu.json
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnmi_set<span class="w"> </span>-insecure<span class="w"> </span>-username<span class="w"> </span>admin<span class="w"> </span>-password<span class="w"> </span>sonicadmin<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-update<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config/mtu:@./mtu.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG
-</span></code></pre></div>
-<p><code>Set</code> RPC の戻りは <code>op: UPDATE</code>（または <code>REPLACE</code> / <code>DELETE</code>）と該当パスのみで、内容は返さない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="capabilities">Capabilities<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h3>
-<p>サーバが対応する YANG モデル一覧と encoding を取得する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gnmi_cli<span class="w"> </span>-insecure<span class="w"> </span>-with_user_pass<span class="w"> </span>-capabilities<span class="w"> </span>-address<span class="w"> </span><span class="m">127</span>.0.0.1:8080
-</span></code></pre></div>
-<p>例の応答には <code>openconfig-acl 1.0.2</code> / <code>openconfig-system-ext 0.10.0</code> / <code>openconfig-lacp 1.1.1</code> / <code>openconfig-platform 0.12.3</code> などが並ぶ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実環境のバージョンは telemetry コンテナのビルド時点に依存する。</p>
-<h3 id="subscribe">Subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
-<p><code>Subscribe</code> は streaming / polling / once の 3 種類を <code>-query_type</code> と <code>-streaming_type</code> で指定する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_cli<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-address<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-query_type<span class="w"> </span>s<span class="w"> </span>-streaming_type<span class="w"> </span>TARGET_DEFINED<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-q<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/state/oper-status<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-target<span class="w"> </span>OC-YANG<span class="w"> </span>-with_user_pass
-</span></code></pre></div>
-<p>オプション意味<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_3">「単純削除」では起きる不整合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、HLD はこれを否定する。SAI / SDK は <strong>「設定が無いとき = SDK default 値（一部は非ゼロ）」</strong> であり、設定削除（<code>SAI_NULL_OBJECT_ID</code>）すると <strong>0 にリセット</strong> される。結果、</p>
 <ul>
-<li><code>-query_type s</code>: streaming (<code>o</code> = once, <code>p</code> = polling)</li>
-<li><code>-streaming_type TARGET_DEFINED</code>: ターゲット側がモード（ON_CHANGE / SAMPLE）を選ぶ</li>
-<li><code>-with_user_pass</code>: 標準入力から user/pass を促す</li>
+<li>起動時設定なし → SDK default（非ゼロ）</li>
+<li>起動後に削除 → 0</li>
 </ul>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CL as gnmi_cli
-    participant SV as sonic-gnmi (telemetry)
-    CL-&gt;&gt;SV: SubscribeRequest(stream=TARGET_DEFINED)
-    SV--&gt;&gt;CL: SubscribeResponse (initial sync)
-    SV--&gt;&gt;CL: SubscribeResponse (update)
-    SV--&gt;&gt;CL: SubscribeResponse (update)</code></pre>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ツール側は CONFIG_DB を <strong>直接読まない</strong>（gNMI 経由）。<code>-xpath_target CONFIG_DB</code> を指定した場合、サーバ側で redis から読み出す。telemetry サーバの認証 / 証明書設定 (<code>TELEMETRY</code> テーブル等) は本ページのスコープ外。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>という同じ「設定なし」状態で ASIC 側が異なる、という不整合になる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="zero_profile"><code>zero_profile</code> 解（採用）<a class="headerlink" href="#zero_profile" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    PORT[port admin-down] --&gt; BMGR[BufferManager]
+    BMGR --&gt;|profile &lt;- zero_profile| PG[(BUFFER_PG zero_profile)]
+    BMGR --&gt;|profile &lt;- zero_profile| Q[(BUFFER_QUEUE zero_profile)]
+    BMGR --&gt;|list &lt;- zero_profile_list| LIST[(BUFFER_PORT_INGRESS / EGRESS\nPROFILE_LIST)]
+    PG --&gt; APPL[(APPL_DB)]
+    Q --&gt; APPL
+    LIST --&gt; APPL
+    APPL --&gt; BORCH[buffer orchagent]
+    BORCH --&gt; SAI[(SAI buffer\nsize/threshold = 0)]</code></pre>
+<p><code>zero_profile</code> の中身（Mellanox 例）:</p>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>対象</th>
+<th>profile mode</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>gnmi_get</code></td>
-<td>単一/複数パスの <code>Get</code>。<code>-xpath</code> を複数回指定可</td>
+<td>Lossy PG</td>
+<td>static threshold</td>
+<td><code>static_th = 0</code>, <code>size = 0</code>、<code>zero_pool</code> に紐付け（pool size 0）</td>
 </tr>
 <tr>
-<td><code>gnmi_set</code></td>
-<td><code>-update</code> / <code>-replace</code> / <code>-delete</code> で書き込み・削除</td>
+<td>Queue / Profile list</td>
+<td>dynamic threshold</td>
+<td><code>size = 0</code></td>
 </tr>
 <tr>
-<td><code>gnmi_cli</code></td>
-<td><code>Subscribe</code> (streaming/polling/once) と <code>Capabilities</code></td>
+<td>Lossless PG</td>
+<td>（profile を当てず）SAI から完全に削除する</td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>すべて telemetry コンテナの <code>/usr/bin</code> 配下にインストールされる<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは特定のものに紐付かない（gNMI 全モデル横断の操作ツール）。</p>
+<p><strong>lossless PG</strong> は zero_profile ではなく <strong>SAI から完全削除</strong>。<code>SAI_NULL_OBJECT_ID</code> で削除しても結果が 0 になる対象（HLD 引用部）であるため<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">起動条件<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>traditional buffer model</strong>: deployment 時に未使用ポートが分かっていれば最初から <code>zero_profile</code> 適用。途中で <code>config interface shutdown</code> した場合は user の責任で profile 適用<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>dynamic buffer model</strong>: 未使用ポートが 1 つでもあれば <code>zero_profile</code> を <code>APPL_DB</code> に push。ランタイムで buffer manager が自動 toggle</li>
+</ul>
+<h3 id="database-migrator">Database migrator<a class="headerlink" href="#database-migrator" title="Permanent link">&para;</a></h3>
+<p>旧イメージから upgrade した system に対し、<code>db_migrator</code> が admin-down ポートの BUFFER 設定を <code>zero_profile</code> 紐付けに書き換える<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="vendor">Vendor 別<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h3>
+<p>zero_profile を template で提供している vendor のみ採用。それ以外は HLD のいう「buffer 設定削除」方式に従う（不整合は受け入れる）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/qos/reclaim-reserved-buffer.md#L66-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  - For lossless buffer priority groups, SONiC should remove them from SAI when the port is admin down.
+  - For other buffer objects: Introduce a new type of buffer profiles - `zero profile`.
+reasoning: lossless PG は削除、それ以外は zero_profile という分担の根拠。
+-->
+
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>HLD 内で reclaim 専用の CLI 言及は無い。<code>config interface shutdown</code> / <code>startup</code> のフックとして buffer manager が自動で <code>zero_profile</code> を着脱する設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>zero_profile</code> 系は <strong>テンプレート（buffers_config.j2）に同梱</strong> される vendor 提供データ。CONFIG_DB に手書きする運用は想定されない。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>patched 版</strong>: SONiC 用にいくつかの拡張が当たった派生バイナリで、upstream の <code>google/gnxi</code> / <code>openconfig/gnmi</code> のリリース版とフラグや挙動が一致しない可能性がある<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong><code>-insecure</code> は検証用</strong>: 本番では TLS + 証明書認証を使う想定</li>
-<li><strong>target 切り替えが必須</strong>: <code>-xpath_target</code> 未指定で OC-YANG のパスを叩くと target 解決に失敗する</li>
-<li><strong>JSON_IETF 固定</strong>: 例はすべて <code>json_ietf_val</code>。<code>json_val</code> / <code>proto_val</code> 等の他 encoding は別途 capabilities の応答に依存</li>
+<li><strong>vendor が zero_profile テンプレートを提供している platform 限定</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>traditional buffer model でランタイム shutdown した場合、user 側で profile を当てる必要あり</li>
+<li>shared headroom pool model など vendor 固有の buffer model 差異がそのまま zero_profile 定義に反映される</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>gNMI Master Arbitration</strong>: <code>gnmi_set</code> を使う場合、サーバが Master Arbitration を有効化していると <code>MasterArbitration</code> 拡張なしの <code>Set</code> は <code>PermissionDenied</code> で落ちる</li>
-<li><strong>gNMI 認証 / RBAC</strong>: <code>-username</code> / <code>-password</code> のロールに応じて <code>Set</code> 権限が制限される</li>
-<li><strong>CONFIG_DB / COUNTERS_DB の sonic-mgmt-common 経由アクセス</strong>: <code>-xpath_target SONIC-YANG</code> を使うと sonic-mgmt-common の transformer 経路を経由する</li>
+<li><strong>Dynamic Buffer Calculation</strong>: 同じ buffer manager が司る。dynamic mode では shutdown 時の自動 reclaim が標準動作になる</li>
+<li><strong>db_migrator</strong>: 旧 image からの upgrade 時に admin-down ポートを zero_profile に置換</li>
+<li><strong>PFC / lossless</strong>: lossless PG は zero_profile ではなく削除なので、enable し直しの順序に注意</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Unimplemented</code> 系エラー: 指定 <code>-xpath_target</code> が telemetry サーバで有効化されていない</li>
-<li><code>Connection refused</code>: telemetry コンテナが起動していない／ポート 8080 が他用途</li>
-<li><code>Capabilities</code> の応答にあるモデルバージョンと、クライアントが期待するバージョンが食い違う場合、telemetry コンテナのビルドバージョンを確認</li>
+<li>shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか APPL_DB で確認</li>
+<li>lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- patched 版バイナリの差分（gnmi_get/set/cli）の内容
-- -xpath_target の有効値リスト（CONFIG_DB / COUNTERS_DB / OC-YANG / SONIC-YANG ほか）
-- telemetry コンテナでの実際のインストールパスと bin 名（master 現行）
-- sonic-mgmt-common transformer の現行 OpenConfig モデル対応状況
-- TLS / 証明書認証経路の標準的な手順（このドキュメントは insecure 例のみ）
+- buffermgrd の admin-down hook で zero_profile を APPL_DB に push する実装存在確認
+- BUFFER_PG / BUFFER_QUEUE / BUFFER_PORT_*_PROFILE_LIST の YANG 取り込み確認（zero_profile 受け入れ）
+- db_migrator の admin-down ポート処理ロジック実装確認
+- Mellanox SAI 側で zero_pool / zero profile を受けて size=0 になる挙動確認
+- vendor 別実装差異（zero_profile 提供の有無）の現行 sonic-buildimage 内ベンダーディレクトリ確認
+- shared headroom pool model など複数 buffer model における zero_profile 互換性確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-gnmi</code> <code>doc/gNMI_usage_examples.md</code> @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/qos/reclaim-reserved-buffer.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
