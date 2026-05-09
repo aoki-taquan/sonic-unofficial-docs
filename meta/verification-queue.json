@@ -177,6 +177,21 @@
       "pr": 483
     },
     {
+      "page": "docs/management/json-patch-ordering-using-yang-models.md",
+      "verification": "hld-only",
+      "concerns": [
+        "generic_config_updater 内 patch_orderer 実装の現行 master 取り込みと探索アルゴリズム実装確認 (DFS + memoization)",
+        "sonic-extension.yang への create-only 拡張追加状況確認",
+        "sonic-port.yang の lanes leaf に create-only が付与されているか確認",
+        "sonic-yang-mgmt の sonic_yang.find_data_dependencies / validate_data_tree が現行で利用可能か確認",
+        "Dynamic Port Breakout のリアル apply-patch シナリオでの結果 JsonChange 列が HLD 想定と一致するか確認",
+        "大規模 patch への scalability heuristics の追加実装状況確認",
+        "本 HLD は 2021 年版で 5 年経過。priority=high で queue 登録"
+      ],
+      "priority": "high",
+      "issue": 499
+    },
+    {
       "page": "docs/management/p4rt-application-hld.md",
       "issue": 244,
       "verification": "discrepancy-found",
