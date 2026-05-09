@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/1-udev-rules-design-for-terminal-server/">
       
       
-        <link rel="prev" href="../sonic-port-configuration-refactor-design/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../../routing/">
+        <link rel="next" href="../build-profiles/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） - SONiC 非公式ドキュメント</title>
+        <title>ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ssd-show-platform-ssdhealth-ssdutil" class="md-skip">
+        <a href="#ttyusb-symlink-udev-rules" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+              ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
             
           </span>
         </div>
@@ -633,10 +633,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -652,6 +679,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#udev-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        udev rules 概観
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udevadm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        udevadm で属性取得
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#816" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例: 8〜16 ポート構成のルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        故障時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -885,37 +1098,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -931,281 +1117,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンドのチェーン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ssdhealth ユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4790,52 +4701,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#udev-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI
+        udev rules 概観
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -4843,7 +4715,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンドのチェーン
+        設計の前提
       
     </span>
   </a>
@@ -4851,10 +4723,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
+  <a href="#udevadm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ssdhealth ユーティリティ
+        udevadm で属性取得
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#816" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例: 8〜16 ポート構成のルール
       
     </span>
   </a>
@@ -4865,68 +4748,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
+        故障時の挙動
       
     </span>
   </a>
@@ -4939,7 +4761,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4951,10 +4773,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        CLI / CONFIG_DB / YANG
       
     </span>
   </a>
@@ -4962,10 +4784,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        設定例
       
     </span>
   </a>
@@ -5038,7 +4860,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/ssdhealth-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/1-udev-rules-design-for-terminal-server.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5047,224 +4869,166 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-utilities/scripts/ssdhealth</code>、<code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code>、ベンダ別 <code>ssdutil.py</code>、Pmon <code>ssdmond</code> のいずれも実装裏取り未済。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>本 HLD は 2020-07 改訂のターミナルサーバ向け設計で、ハードウェアトポロジ依存（usb hub + cp210x チップ）。<code>/etc/udev/rules.d/</code> への配置形式、現行 SONiC platform 配下での提供有無は実コードでの裏取り未済。</p>
 </div>
-<h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
+<h1 id="ttyusb-symlink-udev-rules">ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計<a class="headerlink" href="#ttyusb-symlink-udev-rules" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
-<p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに複数のシリアルポートを持ち、内部で <strong>USB hub + USB-to-UART (例: cp210x) チップ</strong> を介して <code>/dev/ttyUSB&lt;N&gt;</code> に枚挙される。標準では <code>ttyUSB0</code>〜<code>ttyUSB(n-1)</code> という順序付けだが、<strong>1 つのポートが故障すると枚挙が詰まり</strong> <code>ttyUSB0</code> 以降の number と front-panel 番号の対応が崩れる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は <strong>udev rules で安定した symlink</strong> を生成し、front-panel 番号と <code>/dev/Mytty-&lt;N&gt;</code> 名の <strong>物理的な対応を固定</strong> する設計を示す。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
+<h3 id="udev-rules">udev rules 概観<a class="headerlink" href="#udev-rules" title="Permanent link">&para;</a></h3>
+<p>udev は <strong>マッチ</strong> と <strong>アクション</strong> で構成される。例<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACTION==&quot;add&quot;, KERNELS==&quot;1-1.1.3&quot;, ATTRS{devpath}==&quot;1.1.3&quot;,
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ATTRS{idProduct}==&quot;2303&quot;, ATTRS{idVendor}==&quot;067b&quot;,
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>SYMLINK+=&quot;myttypl2303&quot;
 </span></code></pre></div>
-<p>3 つの表示モード<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="brief">Brief（既定）<a class="headerlink" href="#brief" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic-switch: ~$ show platform ssdhealth
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Device Model : InnoDisk Corp. - mSATA 3ME
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Health: 72.9%
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Temperature: N/A
+<p><code>==</code> がマッチ、<code>SYMLINK+=</code> がアクション。</p>
+<h3 id="_3">設計の前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>ターミナルサーバの <strong>物理構成は確定</strong> している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>USB hub のチップ種別と port 番号</li>
+<li>USB-to-UART チップ種別と interface 番号</li>
+<li>front-panel ポート ↔ (hub port, UART interface) のマッピング</li>
+</ol>
+<p>これらが固定なら <strong><code>KERNELS</code> / <code>DRIVERS</code> / <code>ATTRS{bInterfaceNumber}</code></strong> をマッチ条件にできる。</p>
+<pre class="mermaid"><code>graph TD
+    HUB[USB hub&lt;br/&gt;(SMSC USB2517)]
+    HUB --&gt; P1[hub port 1]
+    HUB --&gt; P2[hub port 2]
+    HUB --&gt; P3[hub port 3]
+    HUB --&gt; P4[hub port 4]
+    P1 --&gt; U1[cp210x A&lt;br/&gt;4 interfaces]
+    P2 --&gt; U2[cp210x B&lt;br/&gt;4 interfaces]
+    U1 --&gt; FP[front-panel ports 1-4]
+    U2 --&gt; FP2[front-panel ports 5-8]</code></pre>
+<h3 id="udevadm"><code>udevadm</code> で属性取得<a class="headerlink" href="#udevadm" title="Permanent link">&para;</a></h3>
+<p>各 <code>/dev/ttyUSB*</code> の親階層を辿るには<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>udevadm<span class="w"> </span>info<span class="w"> </span>-a<span class="w"> </span>-n<span class="w"> </span>/dev/ttyUSB0
 </span></code></pre></div>
-<h4 id="verbose">Verbose<a class="headerlink" href="#verbose" title="Permanent link">&para;</a></h4>
-<p><code>FW Version</code> / <code>Serial Number</code> / <code>Capacity</code> / <code>Power On Hours</code> / <code>Power Cycle count</code> 等を追加表示。</p>
-<h4 id="vendor">Vendor<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h4>
-<p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">コマンドのチェーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>得られる階層:</p>
+<table>
+<thead>
+<tr>
+<th>階層</th>
+<th>種別</th>
+<th>主な属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>top</td>
+<td>root hub</td>
+<td>(root_hub)</td>
+</tr>
+<tr>
+<td>2nd</td>
+<td>usb hub</td>
+<td><code>idVendor=0424</code>, <code>idProduct=2517</code></td>
+</tr>
+<tr>
+<td>3rd</td>
+<td>USB-to-UART (cp210x)</td>
+<td><code>idVendor=10c4</code>, <code>idProduct=ea71</code></td>
+</tr>
+<tr>
+<td>bottom</td>
+<td>ttyUSB</td>
+<td><code>bInterfaceNumber</code>, <code>interface</code>（CP2108 Interface N）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="816">例: 8〜16 ポート構成のルール<a class="headerlink" href="#816" title="Permanent link">&para;</a></h3>
+<p><code>Mytty-N</code> 形式で安定 symlink を作る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>KERNELS==&quot;1-1.1.1:1.0&quot;, DRIVERS==&quot;cp210x&quot;, ATTRS{bInterfaceNumber}==&quot;00&quot;,
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ATTRS{interface}==&quot;CP2108 Interface 0&quot;, SYMLINK+=&quot;Mytty-1&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>KERNELS==&quot;1-1.1.1:1.1&quot;, DRIVERS==&quot;cp210x&quot;, ATTRS{bInterfaceNumber}==&quot;01&quot;,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ATTRS{interface}==&quot;CP2108 Interface 1&quot;, SYMLINK+=&quot;Mytty-2&quot;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>KERNELS==&quot;1-1.1.1:1.2&quot;, DRIVERS==&quot;cp210x&quot;, ATTRS{bInterfaceNumber}==&quot;02&quot;,
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ATTRS{interface}==&quot;CP2108 Interface 2&quot;, SYMLINK+=&quot;Mytty-3&quot;
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>KERNELS==&quot;1-1.1.1:1.3&quot;, DRIVERS==&quot;cp210x&quot;, ATTRS{bInterfaceNumber}==&quot;03&quot;,
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ATTRS{interface}==&quot;CP2108 Interface 3&quot;, SYMLINK+=&quot;Mytty-4&quot;
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>KERNELS==&quot;1-1.1.2:1.0&quot;, ..., SYMLINK+=&quot;Mytty-5&quot;
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>KERNELS==&quot;1-1.1.2:1.1&quot;, ..., SYMLINK+=&quot;Mytty-6&quot;
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>... (続く)
+</span></code></pre></div>
+<p>ポイント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>KERNELS</code> で <strong>USB バス位置</strong> を物理的に固定（<code>1-1.1.&lt;hub_port&gt;:1.&lt;interface&gt;</code>）</li>
+<li><code>ATTRS{bInterfaceNumber}</code> で UART チップの interface index を判別</li>
+<li><code>SYMLINK+=</code> は <strong>追記</strong> なので元の <code>ttyUSB&lt;N&gt;</code> も残る</li>
+</ul>
+<h3 id="_4">故障時の挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>USB hub の port 2 配下の cp210x が壊れると、kernel は <code>ttyUSB0..3</code> を hub port 1 配下に、<code>ttyUSB4..7</code> を hub port 3 配下に枚挙する（ttyUSB4 が <strong>front-panel ポート 9</strong> に対応するなど <strong>番号がずれる</strong>）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    USER[user] --&gt; SHOW[show platform ssdhealth\n(show/main.py)]
-    SHOW --&gt;|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
-    UTIL --&gt; BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
-    BASE --&gt; VENDOR[SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)]
-    BASE -.fallback.-&gt; SCTL[smartctl]
-    VENDOR --&gt; ISMART[iSmart / SmartCmd 等\nベンダ純正]
-    UTIL --&gt; OUT[stdout]</code></pre>
-<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ。コア処理は <code>ssdhealth</code> スクリプト側にある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ssdhealth"><code>ssdhealth</code> ユーティリティ<a class="headerlink" href="#ssdhealth" title="Permanent link">&para;</a></h3>
-<p>新規スクリプト。配置は <code>sonic-utilities/scripts/</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>usage: ssdhealth -d DEVICE [-h] [-v] [-e]
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -d, --device          disk device to get information for
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  -v, --verbose         show verbose output (more parameters)
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -e, --vEndor          show vendor specific disk information
+    F1[FP 1] --- T0[ttyUSB0]
+    F2[FP 2] --- T1[ttyUSB1]
+    F3[FP 3] --- T2[ttyUSB2]
+    F4[FP 4] --- T3[ttyUSB3]
+    F5[FP 5 / hub port 2 故障] -.-x XX[ttyUSB なし]
+    F9[FP 9] --- T4[ttyUSB4]</code></pre>
+<p><code>Mytty-N</code> 化していれば運用者は <strong><code>Mytty-1</code> 〜 <code>Mytty-12</code></strong> の名前で常に front-panel 番号通りにアクセスできる。<code>Mytty-5</code> 〜 <code>Mytty-8</code>（壊れた hub port 2 配下）は<strong>作成されない</strong>ため、欠損が分かる:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ ls /dev/Mytty*
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>/dev/Mytty-1 -&gt; ttyUSB0
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>/dev/Mytty-2 -&gt; ttyUSB1
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>/dev/Mytty-3 -&gt; ttyUSB2
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>/dev/Mytty-4 -&gt; ttyUSB3
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>/dev/Mytty-9 -&gt; ttyUSB4
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>/dev/Mytty-10 -&gt; ttyUSB5
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>/dev/Mytty-11 -&gt; ttyUSB6
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>/dev/Mytty-12 -&gt; ttyUSB7
 </span></code></pre></div>
-<p>中で <code>SsdUtil</code> プラグインを import し、後述の API を呼んで結果を整形する設計。<code>-d</code> で device path を取るので <code>show</code> 側で <code>/dev/sda</code> 等を渡す<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">プラグイン構造<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>二段で抽象化する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="ssdbase">抽象クラス <code>SsdBase</code><a class="headerlink" href="#ssdbase" title="Permanent link">&para;</a></h4>
-<ul>
-<li>配置: <code>sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code></li>
-<li>役割: 汎用 API のジェネリック実装。既知の disk なら専用ユーティリティ、それ以外は <code>smartctl</code> 系へフォールバック。<strong>smartctl の DB に無いモデル</strong> は情報の一部が取得不能 or 不完全になりうる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h4 id="ssdutilssdbase">ベンダ実装 <code>SsdUtil</code>（<code>SsdBase</code> を継承）<a class="headerlink" href="#ssdutilssdbase" title="Permanent link">&para;</a></h4>
-<ul>
-<li>配置: <code>sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py</code></li>
-<li>役割: ベンダ提供ツールの出力をパースして API を実装。InnoDisk なら <code>iSmart</code>、StorFly / Virtium なら <code>SmartCmd</code> を呼ぶ前提<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<pre class="mermaid"><code>classDiagram
-    class SsdBase {
-        +get_disk_health(diskdev) float
-        +get_temperature(diskdev) string
-        +get_model(diskdev) string
-        +get_firmware(diskdev) string
-        +get_serial(diskdev) string
-        +get_vendor_output(diskdev) string
-    }
-    class SsdUtil
-    SsdBase &lt;|-- SsdUtil</code></pre>
-<h3 id="api">API 仕様<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p><code>SsdBase</code> / <code>SsdUtil</code> が公開する API<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>メソッド</th>
-<th>戻り値</th>
-<th>取得不可時</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>get_disk_health(diskdev)</code></td>
-<td>float（0〜100、% 表現）</td>
-<td><code>-1</code></td>
-</tr>
-<tr>
-<td><code>get_temperature(diskdev)</code></td>
-<td>string（摂氏）</td>
-<td><code>0</code></td>
-</tr>
-<tr>
-<td><code>get_model(diskdev)</code></td>
-<td>string（人読 model）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_firmware(diskdev)</code></td>
-<td>string（FW バージョン）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_serial(diskdev)</code></td>
-<td>string（シリアル）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_vendor_output(diskdev)</code></td>
-<td>string（ベンダツール出力そのまま）</td>
-<td>空文字</td>
-</tr>
-</tbody>
-</table>
-<p>引数はいずれも <code>diskdev:string</code>（例: <code>/dev/sda</code>）。</p>
-<h3 id="_5">利用するユーティリティ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>HLD で挙げられているもの<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>ツール</th>
-<th>用途</th>
-<th>サイズ感</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>smartctl</code> (smartmontools)</td>
-<td>汎用 SMART 取得</td>
-<td>約 1.9M</td>
-<td><code>SsdBase</code> の fallback</td>
-</tr>
-<tr>
-<td><code>iSmart</code></td>
-<td>InnoDisk 製 SSD</td>
-<td>&lt;120K</td>
-<td>InnoDisk 公式配布のバイナリ</td>
-</tr>
-<tr>
-<td><code>SmartCmd</code></td>
-<td>StorFly / Virtium</td>
-<td>約 2.2M</td>
-<td>ベンダ専用</td>
-</tr>
-</tbody>
-</table>
-<p><code>smartctl</code> 同梱は <code>sonic-net/sonic-buildimage</code> PR 2703 で提案されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="optional-pmon-ssdmond">Optional: pmon <code>ssdmond</code><a class="headerlink" href="#optional-pmon-ssdmond" title="Permanent link">&para;</a></h3>
-<p>HLD は <strong>オプション</strong> として、pmon に常駐するデーモン <code>ssdmond</code> を提案している<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>周期的に <code>get_health()</code> を呼び出す。</li>
-<li>値が <strong>クリティカルしきい値を割った時にアラート</strong> を上げる。</li>
-<li>HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Class SsdBase
-  Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
-  Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
-  Class SsdUtil
-  Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
-  Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
-reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
--->
-
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show platform ssdhealth</code></td>
-<td>簡易表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth verbose</code></td>
-<td>詳細表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth vendor</code></td>
-<td>ベンダツール生出力</td>
-</tr>
-<tr>
-<td><code>ssdhealth -d /dev/sdX [-v|-e]</code></td>
-<td>内部ラッパが呼ぶスクリプトを直接実行</td>
-</tr>
-</tbody>
-</table>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
+<p>本 HLD は SONiC 内部 DB との対話を <strong>持たない</strong>。<code>/etc/udev/rules.d/</code> 配下に platform 固有 udev rules ファイルを配置するだけ。</p>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>例えば <code>/etc/udev/rules.d/99-terminal-server.rules</code> に上記ルールを保存し:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># rules を再読込</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 確認</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>ls<span class="w"> </span>-l<span class="w"> </span>/dev/Mytty*
+</span></code></pre></div>
+<p><code>udevadm info -a -n /dev/ttyUSB0</code> で属性を確認しながら新ハードに合わせ <code>KERNELS</code> 値を調整する。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>smartctl のデータベースに無い disk</strong> は health / 温度の取得が <strong>N/A</strong> になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダプラグインが用意されていないプラットフォームは <code>SsdBase</code> の fallback（smartctl）に依存。<code>vendor</code> モードの出力は基本的に空。</li>
-<li>pmon デーモン (<code>ssdmond</code>) は <strong>オプション</strong> であり、HLD では Open Question として残っている。常時監視・アラート発火が必要なら別途実装の確認が必要<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>値が取れない場合の表現が API ごとに異なる（health=<code>-1</code>、temp=<code>0</code>、文字列系=空）。<code>0 ℃</code> と「取得不可」が同義になり得る点に注意<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ハードウェア接続の物理関係に強く依存</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。USB hub の port 番号や cp210x チップの ID が変わると rules 全書き換え</li>
+<li>udev rules は <strong>kernel 経由のデバイス出現</strong> に依存するため、device 自体が detect されない場合は症状を救えない</li>
+<li><code>KERNELS=="1-1.1.1:1.0"</code> の形式は <strong>ホスト USB トポロジに固定</strong> され、<code>/sys</code> 階層が変われば破綻</li>
+<li><code>Mytty-X</code> のような任意名は他 udev rules / アプリと衝突しないよう運用上注意</li>
+<li>HLD は 2020 年と古い。現行 SONiC で配布される standard udev rules セットがあるかは別途確認</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>pmon (Platform Monitor)</strong>: <code>ssdmond</code> を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。</li>
-<li><strong>smartmontools / smartctl パッケージ</strong>: ビルドイメージに 1.9M 程度の追加。<code>sonic-buildimage</code> 側のパッケージ取り込みに依存<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>plugin 配置規約</strong>: <code>device/{{vendor}}/platform/plugins/ssdutil.py</code> は <strong>プラットフォームプラグインの一般則</strong> に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。</li>
-<li><strong>SNMP</strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>kernel USB スタック / cp210x ドライバ</strong>: マッチ対象の前提</li>
+<li><strong><code>udev</code></strong>: rules 評価エンジン</li>
+<li><strong>terminal server 用 daemon (rfconsoled / minicom 等)</strong>: <code>Mytty-N</code> を使ってアクセス</li>
+<li><strong>platform 固有スクリプト</strong>: rules ファイルの配置 / 維持</li>
+<li><strong><code>/dev/ttyUSB&lt;N&gt;</code> を直接参照する既存スクリプト</strong>: symlink 利用に切替を要する</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Health: N/A</code>: smartctl が当該 disk を識別できていない可能性。<code>smartctl -i /dev/sdX</code> で raw に確認。ベンダプラグインが装備されているか <code>device/&lt;vendor&gt;/platform/plugins/ssdutil.py</code> の存在を確認。</li>
-<li><code>vendor</code> モードが空: <code>SsdUtil</code> の <code>get_vendor_output()</code> が未実装、もしくはベンダツールバイナリが image に含まれていない。</li>
-<li><code>Temperature: 0</code> と <code>N/A</code> の区別: API の戻り値仕様上、温度の取得不可は <code>0</code> となる。<code>0℃</code> と取得不可が見分けにくい点は HLD の制約<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>show platform ssdhealth</code> が <code>command not found</code>: <code>show/main.py</code> の <code>platform</code> メニューに項目が登録されているか、<code>ssdhealth</code> スクリプトが PATH にあるかを確認。</li>
+<li><code>Mytty-N</code> ができない → <code>udevadm info -a -n /dev/ttyUSBn</code> で <code>KERNELS</code> / <code>bInterfaceNumber</code> が rules と一致するか確認</li>
+<li><code>udevadm control --reload-rules</code> 後も symlink が古い → <code>udevadm trigger</code> を実行</li>
+<li>一部 port が常に欠損 → hub の物理故障 / cp210x 認識失敗 (<code>dmesg</code>) を確認</li>
+<li>別ハードで rules を流用したら全滅 → <code>KERNELS</code> の bus 位置がハードに依存。新ハードで <code>udevadm info -a</code> で属性を改めて確認</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- terminal server 機能を提供する SONiC platform リポでの udev rules 配布有無確認
+- /etc/udev/rules.d/ 配置パスと命名規約（platform 別 rules ファイル）の現行確認
+- cp210x ドライバが提供する ATTRS{interface} 名（"CP2108 Interface N"）が ASIC ベンダ依存で変わる可能性
+- 故障 USB hub port 検出を syslog / SNMP に通知する仕組みの有無確認
+- HLD は 2020 年改訂のため現行 master との乖離リスクあり
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/ssdhealth/ssdhealth_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/udev-terminalserver/udev rules for Terminal Server.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
