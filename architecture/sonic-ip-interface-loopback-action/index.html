@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/dhcp-dos-mitigation-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-ip-interface-loopback-action/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../port-illegal-packets-drop-design/">
       
       
-        <link rel="next" href="../watermark-counters-in-sonic/">
+        <link rel="next" href="../../routing/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース） - SONiC 非公式ドキュメント</title>
+        <title>IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dhcp-dos-dhcp-linux-tc" class="md-skip">
+        <a href="#ip-rif-dropforward" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+              IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -335,13 +337,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -558,20 +560,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -589,13 +594,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -615,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -640,10 +645,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -659,6 +691,236 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時 vs runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI バリデーション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定不在時のデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmfast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm/Fast boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1137,8 +1399,6 @@
       
   
   
-    
-  
   
   
     
@@ -1158,23 +1418,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -1192,13 +1449,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1215,37 +1472,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -1261,214 +1491,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体アーキテクチャ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tc 投入の中身
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視デーモン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        シーケンス（追加 / 削除）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / DB Migrator
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warmfast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm/Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1481,7 +1503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1509,7 +1531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -2501,7 +2523,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体アーキテクチャ
+        全体経路
       
     </span>
   </a>
@@ -2509,10 +2531,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tc" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        tc 投入の中身
+        SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時 vs runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI バリデーション
       
     </span>
   </a>
@@ -2523,29 +2578,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監視デーモン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        シーケンス（追加 / 削除）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / DB Migrator
+        設定不在時のデフォルト
       
     </span>
   </a>
@@ -2569,7 +2602,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2592,7 +2625,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -2614,7 +2658,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -2630,7 +2674,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2641,7 +2685,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2652,7 +2696,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2679,7 +2723,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/dhcp-dos-mitigation-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-ip-interface-loopback-action.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2689,78 +2733,96 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>portmgrd</code> の TC 投入ロジック、<code>db_migrator.py</code> の <code>dhcp_rate_limit</code> 既定値挿入、ドロップ監視デーモンの実装、CoPP デフォルト値削除との整合は未裏取り。</p>
+<p>このページは公式 HLD のみを根拠に書かれている。<code>intfmgrd</code> / <code>intfsorch</code> の <code>loopback_action</code> ハンドラ実装、SAI 1.x の <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> 対応状況、CLI 実装は未裏取り。</p>
 </div>
-<h1 id="dhcp-dos-dhcp-linux-tc">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）<a class="headerlink" href="#dhcp-dos-dhcp-linux-tc" title="Permanent link">&para;</a></h1>
+<h1 id="ip-rif-dropforward">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）<a class="headerlink" href="#ip-rif-dropforward" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DHCP DoS 攻撃は、攻撃者が偽装 MAC で大量の DHCP DISCOVER パケットを送出し、DHCP サーバの CPU / メモリ / アドレス処理を消耗させて正規クライアントへの応答を妨げる手口である。SONiC の従来挙動では <strong>CoPP のデフォルトで DHCP を 300 packets/sec のシステム全体レート</strong> に絞っているが、システム全体で共有しているため、単一ポートからの flood が同 VLAN の正規クライアントの DISCOVER までドロップさせてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は <strong>ポート単位</strong> での DHCP レート制限に切り替え、被害ドメインを攻撃ポートのみに局所化する。SAI / ASIC のオフロードではなく <strong>Linux Traffic Control (tc) の ingress qdisc + filter</strong> をホスト側で使う設計で、<code>portmgrd</code> が CONFIG_DB の <code>dhcp_rate_limit</code> を読み取り、対応する <code>tc</code> コマンドをカーネルに投入する。SAI API の追加・変更は無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>スコープは <strong>DHCP DoS のみ</strong>。DHCP Starvation 攻撃の緩和（DHCP Snooping）は将来作業として明記されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ルータが受信したパケットをルーティングテーブルに従って転送した結果、<strong>同じ RIF (Router Interface) から出ていく</strong> ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる <em>ASIC ループバック</em> / <em>bounce</em> 現象。SAI のデフォルト挙動はそのまま <strong>forward</strong> で、これによってループや帯域の浪費が起こり得る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は IP インタフェース単位で <strong><code>drop</code> / <code>forward</code></strong> を選択できるようにし、<code>drop</code> 設定時は ASIC レベルで出戻りパケットをハードウェアドロップする。<code>drop</code> でドロップされたパケットは <strong>RIF カウンタの <code>TX_ERR</code></strong> に計上される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定を持たない既存インタフェースは従来どおり SAI 既定の <code>forward</code> で振る舞う。</p>
+<p>サポート対象インタフェース<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>INTERFACE</code> (Ethernet)</li>
+<li><code>VLAN_INTERFACE</code> (interface vlan)</li>
+<li><code>PORTCHANNEL_INTERFACE</code></li>
+<li><code>VLAN_SUB_INTERFACE</code> (subinterface)</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体アーキテクチャ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    User[CLI\nconfig interface dhcp-mitigation-rate] --&gt; CDB[(CONFIG_DB\nPORT.dhcp_rate_limit)]
-    CDB --&gt;|subscribe| PORTMGR[portmgrd\n(SwSS container)]
-    PORTMGR --&gt;|tc qdisc / filter add| KERN[Linux Kernel\ntc ingress]
-    KERN --&gt;|UDP/67 を policer\nで rate-limit| ASIC[ASIC へ転送]
-    DAEMON[ドロップ監視デーモン] -.-&gt;|tc qdisc -s 監視| KERN
-    DAEMON --&gt; LOG[ログファイル\n(運用者向けアラート)]</code></pre>
-<p>CoPP 側のシステム全体 DHCP レート制限（300 pps）は <strong>削除</strong> され、DHCP パケットは ASIC を通って ホストカーネルの <code>tc</code> まで届くようになる。そこで TC filter が DHCP DISCOVER を識別し、ポート単位の policer で超過分をドロップする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="tc"><code>tc</code> 投入の中身<a class="headerlink" href="#tc" title="Permanent link">&para;</a></h3>
-<p>ポートに対して <code>dhcp_rate_limit</code> を有効化するときに <code>portmgrd</code> は次の 3 段を実行する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. ingress qdisc を当該インタフェースに作る</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>tc<span class="w"> </span>qdisc<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>handle<span class="w"> </span>ffff:<span class="w"> </span>ingress
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. UDP / 宛先ポート 67 にマッチする filter + policer を追加</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>tc<span class="w"> </span>filter<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>protocol<span class="w"> </span>ip<span class="w"> </span>parent<span class="w"> </span>ffff:<span class="w"> </span>prio<span class="w"> </span><span class="m">1</span><span class="w"> </span>u32<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">     </span>match<span class="w"> </span>ip<span class="w"> </span>protocol<span class="w"> </span><span class="m">17</span><span class="w"> </span>0xff<span class="w"> </span>match<span class="w"> </span>ip<span class="w"> </span>dport<span class="w"> </span><span class="m">67</span><span class="w"> </span>0xffff<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">     </span>police<span class="w"> </span>rate<span class="w"> </span>&lt;byte-rate&gt;<span class="w"> </span>burst<span class="w"> </span>&lt;byte-rate&gt;<span class="w"> </span>conform-exceed<span class="w"> </span>drop
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. 状態確認</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>tc<span class="w"> </span>-s<span class="w"> </span>qdisc<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>handle<span class="w"> </span>ffff:
+    User[CLI: config interface loopback-action] --&gt; CDB[(CONFIG_DB\nINTERFACE / VLAN_INTERFACE\n PORTCHANNEL_INTERFACE / VLAN_SUB_INTERFACE)]
+    CDB --&gt;|subscribe| MGR[intfmgrd]
+    MGR --&gt; ADB[(APP_DB\nINTF_TABLE)]
+    ADB --&gt;|subscribe| ORCH[intfsorch]
+    ORCH --&gt;|set_router_interface_attribute\nLOOPBACK_PACKET_ACTION| SAI[SAI / NPU]</code></pre>
+<p><code>intfmgrd</code> は CONFIG_DB の各 L3 インタフェーステーブルを購読し、<code>loopback_action</code> を含む属性集合を APP_DB の <code>INTF_TABLE</code> に転記する。<code>intfsorch</code> が <code>INTF_TABLE</code> を購読して SAI 属性を設定する設計で、これは既存 IP インタフェース管理経路の延長である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_router_interface_attr_t</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="cm">/* @default SAI_PACKET_ACTION_FORWARD */</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_router_interface_attr_t</span><span class="p">;</span>
 </span></code></pre></div>
-<p>CONFIG_DB に書く値は <strong>packets per second</strong>。<code>tc</code> は bytes per second しか受けないため、SONiC 側で <strong>1 DHCP DISCOVER = 406 バイト</strong> という前提でバイトレートに換算する旨が HLD に明記されている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>設定値</th>
+<th>SAI 属性値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>drop</code></td>
+<td><code>SAI_PACKET_ACTION_DROP</code></td>
+</tr>
+<tr>
+<td><code>forward</code>（または未設定）</td>
+<td><code>SAI_PACKET_ACTION_FORWARD</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>create_router_interface()</code> 時にも、起動済みインタフェースに対する <code>set_router_interface_attribute()</code> でも同じ属性が使われる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="vs-runtime">起動時 vs runtime<a class="headerlink" href="#vs-runtime" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CFG as CONFIG_DB
+    participant MGR as intfmgrd
+    participant APP as APP_DB INTF_TABLE
+    participant ORCH as intfsorch
+    participant SAI as SAI
+    Note over CFG,SAI: runtime での set
+    CFG--&gt;&gt;MGR: INTERFACE|EthN.loopback_action = drop
+    MGR--&gt;&gt;APP: INTF_TABLE|EthN.loopback_action = drop
+    APP--&gt;&gt;ORCH: notify (single field update)
+    ORCH-&gt;&gt;SAI: set_router_interface_attribute(LOOPBACK_PACKET_ACTION = DROP)
+
+    Note over CFG,SAI: init
+    APP--&gt;&gt;ORCH: 全フィールド一括（mac_addr, loopback_action, ipv6_use_link_local_only, ...）
+    ORCH-&gt;&gt;SAI: create_router_interface(...)</code></pre>
+<p>init 時は <strong>インタフェースの全属性が一度に</strong> <code>INTF_TABLE</code> に並ぶため、<code>intfsorch</code> は <code>create_router_interface()</code> で全部まとめて投入する。runtime はフィールド単位の <code>set</code> で反映する経路に切り替わる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="statistics">Statistics<a class="headerlink" href="#statistics" title="Permanent link">&para;</a></h3>
+<p><code>drop</code> で落ちたパケットは <strong>当該インタフェースの <code>TX_ERR</code></strong> に集計される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>show interfaces counters rif</code> の <code>TX_ERR</code> 列で観測できる:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>       IFACE    RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    TX_PPS    TX_ERR
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a> Ethernet236        4  0.00 B/s    0.00/s         1        0  0.00 B/s    0.00/s         0
+</span></code></pre></div>
+<p><code>RX_ERR</code> ではなく <code>TX_ERR</code> 側に出る点は注目に値する。意味的には「ルーティング後の出力で起きた drop」なので egress 側として扱う設計。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md#L276-L286 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Since traffic control(TC) only supports rates in the form of bytes per second, this value is multiplied by 406 (number of bytes that make up a DHCP discover packet).
-  Upon running this command, an ingress queuing discipline is created on the specified port via traffic control(TC). Next, a traffic control(TC) filter is added to filter DHCP discover packets on protocol 17 (UDP) and destination port 67 ...
-reasoning: pps→bps 換算と TC コマンドフローの根拠。
+  Packets that are dropped due to loopback action will be counted in TX_ERR in IP interface statistics.
+reasoning: ドロップ計上先が TX_ERR である根拠。
 -->
 
-<h3 id="_4">監視デーモン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>HLD は別途 <strong>カスタムのドロップ監視デーモン</strong> を導入すると述べている。全ポートの <code>tc qdisc</code> のドロップ数を周期的に確認し、増加を検出した時点でログファイルに警告を書き出す。運用者はこのログを混雑 / 攻撃のヒントとして使う想定である<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">シーケンス（追加 / 削除）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CFG as CONFIG_DB
-    participant P as portmgrd
-    participant TC as Linux tc
-    U-&gt;&gt;CFG: PORT|EthernetX.dhcp_rate_limit = 1000
-    CFG--&gt;&gt;P: notify
-    P-&gt;&gt;TC: tc qdisc add (ingress)
-    P-&gt;&gt;TC: tc filter add (UDP/67 police rate=1000*406 B/s drop)
-    Note over P,TC: 後で削除
-    U-&gt;&gt;CFG: hdel PORT|EthernetX dhcp_rate_limit
-    CFG--&gt;&gt;P: notify
-    P-&gt;&gt;TC: tc filter del / tc qdisc del</code></pre>
-<h3 id="config_db-db-migrator">CONFIG_DB / DB Migrator<a class="headerlink" href="#config_db-db-migrator" title="Permanent link">&para;</a></h3>
-<p><code>PORT</code> テーブルに <code>dhcp_rate_limit</code> フィールドを追加する。<strong>後方互換のため、既存ポートには <code>db_migrator</code> が既定 <code>300</code> を埋める</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fortyGigE0/0&quot;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;lanes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25,26,27,28&quot;</span><span class="p">,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">&quot;mtu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9100&quot;</span><span class="p">,</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="nt">&quot;speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;40000&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;dhcp_rate_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;300&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>YANG では <code>uint32 { range 0..8000; }</code> の leaf として定義される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。範囲上限 8000 pps は明文ルールで、<code>tc</code> 側の policer に渡される最大値の目安となる。</p>
+<h3 id="cli">CLI バリデーション<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>CLI は次を拒否する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>loopback-action</code> を <strong>L3 インタフェース以外</strong> に設定しようとした（INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE / VLAN_SUB_INTERFACE のいずれにも該当しない）。</li>
+<li>値が <code>drop</code> / <code>forward</code> 以外。</li>
+<li>存在しないインタフェース。</li>
+</ul>
+<p>「IP インタフェースかどうか」は <strong>対応テーブルにエントリがあるか</strong> で判定する。例えば <code>Ethernet232</code> が L3 として <code>INTERFACE|Ethernet232</code> を持っていれば OK、L2 ポートとしてしか登録されていない場合は NG。</p>
+<h3 id="_4">設定不在時のデフォルト<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>loopback_action</code> を CONFIG_DB に書かない場合は <strong>SAI 既定の <code>forward</code></strong> がそのまま適用される。「ループバックアクション機能を持たない旧バージョンからのアップグレード」も自動で同じ挙動になり、特別な migration は不要<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="warmfast-boot">Warm/Fast boot<a class="headerlink" href="#warmfast-boot" title="Permanent link">&para;</a></h3>
-<p>既存の warm boot / fast boot 機能には <strong>影響を与えない</strong> と HLD は明記している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>特別な処理は不要<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config save</code> 済みであれば、起動時に CONFIG_DB から <code>INTF_TABLE</code> 経由で再投入される通常経路に乗る。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2768,19 +2830,65 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <th>Table</th>
 <th>Key</th>
 <th>フィールド</th>
-<th>説明</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>PORT</code></td>
-<td><code>Ethernet*</code></td>
-<td><code>dhcp_rate_limit</code></td>
-<td>DHCP DISCOVER の許容 pps（YANG 範囲 0〜8000）。0 は実質無効化想定だが HLD で明記されていない</td>
+<td><code>INTERFACE</code></td>
+<td><code>&lt;EthernetN&gt;</code></td>
+<td><code>loopback_action</code></td>
+<td><code>drop</code> / <code>forward</code></td>
+</tr>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td><code>&lt;VlanN&gt;</code></td>
+<td><code>loopback_action</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL_INTERFACE</code></td>
+<td><code>&lt;PortChannelN&gt;</code></td>
+<td><code>loopback_action</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>VLAN_SUB_INTERFACE</code></td>
+<td><code>&lt;EthernetN.M&gt;</code></td>
+<td><code>loopback_action</code></td>
+<td>同上</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>エントリ例<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;VLAN_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;Vlan100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="nt">&quot;loopback_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;drop&quot;</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;mac_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;00:01:02:03:04:10&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="nt">&quot;ipv6_use_link_local_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="app_db">関連する APP_DB<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INTF_TABLE</code></td>
+<td><code>&lt;interface-name&gt;</code></td>
+<td><code>loopback_action</code> ほか既存属性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2790,64 +2898,56 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 </thead>
 <tbody>
 <tr>
-<td><code>config interface dhcp-mitigation-rate add &lt;port&gt; &lt;pps&gt;</code></td>
-<td>当該ポートに DHCP レート制限を設定</td>
+<td><code>config interface loopback-action &lt;intf&gt; {drop\|forward}</code></td>
+<td>設定変更</td>
 </tr>
 <tr>
-<td><code>config interface dhcp-mitigation-rate delete &lt;port&gt; &lt;pps&gt;</code></td>
-<td>設定を削除</td>
-</tr>
-<tr>
-<td><code>show interface dhcp-mitigation-rate</code></td>
-<td>現在のレート制限一覧</td>
+<td><code>show ip interfaces loopback-action</code></td>
+<td>設定済みインタフェースの一覧</td>
 </tr>
 </tbody>
 </table>
-<p>CLI 仕様の細かいルール<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>pps</code> は正の整数（0 は無効）。</li>
-<li>同じポートに複数の dhcp-mitigation-rate を載せることは不可。先に既存を削除してから新規追加する必要がある。</li>
-<li>削除時に <code>pps</code> 引数を渡す（CLI 表記ゆれ。実装側 add/delete どちらも <code>pps</code> 必須として記述されている）。</li>
-</ul>
+<p><code>show</code> 出力は <strong>設定がある IP インタフェースのみ</strong> を表示する仕様<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>root@sonic:~# show ip interfaces loopback-action
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Interface     Action
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>------------  ----------
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet232   drop
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Vlan100       forward
+</span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-port</code> 系モデルに leaf <code>dhcp_rate_limit</code> を追加<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">dhcp_rate_limit</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;DHCP rate limit (packets per second)&quot;</span><span class="p">;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="k">range</span><span class="w"> </span><span class="nv">0..8000</span><span class="p">;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+<p><code>sonic-interface</code> / <code>sonic-portchannel</code> / <code>sonic-vlan</code> / <code>sonic-vlan-sub-interface</code> の各モジュールで対応コンテナに leaf を追加<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">loopback_action</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;Packet action when a packet ingress and gets routed on the same IP interface&quot;</span><span class="p">;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;drop|forward&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Ethernet0 に 1000 pps で DHCP レート制限を設定</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1000</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 確認</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 削除</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>config<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate<span class="w"> </span>delete<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1000</span>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>interface<span class="w"> </span>loopback-action<span class="w"> </span>Ethernet248<span class="w"> </span>drop
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>interface<span class="w"> </span>loopback-action<span class="w"> </span>Vlan100<span class="w"> </span>forward
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces<span class="w"> </span>loopback-action
 </span></code></pre></div>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CoPP</strong>: 従来の <strong>CoPP 上のシステム全体 DHCP 制限 (既定 300 pps) は削除される</strong>。CoPP に依存していた他の DHCP 関連経路（DHCP リレー等）への影響は HLD では明記されておらず、別途確認が必要。</li>
-<li><strong>portmgrd</strong>: ポート作成 / 削除のタイミングと TC qdisc / filter のライフサイクルが噛み合うことが前提。動的にポートが消える系（hot-removable サブインタフェース等）との相性は HLD 範囲外。</li>
-<li><strong>DHCP Starvation</strong>: 本 HLD では未対応。将来「DHCP Snooping」で対処すると明記。</li>
-<li><strong>ドロップ監視デーモン</strong>: 既存の <code>dropmon</code> / <code>flexcounter</code> とは別の独立デーモン。ログファイル経由でアラートを出す。</li>
+<li><strong>RIF カウンタ (<code>router-interface-counters-in-sonic</code>)</strong>: ループバックアクションによる drop は <code>TX_ERR</code> (具体的には <code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code>) に出る。これは ASIC で観測される他の egress エラーと混在するため、原因特定には別途注意が必要。</li>
+<li><strong>subinterface</strong>: VLAN_SUB_INTERFACE 上にも設定可能。ただし subinterface はそもそも親 Ethernet ポートと VLAN tag の組合せで定義されるため、ループバック判定の解釈が ASIC 実装に依存する可能性。</li>
+<li><strong>dual-ToR / mux</strong>: 物理的にはサーバ向けの兼用ポートで、対向 ToR との bounce 経路と loopback action がどう作用するかは HLD 範囲外。</li>
+<li><strong>アップグレード/ダウングレード</strong>: 設定が未定義のインタフェースは <code>forward</code> で従来挙動。アップグレード後に意図的に <code>drop</code> を設定するときは、トラフィック影響を本番投入前に確認する。</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定したレート制限が効かない場合: <code>tc -s qdisc show dev &lt;intf&gt; handle ffff:</code> で ingress qdisc が存在し、policer の statistics が増加していることを確認する。CONFIG_DB に値があっても <code>portmgrd</code> が当該ポートで TC 投入に失敗していると効かない。</li>
-<li>正規クライアントまでドロップされる場合: <code>dhcp_rate_limit</code> の値が小さすぎる可能性。サーバ側のリース更新タイミングで瞬間的にバーストするケースを考慮した値設定が必要。</li>
-<li>システム全体で DHCP が通らない場合: 本 HLD 適用後 CoPP の DHCP 制限が削除されているはずだが、CoPP 側ルールが残っていると ASIC で先に絞られる可能性がある。</li>
-<li>値変更が反映されない場合: 同ポートに既存の rate がある状態で新たに add しようとすると CLI が拒否する仕様。先に delete してから add する。</li>
+<li><code>drop</code> を設定したのに通り抜ける: <code>redis-cli -n 4 hgetall 'INTERFACE|EthernetN'</code> で <code>loopback_action</code> が入っているか、APP_DB の <code>INTF_TABLE</code> まで反映されているか、<code>ASIC_DB</code> の <code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code> 属性に <code>LOOPBACK_PACKET_ACTION=DROP</code> が出ているかを順に確認する。</li>
+<li>期待しない drop が起きている: <code>show interfaces counters rif</code> の <code>TX_ERR</code> を観測。<code>drop</code> 設定したインタフェースで増えている / いないかでトポロジ問題か判断できる。</li>
+<li>L2 ポートに設定して拒否される: 対象を L3 にする (<code>config interface ip add ...</code>) か、subinterface / VLAN にする。</li>
+<li>設定が再起動で消える: <code>config save</code> 漏れ。CONFIG_DB は永続化していないと cold/fast boot で揮発する。</li>
+<li>SAI 側未対応: ベンダー SAI 実装で <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> をサポートしていないと <code>set_router_interface_attribute</code> が失敗する。<code>syslog</code> の SWSS / SAI ログを確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/Dhcp_Mitigation/DHCP Mitigation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
