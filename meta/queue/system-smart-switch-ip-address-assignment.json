@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/smart-switch-ip-address-assignment.md",
+  "verification": "hld-only",
+  "concerns": [
+    "bridge-midplane の systemd-networkd 設定 (.netdev / .network) と systemd-sonic-generator 取り込み確認",
+    "midplane-network-npu.service / dpu.service の oneshot 起動と database.service Before= 連携確認",
+    "DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT の sonic-yang-models 反映確認",
+    "t1-smartswitch topology テンプレートの sonic-cfggen 取り込み確認",
+    "DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認",
+    "DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認"
+  ],
+  "priority": "medium"
+}
