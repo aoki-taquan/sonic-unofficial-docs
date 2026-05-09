@@ -1031,7 +1031,8 @@
         "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認"
       ],
       "priority": "medium",
-      "issue": 169
+      "issue": 169,
+      "pr": 170
     }
   ]
 }
