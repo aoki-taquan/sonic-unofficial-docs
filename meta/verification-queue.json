@@ -183,6 +183,18 @@
         "config switch-fast-linkup CLI が sonic-utilities に実装済みか未確認"
       ],
       "priority": "high"
+    },
+    {
+      "page": "docs/platform/icmp-hardware-offload.md",
+      "issue": 43,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-linkmgrd の hardware prober コードの存在と prober_type 切替実装の確認",
+        "IcmpOrch が orchagent に存在するか未確認",
+        "SAI 1.12 saiicmpecho.h 系属性が community syncd で使われているか未確認",
+        "peer GUID 学習ロジックの実装確認"
+      ],
+      "priority": "high"
     }
   ]
 }
