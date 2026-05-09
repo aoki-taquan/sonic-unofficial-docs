@@ -1,7 +1,7 @@
 ---
 title: SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
 area: platform
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,12 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い提案"
-    本ページは公式 HLD（短いプロポーザル形式、改訂日不明）のみを根拠に書かれている。本提案は「`Ethernet0` 系から Linux 流の `et[sX]pY[abcd]` 系への移行」を提案しているが、SONiC コミュニティ master では現状も `EthernetN` の内部名が広く使われており、提案は **未採用または部分採用** の状態である可能性が高い。
+!!! danger "裏取りステータス: discrepancy-found（提案は不採用）"
+    verifier-batch-18 で確認:
+
+    - `sonic-buildimage/device/` 配下の `port_config.ini`（複数ベンダの代表例：`arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini`）は依然として `Ethernet0`/`Ethernet4`/... の `EthernetN` 命名を使い、`alias` 列で `Ethernet1/1` 系の前面パネル名を提供する形式
+    - `etsXpY[abcd]` 命名や `ets<X>p<Y>` の chassis 表記は `device/` ツリー内に出現せず、**HLD 提案は master に取り込まれていない**
+    - 本ページは **採用されなかった HLD プロポーザル** の参考資料として残す。実運用は `EthernetN`（CONFIG_DB.PORT key）+ `alias`（前面パネル名）+ breakout の `<panel>/<sub>` 表記で安定している
 
 # SONiC ポート命名規則の変更案（`et[sX]pY[abcd]`）
 

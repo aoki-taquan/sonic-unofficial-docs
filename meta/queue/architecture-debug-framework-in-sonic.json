@@ -1,12 +1,14 @@
 {
   "page": "docs/architecture/debug-framework-in-sonic.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "libswsscommon に Debugframework クラス / linkWithFramework が現行で存在するか確認",
-    "DebugDumpOrch / addDbgCompMap の orchagent 取り込み確認",
-    "APPL_DB Dump table / Dump done table の sonic-yang-models 反映確認",
-    "show debug / show interfaces pktdrop CLI の sonic-utilities 取り込み確認",
-    "2019-07 v0.3 HLD で 6 年以上経過、現行実装との乖離可能性 高"
+    "HLD v0.3 (2019-07) は master 未取り込み。Debugframework クラス / linkWithFramework / SWSS_DEBUG_PRINT は sonic-swss-common に存在せず",
+    "natorch.cpp の gDebugDumpOrch / addDbgCompMap は #ifdef DEBUG_FRAMEWORK 内の dead code（マクロ未定義）",
+    "show debug / show interfaces pktdrop CLI は sonic-utilities/show/ に未実装",
+    "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
+  ],
+  "verified_concerns": [
+    "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認"
   ],
   "priority": "high"
 }

@@ -1,7 +1,7 @@
 ---
 title: FRR 用 sysctl チューニングのデフォルト
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/sonic-frr
@@ -13,8 +13,13 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは sonic-frr の上流 FRR ドキュメントを再構成している。SONiC 側のイメージで実際に投入されている sysctl（`sonic-buildimage` の `etc/sysctl.d/` または起動スクリプトでの set）は未裏取り。SONiC が同等の値を採用しているとは限らないため、本ページは「FRR が推奨する出発点」として読むこと。
+!!! note "裏取りステータス: code-verified（SONiC 側実値の所在）"
+    verifier-batch-18 で確認:
+
+    - `sonic-buildimage/files/image_config/sysctl/90-sonic.conf`（58 行）に SONiC イメージで投入される sysctl 値が集約されている
+    - 抜粋: `net.ipv4.conf.all.forwarding=1`, `net.ipv6.conf.all.forwarding=1`, `net.ipv4.conf.all.arp_announce=1`, `net.ipv4.conf.all.arp_ignore=2`, `net.ipv4.neigh.default.gc_thresh3=4096`, `net.ipv4.ip_local_port_range=32768 50001` 等
+    - FRR 上流推奨と完全一致ではないが forwarding 有効化 / neighbor GC tuning / 大きめの port range の方針は SONiC 側でも採用済
+    - rp_filter / keep_addr_on_down / tcp_l3mdev_accept など個別フィールドの SONiC 採用値は `90-sonic.conf` を直接参照して差分整理のこと（本ページは FRR 推奨値の参考として残す）
 
 # FRR 用 sysctl チューニングのデフォルト
 

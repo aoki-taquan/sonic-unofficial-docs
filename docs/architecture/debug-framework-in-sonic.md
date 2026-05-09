@@ -1,7 +1,7 @@
 ---
 title: Debug Framework（コンポーネント dump 登録 / assert 拡張）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,14 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は v0.3 (2019-07) で改訂が 6 年以上前。`Debugframework` クラス (libswsscommon) と `linkWithFramework` API、APP_DB の Dump table、`show debug` CLI が現行 master に存在するか・命名どおりかは未裏取り。priority=high で queue 登録。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD v0.3 (2019-07) は **master へ取り込まれていない**。verifier-batch-18 で確認:
+
+    - `sonic-swss-common` に `Debugframework` クラス・`linkWithFramework` API・`SWSS_DEBUG_PRINT*` マクロ いずれも存在しない（`grep -r` で 0 件）
+    - `sonic-swss/orchagent/natorch.cpp` の `gDebugDumpOrch->addDbgCompMap(...)` は `#ifdef DEBUG_FRAMEWORK` 内（41 行目および 138-142 行目）でガードされ、`DEBUG_FRAMEWORK` マクロは master ビルド構成で定義されていない（残骸コード）
+    - `sonic-utilities/show/` 配下に `pktdrop`/`debug` 系の CLI ハンドラなし（`dropcounters.py` は別仕様）
+
+    本ページは HLD 仕様の参考資料として残すが、現行 master の挙動とは一致しない。実装は `DebugDumpOrch`/`DebugDumpHandler` 個別クラスではなく、`debugcounterorch` (counter 専用) や `show techsupport` 等に分散している。
 
 # Debug Framework（コンポーネント dump 登録 / assert 拡張）
 
@@ -165,6 +171,12 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debug-framework/debug_framework_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-18, discrepancy):
+- sonic-swss-common: `Debugframework` / `linkWithFramework` / `SWSS_DEBUG_PRINT` 検索 0 件
+- sonic-swss/orchagent/natorch.cpp:40-42, 138-142: `#ifdef DEBUG_FRAMEWORK` 内の dead code のみ（マクロは未定義）
+- sonic-utilities/show/: `pktdrop` / `debug` 系 CLI ハンドラなし
+-->
 
 <!-- concerns hint:
 - libswsscommon に Debugframework クラス / linkWithFramework が現行で存在するか確認
