@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/system/sonic-logging-system-dumps-arch-spec.md",
+      "issue": 295,
+      "verification": "hld-only",
+      "concerns": [
+        "libswss-common の共通 logging / sysdump API 実装範囲確認",
+        "Per daemon / Per platform ダンプ登録機構の実装存在確認 (generate_dump / show techsupport 等)",
+        "sonic-mgmt 側の sysdump 取得 / 設定デプロイパイプラインの整合確認",
+        "クラッシュ検知 → sysdump 自動生成パスの実装確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
       "issue": 293,
       "verification": "hld-only",
