@@ -1999,7 +1999,8 @@
         "sonic-mgmt 配下 sflow テストの実装存在確認"
       ],
       "priority": "low",
-      "issue": 534
+      "issue": 534,
+      "pr": 535
     },
     {
       "page": "docs/architecture/sonic-on-gns3-vm.md",

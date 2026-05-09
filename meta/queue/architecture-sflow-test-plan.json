@@ -10,5 +10,6 @@
     "sonic-mgmt \u914d\u4e0b sflow \u30c6\u30b9\u30c8\u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d"
   ],
   "priority": "low",
-  "issue": 534
+  "issue": 534,
+  "pr": 535
 }
