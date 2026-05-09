@@ -945,7 +945,8 @@
         "crash kernel 内で DHCP を取得する network_setup.sh のスクリプト存在確認"
       ],
       "priority": "medium",
-      "issue": 157
+      "issue": 157,
+      "pr": 158
     }
   ]
 }
