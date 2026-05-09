@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/tc-to-queue-map/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-nat/">
       
       
-        <link rel="prev" href="../tacplus-server/">
+        <link rel="prev" href="../show-mclag/">
       
       
-        <link rel="next" href="../telemetry/">
+        <link rel="next" href="../show-platform/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>TC_TO_QUEUE_MAP テーブル - SONiC 非公式ドキュメント</title>
+        <title>show nat サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tc_to_queue_map" class="md-skip">
+        <a href="#show-nat" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TC_TO_QUEUE_MAP テーブル
+              show nat サブコマンド
             
           </span>
         </div>
@@ -6655,6 +6655,8 @@
                 
   
   
+    
+  
   
   
     
@@ -6662,1144 +6664,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../cli/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    CLI
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/clear/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    clear (sonic-clear) コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-aaa/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config aaa / tacacs / radius サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-dhcp-relay/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config dhcp_relay / dhcpv4_relay サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config interface サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-kdump/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config kdump サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-mclag/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config mclag サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-muxcable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config muxcable サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-nat/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config nat サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-portchannel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config portchannel サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-route/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config route サブコマンド（static route）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-sflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config sflow サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-snmp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config snmp / snmpagentaddress / snmptrap サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-syslog/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config syslog サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vrf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vrf サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/config-vxlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vxlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-acl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-bgp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show bgp / show ip bgp / show ipv6 bgp サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-feature/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show feature サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show interfaces サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-ip/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show ip サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-mclag/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show mclag (mclagdctl) コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-nat/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show nat サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show platform サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-route-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show route-map コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-running-config/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show runningconfiguration / startupconfiguration サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-system-health/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show system-health サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-techsupport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show techsupport コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/show-vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-cfggen/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-cfggen コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-installer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-installer コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/sonic-package-manager/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sonic-package-manager コマンド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -7886,7 +6750,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -7897,7 +6761,7 @@
   <span class="md-ellipsis">
     
   
-    CONFIG_DB
+    CLI
   
 
     
@@ -7908,18 +6772,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11_2" id="__nav_11_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_11_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    CONFIG_DB
+    CLI
   
 
           </label>
@@ -7934,14 +6798,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-rule/" class="md-nav__link">
+      <a href="../clear/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_RULE テーブル
+    clear (sonic-clear) コマンド
   
 
     
@@ -7962,14 +6826,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-table/" class="md-nav__link">
+      <a href="../config-aaa/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL_TABLE テーブル
+    config aaa / tacacs / radius サブコマンド
   
 
     
@@ -7990,14 +6854,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../auto-techsupport/" class="md-nav__link">
+      <a href="../config-acl/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    AUTO_TECHSUPPORT テーブル
+    config acl サブコマンド
   
 
     
@@ -8018,14 +6882,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-aggregate-address/" class="md-nav__link">
+      <a href="../config-bgp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_AGGREGATE_ADDRESS テーブル
+    config bgp サブコマンド
   
 
     
@@ -8046,14 +6910,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-device-global/" class="md-nav__link">
+      <a href="../config-dhcp-relay/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_DEVICE_GLOBAL テーブル
+    config dhcp_relay / dhcpv4_relay サブコマンド
   
 
     
@@ -8074,14 +6938,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-globals/" class="md-nav__link">
+      <a href="../config-interface/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_GLOBALS テーブル
+    config interface サブコマンド
   
 
     
@@ -8102,14 +6966,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-neighbor/" class="md-nav__link">
+      <a href="../config-kdump/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_NEIGHBOR テーブル
+    config kdump サブコマンド
   
 
     
@@ -8130,14 +6994,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-peer-group/" class="md-nav__link">
+      <a href="../config-mclag/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP_PEER_GROUP テーブル
+    config mclag サブコマンド
   
 
     
@@ -8158,14 +7022,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pg/" class="md-nav__link">
+      <a href="../config-muxcable/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_PG テーブル
+    config muxcable サブコマンド
   
 
     
@@ -8186,14 +7050,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-pool/" class="md-nav__link">
+      <a href="../config-nat/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_POOL テーブル
+    config nat サブコマンド
   
 
     
@@ -8214,14 +7078,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-profile/" class="md-nav__link">
+      <a href="../config-portchannel/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_PROFILE テーブル
+    config portchannel サブコマンド
   
 
     
@@ -8242,14 +7106,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../buffer-queue/" class="md-nav__link">
+      <a href="../config-route/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUFFER_QUEUE テーブル
+    config route サブコマンド（static route）
   
 
     
@@ -8270,14 +7134,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-group/" class="md-nav__link">
+      <a href="../config-sflow/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    COPP_GROUP テーブル
+    config sflow サブコマンド
   
 
     
@@ -8298,14 +7162,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-trap/" class="md-nav__link">
+      <a href="../config-snmp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    COPP_TRAP テーブル
+    config snmp / snmpagentaddress / snmptrap サブコマンド
   
 
     
@@ -8326,14 +7190,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../crm/" class="md-nav__link">
+      <a href="../config-syslog/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CRM テーブル
+    config syslog サブコマンド
   
 
     
@@ -8354,14 +7218,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../device-metadata/" class="md-nav__link">
+      <a href="../config-vlan/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DEVICE_METADATA テーブル
+    config vlan サブコマンド
   
 
     
@@ -8382,14 +7246,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-server-ipv4/" class="md-nav__link">
+      <a href="../config-vrf/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DHCP_SERVER_IPV4 テーブル
+    config vrf サブコマンド
   
 
     
@@ -8410,14 +7274,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv4-relay/" class="md-nav__link">
+      <a href="../config-vxlan/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DHCPV4_RELAY テーブル
+    config vxlan サブコマンド
   
 
     
@@ -8438,14 +7302,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-to-tc-map/" class="md-nav__link">
+      <a href="../show-acl/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DSCP_TO_TC_MAP テーブル
+    show acl サブコマンド
   
 
     
@@ -8466,14 +7330,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../feature/" class="md-nav__link">
+      <a href="../show-bgp/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    FEATURE テーブル
+    show bgp / show ip bgp / show ipv6 bgp サブコマンド
   
 
     
@@ -8494,14 +7358,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../fg-nhg/" class="md-nav__link">
+      <a href="../show-feature/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    FG_NHG テーブル
+    show feature サブコマンド
   
 
     
@@ -8522,14 +7386,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../flex-counter-table/" class="md-nav__link">
+      <a href="../show-interfaces/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    FLEX_COUNTER_TABLE テーブル
+    show interfaces サブコマンド
   
 
     
@@ -8550,14 +7414,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../interface/" class="md-nav__link">
+      <a href="../show-ip/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    INTERFACE テーブル
+    show ip サブコマンド
   
 
     
@@ -8578,574 +7442,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump/" class="md-nav__link">
+      <a href="../show-mclag/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    KDUMP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kubernetes-master/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    KUBERNETES_MASTER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ldap-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../loopback-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LOOPBACK_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mgmt-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MGMT_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mgmt-port/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MGMT_PORT テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mirror-session/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MIRROR_SESSION テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mux-cable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MUX_CABLE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ntp-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NTP_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pfc-wd/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PFC_WD テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../port/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORT テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../portchannel-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../portchannel-member/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL_MEMBER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../portchannel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../queue/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    QUEUE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../route-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ROUTE_MAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scheduler/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SCHEDULER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SFLOW テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../syslog-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SYSLOG_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../system-defaults/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SYSTEM_DEFAULTS テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tacplus-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACPLUS_SERVER テーブル
+    show mclag (mclagdctl) コマンド
   
 
     
@@ -9182,7 +7486,7 @@
   <span class="md-ellipsis">
     
   
-    TC_TO_QUEUE_MAP テーブル
+    show nat サブコマンド
   
 
     
@@ -9200,7 +7504,7 @@
   <span class="md-ellipsis">
     
   
-    TC_TO_QUEUE_MAP テーブル
+    show nat サブコマンド
   
 
     
@@ -9237,21 +7541,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールド一覧
+        コマンド一覧
       
     </span>
   </a>
@@ -9262,18 +7555,57 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show nat statistics
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-translations-count" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        show nat translations [count]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-config-sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show nat config [&lt;sub&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -9282,6 +7614,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -9307,7 +7650,1703 @@
   
   
     <li class="md-nav__item">
-      <a href="../telemetry/" class="md-nav__link">
+      <a href="../show-platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show platform サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-route-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show route-map コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-running-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show runningconfiguration / startupconfiguration サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-system-health/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show system-health サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show techsupport コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show vlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-cfggen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-cfggen コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-installer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-installer コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-package-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sonic-package-manager コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../config-db/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CONFIG_DB
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11_3" id="__nav_11_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CONFIG_DB
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_RULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/acl-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/auto-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AUTO_TECHSUPPORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-aggregate-address/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_AGGREGATE_ADDRESS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-device-global/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_DEVICE_GLOBAL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-globals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_GLOBALS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-neighbor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_NEIGHBOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/bgp-peer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_PEER_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-pg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_POOL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PROFILE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/buffer-queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_QUEUE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/copp-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/copp-trap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_TRAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CRM テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/device-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEVICE_METADATA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dhcp-server-ipv4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP_SERVER_IPV4 テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dhcpv4-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPV4_RELAY テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/dscp-to-tc-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_TC_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/feature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/fg-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FG_NHG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/flex-counter-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/kdump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KDUMP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/kubernetes-master/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KUBERNETES_MASTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/ldap-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LDAP_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/loopback-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LOOPBACK_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/mgmt-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MGMT_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/mgmt-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MGMT_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/mirror-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIRROR_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/mux-cable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/ntp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NTP_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/pfc-wd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/portchannel-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/portchannel-member/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL_MEMBER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/portchannel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/route-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/sflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/syslog-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSLOG_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/system-defaults/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSTEM_DEFAULTS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/tacplus-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACPLUS_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/tc-to-queue-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TC_TO_QUEUE_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config-db/telemetry/" class="md-nav__link">
         
   
   
@@ -9335,7 +9374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-interface/" class="md-nav__link">
+      <a href="../../config-db/vlan-interface/" class="md-nav__link">
         
   
   
@@ -9363,7 +9402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan-member/" class="md-nav__link">
+      <a href="../../config-db/vlan-member/" class="md-nav__link">
         
   
   
@@ -9391,7 +9430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vlan/" class="md-nav__link">
+      <a href="../../config-db/vlan/" class="md-nav__link">
         
   
   
@@ -9419,7 +9458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf/" class="md-nav__link">
+      <a href="../../config-db/vrf/" class="md-nav__link">
         
   
   
@@ -9447,7 +9486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel-map/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel-map/" class="md-nav__link">
         
   
   
@@ -9475,7 +9514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-tunnel/" class="md-nav__link">
+      <a href="../../config-db/vxlan-tunnel/" class="md-nav__link">
         
   
   
@@ -9503,7 +9542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-profile/" class="md-nav__link">
+      <a href="../../config-db/wred-profile/" class="md-nav__link">
         
   
   
@@ -10525,21 +10564,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        key 構造
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フィールド一覧
+        コマンド一覧
       
     </span>
   </a>
@@ -10550,18 +10578,57 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show nat statistics
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db-yang-cli" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-translations-count" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 CONFIG_DB / YANG / CLI
+        show nat translations [count]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-nat-config-sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show nat config [&lt;sub&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -10570,6 +10637,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10596,7 +10674,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/tc-to-queue-map.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/show-nat.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -10604,60 +10682,129 @@
   
 
 
-<h1 id="tc_to_queue_map">TC_TO_QUEUE_MAP テーブル<a class="headerlink" href="#tc_to_queue_map" title="Permanent link">&para;</a></h1>
+<h1 id="show-nat">show nat サブコマンド<a class="headerlink" href="#show-nat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Traffic Class (TC) を egress queue インデックスへマップする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>DSCP_TO_TC_MAP</code> で TC 化された値が、このマップで物理キューに振り分けられる。<code>qosorch</code> が SAI map (<code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code>) を生成し、<code>PORT_QOS_MAP.tc_to_queue_map</code> で各ポートに適用する。</p>
-<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>TC_TO_QUEUE_MAP|&lt;name&gt;|&lt;tc&gt;
-</span></code></pre></div>
-<p><code>&lt;name&gt;</code> は 1..32 文字、<code>&lt;tc&gt;</code> は <code>tc_type</code> (0..7)。</p>
-<h2 id="_2">フィールド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>show nat</code> は SONiC の NAT 機能の <strong>動的な変換テーブル</strong> および <strong>静的な設定</strong> を表示する CLI で、<code>show/nat.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装は薄く、<code>natshow</code> / <code>natconfig</code> という C/Python の補助バイナリを <code>clicommon.run_command(...)</code> で呼び出すだけのラッパー。<code>natshow</code> は ASIC_DB / COUNTERS_DB を参照し、<code>natconfig</code> は CONFIG_DB を整形して出すように分業されている。</p>
+<h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>型</th>
-<th>必須</th>
-<th>説明</th>
+<th>コマンド</th>
+<th>用途</th>
+<th>内部呼び出し</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>name</code> (key)</td>
-<td>string (1..32)</td>
-<td>✅</td>
-<td>マップ名</td>
+<td><code>show nat statistics</code></td>
+<td>NAT 変換のカウンタ統計</td>
+<td><code>natshow -s</code></td>
 </tr>
 <tr>
-<td><code>tc</code> (key)</td>
-<td><code>tc_type</code> (0..7)</td>
-<td>✅</td>
-<td>TC</td>
+<td><code>show nat translations</code></td>
+<td>現在の動的変換テーブル</td>
+<td><code>natshow -t</code></td>
 </tr>
 <tr>
-<td><code>qindex</code></td>
-<td>string (0..9)</td>
-<td>-</td>
-<td>egress queue index</td>
+<td><code>show nat translations count</code></td>
+<td>変換エントリ数</td>
+<td><code>natshow -c</code></td>
+</tr>
+<tr>
+<td><code>show nat config</code></td>
+<td>全体設定の一括表示</td>
+<td><code>natconfig -g/-s/-p/-b/-z</code> を順に</td>
+</tr>
+<tr>
+<td><code>show nat config static</code></td>
+<td>static エントリのみ</td>
+<td><code>natconfig -s</code></td>
+</tr>
+<tr>
+<td><code>show nat config pool</code></td>
+<td>pool 設定のみ</td>
+<td><code>natconfig -p</code></td>
+</tr>
+<tr>
+<td><code>show nat config bindings</code></td>
+<td>binding 設定のみ</td>
+<td><code>natconfig -b</code></td>
+</tr>
+<tr>
+<td><code>show nat config globalvalues</code></td>
+<td>グローバル設定のみ</td>
+<td><code>natconfig -g</code></td>
+</tr>
+<tr>
+<td><code>show nat config zones</code></td>
+<td>NAT zone 設定のみ</td>
+<td><code>natconfig -z</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>各コマンドに <code>--verbose</code> オプションがあり、内部で実行する <code>sudo natshow ...</code> / <code>sudo natconfig ...</code> の起動コマンドラインを表示する。</p>
+<h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="show-nat-statistics"><code>show nat statistics</code><a class="headerlink" href="#show-nat-statistics" title="Permanent link">&para;</a></h3>
+<p><code>natshow -s</code> を起動。NAT 変換ごとの hit カウンタ・packet bytes 等を表で表示する。<code>STATE_DB</code> / <code>COUNTERS_DB</code> のカウンタを集計しているため、リアルタイムに更新される。</p>
+<h3 id="show-nat-translations-count"><code>show nat translations [count]</code><a class="headerlink" href="#show-nat-translations-count" title="Permanent link">&para;</a></h3>
+<p>サブコマンド無しで実行 (<code>@nat.group(invoke_without_command=True)</code>) すると <code>natshow -t</code> が呼ばれ、現在 ASIC に入っている変換 (static + 動的に学習されたもの) を表示する。<code>count</code> サブコマンド付きでは件数のみ。</p>
+<h3 id="show-nat-config-sub"><code>show nat config [&lt;sub&gt;]</code><a class="headerlink" href="#show-nat-config-sub" title="Permanent link">&para;</a></h3>
+<p>サブコマンド無しの実行ではグローバル → static → pool → bindings → zones の順で 5 ブロックを連続出力する。それぞれ <code>natconfig -g/-s/-p/-b/-z</code> の独立呼び出しに対応し、ブロック間に <code>click.echo</code> で見出しを差し込む。</p>
+<p>サブコマンド付きでは指定 1 ブロックのみ。</p>
+<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー</th>
+<th>表示するコマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATIC_NAT</code></td>
+<td><code>&lt;global_ip&gt;</code></td>
+<td><code>show nat config static</code></td>
+</tr>
+<tr>
+<td><code>STATIC_NAPT</code></td>
+<td><code>&lt;global_ip&gt;\|TCP/UDP\|&lt;port&gt;</code></td>
+<td><code>show nat config static</code></td>
+</tr>
+<tr>
+<td><code>NAT_POOL</code></td>
+<td><code>&lt;pool_name&gt;</code></td>
+<td><code>show nat config pool</code></td>
+</tr>
+<tr>
+<td><code>NAT_BINDINGS</code></td>
+<td><code>&lt;binding_name&gt;</code></td>
+<td><code>show nat config bindings</code></td>
+</tr>
+<tr>
+<td><code>NAT_GLOBAL</code></td>
+<td><code>Values</code></td>
+<td><code>show nat config globalvalues</code></td>
+</tr>
+<tr>
+<td><code>PORT</code> / <code>PORTCHANNEL</code> / <code>VLAN</code> / <code>LOOPBACK_INTERFACE</code> の <code>nat_zone</code></td>
+<td><code>&lt;if_name&gt;</code></td>
+<td><code>show nat config zones</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code>: SAI QoS map 生成</li>
+<li><code>natshow</code> <code>natconfig</code> の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は <code>--json</code> 等の互換オプションは無いので、現状はラフな text 出力のパース、または STATE_DB / CONFIG_DB を直接読むしかない。</li>
+<li><code>show nat translations</code> は <strong>NAT が実際にハード offload されている前提</strong>。<code>config nat feature disable</code> 状態では空表示になる。</li>
 </ul>
-<h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
-<ul>
-<li>関連 CONFIG_DB: <code>PORT_QOS_MAP</code>、<code>QUEUE</code>、<code>DSCP_TO_TC_MAP</code></li>
-<li>関連 CLI: なし</li>
-<li>関連 YANG: <code>sonic-tc-queue-map</code></li>
-</ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-tc-queue-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>nat</code> グループは <code>show/nat.py</code> L9-L12。<code>config/nat.py</code> 側は CONFIG_DB を書き、<code>show/nat.py</code> は別 binary 経由で読むという分担。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
