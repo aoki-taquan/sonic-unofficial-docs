@@ -1310,6 +1310,20 @@
         "Activate 起動失敗時のロールバック (sonic-installer next image pointer) 挙動確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/gnoi-hld-for-system-apis.md",
+      "issue": 209,
+      "pr": 210,
+      "verification": "hld-only",
+      "concerns": [
+        "UMF/sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler 実装存在確認",
+        "reboot 要求を書き込む DB スキーマ (STATE_DB / CONFIG_DB) の現行実装確認",
+        "COLD 以外 (WARM / NSF / POWERDOWN / HALT / POWERUP) の platform サポート状況確認",
+        "subcomponent 指定 reboot の実装存否",
+        "Warmboot Manager HLD と本 HLD の連携経路の現行実装確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
