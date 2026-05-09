@@ -46,7 +46,8 @@
         "本 HLD は 2022 年 10 月版で 3 年以上経過しており現行 master との乖離リスクあり"
       ],
       "priority": "high",
-      "issue": 440
+      "issue": 440,
+      "pr": 441
     },
     {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
