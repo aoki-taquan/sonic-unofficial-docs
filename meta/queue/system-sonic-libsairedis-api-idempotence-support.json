@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
+  "verification": "hld-only",
+  "concerns": [
+    "RESTORE_DB (DB 7) \u3068 ATTR2OID_* / DEFAULT_ATTR2OID_* / OID2ATTR_* / DEFAULT_OBJ_* \u30ad\u30fc\u30d7\u30ec\u30d5\u30a3\u30c3\u30af\u30b9\u304c\u73fe\u884c sonic-sairedis master \u306b\u53d6\u308a\u8fbc\u307e\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "syncd view comparison (syncd_applyview.cpp) \u3068\u306e\u7af6\u5408\u95a2\u4fc2\u3002\u6700\u7d42\u7684\u306b\u3069\u3061\u3089\u304c master \u63a1\u7528\u304b\u306e\u8abf\u67fb\u5fc5\u8981",
+    "g_objectOwner \u30d9\u30fc\u30b9\u306e owner \u533a\u5225 (UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_) \u304c\u73fe\u884c orchagent \u5b9f\u88c5\u306b\u3042\u308b\u304b\u78ba\u8a8d",
+    "DEFAULT_ATTR2OID_* / DEFAULT_OID2ATTR_* \u306e 1 \u5ea6\u3060\u3051\u4f5c\u6210\u30ed\u30b8\u30c3\u30af\u304c\u73fe\u884c libsairedis \u306b\u3042\u308b\u304b\u78ba\u8a8d",
+    "Performance \u6848 (in memory cache / producer-consumer \u5727\u7e2e / multiple redis instances / async write) \u306e\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d",
+    "\u672c\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u306f\u65e7 design draft\u3002\u73fe\u884c warm-restart \u5b9f\u88c5\u306f\u3069\u306e\u65b9\u5f0f\u304b\u3092\u78ba\u8a8d"
+  ],
+  "priority": "high",
+  "issue": 524
+}

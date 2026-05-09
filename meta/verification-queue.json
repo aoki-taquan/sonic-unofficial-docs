@@ -392,6 +392,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
+      "verification": "hld-only",
+      "concerns": [
+        "RESTORE_DB (DB 7) と ATTR2OID_* / DEFAULT_ATTR2OID_* / OID2ATTR_* / DEFAULT_OBJ_* キープレフィックスが現行 sonic-sairedis master に取り込まれているか確認",
+        "syncd view comparison (syncd_applyview.cpp) との競合関係。最終的にどちらが master 採用かの調査必要",
+        "g_objectOwner ベースの owner 区別 (UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_) が現行 orchagent 実装にあるか確認",
+        "DEFAULT_ATTR2OID_* / DEFAULT_OID2ATTR_* の 1 度だけ作成ロジックが現行 libsairedis にあるか確認",
+        "Performance 案 (in memory cache / producer-consumer 圧縮 / multiple redis instances / async write) の実装ステータス確認",
+        "本ドキュメントは旧 design draft。現行 warm-restart 実装はどの方式かを確認"
+      ],
+      "priority": "high",
+      "issue": 524
+    },
+    {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
       "verification": "hld-only",
       "concerns": [
