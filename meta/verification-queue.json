@@ -903,6 +903,22 @@
       "priority": "high",
       "issue": 151,
       "pr": 152
+    },
+    {
+      "page": "docs/overlay/active-standby-dual-tor.md",
+      "verification": "hld-only",
+      "concerns": [
+        "linkmgrd の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュール構成の現行実装確認",
+        "MuxOrch の neighbor handling 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）のどれが採用されているか確認",
+        "ycabled の i2c_retry_count + MUX_FAIL 報告ロジックの実装確認",
+        "Loopback0 宛 encap パケットを listen して ping を駆動する Python service の所在と起動経路確認",
+        "neighsyncd / muxorch による zero mac neighbor + tunnel route 自動 install の実装確認",
+        "arp_update の FAILED → INCOMPLETE 書き換えと kernel `accept_untracked_na` backport の取り込み確認",
+        "MUX_METRICS_TABLE / MUX_SWITCH_CAUSE / LINK_PROBE_STATS の STATE_DB スキーマ取り込み確認"
+      ],
+      "priority": "high",
+      "issue": 153,
+      "pr": 154
     }
   ]
 }
