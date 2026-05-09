@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/routing/bgp-setup-for-voq-chassis.md",
+      "issue": 224,
+      "verification": "hld-only",
+      "concerns": [
+        "FRR 側 bgp bestpath peer-type multipath-relax の SONiC 同梱 FRR (sonic-frr) への取り込み確認",
+        "bgpcfgd の voq_chassis テンプレート実装存在確認",
+        "CONFIG_DB の BGP_VOQ_CHASSIS_NEIGHBOR スキーマが現行 master にあるか未確認",
+        "sonic-config-engine の minigraph → BGP_VOQ_CHASSIS_NEIGHBOR 振り分け実装確認",
+        "HLD は 2020-09 改訂のため現行 master 実装との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/routing-and-next-hop-table-enhancement.md",
       "issue": 221,
       "verification": "hld-only",
@@ -190,14 +203,16 @@
     {
       "page": "docs/platform/sonic-fast-link-up.md",
       "issue": 41,
-      "verification": "hld-only",
-      "concerns": [
-        "switchorch / portsorch の Fast Link-Up コードパス実装の存在確認",
-        "SAI 属性 (SAI_SWITCH_ATTR_FAST_LINKUP_*, SAI_PORT_ATTR_FAST_LINKUP_ENABLED) が community SAI に取り込まれているか未確認",
-        "STATE_DB SWITCH_CAPABILITY|switch のフィールド名が HLD どおりか未確認",
-        "config switch-fast-linkup CLI が sonic-utilities に実装済みか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "switchorch / portsorch の Fast Link-Up コードパス実装の存在確認 (verified 2026-05-09 at switchorch.cpp:2094-2271 / portsorch.h:300 / sonic-utilities show+config main.py)",
+        "SAI 属性 (SAI_SWITCH_ATTR_FAST_LINKUP_*, SAI_PORT_ATTR_FAST_LINKUP_ENABLED) が community SAI に取り込まれているか未確認 (verified 2026-05-09 at switchorch.cpp:2094-2271 / portsorch.h:300 / sonic-utilities show+config main.py)",
+        "STATE_DB SWITCH_CAPABILITY|switch のフィールド名が HLD どおりか未確認 (verified 2026-05-09 at switchorch.cpp:2094-2271 / portsorch.h:300 / sonic-utilities show+config main.py)",
+        "config switch-fast-linkup CLI が sonic-utilities に実装済みか未確認 (verified 2026-05-09 at switchorch.cpp:2094-2271 / portsorch.h:300 / sonic-utilities show+config main.py)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/icmp-hardware-offload.md",
