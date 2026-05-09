@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/sonic-snmp-table-schema-proposal.md",
+  "issue": 319,
+  "verification": "hld-only",
+  "concerns": [
+    "SNMP / SNMP_COMMUNITY / SNMP_USER 3 テーブルの sonic-yang-models 取り込み確認",
+    "snmpd.conf.j2 の SNMP テーブル分岐（後方互換）実装の現行 master 取り込み",
+    "swss-common/schema.h に CFG_SNMP_TABLE_NAME が追加されているか未確認",
+    "SNMP_COMMUNITY.TYPE=RW の実装サポート状況確認"
+  ],
+  "priority": "low"
+}
