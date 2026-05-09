@@ -843,7 +843,8 @@
         "sonic-cfggen の buffer template (Jinja) で INACTIVE port 判定と zero profile 生成が現行 master にあるか未確認"
       ],
       "priority": "medium",
-      "issue": 143
+      "issue": 143,
+      "pr": 144
     }
   ]
 }
