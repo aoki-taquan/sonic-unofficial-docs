@@ -1154,6 +1154,8 @@
       
         
       
+        
+      
     
     
     
@@ -1755,6 +1757,34 @@
     
   
     NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Management VRF 設計（201911 release / l3mdev + cgroups）
   
 
     
@@ -8628,9 +8658,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは Smart Switch HA 関連 HLD（短い拡張仕様）のみを根拠にしている。<code>VNET_ROUTE_TUNNEL_TABLE</code> の <code>check_directly_connected</code> フィールド、<code>VnetOrch</code> の ARP 検査ロジック、<code>VNET_LOCAL_ENDPOINT_REDIRECT</code> ACL テーブルタイプ、<code>hamgrd</code> の連携経路は未裏取り。Overlay ECMP enhancements HLD と smart-switch-ha-hld との依存関係も別途整理が必要。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/vnetorch.cpp:3213,3251-3253,3306,3334</code> で <code>check_directly_connected</code> フィールドのパースと <code>vnet_tunnel_route_check_directly_connected</code> への保存、<code>isPartiallyLocal</code> ガードを確認。<code>sonic-swss/orchagent/tunneltermhelper.h:12-15</code> で <code>VNET_TUNNEL_TERM_ACL_TABLE_TYPE = "VNET_LOCAL_ENDPOINT_REDIRECT"</code>、<code>VNET_TUNNEL_TERM_ACL_TABLE = "VNET_LOCAL_ENDPOINT"</code>、<code>VNET_TUNNEL_TERM_ACL_BASE_PRIORITY = 9998</code>、<code>VNET_TUNNEL_TERM_ACL_RULE_NAME_SUFFIX = "TUNN_TERM"</code> を確認。<code>sonic-dash-ha/crates/hamgrd</code> 側にも <code>check_directly_connected</code> 関連のフィールドが存在（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="vnet-local-endpoint-forwardingdpu-nexthop">VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）<a class="headerlink" href="#vnet-local-endpoint-forwardingdpu-nexthop" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
