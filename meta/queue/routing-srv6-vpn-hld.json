@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/srv6-vpn-hld.md",
+  "issue": 310,
+  "verification": "hld-only",
+  "concerns": [
+    "SRV6_POLICY_TABLE (APPL_DB) と ROUTE_TABLE への vpn_sid / policy フィールド追加が現行 master にあるか未確認",
+    "SRv6Orch の VPN routes / encap mapper / Prefix AGG_ID 実装の現行確認",
+    "SAI 側 SRv6 VPN 拡張属性 (SAI-IPv6-Segment-Routing-VPN.md) の community SAI 取り込み状況",
+    "FRR の SRV6_MY_SID anycast workaround が現行 sonic-frr に取り込まれているか未確認",
+    "End.X action での nexthop id 対応が現行 srv6orch にあるか未確認"
+  ],
+  "priority": "medium"
+}
