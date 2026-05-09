@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/layer-2-forwarding-enhancements/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-usage/">
       
       
-        <link rel="prev" href="../lag-on-distributed-voq-system/">
+        <link rel="prev" href="../gnmi-master-arbitration-hld/">
       
       
-        <link rel="next" href="../openconfig-support-for-portchannel-aggregate-interface/">
+        <link rel="next" href="../gnoi-hld-for-file-and-factory-reset-apis/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range） - SONiC 非公式ドキュメント</title>
+        <title>gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#l2-forwarding-fdb-flush-aging-static-mac-vlan-range" class="md-skip">
+        <a href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+              gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
             
           </span>
         </div>
@@ -291,13 +291,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1379,8 +1379,6 @@
       
   
   
-    
-  
   
   
     
@@ -1418,23 +1416,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../switching/" class="md-nav__link ">
               
   
   
@@ -1452,13 +1447,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1478,7 +1473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -1506,7 +1501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -1534,7 +1529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -1562,7 +1557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lag-on-distributed-voq-system/" class="md-nav__link">
+      <a href="../../switching/lag-on-distributed-voq-system/" class="md-nav__link">
         
   
   
@@ -1587,37 +1582,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../switching/layer-2-forwarding-enhancements/" class="md-nav__link">
         
   
   
@@ -1633,259 +1601,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-fdb-flush" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. FDB Flush
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. FDB Flush">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#static-fdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        static FDB の保存 / 復活
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fdborch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FdbOrch のデータ構造変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-mac-move-event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. MAC move event
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-fdb-aging-time" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. FDB aging time
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-static-fdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Static FDB
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Static FDB">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-sonic-clear-fdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. sonic-clear fdb 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-vlan-range-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. VLAN range CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1898,7 +1613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
+      <a href="../../switching/openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
         
   
   
@@ -1926,7 +1641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -1954,7 +1669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
         
   
   
@@ -1982,7 +1697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -2010,7 +1725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -2038,7 +1753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -2066,7 +1781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -3370,6 +3085,8 @@
       
   
   
+    
+  
   
   
     
@@ -3409,20 +3126,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3440,13 +3160,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3466,7 +3186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -3494,7 +3214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -3522,7 +3242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -3550,7 +3270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -3575,10 +3295,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3594,6 +3341,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        認証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subscribe
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3606,7 +3561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3634,7 +3589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+      <a href="../packetio/" class="md-nav__link">
         
   
   
@@ -3662,7 +3617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3690,7 +3645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3718,7 +3673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3746,7 +3701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -3774,7 +3729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3802,7 +3757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -4888,22 +4843,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-fdb-flush" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. FDB Flush
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. FDB Flush">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#static-fdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        static FDB の保存 / 復活
+        全体構成
       
     </span>
   </a>
@@ -4911,26 +4854,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fdborch" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        FdbOrch のデータ構造変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-mac-move-event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. MAC move event
+        認証
       
     </span>
   </a>
@@ -4938,10 +4865,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-fdb-aging-time" class="md-nav__link">
+  <a href="#get" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. FDB aging time
+        Get
       
     </span>
   </a>
@@ -4949,38 +4876,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-static-fdb" class="md-nav__link">
+  <a href="#set" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Static FDB
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Static FDB">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-sonic-clear-fdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. sonic-clear fdb 拡張
+        Set
       
     </span>
   </a>
@@ -4988,10 +4887,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6-vlan-range-cli" class="md-nav__link">
+  <a href="#capabilities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. VLAN range CLI
+        Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subscribe
       
     </span>
   </a>
@@ -5004,7 +4914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5016,7 +4926,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -5038,10 +4948,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        関連する YANG
       
     </span>
   </a>
@@ -5054,7 +4964,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5065,7 +4975,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5076,7 +4986,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5087,7 +4997,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5114,7 +5024,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/layer-2-forwarding-enhancements.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnmi-usage.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5123,174 +5033,76 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-04 改訂で <strong>5 年以上前</strong>。<code>FdbOrch</code> の per-port / per-VLAN flush API、MAC move event 取り扱い、CONFIG_DB の <code>FDB</code> table へ static MAC を保存する経路、<code>config mac</code> / <code>config vlan range</code> CLI、<code>SWITCH_TABLE</code> の aging time フィールド命名は実コードでの裏取り未済（priority=high）。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>本ページは <code>sonic-gnmi</code> リポジトリの使い方ドキュメントを根拠にしており、現行 master の telemetry コンテナで配布される実バイナリの引数仕様や、<code>-xpath_target</code> の有効値（<code>OC-YANG</code> / <code>CONFIG_DB</code> / <code>COUNTERS_DB</code> 等）の最新リストは未確認。</p>
 </div>
-<h1 id="l2-forwarding-fdb-flush-aging-static-mac-vlan-range">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）<a class="headerlink" href="#l2-forwarding-fdb-flush-aging-static-mac-vlan-range" title="Permanent link">&para;</a></h1>
+<h1 id="gnmi-gnmi_get-gnmi_set-gnmi_cli">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）<a class="headerlink" href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC 初期の L2 機能に欠けていた <strong>6 つの強化</strong> をまとめた HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>per-port / per-VLAN / per-(port,VLAN) FDB flush</strong>: ポート down / VLAN 抜去 / STP topology change 時の細粒度 flush</li>
-<li><strong>MAC move event</strong> の SAI / Orchagent 対応</li>
-<li><strong>FDB aging time の CLI 設定</strong>（既存は APP_DB 直書きのみ）</li>
-<li><strong>Static FDB entry の CLI 設定</strong>（既存は APP_DB 直書きのみ）</li>
-<li><strong><code>sonic-clear fdb</code> の port / VLAN / port+VLAN 指定</strong></li>
-<li><strong>VLAN range CLI</strong>（4094 VLAN を一発で create/delete + member add/remove）</li>
-</ol>
-<p>要件抜粋<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の telemetry コンテナには <strong>3 つの gNMI クライアントツール</strong> が <code>/usr/bin</code> に同梱されており、運用検証や疎通確認に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>aging time デフォルト <strong>600 秒</strong>、設定範囲 <strong>0〜1,000,000 秒</strong>（0 で無効化）</li>
-<li>最大 <strong>4094 VLAN</strong></li>
-<li>VLAN range は <strong><code>first-last</code> 2 値のみ</strong>。リスト形式（<code>2 10,3 100</code>）は不可</li>
+<li><code>gnmi_get</code>: 単一または複数パスの取得（<code>Get</code> RPC）</li>
+<li><code>gnmi_set</code>: <code>update</code> / <code>replace</code> / <code>delete</code> 操作（<code>Set</code> RPC）</li>
+<li><code>gnmi_cli</code>: <code>Subscribe</code> RPC（streaming / polling / once）と <code>Capabilities</code> 取得</li>
 </ul>
-<p>warm boot 対応は既存の挙動を維持<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これらは upstream の <a href="https://github.com/google/gnxi">google/gnxi</a> と <a href="https://github.com/openconfig/gnmi">openconfig/gnmi</a> のツールに、SONiC 用の追加機能を載せた <strong>patched 版</strong> である。パッチは <code>sonic-gnmi/patches/</code> で管理される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ターゲットモデルとして以下を <code>-xpath_target</code> で切り替えられる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>OC-YANG</code>: OpenConfig YANG モデル</li>
+<li><code>SONIC-YANG</code>: SONiC 独自 YANG（CONFIG_DB を YANG で抽象化したもの）</li>
+<li>非 YANG: <code>CONFIG_DB</code> / <code>COUNTERS_DB</code> などの <strong>redis DB を直接</strong> 参照するモード（YANG なしの raw アクセス）</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="1-fdb-flush">1. FDB Flush<a class="headerlink" href="#1-fdb-flush" title="Permanent link">&para;</a></h3>
-<p>ケース別の挙動<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>イベント</th>
-<th>対象</th>
-<th>削除する FDB</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>port operational down</td>
-<td>per port</td>
-<td>dynamic のみ</td>
-</tr>
-<tr>
-<td>port を VLAN から外す</td>
-<td>per (port, VLAN)</td>
-<td>static + dynamic（<strong><code>CONFIG_DB</code> の static は残す</strong>）</td>
-</tr>
-<tr>
-<td>STP topology change</td>
-<td>per port または per (port, VLAN)</td>
-<td>dynamic のみ</td>
-</tr>
-<tr>
-<td>Portchannel admin/oper down</td>
-<td>per Portchannel</td>
-<td>dynamic のみ</td>
-</tr>
-</tbody>
-</table>
-<p>削除は <strong><code>STATE_DB.FDB_TABLE</code> / <code>ASIC_DB</code> / orchagent 内データ構造 / hardware</strong> の全層を更新する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="static-fdb">static FDB の保存 / 復活<a class="headerlink" href="#static-fdb" title="Permanent link">&para;</a></h4>
-<p>port が VLAN メンバでない場合や、VLAN から外れて static FDB が flush された場合でも、orchagent の <strong>「saved FDB」</strong> に保持される。port が VLAN に再追加されると orchagent が saved FDB から再 program する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="fdborch"><code>FdbOrch</code> のデータ構造変更<a class="headerlink" href="#fdborch" title="Permanent link">&para;</a></h4>
-<p>旧: <code>set&lt;(MAC, bv_id)&gt;</code>
-新: <code>map&lt;(MAC, bv_id), fdb_type&gt;</code> （type = static / dynamic）</p>
-<p>flush 後に static を救出するため、type 情報を内部キャッシュに保持する。</p>
-<pre class="mermaid"><code>flowchart TD
-    EV{event} --&gt;|port down| F1[per-port flush dynamic]
-    EV --&gt;|port from VLAN remove| F2[per-port-VLAN flush all&lt;br/&gt;static は saved に保存]
-    EV --&gt;|STP topology change| F3[per-port or per-port-VLAN flush dynamic]
-    EV --&gt;|portchannel down| F4[per-portchannel flush dynamic]
-    F1 &amp; F2 &amp; F3 &amp; F4 --&gt; SDB[STATE_DB / ASIC_DB / HW / m_entries 更新]</code></pre>
-<h3 id="2-mac-move-event">2. MAC move event<a class="headerlink" href="#2-mac-move-event" title="Permanent link">&para;</a></h3>
-<p>DNX 等の ASIC は <strong>MAC が別 port に移動</strong> すると HW 側でイベントを発生させる。本 HLD は SAI / orchagent でこれを処理し、<code>ASIC_DB</code> / <code>STATE_DB</code> の FDB entry を <strong>新 port に書き換え</strong> る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="3-fdb-aging-time">3. FDB aging time<a class="headerlink" href="#3-fdb-aging-time" title="Permanent link">&para;</a></h3>
-<p>新規 CLI: <code>config mac aging_time &lt;0-1000000&gt;</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既定値は <strong>600 秒</strong> （HW 側のドライバ既定 0 を SONiC 起動時に上書き）。<code>0</code> で aging 無効化。</p>
-<p>CONFIG_DB 反映先<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SWITCH_TABLE  (CONFIG_DB)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  fdb_aging_time : &lt;seconds&gt;
+<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    A[client tool\n(gnmi_get / gnmi_set / gnmi_cli)] --&gt;|gRPC :8080\nuser/pass or cert| B[telemetry container\nsonic-gnmi server]
+    B --&gt;|target=OC-YANG| C[transformer\n→ sonic-mgmt-common]
+    B --&gt;|target=SONIC-YANG| D[sonic YANG → CONFIG_DB]
+    B --&gt;|target=CONFIG_DB / COUNTERS_DB| E[redis DB 直接アクセス]</code></pre>
+<h3 id="_4">認証<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>例ではすべて <code>-insecure -username admin -password sonicadmin</code> で TLS 無し + Basic 認証を使っている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本番では証明書ベースの認証を使う想定で、<code>-insecure</code> は検証用フラグ。</p>
+<h3 id="get">Get<a class="headerlink" href="#get" title="Permanent link">&para;</a></h3>
+<p>OpenConfig YANG パス指定で <code>Get</code> する例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gnmi_get<span class="w"> </span>-insecure<span class="w"> </span>-username<span class="w"> </span>admin<span class="w"> </span>-password<span class="w"> </span>sonicadmin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>-target_addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG
 </span></code></pre></div>
-<p><code>SwitchOrch</code> が SAI に降ろす想定（HLD は明示せず、関係 Orch は SwitchOrch / FdbOrch のいずれか）。</p>
-<h3 id="4-static-fdb">4. Static FDB<a class="headerlink" href="#4-static-fdb" title="Permanent link">&para;</a></h3>
-<p>既存は APP_DB 直書きでしか設定できなかった。新 CLI<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>mac<span class="w"> </span>add<span class="w">    </span>&lt;mac&gt;<span class="w"> </span>&lt;vlan&gt;<span class="w"> </span>&lt;port&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>mac<span class="w"> </span>del<span class="w">    </span>&lt;mac&gt;<span class="w"> </span>&lt;vlan&gt;
+<p>レスポンスは <code>JSON_IETF</code> エンコードで返り、<code>mtu</code> / <code>name</code> / <code>enabled</code> / <code>type</code> が含まれる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="set">Set<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<p>ペイロードは <strong>JSON ファイル</strong> として渡す。<code>-update &lt;path&gt;:@&lt;file&gt;</code> の構文を使う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;mtu&quot;: 9108}&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>mtu.json
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnmi_set<span class="w"> </span>-insecure<span class="w"> </span>-username<span class="w"> </span>admin<span class="w"> </span>-password<span class="w"> </span>sonicadmin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-update<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config/mtu:@./mtu.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath_target<span class="w"> </span>OC-YANG
 </span></code></pre></div>
-<p>挙動<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>Set</code> RPC の戻りは <code>op: UPDATE</code>（または <code>REPLACE</code> / <code>DELETE</code>）と該当パスのみで、内容は返さない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="capabilities">Capabilities<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h3>
+<p>サーバが対応する YANG モデル一覧と encoding を取得する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gnmi_cli<span class="w"> </span>-insecure<span class="w"> </span>-with_user_pass<span class="w"> </span>-capabilities<span class="w"> </span>-address<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+</span></code></pre></div>
+<p>例の応答には <code>openconfig-acl 1.0.2</code> / <code>openconfig-system-ext 0.10.0</code> / <code>openconfig-lacp 1.1.1</code> / <code>openconfig-platform 0.12.3</code> などが並ぶ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実環境のバージョンは telemetry コンテナのビルド時点に依存する。</p>
+<h3 id="subscribe">Subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
+<p><code>Subscribe</code> は streaming / polling / once の 3 種類を <code>-query_type</code> と <code>-streaming_type</code> で指定する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_cli<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-address<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-query_type<span class="w"> </span>s<span class="w"> </span>-streaming_type<span class="w"> </span>TARGET_DEFINED<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-q<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/state/oper-status<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-target<span class="w"> </span>OC-YANG<span class="w"> </span>-with_user_pass
+</span></code></pre></div>
+<p>オプション意味<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>同 (MAC, VLAN) の dynamic entry が既にあれば <strong>static で上書き</strong></li>
-<li>port が VLAN 未メンバでも <strong>CONFIG_DB / APP_DB に保存</strong>、orchagent の saved FDB に積む</li>
-<li>port が VLAN に追加されたら orchagent が <strong>saved FDB から復活させる</strong></li>
-</ul>
-<h4 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>FDB|&lt;vlan&gt;|&lt;mac&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  port: &lt;port&gt;
-</span></code></pre></div>
-<h3 id="5-sonic-clear-fdb">5. <code>sonic-clear fdb</code> 拡張<a class="headerlink" href="#5-sonic-clear-fdb" title="Permanent link">&para;</a></h3>
-<p>旧: <code>sonic-clear fdb</code> （ALL のみ）。新オプション<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-clear<span class="w"> </span>fdb<span class="w"> </span>all
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-clear<span class="w"> </span>fdb<span class="w"> </span>port<span class="w"> </span>&lt;port&gt;
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-clear<span class="w"> </span>fdb<span class="w"> </span>vlan<span class="w"> </span>&lt;vlan&gt;
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-clear<span class="w"> </span>fdb<span class="w"> </span>port<span class="w"> </span>&lt;port&gt;<span class="w"> </span>vlan<span class="w"> </span>&lt;vlan&gt;
-</span></code></pre></div>
-<p>すべて <strong>dynamic のみ</strong> が対象。</p>
-<h3 id="6-vlan-range-cli">6. VLAN range CLI<a class="headerlink" href="#6-vlan-range-cli" title="Permanent link">&para;</a></h3>
-<p>旧: 1 VLAN ずつ。新<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>range<span class="w"> </span>add<span class="w">        </span>&lt;first&gt;<span class="w"> </span>&lt;last&gt;<span class="w"> </span><span class="o">[</span>-w<span class="o">]</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>range<span class="w"> </span>del<span class="w">        </span>&lt;first&gt;<span class="w"> </span>&lt;last&gt;<span class="w"> </span><span class="o">[</span>-w<span class="o">]</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span>&lt;first&gt;<span class="w"> </span>&lt;last&gt;<span class="w"> </span>&lt;port&gt;<span class="w"> </span><span class="o">[</span>-w<span class="o">]</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>range<span class="w"> </span>del<span class="w"> </span>&lt;first&gt;<span class="w"> </span>&lt;last&gt;<span class="w"> </span>&lt;port&gt;<span class="w"> </span><span class="o">[</span>-w<span class="o">]</span>
-</span></code></pre></div>
-<p>実装ポイント<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>内部で <code>first..last</code> をループし、<strong>redis pipeline</strong> で一括 SET / DEL</li>
-<li>VLAN 番号バリデーション 1〜4094</li>
-<li>range 命令は <strong>2 値のみ</strong>。リスト形式不可</li>
-<li><code>-w</code> 警告オプション: 既存 VLAN の create / 非存在 VLAN の delete について <strong>warning ログ</strong> を出す（option 無しなら silent）</li>
+<li><code>-query_type s</code>: streaming (<code>o</code> = once, <code>p</code> = polling)</li>
+<li><code>-streaming_type TARGET_DEFINED</code>: ターゲット側がモード（ON_CHANGE / SAMPLE）を選ぶ</li>
+<li><code>-with_user_pass</code>: 標準入力から user/pass を促す</li>
 </ul>
 <pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CLI as config vlan range
-    participant P as redis pipeline
-    participant CDB as CONFIG_DB
-    U-&gt;&gt;CLI: range add 100 200
-    loop for v in 100..200
-        CLI-&gt;&gt;CDB: GET VLAN|&lt;v&gt;
-        alt 既存
-            CLI--&gt;&gt;CLI: skip (warning if -w)
-        else
-            CLI-&gt;&gt;P: SET VLAN|&lt;v&gt;
-        end
-    end
-    CLI-&gt;&gt;P: EXEC
-    P-&gt;&gt;CDB: bulk write</code></pre>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>FDB</code></td>
-<td><code>&lt;vlan&gt;\|&lt;mac&gt;</code></td>
-<td><code>port</code></td>
-<td>static FDB entry</td>
-</tr>
-<tr>
-<td><code>SWITCH_TABLE</code></td>
-<td><code>switch</code></td>
-<td><code>fdb_aging_time</code></td>
-<td>FDB aging 秒（HLD 表記は <code>SWITCH_TABLE</code>、現行 schema は要確認）</td>
-</tr>
-<tr>
-<td><code>VLAN</code></td>
-<td><code>Vlan&lt;id&gt;</code></td>
-<td>(既存)</td>
-<td>VLAN range CLI で bulk 操作される</td>
-</tr>
-<tr>
-<td><code>VLAN_MEMBER</code></td>
-<td><code>Vlan&lt;id&gt;\|&lt;port&gt;</code></td>
-<td>(既存)</td>
-<td>VLAN member range CLI で bulk 操作される</td>
-</tr>
-</tbody>
-</table>
+    participant CL as gnmi_cli
+    participant SV as sonic-gnmi (telemetry)
+    CL-&gt;&gt;SV: SubscribeRequest(stream=TARGET_DEFINED)
+    SV--&gt;&gt;CL: SubscribeResponse (initial sync)
+    SV--&gt;&gt;CL: SubscribeResponse (update)
+    SV--&gt;&gt;CL: SubscribeResponse (update)</code></pre>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>ツール側は CONFIG_DB を <strong>直接読まない</strong>（gNMI 経由）。<code>-xpath_target CONFIG_DB</code> を指定した場合、サーバ側で redis から読み出す。telemetry サーバの認証 / 証明書設定 (<code>TELEMETRY</code> テーブル等) は本ページのスコープ外。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -5301,91 +5113,55 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config mac aging_time &lt;0-1000000&gt;</code></td>
-<td>aging time 秒。0 で無効化</td>
+<td><code>gnmi_get</code></td>
+<td>単一/複数パスの <code>Get</code>。<code>-xpath</code> を複数回指定可</td>
 </tr>
 <tr>
-<td><code>show mac aging_time</code></td>
-<td>現在 aging time 表示</td>
+<td><code>gnmi_set</code></td>
+<td><code>-update</code> / <code>-replace</code> / <code>-delete</code> で書き込み・削除</td>
 </tr>
 <tr>
-<td><code>config mac add &lt;mac&gt; &lt;vlan&gt; &lt;port&gt;</code></td>
-<td>static FDB 追加</td>
-</tr>
-<tr>
-<td><code>config mac del &lt;mac&gt; &lt;vlan&gt;</code></td>
-<td>static FDB 削除</td>
-</tr>
-<tr>
-<td><code>sonic-clear fdb [all\|port &lt;port&gt;\|vlan &lt;vlan&gt;\|port &lt;port&gt; vlan &lt;vlan&gt;]</code></td>
-<td>dynamic FDB クリア</td>
-</tr>
-<tr>
-<td><code>config vlan range add\|del &lt;first&gt; &lt;last&gt; [-w]</code></td>
-<td>VLAN bulk create / delete</td>
-</tr>
-<tr>
-<td><code>config vlan member range add\|del &lt;first&gt; &lt;last&gt; &lt;port&gt; [-w]</code></td>
-<td>VLAN メンバ bulk add / remove</td>
+<td><code>gnmi_cli</code></td>
+<td><code>Subscribe</code> (streaming/polling/once) と <code>Capabilities</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># aging を 60 秒に</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>mac<span class="w"> </span>aging_time<span class="w"> </span><span class="m">60</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># static FDB を Vlan100 / Ethernet0 に</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>config<span class="w"> </span>mac<span class="w"> </span>add<span class="w"> </span><span class="m">00</span>:11:22:33:44:55<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet0
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># VLAN 100〜199 を一括作成し Ethernet0 を全部のメンバに</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>config<span class="w"> </span>vlan<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">199</span><span class="w"> </span>-w
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">199</span><span class="w"> </span>Ethernet0<span class="w"> </span>-w
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># 個別 port の dynamic FDB をクリア</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>sonic-clear<span class="w"> </span>fdb<span class="w"> </span>port<span class="w"> </span>Ethernet0
-</span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>すべて telemetry コンテナの <code>/usr/bin</code> 配下にインストールされる<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは特定のものに紐付かない（gNMI 全モデル横断の操作ツール）。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD は 2019 年改訂</strong>。current master の実装と命名（特に <code>SWITCH_TABLE</code> のキー、<code>FDB</code> table のキー区切り）には乖離がある可能性<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>VLAN range は <strong>2 値のみ</strong>。複数レンジ合成不可</li>
-<li>aging 範囲 0〜1,000,000 秒（HW で受理されるかは ASIC 依存）</li>
-<li><code>sonic-clear fdb</code> は <strong>dynamic のみ</strong>。static は CLI で個別削除</li>
-<li>MAC move event は <strong>SAI 側のサポートが前提</strong>。SAI 実装が出さない ASIC では機能しない</li>
-<li>VLAN range bulk 操作中の途中失敗時の rollback 仕様は HLD 上明示なし</li>
+<li><strong>patched 版</strong>: SONiC 用にいくつかの拡張が当たった派生バイナリで、upstream の <code>google/gnxi</code> / <code>openconfig/gnmi</code> のリリース版とフラグや挙動が一致しない可能性がある<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>-insecure</code> は検証用</strong>: 本番では TLS + 証明書認証を使う想定</li>
+<li><strong>target 切り替えが必須</strong>: <code>-xpath_target</code> 未指定で OC-YANG のパスを叩くと target 解決に失敗する</li>
+<li><strong>JSON_IETF 固定</strong>: 例はすべて <code>json_ietf_val</code>。<code>json_val</code> / <code>proto_val</code> 等の他 encoding は別途 capabilities の応答に依存</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>FdbOrch</code></strong>: 主体。データ構造 set→map 化、saved FDB、flush API</li>
-<li><strong><code>SwitchOrch</code> / <code>VlanMgr</code> / <code>VlanOrch</code></strong>: aging time / VLAN 操作</li>
-<li><strong>STP / L2 protocol</strong>: orchagent flush API の利用元</li>
-<li><strong><code>sonic-utilities</code></strong>: <code>config mac</code> / <code>config vlan range</code> / <code>sonic-clear fdb</code> 拡張</li>
-<li><strong><code>teamd</code> / Portchannel</strong>: portchannel down 時の flush 連動</li>
-<li><strong>warm boot</strong>: 既存挙動を維持。新機能による壊れがないこと前提</li>
+<li><strong>gNMI Master Arbitration</strong>: <code>gnmi_set</code> を使う場合、サーバが Master Arbitration を有効化していると <code>MasterArbitration</code> 拡張なしの <code>Set</code> は <code>PermissionDenied</code> で落ちる</li>
+<li><strong>gNMI 認証 / RBAC</strong>: <code>-username</code> / <code>-password</code> のロールに応じて <code>Set</code> 権限が制限される</li>
+<li><strong>CONFIG_DB / COUNTERS_DB の sonic-mgmt-common 経由アクセス</strong>: <code>-xpath_target SONIC-YANG</code> を使うと sonic-mgmt-common の transformer 経路を経由する</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>port down 後にも MAC が残る → <code>redis-cli -n 0 keys 'FDB_TABLE:*'</code> で APPL_DB の状態確認、<code>FdbOrch</code> ログ確認</li>
-<li>static FDB を入れても hardware に反映されない → port が VLAN メンバか確認。未メンバなら orchagent の saved FDB に保留</li>
-<li><code>config vlan range add</code> が遅い → pipelining が効いているか、SET 数が多すぎていないかを確認</li>
-<li>aging が効かない → <code>redis-cli -n 4 hgetall 'SWITCH_TABLE|switch'</code> で aging_time 値を確認、HW 側の aging 上限と比較</li>
-<li>MAC move 後に古い port に packet が出続ける → MAC move event 通知の SAI 側サポート、<code>ASIC_DB</code> の FDB entry を確認</li>
+<li><code>Unimplemented</code> 系エラー: 指定 <code>-xpath_target</code> が telemetry サーバで有効化されていない</li>
+<li><code>Connection refused</code>: telemetry コンテナが起動していない／ポート 8080 が他用途</li>
+<li><code>Capabilities</code> の応答にあるモデルバージョンと、クライアントが期待するバージョンが食い違う場合、telemetry コンテナのビルドバージョンを確認</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- FdbOrch の per-port / per-VLAN flush API と m_entries の (MAC, bv_id) → fdb_type マップ化の現行実装確認
-- saved FDB（port が VLAN 未メンバの間 static を保留）の実装存在確認
-- MAC move event の SAI 通知ハンドラ実装確認
-- config mac aging_time / config mac add/del CLI の sonic-utilities 取り込み確認
-- config vlan range / config vlan member range CLI の redis pipeline 実装確認
-- SWITCH_TABLE の fdb_aging_time フィールド命名と SwitchOrch の SAI 反映経路確認
-- HLD は 2019 年改訂のため現行 master との乖離リスクが大きい
+- patched 版バイナリの差分（gnmi_get/set/cli）の内容
+- -xpath_target の有効値リスト（CONFIG_DB / COUNTERS_DB / OC-YANG / SONIC-YANG ほか）
+- telemetry コンテナでの実際のインストールパスと bin 名（master 現行）
+- sonic-mgmt-common transformer の現行 OpenConfig モデル対応状況
+- TLS / 証明書認証経路の標準的な手順（このドキュメントは insecure 例のみ）
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-gnmi</code> <code>doc/gNMI_usage_examples.md</code> @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
