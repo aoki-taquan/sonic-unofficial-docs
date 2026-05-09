@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/routing/class-based-forwarding-enhancement.md",
+      "issue": 233,
+      "verification": "hld-only",
+      "concerns": [
+        "新 NHG / CBF NHG orchestration agent の実装存在確認 (NhgOrch / CbfNhgOrch 等)",
+        "CONFIG_DB の DSCP_TO_FC_MAP / EXP_TO_FC_MAP スキーマ取り込みと QosOrch 拡張の確認",
+        "APP_DB の CLASS_BASED_NEXT_HOP_GROUP_TABLE / FC_TO_NHG_INDEX_MAP_TABLE スキーマが現行 master にあるか未確認",
+        "SAI PR #1193 (SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED) が community SAI / sairedis に取り込まれているか未確認",
+        "HLD は 2021-08 改訂のため現行 master 実装との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
       "issue": 230,
       "verification": "hld-only",
@@ -545,16 +558,19 @@
     {
       "page": "docs/routing/bfd-hw-offload.md",
       "issue": 91,
-      "verification": "hld-only",
+      "verification": "code-verified",
       "concerns": [
-        "BfdOrch が現行 master の sonic-swss に存在するか",
-        "APPL_DB BFD セッションテーブルの最終キー名 (BFD_SESSION vs BFD_SESSION_TABLE)",
-        "SAI_BFD_SESSION_* 属性 (OFFLOAD_TYPE_FULL 等) が community SAI で利用可能か",
-        "show bfd session の sonic-utilities 取り込み",
         "Phase 2 以降の CONFIG_DB スキーマ / config CLI 追加状況",
         "2021 年 HLD と現行 master の乖離（Warm reboot 挙動含む）"
       ],
-      "priority": "high"
+      "priority": "high",
+      "verified_concerns": [
+        "BfdOrch が現行 master の sonic-swss に存在するか → bfdorch.cpp 確認 (verified 2026-05-09)",
+        "APPL_DB BFD セッションテーブルの最終キー名 → BFD_SESSION_TABLE (sonic-swss-common/common/schema.h:120) (verified 2026-05-09)",
+        "SAI_BFD_SESSION_* 属性 → SAI_BFD_SESSION_TYPE_*, SAI_BFD_SESSION_STATE_* を bfdorch で利用確認 (verified 2026-05-09)",
+        "show bfd session の sonic-utilities 取り込み → show/main.py:2669 で実装確認 (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
