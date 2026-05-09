@@ -4,7 +4,7 @@
   "entries": [
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
-      "issue": null,
+      "issue": 230,
       "verification": "hld-only",
       "concerns": [
         "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認",
