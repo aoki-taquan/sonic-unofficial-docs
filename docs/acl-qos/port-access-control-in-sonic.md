@@ -152,7 +152,7 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 ## 干渉する機能
 
 - **VLAN / FDB**: dynamic VLAN 割当・MAC move によって VLAN_MEMBER / FDB が変動
-- **AAA / RADIUS**: AAA improvements や RADIUS 全体の改修と密接（[radius-management-user-authentication](../management/radius-management-user-authentication.md)）
+- **AAA / RADIUS**: AAA improvements や RADIUS 全体の改修と密接（management 章の RADIUS / AAA ページ参照）
 - **CoPP**: EAPoL / MAB のフレームを CPU に上げる trap が CoPP queue を消費
 
 ## トラブルシューティング
