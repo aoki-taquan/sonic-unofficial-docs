@@ -403,7 +403,8 @@
         "本ドキュメントは旧 design draft。現行 warm-restart 実装はどの方式かを確認"
       ],
       "priority": "high",
-      "issue": 524
+      "issue": 524,
+      "pr": 525
     },
     {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",

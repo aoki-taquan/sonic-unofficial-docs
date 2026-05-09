@@ -10,5 +10,6 @@
     "\u672c\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u306f\u65e7 design draft\u3002\u73fe\u884c warm-restart \u5b9f\u88c5\u306f\u3069\u306e\u65b9\u5f0f\u304b\u3092\u78ba\u8a8d"
   ],
   "priority": "high",
-  "issue": 524
+  "issue": 524,
+  "pr": 525
 }
