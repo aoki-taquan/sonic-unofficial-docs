@@ -89,7 +89,8 @@
         "本 HLD は 2021 年版 (Rev 1.0) で 4-5 年経過、Status=Initial。仕様乖離リスクあり"
       ],
       "priority": "high",
-      "issue": 473
+      "issue": 473,
+      "pr": 474
     },
     {
       "page": "docs/management/config-reload-enhancement.md",

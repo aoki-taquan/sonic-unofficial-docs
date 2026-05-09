@@ -10,5 +10,6 @@
     "\u672c HLD \u306f 2021 \u5e74\u7248 (Rev 1.0) \u3067 4-5 \u5e74\u7d4c\u904e\u3001Status=Initial\u3002\u4ed5\u69d8\u4e56\u96e2\u30ea\u30b9\u30af\u3042\u308a"
   ],
   "priority": "high",
-  "issue": 473
+  "issue": 473,
+  "pr": 474
 }
