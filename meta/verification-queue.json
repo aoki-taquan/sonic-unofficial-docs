@@ -78,6 +78,20 @@
       "priority": "high"
     },
     {
+      "page": "docs/internals/dump-utility-for-easy-debugging.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-utilities の dump/ ディレクトリと Executor 抽象基底クラスの現行 master 実装存在確認",
+        "MatchEngine / MatchRequest クラスの API が HLD 記述 (Table/key_pattern/field/value/just_keys) と一致するか確認",
+        "現行実装で利用可能なモジュール一覧 (port/copp/acl_table/acl_rule/...) が HLD 記載と一致するか dump state --show で確認",
+        "techsupport への自動組込み（unified_view_dump/<module>）が実装されているか確認",
+        "multi-asic --namespace ハンドリング、single-ASIC でのエラー出力の現行挙動確認",
+        "本 HLD は 2021 年版 (Rev 1.0) で 4-5 年経過、Status=Initial。仕様乖離リスクあり"
+      ],
+      "priority": "high",
+      "issue": 473
+    },
+    {
       "page": "docs/management/config-reload-enhancement.md",
       "issue": 89,
       "verification": "code-verified",
