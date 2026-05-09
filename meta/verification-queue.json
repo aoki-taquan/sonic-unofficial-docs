@@ -990,6 +990,20 @@
       "priority": "high",
       "issue": 163,
       "pr": 164
+    },
+    {
+      "page": "docs/system/sonic-fips-deployment.md",
+      "verification": "hld-only",
+      "concerns": [
+        "hostcfgd の FIPS table handler の実装存在確認（sonic-host-services / PR #69 取り込み）",
+        "/etc/fips/fips_enabled の各 docker container への bind mount 設定確認",
+        "ENABLE_FIPS ビルドオプションが現行 sonic-buildimage rules/config にあるか未確認",
+        "STATE_DB.FIPS_STAT|state の enabled / enforced 書き込み実装確認",
+        "SymCrypt-OpenSSL engine 統合 (sonic-fips リポの openssl.patch) の現行取り込み状況確認",
+        "enforce mode の kernel cmdline 連動と warm/fast-reboot 必須化の実装確認"
+      ],
+      "priority": "medium",
+      "issue": 165
     }
   ]
 }
