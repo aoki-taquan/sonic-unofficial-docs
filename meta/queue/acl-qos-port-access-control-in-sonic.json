@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/port-access-control-in-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "Authentication Manager / mabd / hostapdmgrd の現行 master 取り込み確認",
+    "PAC_PORT_CONFIG_TABLE / HOSTAPD_GLOBAL_CONFIG_TABLE / RADIUS / RADIUS_SERVER の YANG 取り込み確認",
+    "config authentication / config dot1x / config mab CLI の sonic-utilities 取り込み確認",
+    "SAI Bridge port learning mode 変更と FDB MAC move 対応の community SAI 確認",
+    "EAPoL / MAB 用 host interface trap の SAI / CoPP 設定取り込み確認",
+    "RADIUS 動的 VLAN 割当（Tunnel attributes）の VLAN orch 連携確認"
+  ],
+  "priority": "medium"
+}
