@@ -1,0 +1,15 @@
+{
+  "page": "docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt \u306e test_vrf.py \u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
+    "frr.conf.j2 \u306e VRF \u30c6\u30f3\u30d7\u30ec\u30fc\u30c8\u62e1\u5f35 (router bgp <as> vrf <name> \u30d6\u30ed\u30c3\u30af\u751f\u6210) \u306e\u73fe\u884c master \u78ba\u8a8d",
+    "BGP_NEIGHBOR / BGP_PEER_RANGE \u306e vrf_name \u5c5e\u6027\u306e Schema \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "acl-loader \u306e redirect:<ip>@<intf> action \u69cb\u6587\u306e\u73fe\u884c\u30b5\u30dd\u30fc\u30c8\u78ba\u8a8d",
+    "warm-reboot \u4e2d\u306e VRF \u9023\u7d9a\u30c8\u30e9\u30d5\u30a3\u30c3\u30af\u4fdd\u8a3c\u306e\u73fe\u884c\u6319\u52d5\u78ba\u8a8d",
+    "1000 VRF \u5b9f\u6a5f\u5230\u9054\u6027\u306e\u78ba\u8a8d",
+    "TODO \u9805\u76ee (fallback_lookup / route leak / everflow) \u306e\u73fe\u884c\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
+  ],
+  "priority": "medium",
+  "issue": 509
+}
