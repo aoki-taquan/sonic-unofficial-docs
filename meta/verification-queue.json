@@ -2168,6 +2168,17 @@
       "priority": "low"
     },
     {
+      "page": "docs/switching/sonic-basic-l2-mode-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-cfggen --preset l2 オプションの現行サポート確認",
+        "sonic-mgmt 配下 fdb / vlan / snmp テストが basic L2 モードで pass する現行状況確認",
+        "vlan_configure PortChannel 依存箇所の現状（修正済みか）確認"
+      ],
+      "priority": "low",
+      "issue": 513
+    },
+    {
       "page": "docs/switching/wake-on-lan-in-sonic.md",
       "issue": 17,
       "verification": "hld-only",
