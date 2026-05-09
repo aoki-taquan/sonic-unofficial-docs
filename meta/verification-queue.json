@@ -480,6 +480,20 @@
         "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/routing/bfd-hw-offload.md",
+      "issue": 91,
+      "verification": "hld-only",
+      "concerns": [
+        "BfdOrch が現行 master の sonic-swss に存在するか",
+        "APPL_DB BFD セッションテーブルの最終キー名 (BFD_SESSION vs BFD_SESSION_TABLE)",
+        "SAI_BFD_SESSION_* 属性 (OFFLOAD_TYPE_FULL 等) が community SAI で利用可能か",
+        "show bfd session の sonic-utilities 取り込み",
+        "Phase 2 以降の CONFIG_DB スキーマ / config CLI 追加状況",
+        "2021 年 HLD と現行 master の乖離（Warm reboot 挙動含む）"
+      ],
+      "priority": "high"
     }
   ]
 }
