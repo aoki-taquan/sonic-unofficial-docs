@@ -9,5 +9,6 @@
     "sff8472 wire-addr (a0h/a2h) \u30cf\u30f3\u30c9\u30ea\u30f3\u30b0\u306e\u5b9f\u88c5\u78ba\u8a8d"
   ],
   "priority": "low",
-  "issue": 528
+  "issue": 528,
+  "pr": 529
 }

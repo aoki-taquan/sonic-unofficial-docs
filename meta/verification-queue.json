@@ -2244,7 +2244,8 @@
         "sff8472 wire-addr (a0h/a2h) ハンドリングの実装確認"
       ],
       "priority": "low",
-      "issue": 528
+      "issue": 528,
+      "pr": 529
     },
     {
       "page": "docs/platform/sonic-port-fec-ber.md",
