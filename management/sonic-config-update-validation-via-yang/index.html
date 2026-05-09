@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bgp-route-aggregation-with-bbr-awareness/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/sonic-config-update-validation-via-yang/">
       
       
-        <link rel="prev" href="../bfd-hw-offload/">
+        <link rel="prev" href="../serial-console-global-config-hld/">
       
       
-        <link rel="next" href="../bgp-router-id-explicitly-configured/">
+        <link rel="next" href="../sonic-nos-configuration-methods/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS） - SONiC 非公式ドキュメント</title>
+        <title>YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bbr-bgp-bgp_aggregate_address" class="md-skip">
+        <a href="#yang-configdb-gcu-configdbconnector" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
+              YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -915,8 +915,6 @@
       
   
   
-    
-  
   
   
     
@@ -966,23 +964,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -1000,13 +995,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1026,7 +1021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1051,37 +1046,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1097,192 +1065,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマと YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bgpcfgd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bgpcfgd の挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefix-list" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefix-list 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1295,7 +1077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1323,7 +1105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1351,7 +1133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1379,7 +1161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1407,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1435,7 +1217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1463,7 +1245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1491,7 +1273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1519,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1547,7 +1329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1575,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1603,7 +1385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1631,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1659,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1687,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1715,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -3453,6 +3235,8 @@
       
   
   
+    
+  
   
   
     
@@ -3506,20 +3290,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3537,13 +3324,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3563,7 +3350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -3591,7 +3378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -3619,7 +3406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -3647,7 +3434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -3675,7 +3462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
+      <a href="../gnmi-usage/" class="md-nav__link">
         
   
   
@@ -3703,7 +3490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3731,7 +3518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -3759,7 +3546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -3787,7 +3574,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -3815,7 +3602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
+      <a href="../gnsi-hld/" class="md-nav__link">
         
   
   
@@ -3843,7 +3630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -3871,7 +3658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -3899,7 +3686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+      <a href="../packetio/" class="md-nav__link">
         
   
   
@@ -3927,7 +3714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3955,7 +3742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3983,7 +3770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -4008,10 +3795,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4027,6 +3841,242 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存の 2 ステップ vs 新方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スコープ（Phase 1）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="スコープ（Phase 1）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pythonsonic-utilitiesconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python（sonic-utilities/config/）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C++
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不足 YANG への対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        性能インパクト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証スキップ機構
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外メッセージの保持
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4039,7 +4089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -4067,7 +4117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -4095,7 +4145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -5271,10 +5321,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db-yang" class="md-nav__link">
+  <a href="#2-vs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマと YANG
+        既存の 2 ステップ vs 新方式
       
     </span>
   </a>
@@ -5282,10 +5332,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgpcfgd" class="md-nav__link">
+  <a href="#phase-1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpcfgd の挙動
+        スコープ（Phase 1）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="スコープ（Phase 1）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pythonsonic-utilitiesconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python（sonic-utilities/config/）
       
     </span>
   </a>
@@ -5293,10 +5355,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#prefix-list" class="md-nav__link">
+  <a href="#c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        prefix-list 連携
+        C++
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不足 YANG への対応
       
     </span>
   </a>
@@ -5304,10 +5382,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        STATE_DB
+        性能インパクト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証スキップ機構
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外メッセージの保持
       
     </span>
   </a>
@@ -5320,7 +5420,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5354,7 +5454,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -5370,7 +5470,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5381,7 +5481,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5392,7 +5492,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5403,7 +5503,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5430,7 +5530,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/bgp-route-aggregation-with-bbr-awareness.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/sonic-config-update-validation-via-yang.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5439,124 +5539,113 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>bgpcfgd</code> の <code>BGP_AGGREGATE_ADDRESS</code> / <code>BGP_BBR</code> 購読、State-DB 反映、CLI 取り込みは要裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は 2022-08 (Phase 1 設計) で 3 年以上前。<code>ConfigDBConnector</code> のデコレータ適用範囲、各 <code>config &lt;feature&gt;</code> CLI への取り込み状況、buffermgrd の GCU D-Bus 連携実装は要裏取り。</p>
 </div>
-<h1 id="bbr-bgp-bgp_aggregate_address">BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）<a class="headerlink" href="#bbr-bgp-bgp_aggregate_address" title="Permanent link">&para;</a></h1>
+<h1 id="yang-configdb-gcu-configdbconnector">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）<a class="headerlink" href="#yang-configdb-gcu-configdbconnector" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP の集約広告（aggregate-address）は経路数を圧縮する基本機能だが、SONiC は従来 CONFIG_DB / CLI から集約アドレスを設定する手段を持たず、FRR 設定を直接書き換える必要があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに BBR（Bounce Back Routing）が無効な状態で集約だけを入れると、<strong>contributing route の到達不能性に起因するパケットドロップ</strong> が発生しうる。</p>
-<p>本機能は CONFIG_DB に <code>BGP_AGGREGATE_ADDRESS</code> テーブルを新設し、<strong>BBR の有効状態に応じて集約広告を条件付きで生成</strong> する仕組みを導入する。各エントリの状態は STATE_DB に <code>active</code> / <code>inactive</code> で公開される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC では従来、<code>config &lt;feature&gt;</code> 系 CLI が ConfigDB に書き込む前のフィールド検証を <strong>Python のハードコード（ad-hoc）と YANG モデルの両方</strong> で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本プロジェクトはその二重管理を解消し、<strong>既存の YANG モデルを単一の Source of Truth</strong> として ConfigDB 更新時に再利用する。具体的には Generic Config Updater (GCU) を介した JSON patch 検証を <code>ConfigDBConnector.set_entry()</code> のデコレータとして注入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-yang">CONFIG_DB スキーマと YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
-<p>新規 YANG モジュール <code>sonic-bgp-aggregate-address</code>（<code>revision 2024-07-17</code>）が次のリストを定義する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="2-vs">既存の 2 ステップ vs 新方式<a class="headerlink" href="#2-vs" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  subgraph 既存
+    UC[config &lt;feature&gt; CLI] --&gt; AH[ad-hoc 検証\n（Python）]
+    AH --&gt; SE[ConfigDBConnector.set_entry]
+    SE --&gt; DB[(ConfigDB)]
+  end
+  subgraph 新方式
+    UC2[config &lt;feature&gt; CLI] --&gt; DEC[set_entry デコレータ\n=GCU/YANG 検証]
+    DEC --&gt; DB2[(ConfigDB)]
+  end</code></pre>
+<p>新方式では <strong>デコレータが既存 <code>set_entry</code> をラップ</strong> し、内部で update を JSON patch に変換して <code>GenericConfigUpdater.apply_patch()</code> を呼ぶ。検証通過時のみ ConfigDB に書く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">validate_decorator</span><span class="p">(</span><span class="n">config_db_connector</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validated_set_entry</span><span class="p">(</span><span class="n">updated_value</span><span class="p">):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="n">update_json_patch</span> <span class="o">=</span> <span class="n">updated_value</span><span class="o">.</span><span class="n">to_json_patch</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">GenericConfigUpdater</span><span class="o">.</span><span class="n">apply_patch</span><span class="p">(</span><span class="n">update_json_patch</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">config_db_connector</span><span class="o">.</span><span class="n">set_entry</span> <span class="o">=</span> <span class="n">validated_set_entry</span>
+</span></code></pre></div>
+<p>デコレータ採用の利点<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>既存 <code>ConfigDBConnector</code> インスタンスを差し替えずに使える</li>
+<li>必要な箇所だけデコレートできる</li>
+<li>書き込みを伴わない <code>ConfigDBConnector</code> の利用は無改修で残る</li>
+</ul>
+<h3 id="phase-1">スコープ（Phase 1）<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h3>
+<h4 id="pythonsonic-utilitiesconfig">Python（<code>sonic-utilities/config/</code>）<a class="headerlink" href="#pythonsonic-utilitiesconfig" title="Permanent link">&para;</a></h4>
+<p><code>config &lt;feature&gt;</code> 系 CLI のうち、HLD で列挙されているもの<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<blockquote>
+<p>AAA / ACL / BGP / Console / DHCP Relay / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / VRF / Management VRF / Mirroring / Muxcable / NAT / NTP / NVGRE / PBH / Platform Component Firmware / PortChannel / QoS / sFlow / SNMP / Subinterfaces / Syslog / VLAN / Warm Restart / Watermark / ZTP</p>
+</blockquote>
+<p>加えて ACL rules（incremental update / delete）、<code>pfc</code>、<code>crm</code>、<code>mclag</code>、<code>counterpoll</code>、および以下のスクリプト: <code>configlet</code> / <code>db_migrator</code> / <code>dropconfig</code> / <code>mellanox_buffer_migrator</code> / <code>neighbor_advertisor</code> / <code>null_route_helper</code> / <code>hostcfgd</code>。</p>
+<h4 id="c">C++<a class="headerlink" href="#c" title="Permanent link">&para;</a></h4>
+<p><code>buffermgrd</code> のみ。Python から呼ぶ手段として HLD は 3 案を挙げ、<strong>D-Bus GCU API</strong> を本プロジェクトの推奨手段としている（gNMI プロジェクトが既に採用中）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">不足 YANG への対応<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>ad-hoc 検証で行われていたが YANG に未反映の制約は、<strong>YANG infra でカバー可能なものは GitHub issue を立てて YANG を埋めていく</strong>。YANG 側で表現できないチェックのみ ad-hoc 検証を残す<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>移行期間中は ad-hoc を残し、フラグで切替可能とする。安定後に非性能要件箇所から ad-hoc を削除する設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">性能インパクト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>GCU 経由は ad-hoc より遅い。HLD の実測例<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>型</th>
-<th>既定</th>
-<th>説明</th>
+<th>検証方式</th>
+<th>例</th>
+<th>実測時間</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>aggregate-address</code></td>
-<td>ip-prefix</td>
-<td>—</td>
-<td>広告する集約プレフィックス（key）</td>
+<td>GCU/YANG</td>
+<td><code>config portchannel add PortChannel04</code></td>
+<td><strong>5.177s</strong></td>
 </tr>
 <tr>
-<td><code>bbr-required</code></td>
-<td>bool</td>
-<td>false</td>
-<td>true 時は BBR 有効時のみ集約広告を生成</td>
-</tr>
-<tr>
-<td><code>summary-only</code></td>
-<td>bool</td>
-<td>false</td>
-<td>true 時は contributing route を抑止し集約のみ広告</td>
-</tr>
-<tr>
-<td><code>as-set</code></td>
-<td>bool</td>
-<td>false</td>
-<td>AS_SET を AS_PATH に付加して広告</td>
-</tr>
-<tr>
-<td><code>aggregate-address-prefix-list</code></td>
-<td>string</td>
-<td>""</td>
-<td>集約アドレスを追加する prefix-list 名</td>
-</tr>
-<tr>
-<td><code>contributing-address-prefix-list</code></td>
-<td>string</td>
-<td>""</td>
-<td>contributing 用 prefix-list 名（prefix-length フィルタ付き）</td>
+<td>ad-hoc</td>
+<td>同上</td>
+<td>0.453s</td>
 </tr>
 </tbody>
 </table>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;BGP_AGGREGATE_ADDRESS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;192.168.0.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;bbr-required&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;summary-only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                      </span><span class="nt">&quot;aggregate-address-prefix-list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AGG_ROUTES_V4&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                      </span><span class="nt">&quot;contributing-address-prefix-list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AGG_CONTRIBUTING_ROUTES_V4&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;fc00::/63&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;bbr-required&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;summary-only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;as-set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+<p>CLI 用途では許容範囲だが、warm/fast reboot のような <strong>性能要件のあるパス</strong> は ad-hoc 検証を維持する方針が明記されている<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">検証スキップ機構<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>GCU 検証バグでフィールドが不当にブロックされて運用停止に追い込まれる事故を避けるため、無効化フラグが用意される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;DEVICE_METADATA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;localhost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;yang_config_validation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;disable&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="bgpcfgd">bgpcfgd の挙動<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> は <code>BGP_AGGREGATE_ADDRESS</code> と <code>BGP_BBR</code> の両キーを購読し、次のイベントに応答する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart TD
-  ADD[CONFIG_DB に address 追加] --&gt; R{bbr-required?}
-  R --&gt;|false| GEN[FRR に集約生成&lt;br&gt;STATE_DB=active]
-  R --&gt;|true| BBR{BBR 有効?}
-  BBR --&gt;|Yes| GEN
-  BBR --&gt;|No| INACT[FRR には書かない&lt;br&gt;STATE_DB=inactive]
-  RM[CONFIG_DB から削除] --&gt; CLEAN[prefix-list から除去&lt;br&gt;+FRR から集約削除&lt;br&gt;+STATE_DB から削除]
-  EBBR[BBR 有効化] --&gt; SCAN1[bbr-required=true な全 entry を active 化]
-  DBBR[BBR 無効化] --&gt; SCAN2[bbr-required=true な全 entry を inactive 化]
-  RST[bgp container 再起動] --&gt; CLR[起動時に STATE_DB を全削除\nしてから CONFIG_DB を再処理]</code></pre>
-<h3 id="prefix-list">prefix-list 連携<a class="headerlink" href="#prefix-list" title="Permanent link">&para;</a></h3>
-<p>各エントリは 2 種の prefix-list に集約アドレスを <strong>登録</strong> できる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>aggregate-address-prefix-list</code>: 集約アドレスをそのまま append。</li>
-<li><code>contributing-address-prefix-list</code>: 集約アドレスを <strong>prefix-length フィルタ付き</strong> で append（集約 prefix-length 以上の長さのプレフィックスにマッチ）。</li>
-</ul>
-<p><code>summary-only=true</code> 時は FRR 側で contributing route が広告抑止される。</p>
-<h3 id="state_db">STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;BGP_AGGREGATE_ADDRESS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;192.168.0.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;inactive&quot;</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">                      </span><span class="nt">&quot;aggregate-address-prefix-list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AGG_ROUTES_V4&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">                      </span><span class="nt">&quot;contributing-address-prefix-list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AGG_CONTRIBUTING_ROUTES_V4&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+<p>CLI:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>yang_config_validation<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>yang_config_validation<span class="w"> </span>disable
 </span></code></pre></div>
-<p><code>active</code> は実際に FRR / bgpd に集約広告が入っている状態、<code>inactive</code> は CONFIG_DB に登録はあるが BBR 条件未充足で広告していない状態を示す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>yang_config_validation</code> フィールド自体は YANG 検証を <strong>絶対に通さない</strong>（disable しようとした時点で詰むのを避けるため）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/BGP/BGP-route-aggregation-with-bbr-awareness.md#L237-L260 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/config_yang_validation/config_db_yang_validation.md#L196-L219 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  The process bgpcfgd in bgp container will subscribe the keys BGP_AGGREGATE_ADDRESS and BGP_BBR in config DB.
-  ... 1. Add address in config DB: if BRR requirement is satisfied, generate aggregated address in the bgp container ...
-  ... 5. The bgp container restarted or start up: The bgp container will remove all the addresses in state DB before processing any address in config DB.
-reasoning: 各イベントのフロー（active/inactive 遷移、再起動時のクリア）の根拠。
+  In some cases, we may need to disable YANG validation prior to modifying ConfigDB.
+  ... we add a field to ConfigDB: `yangValidateEnabled` ... This field never undergoes any YANG validation.
+reasoning: 緊急時の検証バイパスフラグの根拠。
 -->
 
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_5">例外メッセージの保持<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>GCU が標準で吐く例外メッセージはユーザに分かりにくいため、各 CLI の呼び出し元で例外型を捕捉して <strong>既存のエラーメッセージを再出力</strong> する。複数のエラーが同じ例外型に集約される場合は統合メッセージを出す。YANG モデル側で <code>yang-error-msg</code> を設定可能なら、それで具体的な制約名を区別する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>BGP_AGGREGATE_ADDRESS</code></td>
-<td>本機能の本体。プレフィックスごとの集約パラメータ</td>
-</tr>
-<tr>
-<td><code>BGP_BBR</code></td>
-<td>既存。BBR feature の有効/無効</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>localhost</code></td>
+<td><code>yang_config_validation</code></td>
+<td><code>enable</code> / <code>disable</code>。デフォルトは enable 相当</td>
 </tr>
 </tbody>
 </table>
@@ -5570,59 +5659,44 @@ reasoning: 各イベントのフロー（active/inactive 遷移、再起動時�
 </thead>
 <tbody>
 <tr>
-<td><code>show ip bgp aggregate-address</code></td>
-<td>IPv4 の集約状態（A=As Set / B=BBR Required / S=Summary Only フラグ）</td>
+<td><code>config yang_config_validation enable</code></td>
+<td>YANG 検証を有効化</td>
 </tr>
 <tr>
-<td><code>show ipv6 bgp aggregate-address</code></td>
-<td>IPv6 同上</td>
-</tr>
-<tr>
-<td><code>config bgp aggregate-address add &lt;prefix&gt; [--bbr-required] [--summary-only] [--as-set] [--aggregate-address-prefix-list X] [--contributing-address-prefix-list Y]</code></td>
-<td>追加</td>
-</tr>
-<tr>
-<td><code>config bgp aggregate-address remove &lt;prefix&gt;</code></td>
-<td>削除</td>
+<td><code>config yang_config_validation disable</code></td>
+<td>YANG 検証をスキップ</td>
 </tr>
 </tbody>
 </table>
-<p>show 出力例<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Flags: A - As Set, B - BBR Required, S - Summary Only
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Prefix           State      Option Flags  Aggregate Address Prefix List  Contributing Address Prefix List
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>192.168.0.0/24   Active     S             AGG_ROUTES_V4                  AGG_CONTRIBUTING_ROUTES_V4
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>10.0.0.0/24      Inactive   A,B,S
+<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>yang_config_validation<span class="w"> </span>disable<span class="w">   </span><span class="c1"># 緊急時のバイパス</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>portchannel<span class="w"> </span>add<span class="w"> </span>PortChannel04<span class="w">    </span><span class="c1"># ad-hoc 検証だけが走る</span>
 </span></code></pre></div>
-<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>bgp<span class="w"> </span>aggregate-address<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.168.0.0/24<span class="w"> </span>--summary-only<span class="w"> </span>--as-set
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>bgp<span class="w"> </span>aggregate-address<span class="w"> </span>add<span class="w"> </span>fc00:1::/64<span class="w"> </span>--bbr-required<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--aggregate-address-prefix-list<span class="w"> </span>AGG_ROUTE_V6<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--contributing-address-prefix-list<span class="w"> </span>CONTRIBUTING_ROUTE_V6
-</span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CLOS で同一レイヤ非同期に展開すると trafic 偏重</strong>: 同一レイヤの一部デバイスにだけ集約を入れると、トラフィックは詳細経路を持つ側に偏る。HLD は「全デバイス同時展開、または traffic 非感応シナリオでのみ使用」を明記している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>再起動時に STATE_DB を全クリア</strong>: <code>bgp</code> コンテナ再起動時、まず STATE_DB の全 <code>BGP_AGGREGATE_ADDRESS</code> を消してから CONFIG_DB を再評価する。短時間ながら集約広告が消える可能性がある<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>性能要件のあるシナリオでは ad-hoc を維持</strong>: warm/fast reboot 等は GCU の数秒コストが許容できないため、引き続き ad-hoc 検証を使う<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>YANG カバレッジに依存</strong>: YANG モデルに未表現の制約は ad-hoc を残さざるを得ない。HLD は移行を段階的に進める前提を明記している<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>buffermgrd の C++ 実装は別経路</strong>: D-Bus GCU API が必要。ビルド・配備依存が増える。</li>
+<li><strong>エラーメッセージの後処理が必要</strong>: GCU の例外を呼び出し元でキャッチして既存メッセージへ書き戻す対応を CLI ごとに入れる必要がある<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>BBR (<code>BGP_BBR</code>)</strong>: <code>bbr-required=true</code> のエントリは BBR enable/disable に追従して active/inactive を切り替える。BBR を OFF→ON にすると対応する集約が一斉に有効化される。</li>
-<li><strong>prefix-list</strong>: 既存の prefix-list を共有して使うため、prefix-list 編集との競合に注意（同名 prefix-list を別用途で使っていると entry の重複追加が起こり得る）。</li>
-<li><strong>FRR の <code>aggregate-address</code> コマンド</strong>: 本機能は FRR 側のネイティブ <code>aggregate-address</code> を内部で叩く想定。手動で FRR に書いた集約とは管理が分離される。</li>
+<li><strong>GCU (Generic Config Updater)</strong>: 本機能は GCU の <code>apply_patch</code> を内部で利用する。GCU 側のバグ・非互換は直接波及する。</li>
+<li><strong>gNMI</strong>: 同じく D-Bus GCU API を使う。両者の検証経路が一貫する利点がある。</li>
+<li><strong>db_migrator</strong> 等のスクリプト: ad-hoc 検証を持っていたものは GCU 経由に変える対象。マイグレーション時の検証失敗が新たな failure モードになりうる。</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li>集約が広告されない: <code>show ip bgp aggregate-address</code> で <code>Inactive</code> なら <code>bbr-required</code> と <code>BGP_BBR</code> の状態を確認。</li>
-<li>削除しても集約が残る: STATE_DB のエントリと FRR <code>running-config</code> を比較。bgpcfgd ログで remove イベント処理を確認。</li>
-<li>prefix-list に意図しない entry: <code>aggregate-address-prefix-list</code> / <code>contributing-address-prefix-list</code> を共有している他用途を確認。</li>
+<li>CLI が予期せず失敗する: GCU の例外メッセージを直接表示している可能性。<code>config yang_config_validation disable</code> で一時回避し、原因 YANG 制約を特定する。</li>
+<li>性能劣化: 性能要件のあるパスで GCU が走っていないか確認。warm/fast reboot は ad-hoc が望ましい<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>バイパスが効かない: <code>DEVICE_METADATA.localhost.yang_config_validation</code> の値を直接 redis で確認。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/BGP/BGP-route-aggregation-with-bbr-awareness.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/config_yang_validation/config_db_yang_validation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
