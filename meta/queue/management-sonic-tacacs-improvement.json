@@ -1,0 +1,15 @@
+{
+  "page": "docs/management/sonic-tacacs-improvement.md",
+  "verification": "hld-only",
+  "concerns": [
+    "bash patch + plugin \u306b\u3088\u308b command authorization \u306e\u73fe\u884c sonic-buildimage \u3078\u306e\u53d6\u308a\u8fbc\u307f\u78ba\u8a8d (debian package \u540d\u30fbpatch \u5834\u6240)",
+    "auditd + audisp-tacplus \u306b\u3088\u308b command accounting \u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "hostcfgd \u306e AAA config \u30e2\u30b8\u30e5\u30fc\u30eb (bash config / auditd config \u751f\u6210) \u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
+    "AAA \u30c6\u30fc\u30d6\u30eb\u30ad\u30fc authorization / accounting \u3068 CLI (config aaa authorization|accounting) \u306e sonic-utilities \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "show tacacs+ counter / sonic-clear tacacscounters \u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
+    "240 byte truncation\u30fb\u6700\u5927\u30b5\u30fc\u30d0\u6570 8\u30fbdocker \u5185 bypass \u306e\u5236\u9650\u304c\u73fe\u884c\u3067\u6b8b\u3063\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "secret \u30de\u30b9\u30af (PASSWD_CMDS) \u30ed\u30b8\u30c3\u30af\u306e\u78ba\u8a8d"
+  ],
+  "priority": "medium",
+  "issue": 495
+}
