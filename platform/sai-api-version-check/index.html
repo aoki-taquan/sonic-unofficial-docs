@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/default-route/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sai-api-version-check/">
       
       
-        <link rel="prev" href="../bgp-router-id-explicitly-configured/">
+        <link rel="prev" href="../icmp-hardware-offload/">
       
       
-        <link rel="next" href="../router-interface-counters-in-sonic/">
+        <link rel="next" href="../sonic-fast-link-up/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>linkmgrd のデフォルトルート連動（DualToR mux 制御） - SONiC 非公式ドキュメント</title>
+        <title>SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#linkmgrd-dualtor-mux" class="md-skip">
+        <a href="#sai-api-sai_query_api_version" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              linkmgrd のデフォルトルート連動（DualToR mux 制御）
+              SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -645,8 +645,6 @@
       
   
   
-    
-  
   
   
     
@@ -666,23 +664,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -700,13 +695,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -726,7 +721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -751,37 +746,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    linkmgrd のデフォルトルート連動（DualToR mux 制御）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -797,275 +765,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態源と通知経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-standby" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        要件（Active-Standby）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        要件（Active-Active）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#solution-one" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Solution One: ハートビート抑止による「擬似不健全」化（現行実装）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Solution One: ハートビート抑止による「擬似不健全」化（現行実装）">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ハートビート送信の停止
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkprober-active-standby" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LinkProber 状態の強制リセット（Active-Standby のみ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        デフォルトルート状態のキャッシュ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active-standby" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active への積極切替の抑止（Active-Standby のみ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI オプション
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#solution-two" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Solution Two（不採用案）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        復旧の挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1078,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1960,6 +1659,8 @@
       
   
   
+    
+  
   
   
     
@@ -1979,20 +1680,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2010,13 +1714,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2036,7 +1740,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2061,10 +1765,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2080,6 +1811,203 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルドシステムの構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_api_version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存の SAI_API_VERSION マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-sai_query_api_version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新 API: sai_query_api_version()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ac_try_run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルド時検査（AC_TRY_RUN）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不整合がもたらす問題（背景）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認方法（手動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2092,7 +2020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -2532,7 +2460,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態源と通知経路
+        ビルドシステムの構造
       
     </span>
   </a>
@@ -2540,10 +2468,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#active-standby" class="md-nav__link">
+  <a href="#sai_api_version" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件（Active-Standby）
+        既存の SAI_API_VERSION マクロ
       
     </span>
   </a>
@@ -2551,10 +2479,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
+  <a href="#api-sai_query_api_version" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件（Active-Active）
+        新 API: sai_query_api_version()
       
     </span>
   </a>
@@ -2562,93 +2490,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#solution-one" class="md-nav__link">
+  <a href="#ac_try_run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Solution One: ハートビート抑止による「擬似不健全」化（現行実装）
+        ビルド時検査（AC_TRY_RUN）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Solution One: ハートビート抑止による「擬似不健全」化（現行実装）">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハートビート送信の停止
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkprober-active-standby" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LinkProber 状態の強制リセット（Active-Standby のみ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        デフォルトルート状態のキャッシュ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active-standby" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active への積極切替の抑止（Active-Standby のみ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI オプション
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#solution-two" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Solution Two（不採用案）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        復旧の挙動
+        不整合がもたらす問題（背景）
       
     </span>
   </a>
@@ -2661,7 +2517,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2684,7 +2540,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -2706,10 +2562,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        確認方法（手動）
       
     </span>
   </a>
@@ -2722,7 +2578,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2733,7 +2589,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2744,7 +2600,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2771,7 +2627,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/default-route.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sai-api-version-check.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2781,136 +2637,132 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-linkmgrd</code> の実コード（<code>LinkProberStateMachine</code> / <code>MuxStateMachine</code> 等）での裏取りは未済。</p>
+<p>このページは公式 HLD のみを根拠に書かれている。OCP SAI 本体への <code>sai_query_api_version</code> 取り込み状況、<code>sonic-sairedis</code> の autotools <code>AC_TRY_RUN</code> 検査の現行実装、各ベンダー libsai の API 提供状況は未裏取り。</p>
 </div>
-<h1 id="linkmgrd-dualtor-mux">linkmgrd のデフォルトルート連動（DualToR mux 制御）<a class="headerlink" href="#linkmgrd-dualtor-mux" title="Permanent link">&para;</a></h1>
+<h1 id="sai-api-sai_query_api_version">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）<a class="headerlink" href="#sai-api-sai_query_api_version" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DualToR 構成では 2 台の ToR が <code>active</code> / <code>standby</code> または <code>active-active</code> の役割で同一サーバ群を収容する。<code>linkmgrd</code> は LinkProber のハートビートと mux 状態に基づいてどちらの ToR がトラフィックを担うかを制御するが、ToR 自身のアップリンク到達性が壊れている場合（典型的にはデフォルトルートが消失した場合）、その ToR が <code>active</code> のまま居続けるとトラフィックがブラックホール化する。</p>
-<p>本機能は <strong>デフォルトルートの有無を mux の健全性判定に取り込む</strong> ためのもので、<code>orchagent</code> が <code>STATE_DB</code> に書き込むデフォルトルート状態を <code>linkmgrd</code> が購読し、不在時には自身を <code>standby</code> 寄りに倒す挙動を取る。コマンドラインオプションでオプトインする設計である。</p>
+<p>SONiC の syncd は <strong>OCP SAI リポジトリのヘッダ</strong> に対してコンパイルされ、リンクは <strong>vendor が <code>sonic-buildimage</code> 配下に配置した <code>libsai.so</code></strong> に対して行われる。OCP SAI ヘッダが更新されたが vendor 側 <code>libsai.so</code> の差し替えが間に合っていないと、ABI 不一致や属性 ID / enum 値のミスマッチが発生し、最悪 syncd が起動しない or 不可解な振る舞いをする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI は属性追加・enum 拡張に <strong>後方互換を保たない</strong> ため、片方だけ進むと壊れる。</p>
+<p>本機能は次の 2 段で問題を検出する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>SAI に新規 API <strong><code>sai_query_api_version()</code></strong> を追加し、<code>libsai.so</code> 自身が「どのバージョンのヘッダに対して実装されたか」を返せるようにする。</li>
+<li><code>sonic-sairedis</code> のビルド時に autotools <code>AC_TRY_RUN</code> で <strong>vendor の <code>libsai.so</code> が返すバージョン</strong> と <strong><code>sonic-sairedis</code> の SAI ヘッダのバージョン</strong> を比較し、不一致ならビルドを失敗させる。</li>
+</ol>
+<p>これにより、組み合わせの不整合がイメージビルド時点で検知され、「動かしてみて初めて気づく」事態を防ぐ。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">状態源と通知経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p><code>orchagent</code> は IPv4 / IPv6 のデフォルトルート状態を <code>STATE_DB</code> のエントリに書き込む。値は次の 2 値で表現される。</p>
-<ul>
-<li>有効なデフォルトルートあり: <code>state:ok</code></li>
-<li>有効なデフォルトルートなし: <code>state:na</code></li>
-</ul>
-<p><code>linkmgrd</code> はこの STATE_DB エントリを購読し、変化を mux 状態機械にフィードする。HLD 時点では実装は <strong>IPv4 のみを実効的に使用</strong> するが、通知ハンドラ自体は IPv4 / IPv6 の両エントリに対応した形で定義することが要件として明記されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">ビルドシステムの構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    Kernel[Linux ルーティングテーブル] --&gt;|default route 監視| ORCH[orchagent]
-    ORCH --&gt;|state:ok / state:na| SDB[(STATE_DB)]
-    SDB --&gt; LM[linkmgrd]
-    LM --&gt; LSM[LinkManagerStateMachine]
-    LSM --&gt; MUX[MuxState]</code></pre>
+    SAIH[sonic-sairedis\nSAI headers (OCP SAI submodule)] --&gt; SYNCD[syncd 本体\n(コンパイル対象)]
+    VENDH[vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)] --&gt; VLIB[vendor libsai.so\n(sonic-buildimage)]
+    SYNCD --&gt;|link| VLIB
+    SYNCD --&gt;|sai_query_api_version()\nビルド時 AC_TRY_RUN| VLIB</code></pre>
+<p>ベンダーによっては SAI ヘッダを公開しているところ（Mellanox-SAI など）と、<code>libsai.so</code> バイナリのみ配布するところがある。後者の場合「ヘッダだけ更新して libsai を放置」が容易に起こり得るため、本機能の効果が大きい<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai_api_version">既存の <code>SAI_API_VERSION</code> マクロ<a class="headerlink" href="#sai_api_version" title="Permanent link">&para;</a></h3>
+<p>OCP SAI の <code>saiversion.h</code> には次のマクロが既に定義されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#define SAI_MAJOR 1</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#define SAI_MINOR 9</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#define SAI_REVISION 1</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="cp">#define SAI_VERSION(major, minor, revision) (10000 * (major) + 100 * (minor) + (revision))</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="cp">#define SAI_API_VERSION SAI_VERSION(SAI_MAJOR, SAI_MINOR, SAI_REVISION)</span>
+</span></code></pre></div>
+<p>ただしこれは <strong>ヘッダ側</strong> の値であり、<code>libsai.so</code> バイナリ単体からは取得できない。本提案はそれを取得可能にする。</p>
+<h3 id="api-sai_query_api_version">新 API: <code>sai_query_api_version()</code><a class="headerlink" href="#api-sai_query_api_version" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cm">/**</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cm"> * @brief Retrieve a SAI API version this implementation is aligned to</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cm"> *</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="cm"> * @param[out] version Version number</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="cm"> *</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="cm"> * @return #SAI_STATUS_SUCCESS on success, failure status code on error</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="cm"> */</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_api_version</span><span class="p">(</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="n">_Out_</span><span class="w"> </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">);</span>
+</span></code></pre></div>
+<p>実装は trivial で、ベンダー libsai 内で <code>*version = SAI_API_VERSION</code> を返すだけ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_api_version</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">        </span><span class="n">_Out_</span><span class="w"> </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="o">*</span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_API_VERSION</span><span class="p">;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>「<code>SAI_API_VERSION</code> は <strong>ベンダーがコンパイルに使った SAI ヘッダ</strong> に由来する値」という点が本質的に重要。これを runtime で取り出せる窓を libsai 側に常設する。</p>
+<h3 id="ac_try_run">ビルド時検査（AC_TRY_RUN）<a class="headerlink" href="#ac_try_run" title="Permanent link">&para;</a></h3>
+<p><code>sonic-sairedis</code> の <code>configure</code> ステップで次の流れで検査する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Conf as configure (autotools)
+    participant Test as 小さなテストプログラム
+    participant LSAI as vendor libsai.so
+    Conf-&gt;&gt;Test: AC_TRY_RUN でコンパイル &amp; 実行
+    Test-&gt;&gt;LSAI: sai_query_api_version(&amp;v)
+    LSAI--&gt;&gt;Test: v = vendor 側 SAI_API_VERSION
+    Test-&gt;&gt;Test: v vs SAIREDIS の SAI_API_VERSION (ヘッダ)
+    alt 一致 (or MAJOR.MINOR 一致)
+        Test--&gt;&gt;Conf: exit 0
+    else 不一致
+        Test--&gt;&gt;Conf: exit 非ゼロ
+        Conf-&gt;&gt;Conf: configure 失敗 → ビルド停止
+    end</code></pre>
+<p>セマンティックバージョニングに従う限りは、テストプログラムが <strong>MAJOR.MINOR</strong> のみを比較し PATCH の差は許容するという緩和も提案されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより小さい修正リリースで全ビルド連鎖がブロックされるのを避ける。</p>
 <!-- evidence:
-source: sonic-net/sonic-linkmgrd/doc/default_route.md#L1-L6 (sha: 65f563308c689e3225fdf3fc249a132350e9879b)
+source: sonic-net/SONiC/doc/sonic-build-system/saiversioncheck.md#L77-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Orchagent will update both IPv4 and Ipv6 default route status to state db entries.
-  If there is a valid default route, it shall be updated as `state:ok`.
-  If there isn't a valid default route, it shall be updated as `state:na`.
-  For now we only care about IPv4, but state db notification handler should be properly defined for both entries.
-reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用という設計事実の根拠。
+  Using that new API we can implement a configure-time check in sonic-sairedis with autotools AC_TRY_RUN:
+  ...
+  In case, SAI versioning follows sematical versioning rules, the test program can implement a check for only MAJOR and MINOR version, relaxing the constraint on the PATCH version.
+reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシーの根拠。
 -->
 
-<h3 id="active-standby">要件（Active-Standby）<a class="headerlink" href="#active-standby" title="Permanent link">&para;</a></h3>
-<p>Active-Standby 構成における要件は次のとおり整理される。</p>
-<ol>
-<li>片側 ToR がデフォルトルートを失った場合、その ToR は <code>standby</code> に遷移する。</li>
-<li>その状態で対向 ToR が不健全になっても <code>active</code> には戻らない。デフォルトルートを欠いた ToR を <code>active</code> にしても無意味だからである。</li>
-<li>両 ToR が同時にデフォルトルートを失った場合、mux 方向は片側に <strong>固定</strong> されオシレーションを起こさない。</li>
-<li>デフォルトルートが復旧した場合、mux は自動回復可能でなければならない。</li>
-<li>mux mode が <code>manual</code> の場合、デフォルトルートの変化で mux 方向を変えてはならない。</li>
-<li>ユーザは本機能（デフォルトルート連動）自体を <strong>オフ</strong> にできなければならない。</li>
-</ol>
-<h3 id="active-active">要件（Active-Active）<a class="headerlink" href="#active-active" title="Permanent link">&para;</a></h3>
-<p>Active-Active 構成では両 ToR が独立に転送するため、要件は次のように単純化される。</p>
-<ol>
-<li>デフォルトルートを失った ToR は <code>standby</code> に倒れ、復旧するまで <code>standby</code> を維持する。</li>
-<li>両 ToR が失った場合は両方が <code>standby</code> になる。</li>
-<li>復旧後は自動回復する。</li>
-<li><code>manual</code> モードでは forwarding state を変えない。</li>
-<li>オプトイン制御をユーザに提供する。</li>
-</ol>
-<h3 id="solution-one">Solution One: ハートビート抑止による「擬似不健全」化（現行実装）<a class="headerlink" href="#solution-one" title="Permanent link">&para;</a></h3>
-<p>HLD は二案のうち <strong>Solution One</strong> を現行採用としている。要点は次の 4 点である。</p>
-<h4 id="_4">ハートビート送信の停止<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p>デフォルトルートが無い側は LinkProber のハートビート <strong>送信を止める</strong>（受信は続ける）。これは <code>LinkProber</code> から見て当該 ToR が不健全に見えるため、<code>linkmgrd</code> の通常ロジックでそのまま <code>standby</code> に落ちる。Active-Standby・Active-Active のいずれでも同じ手段が使える。</p>
-<p>両 ToR がデフォルトルートを失うと、両方ともハートビートを止めるため <code>LinkProber:Wait</code> 状態に収束し、相互に <code>active</code> を奪い合うオシレーションを回避できる。</p>
-<h4 id="linkprober-active-standby"><code>LinkProber</code> 状態の強制リセット（Active-Standby のみ）<a class="headerlink" href="#linkprober-active-standby" title="Permanent link">&para;</a></h4>
-<p><code>LinkProber:Wait</code> から復旧する際、復旧側で受信される <code>LinkProber:Unknown</code> イベントは通常では状態遷移ハンドラを起動しない。HLD はこの穴を埋めるため、デフォルトルートが <code>ok</code> に戻った時点で <strong><code>LinkProber</code> 状態を強制的にリセットして mux 状態と一致させる</strong> という処理を追加する。これは <code>Link:Up</code> イベント受信時と同じアプローチを流用すると説明されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>Active-Active 側は対向と独立に動くため、このリセットは不要。</p>
-<h4 id="_5">デフォルトルート状態のキャッシュ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
-<p>要件 #5（manual モードで反応しない）と要件 #6（機能自体のオフ）を満たすため、<code>linkmgrd</code> 内部にデフォルトルート状態をキャッシュしておく。mux mode が <code>auto</code> ↔ <code>manual</code> で切り替わった時、現在のキャッシュ値に応じてハートビート送信を再開・停止できるようにするためである。</p>
-<h4 id="active-active-standby"><code>active</code> への積極切替の抑止（Active-Standby のみ）<a class="headerlink" href="#active-active-standby" title="Permanent link">&para;</a></h4>
-<p>「デフォルトルートを欠いた ToR を <code>active</code> にしない」という要件 #1.2 を直接的に実装するため、Active-Standby の状態遷移では <strong>デフォルトルート不在時に <code>active</code> 側へ遷移するパスを明示的に塞ぐ</strong>。これにより、Solution One の遷移パスは次のように整理される（A 側で消失 → B 側で消失 → B 復旧 → A 復旧）。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>              0.init           1.A消失           2.B消失            3.B復旧            4.A復旧
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ToR A    active, healthy -&gt; standby, healthy -&gt; standby, unhealthy -&gt; standby, healthy -&gt; standby, healthy
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ToR B    standby, healthy -&gt; active,  healthy -&gt; active,  unhealthy -&gt; active,  healthy -&gt; active,  healthy
-</span></code></pre></div>
-<p>積極切替を抑止する前は step #2 で <code>ToR A</code> が一時的に <code>active, unhealthy</code> を経由していたが、抑止によって <code>standby, unhealthy</code> で停留する。Active-Active ではこの抑止は不要で、両 ToR は独立に振る舞う<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="cli">CLI オプション<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h4>
-<p>ユーザによるオプトインのため、<code>linkmgrd</code> プロセスに <code>--default_route</code> / <code>-d</code> のコマンドラインオプションが追加される。指定がない場合は本連動は無効である。</p>
-<h3 id="solution-two">Solution Two（不採用案）<a class="headerlink" href="#solution-two" title="Permanent link">&para;</a></h3>
-<p><code>LinkManagerStateMachine</code> は現状 <code>LinkProber</code> / <code>MuxState</code> / <code>LinkState</code> の 3 次元で状態遷移を定義している。Solution Two はそこに <code>DefaultRoute</code> を 4 次元目として正式に組み込む案で、可読性・保守性の面で優位だが、実装工数が大きい。HLD は <strong>Active-Active 化のタイミングで再検討</strong> する余地として残すと述べている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_6">復旧の挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>デフォルトルートが <code>ok</code> に戻った時、Active-Standby では上述のとおり <code>LinkProber</code> 状態が強制的にリセットされ、必要なら <code>standby</code> から <code>active</code> への遷移が即座に走る。Active-Active では各 ToR が独立に <code>standby</code> → <code>active</code> に戻る。</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant K as Kernel/FRR
-    participant O as orchagent
-    participant S as STATE_DB
-    participant L as linkmgrd
-    K-&gt;&gt;O: default route restored
-    O-&gt;&gt;S: state:ok
-    S--&gt;&gt;L: notify
-    L-&gt;&gt;L: cache := ok
-    alt active-standby
-        L-&gt;&gt;L: LinkProber state reset
-        L-&gt;&gt;L: resume heartbeat
-    else active-active
-        L-&gt;&gt;L: resume heartbeat
-    end</code></pre>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_4">不整合がもたらす問題（背景）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>HLD は不整合時の典型症状を 4 つ列挙している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>ABI 変更によるリンク失敗（syncd が <code>libsai.so</code> とリンクできない）。</li>
+<li>属性 ID ミスマッチ。SAI が <strong>後方互換を保たずに新属性を追加</strong> するため、片方が新版なら ID が一致せず syncd が異常終了 or 微妙に誤動作する。</li>
+<li>enum 値ミスマッチ。同様の理由で列挙の番号が変わる。</li>
+<li>それ以外（暗黙の動作差異）。</li>
+</ul>
+<p>これらは production で出ると気付くまでに時間がかかるため、ビルド時に弾く価値が高い。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述はない。状態の購読対象は <code>STATE_DB</code> 側であり、CONFIG_DB を介した有効化スイッチは定義されていない（オン/オフは下記のコマンドラインオプション経由）。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<p>HLD には <code>show</code> / <code>config</code> 系の SONiC CLI への追加は記載されていない。本機能は <code>linkmgrd</code> プロセスのコマンドラインオプションでのみ制御される。</p>
-<table>
-<thead>
-<tr>
-<th>オプション</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--default_route</code> (<code>-d</code>)</td>
-<td>linkmgrd でデフォルトルート連動を有効化する</td>
-</tr>
-</tbody>
-</table>
+<p>該当なし。本機能はビルドシステムレベルの整合性チェックで、runtime 設定を持たない。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>該当なし。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に記載なし。</p>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p><code>linkmgrd</code> の起動引数として下記のように渡す（実際のサービスユニットファイル内での渡し方はプラットフォーム依存）。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>linkmgrd<span class="w"> </span>--default_route
+<p>該当なし。</p>
+<h3 id="_6">確認方法（手動）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>ベンダー libsai 単体に対し、簡易プログラムから <code>sai_query_api_version()</code> を呼べばバージョンが取り出せる。</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sai.h&gt;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sai_query_api_version</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="c1">// v = 10000 * MAJOR + 100 * MINOR + REVISION</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;vendor libsai SAI_API_VERSION = %lu</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="n">v</span><span class="p">);</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p><code>SAI_VERSION(major, minor, revision)</code> の式は <code>10000*major + 100*minor + revision</code> なので、<code>v / 10000</code> が major、<code>(v / 100) % 100</code> が minor、<code>v % 100</code> が revision になる。</p>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>LinkProber</strong>: 本機能はハートビート <strong>送信</strong> を抑止することで <code>LinkProber</code> の不健全状態をエミュレートする。受信側のロジックを変更しないため、対向 ToR の判定は通常どおり動く。</li>
-<li><strong>mux mode (<code>auto</code> / <code>manual</code>)</strong>: <code>manual</code> ではデフォルトルート変化で mux 方向を変えてはならない要件があるため、<code>linkmgrd</code> 内部でキャッシュ参照と分岐が発生する。</li>
-<li><strong>dualtor_io テスト</strong>: HLD は、本機能が有効な状態でデフォルトルートが欠けると一部の dualtor_io テストが失敗することを <strong>テスト環境側の問題</strong> と扱うと明記している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>OCP SAI のリリースサイクル</strong>: 本機能が機能するのは OCP SAI 側に <code>sai_query_api_version</code> が追加された後。それ以前は <code>dlsym</code> で関数が見つからない可能性があり、ビルド時テストが「シンボル無し」エラーで失敗する。これは <strong>「未対応 vendor libsai は失格」</strong> という強い前提を持つ設計である。</li>
+<li><strong>マルチベンダー環境</strong>: 1 つの <code>sonic-sairedis</code> を複数ベンダーで再利用するため、<code>sai_query_api_version</code> を全ベンダー libsai が実装している必要がある。実装漏れベンダーがあるとビルドが通らない。</li>
+<li><strong>CI / PR チェック</strong>: HLD は「<code>sonic-sairedis</code> を更新したら同じ PR で全ベンダー libsai を更新する責任」を明記している<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CI が PR でこのビルド時検査を回す形になる。</li>
+<li><strong>PATCH 緩和</strong>: 提案レベルでは MAJOR.MINOR のみ比較する案が出ている。実装がそのとおりかは裏取り対象。</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>フェイルオーバが意図どおり起きない場合、まず <code>STATE_DB</code> のデフォルトルート状態が <code>ok</code> / <code>na</code> のどちらで観測されているか確認する。<code>orchagent</code> 側がそもそも書き込んでいない可能性がある。</li>
-<li>復旧後に Active-Standby で <code>active</code> に戻らない場合、<code>LinkProber</code> の状態リセットが走っていない可能性がある。HLD では <code>Link:Up</code> 受信時と同じパスを通すと記述されているため、<code>Link:Up</code> 系のログと突き合わせて切り分けると良い。</li>
-<li>本機能のオン/オフは <code>linkmgrd</code> 起動引数で決まる。サービスユニットの引数を確認すること。</li>
+<li>ビルドが <code>configure: error: SAI version mismatch ...</code> で止まる: <code>sonic-sairedis</code> 配下の SAI ヘッダ（OCP SAI submodule）と vendor libsai のバージョンを照合する。たいていは vendor libsai 側を更新する必要がある。</li>
+<li><code>sai_query_api_version</code> 未定義エラー: ベンダー libsai が古く、本 API 未実装。ベンダーに更新を要求する。</li>
+<li>検査をスキップしたい（緊急ビルド）: HLD では明示されていないが、<code>AC_TRY_RUN</code> 検査は configure フラグでスキップ可能なように作るのが一般的。実装裏取り対象。</li>
+<li>Runtime での挙動が怪しい: ビルド検査は通っても、ベンダー libsai が <code>SAI_API_VERSION</code> を <strong>実態と異なる値で返す</strong> バグがあると検知できない。属性 ID / enum 値の異常は依然として可能性がある。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-linkmgrd</code> <code>doc/default_route.md</code> @ <code>65f563308c689e3225fdf3fc249a132350e9879b</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/saiversioncheck.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
