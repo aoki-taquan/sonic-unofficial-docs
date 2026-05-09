@@ -1,7 +1,7 @@
 ---
 title: Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / Initial Proposal"
-    HLD は v0.1（改訂日記載なし）。`port_rates.lua` に Pre/Post FEC BER 計算ロジックが追加されているか、`portstat.py` が `-f` で `FEC_PRE_BER` / `FEC_POST_BER` を表示するかは未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/port_rates.lua` master に `compute_ber()` 関数と `SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS` / `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES` の HGET、Pre/Post FEC BER 計算（`rs_average_frame_ber` を使用）、lanes と serdes_speed lookup を確認。`sonic-utilities/scripts/portstat` に `-f`/`--fec-stats`、`-fh`/`--fec_hist` フラグ実装済み。HLD の主要要素は master 取り込み済み。
 
 # Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）
 

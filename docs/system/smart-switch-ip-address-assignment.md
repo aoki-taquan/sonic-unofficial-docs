@@ -1,7 +1,7 @@
 ---
 title: Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2。`bridge-midplane` の systemd-networkd 設定、`midplane-network-npu/dpu.service` oneshot、`DHCP_SERVER_IPV4` 系の port-mode IP 払い出し、sonic-cfggen の `t1-smartswitch` テンプレートは未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/files/image_config/midplane-network/` 配下に `bridge-midplane.netdev` / `bridge-midplane.network` / `dummy-midplane.network` / `define-npu-specific-netdevs.sh` を確認。`DHCP_SERVER_IPV4` / `DHCP_SERVER_IPV4_PORT` テーブルは `src/sonic-yang-models/doc/Configuration.md`、`src/sonic-config-engine/config_samples.py`、`src/sonic-dhcp-utilities/` で参照されている。Smart Switch midplane bridge / DHCP server 経路は master 取り込み済み。
 
 # Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
 

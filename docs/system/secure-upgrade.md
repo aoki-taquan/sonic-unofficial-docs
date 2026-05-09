@@ -1,7 +1,7 @@
 ---
 title: Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 (2022-06)。`build_image.sh` の `SECURE_UPGRADE_MODE` 分岐、`sign_image_dev.sh` / `sign_image_${platform}.sh` の同梱、`sonic-installer install` の verification 経路、`onie-mk-demo.sh` 経由の sharch.sh prefix は未裏取り。secure boot HLD（hld_secure_boot.md）と対をなす。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage` master の `slave.mk` / `rules/config` / `onie-mk-demo.sh` / `files/build_templates/sonic_version.yml.j2` で `SECURE_UPGRADE_MODE` 分岐を確認。`sign_image_dev` 系の参照も `onie-mk-demo.sh` に存在。`sonic-utilities/sonic_installer/main.py` には `verify_secureboot_image` / `is_secure_upgrade_image_verification_supported` の検証経路が実装されている。secure boot HLD（hld_secure_boot.md）と対をなす。
 
 # Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）
 
