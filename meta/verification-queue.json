@@ -872,7 +872,8 @@
         "Stage 2 (SAI API 経由のタグ表現) の取り込み状況確認"
       ],
       "priority": "medium",
-      "issue": 147
+      "issue": 147,
+      "pr": 148
     }
   ]
 }
