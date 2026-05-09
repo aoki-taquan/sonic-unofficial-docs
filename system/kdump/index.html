@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/prefix-based-mux-neighbors/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/kdump/">
       
       
-        <link rel="prev" href="../overlay-ecmp-with-bfd-monitoring/">
+        <link rel="prev" href="../kdump-remote-ssh/">
       
       
-        <link rel="next" href="../reliable-tsa/">
+        <link rel="next" href="../memory-statistics-feature-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化） - SONiC 非公式ドキュメント</title>
+        <title>kdump（kexec ベース kernel crash dump / makedumpfile） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mux-dual-tor" class="md-skip">
+        <a href="#kdumpkexec-kernel-crash-dump-makedumpfile" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
+              kdump（kexec ベース kernel crash dump / makedumpfile）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1485,8 +1485,6 @@
       
   
   
-    
-  
   
   
     
@@ -1586,23 +1584,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -1620,13 +1615,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1646,7 +1641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1674,7 +1669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1702,7 +1697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -1730,7 +1725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
+      <a href="../../routing/bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
         
   
   
@@ -1758,7 +1753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1786,7 +1781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
         
   
   
@@ -1814,7 +1809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1842,7 +1837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1870,7 +1865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -1898,7 +1893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1926,7 +1921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
+      <a href="../../routing/bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
         
   
   
@@ -1954,7 +1949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1982,7 +1977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -2010,7 +2005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -2038,7 +2033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -2066,7 +2061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -2094,7 +2089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2122,7 +2117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../high-level-design-document/" class="md-nav__link">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2150,7 +2145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -2178,7 +2173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -2206,7 +2201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -2234,7 +2229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -2262,7 +2257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -2290,7 +2285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -2315,37 +2310,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -2361,220 +2329,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        従来方式 vs プレフィックスルート方式
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orchagent 側の変更
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Orchagent 側の変更">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#neighbororch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NeighborOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#muxorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capability チェックと後方互換
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラフィック転送パス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state-db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する State-DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2587,7 +2341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -2615,7 +2369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2643,7 +2397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -2671,7 +2425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
+      <a href="../../routing/segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
         
   
   
@@ -2699,7 +2453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2727,7 +2481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
         
   
   
@@ -2755,7 +2509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -2783,7 +2537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2811,7 +2565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -2839,7 +2593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -2867,7 +2621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-weighted-ecmp/" class="md-nav__link">
+      <a href="../../routing/sonic-weighted-ecmp/" class="md-nav__link">
         
   
   
@@ -2895,7 +2649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2923,7 +2677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-vpn-hld/" class="md-nav__link">
+      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2951,7 +2705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2979,7 +2733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-ip-route-configuration/" class="md-nav__link">
+      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -3007,7 +2761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -3035,7 +2789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -3063,7 +2817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -4997,6 +4751,8 @@
       
   
   
+    
+  
   
   
     
@@ -5096,20 +4852,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -5127,13 +4886,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5153,7 +4912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -5181,7 +4940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -5209,7 +4968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -5237,7 +4996,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5265,7 +5024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5293,7 +5052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -5321,7 +5080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -5349,7 +5108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -5377,7 +5136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -5405,7 +5164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
+      <a href="../independent-dpu-upgrade/" class="md-nav__link">
         
   
   
@@ -5433,7 +5192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -5458,10 +5217,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/kdump/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kdump（kexec ベース kernel crash dump / makedumpfile）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -5477,6 +5263,186 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crash-capture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crash → Capture フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-crashkernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory 予約 (crashkernel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-kdump-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config kdump CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        保存形式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        容量管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-build-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC build / install への組込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tech-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tech-support 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5489,7 +5455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -5517,7 +5483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -5545,7 +5511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -5573,7 +5539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5601,7 +5567,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5629,7 +5595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -5657,7 +5623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -5685,7 +5651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -5713,7 +5679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -5741,7 +5707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5769,7 +5735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5797,7 +5763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5825,7 +5791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5853,7 +5819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5881,7 +5847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5909,7 +5875,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5937,7 +5903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5965,7 +5931,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5993,7 +5959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -6021,7 +5987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -6049,7 +6015,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -6077,7 +6043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -6105,7 +6071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -6133,7 +6099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -6161,7 +6127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -6189,7 +6155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -6217,7 +6183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -6245,7 +6211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -6273,7 +6239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -6301,7 +6267,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -6329,7 +6295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -13474,10 +13440,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vs" class="md-nav__link">
+  <a href="#crash-capture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        従来方式 vs プレフィックスルート方式
+        Crash → Capture フロー
       
     </span>
   </a>
@@ -13485,22 +13451,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
+  <a href="#memory-crashkernel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchagent 側の変更
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Orchagent 側の変更">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#neighbororch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NeighborOrch
+        Memory 予約 (crashkernel)
       
     </span>
   </a>
@@ -13508,26 +13462,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#muxorch" class="md-nav__link">
+  <a href="#config-kdump-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capability チェックと後方互換
+        config kdump CLI
       
     </span>
   </a>
@@ -13538,35 +13476,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラフィック転送パス
+        保存形式
       
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
+        容量管理
       
     </span>
   </a>
@@ -13574,10 +13495,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state-db" class="md-nav__link">
+  <a href="#sonic-build-install" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する State-DB
+        SONiC build / install への組込み
       
     </span>
   </a>
@@ -13585,10 +13506,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#tech-support" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        tech-support 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析
       
     </span>
   </a>
@@ -13601,7 +13544,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13612,21 +13555,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -13661,7 +13593,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/prefix-based-mux-neighbors.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/kdump.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13669,173 +13601,151 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-swss/orchagent/muxorch.h</code> L205 で MUX_CABLE の <code>neighbor_mode</code> フィールドが <code>REQ_T_STRING</code> で受け付けられ、<code>muxorch.cpp</code> L1172 <code>MuxPrefixBasedNbrHandler</code> クラス、L2238-2286 で <code>neighbor_mode</code> 値を読み取り <code>MuxNbrHandlerType::NBR_HANDLER_PREFIX_BASED / HOST_ROUTE</code> に分岐し、STATE_DB <code>MUX_CABLE_TABLE</code> に <code>neighbor_mode = "prefix-route" / "host-route"</code> を反映することを確認。<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> は <code>sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp</code> L154 ほかで使用済み (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.4 (2019-12) で 6 年以上前。<code>config kdump</code> / <code>show kdump</code> の sonic-utilities 取り込み、<code>KDUMP</code> CONFIG_DB スキーマ、<code>/etc/default/kdump-tools</code> の <code>USE_KDUMP</code> 連動、<code>build_debian.sh</code> での kdump-tools 同梱は未裏取り。</p>
 </div>
-<h1 id="mux-dual-tor">プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）<a class="headerlink" href="#mux-dual-tor" title="Permanent link">&para;</a></h1>
+<h1 id="kdumpkexec-kernel-crash-dump-makedumpfile">kdump（kexec ベース kernel crash dump / makedumpfile）<a class="headerlink" href="#kdumpkexec-kernel-crash-dump-makedumpfile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを <strong>追加・削除</strong> する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は SAI ネイバ作成時に <strong>暗黙のホストルート生成を抑止</strong>（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code>）し、その代わりに <code>/32</code>（IPv4）または <code>/128</code>（IPv6）の <strong>明示的なプレフィックスルート</strong> を作成する。Mux 状態遷移時はネイバエントリ自体は触らず、プレフィックスルートの <strong>ネクストホップだけを直接ネイバ↔IPinIP トンネルで切り替える</strong>。これにより <code>O(neighbor 数)</code> の add/remove が 1 ルートの nexthop 更新に集約され、切替が大幅に軽量化される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Linux kernel の <strong>kexec</strong> を使い、kernel panic 直後に <strong>予約された別メモリ領域に展開済みの capture kernel</strong> を起動して crash dump を <code>/var/crash/&lt;timestamp&gt;/</code> に保存する標準仕組みを SONiC に統合する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Debian の <code>kdump-tools</code> を SONiC host に同梱し、<code>makedumpfile</code> で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="vs">従来方式 vs プレフィックスルート方式<a class="headerlink" href="#vs" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-  subgraph 従来 (host_route)
-    A1[Neighbor 作成] --&gt;|暗黙| H1[Host route 生成&lt;br&gt;= SDK 内部、SAI 制御不可]
-    H1 --&gt;|active→standby| RM[Neighbor 削除&lt;br&gt;+ Tunnel route 追加]
-  end
-  subgraph 新方式 (prefix_route)
-    A2[Neighbor 作成&lt;br&gt;NO_HOST_ROUTE=true] --&gt; P[/32 or /128 prefix route&lt;br&gt;明示作成]
-    P --&gt;|active→standby| UP[prefix route の nexthop を&lt;br&gt;tunnel に置換するだけ]
-  end</code></pre>
-<p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>旧来の host route は SDK が暗黙生成する非 SAI オブジェクトであり、SONiC からは制御できない。</li>
-<li>新方式の prefix route は SAI ルートオブジェクトとして可視であり、<code>set route attribute next_hop</code> で書き換えられる。</li>
-<li>ネイバエントリ自体は遷移中も <strong>persistent</strong>。SAI の <code>create_neighbor_entry</code> / <code>remove_neighbor_entry</code> を呼ばないので大幅に軽い。</li>
-</ul>
-<h3 id="orchagent">Orchagent 側の変更<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
-<h4 id="neighbororch">NeighborOrch<a class="headerlink" href="#neighbororch" title="Permanent link">&para;</a></h4>
-<p>ネイバ作成時の追加処理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>対象ネイバが mux ポート配下か判定。</li>
-<li>mux ポートかつプレフィックスルート方式なら <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> で作成。</li>
-<li>続けて <code>&lt;server_ip&gt;/32</code> または <code>&lt;server_ip&gt;/128</code> のプレフィックスルートを <strong>mux 現状態に応じた nexthop</strong> で作成する。</li>
-</ol>
-<p>mux ポートに動的指定された場合のために、<code>MuxOrch</code> から既存ネイバを mux ネイバへ昇格する API も提供される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="muxorch">MuxOrch<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h4>
-<p>新たに「プレフィックスルート用 neighbor handler」を追加し、ポート単位の <code>neighbor_mode</code> で従来 handler と切り替える。これにより同一スイッチ上で host_route と prefix_route の <strong>共存</strong> を許す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>linkmgrd の状態通知に応じて<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="crash-capture">Crash → Capture フロー<a class="headerlink" href="#crash-capture" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant K1 as Kernel #1 (production)
+    participant K2 as Kernel #2 (capture)
+    participant FS as /var/crash/
+    Note over K1: panic / OOPS
+    K1-&gt;&gt;K2: kexec で起動 (予約 RAM 領域)
+    K2-&gt;&gt;K2: makedumpfile で in-use page 抽出/圧縮
+    K2-&gt;&gt;FS: dump.&lt;ts&gt; + dmesg.&lt;ts&gt; 保存
+    K2-&gt;&gt;K1: clean reboot</code></pre>
+<h3 id="memory-crashkernel">Memory 予約 (crashkernel)<a class="headerlink" href="#memory-crashkernel" title="Permanent link">&para;</a></h3>
+<p>RAM サイズに応じた <strong>default crashkernel</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>遷移</th>
-<th>動作</th>
+<th>RAM</th>
+<th>予約量</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>active → standby</td>
-<td>prefix route の nexthop を tunnel nexthop（IPinIP）へ置換</td>
+<td>≤ 2GB</td>
+<td>256 MB</td>
 </tr>
 <tr>
-<td>standby → active</td>
-<td>prefix route の nexthop を直接ネイバ nexthop へ戻す</td>
+<td>≤ 4GB</td>
+<td>320 MB</td>
 </tr>
 <tr>
-<td>全期間</td>
-<td>ネイバエントリは触らない</td>
-</tr>
-</tbody>
-</table>
-<p>State-DB の <code>MUX_CABLE_TABLE.&lt;port&gt;.neighbor_mode</code> に現在のモードを公開し、デバッグユーティリティから参照させる。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/dualtor/mux_neighbors_using_prefix_route.md#L62-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  The neighbor entry is created with SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true,
-  which prevents implicit host route creation in SDK/ASIC.
-  ... During active to standby transition: The prefix route's nexthop is updated from the direct neighbor nexthop to the tunnel nexthop ...
-reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えによる状態遷移最適化の根拠。
--->
-
-<h3 id="capability">Capability チェックと後方互換<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
-<p>ASIC が <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> をサポートしない場合、自動的に <strong>host_route 方式へフォールバック</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに per-port の config knob <code>neighbor_mode</code> で強制的に host_route に戻すこともできる。これによりプラットフォーム間の混在配備と新旧比較デバッグを許す。</p>
-<p>ネイバモードの <strong>動的変更はサポート対象外</strong>。一度 mux ネイバとして作られたら、その port の mode 変更は config reload を伴う想定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">トラフィック転送パス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>状態</th>
-<th>フロー</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Active</td>
-<td>受信パケット → prefix route lookup → 直接ネイバ nexthop → サーバ</td>
+<td>≤ 8GB</td>
+<td>384 MB</td>
 </tr>
 <tr>
-<td>Standby</td>
-<td>受信パケット → prefix route lookup → tunnel nexthop → IPinIP → Peer ToR → サーバ</td>
+<td>&gt; 8GB</td>
+<td>448 MB</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>config kdump memory &lt;size&gt;M</code> で上書き可能。値が小さすぎると capture kernel/initramfs/dump が乗らないため失敗する。</p>
+<h3 id="config-kdump-cli"><code>config kdump</code> CLI<a class="headerlink" href="#config-kdump-cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>値</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MUX_CABLE</code></td>
-<td><code>&lt;port&gt;</code></td>
-<td><code>neighbor_mode</code></td>
-<td><code>host_route</code> / <code>prefix_route</code></td>
-<td>既定は <code>prefix_route</code>。capability に応じて自動フォールバック</td>
-</tr>
-</tbody>
-</table>
-<h3 id="state-db">関連する State-DB<a class="headerlink" href="#state-db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>フィールド</th>
+<th>Command</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>MUX_CABLE_TABLE.&lt;port&gt;</code></td>
-<td><code>neighbor_mode</code></td>
-<td>現在実際に使われているモード（host_route / prefix_route）</td>
+<td><code>config kdump enable</code> / <code>disable</code></td>
+<td>機能 on/off。<strong>reboot 必須</strong>（<code>USE_KDUMP=1/0</code> を <code>/etc/default/kdump-tools</code> に書く + kernel cmdline <code>crashkernel=...</code> の変更が要る）</td>
+</tr>
+<tr>
+<td><code>config kdump memory &lt;Xm&gt;</code></td>
+<td>予約量変更。reboot で反映</td>
+</tr>
+<tr>
+<td><code>config kdump num_dumps &lt;N&gt;</code></td>
+<td>保持数 (1〜9, default 3)</td>
+</tr>
+<tr>
+<td><code>show kdump [status]</code></td>
+<td>enable / 予約量 / 保持上限 / 保存ファイル一覧</td>
+</tr>
+<tr>
+<td><code>show kdump files</code></td>
+<td>保存ファイルのみ</td>
+</tr>
+<tr>
+<td><code>show kdump log [X]</code></td>
+<td>dmesg ring buffer 末尾 X 行（default 75）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p><code>show muxcable config</code> の出力末尾に <code>neighbor_mode</code> 列が追加される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>port         state   ipv4             cable_type     prober_type   neighbor_mode
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>-----------  ------  ---------------  -------------  ------------  -------------
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Ethernet0    auto    192.168.0.2/32   active-active  software      host-route
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Ethernet8    auto    192.168.0.4/32   active-active  software      prefix-route
-</span></code></pre></div>
-<p><code>dualtor_neighbor_check</code> ユーティリティは prefix route 方式向けに新フォーマットを出す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_ROUTE  NEXTHOP_TYPE  HWSTATUS
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>192.168.0.3  e2:67:e4:05:9a:ec  Ethernet0  standby    yes               yes           TUNNEL        consistent
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>192.168.0.7  9a:41:63:4f:86:7c  Ethernet16 active     yes               yes           NEIGHBOR      consistent
-</span></code></pre></div>
-<p><code>NEXTHOP_TYPE</code> が現在 prefix route に紐付いている nexthop 種別（<code>NEIGHBOR</code> または <code>TUNNEL</code>）を示す。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_3">保存形式<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>/var/crash/&lt;YYYYMMDDhhmm&gt;/</code>:
+- <code>dump.&lt;ts&gt;</code> — <code>makedumpfile</code> 圧縮 vmcore（自由ページ / cache / user data 等を除外）
+- <code>dmesg.&lt;ts&gt;</code> — crash 直前の kernel log</p>
+<p>ファイル prefix は <strong><code>kdump-</code></strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。permission は root のみ。</p>
+<h3 id="_4">容量管理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>ASIC capability 必須</strong>: <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> を実装しない ASIC では使えず、host_route にフォールバックする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>mode 動的変更不可</strong>: 一度作成された mux ネイバの mode を実行時に切り替えることはサポートされない<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Warm reboot 対応は TBD</strong>: HLD は warm reboot サポートを「TBD」と明記しており未確定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>default 3 件、最大 9 件</li>
+<li>ローテートは <strong>新規 crash 発生時</strong> に最古から削除<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>想定サイズ ~90 MB 程度なので明示的容量制限なし</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="sonic-build-install">SONiC build / install への組込み<a class="headerlink" href="#sonic-build-install" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>linkmgrd</code> / <code>MuxOrch</code> の状態機械</strong>: 状態遷移は従来どおり linkmgrd → MuxOrch だが、SAI 操作の中身が neighbor add/remove から route attribute set に置き換わる。</li>
-<li><strong>IPinIP トンネル</strong>: standby 時の tunnel nexthop は既存 IPinIP 機構を再利用する。tunnel terminator 側に変更はない。</li>
-<li><strong>暗黙ホストルート挙動の差</strong>: 他機能（例: ARP/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。</li>
+<li><code>sonic-buildimage/build_debian.sh</code> で <code>kdump-tools</code> と <code>makedumpfile</code> を host 側に install<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>kdump-tools</code> Debian package は <strong>build 時 fakeroot 環境では initramfs を作れない</strong> ため、<strong>初回 boot 時に capture kernel 用 initramfs を生成</strong> するよう改変</li>
+<li><code>sonic-installer</code> で新 image を入れた際、<strong>旧 image の有効/無効状態を引き継ぐ</strong></li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="tech-support"><code>tech-support</code> 連携<a class="headerlink" href="#tech-support" title="Permanent link">&para;</a></h3>
+<p><code>tech-support</code> 採取時に <code>/var/crash/</code> 配下を取り込み、リモートに送れるようにする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
+<p>kdump 自体は <strong>cold reboot 必要</strong> で warm boot に対応しない。crash 発生時の dump → reboot は warm 不可<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_5">解析<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>/usr/lib/debug/boot/vmlinux-*</code> (debug kernel) と <code>crash</code> ツールで読む。switch 上 / Linux host 上どちらでも可能。host で読む場合 <code>.deb</code> を <code>ar x</code> + <code>tar</code> で extract（install せず）して vmlinux を取り出す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>crash usr/lib/debug/boot/vmlinux-4.9.0-9-2-amd64 kdump.201910281849
+</span></code></pre></div>
+<!-- evidence:
+source: sonic-net/SONiC/doc/kdump/SONiC-kdump.md#L137-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In case of a system crash, kdump uses kexec to boot into a second kernel (a capture kernel).
+  ... The capture kernel uses makedumpfile system utility to collect crash information and create a compressed core dump file.
+reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠。
+-->
+
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>切替が遅い / SAI コールが多い: <code>STATE_DB.MUX_CABLE_TABLE.&lt;port&gt;.neighbor_mode</code> を確認。<code>host_route</code> のままなら capability 失敗かフラグ強制を疑う。</li>
-<li>prefix route の nexthop が更新されない: <code>MuxOrch</code> のログ、SAI route attribute の最新値（<code>saidump</code> 等）を確認。</li>
-<li><code>dualtor_neighbor_check</code> の出力で <code>PREFIX_ROUTE=no</code>: prefix_route モードのはずなのに作られていない → NeighborOrch 側のフォールバック分岐を確認。</li>
+<li>enable/disable / memory 変更は <strong>reboot 必須</strong>（kernel cmdline を弄るため）</li>
+<li>warm boot 時の crash 対応は無し</li>
+<li>HLD は 2019-12 v0.4。kdump-tools 後続バージョンの差分・kernel バージョン更新の影響は未確認</li>
+<li>保持上限 9（HLD 規定）</li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>tech-support</code></strong>: dump 取込先</li>
+<li><strong>secure-boot</strong>: kexec の二段起動と signed kernel の整合</li>
+<li><strong>disk I/O 削減 HLD</strong>: <code>/var/crash</code> への書込みは disk I/O に乗る</li>
+<li><strong>fast-reboot / warm-reboot</strong>: 排他</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- config kdump / show kdump CLI の sonic-utilities 取り込み確認
+- KDUMP CONFIG_DB スキーマと sonic-yang-models 反映確認
+- build_debian.sh での kdump-tools / makedumpfile 同梱確認
+- /etc/default/kdump-tools の USE_KDUMP 連動と crashkernel cmdline 反映確認
+- sonic-installer での kdump 状態継承確認
+- kernel debug image (linux-image-*-dbg) のビルドターゲット確認
+- secure boot 環境での kexec 二段起動の整合確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dualtor/mux_neighbors_using_prefix_route.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/kdump/SONiC-kdump.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
