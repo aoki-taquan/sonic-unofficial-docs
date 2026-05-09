@@ -544,6 +544,19 @@
         "MLACP FSM 状態名の現行コードでの一致"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md",
+      "issue": 101,
+      "verification": "hld-only",
+      "concerns": [
+        "libteam の 0xf1 PDU 拡張パッチが現行 sonic-buildimage に存在するか",
+        "config portchannel retry-count CLI が sonic-utilities master に取り込まれているか",
+        "feature test (LLDP + 0xf1 ping) スクリプトの所在",
+        "60 秒トランジションガードの実装値",
+        "warm-reboot ホックでの retry 自動化有無"
+      ],
+      "priority": "medium"
     }
   ]
 }
