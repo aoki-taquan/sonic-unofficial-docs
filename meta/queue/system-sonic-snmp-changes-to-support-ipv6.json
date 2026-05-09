@@ -1,14 +1,16 @@
 {
   "page": "docs/system/sonic-snmp-changes-to-support-ipv6.md",
-  "verification": "hld-only",
-  "concerns": [
-    "minigraph parser の SNMP_AGENT_ADDRESS_CONFIG 自動投入が現行 sonic-buildimage に取り込まれているか未確認 (PR #17045)",
-    "snmpd.conf 生成テンプレート (snmp.sh / Jinja) で SNMP_AGENT_ADDRESS_CONFIG を agentAddress に反映する経路確認",
-    "link-local IPv6 を agentAddress として bind する PR #16013 相当の取り込み確認",
-    "config_db.json 直接ロード時に SNMP_AGENT_ADDRESS_CONFIG が空でも snmpd が any IP に listen する挙動の現行確認",
-    "multi-ASIC 機で namespace 分離により本問題が発症しない前提が現行 master でも維持されているか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "minigraph parser の SNMP_AGENT_ADDRESS_CONFIG 自動投入 -> sonic-buildimage/src/sonic-config-engine/minigraph.py L2310-2324 で Management IP / Loopback IP からの SNMP_AGENT_ADDRESS_CONFIG 生成を確認 (verified 2026-05-09)",
+    "snmpd.conf 生成テンプレートで SNMP_AGENT_ADDRESS_CONFIG を agentAddress に反映する経路 -> sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2 L27-33 でループ展開を確認 (verified 2026-05-09)",
+    "link-local IPv6 を agentAddress として bind する経路 -> snmpd.conf.j2 L29 の {{ protocol(agentip) }}:[{{ agentip }}] 形式で IPv6 を含む agent 表記をサポートしていることを確認 (verified 2026-05-09)",
+    "config_db.json 直接ロード時に SNMP_AGENT_ADDRESS_CONFIG が空でも snmpd が any IP に listen する挙動 -> snmpd.conf.j2 L32-33 のフォールバック agentAddress udp:161 / udp6:161 を確認 (verified 2026-05-09)",
+    "multi-ASIC 機での namespace 分離前提 -> minigraph.py の SNMP_AGENT_ADDRESS_CONFIG 生成は host namespace 視点のみで、フロント ASIC namespace への影響なし (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 155,
-  "pr": 156
+  "pr": 156,
+  "last_verified": "2026-05-09"
 }

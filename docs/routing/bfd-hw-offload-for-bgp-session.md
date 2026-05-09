@@ -1,7 +1,7 @@
 ---
 title: BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
 area: routing
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2024-06 改訂 v0.2。`bfdsyncd` プロセスが `bgp` コンテナで実際に起動するか、`FEATURE.bgp.bfd_hw_offload` フラグの supervisord テンプレート分岐が現行 master に取り込まれているかは未確認。
+!!! danger "裏取りステータス: Discrepancy-found"
+    HLD で導入予定の `bfdsyncd` プロセスは現行 master の `sonic-buildimage/dockers/docker-fpm-frr/` に未取り込み（grep ヒット 0）。`FEATURE.bgp.bfd_hw_offload` フラグも supervisord テンプレートに見当たらない。`sonic-swss/orchagent/bfdorch.cpp` L420-466 では `SAI_BFD_SESSION_ATTR_LOCAL_DISCRIMINATOR` / `REMOTE_DISCRIMINATOR` / `MIN_TX` / `MIN_RX` / `MULTIPLIER` の **設定 (set)** は実装済みだが、HLD が要求する `SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX` / `REMOTE_MIN_RX` / `REMOTE_MULTIPLIER` の **取得 (get) → STATE_DB 反映** ロジックは未取り込み（grep ヒット 0）。本ページは HLD 仕様としての参考情報に留まる（verified at: 2026-05-09）。
 
 # BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
 

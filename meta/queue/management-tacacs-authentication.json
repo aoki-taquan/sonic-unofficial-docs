@@ -1,13 +1,15 @@
 {
   "page": "docs/management/tacacs-authentication.md",
   "issue": 242,
-  "verification": "hld-only",
-  "concerns": [
-    "hostcfgd AAA module が AAA / TACPLUS / TACPLUS_SERVER を購読して PAM/NSS ファイルを生成する実装の存在確認",
-    "pam_tacplus の source_ip パッチが SONiC 同梱版に当たっているか確認",
-    "nss_tacplus / tacplus_nss.conf の権限テーブル生成ロジック実装確認",
-    "/etc/pam.d/common-auth-sonic への切替が SSH/console 双方で実装されているか未確認",
-    "config aaa / config tacacs CLI の sonic-utilities への取り込み状況"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "hostcfgd AAA module が AAA / TACPLUS / TACPLUS_SERVER を購読して PAM/NSS ファイルを生成する実装の存在確認 -> sonic-host-services/scripts/hostcfgd L354 class AaaCfg、L2185 self.aaacfg = AaaCfg(self.config_db)、L2224-2225 で TACPLUS / TACPLUS_SERVER 初期化を確認 (verified 2026-05-09)",
+    "pam_tacplus の source_ip パッチが SONiC 同梱版に当たっているか確認 -> sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch を確認 (verified 2026-05-09)",
+    "nss_tacplus / tacplus_nss.conf の権限テーブル生成ロジック実装確認 -> hostcfgd L34-35 NSS_TACPLUS_CONF / TEMPLATE、L802-812 で template render → /etc/tacplus_nss.conf 書き出しを確認 (verified 2026-05-09)",
+    "/etc/pam.d/common-auth-sonic への切替が SSH/console 双方で実装されているか -> hostcfgd L748-752 で ETC_PAMD_SSHD と ETC_PAMD_LOGIN の両方を common-auth → common-auth-sonic で sed 切替するのを確認 (verified 2026-05-09)",
+    "config aaa / config tacacs CLI の sonic-utilities への取り込み状況 -> sonic-utilities/config/aaa.py L200/L217/L233/L249/L271/L309 で TACPLUS / TACPLUS_SERVER 操作 CLI 実装を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

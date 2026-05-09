@@ -486,14 +486,19 @@
     {
       "page": "docs/acl-qos/dhcp-dos-mitigation-in-sonic.md",
       "issue": 23,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "portmgrd の tc qdisc/filter 投入実装の存在確認",
-        "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか未確認",
-        "CoPP のシステム全体 DHCP 制限が実際に削除されたか未確認",
-        "ドロップ監視デーモンの存在と命名は未確認"
+        "portmgrd の tc qdisc/filter 投入実装が sonic-swss/cfgmgr に未取り込み (grep ヒット 0)",
+        "CoPP のシステム全体 DHCP 制限が削除されておらず、copp_cfg.j2 の dhcp_relay (trap_ids=dhcp,dhcpv6) が残存",
+        "ドロップ監視デーモンの実装も未取り込み"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか -> sonic-utilities/scripts/db_migrator.py L514-524 migrate_config_db_port_table_for_dhcp_rate_limit / L1142 呼び出しを確認 (verified 2026-05-09)",
+        "PORT.dhcp_rate_limit YANG / CLI 取り込み -> sonic-yang-models/yang-models/sonic-port.yang L106、sonic-utilities/config/main.py L5948-6002 の interface dhcp-mitigation-rate 系 CLI、utilities_common/cli.py L846 の処理を確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "データ層 (YANG / CLI / db_migrator) は取り込み済みだが、ホットパスとなる portmgr の tc qdisc / filter 投入と CoPP 削除が現行 master に未取り込みで、HLD が想定するエンドツーエンドの mitigation は機能しない可能性が高い。"
     },
     {
       "page": "docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md",
@@ -511,15 +516,17 @@
     {
       "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
       "issue": 125,
-      "verification": "hld-only",
-      "concerns": [
-        "aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装",
-        "STATE_DB ルール側キーの最終形 (ACL_RULE_TABLE|... vs ACL_RULE|...)",
-        "show acl table / show acl rule の sonic-utilities 取り込み",
-        "PFC / Mux 内部生成 ACL の扱いの将来計画",
-        "sonic-mgmt の test_acl.py の更新状況"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装 -> sonic-swss/orchagent/aclorch.cpp L4201-4202 で m_aclTableStateTable / m_aclRuleStateTable を確認 (verified 2026-05-09)",
+        "STATE_DB ルール側キーの最終形 -> sonic-swss-common/common/schema.h L514-515 で STATE_ACL_TABLE_TABLE_NAME = 'ACL_TABLE_TABLE' / STATE_ACL_RULE_TABLE_NAME = 'ACL_RULE_TABLE' を確認 (verified 2026-05-09)",
+        "show acl table / show acl rule の sonic-utilities 取り込み -> sonic-utilities/show/acl.py で acl-loader show table/rule を起動、acl_loader/main.py L76-80 APPL_/STATE_ACL_TABLE / RULE 定数、L324-340 で STATE_DB から status 取得を確認 (verified 2026-05-09)",
+        "PFC / Mux 内部生成 ACL の扱い -> aclorch.cpp L4283-4287 で CFG/APP の table/rule 経路を確認、内部生成 ACL は対象外との HLD 表現と整合 (verified 2026-05-09)",
+        "sonic-mgmt の test_acl.py の更新状況 -> 本リポジトリのスコープ外 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
@@ -836,15 +843,17 @@
       "page": "docs/management/gnoi-hld-for-healthz-api.md",
       "issue": 205,
       "pr": 206,
-      "verification": "hld-only",
-      "concerns": [
-        "UMF/sonic-gnmi の Healthz FE 実装存在確認",
-        "host service debug_info モジュール (collect / check) の実装確認",
-        "3 つの Get path (alert-info / critical-info / all-info) の解釈実装確認",
-        "gnoi_client CLI への healthz サブコマンド対応確認",
-        "artifact 永続化と GC ポリシーの現行実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "UMF/sonic-gnmi の Healthz FE 実装存在確認 -> sonic-gnmi/gnmi_server/gnoi_healthz.go L91 getDebugData / L191 Get RPC 実装、gnmi_server/gnoi_healthz_test.go と gnoi_client/healthz/healthz.go を確認 (verified 2026-05-09)",
+        "host service debug_info モジュール (collect / check) の実装確認 -> sonic-host-services/host_modules/debug_info.py L47 class DebugArtifactCollector、L121 _collect_counter_artifacts / L140 _collect_teamdctl_data / L206 _collect_host_files / L239 collect_artifacts を確認 (verified 2026-05-09)",
+        "3 つの Get path (alert-info / critical-info / all-info) の解釈実装確認 -> gnoi_healthz.go L25-29 ddComponentAll / ddLogLvlAlert / ddLogLvlCritical / ddLogLvlAll を確認 (verified 2026-05-09)",
+        "gnoi_client CLI への healthz サブコマンド対応確認 -> sonic-gnmi/gnoi_client/gnoi_client.go L14/L89-100 で Healthz の Get / Artifact / Acknowledge / List / Check サブコマンドを確認 (verified 2026-05-09)",
+        "artifact 永続化と GC ポリシーの現行実装確認 -> gnoi_healthz.go L139-151 で /tmp/dump 配下を /mnt/host 経由でアクセス、debug_info.py L295 artifact_dir_host 作成を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnoi-hld-for-os-apis.md",
@@ -938,16 +947,18 @@
     {
       "page": "docs/management/send-to-ingress-hld.md",
       "issue": 115,
-      "verification": "hld-only",
-      "concerns": [
-        "PortsMgr / PortsOrch の SEND_TO_INGRESS_PORT 実装",
-        "APPL_DB SEND_TO_INGRESS_PORT_TABLE スキーマ",
-        "CPU port を OBJ_ID に取れる SAI hostif の community 提供状況",
-        "マルチ ASIC namespace 内 netdev の挙動",
-        "CoPP との相互作用",
-        "HLD 後の属性追加（rate-limit 等）"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "PortsMgr / PortsOrch の SEND_TO_INGRESS_PORT 実装 -> sonic-swss/orchagent/portsorch.cpp L771 m_sendToIngressPortTable、L6507 doTask 分岐、L7106 addSendToIngressHostIf()、L4461 で alias 登録経路を確認 (verified 2026-05-09)",
+        "APPL_DB SEND_TO_INGRESS_PORT_TABLE スキーマ -> sonic-swss/orchagent/orchdaemon.cpp L219 APP_SEND_TO_INGRESS_PORT_TABLE_NAME 登録を確認 (verified 2026-05-09)",
+        "CPU port を OBJ_ID に取れる SAI hostif の community 提供状況 -> portsorch.cpp L7115/L7120 で SAI_HOSTIF_TYPE_NETDEV と name コピーで hostif 生成を確認 (verified 2026-05-09)",
+        "マルチ ASIC namespace 内 netdev の挙動 -> portsorch 内 hostif 生成は名前解決ベースで namespace 透過 (verified 2026-05-09)",
+        "CoPP との相互作用 -> hostif 経路は CoPP trap 配下とは独立、portsorch.cpp L7106- で別経路と確認 (verified 2026-05-09)",
+        "HLD 後の属性追加 (rate-limit 等) -> 現時点 portsorch 側で追加属性なし、HLD どおり (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/sonic-cli-auto-generation-tool.md",
@@ -996,27 +1007,31 @@
     {
       "page": "docs/management/ssh-server-global-config-hld.md",
       "issue": 37,
-      "verification": "hld-only",
-      "concerns": [
-        "hostcfgd の SSH_SERVER ハンドラ実装と sshd_config 書き換えロジックの確認",
-        "limits.conf.j2 の配置と max_syslogins 反映方式確認",
-        "init_cfg.json.j2 に既定値が含まれるか未確認",
-        "ports に複数値を指定したときの sshd_config 行展開の実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "hostcfgd の SSH_SERVER ハンドラ実装と sshd_config 書き換えロジックの確認 -> sonic-host-services/scripts/hostcfgd L1045 class SshServer、L2478 self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))、L32 SSH_CONFG = '/etc/ssh/sshd_config' を確認 (verified 2026-05-09)",
+        "limits.conf.j2 の配置と max_syslogins 反映方式確認 -> sonic-host-services/data/templates/limits.conf.j2 と hostcfgd L82-83/L1412-1478 で render する PamLimitsCfg を確認 (verified 2026-05-09)",
+        "init_cfg.json.j2 に既定値が含まれるか -> hostcfgd L2245 init_data['SSH_SERVER'] による初期化経路を確認 (verified 2026-05-09)",
+        "ports に複数値を指定したときの sshd_config 行展開の実装確認 -> SshServer (L1045) の sshd_config テンプレート展開経路を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/tacacs-authentication.md",
       "issue": 242,
-      "verification": "hld-only",
-      "concerns": [
-        "hostcfgd AAA module が AAA / TACPLUS / TACPLUS_SERVER を購読して PAM/NSS ファイルを生成する実装の存在確認",
-        "pam_tacplus の source_ip パッチが SONiC 同梱版に当たっているか確認",
-        "nss_tacplus / tacplus_nss.conf の権限テーブル生成ロジック実装確認",
-        "/etc/pam.d/common-auth-sonic への切替が SSH/console 双方で実装されているか未確認",
-        "config aaa / config tacacs CLI の sonic-utilities への取り込み状況"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "hostcfgd AAA module が AAA / TACPLUS / TACPLUS_SERVER を購読して PAM/NSS ファイルを生成する実装の存在確認 -> sonic-host-services/scripts/hostcfgd L354 class AaaCfg、L2185 self.aaacfg = AaaCfg(self.config_db)、L2224-2225 で TACPLUS / TACPLUS_SERVER 初期化を確認 (verified 2026-05-09)",
+        "pam_tacplus の source_ip パッチが SONiC 同梱版に当たっているか確認 -> sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch を確認 (verified 2026-05-09)",
+        "nss_tacplus / tacplus_nss.conf の権限テーブル生成ロジック実装確認 -> hostcfgd L34-35 NSS_TACPLUS_CONF / TEMPLATE、L802-812 で template render → /etc/tacplus_nss.conf 書き出しを確認 (verified 2026-05-09)",
+        "/etc/pam.d/common-auth-sonic への切替が SSH/console 双方で実装されているか -> hostcfgd L748-752 で ETC_PAMD_SSHD と ETC_PAMD_LOGIN の両方を common-auth → common-auth-sonic で sed 切替するのを確認 (verified 2026-05-09)",
+        "config aaa / config tacacs CLI の sonic-utilities への取り込み状況 -> sonic-utilities/config/aaa.py L200/L217/L233/L249/L271/L309 で TACPLUS / TACPLUS_SERVER 操作 CLI 実装を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/tacacs-passkey-encryption.md",
@@ -1217,26 +1232,33 @@
     {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
       "issue": 307,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "bfdsyncd プロセスのソース・supervisord 取り込み確認（FEATURE.bgp.bfd_hw_offload 分岐）",
-        "BfdOrch の SAI_BFD_SESSION_ATTR_REMOTE_* 取得実装の存在確認",
-        "IPv6 link-local 用 inject-down モードの BfdOrch / SAI 実装確認",
-        "bfdd と BfdOrch の local discriminator マッピング実装存在確認"
+        "bfdsyncd プロセスが sonic-buildimage / sonic-frr / sonic-swss の現行 master に未取り込み (grep ヒット 0)",
+        "FEATURE.bgp.bfd_hw_offload フラグの supervisord テンプレート分岐が未取り込み",
+        "BfdOrch 側で SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX / REMOTE_MIN_RX / REMOTE_MULTIPLIER の get → STATE_DB 反映が未実装",
+        "IPv6 link-local 用 inject-down モードのハンドラも未実装"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "bfdd と BfdOrch の local discriminator マッピング実装存在確認 -> sonic-swss/orchagent/bfdorch.cpp L420-424 で bfd_gen_id() による LOCAL_DISCRIMINATOR 採番と STATE_DB fvVector 出力を確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
     },
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
       "issue": 230,
-      "verification": "hld-only",
-      "concerns": [
-        "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認",
-        "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか未確認",
-        "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認",
-        "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py L23 AggregateAddressMgr、L41 で BGP_BBR を subscribe、main.py L106 で登録 (verified 2026-05-09)",
+        "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか -> sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang を確認 (verified 2026-05-09)",
+        "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認 -> sonic-utilities/config/bgp_cli.py、show/bgp_cli.py、tests/bgp_aggregate_address_test.py を確認 (verified 2026-05-09)",
+        "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認 -> managers_aggregate_address.py L43 self.address_table = swsscommon.Table(state_db_conn, BGP_AGGREGATE_ADDRESS_TABLE_NAME)、L47-81 で BBR 状態に応じた set/del を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/bgp-router-id-explicitly-configured.md",
@@ -1325,15 +1347,17 @@
     {
       "page": "docs/routing/overlay-ecmp-enhancements.md",
       "issue": 305,
-      "verification": "hld-only",
-      "concerns": [
-        "VnetOrch の primary/secondary 切替ロジック実装存在確認",
-        "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか未確認",
-        "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認",
-        "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認",
-        "pinned_state による BFD 状態オーバーライド実装存在確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "VnetOrch の primary/secondary 切替ロジック実装存在確認 -> sonic-swss/orchagent/vnetorch.cpp L1029-1067 で nexthops_primary / nexthops_secondary を引数に取る setup と切替を確認 (verified 2026-05-09)",
+        "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか -> sonic-swss-common/common/schema.h L133 APP_VNET_MONITOR_TABLE_NAME / L500 STATE_VNET_MONITOR_TABLE_NAME を確認 (verified 2026-05-09)",
+        "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認 -> vnetorch.cpp L445/L477 と sonic-yang-models/yang-models/sonic-vnet.yang を確認 (verified 2026-05-09)",
+        "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認 -> vnetorch.cpp L1033/L1054/L1062 で setEndpointMonitor 呼び出しに timer を伝搬 (verified 2026-05-09)",
+        "pinned_state による BFD 状態オーバーライド実装存在確認 -> vnetorch.cpp L1013-1015 で PINNED_STATE_UP / PINNED_STATE_DOWN による分岐を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/overlay-ecmp-with-bfd-monitoring.md",
@@ -1367,14 +1391,16 @@
     {
       "page": "docs/routing/reliable-tsa.md",
       "issue": 97,
-      "verification": "hld-only",
-      "concerns": [
-        "bgpcfgd の CHASSIS_APP_DB BGP_DEVICE_GLOBAL|STATE 購読実装",
-        "TSA/TSB スクリプトの Supervisor 側 CHASSIS_APP_DB 書き込み",
-        "startup_tsa_tsb サービスの実装と timer 値",
-        "Supervisor host config_db.json への tsa_enabled 永続化フロー"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "bgpcfgd の CHASSIS_APP_DB BGP_DEVICE_GLOBAL|STATE 購読実装 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py L8 ChassisAppDbMgr、main.py L113 で登録、managers_device_global.py L246-247 で CHASSIS_APP_DB から BGP_DEVICE_GLOBAL|STATE.tsa_enabled を読む経路を確認 (verified 2026-05-09)",
+        "TSA/TSB スクリプトの Supervisor 側 CHASSIS_APP_DB 書き込み -> sonic-buildimage/dockers/docker-fpm-frr/base_image_files/TSA / TSB / TS で sonic-db-cli CHASSIS_APP_DB HMSET 'BGP_DEVICE_GLOBAL|STATE' tsa_enabled を確認 (verified 2026-05-09)",
+        "startup_tsa_tsb サービスの実装と timer 値 -> sonic-buildimage/files/build_templates/startup_tsa_tsb.service と files/scripts/startup_tsa_tsb.py で startup-tsa-tsb.conf からタイマ値を読む実装を確認 (verified 2026-05-09)",
+        "Supervisor host config_db.json への tsa_enabled 永続化フロー -> TSA / TSB の sonic-cfggen -a で CONFIG_DB の BGP_DEVICE_GLOBAL.STATE.tsa_enabled を更新する処理を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/router-interface-counters-in-sonic.md",
@@ -1406,17 +1432,19 @@
     },
     {
       "page": "docs/routing/srv6-sid-l3adj.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SRv6Orch の L3Adj 取り扱い拡張の現行 master 実装存在確認 (sonic-swss/orchagent/srv6orch.cpp、PR #2902)",
-        "m_pendingSRv6MySIDEntries データ構造とハンドリングの取り込み確認",
-        "NeighOrch から SRv6Orch への Neighbor ADD/DEL 通知購読経路の実装確認",
-        "SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID の libsairedis / community SAI 取り込み状況確認",
-        "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "SRv6Orch の L3Adj 取り扱い拡張の現行 master 実装存在確認 -> sonic-swss/orchagent/srv6orch.h L189 createUpdateMysidEntry(my_sid_string, vrf, adj, end_action) で確認 (verified 2026-05-09)",
+        "m_pendingSRv6MySIDEntries データ構造とハンドリングの取り込み確認 -> srv6orch.h L277 で map<NextHopKey, set<tuple<string,string,string,string>>>、cpp L1227/L1259/L1341/L1533/L1541 で挿入と解決処理を確認 (verified 2026-05-09)",
+        "NeighOrch から SRv6Orch への Neighbor ADD/DEL 通知購読経路の実装確認 -> srv6orch.cpp L1227-1259 で update.entry を NextHopKey に変換し pending を resolve する経路を確認 (verified 2026-05-09)",
+        "SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID の libsairedis / community SAI 取り込み状況確認 -> srv6orch.cpp L1544 で nh_attr.id に設定、sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp L150 でも参照 (verified 2026-05-09)",
+        "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認 -> srv6orch.cpp で adj パラメータ受け口 (createUpdateMysidEntry 第3引数) は実装済み。dplane_fpm_sonic 側書き込みは frr 側スコープで HLD どおり (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 171,
-      "pr": 172
+      "pr": 172,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/srv6-vpn-hld.md",
@@ -1773,17 +1801,19 @@
     },
     {
       "page": "docs/system/sonic-snmp-changes-to-support-ipv6.md",
-      "verification": "hld-only",
-      "concerns": [
-        "minigraph parser の SNMP_AGENT_ADDRESS_CONFIG 自動投入が現行 sonic-buildimage に取り込まれているか未確認 (PR #17045)",
-        "snmpd.conf 生成テンプレート (snmp.sh / Jinja) で SNMP_AGENT_ADDRESS_CONFIG を agentAddress に反映する経路確認",
-        "link-local IPv6 を agentAddress として bind する PR #16013 相当の取り込み確認",
-        "config_db.json 直接ロード時に SNMP_AGENT_ADDRESS_CONFIG が空でも snmpd が any IP に listen する挙動の現行確認",
-        "multi-ASIC 機で namespace 分離により本問題が発症しない前提が現行 master でも維持されているか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "minigraph parser の SNMP_AGENT_ADDRESS_CONFIG 自動投入 -> sonic-buildimage/src/sonic-config-engine/minigraph.py L2310-2324 で Management IP / Loopback IP からの SNMP_AGENT_ADDRESS_CONFIG 生成を確認 (verified 2026-05-09)",
+        "snmpd.conf 生成テンプレートで SNMP_AGENT_ADDRESS_CONFIG を agentAddress に反映する経路 -> sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2 L27-33 でループ展開を確認 (verified 2026-05-09)",
+        "link-local IPv6 を agentAddress として bind する経路 -> snmpd.conf.j2 L29 の {{ protocol(agentip) }}:[{{ agentip }}] 形式で IPv6 を含む agent 表記をサポートしていることを確認 (verified 2026-05-09)",
+        "config_db.json 直接ロード時に SNMP_AGENT_ADDRESS_CONFIG が空でも snmpd が any IP に listen する挙動 -> snmpd.conf.j2 L32-33 のフォールバック agentAddress udp:161 / udp6:161 を確認 (verified 2026-05-09)",
+        "multi-ASIC 機での namespace 分離前提 -> minigraph.py の SNMP_AGENT_ADDRESS_CONFIG 生成は host namespace 視点のみで、フロント ASIC namespace への影響なし (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 155,
-      "pr": 156
+      "pr": 156,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/sonic-telemetry-in-dial-out-mode.md",

@@ -1,7 +1,7 @@
 ---
 title: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `SRv6Orch` での L3Adj 取り扱い、`m_pendingSRv6MySIDEntries` キュー、`NeighOrch::hasNextHop()` 連携、Neighbor ADD/DEL 通知購読、`SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` の現行 sairedis 反映状況は実コードでの裏取り未済（参考 PR: sonic-swss#2902）。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/srv6orch.h` L189 で `createUpdateMysidEntry(my_sid_string, vrf, adj, end_action)` シグネチャを、L277 で `m_pendingSRv6MySIDEntries: map<NextHopKey, set<tuple<...>>>` を確認。`srv6orch.cpp` L1227-1259 で Neighbor 確定時の pending 解決、L1341/L1533/L1541 で未解決時の queue 投入、L1544 で `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` を SAI に渡す経路を確認（verified at: 2026-05-09）。
 
 # SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
 

@@ -1,7 +1,7 @@
 ---
 title: BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - sonic-bgp-aggregate-address
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`bgpcfgd` の `BGP_AGGREGATE_ADDRESS` / `BGP_BBR` 購読、State-DB 反映、CLI 取り込みは要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py` L23 `AggregateAddressMgr` が L41 で `BGP_BBR` を、L43 で STATE_DB `BGP_AGGREGATE_ADDRESS` を扱い、L73-81 で BBR 状態に応じた集約広告制御を実装。`main.py` L106 で `AggregateAddressMgr` が登録済み。CLI は `sonic-utilities/config/bgp_cli.py` / `show/bgp_cli.py` に取り込まれており、YANG は `sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` に存在（verified at: 2026-05-09）。
 
 # BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
 

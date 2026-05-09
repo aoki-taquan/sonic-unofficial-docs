@@ -1,12 +1,14 @@
 {
   "page": "docs/routing/reliable-tsa.md",
   "issue": 97,
-  "verification": "hld-only",
-  "concerns": [
-    "bgpcfgd の CHASSIS_APP_DB BGP_DEVICE_GLOBAL|STATE 購読実装",
-    "TSA/TSB スクリプトの Supervisor 側 CHASSIS_APP_DB 書き込み",
-    "startup_tsa_tsb サービスの実装と timer 値",
-    "Supervisor host config_db.json への tsa_enabled 永続化フロー"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "bgpcfgd の CHASSIS_APP_DB BGP_DEVICE_GLOBAL|STATE 購読実装 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py L8 ChassisAppDbMgr、main.py L113 で登録、managers_device_global.py L246-247 で CHASSIS_APP_DB から BGP_DEVICE_GLOBAL|STATE.tsa_enabled を読む経路を確認 (verified 2026-05-09)",
+    "TSA/TSB スクリプトの Supervisor 側 CHASSIS_APP_DB 書き込み -> sonic-buildimage/dockers/docker-fpm-frr/base_image_files/TSA / TSB / TS で sonic-db-cli CHASSIS_APP_DB HMSET 'BGP_DEVICE_GLOBAL|STATE' tsa_enabled を確認 (verified 2026-05-09)",
+    "startup_tsa_tsb サービスの実装と timer 値 -> sonic-buildimage/files/build_templates/startup_tsa_tsb.service と files/scripts/startup_tsa_tsb.py で startup-tsa-tsb.conf からタイマ値を読む実装を確認 (verified 2026-05-09)",
+    "Supervisor host config_db.json への tsa_enabled 永続化フロー -> TSA / TSB の sonic-cfggen -a で CONFIG_DB の BGP_DEVICE_GLOBAL.STATE.tsa_enabled を更新する処理を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

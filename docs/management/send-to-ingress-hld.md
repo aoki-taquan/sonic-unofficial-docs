@@ -1,7 +1,7 @@
 ---
 title: Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2022-10）のみを根拠に書かれている。`PortsMgr` / `PortsOrch` の `SEND_TO_INGRESS_PORT` 取り扱い、CPU port を関連付けた `SAI_HOSTIF_TYPE_NETDEV` の作成、各ベンダー SAI 実装の対応状況は未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/portsorch.cpp` L771 で `m_sendToIngressPortTable(db, APP_SEND_TO_INGRESS_PORT_TABLE_NAME)` 登録、L6507 で `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 分岐、L7106 `addSendToIngressHostIf()` で `SAI_HOSTIF_TYPE_NETDEV` 属性を設定する hostif 作成を確認。`orchdaemon.cpp` L219 で `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` を portsorch 優先度に登録。`cfgmgr/portmgrd.cpp` / `portmgr.cpp` 側の関連処理も確認（verified at: 2026-05-09）。
 
 # Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
 

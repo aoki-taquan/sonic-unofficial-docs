@@ -2,13 +2,15 @@
   "page": "docs/management/gnoi-hld-for-healthz-api.md",
   "issue": 205,
   "pr": 206,
-  "verification": "hld-only",
-  "concerns": [
-    "UMF/sonic-gnmi の Healthz FE 実装存在確認",
-    "host service debug_info モジュール (collect / check) の実装確認",
-    "3 つの Get path (alert-info / critical-info / all-info) の解釈実装確認",
-    "gnoi_client CLI への healthz サブコマンド対応確認",
-    "artifact 永続化と GC ポリシーの現行実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "UMF/sonic-gnmi の Healthz FE 実装存在確認 -> sonic-gnmi/gnmi_server/gnoi_healthz.go L91 getDebugData / L191 Get RPC 実装、gnmi_server/gnoi_healthz_test.go と gnoi_client/healthz/healthz.go を確認 (verified 2026-05-09)",
+    "host service debug_info モジュール (collect / check) の実装確認 -> sonic-host-services/host_modules/debug_info.py L47 class DebugArtifactCollector、L121 _collect_counter_artifacts / L140 _collect_teamdctl_data / L206 _collect_host_files / L239 collect_artifacts を確認 (verified 2026-05-09)",
+    "3 つの Get path (alert-info / critical-info / all-info) の解釈実装確認 -> gnoi_healthz.go L25-29 ddComponentAll / ddLogLvlAlert / ddLogLvlCritical / ddLogLvlAll を確認 (verified 2026-05-09)",
+    "gnoi_client CLI への healthz サブコマンド対応確認 -> sonic-gnmi/gnoi_client/gnoi_client.go L14/L89-100 で Healthz の Get / Artifact / Acknowledge / List / Check サブコマンドを確認 (verified 2026-05-09)",
+    "artifact 永続化と GC ポリシーの現行実装確認 -> gnoi_healthz.go L139-151 で /tmp/dump 配下を /mnt/host 経由でアクセス、debug_info.py L295 artifact_dir_host 作成を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,7 +1,7 @@
 ---
 title: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2025-06 改訂 v0.1。`debug_info.collect` / `debug_info.check` という host service モジュールの実装、`HealthzCollect` / `HealthzCheck` の DBUS 経路、`/components/component[name=healthz]/{alert-info,critical-info,all-info}` パスの取り扱いは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-gnmi/gnmi_server/gnoi_healthz.go` L25-29 で `ddComponentAll = "all"` / `ddLogLvlAlert = "alert"` / `ddLogLvlCritical = "critical"` / `ddLogLvlAll = "all"` を定義、L39 `isDebugData(p)` / L91 `getDebugData(p)` / L191 `Get RPC` でパス解釈を確認。`sonic-host-services/host_modules/debug_info.py` L47 `class DebugArtifactCollector` の `collect_artifacts` / `_collect_counter_artifacts` / `_collect_teamdctl_data` / `_collect_host_files` 実装、`sonic-gnmi/sonic_service_client/dbus_client.go` の `HealthzClient` DBUS 経路、`gnoi_client/healthz/healthz.go` と `gnoi_client.go` L89-100 で `Get` / `Artifact` / `Acknowledge` / `List` / `Check` サブコマンドを確認（verified at: 2026-05-09）。
 
 # gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
 

@@ -1,7 +1,7 @@
 ---
 title: SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは GitHub PR (15487 / 16013 / 17045) の実装を前提とした HLD 記述に基づく。minigraph parser の `SNMP_AGENT_ADDRESS_CONFIG` 自動投入、link-local IPv6 を agentAddress として使う処理、SNMP docker 内 `snmpd.conf` 生成テンプレートの現行実装は実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2` L27-33 で `SNMP_AGENT_ADDRESS_CONFIG` をループして `agentAddress {{ protocol(agentip) }}:[{{ agentip }}]{...}` を出力、未設定時は L32-33 で `agentAddress udp:161` / `udp6:161` をフォールバックする経路を確認。`sonic-buildimage/src/sonic-config-engine/minigraph.py` L2310-2324 で minigraph 解析時に Management IP / Loopback IP から `SNMP_AGENT_ADDRESS_CONFIG` を生成する処理を確認（verified at: 2026-05-09）。
 
 # SNMP IPv6 応答の SRC IP 不整合と `SNMP_AGENT_ADDRESS_CONFIG` による回避
 

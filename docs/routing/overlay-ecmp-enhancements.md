@@ -1,7 +1,7 @@
 ---
 title: Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（v0.1 / 2024-08）のみを根拠に書かれている。`VnetOrch` の primary/secondary 切替実装、`VNET_MONITOR_TABLE` の APPL_DB / STATE_DB 取り込み、`pinned_state` 等の追加フィールドが現行 master にあるかは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/vnetorch.cpp` L445/L477-479 で `overlay_dmac` MAC 属性、L1029-1067 で `nexthops_primary` / `nexthops_secondary` / `tx_monitor_timer` / `rx_monitor_timer` / `monitor_addr_to_pinned_state` を伴う ECMP セットアップ、L1013-1015 で `PINNED_STATE_UP` / `PINNED_STATE_DOWN` による BFD 状態オーバーライドを確認。`sonic-swss-common/common/schema.h` L133/L500 で `APP_VNET_MONITOR_TABLE_NAME` / `STATE_VNET_MONITOR_TABLE_NAME = "VNET_MONITOR_TABLE"` を確認。`vnetorch.cpp` L747 の `monitor_session_producer_(APP_VNET_MONITOR_TABLE_NAME)` も登録済み。`overlay_dmac` は `sonic-yang-models/yang-models/sonic-vnet.yang` に取り込み済み（verified at: 2026-05-09）。
 
 # Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
 
