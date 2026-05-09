@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/banner-messages-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/smartswitch-eni-based-forwarding/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../nvgre-tunnel-in-sonic/">
       
       
-        <link rel="next" href="../critical-resource-monitoring/">
+        <link rel="next" href="../vnet-local-endpoint-forwarding/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>バナーメッセージ（login / motd / logout） - SONiC 非公式ドキュメント</title>
+        <title>SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#login-motd-logout" class="md-skip">
+        <a href="#smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              バナーメッセージ（login / motd / logout）
+              SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
             
           </span>
         </div>
@@ -313,11 +313,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../overlay/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -1483,6 +1483,8 @@
       
   
   
+    
+  
   
   
     
@@ -1504,20 +1506,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../overlay/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1535,13 +1540,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1561,7 +1566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -1589,7 +1594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -1614,10 +1619,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1633,6 +1665,275 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パケット経路の 3 ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スコープ・スケール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 分け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-eni_redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL テーブル定義（ENI_REDIRECT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL ルールの 2 種類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL ルールの 2 種類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priority-9996" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通常ルール（PRIORITY 9996）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel-termination-priority-9997" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tunnel Termination ルール（PRIORITY 9997, 高優先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel-termination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ Tunnel Termination ルールが必要か
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REDIRECT のスキーマ拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-remote-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local / Remote nexthop 解決フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1645,7 +1946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -1901,8 +2202,6 @@
       
   
   
-    
-  
   
   
     
@@ -1928,23 +2227,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -1962,13 +2258,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1985,37 +2281,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バナーメッセージ（login / motd / logout）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2031,203 +2300,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態遷移
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        マルチライン文字列
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2240,7 +2312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -2268,7 +2340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -2296,7 +2368,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -2324,7 +2396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -2352,7 +2424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -3392,10 +3464,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パケット経路の 3 ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        スコープ・スケール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 分け
       
     </span>
   </a>
@@ -3406,7 +3500,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移
+        コンポーネント構成
       
     </span>
   </a>
@@ -3414,10 +3508,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#acl-eni_redirect" class="md-nav__link">
     <span class="md-ellipsis">
       
-        マルチライン文字列
+        ACL テーブル定義（ENI_REDIRECT）
       
     </span>
   </a>
@@ -3425,10 +3519,71 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#acl-2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動時シーケンス
+        ACL ルールの 2 種類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL ルールの 2 種類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priority-9996" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通常ルール（PRIORITY 9996）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel-termination-priority-9997" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tunnel Termination ルール（PRIORITY 9997, 高優先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel-termination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ Tunnel Termination ルールが必要か
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REDIRECT のスキーマ拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-remote-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local / Remote nexthop 解決フロー
       
     </span>
   </a>
@@ -3441,7 +3596,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3485,35 +3640,24 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3524,7 +3668,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3535,7 +3679,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3562,7 +3706,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/banner-messages-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/smartswitch-eni-based-forwarding.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3572,205 +3716,265 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>hostcfgd</code> の BANNER_MESSAGE ハンドラ、<code>banner-config</code> systemd サービスの実装、CLI 実装、YANG レビジョンは未裏取り。</p>
+<p>本ページは公式 HLD（Rev 0.2, 2025-10）のみを根拠に書かれている。<code>DashEniFwdOrch</code> の実装、<code>ENI_REDIRECT</code> ACL_TABLE_TYPE の AclOrch 取り込み、<code>ACL_RULE.REDIRECT</code> の tunnel nexthop 表記拡張、<code>VIP_TABLE</code> のスキーマ確定は未確認。</p>
 </div>
-<h1 id="login-motd-logout">バナーメッセージ（login / motd / logout）<a class="headerlink" href="#login-motd-logout" title="Permanent link">&para;</a></h1>
+<h1 id="smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）<a class="headerlink" href="#smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>業務スイッチには、ログイン前後やログアウト時に <strong>法的注意文・運用情報・MOTD</strong> を表示する要件が頻繁にある。SONiC 既定の Debian バナー（<code>Debian GNU/Linux 11</code>）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は <strong>CONFIG_DB → hostcfgd → banner-config systemd サービス → Linux ファイル</strong> という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SmartSwitch（NPU + 複数 DPU）構成で NPU ↔ DPU 間のトラフィック転送モデルには 2 つの選択肢がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>VIP ベース</strong>: コントローラが DPU 単位で Virtual IP を払い出し、ホストはそれをゲートウェイにする。実装は単純だが DPU ごとに VIP を消費しコスト高</li>
+<li><strong>ENI ベース転送（本 HLD）</strong>: ホストはスイッチ単位の VIP のみを使い、NPU 上で <strong>ENI（Elastic Network Interface）単位の ACL ルールでローカル DPU またはリモート DPU へリダイレクト</strong> する</li>
+</ol>
+<p>ENI ベースは VIP 消費を 1 cluster 単位まで削減でき、ENI を SmartSwitch を跨いで配置できる柔軟性も持つ。コスト効率からこちらが採用される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装はスイッチに <strong>ENI と DPU の対応関係</strong> を理解させ、INGRESS ACL（<code>ENI_REDIRECT</code> 型）でパケットを <code>local nexthop</code> または <code>tunnel nexthop</code> にリダイレクトする形を取る。新しい orchagent <code>DashEniFwdOrch</code> がこの ACL を生成する。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="3">パケット経路の 3 ケース<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    H[Host] --&gt;|VIP=スイッチ宛て| NPU
+    subgraph cluster["T1 cluster"]
+      NPU --&gt; ACL[ENI_REDIRECT ACL]
+      ACL --&gt;|case 1: local active ENI| LD[Local DPU]
+      ACL --&gt;|case 2: local standby ENI\n(remote が active)| RT[Remote NPU+DPU\n VxLAN]
+      ACL --&gt;|case 3: ENI が無いスイッチ| RT
+    end</code></pre>
+<p>3 ケース<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>Case 1</strong>: パケットが着地した NPU に <strong>active ENI</strong> がある → ローカル DPU へ</li>
+<li><strong>Case 2</strong>: パケットが着地した NPU に <strong>standby ENI</strong> がある（active が他 NPU） → 他 NPU に向けて L3 VxLAN</li>
+<li><strong>Case 3</strong>: パケットが着地した NPU に該当 ENI が無い → これも remote へ転送</li>
+</ul>
+<h3 id="_3">スコープ・スケール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>対象は <strong>Floating NIC (FNIC) シナリオのみ</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>スケール（FNIC + Private Link 想定）:</li>
+<li>hosted ENI 数 × 2（Tunnel Termination 用 + 通常用）</li>
+<li>
+<ul>
+<li>non-hosted ENI 数 × 1（Tunnel Termination 不要）</li>
+</ul>
+</li>
+<li>例: T1 8 台 / DPU 4 / ENI 64 / HA 2 倍 → cluster 内 1024 ENI、T1 1 台にホストされる ENI 256 → ACL ルール <code>256*2 + (1024-256) = 1280</code><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="phase">Phase 分け<a class="headerlink" href="#phase" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>タイミング</th>
-<th>反映先ファイル</th>
+<th>Phase</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>login</code></td>
-<td>ログインプロンプト前（ローカル / SSH 共通）</td>
-<td><code>/etc/issue.net</code> と <code>/etc/issue</code></td>
+<td>Phase 1</td>
+<td><code>HaMgrd</code> が <code>DASH_ENI_FORWARD_TABLE</code> を書き、orchagent は <strong>primary endpoint のみ</strong> ACL ルールに変換。Tunnel Termination ルールも生成。BFD は使わない</td>
 </tr>
 <tr>
-<td><code>motd</code></td>
-<td>ログイン後</td>
-<td><code>/etc/motd</code></td>
-</tr>
-<tr>
-<td><code>logout</code></td>
-<td>ログアウト時</td>
-<td><code>/etc/logout_message</code></td>
+<td>Phase 2</td>
+<td>local / remote DPU に BFD セッションを張り、BFD の状態で primary / secondary を切替。local NEIGH down も処理</td>
 </tr>
 </tbody>
 </table>
-<p>機能既定値は <strong>disabled</strong>。<code>disabled</code> の間は CONFIG_DB を編集しても Linux 側のファイルは書き換わらず、SONiC OS の標準バナーが表示され続ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>本 HLD の主目的は Phase 1 の機構を確立すること<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">コンポーネント構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CLI[config banner ...] --&gt; CDB[(CONFIG_DB\nBANNER_MESSAGE|MESSAGE)]
-    CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|systemctl restart| BC[banner-config service]
-    BC --&gt;|read CONFIG_DB| CDB
-    BC --&gt;|/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message| FS[Linux fs]
-    Login[SSH/local login] --&gt; FS</code></pre>
-<p><code>banner-config</code> は <strong>SSH を受け付ける前段階で起動する単発サービス</strong> として設計されており、CONFIG_DB から現在の値を読んで対応するファイルに書き出す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> は CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読しており、変更があれば <code>banner-config</code> を再実行する。</p>
-<h3 id="_4">状態遷移<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; disabled: 既定
-    disabled --&gt; enabled: config banner state enabled
-    enabled --&gt; disabled: config banner state disabled
-    note right of disabled
-        CONFIG_DB の値は保存されるが
-        Linux 側のファイルは触らない
-        既定 SONiC バナーのまま
-    end note
-    note right of enabled
-        banner-config が CONFIG_DB の値を
-        Linux ファイルに書き出す
-    end note</code></pre>
-<p><code>disabled</code> の状態でも CLI で個別の <code>login</code> / <code>motd</code> / <code>logout</code> メッセージを設定できる。これは CONFIG_DB のみに保存され、<code>enabled</code> に遷移した時点で Linux に適用される設計である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">マルチライン文字列<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>config banner login "Hello!\nWelcome to SONiC CLI!"</code> のように <code>\n</code> を含めることで複数行バナーを設定できる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Hello!
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Welcome to SONiC CLI!
+    HA[HaMgrd] --&gt;|primary endpoint| EFT[(DASH_ENI_FORWARD_TABLE)]
+    DPU[(DPU / vDPU table)] --&gt; ORCH[DashEniFwdOrch]
+    EFT --&gt; ORCH
+    ORCH --&gt;|Local 経路| NO[NeighOrch\nAPP_NEIGH_RESOLVE_TABLE]
+    ORCH --&gt;|Remote 経路| VX[VxLanTunnOrch\nTunnel NH]
+    ORCH --&gt; AR[(ACL_RULE)]
+    AR --&gt; AO[AclOrch]
+    AO --&gt; NO
+    AO --&gt; VX
+    AO --&gt; SAI[SAI/SDK]</code></pre>
+<p><code>DashEniFwdOrch</code> の責務:</p>
+<ul>
+<li><code>DASH_ENI_FORWARD_TABLE</code> を購読し、各 ENI について endpoint が <strong>local / remote</strong> のいずれかを DPU テーブルから判別</li>
+<li>Local の場合: <code>NeighOrch</code> を介してネクストホップ解決（必要なら <code>APP_NEIGH_RESOLVE_TABLE</code> に書く）</li>
+<li>Remote の場合: <code>VxLanTunnOrch</code> で tunnel nexthop を生成</li>
+<li>結果を <code>ACL_RULE</code> テーブルに書き、<code>AclOrch</code> 経由で SAI/SDK に下ろす</li>
+</ul>
+<h3 id="acl-eni_redirect">ACL テーブル定義（<code>ENI_REDIRECT</code>）<a class="headerlink" href="#acl-eni_redirect" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;ENI_REDIRECT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;MATCHES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;DST_IP&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DST_IPV6&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;INNER_DST_MAC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;TUNNEL_TERM&quot;</span><span class="p">],</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;ACTIONS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;REDIRECT_ACTION&quot;</span><span class="p">],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;BIND_POINTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;PORT&quot;</span><span class="p">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">&quot;ENI&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">&quot;STAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INGRESS&quot;</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">      </span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENI_REDIRECT&quot;</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">&quot;PORTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&lt;Ingress front panel ports&gt;&quot;</span><span class="p">]</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="_6">起動時シーケンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant Sys as systemd
-    participant BC as banner-config
-    participant CDB as CONFIG_DB
-    participant FS as /etc/...
-    Sys-&gt;&gt;BC: start banner-config (before sshd)
-    BC-&gt;&gt;CDB: read BANNER_MESSAGE|MESSAGE
-    alt state == enabled
-        BC-&gt;&gt;FS: write /etc/issue.net, /etc/issue, /etc/motd, /etc/logout_message
-    else state == disabled
-        BC-&gt;&gt;BC: no-op (default SONiC banner remains)
-    end
-    Sys-&gt;&gt;Sys: start sshd</code></pre>
-<p>設定変更時のシーケンスは <code>hostcfgd</code> が変更を検知して <code>banner-config</code> を再起動する点が異なる。</p>
+<p>要点:</p>
+<ul>
+<li><code>INGRESS</code> ACL。マッチ条件は <strong>外側 DST_IP / DST_IPV6（VIP）+ INNER_DST_MAC（ENI MAC）+ TUNNEL_TERM</strong> の組み合わせ</li>
+<li>アクションは <code>REDIRECT_ACTION</code> のみ</li>
+<li>BIND_POINTS は前面パネルポート</li>
+</ul>
+<h3 id="acl-2">ACL ルールの 2 種類<a class="headerlink" href="#acl-2" title="Permanent link">&para;</a></h3>
+<p>ENI 属性が次の場合を例にする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>MAC: aa:bb:cc:dd:ee:ff
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TUNNEL_VNI: 4000
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>VIP: 1.1.1.1/32
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>VNET: Vnet1000
+</span></code></pre></div>
+<h4 id="priority-9996">通常ルール（PRIORITY 9996）<a class="headerlink" href="#priority-9996" title="Permanent link">&para;</a></h4>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;ENI:Vnet1000_AABBCCDDEEFF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9996&quot;</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;DST_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.1.1/32&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;INNER_DST_MAC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aa:bb:cc:dd:ee:ff&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;REDIRECT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;local/tunnel nexthop&gt;&quot;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>FNIC では <strong><code>outbound_eni_mac_lookup</code> と <code>outbound_vni</code> は無関係</strong>（常に INNER_DST_MAC でマッチする）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="tunnel-termination-priority-9997">Tunnel Termination ルール（PRIORITY 9997, 高優先）<a class="headerlink" href="#tunnel-termination-priority-9997" title="Permanent link">&para;</a></h4>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;ENI:Vnet1000_AABBCCDDEEFF_TERM&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9997&quot;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">&quot;DST_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.1.1/32&quot;</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">&quot;INNER_DST_MAC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aa:bb:cc:dd:ee:ff&quot;</span><span class="p">,</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">&quot;TUNN_TERM&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">&quot;REDIRECT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;local nexthop oid&gt;&quot;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="tunnel-termination">なぜ Tunnel Termination ルールが必要か<a class="headerlink" href="#tunnel-termination" title="Permanent link">&para;</a></h4>
+<p>HA failover の遷移期に「旧 active が standby になったが、旧 standby はまだ standby のまま」という曖昧状態が短時間生じる。この状態で remote にループバックするとパケットがピンポンして輻輳・ドロップが起きる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<pre class="mermaid"><code>flowchart LR
+    P[着信パケット] --&gt; CHK{TUNNEL_TERM?\n(VxLAN decap 後)}
+    CHK --&gt;|Yes| LOCAL[必ず local nexthop へ\n(高優先 9997)]
+    CHK --&gt;|No| LOOK[通常ルール 9996]</code></pre>
+<p>「<strong>Tunnel decap 後のパケットは必ずローカルに留める</strong>」というルールを高優先で挿入し、ループを防ぐ。</p>
+<h3 id="redirect">REDIRECT のスキーマ拡張<a class="headerlink" href="#redirect" title="Permanent link">&para;</a></h3>
+<p>既存の <code>ACL_RULE.REDIRECT</code> は次のいずれかを取る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>物理ポート名（<code>Ethernet10</code>）</li>
+<li>LAG 名（<code>PortChannel5</code>）</li>
+<li>IP（<code>10.0.0.1</code>）</li>
+<li>IP@VRF（<code>10.0.0.2@Vrf2</code>）</li>
+<li>IP@IF（<code>10.0.0.3@Ethernet1</code>）</li>
+<li>nexthop group（<code>10.0.0.1,10.0.0.3@Ethernet1</code>）</li>
+</ul>
+<p>本 HLD ではここに <strong>tunnel nexthop 表記</strong> を追加する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redirect_action = &quot;&lt;remote PA&gt;@&lt;tunnel_name&gt;,&lt;vni&gt;&quot;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>例: &quot;2.2.2.1@tunnel_name,100&quot;
+</span></code></pre></div>
+<p>これにより <code>AclOrch</code> が <code>VxLanTunnOrch</code> から tunnel nexthop OID を解決して SAI に下ろせる。</p>
+<h3 id="local-remote-nexthop">Local / Remote nexthop 解決フロー<a class="headerlink" href="#local-remote-nexthop" title="Permanent link">&para;</a></h3>
+<p>リモート（VxLAN）:</p>
+<pre class="mermaid"><code>flowchart LR
+    EFT[DASH_ENI_FORWARD_TABLE] --&gt; O[DashEniFwdOrch]
+    DPU[(DPU table)] --&gt; O
+    O --&gt; Q{remote endpoint?}
+    Q --&gt;|Yes| VX[VxLanTunnOrch で tunnel NH 作成]
+    O --&gt; AR[ACL_RULE]
+    AR --&gt; AO[AclOrch]
+    AO --&gt;|tunnel NH oid 取得| VX
+    AO --&gt; SAI</code></pre>
+<p>ローカル:</p>
+<pre class="mermaid"><code>flowchart LR
+    EFT[DASH_ENI_FORWARD_TABLE] --&gt; O[DashEniFwdOrch]
+    O --&gt;|observe/resolve| NO[NeighOrch]
+    NO --&gt;|NH 更新| O
+    O --&gt; AR[ACL_RULE]
+    AR --&gt; AO[AclOrch]
+    AO --&gt;|local NH oid| NO
+    AO --&gt; SAI</code></pre>
+<p><code>DashEniFwdOrch</code> は隣接解決を <code>APP_NEIGH_RESOLVE_TABLE_NAME</code> に書いて <code>NeighOrch</code> に促せる<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/banner/banner_hld.md#L84-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md#L182-L211 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Hostcfgd will listen for the configuration changes in corresponding tables and restart banner-config service.
-  Banner config service - it is simple SystemD service which runs before we get SSH connection.
-  ...
-  /etc/issue.net and /etc/issue - Login message
-  /etc/motd - Message of the day
-  /etc/logout_message - Logout message
-reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前段で動くという挙動の根拠。
+  When the HA failover happens, the used-to-be active becomes standby, but the used-to-be standby is still unchanged.
+  ... To solve this, ACL rules with high priority are added and the redirect should always be to local nexthop
+  "ENI:Vnet1000_AABBCCDDEEFF_TERM": { "PRIORITY": "9997", ... "TUNN_TERM": "true", "REDIRECT": "<local nexthop oid>" }
+reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ルールが高優先 (9997) で local nexthop に留める設計の根拠。
 -->
 
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
+<th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>BANNER_MESSAGE</code></td>
-<td><code>MESSAGE</code></td>
-<td><code>state</code></td>
-<td><code>enabled</code> / <code>disabled</code>（既定 <code>disabled</code>）</td>
+<td><code>ACL_TABLE_TYPE.ENI_REDIRECT</code></td>
+<td>INGRESS ACL の型定義（match 4 つ + REDIRECT_ACTION + PORT bind）</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>login</code></td>
-<td>ログインプロンプト前メッセージ</td>
+<td><code>ACL_TABLE.ENI</code></td>
+<td>INGRESS / type=ENI_REDIRECT / 前面パネルポート bind</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>motd</code></td>
-<td>ログイン後 MOTD</td>
+<td><code>ACL_RULE</code></td>
+<td>ENI 単位の通常ルール + Tunnel Termination ルール</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>logout</code></td>
-<td>ログアウト時メッセージ</td>
+<td><code>DASH_ENI_FORWARD_TABLE</code></td>
+<td>HaMgrd → DashEniFwdOrch への入力</td>
+</tr>
+<tr>
+<td><code>VIP_TABLE</code></td>
+<td>スイッチ VIP の一時格納先（HLD は「現状一時テーブル」と明記）<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config banner state {enabled\|disabled}</code></td>
-<td>機能オン / オフ</td>
-</tr>
-<tr>
-<td><code>config banner login &lt;message&gt;</code></td>
-<td>login バナー設定</td>
-</tr>
-<tr>
-<td><code>config banner logout &lt;message&gt;</code></td>
-<td>logout バナー設定</td>
-</tr>
-<tr>
-<td><code>config banner motd &lt;message&gt;</code></td>
-<td>MOTD 設定</td>
-</tr>
-<tr>
-<td><code>show banner</code></td>
-<td>現在の設定を一覧表示（state / login / motd / logout の表）</td>
-</tr>
-</tbody>
-</table>
+<p>専用 CLI は HLD で言及されていない。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-banner.yang</code> モジュールに <code>BANNER_MESSAGE.MESSAGE</code> コンテナを定義<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">BANNER_MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">state</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;enabled|disabled&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">disabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">login</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;Debian GNU/Linux 11&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">motd</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;You are on ____   ___  _   _ _  ____ ...&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">logout</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>YANG 既定値: <code>state=disabled</code>, <code>login=Debian GNU/Linux 11</code>, <code>motd=</code> SONiC ASCII art (HLD 中の長文), <code>logout=""</code>.</p>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>banner<span class="w"> </span>state<span class="w"> </span>enabled
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s2">&quot;Authorized access only. All activity is monitored.&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>banner<span class="w"> </span>motd<span class="w"> </span><span class="s2">&quot;Welcome to ToR-A1 (SONiC).&quot;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>config<span class="w"> </span>banner<span class="w"> </span><span class="nb">logout</span><span class="w"> </span><span class="s2">&quot;Bye!&quot;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show<span class="w"> </span>banner
-</span></code></pre></div>
-<h3 id="_9">永続化<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。HLD の Test Plan は <code>do not save → reboot → 既定</code> / <code>save → reboot → 設定維持</code> を明示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。永続化したい場合は <code>config save</code> を別途実行する。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>/etc/issue</code> / <code>/etc/motd</code></strong>: 他の systemd サービスや Debian メンテナンスでこれらのファイルを再生成すると、<code>banner-config</code> の出力と競合する。基本的には <code>banner-config</code> が後勝ちで上書きする想定。</li>
-<li><strong><code>hostcfgd</code></strong>: 既存の他テーブル監視（NTP / SNMP / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。</li>
-<li><strong>SSH (<code>sshd</code>)</strong>: <code>/etc/issue.net</code> の変更は次回接続から反映される。既存セッションには影響しない。</li>
+<li><strong>対象は FNIC シナリオのみ</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FNIC 以外の DASH シナリオはスコープ外</li>
+<li>VIP 配置は T1 cluster 共通だが、それを保持する場所が「現状 <code>VIP_TABLE</code> という一時テーブル」と HLD で明記。最終形は未確定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Phase 1 では BFD によるエンドポイント切替なし。card レベル故障の検知遅延がある</li>
+<li>Warm boot / Fast boot に対する追加処理は無い（impact なし）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定したバナーが表示されない: 機能 <code>state</code> が <code>enabled</code> か確認。<code>disabled</code> のままだと CONFIG_DB の値は反映されない。</li>
-<li>一部だけ反映される: <code>/etc/issue</code> と <code>/etc/issue.net</code> は同じ login メッセージで両方更新される設計。片方だけ反映されている場合は <code>banner-config</code> のサービスログ (<code>journalctl -u banner-config</code>) を確認。</li>
-<li>リブート後に消えた: <code>config save</code> 未実行。CONFIG_DB スナップショットを永続化する必要がある。</li>
-<li>マルチライン: <code>\n</code> をシェル経由で渡す際にクォートを正しくしないと改行が消える。<code>config banner login "line1\nline2"</code> のようにダブルクォート + <code>\n</code> で渡す。</li>
-<li><code>show banner</code> でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。</li>
+<li><strong>DASH HA HLD</strong>: 本 HLD は HA HLD のフォワーディング層を切り出したもの。<code>DASH_ENI_FORWARD_TABLE</code> のスキーマは HA detailed design 側で定義</li>
+<li><strong><code>AclOrch</code></strong>: <code>ENI_REDIRECT</code> 型 ACL_TABLE_TYPE の取り込みと、tunnel nexthop 表記の REDIRECT 解釈拡張</li>
+<li><strong><code>VxLanTunnOrch</code> / <code>NeighOrch</code></strong>: nexthop 解決のバックエンド</li>
+<li><strong><code>HaMgrd</code></strong>: <code>DASH_ENI_FORWARD_TABLE</code> の唯一の書き手（Phase 1）</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>着信トラフィックが正しい DPU に行かない場合、まず <code>redis-cli -n 4 hgetall "DASH_ENI_FORWARD_TABLE|&lt;eni&gt;"</code> で endpoint が正しいか確認</li>
+<li>ACL ルールが ASIC に反映されているかは <code>AclOrch</code> ログと SAI ACL カウンタで確認</li>
+<li>HA failover 直後の輻輳は Tunnel Termination ルール（PRIORITY 9997）が SET されているかを確認</li>
+<li>リモート経路でドロップが続く場合 <code>VxLanTunnOrch</code> の tunnel NH OID と <code>ACL_RULE.REDIRECT</code> の <code>&lt;PA&gt;@&lt;tunnel&gt;,&lt;vni&gt;</code> 表記の整合を確認</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- DashEniFwdOrch が現行 master の sonic-swss に存在するか
+- ENI_REDIRECT ACL_TABLE_TYPE の AclOrch 取り込み
+- ACL_RULE.REDIRECT の tunnel nexthop 表記 ("<PA>@<tunnel>,<vni>") のパーサ実装
+- DASH_ENI_FORWARD_TABLE スキーマの最新形 (HA detailed design 側)
+- VIP_TABLE の最終的な所在 (CONFIG_DB? APP_DB?)
+- Phase 2 の BFD 連携
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/banner/banner_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/high-availability/eni-based-forwarding.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
