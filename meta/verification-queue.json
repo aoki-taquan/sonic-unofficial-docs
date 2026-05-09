@@ -229,14 +229,16 @@
     {
       "page": "docs/platform/icmp-hardware-offload.md",
       "issue": 43,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-linkmgrd の hardware prober コードの存在と prober_type 切替実装の確認",
-        "IcmpOrch が orchagent に存在するか未確認",
-        "SAI 1.12 saiicmpecho.h 系属性が community syncd で使われているか未確認",
-        "peer GUID 学習ロジックの実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "sonic-linkmgrd の hardware prober コードの存在と prober_type 切替実装の確認 (verified 2026-05-09 at icmporch.cpp / linkmgrd LinkProberBase.cpp)",
+        "IcmpOrch が orchagent に存在するか未確認 (verified 2026-05-09 at icmporch.cpp / linkmgrd LinkProberBase.cpp)",
+        "SAI 1.12 saiicmpecho.h 系属性が community syncd で使われているか未確認 (verified 2026-05-09 at icmporch.cpp / linkmgrd LinkProberBase.cpp)",
+        "peer GUID 学習ロジックの実装確認 (verified 2026-05-09 at icmporch.cpp / linkmgrd LinkProberBase.cpp)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/sai-api-version-check.md",
