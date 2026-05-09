@@ -1,0 +1,12 @@
+{
+  "page": "docs/platform/sonic-sfp-refactoring.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic_xcvr (api/ mem_maps/ codes/ xcvr_eeprom.py xcvr_api_factory.py) の sonic-platform-common 取り込み確認",
+    "SFF-8024 / SFF-8436 / SFF-8472 / CMIS 各 XcvrApi 実装の存在確認",
+    "identifier → XcvrApi class マップ (id_mapping) の実装確認",
+    "SfpOptoeBase の現行クラス階層と vendor 移行状況の確認",
+    "xcvrd が新 XcvrApi を使う形に書き換わっているかの確認"
+  ],
+  "priority": "medium"
+}
