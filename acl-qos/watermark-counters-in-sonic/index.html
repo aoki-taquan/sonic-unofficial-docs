@@ -7012,6 +7012,8 @@
       
         
       
+        
+      
     
     
     
@@ -7557,6 +7559,34 @@
     
   
     config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/debug-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
   
 
     
@@ -10949,9 +10979,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>PortsOrch</code> の watermark flex counter group、<code>watermarkorch</code> の存在、Lua plugin 配置、<code>syncd</code> の <code>STATS_MODE_READ_AND_CLEAR</code> 拡張、telemetry virtual path の最終仕様は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）</p>
+<p><code>sonic-swss/orchagent/watermarkorch.{h,cpp}</code> で <code>WatermarkOrch</code> クラスの存在、<code>DEFAULT_TELEMETRY_INTERVAL=120</code> (cpp L9) と CFG_WATERMARK_TABLE 連動 <code>handleWmConfigUpdate</code> の <code>TELEMETRY_INTERVAL</code> キー処理 (cpp L97) を確認。Lua plugin として <code>orchagent/watermark_bufferpool.lua</code>, <code>watermark_pg.lua</code>, <code>watermark_queue.lua</code> を確認。<code>STATS_MODE_READ_AND_CLEAR</code> は <code>bufferorch.cpp</code> L334 / <code>portsorch.cpp</code> L868/L874 で利用、<code>hftelutils.cpp</code> で <code>SAI_STATS_MODE_READ_AND_CLEAR</code> が SAI 側へ受け渡し。<strong>HLD で混在していた <code>TELEMETRY_PERIOD</code> ではなく実装は <code>TELEMETRY_INTERVAL</code></strong> (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="watermark-pg-queue">バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）<a class="headerlink" href="#watermark-pg-queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

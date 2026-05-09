@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-syslog/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/debug-group/">
       
       
-        <link rel="prev" href="../config-snmp/">
+        <link rel="prev" href="../config-vxlan/">
       
       
-        <link rel="next" href="../config-vlan/">
+        <link rel="next" href="../reboot-fast-warm/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config syslog サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>debug / undebug コマンド群 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-syslog" class="md-skip">
+        <a href="#debug-undebug" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config syslog サブコマンド
+              debug / undebug コマンド群
             
           </span>
         </div>
@@ -7223,37 +7223,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config syslog サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../config-syslog/" class="md-nav__link">
         
   
   
@@ -7269,164 +7242,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド一覧
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各コマンドの詳細
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-add-server_ip-source-port-vrf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-del-server_ip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog del &lt;server_ip&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-host-i-interval-b-burst" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        注意
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7520,10 +7335,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../debug-group/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -7539,6 +7381,170 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド一覧
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コマンド一覧">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-bgp-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug bgp (FRR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-zebra-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug zebra (FRR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-spanning_tree-debug-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug spanning_tree (debug stp 兼用)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-muxcable-dual-tor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug muxcable (Dual-ToR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#undebug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        undebug 側
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各コマンドの詳細 (一部)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細 (一部)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-bgp-updates-inoutprefix-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug bgp updates [in|out|prefix] [&lt;prefix&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-spanning_tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug spanning_tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -10725,25 +10731,14 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各コマンドの詳細
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
+    <nav class="md-nav" aria-label="コマンド一覧">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config-syslog-add-server_ip-source-port-vrf" class="md-nav__link">
+  <a href="#debug-bgp-frr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]
+        debug bgp (FRR)
       
     </span>
   </a>
@@ -10751,10 +10746,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-syslog-del-server_ip" class="md-nav__link">
+  <a href="#debug-zebra-frr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config syslog del &lt;server_ip&gt;
+        debug zebra (FRR)
       
     </span>
   </a>
@@ -10762,10 +10757,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-host-i-interval-b-burst" class="md-nav__link">
+  <a href="#debug-spanning_tree-debug-stp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]
+        debug spanning_tree (debug stp 兼用)
       
     </span>
   </a>
@@ -10773,32 +10768,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" class="md-nav__link">
+  <a href="#debug-muxcable-dual-tor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]
+        debug muxcable (Dual-ToR)
       
     </span>
   </a>
@@ -10811,13 +10784,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#undebug" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        undebug 側
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各コマンドの詳細 (一部)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細 (一部)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-bgp-updates-inoutprefix-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug bgp updates [in|out|prefix] [&lt;prefix&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-spanning_tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug spanning_tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -10860,7 +10872,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-syslog.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/debug-group.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -10868,122 +10880,166 @@
   
 
 
-<h1 id="config-syslog">config syslog サブコマンド<a class="headerlink" href="#config-syslog" title="Permanent link">&para;</a></h1>
+<h1 id="debug-undebug">debug / undebug コマンド群<a class="headerlink" href="#debug-undebug" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config syslog</code> は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、<code>config/syslog.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>hostcfgd</code> および各 feature コンテナの supervisord ラッパが CONFIG_DB を購読して <code>rsyslog</code> 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。</p>
+<p>SONiC の <code>debug</code> および <code>undebug</code> コマンドは、<code>config</code> / <code>show</code> とは別の独立した Click root として実装される (<code>debug = debug.main:cli</code>、<code>undebug = undebug.main:cli</code>)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>対象は主に <strong>FRR (BGP / zebra)</strong> と <strong>STP (<code>stpctl</code>)</strong> の動的デバッグスイッチで、いずれも実体は <code>vtysh</code> または <code>stpctl</code> のラッパー。CONFIG_DB は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。<code>undebug</code> は <code>debug</code> のミラーで、各 <code>debug ...</code> コマンドに対応する <code>no debug ...</code> を vtysh に投げる。</p>
+<p><code>debug.main</code> は <strong>import 時に <code>sudo vtysh -c 'show version'</code> を実行して FRR か Quagga かを判定</strong>し、コマンドツリーを動的に切り替える点が特徴的<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。本ドキュメントでは現役の FRR ブランチを中心に記述する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="debug-bgp-frr"><code>debug bgp</code> (FRR)<a class="headerlink" href="#debug-bgp-frr" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>コマンド</th>
-<th>用途</th>
+<th>vtysh 経由で実行されるコマンド</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>config syslog add &lt;server_ip&gt; [--source &lt;src&gt;] [--port &lt;p&gt;] [--vrf &lt;vrf&gt;]</code></td>
-<td>リモート syslog サーバ追加</td>
+<td><code>debug bgp allow-martians</code></td>
+<td><code>debug bgp allow-martians</code></td>
 </tr>
 <tr>
-<td><code>config syslog del &lt;server_ip&gt;</code></td>
-<td>リモートサーバ削除</td>
+<td><code>debug bgp as4 [segment]</code></td>
+<td><code>debug bgp as4 [segment]</code></td>
 </tr>
 <tr>
-<td><code>config syslog rate-limit-host [-i &lt;sec&gt;] [-b &lt;num&gt;]</code></td>
-<td>ホスト rsyslog のレート制限 (interval / burst)</td>
+<td><code>debug bgp bestpath &lt;prefix&gt;</code></td>
+<td><code>debug bgp bestpath &lt;prefix&gt;</code></td>
 </tr>
 <tr>
-<td><code>config syslog rate-limit-container &lt;service&gt; [-i &lt;sec&gt;] [-b &lt;num&gt;] [-n &lt;ns&gt;]</code></td>
-<td>feature コンテナのレート制限</td>
+<td><code>debug bgp keepalives [&lt;prefix_or_iface&gt;]</code></td>
+<td><code>debug bgp keepalives [..]</code></td>
 </tr>
 <tr>
-<td><code>config syslog rate-limit-feature enable [&lt;service&gt;] [-n &lt;ns&gt;]</code></td>
-<td>feature 単位でレート制限機能を on</td>
+<td><code>debug bgp neighbor-events [&lt;prefix_or_iface&gt;]</code></td>
+<td><code>debug bgp neighbor-events [..]</code></td>
 </tr>
 <tr>
-<td><code>config syslog rate-limit-feature disable [&lt;service&gt;] [-n &lt;ns&gt;]</code></td>
-<td>レート制限を off</td>
+<td><code>debug bgp nht</code></td>
+<td><code>debug bgp nht</code></td>
 </tr>
 <tr>
-<td><code>config syslog level -i &lt;id&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]</code></td>
-<td>サブコンポーネントのログレベル設定</td>
+<td><code>debug bgp pbr [error]</code></td>
+<td><code>debug bgp pbr [error]</code></td>
+</tr>
+<tr>
+<td><code>debug bgp update-groups</code></td>
+<td><code>debug bgp update-groups</code></td>
+</tr>
+<tr>
+<td><code>debug bgp updates [in\|out\|prefix] [&lt;prefix&gt;]</code></td>
+<td><code>debug bgp updates [..]</code></td>
+</tr>
+<tr>
+<td><code>debug bgp zebra [&lt;prefix&gt;]</code></td>
+<td><code>debug bgp zebra [prefix &lt;prefix&gt;]</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-syslog-add-server_ip-source-port-vrf"><code>config syslog add &lt;server_ip&gt; [--source ...] [--port ...] [--vrf ...]</code><a class="headerlink" href="#config-syslog-add-server_ip-source-port-vrf" title="Permanent link">&para;</a></h3>
-<p><strong>引数 / オプション</strong>:</p>
-<ul>
-<li><code>&lt;server_ip_address&gt;</code> ... IPv4 / IPv6。<code>ip_addr_validator</code> で検証。</li>
-<li><code>--source &lt;ip&gt;</code> ... 送信元 IP (Loopback 等を想定)。<code>source_validator</code> がアドレス整合と存在検査を行う。</li>
-<li><code>--port &lt;port&gt;</code> ... 送信先 UDP port (省略時 514)。</li>
-<li><code>--vrf &lt;vrf&gt;</code> ... 出力 VRF。<code>mgmt</code> (mgmt-vrf) または CONFIG_DB の <code>VRF</code> テーブルに存在する VRF。<code>source</code> と組み合わせる場合 <code>source_to_vrf_validator</code> で同 VRF 内のインタフェースかをチェックする。</li>
-</ul>
-<p><strong>動作</strong>:
-<code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="config-syslog-del-server_ip"><code>config syslog del &lt;server_ip&gt;</code><a class="headerlink" href="#config-syslog-del-server_ip" title="Permanent link">&para;</a></h3>
-<p><code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を削除。存在しないアドレスを与えるとエラー終了。</p>
-<h3 id="config-syslog-rate-limit-host-i-interval-b-burst"><code>config syslog rate-limit-host [-i &lt;interval&gt;] [-b &lt;burst&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-host-i-interval-b-burst" title="Permanent link">&para;</a></h3>
-<p><code>SYSLOG_CONFIG|GLOBAL</code> (または同等のグローバル key) に <code>rate_limit_interval</code> / <code>rate_limit_burst</code> を書く。<code>interval</code> <code>burst</code> の <code>IntRange(0, 2147483647)</code> 制約だけ CLI 側で適用される。</p>
-<h3 id="config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace"><code>config syslog rate-limit-container &lt;service_name&gt; [-i &lt;interval&gt;] [-b &lt;burst&gt;] [-n &lt;namespace&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-container-service_name-i-interval-b-burst-n-namespace" title="Permanent link">&para;</a></h3>
-<p><code>SYSLOG_CONFIG_FEATURE|&lt;service&gt;</code> に同フィールドを書く。<code>-n</code> を付けると multi-ASIC namespace の CONFIG_DB に書き込む。</p>
-<h3 id="config-syslog-rate-limit-feature-enabledisable-service-n-ns"><code>config syslog rate-limit-feature enable|disable [&lt;service&gt;] [-n &lt;ns&gt;]</code><a class="headerlink" href="#config-syslog-rate-limit-feature-enabledisable-service-n-ns" title="Permanent link">&para;</a></h3>
-<p><code>get_feature_names_to_proceed</code> がサービス名を解決し、各 <code>SYSLOG_CONFIG_FEATURE</code> エントリの rate-limit 機能 on/off フラグを更新する。<code>&lt;service&gt;</code> 省略時は全 feature を一括処理する。</p>
-<h3 id="config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns"><code>config syslog level -i &lt;identifier&gt; -l &lt;level&gt; [--container &lt;c&gt;] [--program &lt;p&gt;] [--pid] [-n &lt;ns&gt;]</code><a class="headerlink" href="#config-syslog-level-i-identifier-l-level-container-c-program-p-pid-n-ns" title="Permanent link">&para;</a></h3>
-<p><code>LOGGER</code> テーブル (またはサブシステム別の logger テーブル) に <code>severity</code> を書く。識別子は <code>(container, program, pid)</code> の組み合わせで、<code>--container</code> / <code>--program</code> を併用すると特定の rsyslog ログタグだけを対象にする。<code>--pid</code> は実行中プロセスの PID にひもづけたい場合のオプション。</p>
-<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>prefix 引数は <code>^[A-Za-z0-9.:/]*$</code> の正規表現でバリデートされ、不正値は <code>sys.exit('Prefix contains only number, alphabet, period, colon, and forward slash')</code><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<h3 id="debug-zebra-frr"><code>debug zebra</code> (FRR)<a class="headerlink" href="#debug-zebra-frr" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>テーブル</th>
-<th>キー</th>
-<th>主なフィールド</th>
-<th>操作するコマンド</th>
+<th>コマンド</th>
+<th>vtysh コマンド</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>SYSLOG_SERVER</code></td>
-<td><code>&lt;server_ip&gt;</code></td>
-<td><code>source</code>, <code>port</code>, <code>vrf</code></td>
-<td><code>add</code> / <code>del</code></td>
+<td><code>debug zebra dplane [detailed]</code></td>
+<td><code>debug zebra dplane [detailed]</code></td>
 </tr>
 <tr>
-<td><code>SYSLOG_CONFIG</code></td>
-<td><code>GLOBAL</code></td>
-<td><code>rate_limit_interval</code>, <code>rate_limit_burst</code></td>
-<td><code>rate-limit-host</code></td>
+<td><code>debug zebra events</code></td>
+<td><code>debug zebra events</code></td>
 </tr>
 <tr>
-<td><code>SYSLOG_CONFIG_FEATURE</code></td>
-<td><code>&lt;service&gt;</code></td>
-<td><code>rate_limit_interval</code>, <code>rate_limit_burst</code>, enable/disable</td>
-<td><code>rate-limit-container</code> / <code>rate-limit-feature</code></td>
+<td><code>debug zebra fpm</code></td>
+<td><code>debug zebra fpm</code></td>
 </tr>
 <tr>
-<td><code>LOGGER</code></td>
-<td><code>&lt;identifier&gt;</code> 等</td>
-<td><code>LOGLEVEL</code>, <code>LOGOUTPUT</code></td>
-<td><code>level</code></td>
+<td><code>debug zebra kernel</code></td>
+<td><code>debug zebra kernel</code></td>
+</tr>
+<tr>
+<td><code>debug zebra nht</code></td>
+<td><code>debug zebra nht</code></td>
+</tr>
+<tr>
+<td><code>debug zebra packet</code></td>
+<td><code>debug zebra packet</code></td>
+</tr>
+<tr>
+<td><code>debug zebra rib [detailed]</code></td>
+<td><code>debug zebra rib [detailed]</code></td>
+</tr>
+<tr>
+<td><code>debug zebra vxlan</code></td>
+<td><code>debug zebra vxlan</code></td>
 </tr>
 </tbody>
 </table>
+<h3 id="debug-spanning_tree-debug-stp"><code>debug spanning_tree</code> (<code>debug stp</code> 兼用)<a class="headerlink" href="#debug-spanning_tree-debug-stp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>コマンド</th>
+<th>内部コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>debug spanning_tree</code></td>
+<td><code>sudo stpctl dbg enable</code></td>
+</tr>
+<tr>
+<td><code>debug spanning_tree dump global</code></td>
+<td><code>sudo stpctl global</code></td>
+</tr>
+<tr>
+<td><code>debug spanning_tree dump vlan &lt;vlan_id&gt;</code></td>
+<td><code>sudo stpctl vlan &lt;vlan_id&gt;</code></td>
+</tr>
+<tr>
+<td><code>debug spanning_tree dump interface &lt;vlan_id&gt; &lt;if&gt;</code></td>
+<td><code>sudo stpctl port &lt;vlan_id&gt; &lt;if&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="debug-muxcable-dual-tor"><code>debug muxcable</code> (Dual-ToR)<a class="headerlink" href="#debug-muxcable-dual-tor" title="Permanent link">&para;</a></h3>
+<p>current の <code>debug.main</code> ツリーには <code>bgp</code> / <code>zebra</code> / <code>spanning_tree</code> のみが組み込まれている。Dual-ToR 関連の muxcable に対するデバッグ操作は <code>config muxcable</code> 配下に <code>hwmode state</code> / <code>prbs</code> / <code>loopback</code> 等として置かれている (CLI ツリー上は <code>debug</code> ではなく <code>config</code> 名前空間)。実装上、<code>debug</code> Click root には muxcable サブグループは追加されておらず、本ページではその点を明示する。</p>
+<h2 id="undebug"><code>undebug</code> 側<a class="headerlink" href="#undebug" title="Permanent link">&para;</a></h2>
+<p><code>undebug</code> は <code>debug</code> と同じツリー構造で、各コマンドが対応する <code>no debug ...</code> を vtysh に発行する。例:</p>
+<ul>
+<li><code>undebug bgp keepalives</code> → <code>vtysh -c "no debug bgp keepalives"</code></li>
+<li><code>undebug zebra rib detailed</code> → <code>vtysh -c "no debug zebra rib detailed"</code></li>
+</ul>
+<p>実装も <code>undebug/main.py</code> で同様に <code>vtysh -c 'show version'</code> で FRR/Quagga 判定する形態。</p>
+<h2 id="_3">各コマンドの詳細 (一部)<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="debug-bgp-updates-inoutprefix-prefix"><code>debug bgp updates [in|out|prefix] [&lt;prefix&gt;]</code><a class="headerlink" href="#debug-bgp-updates-inoutprefix-prefix" title="Permanent link">&para;</a></h3>
+<p>引数 <code>direction</code> は <code>click.Choice(['in', 'out', 'prefix'])</code> で、3 番目を選んだ場合に <code>&lt;prefix&gt;</code> を併用する。<code>prefix</code> は前述の正規表現バリデーション。生成される vtysh 文字列は引数によって <code>debug bgp updates</code>, <code>debug bgp updates in 10.0.0.0/8</code>, <code>debug bgp updates prefix fe80::/10</code> 等。</p>
+<h3 id="debug-spanning_tree"><code>debug spanning_tree</code><a class="headerlink" href="#debug-spanning_tree" title="Permanent link">&para;</a></h3>
+<p>サブコマンド無しで実行すると <code>sudo stpctl dbg enable</code> を起動し、<code>stpsyncd</code> / <code>stpd</code> のデバッグ出力を有効化する。<code>dump global</code> / <code>vlan</code> / <code>interface</code> は内部状態のスナップショット表示。</p>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VRF を指定する場合、mgmt-vrf を使うには <code>is_mgmt_vrf_enabled</code> で <code>MGMT_VRF_CONFIG</code> の有効性が確認される。mgmt-vrf 未設定で <code>--vrf mgmt</code> を渡すとエラー。</li>
-<li><code>add</code> コマンドは IPv4 / IPv6 両対応だが、CLI 引数では区別せず、<code>ipaddress.ip_address()</code> で自動判別する。</li>
-<li>レート制限の単位は <strong>rsyslog の <code>imuxsock</code> ratelimit</strong> (interval 秒間に burst 件まで) であり、CLI が指定するのはそれの interval / burst パラメータそのまま。</li>
+<li><code>debug.main</code> の <strong>import 時に <code>subprocess.check_output(['sudo', 'vtysh', '-c', 'show version'])</code> が走る</strong>。これは tab 補完のような副次的な呼び出しでも実行されるため、bgp コンテナが起動していない環境で <code>debug</code> コマンドの help を見るだけでもエラーで終了する場合がある。</li>
+<li><code>debug</code> の効果は <strong>プロセス再起動で消える</strong>。永続化したい場合は FRR 側 (<code>/etc/frr/frr.conf</code> 内 <code>debug ...</code> 行) に書く運用となる。</li>
+<li>Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (<code>debug bgp filters</code> / <code>fsm</code> などは Quagga のみ)。<code>vtysh -c 'show version'</code> で判定するため、現役 SONiC では FRR 経路のみが効く。</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>syslog</code> グループは <code>config/syslog.py</code> L361-L368。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>setup.py</code> の entry point <code>'debug = debug.main:cli'</code> / <code>'undebug = undebug.main:cli'</code>、および <code>data_files</code> への登録。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/setup.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/setup.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>add</code> / <code>delete</code> は <code>config/syslog.py</code> L370-L454。重複検査は <code>is_exist_in_db</code>。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>debug.main</code> の import 時 FRR 判定 (<code>debug/main.py</code> L31-L32)。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/debug/main.py#L31">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/debug/main.py#L31</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>prefix バリデーション (<code>debug/main.py</code> L30 + L60-L63 etc.)。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

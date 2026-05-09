@@ -6990,6 +6990,8 @@
       
         
       
+        
+      
     
     
     
@@ -7535,6 +7537,34 @@
     
   
     config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/debug-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
   
 
     
@@ -10905,9 +10935,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>PORT_BUFFER_DROP</code> Flex Counter group の sonic-swss / sonic-utilities への取り込み状況、<code>counterpoll port-buffer-drop</code> CLI 実装、interval バリデーション（30s–5m）の実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/portsorch.h</code> L31 で <code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"</code>、<code>portsorch.cpp</code> L88 で <code>PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000</code>（HLD のデフォルト 60s と一致）、<code>flexcounterorch.cpp</code> L75 で flex counter テーブル登録を確認。<code>sonic-utilities/counterpoll/main.py</code> L146-178 に <code>counterpoll port-buffer-drop</code> グループ、interval バリデーションは <code>click.IntRange(30000, 300000)</code> で実装 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="port_buffer_drop-fc-group">ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）<a class="headerlink" href="#port_buffer_drop-fc-group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

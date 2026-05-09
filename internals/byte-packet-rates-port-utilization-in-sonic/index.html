@@ -7023,6 +7023,8 @@
       
         
       
+        
+      
     
     
     
@@ -7568,6 +7570,34 @@
     
   
     config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/debug-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
   
 
     
@@ -10971,9 +11001,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>portsorch</code> / <code>intfsorch</code> の <code>addRifToFlexCounter</code> / Lua プラグインの存在と配置、<code>config rate smoothing_interval</code> CLI 実装、<code>counterpoll port_rates</code> / <code>rif_rates</code> トークン実装、<code>RATES</code> テーブルの実 schema は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/portsorch.h</code> L30 (<code>PORT_RATE_COUNTER_FLEX_COUNTER_GROUP</code>) と <code>intfsorch.h</code> L20 (<code>RIF_RATE_COUNTER_FLEX_COUNTER_GROUP</code>)、Lua プラグイン <code>port_rates.lua</code> / <code>rif_rates.lua</code> / <code>trap_rates.lua</code> / <code>tunnel_rates.lua</code>（<code>Makefile.am</code> L20-32）、<code>flexcounterorch.cpp</code> L73/L83 で <code>PORT_RATES</code> / <code>RIF_RATES</code> の counterpoll キー登録を確認。<code>sonic-utilities/config/main.py</code> L9586 <code>smoothing_interval</code> CLI が <code>RATES:PORT</code> / <code>RATES:RIF</code> / <code>RATES:TRAP</code> を <code>COUNTERS_DB</code> に書き込み、<code>alpha = 2/(N+1)</code> で EMA 係数を計算 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="rates-ema">バイト/パケットレートとポート使用率（RATES テーブル + EMA）<a class="headerlink" href="#rates-ema" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

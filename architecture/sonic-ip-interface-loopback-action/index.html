@@ -7023,6 +7023,8 @@
       
         
       
+        
+      
     
     
     
@@ -7568,6 +7570,34 @@
     
   
     config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/debug-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
   
 
     
@@ -10971,9 +11001,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>intfmgrd</code> / <code>intfsorch</code> の <code>loopback_action</code> ハンドラ実装、SAI 1.x の <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> 対応状況、CLI 実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/cfgmgr/intfmgr.cpp</code> L782-896 で CONFIG_DB の <code>loopback_action</code> フィールド読み取りと APP_DB への伝播、<code>sonic-swss/orchagent/intfsorch.cpp</code> で <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> (L441) と <code>setIntfLoopbackAction</code> (L1001)、<code>loopbackActionMap</code> (L1148-) を確認。<code>sonic-utilities/config/main.py</code> L5881-5905 に <code>config interface loopback-action</code> CLI、<code>sonic-utilities/show/main.py</code> L1413-1438 に <code>show ip interfaces loopback-action</code> を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="ip-rif-dropforward">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）<a class="headerlink" href="#ip-rif-dropforward" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

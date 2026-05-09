@@ -7018,6 +7018,8 @@
       
         
       
+        
+      
     
     
     
@@ -7563,6 +7565,34 @@
     
   
     config vxlan サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/debug-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    debug / undebug コマンド群
   
 
     
@@ -10961,9 +10991,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2025-05 (Rev 0.1)。<code>sonic-mgmt-common</code> の transformer 経路、REST/gNMI ハンドラ実装、エラーハンドリングは要裏取り。<strong>詳細な REST/gNMI ペイロード例や全テストケースは原文 HLD <code>doc/mgmt/OpenConfig_VLAN_Interface.md</code> を参照</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-mgmt-common/translib/transformer/sw_vlan.go</code>, <code>xfmr_intf.go</code>, <code>vlan_openconfig_test.go</code> で OpenConfig VLAN transformer 実装を確認。<code>xfmr_intf.go</code> には <code>Subscribe_routed_vlan_ip_addr_xfmr</code>, <code>YangToDb_intf_routed_vlan_name_xfmr</code>, <code>routed_vlan_ip_addr_del</code>、<code>VLAN_INTERFACE_TN</code> (CONFIG_DB key) などが揃っており、switched-vlan / routed-vlan の双方が CONFIG_DB の <code>VLAN</code> / <code>VLAN_INTERFACE</code> / <code>VLAN_MEMBER</code> テーブルにマップされる。<strong>詳細 REST/gNMI ペイロード例は原文 HLD 参照</strong> (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="vlan-openconfig-yang-rest-gnmi">VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）<a class="headerlink" href="#vlan-openconfig-yang-rest-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
