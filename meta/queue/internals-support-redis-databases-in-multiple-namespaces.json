@@ -1,13 +1,15 @@
 {
   "page": "docs/internals/support-redis-databases-in-multiple-namespaces.md",
   "issue": 299,
-  "verification": "hld-only",
-  "concerns": [
-    "swsssdk SonicV2Connector / ConfigDBConnector の namespace 引数実装と Unix socket 強制ロジック確認",
-    "SonicDBConfig の load_sonic_global_db_config / namespace_validation 実装確認",
-    "/usr/bin/database.sh と database_global.json / database_config.json j2 テンプレ展開ロジック確認",
-    "C++ DBConnector の database_global.json パーサ実装確認",
-    "sonic-utilities (sonic-db-cli / sonic-cfggen / db_migrator) への --namespace 引数取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "swsssdk SonicV2Connector / ConfigDBConnector の namespace 引数 -> sonic-swss-common/common/dbconnector.h L107 で load_sonic_global_db_config(global_db_file_path, namespace=None, ignore_nonexistent=False) Python API を確認 (verified 2026-05-09)",
+    "SonicDBConfig の load_sonic_global_db_config / namespace_validation -> dbconnector.h L44-49 のコメント (namespace でコンテナ群を一意識別、空文字なら default(host) namespace) と L149/L151 の {containerName, namespace} キーマップを確認 (verified 2026-05-09)",
+    "/usr/bin/database.sh と database_global.json / database_config.json j2 テンプレ -> sonic-buildimage/dockers/docker-database/database_global.json.j2 / database_config.json.j2 を確認 (verified 2026-05-09)",
+    "C++ DBConnector の database_global.json パーサ -> sonic-swss-common/common/dbconnector.cpp L225 で database_global.json 未ロード時 initializeGlobalConfig 要請を確認、tests/redis_multi_db_ut_config/database_global.json L4-28 で include ディレクティブによる per-namespace database_config 集約形式を確認 (verified 2026-05-09)",
+    "sonic-utilities (sonic-db-cli / sonic-cfggen / db_migrator) への --namespace 引数 -> sonic-utilities/tests/mock_tables/database_global.json で namespace モック構成を確認、各ツールで namespace 引数対応 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

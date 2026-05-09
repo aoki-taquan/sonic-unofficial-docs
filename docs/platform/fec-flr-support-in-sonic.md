@@ -1,7 +1,7 @@
 ---
 title: FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
 area: platform
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 (2025-07) で `port_flr.lua` 追加と FlexCounterOrch 拡張、speed → interleaving factor table、predicted FLR の線形回帰アルゴリズム。**SAI 属性 `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si` の community SAI / vendor SAI 提供状況**は要確認。
+!!! danger "裏取りステータス: Discrepancy-found（CLI 取り込み未済）"
+    `sonic-swss/orchagent/port_flr.lua` L31 `FEC_FLR_POLL_INTERVAL = 120` / L443-452 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を RATES テーブルへ書き込む実装を確認。`sonic-utilities/utilities_common/portstat.py` L48-50 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` / `FEC_MAX_T` カラム取り込み、`utilities_common/netstat.py` L144/L156 で `format_fec_flr` / `format_fec_flr_predicted` フォーマッタを確認。SAI `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15` は `sonic-sairedis/unittest/saidump/dump.json` のサンプル出力に出現を確認（verified at: 2026-05-09）。**HLD と現行 master の差異**: HLD §New CLI で `counterpoll port flr-interval-factor FLR_INTERVAL_FACTOR` のサブコマンド追加が記載されているが、`sonic-utilities/counterpoll/main.py` および `config/` 配下に `flr-interval-factor` / `FLR_INTERVAL_FACTOR` の grep ヒットなし。CLI による polling factor 動的設定は現行 master では未取り込み（lua 側ハードコード `FEC_FLR_POLL_INTERVAL = 120` のみ）。
 
 # FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
 

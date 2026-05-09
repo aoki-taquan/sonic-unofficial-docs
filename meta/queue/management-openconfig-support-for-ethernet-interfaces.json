@@ -2,14 +2,16 @@
   "page": "docs/management/openconfig-support-for-ethernet-interfaces.md",
   "issue": 213,
   "pr": 214,
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-mgmt-common transformer の openconfig-interfaces/if-ethernet/if-ip 実装確認",
-    "subinterface index 0 のみ対応の実装方針確認",
-    "ipv6/config/enabled → ipv6_use_link_local_only マッピング実装確認",
-    "SPEED_200/400/600/800GB identity の sonic-mgmt-common 取り込み確認",
-    "translib App から transformer への移行進捗",
-    "重複 IP 検出の実装位置 (transformer / SONiC YANG validator)"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "transformer の openconfig-interfaces/if-ethernet/if-ip 実装 -> sonic-mgmt-common/translib/transformer/xfmr_intf.go (大規模 transformer) と annotations/openconfig-interfaces-annot.yang L54-90 の field-transformer マッピングを確認 (verified 2026-05-09)",
+    "subinterface index 0 のみ対応 -> annotations と xfmr_intf.go の subinterface ハンドラで index 0 の特殊扱いを確認 (verified 2026-05-09)",
+    "ipv6/config/enabled → ipv6_use_link_local_only マッピング -> xfmr_intf.go L3796-3828 の YangToDb_ipv6_enabled_xfmr / DbToYang を確認 (verified 2026-05-09)",
+    "SPEED_200/400/600/800GB identity -> sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang L162 SPEED_400GB / L172 SPEED_800GB を確認 (verified 2026-05-09)",
+    "translib App から transformer への移行 -> 現行 master では transformer ベースが主流 (verified 2026-05-09)",
+    "重複 IP 検出の実装位置 -> CVL/SONiC YANG validator 側で実装 (本 HLD スコープ外) (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,13 +1,15 @@
 {
   "page": "docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md",
   "issue": 101,
-  "verification": "hld-only",
-  "concerns": [
-    "libteam の 0xf1 PDU 拡張パッチが現行 sonic-buildimage に存在するか",
-    "config portchannel retry-count CLI が sonic-utilities master に取り込まれているか",
-    "feature test (LLDP + 0xf1 ping) スクリプトの所在",
-    "60 秒トランジションガードの実装値",
-    "warm-reboot ホックでの retry 自動化有無"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "libteam の 0xf1 PDU 拡張パッチ取り込み -> sonic-buildimage/src/libteam/patch/0015-add-support-for-custom-retry.patch / 0016-block-retry-count-changes.patch を確認 (verified 2026-05-09)",
+    "config portchannel retry-count CLI -> sonic-utilities/config/main.py L3052 portchannel_retry_count グループ + L3061 で teamdctl runner.enable_retry_count_feature 状態取得、その後の get/set サブコマンドを確認 (verified 2026-05-09)",
+    "feature test (LLDP + 0xf1 ping) -> sonic-utilities/scripts/teamd_increase_retry_count.py L39 ByteField('version', 0xf1) と L62-69 actor_retry_count_type=0x80 / partner_retry_count_type=0x81 TLV を確認 (verified 2026-05-09)",
+    "60 秒トランジションガード値 -> teamd_increase_retry_count.py 内のタイマで実装 (verified 2026-05-09)",
+    "warm-reboot ホックでの retry 自動化 -> 0016-block-retry-count-changes.patch で warm-reboot 中の挙動が制御される (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

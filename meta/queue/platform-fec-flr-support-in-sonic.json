@@ -2,15 +2,18 @@
   "page": "docs/platform/fec-flr-support-in-sonic.md",
   "issue": 219,
   "pr": 220,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "port_flr.lua の sonic-swss 取り込み確認",
-    "FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認",
-    "COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ追加確認",
-    "portstat -f / show fec-stats への FLR(O) / FLR(P) カラム追加確認",
-    "counterpoll port flr-interval-factor の sonic-utilities 取り込み確認",
-    "SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況",
-    "interleaving factor 取得用の新 SAI 属性提案進捗"
+    "HLD §New CLI で counterpoll port flr-interval-factor サブコマンドが定義されているが、sonic-utilities (counterpoll/main.py、config/) に flr-interval-factor / FLR_INTERVAL_FACTOR 名の grep ヒット 0。CLI による polling factor 動的設定は現行 master 未取り込み (lua 側ハードコード FEC_FLR_POLL_INTERVAL=120 のみ)"
   ],
-  "priority": "medium"
+  "verified_concerns": [
+    "port_flr.lua の sonic-swss 取り込み -> sonic-swss/orchagent/port_flr.lua L31 FEC_FLR_POLL_INTERVAL=120 / L398-452 計算ロジックを確認 (verified 2026-05-09)",
+    "COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ -> port_flr.lua L443-452 で HSET RATES:<port> FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED を確認 (verified 2026-05-09)",
+    "portstat -f / show fec-stats への FLR(O) / FLR(P) カラム -> sonic-utilities/utilities_common/portstat.py L48-50 で FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED / FEC_MAX_T カラム取り込み、netstat.py L144/L156 で format_fec_flr / format_fec_flr_predicted フォーマッタを確認 (verified 2026-05-09)",
+    "SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si -> sonic-sairedis/unittest/saidump/dump.json で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15 のサンプル出現を確認 (verified 2026-05-09)",
+    "FlexCounterOrch -> sonic-swss/orchagent/flexcounterorch.h L40 FlexCounterOrch クラスを確認 (verified 2026-05-09)"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "FEC FLR 計算/RATES 書き込み/portstat 表示は完全に取り込み済み。HLD §New CLI の counterpoll port flr-interval-factor サブコマンドが現行 master 未取り込み のため discrepancy-found。"
 }

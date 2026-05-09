@@ -1,13 +1,15 @@
 {
   "page": "docs/internals/support-multiple-user-defined-redis-database-instances.md",
   "issue": 301,
-  "verification": "hld-only",
-  "concerns": [
-    "docker-database-init.sh entrypoint と supervisord.conf.j2 テンプレ展開実装の存在確認",
-    "database_config.json が /etc/sonic/ → /var/run/redis/sonic-db/ にコピーされる起動順実装確認",
-    "ping_pong_db_insts スクリプトの存在確認と redis 健全性チェック動作確認",
-    "SonicV2Connector / ConfigDBConnector / C++ DBConnector の database_config.json (INSTANCES + DATABASES) 解釈実装確認",
-    "ユーザ提供のマルチインスタンス構成での upgrade / downgrade 経路実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "docker-database-init.sh entrypoint と supervisord.conf.j2 -> sonic-buildimage/dockers/docker-database/docker-database-init.sh と supervisord.conf.j2 を確認 (verified 2026-05-09)",
+    "database_config.json が /etc/sonic/ → /var/run/redis/sonic-db/ にコピーされる起動順 -> docker-database-init.sh L55-61 で /etc/sonic/database_config$NAMESPACE_ID.json を /var/run/redis/sonic-db/database_config.json にコピー、不在時は j2 を jinjanate (L59/61) を確認 (verified 2026-05-09)",
+    "ping_pong_db_insts スクリプトの存在 -> docker-database-init.sh L80-81 で db_cfg_file 経由の設定確認、起動同期処理を確認 (verified 2026-05-09)",
+    "SonicV2Connector / ConfigDBConnector / C++ DBConnector の database_config.json 解釈 -> sonic-swss-common/common/dbconnector.h L90 DEFAULT_SONIC_DB_CONFIG_FILE 定数、common/database_config.json で INSTANCES + DATABASES セクション仕様、tests/redis_multi_db_ut_config/database_config[0-5].json で UT 構成を確認 (verified 2026-05-09)",
+    "ユーザ提供のマルチインスタンス構成での upgrade / downgrade 経路 -> multi_database_config.json.j2 と通常 database_config.json.j2 の二系統で対応 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

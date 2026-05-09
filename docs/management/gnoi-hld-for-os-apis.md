@@ -1,7 +1,7 @@
 ---
 title: gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2025-01 改訂 v0.1。`image_service.install` / `image_service.activate` / `image_service.verify` の DBUS エンドポイントの現行実装、デュアル supervisor 環境での同期挙動、`gnoi_client` の OS サブコマンドは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-gnmi/gnmi_server/gnoi_os.go` L25-441 で `OSServer.processTransferReq` / `processTransferEnd` / `Activate` / `Verify` のサーバ実装を確認。`sonic-gnmi/gnoi_client/os/os.go` L20-72 で OS Verify / Activate / Install のクライアント実装を、`sonic-gnmi/gnoi_client/gnoi_client.go` L73-77 で `--module OS --rpc {Verify,Activate,Install}` ディスパッチを確認。`sonic-host-services/host_modules/image_service.py` L81-99 で DBUS の `install` メソッド（`/usr/local/bin/sonic-installer install -y` 呼び出し）と L165 `set_next_boot` 実装を確認（verified at: 2026-05-09）。HostModule 側の gNOI 統合（L229-251 `installos`）は現行 master では `ERROR_UNIMPLEMENTED` だが、別経路の `OSServer` （sonic-gnmi 側）で機能する。
 
 # gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
 

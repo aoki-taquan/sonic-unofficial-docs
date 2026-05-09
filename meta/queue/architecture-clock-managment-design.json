@@ -1,13 +1,15 @@
 {
   "page": "docs/architecture/clock-managment-design.md",
   "issue": 135,
-  "verification": "hld-only",
-  "concerns": [
-    "config clock CLI の sonic-utilities 取り込み",
-    "DEVICE_METADATA.timezone の sonic-device_metadata.yang 追加",
-    "hostcfgd の timezone 変更ハンドラ実装",
-    "NTP 状態判定ロジックの実装",
-    "rsyslog 再起動の自動化フロー"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "config clock CLI の sonic-utilities 取り込み -> sonic-utilities/config/main.py L9758-9799 で `config clock timezone` / `config clock date` を確認 (verified 2026-05-09)",
+    "DEVICE_METADATA.timezone の sonic-device_metadata.yang 追加 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang L272-273 で leaf timezone を確認 (verified 2026-05-09)",
+    "hostcfgd の timezone 変更ハンドラ実装 -> sonic-host-services/scripts/hostcfgd L1482 DeviceMetaCfg / L1534 apply_timezone_if_needed / L1556 timedatectl set-timezone を確認 (verified 2026-05-09)",
+    "NTP 状態判定ロジック -> 本 HLD は date 設定のみで NTP 連動はスコープ外、CLI 側で timedatectl 経由 (verified 2026-05-09)",
+    "rsyslog 再起動の自動化 -> hostcfgd L1566 set-timezone 失敗時 + rsyslog 再起動を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

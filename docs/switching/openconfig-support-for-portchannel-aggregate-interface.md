@@ -1,7 +1,7 @@
 ---
 title: PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
     - openconfig-if-ethernet
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `sonic-mgmt-common` の transformer ベース OpenConfig PortChannel 実装、`oc-lag:aggregate-id` でメンバ Ethernet を PortChannel に紐付ける GET / SET 経路、`min-links` 属性のマッピングは実コードでの裏取り未済。subinterface 機能は本 HLD のスコープ外であり別途。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-mgmt-common/translib/transformer/sw_portchannel.go` で PortChannel transformer を確認。`sonic-mgmt-common/translib/transformer/portchannel_openconfig_test.go` L54-73 で `interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id` への PATCH と `interface[name=PortChannel111]/openconfig-if-aggregate:aggregation/config/min-links` への min-links 設定の REST テストを確認。`sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang` L87-90 で `min-links → min_links` の `lag_min_links_xfmr` field-transformer を、`sonic-mgmt-common/cvl/testdata/schema/sonic-portchannel.yang` L51 で SONiC 側 `min_links` フィールド定義を確認（verified at: 2026-05-09）。subinterface は本 HLD のスコープ外。
 
 # PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
 

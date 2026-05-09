@@ -2,13 +2,15 @@
   "page": "docs/management/gnoi-hld-for-os-apis.md",
   "issue": 207,
   "pr": 208,
-  "verification": "hld-only",
-  "concerns": [
-    "UMF / sonic-gnmi の OS RPC handler (Install/Activate/Verify) 実装存在確認",
-    "host_modules/image_service.py の install/activate/verify エンドポイント現行実装確認",
-    "chassis での standby_supervisor sync 経路確認",
-    "gnoi_client の os サブコマンド実装状況確認",
-    "Activate 起動失敗時のロールバック (sonic-installer next image pointer) 挙動確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "UMF / sonic-gnmi の OS RPC handler -> sonic-gnmi/gnmi_server/gnoi_os.go L25 processTransferReq / L86 processTransferEnd / L391 Activate / L441 Verify を確認 (verified 2026-05-09)",
+    "host_modules/image_service.py の install/activate/verify -> L81 install (sonic-installer 呼び出し) / L165 set_next_boot 実装。HostModule 側 installos (L229) は ERROR_UNIMPLEMENTED で別経路の OSServer (sonic-gnmi 内) で機能 (verified 2026-05-09)",
+    "chassis での standby_supervisor sync 経路 -> ベンダ HLD 領域、現行 master では未統合 (verified 2026-05-09)",
+    "gnoi_client の os サブコマンド -> sonic-gnmi/gnoi_client/os/os.go L20-72 + gnoi_client.go L73-77 で Verify/Activate/Install を確認 (verified 2026-05-09)",
+    "Activate 起動失敗時のロールバック -> gnoi_os.go の Activate 内で sonic-installer next image pointer 復元処理 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }
