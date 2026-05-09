@@ -82,6 +82,16 @@ PR 本文には次を必ず含める（Reviewer の機械チェック対象）:
 - HLD のパス・ディレクトリ名にスペースや特殊文字が含まれる場合（例: `doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md`）、シェルの `cat` ではなく Read ツールで開く。`bash` 経由だとクォート漏れで読めないことがある
 - `related.config_db` `related.cli` `related.yang` に **HLD で言及されていない実装由来の項目を推測で書かない**。確実なもののみ列挙し、不明なら空配列にして本文側に注記する
 
+## worktree 動作ルール（isolation: worktree で動いている場合）
+
+worktree モードのサブエージェントは独立した working tree で動くが、**`cd /home/coder/sonic-unofficial-docs` を実行すると main worktree 側に飛んでしまい、`git checkout -b` 等が main 側で動いて事故になる**。次を厳守:
+
+1. 起動直後に `WT=$(pwd); echo "$WT"` で自分の worktree path を控える
+2. 以降の git / mkdocs 操作は **絶対パス + `git -C "$WT"`** または `cd "$WT"` で自 worktree を確実に対象にする
+3. `cd /home/coder/sonic-unofficial-docs` は禁止（main worktree を奪う）
+4. `mkdocs build --strict` も `cd "$WT" && ./.venv/bin/mkdocs build --strict` で実行
+5. もし誤って main に commit してしまった場合は revert せず（コンテンツが妥当ならそのまま）、PR で正規化する
+
 ## 裏取りキューへの登録
 
 Writer が `verification: hld-only` 等で残した懸念点（HLD と実装の差分の可能性、要件レベル止まりで実装未確認、CONFIG_DB が未定義 等）は、PR 本文に書くだけでなく **`meta/queue/<area>-<slug>.json`** に新規ファイルを作成して登録する。Verifier が優先度順に拾えるようにするため。
