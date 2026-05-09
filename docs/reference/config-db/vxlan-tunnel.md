@@ -1,0 +1,65 @@
+---
+title: VXLAN_TUNNEL テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-vxlan.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - VXLAN_TUNNEL
+    - VXLAN_TUNNEL_MAP
+    - VXLAN_EVPN_NVO
+  cli:
+    - config vxlan
+  yang:
+    - sonic-vxlan
+---
+
+# VXLAN_TUNNEL テーブル
+
+## 概要
+
+VXLAN VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する[^1]。`orchagent` の `VxlanOrch` / `VxlanTunnelOrch` が SAI VXLAN tunnel と SAI tunnel termination を生成する。EVPN ベースのオーバーレイでは destination は省略され、`VXLAN_EVPN_NVO` で NVO がバインドされる。
+
+## key 構造
+
+```
+VXLAN_TUNNEL|<name>
+```
+
+YANG `max-elements 2` 制約により最大 2 トンネルまで（実装的に EVPN 用 1 + 静的 1 を想定）。
+
+## フィールド一覧
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|----|------|------|
+| `name` (key) | string | ✅ | トンネル名 |
+| `src_ip` | ip-address | - | 自 VTEP IP（origination 用） |
+| `dst_ip` | ip-address | - | 対向 VTEP IP（point-to-point の場合） |
+| `ttl_mode` | string `uniform`/`pipe` | - | decap 時 TTL モード |
+
+## 関連サブテーブル
+
+- `VXLAN_TUNNEL_MAP` (key: `name`, `mapname`): VLAN ↔ VNI マッピング
+    - `vlan` (string `Vlan<id>`, mandatory)
+    - `vni` (`vnid_type`, mandatory)
+- `VXLAN_EVPN_NVO` (key: `name`, max-elements 1): EVPN NVO インスタンス
+    - `source_vtep` (leafref `VXLAN_TUNNEL.name`, mandatory)
+
+## 購読者
+
+- `orchagent` `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `EvpnNvoOrch`: SAI tunnel / tunnel-map / NVO を生成
+- `bgpcfgd` (EVPN type-2 / type-3 advertise との連携)
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: `VXLAN_TUNNEL_MAP`、`VXLAN_EVPN_NVO`、`VLAN`、`VNET`、`VLAN_INTERFACE`
+- 関連 CLI: [`config vxlan`](../cli/config-vxlan.md)
+- 関連 YANG: `sonic-vxlan`
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-vxlan.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
