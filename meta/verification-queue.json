@@ -557,6 +557,19 @@
         "warm-reboot ホックでの retry 自動化有無"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/switching/sonic-sai-post-support-for-macsec.md",
+      "issue": 103,
+      "verification": "hld-only",
+      "concerns": [
+        "Orchagent / MACSecOrch / MACSecMgr の POST 対応コードの現行 master 取り込み",
+        "STATE_DB FIPS_MACSEC_POST_TABLE スキーマと status 値の最終形",
+        "SAI POST capability query / completion callback API の community SAI での提供状況",
+        "/proc/cmdline sonic_fips=1 と /etc/fips/fips_enable 検査ロジック",
+        "2025-07 HLD と現行実装の乖離"
+      ],
+      "priority": "high"
     }
   ]
 }
