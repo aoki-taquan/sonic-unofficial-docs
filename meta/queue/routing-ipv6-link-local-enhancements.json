@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/ipv6-link-local-enhancements.md",
+  "issue": 308,
+  "verification": "hld-only",
+  "concerns": [
+    "IntfMgr / IntfOrch の ipv6_use_link_local_only ハンドラが現行 master にあるか未確認",
+    "NeighOrch の NextHopKey に alias を含める実装が現行コードで維持されているか未確認",
+    "fe80::/10 サブネットルートの IP2ME プログラム実装の存在確認",
+    "config ipv6 enable/disable link-local CLI の sonic-utilities への取り込み確認",
+    "HLD は 2021-06 改訂の v0.3 で 4 年以上経過、現行 master との乖離リスクあり"
+  ],
+  "priority": "high"
+}
