@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-port-naming-convention-change/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/support-multiple-user-defined-redis-database-instances/">
       
       
-        <link rel="prev" href="../sonic-fast-link-up/">
+        <link rel="prev" href="../sonic-flexcounter-refactor/">
       
       
-        <link rel="next" href="../support-bmc-flows-in-sonic/">
+        <link rel="next" href="../support-redis-databases-in-multiple-namespaces/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC ポート命名規則の変更案（et[sX]pY[abcd]） - SONiC 非公式ドキュメント</title>
+        <title>複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-etsxpyabcd" class="md-skip">
+        <a href="#redis-database_configjson-db" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+              複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
             
           </span>
         </div>
@@ -401,13 +401,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -425,11 +423,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../internals/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -4389,8 +4389,6 @@
       
   
   
-    
-  
   
   
     
@@ -4416,6 +4414,634 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../platform/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プラットフォーム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プラットフォーム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICMP Hardware Offload（DualToR link prober の NPU 化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sai_query_stats_capability による Counter Capability 一括取得
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
         
       
         
@@ -4454,7 +5080,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -4465,7 +5091,7 @@
   <span class="md-ellipsis">
     
   
-    プラットフォーム
+    内部実装
   
 
     
@@ -4476,18 +5102,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
-    プラットフォーム
+    内部実装
   
 
           </label>
@@ -4502,14 +5128,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+    VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
   
 
     
@@ -4530,14 +5156,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
   
 
     
@@ -4558,14 +5184,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../l3-scaling-and-performance-enhancements/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
+    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
   
 
     
@@ -4586,14 +5212,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../p4-orchagent/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+    P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
   
 
     
@@ -4614,14 +5240,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+    flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
   
 
     
@@ -4642,322 +5268,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICMP Hardware Offload（DualToR link prober の NPU 化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sai_query_stats_capability による Counter Capability 一括取得
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+    FlexCounter リファクタ（CounterContext テンプレート化）
   
 
     
@@ -4994,7 +5312,7 @@
   <span class="md-ellipsis">
     
   
-    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+    複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
   
 
     
@@ -5012,7 +5330,7 @@
   <span class="md-ellipsis">
     
   
-    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+    複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
   
 
     
@@ -5061,10 +5379,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#database_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 インスタンス分散の例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        現行の命名
+        起動シーケンス
       
     </span>
   </a>
@@ -5072,10 +5412,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etsxpyabcd" class="md-nav__link">
+  <a href="#python-c-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新提案: et[sX]pY[abcd]
+        Python / C++ API
       
     </span>
   </a>
@@ -5083,32 +5423,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#upgrade-downgrade" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        未解決の論点
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        移行ステージ
+        Upgrade / Downgrade
       
     </span>
   </a>
@@ -5121,7 +5439,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5133,10 +5451,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-cli-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / CLI / YANG
       
     </span>
   </a>
@@ -5144,21 +5462,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
+        設定例（カスタム配置）
       
     </span>
   </a>
@@ -5171,7 +5478,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5182,7 +5489,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5193,7 +5500,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5204,7 +5511,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5230,325 +5537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../internals/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    内部実装
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_10">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    内部実装
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/l3-scaling-and-performance-enhancements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/p4-orchagent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FlexCounter リファクタ（CounterContext テンプレート化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/support-multiple-user-defined-redis-database-instances/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../internals/support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
+      <a href="../support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
         
   
   
@@ -5576,7 +5565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/why-need-health-check/" class="md-nav__link">
+      <a href="../why-need-health-check/" class="md-nav__link">
         
   
   
@@ -5604,7 +5593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -6337,10 +6326,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#database_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 インスタンス分散の例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        現行の命名
+        起動シーケンス
       
     </span>
   </a>
@@ -6348,10 +6359,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etsxpyabcd" class="md-nav__link">
+  <a href="#python-c-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新提案: et[sX]pY[abcd]
+        Python / C++ API
       
     </span>
   </a>
@@ -6359,32 +6370,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#upgrade-downgrade" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        未解決の論点
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        移行ステージ
+        Upgrade / Downgrade
       
     </span>
   </a>
@@ -6397,7 +6386,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -6409,10 +6398,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-cli-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / CLI / YANG
       
     </span>
   </a>
@@ -6420,21 +6409,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
+        設定例（カスタム配置）
       
     </span>
   </a>
@@ -6447,7 +6425,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -6458,7 +6436,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -6469,7 +6447,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -6480,7 +6458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6507,7 +6485,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-port-naming-convention-change.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/support-multiple-user-defined-redis-database-instances.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6516,183 +6494,133 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い提案</p>
-<p>本ページは公式 HLD（短いプロポーザル形式、改訂日不明）のみを根拠に書かれている。本提案は「<code>Ethernet0</code> 系から Linux 流の <code>et[sX]pY[abcd]</code> 系への移行」を提案しているが、SONiC コミュニティ master では現状も <code>EthernetN</code> の内部名が広く使われており、提案は <strong>未採用または部分採用</strong> の状態である可能性が高い。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は改訂日付未記載で、後続の <a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis HLD</a> のベースとなった文書。<code>docker-database-init.sh</code>、<code>supervisord.conf.j2</code>、<code>ping_pong_db_insts</code> スクリプトの実装存在は要裏取り。<strong>詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照</strong>。</p>
 </div>
-<h1 id="sonic-etsxpyabcd">SONiC ポート命名規則の変更案（<code>et[sX]pY[abcd]</code>）<a class="headerlink" href="#sonic-etsxpyabcd" title="Permanent link">&para;</a></h1>
+<h1 id="redis-database_configjson-db">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）<a class="headerlink" href="#redis-database_configjson-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は伝統的に <code>Ethernet0</code> / <code>Ethernet4</code> / ... のような <strong><code>Ethernet</code> プレフィクス + ASIC レーン番号</strong> をポート名に使ってきた。Microsoft からのプロポーザルとして本ドキュメントは以下の問題を指摘し、Linux Network Interface Naming に揃える命名規則を提案する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>プレフィクス <code>Ethernet</code> が冗長（長い）</li>
-<li>ポート番号（ASIC lane 起点）が <strong>前面パネル番号と一致しない</strong></li>
-<li>chassis（slot 概念あり）に対応できない</li>
-</ul>
-<p>提案する新規命名規則は <strong><code>et[sX]pY[abcd]</code></strong> で、systemd / udev の永続デバイス名規則に近いスタイルである。</p>
+<p>従来の SONiC は <strong>単一の Redis インスタンス</strong> に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると <strong>この 1 インスタンスがホットスポット</strong> になる。HLD の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで <strong>20〜30% の性能改善</strong> が得られた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>ユーザが <code>database_config.json</code> で Redis インスタンス数と DB の割当を任意定義できる</strong> ようにする</li>
+<li>起動経路を <code>docker-database-init.sh</code> に切り替え、<code>supervisord.conf</code> を <strong>j2 テンプレ生成</strong> に変更</li>
+<li>既定設定（1 インスタンス）は <code>/etc/default/sonic-db/database_config.json</code>、ユーザ設定は <code>/etc/sonic/database_config.json</code> に置き、起動時に <code>/var/run/redis/sonic-db/</code> にコピーされる</li>
+</ol>
+<blockquote>
+<p>このページは <a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis HLD</a> の <strong>基礎となる先行 HLD</strong>。Multi-ASIC 拡張は別ページを参照。</p>
+</blockquote>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">現行の命名<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Ethernet0, Ethernet1, ..., Ethernet(N-1)        # N=32 or 64
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Ethernet0, Ethernet4, Ethernet8, ...            # 4 lane 単位 / breakout 想定
+<h3 id="database_configjson"><code>database_config.json</code><a class="headerlink" href="#database_configjson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;COUNTERS_DB&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nt">&quot;LOGLEVEL_DB&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">&quot;CONFIG_DB&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nt">&quot;PFC_WD_DB&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">&quot;SNMP_OVERLAY_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>問題点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>Ethernet</code> プレフィクスが長くタイピングしづらい</li>
-<li>前面パネルポートと番号が直結しない</li>
-<li>同じ ASIC を多重 slot に積む chassis では番号衝突を起こす</li>
-</ul>
-<h3 id="etsxpyabcd">新提案: <code>et[sX]pY[abcd]</code><a class="headerlink" href="#etsxpyabcd" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>et   sX        pY        [abcd]
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>↑    ↑         ↑          ↑
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>prefix slot番号  front panel   breakout
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>(任意, x=1..)  port  (必須)    (任意)
+<p><code>INSTANCES</code> セクションを増やせば <strong>複数 Redis</strong> を立てられる。各 <code>DATABASES</code> エントリの <code>instance</code> フィールドでそれを参照する形で DB をインスタンスに割り付ける<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="2">2 インスタンス分散の例<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;redis2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6380</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis2.sock&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis2&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>部分</th>
-<th>必須/任意</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>et</code></td>
-<td>必須</td>
-<td>SONiC が選んだ prefix。<code>em</code> / <code>en</code> 等の Linux predictable name と類似。よく使われる Linux 規則の一族</td>
-</tr>
-<tr>
-<td><code>sX</code></td>
-<td>任意</td>
-<td>slot 番号。chassis 構成で使う。X は通常 1 から</td>
-</tr>
-<tr>
-<td><code>pY</code></td>
-<td>必須</td>
-<td>前面パネルポート Y。通常 1 から</td>
-</tr>
-<tr>
-<td><code>[a\|b\|c\|d]</code></td>
-<td>任意</td>
-<td>breakout サブポート</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_4">例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>構成</th>
-<th>ポート名例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>breakout なし、32 ポート pizza box</td>
-<td><code>etp1, etp2, ..., etp32</code></td>
-</tr>
-<tr>
-<td>2 分割 breakout</td>
-<td><code>etp16a, etp16b</code></td>
-</tr>
-<tr>
-<td>4 分割 breakout</td>
-<td><code>etp18a, etp18b, etp18c, etp18d</code></td>
-</tr>
-<tr>
-<td>chassis 複数 line card</td>
-<td><code>ets0p1, ets1p10</code></td>
-</tr>
-</tbody>
-</table>
-<p>数字の起点は <strong>「通常 1 から」</strong>。Microsoft 提案のコメントとして、index を 1 起点にすると C/C++ 配列など 0 起点言語との橋渡しで「先頭エントリが無駄になる/ならない」が実装と言語に依存する旨の議論がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">未解決の論点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>提案文書時点で未解決として明示されているもの<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>「APPL_DB / STATE_DB は redis、ASIC_DB は redis2」のように <strong>頻度の高い DB を分離</strong> することで競合を緩和できる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">起動シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+  participant Image
+  participant DBSvc as database service
+  participant DI as docker-database-init.sh
+  participant SUP as supervisord
+  Image-&gt;&gt;DBSvc: docker run
+  DBSvc-&gt;&gt;DI: ENTRYPOINT
+  alt /etc/sonic/database_config.json あり
+    DI-&gt;&gt;DI: ユーザ設定を /var/run/redis/sonic-db/ にコピー
+  else 無し
+    DI-&gt;&gt;DI: /etc/default/sonic-db/database_config.json をコピー
+  end
+  DI-&gt;&gt;DI: supervisord.conf.j2 → supervisord.conf 生成
+  DI-&gt;&gt;SUP: /usr/bin/supervisord 起動
+  SUP-&gt;&gt;SUP: redis 等を database_config.json 通りに起動
+  SUP-&gt;&gt;SUP: ping_pong_db_insts で起動確認</code></pre>
+<p>要点<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>PortChannel（LAG）の命名規則</strong>: <code>et[sX]pY[abcd]</code> のような枠組みに乗せるか、別系統で持つか未定</li>
+<li>ユーザ設定があれば最優先、無ければ既定設定にフォールバック</li>
+<li><code>supervisord.conf</code> を <strong>j2 テンプレからランタイム生成</strong>することで「インスタンス数だけ redis を起動」が動的に決まる</li>
+<li>各 redis の起動健全性は <strong><code>ping_pong_db_insts</code></strong> スクリプトで確認</li>
 </ul>
-<h3 id="_6">移行ステージ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>破壊的変更を一気にやるのではなく、4 段階に分けて段階移行する案<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart LR
-    S1[Stage 1\nport_config.ini\nalias を新規則に] --&gt; S2[Stage 2\nコード内の Ethernet\nプレフィクス依存を解消]
-    S2 --&gt; S3[Stage 3\nテストの Ethernet\n依存を解消]
-    S3 --&gt; S4[Stage 4\n内部ポート名を\n新規則に切替\nLinux IF 名も同一]</code></pre>
-<table>
-<thead>
-<tr>
-<th>Stage</th>
-<th>変更内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>port_config.ini</code> の <strong>alias 列</strong> を新命名で埋める。内部名はまだ <code>EthernetN</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td>SONiC コードベースから <code>Ethernet</code> プレフィクス前提（hardcode）を順次除去</td>
-</tr>
-<tr>
-<td>3</td>
-<td>テスト（DVS / pytest など）から <code>Ethernet</code> プレフィクス・<code>Ethernet0</code> ハードコードを除去</td>
-</tr>
-<tr>
-<td>4</td>
-<td>内部ポート名と Linux IF 名の両方を新命名に切替</td>
-</tr>
-</tbody>
-</table>
-<p>Stage 1 の段階で <strong>alias は新命名、内部名は EthernetN のまま</strong> という共存状態が続く。CLI 表示・SNMP・LLDP などユーザ視認領域は alias を出すことで命名移行を先行できる構成。</p>
+<h3 id="python-c-api">Python / C++ API<a class="headerlink" href="#python-c-api" title="Permanent link">&para;</a></h3>
+<p><code>SonicV2Connector</code> / <code>ConfigDBConnector</code> (Python)、<code>DBConnector</code> (C++) は <code>database_config.json</code> を読み、DB 名から該当インスタンス（hostname / port / unix_socket_path）を引いて接続する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なクラス定義・新引数は原文 HLD の §New Design of {Python,C++} Interface を参照。</p>
+<p>主要 API 動作:</p>
+<ul>
+<li><code>connect(&lt;DB_NAME&gt;)</code> で <code>database_config.json</code> の <code>instance</code> を辿って Unix socket / TCP を選ぶ</li>
+<li>既存コードは設定で 1 インスタンス構成を継続する限り <strong>無改修で動く</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/database/multi_database_instances.md#L4-L6 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  ## Change stages ##
-  1. Change port_config.ini alias column to use the new naming convention.
-  2. Break SONiC code dependency of 'Ethernet' prefix.
-  3. Break SONiC test dependency of 'Ethernet' prefix and/or 'Ethernet0'.
-  4. Change SONiC port name to new naming convention.
-reasoning: 4 段階移行プランの根拠。
+  We tried to create two database instances and separate the huge write into two database instances.
+  The test result shows the performance (time) improved 20-30%.
+reasoning: 2 インスタンス分割の実測効果の根拠。
 -->
 
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>本提案は CONFIG_DB のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>CLI 自体の追加・削除は提案されていない。<code>show interface</code> 等の出力や CLI 入力で使うキーが alias ベースに切替わるかが運用上のポイント。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="upgrade-downgrade">Upgrade / Downgrade<a class="headerlink" href="#upgrade-downgrade" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>本ドキュメントは提案段階</strong>。コミュニティが採択して全 stage を完了したかは別途確認が必要</li>
-<li>Stage 4（内部名切替）は SONiC コードベース全体・テスト・自動化スクリプトに広く影響するため、移行には大規模な検証が必要</li>
-<li>PortChannel 等 LAG 系名称の取り扱いは <strong>未解決</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>1 起点インデクスとプログラミング言語の 0 起点との橋渡しは実装ごとに注意</li>
+<li><strong>Upgrade</strong>: 旧イメージ → 新イメージで、ユーザが <code>/etc/sonic/database_config.json</code> を置いていれば反映、なければ既定（単一インスタンス）。挙動は後方互換<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Downgrade</strong>: 旧イメージは複数インスタンス設定を理解できない。事前にユーザカスタム設定を退避することが推奨される（HLD 詳述）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
+<p>該当なし。設定は <strong>JSON ファイル</strong> ベース。</p>
+<h3 id="_5">設定例（カスタム配置）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># DUT 上で</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>my-database_config.json<span class="w"> </span>/etc/sonic/database_config.json
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>database
+</span></code></pre></div>
+<p>中身は前述の 2 インスタンス例を参考。書き換えたら database service の再起動が必要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>port_config.ini</code> / hwsku パッケージング</strong>: alias 列の更新</li>
-<li><strong>CLI / <code>show interface</code> / SNMP / LLDP</strong>: alias がユーザ可視領域に出るので、運用ドキュメントとの整合</li>
-<li><strong>テスト基盤（DVS / pytest / sonic-mgmt）</strong>: <code>Ethernet0</code> 等のハードコード除去が必要</li>
-<li><strong>chassis HLD</strong>: slot 番号 (<code>sX</code>) を意識した命名は chassis ユースケースが主動機</li>
+<li><strong>DB id の競合に注意</strong>: 上記既定例で <code>PFC_WD_DB</code> と <code>FLEX_COUNTER_DB</code> が同じ id=5 を共有しているように、Redis の同一インスタンス内 db index を共用する書き方が許される。インスタンスを分けるなら id 衝突は問題ないが、命名・運用上は注意<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>supervisord.conf</code> を直接編集しない</strong>: j2 テンプレ展開で毎回再生成される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>詳細仕様は原文必読</strong>: 1000 行超の HLD のうち、本ページは起動・JSON フォーマット・性能根拠に絞っている。Python / C++ API の細部は原文を参照<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>新 docker entrypoint<code>docker-database-init.sh</code> の前後互換</strong>: 既存運用スクリプトが <code>/usr/bin/supervisord</code> を直接想定していた場合、調整が必要。</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認</li>
-<li>chassis で <code>ets0p1</code> が <code>ets1p1</code> と衝突する場合、line card の slot 番号が想定どおりに振られているか確認</li>
+<li><strong><a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis</a></strong>: 本 HLD の上位拡張。NPU 別 namespace で本 JSON フォーマットを <strong>複数枚</strong> 持つ構造になる。</li>
+<li><strong><code>ping_pong_db_insts</code></strong>: 起動シーケンスで全 redis の生存確認に使う健全性チェッカ。</li>
+<li><strong><code>/etc/sonic/old_config</code></strong> バックアップ経路: イメージ更新時の <code>/etc/sonic/</code> バックアップ・リストアを通る。<code>database_config.json</code> もユーザ配置なら同じ経路で保全<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- 本提案がどの Stage まで実装されたか（master では未だ EthernetN が主流）
-- port_config.ini alias 列の運用ガイドライン
-- chassis での ets<X>p<Y> 命名の実装事例
-- PortChannel 命名の最終決定
-- breakout (a/b/c/d) と CONFIG_DB.PORT のキーの整合
--->
-
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>redis インスタンスが起動しない: <code>supervisord.conf</code> 生成結果（<code>/etc/supervisor/conf.d/</code>）と <code>database_config.json</code> の <code>INSTANCES</code> 整合を確認。</li>
+<li>DB が想定と違うインスタンスに接続される: アプリが正しい SDK API（<code>SonicV2Connector</code>）を使っているか、JSON の <code>instance</code> フィールドが意図どおりか。</li>
+<li><code>ping_pong_db_insts</code> が fail: redis の <code>unix_socket_path</code> パーミッション、port 重複を確認。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-port-name/sonic-port-name.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/database/multi_database_instances.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
