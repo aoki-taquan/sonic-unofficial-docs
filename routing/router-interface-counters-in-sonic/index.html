@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/router-interface-counters-in-sonic/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../default-route/">
       
       
-        <link rel="next" href="../config-db/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>CLI リファレンス - SONiC 非公式ドキュメント</title>
+        <title>ルータインタフェース (RIF) カウンタ - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cli" class="md-skip">
+        <a href="#rif" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CLI リファレンス
+              ルータインタフェース (RIF) カウンタ
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -445,13 +447,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
           
   
   
@@ -645,6 +645,8 @@
       
   
   
+    
+  
   
   
     
@@ -664,20 +666,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -695,13 +700,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -721,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -749,7 +754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -774,10 +779,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルータインタフェース (RIF) カウンタ
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -793,6 +825,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レート計算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telemetry 経由の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1397,8 +1604,6 @@
       
   
   
-    
-  
   
   
     
@@ -1418,23 +1623,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../reference/" class="md-nav__link ">
               
   
   
@@ -1452,13 +1654,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1475,8 +1677,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1492,21 +1692,18 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../../reference/cli/" class="md-nav__link ">
               
   
   
@@ -1525,7 +1722,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1565,13 +1762,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -1579,7 +1773,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../config-db/" class="md-nav__link ">
+            <a href="../../reference/config-db/" class="md-nav__link ">
               
   
   
@@ -1638,13 +1832,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -1652,7 +1843,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../yang/" class="md-nav__link ">
+            <a href="../../reference/yang/" class="md-nav__link ">
               
   
   
@@ -1719,6 +1910,169 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レート計算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telemetry 経由の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1734,7 +2088,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/index.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/router-interface-counters-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1742,10 +2096,200 @@
   
 
 
-<h1 id="cli">CLI リファレンス<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h1>
-<p><code>config</code> / <code>show</code> / <code>sonic-installer</code> などの全コマンドリファレンス。<code>sonic-utilities</code> の click ツリーを機械抽出した上で、用例と関連する CONFIG_DB テーブルを補う。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss</code> の <code>IntfsOrch</code> および <code>flex_counter</code> グループ、<code>sonic-utilities</code> の <code>rifstat</code> 実装での裏取りは未済。</p>
+</div>
+<h1 id="rif">ルータインタフェース (RIF) カウンタ<a class="headerlink" href="#rif" title="Permanent link">&para;</a></h1>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>SONiC のポート単位カウンタ（<code>portstat</code> 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される <strong>ルータインタフェース (RIF)</strong> 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、VLAN インタフェース、ポートチャネル上の L3 サブインタフェースなど、SAI が <code>sai_router_interface</code> オブジェクトとして扱うものを指す。</p>
+<p>本機能は SAI の <code>SAI_ROUTER_INTERFACE_STAT_*</code> カウンタを <strong>flex counter で定期取得</strong> し、<code>COUNTERS_DB</code> に集約したうえで、<code>show interfaces counters rif</code> CLI から RX/TX のパケット・バイト・エラーを表示できるようにするものである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">データ経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    SAI[SAI\nsai_get_router_interface_stats] --&gt;|polling| FC[Flex Counter\n(RIF FC group, default 1s)]
+    FC --&gt; CDB[(COUNTERS_DB)]
+    CDB --&gt;|COUNTERS:rif_vid\nCOUNTERS_RIF_NAME_MAP\nCOUNTERS_RIF_TYPE_MAP| CLI[show interfaces counters rif]
+    SWSS[IntfsOrch] -.-&gt;|RIF 追加/削除を FC に登録\nMAP 更新| CDB</code></pre>
+<p>要点は次の 3 点。</p>
+<ul>
+<li>取得元は SAI <code>sai_router_interface_api -&gt; sai_get_router_interface_stats()</code>。</li>
+<li>集約器は flex counter の RIF 専用グループで、デフォルトインターバルはポートカウンタと同じ <strong>1 秒</strong> に揃える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>IntfsOrch</code> が RIF オブジェクト生成・破棄時に flex counter への登録/解除と、<code>COUNTERS_RIF_NAME_MAP</code> / <code>COUNTERS_RIF_TYPE_MAP</code> の更新を行う。</li>
+</ul>
+<h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<p>各 RIF VID に対応するエントリで、以下 8 個のカウンタが格納される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>カウンタ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS:rif_vid</code></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS</code></td>
+</tr>
+</tbody>
+</table>
+<p>加えて以下のマッピングが追加される。</p>
+<table>
+<thead>
+<tr>
+<th>マップ</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_RIF_NAME_MAP</code></td>
+<td>RIF OID ↔ RIF 名（例: <code>Ethernet0</code>, <code>Vlan2</code>, <code>Portchannel0002</code>）</td>
+</tr>
+<tr>
+<td><code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td>RIF OID ↔ 種別（LAG / Vlan 等）</td>
+</tr>
+</tbody>
+</table>
+<p>VID ベースの COUNTERS テーブルだけでは人間に読みにくいため、CLI 側はこのマップを介して RIF 名で参照する。</p>
+<h3 id="_4">レート計算<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>-p / --period</code> オプションで指定された秒数 <code>delta</code> をもとに、CLI 側で次の式により BPS / PPS を算出する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BPS = (new_*_OCTETS  - old_*_OCTETS)  / delta
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PPS = (new_*_PACKETS - old_*_PACKETS) / delta
+</span></code></pre></div>
+<p>BPS は値域に応じて <code>MB/s</code> / <code>KB/s</code> / <code>B/s</code> で表示する。<code>-p</code> を指定しない呼び出しでは BPS / PPS 列は <code>N/A</code> で出力される。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/rif-counters/RIF_counters.md#L70-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  BPS = (new_*_OCTETS - old_*_OCTETS) / delta,
+  Where delta is the period specified. The BPS is printed in MB/s, KB/s or B/s depending on the value.
+  PPS = (new_*_PACKETS - old_*_PACKETS) / delta
+reasoning: BPS / PPS の計算式と表示形式の根拠。
+-->
+
+<h3 id="telemetry">Telemetry 経由の参照<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h3>
+<p><code>sonic-telemetry</code> 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、HLD は <strong>virtual path</strong> 経由の参照を推奨している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>DB target</th>
+<th>Virtual Path</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>RIF_COUNTERS/&lt;interface_name&gt;</code></td>
+<td>単一 RIF の全カウンタ</td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>RIF_COUNTERS/*/&lt;counter_name&gt;</code></td>
+<td>全 RIF の単一カウンタ</td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>RIF_COUNTERS/&lt;interface&gt;/&lt;counter&gt;</code></td>
+<td>単一 RIF の単一カウンタ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>HLD には専用の CONFIG_DB エントリは記載されていない。flex counter のインターバル変更等は既存の <code>FLEX_COUNTER_TABLE</code> 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show interfaces counters rif [-p PERIOD] [--verbose] [&lt;interface&gt;]</code></td>
+<td>RIF カウンタを一覧 / 単体表示</td>
+</tr>
+<tr>
+<td><code>sonic-clear interface rifcounters [&lt;interface&gt;]</code></td>
+<td>RIF カウンタをクリア（単体または全体）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">表示例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>引数なしの場合は全 RIF を表形式で表示<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    Tx_PPS    TX_ERR
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-----------       -------  --------  --------  ------    -------  --------  --------  --------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet0         2180       N/A       N/A        0      44697      N/A       N/A     0
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Portchannel0002   2833       N/A       N/A        0          0      N/A       N/A     0
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Vlan2             2833       N/A       N/A        0       4170      N/A       N/A     0
+</span></code></pre></div>
+<p>インタフェース名を指定するとデバッグ向けの整形出力になる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Portchannel0002
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>---------------
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  RX:
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    0 packets
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    0 bytes
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    0 error packets
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    0 error bytes
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  TX:
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    0 packets
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    0 bytes
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    0 error packets
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    0 error bytes
+</span></code></pre></div>
+<p><code>COUNTERS_RIF_NAME_MAP</code> に存在しない名前を渡した場合は警告メッセージを出すと HLD は記載している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>portstat</strong>: 別系統。<code>SAI_PORT_STAT_*</code> カウンタを使い、L2 視点のドロップやエラーを返す。RIF カウンタはあくまで L3 視点であり、両者を合算した値ではない。</li>
+<li><strong><code>Port_illegal_packets_drop_design</code> (Interface MIB)</strong>: SNMP 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に <strong>集約</strong> されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。</li>
+<li><strong>flex counter インターバル</strong>: ポートカウンタと同じ既定 1 秒。負荷増を懸念する場合はインターバルを長くする運用が考えられる。</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show interfaces counters rif</code> がインタフェースを 1 つも表示しない場合、<code>COUNTERS_RIF_NAME_MAP</code> の存在を <code>redis-cli -n 2 keys 'COUNTERS_RIF*'</code> 等で確認する。<code>IntfsOrch</code> がマップを生成しているはず。</li>
+<li>値がすべてゼロ / 動かない場合、当該プラットフォームの SAI が <code>SAI_ROUTER_INTERFACE_STAT_*</code> を実装していない可能性がある。HLD は SAI 必須カウンタを列挙しているが、ベンダー実装が揃っているとは限らない。</li>
+<li>特定 RIF の VID と名前の対応を確認するには <code>COUNTERS_RIF_NAME_MAP</code> を redis から直接読む。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/SONiC</code> <code>doc/rif-counters/RIF_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
