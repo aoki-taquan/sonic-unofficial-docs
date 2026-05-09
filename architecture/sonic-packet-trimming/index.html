@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-packet-trimming/">
       
       
-        <link rel="prev" href="../sonic-qos-scheduler-and-shaping/">
+        <link rel="prev" href="../sonic-on-gns3-vm/">
       
       
-        <link rel="next" href="../test-plan-for-align-watermark-flow-with-port-configuration/">
+        <link rel="next" href="../sonic-policy-based-hashing/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居） - SONiC 非公式ドキュメント</title>
+        <title>Packet Trimming（symmetric / asymmetric DSCP / ACL disable） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#l3v4v6-acl-v4-v6-1-sai-acl" class="md-skip">
+        <a href="#packet-trimmingsymmetric-asymmetric-dscp-acl-disable" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
+              Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -335,13 +337,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -596,20 +598,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -627,13 +632,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -653,7 +658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -681,7 +686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -709,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -737,7 +742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -765,7 +770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -793,7 +798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -821,7 +826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -849,7 +854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -877,7 +882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -905,7 +910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
+      <a href="../sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -933,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -961,7 +966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -989,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1017,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1045,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1070,10 +1075,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1089,6 +1121,203 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symmetric-vs-asymmetric-dscp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symmetric vs Asymmetric DSCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drop-counterv03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drop counter（v0.3）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initial / Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1101,7 +1330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1129,7 +1358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1157,7 +1386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1185,7 +1414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1213,7 +1442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -3447,8 +3676,6 @@
       
   
   
-    
-  
   
   
     
@@ -3520,23 +3747,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -3554,13 +3778,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3580,7 +3804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-flex-counters-support/" class="md-nav__link">
+      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -3608,7 +3832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-ingress-egress-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/acl-ingress-egress-test-plan/" class="md-nav__link">
         
   
   
@@ -3636,7 +3860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-support-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -3664,7 +3888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-user-defined-table-type-support/" class="md-nav__link">
+      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
         
   
   
@@ -3692,7 +3916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -3720,7 +3944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asymmetric-pfc-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/asymmetric-pfc-test-plan/" class="md-nav__link">
         
   
   
@@ -3748,7 +3972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configurable-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/configurable-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3776,7 +4000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-manager-redesign-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/copp-manager-redesign-test-plan/" class="md-nav__link">
         
   
   
@@ -3804,7 +4028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -3832,7 +4056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-acl-tags/" class="md-nav__link">
+      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -3860,7 +4084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -3888,7 +4112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
+      <a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
         
   
   
@@ -3916,7 +4140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dynamically-headroom-calculation/" class="md-nav__link">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
         
   
   
@@ -3944,7 +4168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -3972,7 +4196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../egress-outer-dscp-change-table/" class="md-nav__link">
+      <a href="../../acl-qos/egress-outer-dscp-change-table/" class="md-nav__link">
         
   
   
@@ -4000,7 +4224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -4028,7 +4252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
+      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
         
   
   
@@ -4056,7 +4280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-test-plan/" class="md-nav__link">
+      <a href="../../acl-qos/everflow-test-plan/" class="md-nav__link">
         
   
   
@@ -4084,7 +4308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pfc-historical-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/pfc-historical-statistics/" class="md-nav__link">
         
   
   
@@ -4112,7 +4336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-access-control-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-access-control-in-sonic/" class="md-nav__link">
         
   
   
@@ -4140,7 +4364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -4168,7 +4392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -4196,7 +4420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer/" class="md-nav__link">
+      <a href="../../acl-qos/reclaim-reserved-buffer/" class="md-nav__link">
         
   
   
@@ -4224,7 +4448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-mirroring-hld/" class="md-nav__link">
+      <a href="../../acl-qos/sonic-port-mirroring-hld/" class="md-nav__link">
         
   
   
@@ -4252,7 +4476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-qos-scheduler-and-shaping/" class="md-nav__link">
+      <a href="../../acl-qos/sonic-qos-scheduler-and-shaping/" class="md-nav__link">
         
   
   
@@ -4277,37 +4501,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
         
   
   
@@ -4323,142 +4520,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        検討された選択肢
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#l3v4v6-match-action-bind" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        L3V4V6 の match / action / bind
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-1-phase-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 1 / Phase 2
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB capability 公開
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG / CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4471,7 +4532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
+      <a href="../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
         
   
   
@@ -4499,7 +4560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -4527,7 +4588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -12646,10 +12707,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#symmetric-vs-asymmetric-dscp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Symmetric vs Asymmetric DSCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        検討された選択肢
+        コンポーネント
       
     </span>
   </a>
@@ -12657,10 +12729,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#l3v4v6-match-action-bind" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        L3V4V6 の match / action / bind
+        CONFIG_DB
       
     </span>
   </a>
@@ -12668,10 +12740,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#phase-1-phase-2" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Phase 1 / Phase 2
+        STATE_DB
       
     </span>
   </a>
@@ -12679,10 +12751,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state_db-capability" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        STATE_DB capability 公開
+        動作フロー
       
     </span>
   </a>
@@ -12690,10 +12762,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang-cli" class="md-nav__link">
+  <a href="#drop-counterv03" class="md-nav__link">
     <span class="md-ellipsis">
       
-        YANG / CLI
+        Drop counter（v0.3）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initial / Migration
       
     </span>
   </a>
@@ -12706,7 +12789,35 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12717,7 +12828,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12728,7 +12839,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12755,7 +12877,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-packet-trimming.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12763,113 +12885,134 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>sonic-swss <code>orchagent/aclorch.cpp</code> L44 で <code>STATE_DB_ACL_L3V4V6_SUPPORTED = "supported_L3V4V6"</code> 定義、L240 で <code>TABLE_TYPE_L3V4V6</code> を default table types に追加、L2737/L2739 で table 作成時に <code>isAclL3V4V6TableSupported(stage)</code> を判定、L3519/L3527 で <code>m_L3V4V6Capability</code> を ingress/egress 別に検出、L3541 でケーパビリティを SWSS_LOG に出力。<code>aclorch.h</code> L616 <code>isAclL3V4V6TableSupported</code> / L633 <code>m_L3V4V6Capability</code> マップを確認。CLI 側は sonic-utilities <code>acl_loader/main.py</code> L429-433 で <code>is_table_l3v4v6</code>、L780/L784 で <code>L3V4V6</code> 用 ethertype チェックを確認。YANG は sonic-yang-models <code>sonic-types.yang.j2</code> L115 <code>enum L3V4V6</code> を確認（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>SwitchOrch</code> の trimming 拡張、<code>BufferOrch</code> での per-buffer-profile trimming 制御、ACL <code>DISABLE_TRIMMING</code> action、symmetric / asymmetric DSCP の SAI capability、Drop counter（v0.3）の取り込みは未確認。</p>
 </div>
-<h1 id="l3v4v6-acl-v4-v6-1-sai-acl">L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）<a class="headerlink" href="#l3v4v6-acl-v4-v6-1-sai-acl" title="Permanent link">&para;</a></h1>
+<h1 id="packet-trimmingsymmetric-asymmetric-dscp-acl-disable">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）<a class="headerlink" href="#packet-trimmingsymmetric-asymmetric-dscp-acl-disable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来 SONiC は IPv4 用 <code>L3</code> と IPv6 用 <code>L3V6</code> を <strong>別々の SAI ACL テーブル</strong> として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong>新規組み込みテーブル型 <code>L3V4V6</code></strong> を導入し、この最適化を operator が選択的に有効化できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>MIRROR</code> / <code>MIRRORV6</code> で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。</p>
+<p>Packet Trimming（PT）はバッファ枯渇で <strong>drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（受信側）に届ける</strong> SAI 機能。受信側 NIC が再送依頼を高速に出せるため、congestion 復帰が早い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn、2024-11 初版。</p>
+<p>スコープ:</p>
+<ul>
+<li>global PT 設定 + per-buffer-profile での enable/disable</li>
+<li>ACL の <strong>disable trimming action</strong> で fine-grained 除外（v0.1 から）</li>
+<li>v0.2: <strong>Asymmetric DSCP</strong>（trim 後 packet に異なる DSCP を打つ）</li>
+<li>v0.3: <strong>Drop counters</strong>（trim 数の可視化）</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">検討された選択肢<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="symmetric-vs-asymmetric-dscp">Symmetric vs Asymmetric DSCP<a class="headerlink" href="#symmetric-vs-asymmetric-dscp" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Option</th>
-<th>内容</th>
-<th>採否</th>
+<th>Mode</th>
+<th>trim 後の DSCP</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>A</td>
-<td>MirrorV4/V6 と同じく compile-time マージ</td>
-<td>不採用（テーブル数制約・bind ポート不一致）</td>
+<td>Symmetric</td>
+<td>original packet の DSCP をそのまま保持</td>
 </tr>
 <tr>
-<td>B</td>
-<td>既存 <code>L3V6</code> に v4 match field を増やす</td>
-<td>不採用（ユーザ設定書き換えが必要）</td>
-</tr>
-<tr>
-<td>C</td>
-<td>新型 <code>L3V4V6</code> を導入</td>
-<td><strong>採用</strong></td>
+<td>Asymmetric</td>
+<td>global の <code>dscp_value</code> で上書き（受信側で trim と判別しやすい）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="l3v4v6-match-action-bind"><code>L3V4V6</code> の match / action / bind<a class="headerlink" href="#l3v4v6-match-action-bind" title="Permanent link">&para;</a></h3>
-<p>サポート match<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>VLAN_ID</code>, <code>IP_TYPE</code>, <code>ETHER_TYPE</code></li>
-<li><code>SRC_IPV6</code> / <code>DST_IPV6</code> / <code>SRC_IP</code> / <code>DST_IP</code></li>
-<li><code>ICMPV6_TYPE/CODE</code> / <code>ICMP_TYPE/CODE</code></li>
-<li><code>IP_PROTOCOL</code> / <code>NEXT_HEADER</code></li>
-<li><code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code> / <code>TCP_FLAGS</code></li>
-</ul>
-<p>action: <code>PACKET_ACTION</code> / <code>REDIRECT_ACTION</code>（egress では <code>REDIRECT</code> 非対応な ASIC では <code>PACKET_ACTION</code> のみ）。bind: Port / LAG。</p>
-<p>ACL ルールには <strong><code>IP_TYPE</code> または <code>ETHER_TYPE</code> を含めることを推奨</strong>。Phase 2 で非対応 ASIC 上で内部的に v4 用 / v6 用の 2 枚に振り分ける際の判定キーになる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="phase-1-phase-2">Phase 1 / Phase 2<a class="headerlink" href="#phase-1-phase-2" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-  U[user creates&lt;br&gt;ACL_TABLE type=L3V4V6] --&gt; O{platform supports&lt;br&gt;combined v4/v6?}
-  O -- yes --&gt; S[1 SAI ACL table&lt;br&gt;Phase 1 動作]
-  O -- no Phase 1 --&gt; E[orchagent syslog ERROR&lt;br&gt;テーブル作成失敗]
-  O -- no Phase 2 --&gt; SP[内部で 2 SAI ACL tables&lt;br&gt;v4/v6 で分割]
-  SP --&gt; U2[ユーザには 1 テーブルとして見える]</code></pre>
-<p>現状は <strong>Phase 1 のみ実装</strong> され、非対応 ASIC では orchagent が syslog にエラーを出してテーブル作成を断る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="state_db-capability"><code>STATE_DB</code> capability 公開<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>hgetall &quot;ACL_STAGE_CAPABILITY_TABLE|INGRESS&quot;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ...
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  supported_L3V4V6 -&gt; &quot;true&quot;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>hgetall &quot;ACL_STAGE_CAPABILITY_TABLE|EGRESS&quot;
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ...
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  supported_L3V4V6 -&gt; &quot;true&quot;
+<h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    USER[(CONFIG_DB\nSWITCH_TRIMMING\nBUFFER_PROFILE.packet_trimming\nACL_RULE.action=DISABLE_TRIMMING)] --&gt; SO[SwitchOrch]
+    USER --&gt; BO[BufferOrch]
+    USER --&gt; AO[AclOrch]
+    USER --&gt; QO[QosOrch]
+    SO --&gt;|switch trim attr| SAI_SW[(SAI switch trimming)]
+    BO --&gt;|profile trim attr| SAI_BUF[(SAI buffer profile)]
+    AO --&gt;|disable trim action| SAI_ACL[(SAI ACL entry)]
+    SO --&gt; CDB[(STATE_DB\nSWITCH_TRIMMING_CAPABILITY)]
+    FCO[FlexCounterOrch] --&gt; CDB2[(COUNTERS_DB\ntrim drop counter)]</code></pre>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SWITCH_TRIMMING|GLOBAL:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  size           = &lt;bytes&gt;           # 残す size
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  dscp_value     = &lt;0..63&gt;           # asymmetric の上書き値
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  dscp_mode      = symmetric | asymmetric
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  queue_index    = &lt;queue&gt;           # trim 後の egress queue 指定
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>BUFFER_PROFILE|&lt;name&gt;:
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  packet_trimming = enabled | disabled
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;:
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  PACKET_ACTION = DISABLE_TRIMMING   # ACL マッチ packet は trim 対象外
 </span></code></pre></div>
-<p>operator はこのフィールドで platform 対応可否を確認できる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="state_db">STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>STATE_DB.SWITCH_TRIMMING_CAPABILITY</code> で ASIC が PT をサポートしているか / supported size 範囲 / asymmetric DSCP 可否を公開<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI が事前 check に使う。</p>
+<h3 id="_4">動作フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant P as ingress packet
+    participant Q as egress queue (buffer profile)
+    participant T as SAI trim engine
+    participant N as 受信 NIC
+    P-&gt;&gt;Q: enqueue
+    alt buffer 余り
+      Q-&gt;&gt;N: 通常転送
+    else buffer 枯渇 + profile=enabled + ACL not disabling
+      Q-&gt;&gt;T: drop 直前で trim
+      T-&gt;&gt;N: L2+L3/L4+N bytes (DSCP optional 上書き)
+    end</code></pre>
+<h3 id="drop-counterv03">Drop counter（v0.3）<a class="headerlink" href="#drop-counterv03" title="Permanent link">&para;</a></h3>
+<p>trim された packet の counter を per-port / per-queue で公開。Flex Counter framework に乗る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。congestion 状況の可視化と運用判断（PT を無効化すべきか）に使う。</p>
+<h3 id="initial-migration">Initial / Migration<a class="headerlink" href="#initial-migration" title="Permanent link">&para;</a></h3>
+<p><code>SWITCH_TRIMMING|GLOBAL</code> の初期値はテンプレート提供。db_migrator が旧 image からの up-grade 時に default を入れる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/acl/Extend-L3V6ACLs.md#L256-L325 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/packet_trimming/packet-trimming-design.md#L72-L80 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  AclOrch::init() -> initDefaultTableTypes() -> addAclTableType(TABLE_TYPE_L3V4V6)
-  ... A new field called `supported_L3V4V6` is added to the ACL capability in STATE_DB ...
-reasoning: orchagent 側エントリポイントと STATE_DB capability キー名を引用
+  In scope: Global PT configuration with per buffer profile control
+  Fine-grained PT control via ACL disable trimming action
+reasoning: スコープと per-buffer + ACL disable の根拠。
 -->
 
-<h3 id="yang-cli">YANG / CLI<a class="headerlink" href="#yang-cli" title="Permanent link">&para;</a></h3>
-<p><code>sonic-acl</code> の <code>ACL_TABLE.type</code> enum に <code>L3V4V6</code> を追加<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>-s<span class="w"> </span>ingress<span class="w"> </span>-p<span class="w"> </span>Ethernet0<span class="w"> </span>DATAACL<span class="w"> </span>L3V4V6
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config switch-trimming size 128
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config switch-trimming dscp-value 32 --mode asymmetric
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config switch-trimming queue 0
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config buffer profile &lt;name&gt; --packet-trimming enabled
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>config acl rule add &lt;table&gt; &lt;rule&gt; --action DISABLE_TRIMMING
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>show switch-trimming summary
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>show switch-trimming counters
 </span></code></pre></div>
-<p>設定例（v4 ルールと v6 ルールを同テーブルに混在）:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;STAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INGRESS&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;L3V4V6&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PORTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Ethernet1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">&quot;DATAACL|RULE1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;ETHER_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0x0800&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">                       </span><span class="nt">&quot;DST_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;20.2.2.2/32&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;DATAACL|RULE2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;IP_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPV6ANY&quot;</span><span class="p">,</span><span class="w">   </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">                       </span><span class="nt">&quot;DST_IPV6&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2001::2/64&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
-</span></code></pre></div>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ACL テーブル間の優先順位付けは未実装。1 ポートに複数 ACL テーブルが bind され action が衝突した場合の勝者は未定義。Phase 2 で <code>ACL_TABLE</code> priority 設定で対処予定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>L3V4V6</code> テーブル内のルールには <code>IP_TYPE</code> または <code>ETHER_TYPE</code> を含めるのが望ましい</li>
-<li>warm/fast-boot への影響は無し<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ASIC が trimming 機能を持つ platform 限定（capability で reject）</li>
+<li>size はハードウェア制約（最小 / 最大）あり</li>
+<li>ACL の <code>DISABLE_TRIMMING</code> は他 packet_action と排他になる場合あり（実装依存）</li>
+<li>Drop counter は v0.3 から、対応未済 platform は <code>N/A</code></li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 L3 / L3V6 テーブル</strong>: 共存可能。同一ポートに複数 ACL テーブル bind が発生しうる</li>
-<li><strong>MIRROR / MIRRORV6</strong>: 既に compile-time マージで最適化済み。本機能は L3 系のみ</li>
+<li><strong>Buffer / PFC</strong>: profile ごとに trim を切り替える設計のため、PFC lossless profile では disable が定石</li>
+<li><strong>ACL</strong>: <code>DISABLE_TRIMMING</code> を使う rule は AclOrch / capabilities と整合が必要</li>
+<li><strong>Flex Counter</strong>: drop counter を polling</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>trim が起きない → buffer profile の <code>packet_trimming=enabled</code>、ACL で disable していないか確認</li>
+<li>受信 NIC で trim 判別ができない → asymmetric DSCP 設定で受信側に signal するよう運用</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- SwitchOrch の trimming 拡張と SAI switch trimming 属性の community SAI 取り込み確認
+- BufferOrch の per-buffer-profile trimming 制御の実装確認
+- ACL DISABLE_TRIMMING action の SAI / AclOrch 取り込み確認
+- SWITCH_TRIMMING / BUFFER_PROFILE.packet_trimming / ACL_RULE 関連の YANG 取り込み確認
+- v0.2 Asymmetric DSCP / v0.3 Drop counter の現行 master 取り込み確認
+- vendor 別 PT capability（Mellanox/Broadcom 等）と STATE_DB capability 公開確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/acl/Extend-L3V6ACLs.md">sonic-net/SONiC doc/acl/Extend-L3V6ACLs.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/packet_trimming/packet-trimming-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
