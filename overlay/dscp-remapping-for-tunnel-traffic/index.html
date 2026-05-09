@@ -2269,6 +2269,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -5292,6 +5303,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -5325,8 +5347,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>tunneldecaporch</code> / <code>muxorch</code> 実装、<code>qos_config.j2</code> の生成結果、<code>db_migrator</code> の <code>pfc_wd_sw_enable</code> 移行ロジックでの裏取りは未済。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>主要実装は現行 master で確認済みだが、HLD と実装で <strong>PFC watchdog 用フィールド名に差異</strong> がある。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dscp-tc-dual-tor-pfc">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）<a class="headerlink" href="#dscp-tc-dual-tor-pfc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -5589,7 +5611,13 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <li>PFCWD の対象キューが想定と違う: <code>db_migrator</code> が <code>pfc_wd_sw_enable</code> を生成しているか、または手動で <code>PORT_QOS_MAP</code> に入っているかを確認。</li>
 <li>terminator の競合: <code>MuxTunnel</code> と通常 IPinIP の両方を作っているのに decap 属性が片方にしか反映されない場合、terminator 分離 (P2P / P2MP) が orchagent で実装されているか裏取り。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
+<ul>
+<li><strong>PFCWD フィールド名</strong>: HLD は <code>pfc_wd_sw_enable</code> と表記しているが、現行 master では <code>pfcwd_sw_enable</code>（アンダースコアの位置が異なる）として実装されている。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から <code>pfcwd_sw_enable</code> を派生している。CONFIG_DB / YANG (<code>sonic-port-qos-map</code>) を読む際は実装側の名称に合わせる必要がある。</li>
+<li>一方、<code>tunneldecaporch.cpp:834,1084</code>（<code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>..._TC_TO_PRIORITY_GROUP_MAP</code>）、<code>muxorch.cpp:259,2347</code>（MuxTunnel の <code>SAI_TUNNEL_PEER_MODE_P2P</code>）、<code>files/build_templates/qos_config.j2:441</code> の Dual-ToR 限定 <code>AZURE_TUNNEL</code> 出力は HLD どおり実装されていることを確認した。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
