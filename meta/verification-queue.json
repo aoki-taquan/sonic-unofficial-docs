@@ -641,6 +641,20 @@
         "/etc/cipher_pass パーミッション設定の sonic-buildimage 反映"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/send-to-ingress-hld.md",
+      "issue": 115,
+      "verification": "hld-only",
+      "concerns": [
+        "PortsMgr / PortsOrch の SEND_TO_INGRESS_PORT 実装",
+        "APPL_DB SEND_TO_INGRESS_PORT_TABLE スキーマ",
+        "CPU port を OBJ_ID に取れる SAI hostif の community 提供状況",
+        "マルチ ASIC namespace 内 netdev の挙動",
+        "CoPP との相互作用",
+        "HLD 後の属性追加（rate-limit 等）"
+      ],
+      "priority": "medium"
     }
   ]
 }
