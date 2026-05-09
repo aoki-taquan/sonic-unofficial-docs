@@ -90,22 +90,6 @@
       "pr": 194
     },
     {
-      "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
-      "verification": "hld-only",
-      "concerns": [
-        "/etc/sysctl.d 配下の SONiC default で net.ipv4/ipv6.neigh.default.gc_thresh* が HLD 提案値で設定されているか未確認",
-        "COPP_TABLE の ARP/ND group の cir/cbs が 600 → 8000 pps に上がっているか未確認",
-        "RouteOrch の bulk route API + 1 秒 timer flush の現行 master 実装確認 (sonic-swss/orchagent/routeorch.cpp)",
-        "fpmsyncd の rt_table=0 での master device lookup スキップ最適化の取り込み確認",
-        "sonic-sairedis 内の nlohmann/json バージョンと dump() 経路のバージョンアップ取り込み確認",
-        "show arp / show ndp の個別 FDB lookup 化最適化が sonic-utilities に取り込まれているか確認",
-        "HLD は 2019 年改訂のため現行 master との乖離リスクあり"
-      ],
-      "priority": "high",
-      "issue": 197,
-      "pr": 198
-    },
-    {
       "page": "docs/management/config-reload-enhancement.md",
       "issue": 89,
       "verification": "code-verified",
@@ -584,6 +568,23 @@
         "config rate smoothing_interval CLI が sonic-utilities に実装済か未確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "sysctl 90-sonic.conf の gc_thresh は 1024/2048/4096 で HLD 提案 (16000/32000/48000) と乖離。スケール目標 IPv4 ARP 32k には届かない",
+        "CoPP ARP は queue4_group2 cir/cbs=600 で HLD 提案 8000 pps と乖離",
+        "sonic-sairedis 内 nlohmann/json バージョン取り込み確認は未検証",
+        "show arp / show ndp の個別 FDB lookup 化最適化は未検証"
+      ],
+      "verified_concerns": [
+        "RouteOrch の bulk route API (gRouteBulker) を sonic-swss/orchagent/routeorch.cpp:41,626-1116 で確認",
+        "fpmsyncd の rt_table=0 master lookup スキップを sonic-swss/fpmsyncd/routesync.cpp:2077-2082 で確認"
+      ],
+      "priority": "medium",
+      "issue": 197,
+      "pr": 198
     },
     {
       "page": "docs/internals/p4-orchagent.md",
@@ -1115,6 +1116,19 @@
         "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認",
         "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認",
         "pinned_state による BFD 状態オーバーライド実装存在確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/routing/overlay-ecmp-with-bfd-monitoring.md",
+      "issue": 306,
+      "verification": "hld-only",
+      "concerns": [
+        "VnetOrch の ECMP/NHG メンバ管理と BFD 状態連動の現行 master 実装確認",
+        "BfdOrch の VxLAN 用 multi-hop BFD HW offload サポートの現行実装確認",
+        "STATE_DB ADVERTISE_NETWORK_TABLE と APPL_DB BGP_PROFILE_TABLE のスキーマ確認",
+        "bgpcfgd の network コマンド + route-map 自動生成の実装確認",
+        "HLD は 2022-04 改訂で約 4 年経過、後継 HLD で機能拡張済み"
       ],
       "priority": "medium"
     },
