@@ -1,7 +1,7 @@
 ---
 title: FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 1, 2025-07）のみを根拠に書かれている。`MACSecOrch` / `MACSecMgr` の POST 対応、`STATE_DB.FIPS_MACSEC_POST_TABLE` のスキーマ確定、SAI 側 POST capability クエリ・コールバックの利用可能性は未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/macsecpost.cpp` (`STATE_FIPS_MACSEC_POST_TABLE_NAME` を読み書き)、`sonic-swss-common/common/schema.h:471` の `STATE_FIPS_MACSEC_POST_TABLE_NAME = "FIPS_MACSEC_POST_TABLE"`、`sonic-buildimage/build_image.sh:214` の `sonic_fips=1` カーネルコマンドライン、`build_debian.sh:691-692` の `/etc/fips/fips_enable` 初期化、`dockers/docker-macsec/cli/show/plugins/show_macsec.py:351-389` の FIPS_MACSEC_POST_TABLE 読み出し CLI を確認済み（verified at: 2026-05-09）。
 
 # FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
 
