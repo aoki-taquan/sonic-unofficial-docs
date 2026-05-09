@@ -1,7 +1,7 @@
 ---
 title: Reboot-cause 履歴の STATE_DB / テレメトリ公開
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2020-09 改訂、5 年以上経過）"
-    HLD は v0.1 / 2020-09。`determine-reboot-cause` / `process-reboot-cause` サービス、`/host/reboot-cause/history/` への JSON 保存、STATE_DB の `REBOOT_CAUSE` テーブル、`show reboot-cause history` CLI が現行 master でこの設計どおりかは未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装存在を確認。`sonic-host-services/scripts/determine-reboot-cause` および `scripts/process-reboot-cause` が systemd unit (`sonic-host-services-data.{determine,process}-reboot-cause.service`) として配置されている。`process-reboot-cause:27-34` で `REBOOT_CAUSE_DIR=/host/reboot-cause/`、`REBOOT_CAUSE_HISTORY_DIR=/host/reboot-cause/history/`、`PREVIOUS_REBOOT_CAUSE_FILE=previous-reboot-cause.json`、`REBOOT_CAUSE_TABLE_NAME="REBOOT_CAUSE"`、`MAX_HISTORY_FILES=10` を確認。`process-reboot-cause:62` で `min(MAX_HISTORY_FILES, ...)` の 10 件 cap も確認。CLI は `sonic-utilities/show/reboot_cause.py` の `fetch_reboot_cause_history_from_db` で `REBOOT_CAUSE|*` 走査を確認（verified at: 2026-05-09）。
 
 # Reboot-cause 履歴の STATE_DB / テレメトリ公開
 
@@ -126,7 +126,7 @@ show reboot-cause history
 
 - STATE_DB に保持されるのは **最大 10 件**（`history/` ディレクトリ自体は古い分も残る可能性あり、HLD ではローテーション仕様未明記）。
 - `comment` は unstructured JSON 文字列で、構造化スキーマは規定されていない。
-- HLD は 5 年以上前の v0.1 のままで、現行 master と差異が大きい可能性が高い。
+- HLD は 5 年以上前の v0.1 のままで、現行 master と差異が大きい可能性が高い → 2026-05-09 裏取り済み。テーブル名・キー・10 件 cap・JSON ファイル配置は HLD 通り。実装は `sonic-host-services` の `scripts/{determine,process}-reboot-cause`、CLI は `sonic-utilities/show/reboot_cause.py`。
 
 ## 干渉する機能
 

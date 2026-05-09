@@ -62,6 +62,19 @@
       "priority": "high"
     },
     {
+      "page": "docs/architecture/sag-high-level-design-for-sonic.md",
+      "issue": 332,
+      "verification": "hld-only",
+      "concerns": [
+        "IntfMgr / IntfsOrch の SAG ハンドラ実装の現行 master 取り込み確認",
+        "SAG / SAG_TABLE スキーマと VLAN_INTERFACE.static_anycast_gateway フィールドの sonic-yang-models 反映確認",
+        "config static-anycast-gateway / config vlan static-anycast-gateway CLI の sonic-utilities 取り込み確認",
+        "RouteOrch の MAC 変更時 IPv6 link-local me-route 再追加実装確認",
+        "HLD は 2021-10 改訂で 4 年経過、現行 master との乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/architecture/sonic-arm-architecture-support.md",
       "verification": "hld-only",
       "concerns": [
@@ -380,18 +393,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/reboot-cause-information-via-telemetry-agent.md",
-      "issue": 318,
-      "verification": "hld-only",
-      "concerns": [
-        "determine-reboot-cause / process-reboot-cause サービスの現行 master 実装確認",
-        "STATE_DB REBOOT_CAUSE スキーマ（cause/time/user/comment）の現行スキーマ整合確認",
-        "show reboot-cause history CLI の sonic-utilities 取り込み確認",
-        "HLD は 2020-09 改訂で 5 年以上経過、現行 master との乖離リスクあり"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/system/sonic-os-sonic-docker-images-versioning.md",
       "verification": "hld-only",
       "concerns": [
@@ -483,6 +484,19 @@
         "show acl table / show acl rule の sonic-utilities 取り込み",
         "PFC / Mux 内部生成 ACL の扱いの将来計画",
         "sonic-mgmt の test_acl.py の更新状況"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/acl-qos/pfc-historical-statistics.md",
+      "issue": 324,
+      "verification": "hld-only",
+      "concerns": [
+        "pfc_detect_broadcom.lua の estimate ロジック追加が現行 sonic-swss にあるか未確認",
+        "PfcWdOrch の pfc_stat_history per-port 設定処理の実装存在確認",
+        "pfcstat.py への --history オプション追加が sonic-utilities にあるか未確認",
+        "config pfcwd pfc_stat_history / start --pfc-stat-history CLI の取り込み確認",
+        "SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US 等 SAI 属性の community SAI 取り込み確認"
       ],
       "priority": "medium"
     },
@@ -1816,6 +1830,18 @@
         "snmpd.conf.j2 の SNMP テーブル分岐（後方互換）実装の現行 master 取り込み",
         "swss-common/schema.h に CFG_SNMP_TABLE_NAME が追加されているか未確認",
         "SNMP_COMMUNITY.TYPE=RW の実装サポート状況確認"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/system/swss-docker-warm-restart-code-reference.md",
+      "issue": 316,
+      "verification": "hld-only",
+      "concerns": [
+        "HLD 自身が一時的開発メモであり、現行 Warm Restart の正規仕様ではない",
+        "RedisClient の hmset / hgetallordered が現行 sonic-swss-common にあるか未確認",
+        "libsairedis の Redis API 冪等性パッチが現行 master に取り込まれているか未確認",
+        "swss-flushdb スクリプトの sonic-utilities 取り込み確認"
       ],
       "priority": "low"
     },
