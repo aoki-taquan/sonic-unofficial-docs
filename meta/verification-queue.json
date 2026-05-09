@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/internals/support-redis-databases-in-multiple-namespaces.md",
+      "issue": 299,
+      "verification": "hld-only",
+      "concerns": [
+        "swsssdk SonicV2Connector / ConfigDBConnector の namespace 引数実装と Unix socket 強制ロジック確認",
+        "SonicDBConfig の load_sonic_global_db_config / namespace_validation 実装確認",
+        "/usr/bin/database.sh と database_global.json / database_config.json j2 テンプレ展開ロジック確認",
+        "C++ DBConnector の database_global.json パーサ実装確認",
+        "sonic-utilities (sonic-db-cli / sonic-cfggen / db_migrator) への --namespace 引数取り込み確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/platform-monitor-requirement-for-chassis-subsystem.md",
       "issue": 297,
       "verification": "hld-only",
