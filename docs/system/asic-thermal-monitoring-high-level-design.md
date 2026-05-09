@@ -1,7 +1,7 @@
 ---
 title: ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2019-01 初版（2020-10 改訂）であり、`SwitchOrch` の `sensorsPollerTimer` 実装、`ASIC_SENSORS` テーブルでの enable/disable 制御、`ASIC_TEMPERATURE_INFO` の `temperature_N` 列拡張、platform 側 `_thermal_list[]` への ASIC 内部センサ追加は実コードでの裏取り未済。CLI 制御は本 HLD では未定義。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/switchorch.h:12-14` で `DEFAULT_ASIC_SENSORS_POLLER_INTERVAL` / `ASIC_SENSORS_POLLER_STATUS` / `ASIC_SENSORS_POLLER_INTERVAL` 定数、`switchorch.h:170-179` で `m_asicSensorsTable` / `m_sensorsPollerTimer` / `m_sensorsPollerEnabled` / `m_numTempSensors` / `m_sensorsMaxTempSupported` / `m_sensorsAvgTempSupported` メンバ、`sonic-swss-common/common/schema.h:138` で `ASIC_TEMPERATURE_INFO_TABLE_NAME`、`sonic-swss/orchagent/switchorch.cpp:154,173,402,408,425-436` で SelectableTimer 実装と `ASIC_SENSORS` テーブルの ASIC_SENSORS_POLLER_STATUS/INTERVAL 動的反映を確認（verified at: 2026-05-09）。
 
 # ASIC 内部温度センサのポーリング（`ASIC_SENSORS` / `ASIC_TEMPERATURE_INFO`）
 
