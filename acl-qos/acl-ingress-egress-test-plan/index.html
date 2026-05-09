@@ -12257,9 +12257,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本テストプランは sonic-mgmt 側 PTF テストの設計記述。<code>acl-loader</code> / <code>aclshow</code> の現行 CLI 仕様、<code>ACL_TABLE</code> / <code>ACL_RULE</code> の YANG / orchagent 側の対応、PTF 実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>sonic-utilities <code>acl_loader/main.py</code> L1140 <code>show</code> / L1198 <code>update</code> グループと <code>show_table</code> (L960) / <code>show_rule</code> (L1050) で現行 CLI 体系を確認。orchagent 側 egress ACL は <code>acltable.h</code> L67 で <code>STAGE_EGRESS → SAI_ACL_STAGE_EGRESS</code> マップ、<code>portsorch.cpp</code> L2741 で stage 判定の実装を確認。HLD で参照される <code>DATAINGRESS</code> / <code>DATAEGRESS</code> テーブル / 28 ルールセットは <code>sonic-net/SONiC</code> <code>doc/acl/ACL-Ingress-Egress-test-plan.md</code> 自体で定義されており、orchagent / SAI 側の egress stage 対応も現行 master に取り込み済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="acl-ingress-egress-dataingress-dataegress">ACL Ingress / Egress テストプラン（<code>DATAINGRESS</code> / <code>DATAEGRESS</code> テーブル）<a class="headerlink" href="#acl-ingress-egress-dataingress-dataegress" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -12223,9 +12223,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>AclOrch::initDefaultTableTypes()</code> への <code>TABLE_TYPE_L3V4V6</code> 追加、<code>ACL_STAGE_CAPABILITY_TABLE</code> への <code>supported_L3V4V6</code> フィールド追加、Phase 2（非対応 ASIC で内部的に v4/v6 SAI テーブル 2 枚を作る分割）の実装状況は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>sonic-swss <code>orchagent/aclorch.cpp</code> L44 で <code>STATE_DB_ACL_L3V4V6_SUPPORTED = "supported_L3V4V6"</code> 定義、L240 で <code>TABLE_TYPE_L3V4V6</code> を default table types に追加、L2737/L2739 で table 作成時に <code>isAclL3V4V6TableSupported(stage)</code> を判定、L3519/L3527 で <code>m_L3V4V6Capability</code> を ingress/egress 別に検出、L3541 でケーパビリティを SWSS_LOG に出力。<code>aclorch.h</code> L616 <code>isAclL3V4V6TableSupported</code> / L633 <code>m_L3V4V6Capability</code> マップを確認。CLI 側は sonic-utilities <code>acl_loader/main.py</code> L429-433 で <code>is_table_l3v4v6</code>、L780/L784 で <code>L3V4V6</code> 用 ethertype チェックを確認。YANG は sonic-yang-models <code>sonic-types.yang.j2</code> L115 <code>enum L3V4V6</code> を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="l3v4v6-acl-v4-v6-1-sai-acl">L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）<a class="headerlink" href="#l3v4v6-acl-v4-v6-1-sai-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

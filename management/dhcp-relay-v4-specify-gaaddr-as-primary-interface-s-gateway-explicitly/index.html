@@ -12389,9 +12389,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>isc-dhcp</code> (dhcrelay) の <code>-pg</code> オプション実装、<code>docker-dhcp-relay</code> の supervisord 設定生成、<code>config interface ip add --secondary</code> 実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/isc-dhcp/patch/0015-option-to-set-primary-address-in-interface.patch</code> で dhcrelay の <code>-pg</code> オプション実装パッチを確認。<code>sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2</code> L27-28 で <code>VLAN_INTERFACE | get_primary_addr</code> を回して primary IPv4 のみ <code>-pg &lt;gateway&gt;</code> 引数を組み立てる Jinja を確認。<code>get_primary_addr</code> フィルタは <code>sonic-buildimage/src/sonic-config-engine/sonic-cfggen</code> L168 で定義（secondary を除外して primary のみ返す）、L302 で env.filters に登録。<code>sonic-utilities/config/main.py</code> L5680 で <code>--secondary/-s</code> フラグ、L5794-L5806 で VLAN_INTERFACE への <code>secondary: "true"</code> 書き込みを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dhcpv4-relay-giaddr-primary-vlan_interface-secondary">DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）<a class="headerlink" href="#dhcpv4-relay-giaddr-primary-vlan_interface-secondary" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

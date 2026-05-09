@@ -12368,8 +12368,9 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 0.5 (2023-05) で複数回の改訂を経ているが、<code>switchport_mode</code> フィールドや CLI multi-VLAN parser、<code>db_migrator</code> 拡張が現行 master に取り込まれているか要裏取り。<strong>詳細な状態遷移と全例は原文 HLD を参照</strong>。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>sonic-utilities <code>config/switchport.py</code> L17 で <code>mode_type</code> enum <code>["access", "trunk", "routed"]</code> を、L57-78 で <code>port_data["mode"]</code> への書き込みを確認、<code>config/main.py</code> L119 で <code>PORT_MODE = "switchport_mode"</code> 定数定義、L1787 <code>config.add_command(switchport.switchport)</code> 登録、L5777 で <code>interface_mode == "trunk" or interface_mode == "access"</code> 判定を確認。YANG 側は sonic-yang-models <code>yang-models/sonic-port.yang</code> L86-89 / <code>sonic-portchannel.yang</code> L71 で <code>leaf mode { type stypes:switchport_mode; }</code>、<code>sonic-types.yang.j2</code> L244 で <code>typedef switchport_mode</code> を確認。</p>
+<p><strong>discrepancy</strong>: HLD と本文は CONFIG_DB のフィールド名を <code>switchport_mode</code> と表記しているが、実装上は <code>PORT.&lt;name&gt;.mode</code> (YANG: <code>leaf mode</code>) で <code>switchport_mode</code> は YANG <strong>typedef 名</strong>。<code>db_migrator</code> への明示的な switchport モード推論ロジックも現行 master に未追加（既存 entry に <code>mode</code> フィールドが無ければ <code>routed</code> 相当として振る舞う実装）。</p>
 </div>
 <h1 id="switchport-access-trunk-routed-vlan-cli">Switchport モード（access / trunk / routed）と VLAN CLI 拡張<a class="headerlink" href="#switchport-access-trunk-routed-vlan-cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
