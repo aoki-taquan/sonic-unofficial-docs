@@ -160,6 +160,17 @@
         "ports に複数値を指定したときの sshd_config 行展開の実装確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
+      "issue": 39,
+      "verification": "hld-only",
+      "concerns": [
+        "isc-dhcp の dhcrelay -pg 拡張が community master に取り込まれているか未確認",
+        "docker-dhcp-relay supervisord テンプレートが secondary を考慮するか未確認",
+        "config interface ip add --secondary CLI の sonic-utilities 実装確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
