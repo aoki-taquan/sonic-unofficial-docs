@@ -1147,7 +1147,8 @@
         "vtysh ↔ frr.conf テンプレート ↔ CONFIG_DB の整合経路（bgpcfgd 等）の現行確認"
       ],
       "priority": "low",
-      "issue": 185
+      "issue": 185,
+      "pr": 186
     }
   ]
 }
