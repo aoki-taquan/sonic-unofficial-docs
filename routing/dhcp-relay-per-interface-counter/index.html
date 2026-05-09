@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-fast-link-up/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/dhcp-relay-per-interface-counter/">
       
       
-        <link rel="prev" href="../single-asic-voq-fixed-system-sonic/">
+        <link rel="prev" href="../dhcp-relay-for-ipv6-hld/">
       
       
-        <link rel="next" href="../sonic-port-fec-ber/">
+        <link rel="next" href="../high-level-design-document/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC Fast Link-Up（リンク再起動時の EQ 再利用） - SONiC 非公式ドキュメント</title>
+        <title>DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-fast-link-up-eq" class="md-skip">
+        <a href="#dhcp-relay-per-interface-counterdhcpmon-counters_db" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+              DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1095,6 +1095,8 @@
       
   
   
+    
+  
   
   
     
@@ -1170,20 +1172,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1201,13 +1206,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1227,7 +1232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1255,7 +1260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1283,7 +1288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1311,7 +1316,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1339,7 +1344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1367,7 +1372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1395,7 +1400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1423,7 +1428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1451,7 +1456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1479,7 +1484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1504,10 +1509,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1523,6 +1555,197 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        役割分担
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context-interface-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context interface map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv4-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCPv4 counter 増分条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv6-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCPv6 counter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dual-tor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual-ToR 特殊ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persist-db-update-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persist (DB update thread)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clear
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Counter Reset 契機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1535,7 +1758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1563,7 +1786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1591,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1619,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1647,7 +1870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1675,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1703,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -1731,7 +1954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1759,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1787,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1815,7 +2038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1843,7 +2066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -1871,7 +2094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -1899,7 +2122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -1927,7 +2150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -1955,7 +2178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -1983,7 +2206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2011,7 +2234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2039,7 +2262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2067,7 +2290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -5739,8 +5962,6 @@
       
   
   
-    
-  
   
   
     
@@ -5796,23 +6017,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -5830,13 +6048,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5856,7 +6074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -5884,7 +6102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -5912,7 +6130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -5940,7 +6158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -5968,7 +6186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -5996,7 +6214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6024,7 +6242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -6052,7 +6270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -6080,7 +6298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -6108,7 +6326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -6136,7 +6354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -6164,7 +6382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -6192,7 +6410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -6220,7 +6438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -6248,7 +6466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6276,7 +6494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -6304,7 +6522,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -6329,37 +6547,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -6375,236 +6566,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capability-discovery" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capability discovery
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        グローバルパラメータの設定経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#enabledisable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポート単位の enable/disable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recovery-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作モデル（recovery only）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ber" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BER 閾値の表記
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        エラーハンドリング / ログ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -6617,7 +6578,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -6645,7 +6606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -6673,7 +6634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -11543,7 +11504,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        役割分担
       
     </span>
   </a>
@@ -11551,10 +11512,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#capability-discovery" class="md-nav__link">
+  <a href="#context-interface-map" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Capability discovery
+        Context interface map
       
     </span>
   </a>
@@ -11562,10 +11523,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#dhcpv4-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        グローバルパラメータの設定経路
+        DHCPv4 counter 増分条件
       
     </span>
   </a>
@@ -11573,10 +11534,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#enabledisable" class="md-nav__link">
+  <a href="#dhcpv6-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート単位の enable/disable
+        DHCPv6 counter
       
     </span>
   </a>
@@ -11584,10 +11545,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#recovery-only" class="md-nav__link">
+  <a href="#dual-tor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作モデル（recovery only）
+        Dual-ToR 特殊ルール
       
     </span>
   </a>
@@ -11595,10 +11556,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ber" class="md-nav__link">
+  <a href="#persist-db-update-thread" class="md-nav__link">
     <span class="md-ellipsis">
       
-        BER 閾値の表記
+        Persist (DB update thread)
       
     </span>
   </a>
@@ -11606,10 +11567,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#clear" class="md-nav__link">
     <span class="md-ellipsis">
       
-        エラーハンドリング / ログ
+        Clear
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Counter Reset 契機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB スキーマ
       
     </span>
   </a>
@@ -11622,79 +11605,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連 CLI
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11705,18 +11638,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11743,7 +11665,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-fast-link-up.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/dhcp-relay-per-interface-counter.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11751,292 +11673,175 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>現行 master の <code>sonic-swss/orchagent/switchorch.cpp:2094-2271</code> (<code>setFastLinkupCapability</code> / <code>setSwitchFastLinkup</code> / <code>doCfgSwitchFastLinkupTableTask</code>)、<code>portsorch.h:300</code> (<code>setPortFastLinkupEnabled</code>)、SAI 属性 <code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]</code> / <code>..._GUARD_TIMEOUT[_RANGE]</code> / <code>..._BER_THRESHOLD</code>、<code>sonic-utilities/show/main.py:2933</code> および <code>config/main.py:5095</code> の <code>switch-fast-linkup</code> CLI 群を確認済み（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は 2023-2025 年に複数改訂。<code>dhcpmon</code> のマルチスレッド化、<code>dhcp6relay</code> から counter 機能の <code>dhcpmon</code> への分離、<code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> の <code>COUNTERS_DB</code> 反映、show/clear CLI、Dual-ToR 専用ルールの現行実装は未裏取り。</p>
 </div>
-<h1 id="sonic-fast-link-up-eq">SONiC Fast Link-Up（リンク再起動時の EQ 再利用）<a class="headerlink" href="#sonic-fast-link-up-eq" title="Permanent link">&para;</a></h1>
+<h1 id="dhcp-relay-per-interface-counterdhcpmon-counters_db">DHCP Relay per-interface counter（<code>dhcpmon</code> マルチスレッド + COUNTERS_DB 永続化）<a class="headerlink" href="#dhcp-relay-per-interface-counterdhcpmon-counters_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>100G 以上の高速イーサネット（特に PAM4）では、リンクトレーニング (Equalization, EQ) 自体に秒オーダーの時間がかかる。リンクフラップ後に <strong>毎回フル EQ を走らせる</strong> と、ピア側 ASIC ファームと協調するうえで数秒〜10 秒前後の停止になり、データプレーンの収束時間に効いてくる。Fast Link-Up は <strong>「直前の良好な EQ パラメータが残っているなら、それを再利用して即座に Up を試みる」</strong> 設計（Just-Do-Fast）で、回復シナリオに限定して動作する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主要要素は以下のとおり<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ol>
-<li><strong>回復時のみ動作</strong>: 初回リンクアップではフル EQ を行い、フラップ後の再起動でのみ高速経路を試みる。</li>
-<li><strong>品質ゲート</strong>: 高速経路で UP した後、<code>guard_time</code> 経過時点で BER をチェックし、<code>ber_threshold</code> を超えていれば フル EQ にフォールバック。</li>
-<li><strong>3 つのグローバルパラメータ + ポート単位 enable/disable</strong>: <code>polling_time</code> / <code>guard_time</code> / <code>ber_threshold</code> をスイッチ全体に。<code>fast_linkup</code> をポート毎に。</li>
-<li><strong>Capability ゲート</strong>: 起動時に SAI から対応可否と許容レンジを問い合わせ、未対応のプラットフォームでは設定を拒否する（あるいは ports 側は <strong>safe no-op</strong>）。</li>
-</ol>
+<p>旧設計の DHCPv4 counter は <code>dhcpmon</code> のプロセスメモリ内で <strong>VLAN/PortChannel 粒度のみ</strong> を持ち、ユーザは syslog からしか可視化できなかった。DHCPv6 は <code>dhcp6relay</code> プロセスに counter ロジックが同居し、relay 機能と相互影響していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>DHCPv4 / DHCPv6 ともに <strong>物理 / LAG / VLAN</strong> 粒度の TX/RX counter を持つ</li>
+<li>counter を <strong><code>COUNTERS_DB</code></strong> に永続化（プロセスメモリだけでは不可視）</li>
+<li>DHCPv6 counter を <code>dhcp6relay</code> から <strong><code>dhcpmon</code></strong> に移動し、relay と分離</li>
+<li><code>show</code> / <code>sonic-clear</code> CLI を提供</li>
+</ul>
+<p>を達成する設計。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">役割分担<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI capability query\nSAI_SWITCH_ATTR_FAST_LINKUP_*] --&gt; SO[switchorch\n(init)]
-    SO --&gt; SDB[(STATE_DB\nSWITCH_CAPABILITY|switch)]
-    User1[config switch-fast-linkup global ...] --&gt; CLI1[CLI 検証]
-    CLI1 --&gt; CDB1[(CONFIG_DB\nSWITCH_FAST_LINKUP|GLOBAL)]
-    CDB1 --&gt; SO
-    SO --&gt;|set switch attrs| SAI
-    User2[config interface fast-linkup ...] --&gt; CDB2[(CONFIG_DB\nPORT|&lt;intf&gt;.fast_linkup)]
-    CDB2 --&gt; PO[portsorch]
-    PO --&gt;|SAI_PORT_ATTR_FAST_LINKUP_ENABLED| SAI</code></pre>
-<h3 id="capability-discovery">Capability discovery<a class="headerlink" href="#capability-discovery" title="Permanent link">&para;</a></h3>
-<p><code>switchorch</code> の init 時に次を問い合わせる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME</code> の create/set 可否で <strong>対応可否</strong> を判定</li>
-<li>任意の <strong>レンジ</strong> を <code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME_RANGE</code> / <code>_GUARD_TIME_RANGE</code> から取得</li>
-</ul>
-<p>結果は <code>STATE_DB:SWITCH_CAPABILITY|switch</code> に下記キーで公開される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FAST_LINKUP_CAPABLE             = &quot;true&quot; / &quot;false&quot;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FAST_LINKUP_POLLING_TIMER_RANGE = &quot;&lt;min&gt;,&lt;max&gt;&quot;  (任意)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>FAST_LINKUP_GUARD_TIMER_RANGE   = &quot;&lt;min&gt;,&lt;max&gt;&quot;  (任意)
+  subgraph dhcpmon (multi-thread)
+    Main[main thread:&lt;br&gt;socket recv + cache++]
+    DBu[DB update thread:&lt;br&gt;20s ごとに COUNTERS_DB sync]
+  end
+  Sock4R[(socket DHCPv4 RX)] --&gt; Main
+  Sock4T[(socket DHCPv4 TX)] --&gt; Main
+  Sock6R[(socket DHCPv6 RX)] --&gt; Main
+  Sock6T[(socket DHCPv6 TX)] --&gt; Main
+  Main --&gt; Cache[in-process counter cache]
+  Cache --&gt; DBu
+  DBu --&gt; CDB[(COUNTERS_DB&lt;br&gt;DHCPV4_COUNTER_TABLE&lt;br&gt;DHCPV6_COUNTER_TABLE)]</code></pre>
+<p>socket は BPF program (<code>tcpdump -dd</code>) でフィルタしている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>socket</th>
+<th>フィルタ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DHCPv4 RX</td>
+<td><code>inbound and udp and (port 67 or port 68)</code></td>
+</tr>
+<tr>
+<td>DHCPv4 TX</td>
+<td><code>outbound and udp and (port 67 or port 68)</code></td>
+</tr>
+<tr>
+<td>DHCPv6 RX</td>
+<td><code>inbound and ip6 and (udp port 547 or udp port 546)</code></td>
+</tr>
+<tr>
+<td>DHCPv6 TX</td>
+<td><code>outbound and ip6 and (udp port 547 or udp port 546)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="context-interface-map">Context interface map<a class="headerlink" href="#context-interface-map" title="Permanent link">&para;</a></h3>
+<p><code>dhcpmon</code> 起動引数（<code>-id Vlan1000 -iu PortChannel1 -iu Ethernet42</code>）から <strong>downlink/uplink を context interface</strong> として登録し、配下の VLAN member / LAG member を context interface へマップする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  &quot;Vlan1000&quot;: &quot;Vlan1000&quot;,   &quot;Ethernet1&quot;: &quot;Vlan1000&quot;,  &quot;Ethernet2&quot;: &quot;Vlan1000&quot;,  &quot;Ethernet3&quot;: &quot;Vlan1000&quot;,   # downlink
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  &quot;PortChannel1&quot;: &quot;PortChannel1&quot;, &quot;Ethernet40&quot;: &quot;PortChannel1&quot;, &quot;Ethernet41&quot;: &quot;PortChannel1&quot;,            # uplink
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  &quot;Ethernet42&quot;: &quot;Ethernet42&quot;                                                                            # uplink
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>}
 </span></code></pre></div>
-<p>CLI / OA はこれを参照して入力検証する。レンジ未公表のプラットフォームでは「対応はあるが範囲制約は非公開」として、CLI 側はレンジチェックをスキップし、OA も SAI のエラーで拒否する形になる。</p>
-<h3 id="_4">グローバルパラメータの設定経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CLI as CLI
-    participant SDB as STATE_DB
-    participant CDB as CONFIG_DB
-    participant SO as switchorch
-    participant SAI as SAI
-    U-&gt;&gt;CLI: config switch-fast-linkup global --polling-time 60 --guard-time 10 --ber 12
-    CLI-&gt;&gt;SDB: read SWITCH_CAPABILITY|switch
-    CLI-&gt;&gt;CLI: validate (capability + range)
-    CLI-&gt;&gt;CDB: write SWITCH_FAST_LINKUP|GLOBAL
-    CDB--&gt;&gt;SO: notify
-    SO-&gt;&gt;SO: doCfgSwitchFastLinkupTableTask()
-    SO-&gt;&gt;SO: validate (cached cap)
-    SO-&gt;&gt;SAI: SET FAST_LINKUP_POLLING_TIME=60
-    SO-&gt;&gt;SAI: SET FAST_LINKUP_GUARD_TIME=10
-    SO-&gt;&gt;SAI: SET FAST_LINKUP_BER_THRESHOLD=12</code></pre>
-<p>部分更新が許容されており、未指定のフィールドはそのまま残る（partial update semantics）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応プラットフォームでは NOTICE ログを出して <strong>SAI 呼び出しなしでリターン</strong>（safe no-op）。</p>
-<h3 id="enabledisable">ポート単位の enable/disable<a class="headerlink" href="#enabledisable" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CLI as CLI
-    participant CDB as CONFIG_DB
-    participant PO as portsorch
-    participant SAI as SAI
-    U-&gt;&gt;CLI: config interface fast-linkup Ethernet0 enabled
-    CLI-&gt;&gt;CDB: PORT|Ethernet0.fast_linkup = true
-    CDB--&gt;&gt;PO: notify
-    alt SAI_PORT_ATTR_FAST_LINKUP_ENABLED supported
-        PO-&gt;&gt;SAI: SET FAST_LINKUP_ENABLED=true on port
-    else not supported
-        PO-&gt;&gt;PO: NOTICE log, no SAI call
-    end</code></pre>
-<p><code>portsorch</code> 側でも <code>querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)</code> を init で打ち、<code>m_fastLinkupPortAttrSupported</code> にキャッシュ。CLI でのアラインメント（インタフェース別名解決）は CLI 側責務<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="recovery-only">動作モデル（recovery only）<a class="headerlink" href="#recovery-only" title="Permanent link">&para;</a></h3>
-<p>ASIC ファームウェアの挙動として、<strong>リンクが既に Up していて落ちた後の再起動</strong> にのみ Fast Link-Up を試みる。フローは次のとおり<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>リンクフラップ発生。</li>
-<li>ASIC FW は前回の EQ を使って <code>polling_time</code> 秒以内に Up を試みる。</li>
-<li>成功したら <code>guard_time</code> のガードタイマーを開始。満了時点で BER を計測。</li>
-<li>BER が <code>ber_threshold = 1e-&lt;E&gt;</code> を超えていたら <strong>フル EQ にフォールバック</strong>。</li>
-<li><code>polling_time</code> 内に Fast Link-Up が成功しなければ通常の Link-Up シーケンスに戻る。</li>
-</ol>
-<h3 id="ber">BER 閾値の表記<a class="headerlink" href="#ber" title="Permanent link">&para;</a></h3>
-<p><code>ber_threshold</code> は <strong>負指数の絶対値</strong> を入れる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。例えば <code>12</code> を指定すると <code>1e-12</code> を許容上限とする。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/fast-linkup/fast-link-up-hld.md#L60-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  - polling_time (sec): max time to attempt fast link-up before falling back.
-  - guard_time (sec): period the link must remain UP with acceptable BER.
-  - ber_threshold (exponent): acceptable BER as 1e-<E> (e.g., 12 → 1e-12).
-reasoning: 3 つのパラメータの単位とセマンティクスの根拠。
--->
-
-<h3 id="_5">エラーハンドリング / ログ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>エラーは CLI 側 / OA 側の両方で多段にチェック。代表的な事象とログ重大度<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>socket interface（パケットが入ってきた物理 IF）と context interface の両方で counter をインクリメント<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="dhcpv4-counter">DHCPv4 counter 増分条件<a class="headerlink" href="#dhcpv4-counter" title="Permanent link">&para;</a></h3>
+<p><code>Option 53</code>（packet type）+ <code>Destination IP</code>（IP header）+ <code>Gateway IP</code>（DHCPv4 header）の 3 フィールドで判定<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>事象</th>
-<th>主体</th>
-<th>重大度</th>
+<th>方向</th>
+<th>RX 条件</th>
+<th>TX 条件</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Capability query failed</td>
-<td>switchorch</td>
-<td>ERROR</td>
+<td>Client → Server</td>
+<td>downlink IF かつ dst-ip = bcast または gateway-ip かつ DHCP gateway = 0</td>
+<td>uplink IF かつ DHCP gateway = device gateway</td>
 </tr>
 <tr>
-<td>Global parameters applied (SAI)</td>
-<td>switchorch</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>Out-of-range global rejected</td>
-<td>switchorch</td>
-<td>NOTICE</td>
-</tr>
-<tr>
-<td>Unsupported operation on SWITCH_FAST_LINKUP</td>
-<td>switchorch</td>
-<td>ERROR</td>
-</tr>
-<tr>
-<td>Unknown field in SWITCH_FAST_LINKUP ignored</td>
-<td>switchorch</td>
-<td>WARN</td>
-</tr>
-<tr>
-<td>Per-port fast_linkup applied (SAI)</td>
-<td>portsorch</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td>Per-port fast_linkup apply failed (SAI)</td>
-<td>portsorch</td>
-<td>ERROR</td>
-</tr>
-<tr>
-<td>Fast-linkup not supported (switch/port path)</td>
-<td>both</td>
-<td>NOTICE</td>
+<td>Server → Client</td>
+<td>uplink IF かつ dst-ip = device gateway かつ DHCP gateway = device gateway</td>
+<td>downlink IF かつ DHCP gateway = device gateway</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SWITCH_FAST_LINKUP</code></td>
-<td><code>GLOBAL</code></td>
-<td><code>polling_time</code></td>
-<td>秒。Fast Link-Up 試行最大時間</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>guard_time</code></td>
-<td>秒。BER 評価までのガード期間</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>ber_threshold</code></td>
-<td>整数。負指数（例: <code>12</code> → <code>1e-12</code>）</td>
-</tr>
-<tr>
-<td><code>PORT</code></td>
-<td><code>&lt;ifname&gt;</code></td>
-<td><code>fast_linkup</code></td>
-<td><code>"true"</code> / <code>"false"</code>（既定 <code>"false"</code>）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="state_db">関連する STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SWITCH_CAPABILITY</code></td>
-<td><code>switch</code></td>
-<td><code>FAST_LINKUP_CAPABLE</code></td>
-<td><code>true</code> / <code>false</code></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>FAST_LINKUP_POLLING_TIMER_RANGE</code></td>
-<td><code>"&lt;min&gt;,&lt;max&gt;"</code>（任意）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>FAST_LINKUP_GUARD_TIMER_RANGE</code></td>
-<td><code>"&lt;min&gt;,&lt;max&gt;"</code>（任意）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config switch-fast-linkup global [--polling-time &lt;sec&gt;] [--guard-time &lt;sec&gt;] [--ber &lt;E&gt;]</code></td>
-<td>グローバル設定</td>
-</tr>
-<tr>
-<td><code>config interface fast-linkup &lt;ifname&gt; {enabled\|disabled}</code></td>
-<td>ポート単位の有効化</td>
-</tr>
-<tr>
-<td><code>show switch-fast-linkup global [--json]</code></td>
-<td>設定確認</td>
-</tr>
-<tr>
-<td><code>show interfaces fast-linkup status</code></td>
-<td>ポート単位状態</td>
-</tr>
-</tbody>
-</table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-fast-linkup.yang</code> モジュール（<code>SWITCH_FAST_LINKUP.GLOBAL</code> のみ）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">GLOBAL</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">polling_time</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint16</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">guard_time</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint16</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">ber_threshold</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint8</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>ポート側 <code>fast_linkup</code> は既存の <code>sonic-port.yang</code> に従う。動的レンジは YANG ではモデリングせず CLI 側で STATE_DB を参照して検証する設計<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># capability 確認</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># グローバル設定</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>config<span class="w"> </span>switch-fast-linkup<span class="w"> </span>global<span class="w"> </span>--polling-time<span class="w"> </span><span class="m">60</span><span class="w"> </span>--guard-time<span class="w"> </span><span class="m">10</span><span class="w"> </span>--ber<span class="w"> </span><span class="m">12</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># ポート毎に有効化</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>config<span class="w"> </span>interface<span class="w"> </span>fast-linkup<span class="w"> </span>Ethernet0<span class="w"> </span>enabled
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># 確認</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>show<span class="w"> </span>switch-fast-linkup<span class="w"> </span>global
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>show<span class="w"> </span>interfaces<span class="w"> </span>fast-linkup<span class="w"> </span>status
-</span></code></pre></div>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="dhcpv6-counter">DHCPv6 counter<a class="headerlink" href="#dhcpv6-counter" title="Permanent link">&para;</a></h3>
+<p><code>Message-type</code> で 13 種 + <code>Unknown</code> / <code>Malformed</code>。送受信方向は spec 準拠。<code>pcapplusplus</code> で DHCPv6 ヘッダ解析<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>カウント除外条件:
+- physical / context IF が無効
+- 構造異常（option 長/形式不正） → <code>Malformed</code>
+- IPv6 ext header 末尾が UDP でない、Option ID &gt; 147 → <code>Malformed</code>
+- Hop limit &gt;= 8（RFC8415）→ ignore
+- Dual-ToR で <strong>standby IF</strong> から来た packet
+- Link Address 不一致（Option 9 と Relay-forw の関係）</p>
+<h3 id="dual-tor">Dual-ToR 特殊ルール<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Auto-FEC / Link Training (LT) / Auto-Negotiation</strong>: フル EQ シーケンスのうち、FEC モードや LT 状態は EQ パラメータと密接に関連する。Fast Link-Up はパラメータ再利用のみが対象で、ピア設定が変わるシナリオでは再利用しても収束しない。</li>
-<li><strong>Warm reboot / Fast reboot</strong>: リンクが事前に Down → Up になる経路では「直前の EQ」が ASIC FW にどこまで残るかは ASIC 依存。HLD はその点まで踏み込んでいない。</li>
-<li><strong>Capability 未公表のプラットフォーム</strong>: <code>FAST_LINKUP_CAPABLE=false</code> の場合、グローバル設定は CLI で拒否され、ポート側は safe no-op になる。誤って <code>enabled</code> を入れたときに何が起きるかを事前に CLI で確認する。</li>
-<li><strong>BER 計測精度</strong>: <code>guard_time</code> 内の BER 計測精度は ASIC FW 依存。低トラフィック時は BER の信頼区間が広く、フォールバック判定が遅延する可能性。</li>
+<li>standby IF からの packet は <strong>drop</strong>（counter 加算せず）</li>
+<li>DHCPv4 のゲートウェイは Vlan IP ではなく <strong>Loopback IP</strong></li>
+<li>DHCPv6 は server へ <strong>Loopback</strong> から送出、Vlan LLA を含む <code>Option 18</code> 付与</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="persist-db-update-thread">Persist (DB update thread)<a class="headerlink" href="#persist-db-update-thread" title="Permanent link">&para;</a></h3>
+<p>20 秒間隔で全 cache を <code>COUNTERS_DB</code> の <code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> に sync<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="clear">Clear<a class="headerlink" href="#clear" title="Permanent link">&para;</a></h3>
+<p><code>sonic-clear</code> CLI 実行時:
+1. CLI が <code>COUNTERS_DB</code> を直接 zero clear
+2. dhcpmon プロセスへ signal 送信
+3. main thread 内で <code>COUNTERS_DB → cache</code> の同期取り込み（クリアの取り込み）</p>
+<h3 id="counter-reset">Counter Reset 契機<a class="headerlink" href="#counter-reset" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>契機</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhcp_relay container 再起動</td>
+<td><code>start.sh</code> で全 counter clear</td>
+</tr>
+<tr>
+<td>dhcpmon プロセス再起動</td>
+<td>downlink/uplink + VLAN_MEMBER / PORTCHANNEL_MEMBER の関連 IF entry を 0 で初期化</td>
+</tr>
+<tr>
+<td>VLAN add/del</td>
+<td>container 再起動が必要（vlan del は CLI 自動再起動）</td>
+</tr>
+<tr>
+<td>VLAN/LAG member 変更</td>
+<td>期待: entry add (=0) / del 連動。<strong>現状未サポート、将来対応</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DHCPV4_COUNTER_TABLE|Vlan1000           RX={&quot;Discover&quot;:1,...}    TX={&quot;Offer&quot;:2,...}
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>DHCPV4_COUNTER_TABLE|Vlan1000:Ethernet4 RX={...}                 TX={...}
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DHCPV6_COUNTER_TABLE|Vlan1000           RX={&quot;Solicit&quot;:1,...}     TX={&quot;Advertise&quot;:2,...}
+</span></code></pre></div>
+<p>uplink IF キーには <strong>VLAN プレフィックス</strong> (<code>Vlan1000:Ethernet4</code>) を付け、複数 VLAN で uplink IF が共有される構成を区別する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>counter<span class="w"> </span><span class="o">[</span>--dir<span class="w"> </span>TX<span class="p">|</span>RX<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;type&gt;<span class="o">]</span><span class="w"> </span>&lt;vlan&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv6<span class="w"> </span>counters<span class="w"> </span><span class="o">[</span>--dir<span class="w"> </span>TX<span class="p">|</span>RX<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;type&gt;<span class="o">]</span><span class="w"> </span>&lt;vlan&gt;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-clear<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>counter<span class="w"> </span><span class="o">[</span>--dir<span class="w"> </span>TX<span class="p">|</span>RX<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;vlan&gt;<span class="o">]</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sonic-clear<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv6<span class="w"> </span>counters<span class="w"> </span><span class="o">[</span>--dir<span class="w"> </span>TX<span class="p">|</span>RX<span class="o">]</span><span class="w"> </span><span class="o">[</span>--type<span class="w"> </span>&lt;type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;vlan&gt;<span class="o">]</span>
+</span></code></pre></div>
+<p><code>show</code> には <code>--dir</code> または <code>--type</code> のいずれかが必要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定したのに反映されない: <code>STATE_DB SWITCH_CAPABILITY|switch.FAST_LINKUP_CAPABLE</code> を確認。<code>false</code> ならプラットフォーム未対応。</li>
-<li>レンジ外で拒否される: <code>FAST_LINKUP_POLLING_TIMER_RANGE</code> / <code>FAST_LINKUP_GUARD_TIMER_RANGE</code> を <code>redis-cli -n 6</code> で確認し、許容範囲内に収める。</li>
-<li>リンクフラップ後の収束が遅い: BER 閾値を厳しくしすぎている可能性。<code>ber_threshold</code> を緩めるとフォールバック頻度が下がる代わりに品質劣化リスクが上がる。</li>
-<li>一部ポートだけ Fast Link-Up が効かない: ポート側 <code>fast_linkup=true</code> になっていてもプラットフォーム / SAI 実装が未対応の可能性。<code>syslog</code> の <code>Fast-linkup not supported (switch/port path)</code> NOTICE を確認。</li>
-<li>syslog に <code>Unknown field in SWITCH_FAST_LINKUP ignored</code> WARN: 古い CLI / 新しい OA、または逆の組み合わせでスキーマズレが発生している可能性。</li>
+<li>VLAN/LAG member 変更時の counter entry 動的追加・削除は将来対応<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>VLAN add/del は container 再起動を要する（vlan del は CLI 自動再起動）</li>
+<li>counter は 20 秒間隔で <code>COUNTERS_DB</code> に flush。直近 20 秒分はメモリのみ</li>
+<li>DHCPv6 Option ID &gt; 147 は Malformed 扱い（IANA 予約準拠）</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>dhcp_relay container</strong>: 起動・再起動で counter リセット</li>
+<li><strong>Dual-ToR</strong>: standby IF drop、Loopback ベース送受信、Option 18 (Vlan LLA)</li>
+<li><strong>VLAN_MEMBER / PORTCHANNEL_MEMBER</strong>: 初期化対象 IF の決定根拠</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/fast-linkup/fast-link-up-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md">sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
