@@ -860,6 +860,19 @@
       "priority": "medium",
       "issue": 145,
       "pr": 146
+    },
+    {
+      "page": "docs/acl-qos/dash-acl-tags.md",
+      "verification": "hld-only",
+      "concerns": [
+        "DashAclOrch の DASH_PREFIX_TAG_TABLE 購読 + tag 展開ロジックの実装存在確認",
+        "DASH_ACL_RULE_TABLE の src_tag / dst_tag フィールド受理コードの確認",
+        "ENI bind 済み ACL group の更新時に「新 group コピー → bind → 旧削除」シーケンスが現行 master にあるか未確認",
+        "DASH_PREFIX_TAG_TABLE のスコープ（global / per ENI）の Open Item の最終決定状況確認",
+        "Stage 2 (SAI API 経由のタグ表現) の取り込み状況確認"
+      ],
+      "priority": "medium",
+      "issue": 147
     }
   ]
 }
