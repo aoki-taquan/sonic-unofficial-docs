@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/byte-packet-rates-port-utilization-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/packetio/">
       
       
-        <link rel="prev" href="../aggregate-voq-counters-in-sonic/">
+        <link rel="prev" href="../gnoi-hld-for-file-and-factory-reset-apis/">
       
       
-        <link rel="next" href="../sonic-counter-initialization-optimization/">
+        <link rel="next" href="../save-on-set-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>バイト/パケットレートとポート使用率（RATES テーブル + EMA） - SONiC 非公式ドキュメント</title>
+        <title>P4Runtime PacketIO（generic netlink + send_to_ingress） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rates-ema" class="md-skip">
+        <a href="#p4runtime-packetiogeneric-netlink-send_to_ingress" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              バイト/パケットレートとポート使用率（RATES テーブル + EMA）
+              P4Runtime PacketIO（generic netlink + send_to_ingress）
             
           </span>
         </div>
@@ -379,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -3025,6 +3025,8 @@
       
   
   
+    
+  
   
   
     
@@ -3058,20 +3060,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3089,13 +3094,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3115,7 +3120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -3143,7 +3148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -3171,7 +3176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -3199,7 +3204,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3224,10 +3229,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4Runtime PacketIO（generic netlink + send_to_ingress）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3243,6 +3275,320 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#receive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Receive 側設計
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Receive 側設計">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#genetlink-hostif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        genetlink hostif 利用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-defined-trap-genetlink-hostif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        user-defined trap → genetlink hostif
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copporch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoppOrch の役割
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receive_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダドライバ側の Receive 実装
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ベンダドライバ側の Receive 実装">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. パケット経路判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. メタデータ抽出と汎用形式化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-genetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. genetlink で送出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transmit 側設計
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Transmit 側設計">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directed-transmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directed transmit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_to_ingress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send_to_ingress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transmit_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダ Transmit 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receive-transmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントフロー（receive + transmit 統合）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3255,7 +3601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3283,7 +3629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3311,7 +3657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3339,7 +3685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3367,7 +3713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -3713,8 +4059,6 @@
       
   
   
-    
-  
   
   
     
@@ -3740,23 +4084,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -3774,13 +4115,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3800,7 +4141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3825,37 +4166,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -3871,236 +4185,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI カウンタの選択
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        計算式（生レート）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EMA による平滑化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        COUNTERS_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flex Counter グループの動的登録
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI への影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counterpoll" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        counterpoll 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する COUNTERS_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4113,7 +4197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-counter-initialization-optimization/" class="md-nav__link">
+      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
@@ -4141,7 +4225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -4169,7 +4253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -4197,7 +4281,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -4565,10 +4649,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#receive" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        Receive 側設計
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Receive 側設計">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#genetlink-hostif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        genetlink hostif 利用
       
     </span>
   </a>
@@ -4576,10 +4672,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
+  <a href="#user-defined-trap-genetlink-hostif" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI カウンタの選択
+        user-defined trap → genetlink hostif
       
     </span>
   </a>
@@ -4587,10 +4683,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#copporch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        計算式（生レート）
+        CoppOrch の役割
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receive_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダドライバ側の Receive 実装
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ベンダドライバ側の Receive 実装">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. パケット経路判定
       
     </span>
   </a>
@@ -4598,10 +4722,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ema" class="md-nav__link">
+  <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        EMA による平滑化
+        2. メタデータ抽出と汎用形式化
       
     </span>
   </a>
@@ -4609,10 +4733,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
+  <a href="#3-genetlink" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTERS_DB スキーマ
+        3. genetlink で送出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transmit 側設計
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Transmit 側設計">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directed-transmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directed transmit
       
     </span>
   </a>
@@ -4620,10 +4772,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
+  <a href="#send_to_ingress" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flex Counter グループの動的登録
+        send_to_ingress
       
     </span>
   </a>
@@ -4631,21 +4783,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#transmit_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI への影響
+        ベンダ Transmit 拡張
       
     </span>
   </a>
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
-  <a href="#counterpoll" class="md-nav__link">
+  <a href="#receive-transmit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        counterpoll 拡張
+        イベントフロー（receive + transmit 統合）
       
     </span>
   </a>
@@ -4658,7 +4815,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4681,10 +4838,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db_1" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する COUNTERS_DB
+        関連する SAI
       
     </span>
   </a>
@@ -4692,7 +4849,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -4703,7 +4860,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4719,7 +4876,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4730,7 +4898,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4741,7 +4909,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4768,7 +4936,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/byte-packet-rates-port-utilization-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/packetio.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4778,141 +4946,131 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>portsorch</code> / <code>intfsorch</code> の <code>addRifToFlexCounter</code> / Lua プラグインの存在と配置、<code>config rate smoothing_interval</code> CLI 実装、<code>counterpoll port_rates</code> / <code>rif_rates</code> トークン実装、<code>RATES</code> テーブルの実 schema は未裏取り。</p>
+<p><code>CoppOrch</code> の user-defined trap + genetlink hostif 生成、<code>SEND_TO_INGRESS_PORT</code> の <code>PortsOrch</code> での処理、SAI <code>SAI_HOSTIF_TYPE_GENETLINK</code> / <code>SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME</code> の community SAI 取り込み、ベンダ kernel ドライバ側の <code>genl_packet</code> フィルタ実装は実コードでの裏取り未済（PINS 関連）。</p>
 </div>
-<h1 id="rates-ema">バイト/パケットレートとポート使用率（RATES テーブル + EMA）<a class="headerlink" href="#rates-ema" title="Permanent link">&para;</a></h1>
+<h1 id="p4runtime-packetiogeneric-netlink-send_to_ingress">P4Runtime PacketIO（generic netlink + send_to_ingress）<a class="headerlink" href="#p4runtime-packetiogeneric-netlink-send_to_ingress" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>portstat</code> / <code>intfstat</code> が表示する <code>RX_BPS</code> / <code>RX_PPS</code> / <code>RX_UTIL</code> 等のレート列は、長らく <strong>CLI 側でカウンタの差分を計算する</strong> 方式で実装されていた。問題は次の通り<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC は通常の netdev 経由の Packet I/O をサポートしているが、<strong>P4Runtime（PINS / SDN コントローラ）</strong> には固有の要件があり、それを満たすための拡張を本 HLD が定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ユーザが <code>sonic-clear counters</code> を打つとカウンタの基準点が動き、レート計算がガタつく。</li>
-<li>「ユーザ毎に独立したカウンタ」アプローチと組み合わせるとレートの定義が揺れる。</li>
-<li>計算間隔がユーザ操作に依存するため、ある瞬間のレートが固定的でない。</li>
+<li><strong>Receive</strong>:<ul>
+<li>controller が install した punt flow に <strong>マッチするパケットだけ</strong> が届く専用チャネル</li>
+<li>パケットの <strong>input port + target egress port (= switch pipeline で出ていたであろう port)</strong> をメタデータとして取得</li>
 </ul>
-<p>本機能は <strong>Flex Counter インフラの上にレート計算用のグループ (<code>PORT_RATES</code>, <code>RIF_RATES</code>) を新設</strong> し、Lua プラグインが固定インターバルで生レートを算出 → <strong>指数移動平均 (EMA)</strong> で平滑化したうえで <code>COUNTERS_DB</code> の <strong><code>RATES</code> テーブル</strong> に保存する設計である。<code>portstat</code> / <code>intfstat</code> はそこを読むだけ。<code>sonic-clear counters</code> を打っても影響を受けない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+</li>
+<li><strong>Transmit</strong>:<ul>
+<li>任意の設定済み port に直接 packet を出す <strong>directed transmit</strong></li>
+<li><strong><code>send_to_ingress</code></strong> 機能で「ASIC の forwarding pipeline に再注入」して egress 選択を ASIC に任せる送信モード</li>
+</ul>
+</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    SAI[SAI port/RIF stats] --&gt; FC1[Flex Counter\n(既存 port/rif counters, 1s)]
-    FC1 --&gt; CDB1[(COUNTERS_DB\nCOUNTERS:vid)]
-    CDB1 --&gt;|新 FC group| FC2[Flex Counter\n(PORT_RATES / RIF_RATES)]
-    FC2 --&gt;|Lua plugin| CALC[計算\n(diff/delta + EMA)]
-    SP[(CONFIG_DB\nPORT speed / RIF speed)] --&gt; CALC
-    SCFG[(CONFIG_DB\nRATES.PORT_ALPHA, RIF_ALPHA)] --&gt; CALC
-    CALC --&gt; CDB2[(COUNTERS_DB\nRATES:vid)]
-    CDB2 --&gt; CLI[portstat / intfstat]</code></pre>
-<p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>既存の port / RIF 用 Flex Counter は元の SAI カウンタを <code>COUNTERS_DB:COUNTERS:vid</code> に書き続ける。</li>
-<li>新規 <code>PORT_RATES</code> / <code>RIF_RATES</code> グループは独自インターバル（既定 1s、設定可）で動き、対応 Lua プラグインが計算を行う。</li>
-<li>計算は <code>RATES:vid</code> というキーに保存される。<code>COUNTERS:vid</code> と同じ vid をキーに使うが、テーブル名で完全分離。</li>
-<li>Lua プラグインは前回値 (<code>*_last</code>) も <code>RATES:vid</code> 内に持ち、自分で更新する。</li>
-</ul>
-<h3 id="sai">SAI カウンタの選択<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<h3 id="receive">Receive 側設計<a class="headerlink" href="#receive" title="Permanent link">&para;</a></h3>
+<h4 id="genetlink-hostif">genetlink hostif 利用<a class="headerlink" href="#genetlink-hostif" title="Permanent link">&para;</a></h4>
+<p>通常の netdev port は <strong>すべての punt パケット</strong> を受信し、メタデータも input port のみ。P4Runtime はこれを区別したいため、<strong><code>SAI_HOSTIF_TYPE_GENETLINK</code> 型の hostif</strong> を使う<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>計算</th>
-<th>port 用 SAI カウンタ</th>
-<th>RIF 用 SAI カウンタ</th>
+<th>SAI 属性</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>octets</td>
-<td><code>SAI_PORT_STAT_IF_IN/OUT_OCTETS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN/OUT_OCTETS</code></td>
+<td><code>SAI_HOSTIF_TYPE_GENETLINK</code></td>
+<td>hostif 種別 = generic netlink</td>
 </tr>
 <tr>
-<td>packets</td>
-<td><code>SAI_PORT_STAT_IF_IN/OUT_UCAST_PKTS</code> + <code>SAI_PORT_STAT_IF_IN/OUT_NON_UCAST_PKTS</code></td>
-<td><code>SAI_ROUTER_INTERFACE_STAT_IN/OUT_PACKETS</code></td>
+<td><code>SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME</code></td>
+<td>受信側が listen する multicast group 名</td>
 </tr>
 </tbody>
 </table>
-<p>port の PPS は <strong>UCAST と NON_UCAST の合算</strong> を使う点が独特<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。RIF はもともと <code>IN/OUT_PACKETS</code> が両方を含むためそのまま。</p>
-<h3 id="_4">計算式（生レート）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[RX|TX]_BPS = (octets - octets_last) / delta
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>[RX|TX]_PPS = (packets - packets_last) / delta   # port は UCAST + NON_UCAST の合算
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>[RX|TX]_UTIL = [RX|TX]_BPS / [PORT|RIF]_RATE     # PORT_RATE はリンク速度
-</span></code></pre></div>
-<p><code>delta</code> は <strong>対応する FC グループのインターバル</strong>。port の場合は <code>PORT_RATES</code> の <code>POLL_INTERVAL</code>、RIF の場合は <code>RIF_RATES</code> の <code>POLL_INTERVAL</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ema">EMA による平滑化<a class="headerlink" href="#ema" title="Permanent link">&para;</a></h3>
-<p>瞬間値はマイクロバーストで揺れやすいため、EMA を適用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>N     = [PORT|RIF]_SMOOTH_INTERVAL  (CLI で設定可)
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ALPHA = 2 / (N + 1)
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>EMA   = ALPHA * VALUE + (1 - ALPHA) * EMA_last
-</span></code></pre></div>
-<p><code>ALPHA</code> は CONFIG_DB に <strong>事前計算した値</strong> を入れる設計。Lua プラグインから毎回計算しなくて済む。</p>
-<p><code>SMOOTH_INTERVAL</code> を変えると EMA の応答性が変わる: <code>N=1</code> で実質 EMA 無効、<code>N</code> を大きくすると遅延と引き換えに滑らかになる。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  ALPHA (precalculated):
-  N = [PORT|RIF]_SMOOTH_INTERVAL
-  ALPHA = 2/(N+1)
-  EMA = ALPHA * VALUE + (1 - ALPHA) * EMA_last
-reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。
--->
-
-<h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
-<p><code>RATES:port_vid</code> / <code>RATES:rif_vid</code> に下記を保持<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>RATES:&lt;port_vid&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   # 前回値（Lua plugin が diff 計算に使う）
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   SAI_PORT_STAT_IF_IN_UCAST_PKTS_last
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS_last
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   SAI_PORT_STAT_IF_OUT_UCAST_PKTS_last
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS_last
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   SAI_PORT_STAT_IF_IN_OCTETS_last
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>   SAI_PORT_STAT_IF_OUT_OCTETS_last
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>   # 計算結果（CLI が参照）
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>RATES:&lt;rif_vid&gt;
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>   SAI_ROUTER_INTERFACE_STAT_IN_OCTETS_last
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>   SAI_ROUTER_INTERFACE_STAT_IN_PACKETS_last
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS_last
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS_last
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
-</span></code></pre></div>
-<p>CONFIG_DB 側は次のキーで設定が入る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>RATES
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   PORT_SMOOTH_INTERVAL
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>   RIF_SMOOTH_INTERVAL
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>   PORT_ALPHA       # 事前計算
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   RIF_ALPHA        # 事前計算
-</span></code></pre></div>
-<h3 id="flex-counter">Flex Counter グループの動的登録<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h3>
-<p>ポートと RIF はそれぞれ <code>portsorch</code> / <code>intfsorch</code> がライフサイクルを管理する。RIF 側は <code>addRifToFlexCounter()</code> / <code>removeRifFromFlexCounter()</code> メソッドで動的に登録/解除する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新しい RIF が増えたタイミングで自動で <code>RIF_RATES</code> の対象になり、削除時に外れる。</p>
+<p>これは sFlow の sample 配信と同じ仕組み。</p>
+<h4 id="user-defined-trap-genetlink-hostif">user-defined trap → genetlink hostif<a class="headerlink" href="#user-defined-trap-genetlink-hostif" title="Permanent link">&para;</a></h4>
+<p>P4Runtime は <strong>user-defined trap</strong> を作成し、これを genetlink hostif に bind する。<code>HOSTIF_TABLE_ENTRY</code> で trap → hostif マッピングを programming する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>sequenceDiagram
-    participant ORCH as portsorch / intfsorch
-    participant FC as Flex Counter (PORT_RATES/RIF_RATES)
-    participant LUA as Lua plugin
-    participant CDB as COUNTERS_DB
-    Note over ORCH,FC: 起動 / RIF 追加
-    ORCH-&gt;&gt;FC: register vid
-    loop interval 毎
-        FC-&gt;&gt;CDB: read COUNTERS:&lt;vid&gt;
-        FC-&gt;&gt;LUA: invoke (vid, current, last)
-        LUA-&gt;&gt;CDB: read RATES:&lt;vid&gt;.*_last, port speed
-        LUA-&gt;&gt;LUA: diff / delta, EMA
-        LUA-&gt;&gt;CDB: write RATES:&lt;vid&gt; (rate values + new *_last)
+    participant P4 as P4Runtime
+    participant CO as CoppOrch
+    participant SAI
+    participant KDR as kernel driver
+    P4-&gt;&gt;CO: ACL/punt flow install with user-defined trap
+    CO-&gt;&gt;SAI: create_hostif (GENETLINK, mcgrp_name)
+    CO-&gt;&gt;SAI: create_hostif_trap (user-defined)
+    CO-&gt;&gt;SAI: hostif_table_entry: trap → genetlink hostif
+    Note over P4,KDR: 実トラフィック
+    KDR-&gt;&gt;KDR: punted pkt header の tag を判定
+    alt tag == user-defined
+        KDR-&gt;&gt;P4: genetlink multicast (metadata 付き)
+    else
+        KDR-&gt;&gt;KDR: 既存 netdev に dispatch
     end</code></pre>
-<h3 id="cli">CLI への影響<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>ユーザ向けの <code>show</code> 出力は <strong>既存と同じ列</strong> を返す。CLI は内部で <code>COUNTERS:vid</code> ではなく <code>RATES:vid</code> を参照するように切り替わるだけ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>-p / --period</code> オプションを使うと「指定期間で計算したレート」を見せる必要があるが、その場合は <strong>CLI 側でスナップショット差分を取る方式</strong> に切り替えるとされている<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。常用は RATES テーブル、<code>-p</code> 指定時のみスナップショット計算という二系統。</p>
-<h3 id="counterpoll">counterpoll 拡張<a class="headerlink" href="#counterpoll" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>counterpoll [port_rates|rif_rates] interval &lt;seconds&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll [port_rates|rif_rates] [enable|disable]
-</span></code></pre></div>
-<p>ガード条件<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="copporch">CoppOrch の役割<a class="headerlink" href="#copporch" title="Permanent link">&para;</a></h4>
+<p>CoppOrch は <strong>CPU queue ごとの新 trap group</strong> を処理し<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、ACL entry ごとに user-defined trap を作る:</p>
 <ul>
-<li>対応する <strong>counter polling</strong> (port / rif counters) が disable の状態で <code>port_rates</code> / <code>rif_rates</code> を enable しようとするとエラー。</li>
-<li><code>port_rates</code> の interval を <strong>counter polling の interval より短く</strong> 設定しようとすると <strong>警告</strong> を出し、counter polling と同じ interval にそろえる。</li>
+<li>受信 punt パケットの <strong>CPU QoS queue を ACL entry 単位で制御</strong></li>
+<li>trap → hostif マッピングを CONFIG_DB の <code>copp_cfg.j2</code> 由来で生成</li>
 </ul>
-<p>EMA の窓だけは別 CLI で設定する:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span><span class="o">[</span>all<span class="p">|</span>port<span class="p">|</span>rif<span class="o">]</span><span class="w"> </span>&lt;interval&gt;
+<h3 id="receive_1">ベンダドライバ側の Receive 実装<a class="headerlink" href="#receive_1" title="Permanent link">&para;</a></h3>
+<p>ASIC ベンダの kernel ドライバ（DMA 受信側）に 3 つの責務<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="1">1. パケット経路判定<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
+<p>各 punt パケットの header に含まれる識別子を見て、<strong>netdev へ送るか genetlink へ送るか</strong> を判定:</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#define GENL_PACKET_NAME &quot;genl_packet&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">knet_filter_cb</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">pkt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dev_no</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">meta</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                          </span><span class="kt">int</span><span class="w"> </span><span class="n">chan</span><span class="p">,</span><span class="w"> </span><span class="n">kcom_filter_t</span><span class="w"> </span><span class="o">*</span><span class="n">kf</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">{</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">kf</span><span class="o">-&gt;</span><span class="n">desc</span><span class="p">,</span><span class="w"> </span><span class="n">PSAMPLE_CB_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">KCOM_FILTER_DESC_MAX</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">psample_filter_cb</span><span class="p">(</span><span class="n">pkt</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">dev_no</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">,</span><span class="w"> </span><span class="n">chan</span><span class="p">,</span><span class="w"> </span><span class="n">kf</span><span class="p">);</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">kf</span><span class="o">-&gt;</span><span class="n">desc</span><span class="p">,</span><span class="w"> </span><span class="n">GENL_PACKET_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">KCOM_FILTER_DESC_MAX</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">generic_filter_cb</span><span class="p">(</span><span class="n">pkt</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">dev_no</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">,</span><span class="w"> </span><span class="n">chan</span><span class="p">,</span><span class="w"> </span><span class="n">kf</span><span class="p">);</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">strip_tag_filter_cb</span><span class="p">(</span><span class="n">pkt</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">dev_no</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">,</span><span class="w"> </span><span class="n">chan</span><span class="p">,</span><span class="w"> </span><span class="n">kf</span><span class="p">);</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h4 id="2">2. メタデータ抽出と汎用形式化<a class="headerlink" href="#2" title="Permanent link">&para;</a></h4>
+<p>ベンダ固有 (unit / port number) を <strong><code>ifindex</code> 等の汎用表現</strong> に変換。sFlow 実装の流用が想定される。</p>
+<h4 id="3-genetlink">3. genetlink で送出<a class="headerlink" href="#3-genetlink" title="Permanent link">&para;</a></h4>
+<p><code>ingress_ifindex</code> / <code>egress_ifindex</code> 等の属性をパックし、generic netlink multicast socket に送る。SONiC 側に <strong>vendor-independent な submodule</strong> が用意されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="transmit">Transmit 側設計<a class="headerlink" href="#transmit" title="Permanent link">&para;</a></h3>
+<h4 id="directed-transmit">Directed transmit<a class="headerlink" href="#directed-transmit" title="Permanent link">&para;</a></h4>
+<p>特別な変更は不要。P4Runtime は init 時に各 netdev port の socket を作り、対応 socket に <code>write()</code> する。</p>
+<h4 id="send_to_ingress"><code>send_to_ingress</code><a class="headerlink" href="#send_to_ingress" title="Permanent link">&para;</a></h4>
+<p>新しい <strong>CPU port 紐づけ netdev port</strong> を作り、そこに書いたパケットが <strong>ASIC の forwarding pipeline の入口</strong> に注入される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<pre class="mermaid"><code>graph LR
+    P4[P4Runtime app] --&gt;|write socket| NDV[send_to_ingress&lt;br/&gt;netdev port]
+    NDV --&gt; CPU[CPU port (ASIC)]
+    CPU --&gt; PIPE[ASIC forwarding pipeline]
+    PIPE --&gt; EGR[egress port 自動選択]</code></pre>
+<p>設定は <code>CONFIG_DB</code> の <strong><code>SEND_TO_INGRESS_PORT</code></strong> table<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;SEND_TO_INGRESS_PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;send_to_ingress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>PortsOrch</code> がこれを購読し、SAI の <code>create_hostif</code> を CPU port に対して呼び <strong>netdev type hostif を CPU port に紐づけて作る</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="transmit_1">ベンダ Transmit 拡張<a class="headerlink" href="#transmit_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>通常 SAI の hostif (netdev) は <strong>physical port / VLAN / LAG にのみ作れる</strong>。CPU port 用に作れるよう拡張が必要</li>
+<li>packet が <strong>CPU port から ingress</strong> したときに ASIC が forward するためのベンダ固有設定（通常 CPU port は egress 側のみ）</li>
+</ul>
+<h3 id="receive-transmit">イベントフロー（receive + transmit 統合）<a class="headerlink" href="#receive-transmit" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant P4 as P4Runtime
+    participant CO as CoppOrch
+    participant PO as PortsOrch
+    participant SAI
+    participant ASIC
+    P4-&gt;&gt;CO: trap install (user-defined)
+    CO-&gt;&gt;SAI: hostif (GENETLINK) + trap
+    P4-&gt;&gt;PO: SEND_TO_INGRESS_PORT 設定
+    PO-&gt;&gt;SAI: create_hostif on CPU port (netdev)
+    Note over P4,ASIC: 動的トラフィック
+    ASIC--&gt;&gt;P4: punted pkt → genetlink mcgrp (metadata 付き)
+    P4-&gt;&gt;SAI: write to send_to_ingress netdev
+    SAI-&gt;&gt;ASIC: CPU port 経由で pipeline に injection
+    ASIC-&gt;&gt;ASIC: 通常の forwarding</code></pre>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4925,107 +5083,87 @@ reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置�
 </thead>
 <tbody>
 <tr>
-<td><code>RATES</code></td>
-<td>（単一エントリ）</td>
-<td><code>PORT_SMOOTH_INTERVAL</code></td>
-<td>EMA の N（port 用）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>RIF_SMOOTH_INTERVAL</code></td>
-<td>EMA の N（RIF 用）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>PORT_ALPHA</code></td>
-<td>事前計算: <code>2/(N+1)</code></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>RIF_ALPHA</code></td>
-<td>事前計算</td>
-</tr>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>PORT_RATES</code></td>
-<td><code>FLEX_COUNTER_STATUS</code>, <code>POLL_INTERVAL</code></td>
-<td>port レート計算 FC group</td>
-</tr>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>RIF_RATES</code></td>
-<td>同上</td>
-<td>RIF レート計算 FC group</td>
+<td><code>SEND_TO_INGRESS_PORT</code></td>
+<td><code>send_to_ingress</code></td>
+<td>(空)</td>
+<td>CPU port を ingress として使う netdev port を作る</td>
 </tr>
 </tbody>
 </table>
-<h3 id="counters_db_1">関連する COUNTERS_DB<a class="headerlink" href="#counters_db_1" title="Permanent link">&para;</a></h3>
-<p><code>RATES:&lt;vid&gt;</code> に上述の前回値 + レート結果。CLI / telemetry は基本的にこれを読む。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<h3 id="sai">関連する SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>機能</th>
+<th>利用</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>counterpoll port_rates {enable\|disable}</code></td>
-<td>PORT_RATES グループ ON/OFF</td>
+<td><code>SAI_HOSTIF_TYPE_GENETLINK</code></td>
+<td>generic netlink hostif 作成</td>
 </tr>
 <tr>
-<td><code>counterpoll rif_rates {enable\|disable}</code></td>
-<td>RIF_RATES 同</td>
+<td><code>SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME</code></td>
+<td>listen するマルチキャストグループ名</td>
 </tr>
 <tr>
-<td><code>counterpoll port_rates interval &lt;sec&gt;</code></td>
-<td>port レート計算間隔</td>
-</tr>
-<tr>
-<td><code>counterpoll rif_rates interval &lt;sec&gt;</code></td>
-<td>RIF 同</td>
-</tr>
-<tr>
-<td><code>config rate smoothing_interval {all\|port\|rif} &lt;N&gt;</code></td>
-<td>EMA の窓を変更</td>
-</tr>
-<tr>
-<td><code>portstat</code> / <code>intfstat</code></td>
-<td>既存の表示 CLI（バックエンドが RATES に切替）</td>
+<td><code>create_hostif (CPU port)</code></td>
+<td>send_to_ingress の netdev hostif 作成（ベンダ拡張）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span>interval<span class="w"> </span><span class="m">1</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span>port<span class="w"> </span><span class="m">5</span><span class="w">    </span><span class="c1"># EMA N=5</span>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>本 HLD は <strong>CLI 拡張を伴わない</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。P4Runtime / PINS スタック側の設定経路を使う。</p>
+<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// /etc/sonic/config_db.json 抜粋</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;SEND_TO_INGRESS_PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;send_to_ingress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>実運用は P4Runtime コントローラが punt flow / send_to_ingress 操作を行うため、ユーザがコマンドで触る場面は少ない。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>sonic-clear counters</code></strong>: 旧来は CLI 側で差分計算していたためカウンタクリアでレート初期化が起きていた。本機能では <code>RATES</code> テーブル経由となり <strong>影響を受けない</strong>。これは仕様上の意図。</li>
-<li><strong>counter polling との関係</strong>: <code>port_rates</code> の interval を counter polling より短くしても意味がない（生カウンタが更新されないため）。CLI が警告して合わせる仕様<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>EMA の応答性</strong>: 瞬間ピークを見たいユースケースでは <code>smoothing_interval</code> を 1 にするのが直感的。スパイクを丸めたい運用では大きめの値を。</li>
-<li><strong>port speed</strong>: <code>[RX|TX]_UTIL</code> は CONFIG_DB の <code>PORT.speed</code> を分母に使うため、<code>speed</code> 設定が誤っていると UTIL が % で歪む。</li>
-<li><strong><code>-p</code> オプション</strong>: 指定された期間で計算する場合は本機能の RATES テーブルではなく、CLI 内のスナップショット計算に切り替わる。意味的に別系統である点に注意。</li>
+<li><strong>ベンダ kernel driver の対応必須</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>generic_filter_cb</code> 等の実装が無い ASIC では receive metadata が出ない</li>
+<li>send_to_ingress は <strong>SAI hostif の CPU port 対応</strong> が必要。community SAI / ベンダ SAI 双方の対応次第</li>
+<li>P4Runtime / PINS スタック前提の設計であり、汎用 SDN 用ではない</li>
+<li><code>SEND_TO_INGRESS_PORT</code> の table 名 / フィールドが固定（<code>send_to_ingress</code> 単一エントリ）</li>
+<li>punt パケットへのメタデータ付与は <strong>ベンダ独自の packet header tag</strong> に依存。標準フォーマット未定</li>
+<li>HLD 当時 (2021) は P4Runtime + PINS が新興。current master の取り込み状況は別途確認</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>portstat</code> で BPS / PPS が常に 0: <code>RATES:&lt;port_vid&gt;</code> が COUNTERS_DB に書かれているか <code>redis-cli -n 2 keys 'RATES*'</code> で確認。Lua プラグインが回っていない、または Flex Counter group が disable の可能性。</li>
-<li>値がガタつく: <code>smoothing_interval</code> を上げて EMA を効かせる。</li>
-<li><code>RATES</code> の値と <code>COUNTERS</code> の差分が合わない: EMA で平滑化されているため、瞬時カウンタの素差分とは一致しない。これが意図。</li>
-<li><code>counter poll port_rates enable</code> でエラー: 既存 <code>port</code> counter polling が disable の可能性。先にそちらを enable する。</li>
-<li>新しい RIF を作ったのに RATES に反映されない: <code>intfsorch</code> の <code>addRifToFlexCounter</code> が呼ばれていない可能性。<code>syslog</code> で SWSS 起動エラーを確認。</li>
+<li><strong><code>CoppOrch</code></strong>: user-defined trap + genetlink hostif の生成主体</li>
+<li><strong><code>PortsOrch</code></strong>: <code>SEND_TO_INGRESS_PORT</code> の処理 + CPU port 用 netdev hostif 作成</li>
+<li><strong>既存 sFlow / <code>psample</code> 系</strong>: genetlink 仕様を流用するため共存可能</li>
+<li><strong>ベンダ ASIC SDK / kernel driver</strong>: receive 経路と CPU port ingress を実装する責務</li>
+<li><strong>P4Runtime daemon</strong>: コントローラ側 endpoint</li>
+<li><strong>既存 CoPP (<code>copp_cfg.j2</code>)</strong>: trap group / queue マッピングの拡張</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>punt パケットが genetlink に出ない → <code>dmesg</code> で kernel driver の filter が登録されているか、user-defined trap が SAI に作られているか確認</li>
+<li><code>send_to_ingress</code> から送ったパケットが forwarding されない → ベンダ SAI が CPU port ingress を許可しているか、ASIC で <code>SEND_TO_INGRESS_PORT</code> 配下の netdev port が見えるか (<code>ip link</code>)</li>
+<li>メタデータ ifindex が 0 → ベンダ kernel driver の metadata 抽出ロジックが未実装の可能性</li>
+<li>通常 netdev とのパケット重複受信 → user-defined trap → genetlink hostif マッピングが正しく適用されているか確認</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認
+- SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認
+- SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認
+- ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認
+- copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認
+- P4Runtime / PINS スタックの SONiC master 取り込み状況確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/rates-and-utilization/Rates_and_utilization_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/pins/Packet_io.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
