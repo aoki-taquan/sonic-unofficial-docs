@@ -829,7 +829,8 @@
         "libsairedis の sai_query_attribute_enum_values_capability 実装状況未確認",
         "HLD は 2019 年改訂のため現行 master 実装との大幅な乖離リスクあり"
       ],
-      "priority": "high"
+      "priority": "high",
+      "pr": 142
     }
   ]
 }
