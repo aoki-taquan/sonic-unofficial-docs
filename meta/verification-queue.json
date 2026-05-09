@@ -265,6 +265,20 @@
       "pr": 146
     },
     {
+      "page": "docs/acl-qos/acl-ingress-egress-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "DATAINGRESS / DATAEGRESS テーブルおよび 28 ルールセットを生成する PTF テストの sonic-mgmt 内実装存在確認",
+        "acl-loader の現行コマンド体系 (update / show rule) が HLD 記述と一致するか確認",
+        "egress ACL の orchagent / SAI 側 (SAI_ACL_STAGE_EGRESS) サポート状況が現行 master で完備しているか未確認",
+        "RULE_27/28 で BGP を許可する慣習が現行テストフレームワークで採用されているか確認",
+        "ACL counter (aclshow) が counterpoll acl の状態に応じて正しく値を返すか確認"
+      ],
+      "priority": "medium",
+      "issue": 446,
+      "pr": 450
+    },
+    {
       "page": "docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md",
       "verification": "hld-only",
       "concerns": [
