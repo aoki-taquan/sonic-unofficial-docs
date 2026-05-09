@@ -2988,6 +2988,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -9909,6 +9920,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -9941,9 +9963,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>linkmgrd</code> の active-active 用 state machine、<code>MuxOrch</code> の prefix-based neighbor 実装（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> + 別 prefix route）、<code>HW_FORWARDING_STATE_PEER</code> などの新規 APP_DB / STATE_DB テーブル、<code>config mux mode detach</code> の <code>xcvrd</code> への取り込みは実コードでの裏取り未済。warm reboot 対応は HLD では TBD。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-linkmgrd</code> に active-active 専用の state machine 一式 (<code>src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code>、<code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code>) が存在し、<code>MuxOrch</code> は <code>cable_type == "active-active"</code>（<code>muxorch.cpp:2233</code>）で active-active 系処理を分岐する。新規 APP_DB / STATE_DB テーブル（<code>FORWARDING_STATE_COMMAND</code> / <code>FORWARDING_STATE_RESPONSE</code> / <code>HW_FORWARDING_STATE_PEER</code> / <code>HW_MUX_CABLE_TABLE_PEER</code>）は <code>sonic-swss-common/common/schema.h:145-149,465</code> に登録済み。<code>config mux mode detach</code> も <code>sonic-utilities/config/muxcable.py:351</code> の <code>click.Choice</code> に追加済み。warm reboot 対応は HLD 上 TBD のままで本ページの裏取り範囲外。</p>
 </div>
 <h1 id="active-active-dual-torgrpc-cable-control-prefix-based-neighbor">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）<a class="headerlink" href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -10325,7 +10347,15 @@
 <li>standby 切替で traffic 断 → prefix route の next hop が tunnel に切り替わっているか <code>show mux tunnel-route &lt;port&gt;</code> で確認</li>
 <li>両 ToR が standby 化して通信不能 → linkmgrd の rescue ロジック / default route 状態を確認</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離 / 補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>現行 master（2026-05 時点）の実コード裏取り結果:</p>
+<ul>
+<li><strong>linkmgrd active-active state machine</strong>: <code>sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code> および <code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code> が active-standby 系と並列に存在。<code>PeerActiveState</code> / <code>PeerUnknownState</code> / <code>PeerWaitState</code> も <code>src/link_prober/</code> に追加されており、HLD のとおり self / peer 独立判定が実装されている。</li>
+<li><strong>MuxOrch の active-active 分岐</strong>: <code>sonic-swss/orchagent/muxorch.cpp:2233</code> で <code>cable_type_str == "active-active"</code> 判定。prefix-based neighbor の SAI 属性（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code>）と prefix route の組合せは muxorch / neighorch 内で扱う。</li>
+<li><strong>新規 APP_DB / STATE_DB テーブル</strong>: <code>sonic-swss-common/common/schema.h</code> に <code>APP_FORWARDING_STATE_COMMAND_TABLE_NAME = "FORWARDING_STATE_COMMAND"</code> (145行)、<code>APP_FORWARDING_STATE_RESPONSE_TABLE_NAME = "FORWARDING_STATE_RESPONSE"</code> (146行)、<code>APP_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_FORWARDING_STATE_PEER"</code> (149行)、<code>STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_MUX_CABLE_TABLE_PEER"</code> (465行) が定義されている。</li>
+<li><strong><code>config mux mode detach</code></strong>: <code>sonic-utilities/config/muxcable.py:351</code> で <code>click.Choice(["active","auto","manual","standby","detach"])</code> として <code>detach</code> を受け付ける。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - linkmgrd の active-active state machine 実装存在確認（sonic-linkmgrd）
 - MuxOrch の prefix-based neighbor (SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true + prefix route) 実装確認
