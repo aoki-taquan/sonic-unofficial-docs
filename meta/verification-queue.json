@@ -1238,7 +1238,8 @@
         "HLD は 2019 年改訂のため現行 master との乖離リスクあり"
       ],
       "priority": "high",
-      "issue": 197
+      "issue": 197,
+      "pr": 198
     }
   ]
 }
