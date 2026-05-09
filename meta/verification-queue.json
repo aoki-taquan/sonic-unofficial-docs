@@ -776,6 +776,19 @@
         "swssloglevel の deprecation 計画"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/architecture/clock-managment-design.md",
+      "issue": 135,
+      "verification": "hld-only",
+      "concerns": [
+        "config clock CLI の sonic-utilities 取り込み",
+        "DEVICE_METADATA.timezone の sonic-device_metadata.yang 追加",
+        "hostcfgd の timezone 変更ハンドラ実装",
+        "NTP 状態判定ロジックの実装",
+        "rsyslog 再起動の自動化フロー"
+      ],
+      "priority": "medium"
     }
   ]
 }
