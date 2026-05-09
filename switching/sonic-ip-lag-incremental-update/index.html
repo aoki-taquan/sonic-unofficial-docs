@@ -2684,6 +2684,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8890,6 +8901,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8922,9 +8944,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD（2018 年版・初期 incremental update 設計）のみを根拠にしている。<code>portmgrd</code> / <code>intfmgrd</code> / <code>teammgrd</code> の現行実装、<code>/etc/network/interfaces</code> から portmgrd 管理への移行完了状況、<code>config interface</code> / <code>config portchannel</code> CLI の現状は未裏取り。HLD 当時の Phase 0/1/2 完了度合いも別途裏取りが必要。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>portmgrd</code> / <code>intfmgrd</code> / <code>teammgrd</code> の 3 daemon は現行 master の <code>sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp</code> に存在し、HLD の責務分担と一致している。<code>config portchannel add</code> は <code>min_links</code> / <code>fallback</code> オプションを受け付ける（<code>sonic-utilities/config/main.py:2835-2853</code>）。HLD 当時の Phase 1/2（loopback の portmgrd 管理化、teamd docker 再起動時の状態復元）の現状については後段「実装との乖離 / 補足」を参照。</p>
 </div>
 <h1 id="ip-lag-mtu-incremental-updateportmgrd-intfmgrd-teammgrd">IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）<a class="headerlink" href="#ip-lag-mtu-incremental-updateportmgrd-intfmgrd-teammgrd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -9188,7 +9210,14 @@ reasoning: 「1 テーブル 1 マネージャ」が責務分担の根本原則�
 <li>docker swss 再起動後に IP が消える: Phase 1 の要件として state 復元が掲げられているが<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、HLD 当時の段階では TBD。実装裏取りが必要。</li>
 <li>設定変更を別ルート（<code>ip</code> コマンド直叩き等）から行うと挙動がずれる: HLD の theorem「1 テーブル 1 マネージャ」を破る操作。CONFIG_DB 経由のみが正規。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>現行 master（2026-05 時点）の実コード裏取り結果:</p>
+<ul>
+<li><strong>portmgrd / intfmgrd / teammgrd の存在</strong>: <code>sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp</code> および対応する daemon main (<code>*.cpp</code>) が存在し、HLD の責務分担（port admin/MTU は portmgrd、IP は intfmgrd、LAG composition は teammgrd）と一致している。</li>
+<li><strong>CLI</strong>: <code>config portchannel add</code> は <code>--min_links</code> / <code>--fallback</code> / <code>--fast_rate</code> を受け付ける（<code>sonic-utilities/config/main.py:2835-2853</code>）。HLD 記載の min_links / fall_back のサブオプションは実装済み。</li>
+<li><strong>Phase 2 として HLD が future work 扱いした項目</strong>は本ページの裏取り範囲外で、別途 deep-dive が必要（loopback の portmgrd 管理化、teamd docker 再起動時の state 復元の現行実装範囲）。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
