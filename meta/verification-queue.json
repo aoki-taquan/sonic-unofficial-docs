@@ -895,6 +895,22 @@
       "priority": "medium"
     },
     {
+      "page": "docs/management/sonic-tacacs-improvement.md",
+      "verification": "hld-only",
+      "concerns": [
+        "bash patch + plugin による command authorization の現行 sonic-buildimage への取り込み確認 (debian package 名・patch 場所)",
+        "auditd + audisp-tacplus による command accounting の現行 master 取り込み確認",
+        "hostcfgd の AAA config モジュール (bash config / auditd config 生成) の実装存在確認",
+        "AAA テーブルキー authorization / accounting と CLI (config aaa authorization|accounting) の sonic-utilities 取り込み確認",
+        "show tacacs+ counter / sonic-clear tacacscounters の実装存在確認",
+        "240 byte truncation・最大サーバ数 8・docker 内 bypass の制限が現行で残っているか確認",
+        "secret マスク (PASSWD_CMDS) ロジックの確認"
+      ],
+      "priority": "medium",
+      "issue": 495,
+      "pr": 496
+    },
+    {
       "page": "docs/management/ssh-server-global-config-hld.md",
       "issue": 37,
       "verification": "hld-only",
