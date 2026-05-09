@@ -1,7 +1,7 @@
 ---
 title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
 area: internals
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2019-06 改訂で **5 年以上前**。kernel `gc_thresh1/2/3` 値、CoPP の ARP/ND 上限 8000pps、sairedis bulk route API 経由の RouteOrch、`fpmsyncd` の `rt_table=0` での master device lookup スキップ、JSON ライブラリ v3.6 への upgrade、`show arp` / `show ndp` の per-ARP FDB lookup 最適化は実コードでの裏取り未済（priority=high）。
+!!! danger "裏取りステータス: Discrepancy-found（提案値と現行 default が乖離、一部最適化は実装済み）"
+    現行 master を裏取りした結果、HLD 提案の **kernel `gc_thresh*` 値**と **CoPP ARP/ND 上限**は採用されておらず、より保守的な default に再設定されている。一方で **`RouteOrch` の bulk route API**（`gRouteBulker`）と **`fpmsyncd` の master device lookup スキップ**は実装済み。詳細は本文末尾の「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / `show arp`）
 
@@ -190,6 +190,21 @@ show ndp
 - ARP entry が 32k に達しない → `sysctl net.ipv4.neigh.default.gc_thresh*` の現在値、CoPP の ARP rate limiter
 - `show arp` が遅い → `show arp` 実装が **個別 FDB lookup 版** か、古い版で全件取得していないかを確認
 - VNET ありで route 反映が遅い → 本最適化の対象外（`rt_table != 0` の lookup は従来通り）
+
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。
+
+| HLD 主張 | 実装 | 結果 |
+|---|---|---|
+| `net.ipv4.neigh.default.gc_thresh1/2/3 = 16000/32000/48000`、IPv6 = 8000/16000/32000 | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21-26` で v4/v6 ともに `1024/2048/4096` | ⚠️ HLD 提案値は採用されず |
+| CoPP ARP/ND 上限 600 → 8000 pps | `sonic-buildimage/files/image_config/copp/copp_cfg.j2` で `arp` trap は `queue4_group2`（cir/cbs 600）。8000 pps への引き上げは無し | ⚠️ HLD 提案値は採用されず |
+| `RouteOrch` の bulk route API + 1 秒 timer flush | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、`routeorch.cpp:626-1116` で bulker 経由の add/remove と flush 処理 | ✓ 実装済み |
+| `fpmsyncd` の `rt_table == 0` で master device lookup スキップ | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` で `master_index` 取得し、0 のときは lookup を行わない | ✓ 実装済み |
+| sairedis 内 nlohmann/json v2.0 → v3.6 | 本確認では未検証（実装は時間経過で更に進んでいると見られる） | △ |
+| `show arp` / `show ndp` の個別 FDB lookup 化 | 本確認では未検証 | △ |
+
+`gc_thresh` と CoPP ARP/ND が HLD 提案値を採用していない理由は、その後の運用で **kernel メモリ消費**と **CPU 負荷** が問題になったためと思われる（本文「制限事項」で警告済みのトレードオフ）。本ページで挙げているスケール目標値（IPv4 ARP 32k 等）は **kernel cache 上限としては届かない設定**になっている点に注意。
 
 ## 引用元
 
