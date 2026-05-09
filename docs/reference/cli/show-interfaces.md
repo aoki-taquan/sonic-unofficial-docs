@@ -1,0 +1,163 @@
+---
+title: show interfaces サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: show/interfaces/__init__.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: show/interfaces/portchannel.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: show/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - PORT
+    - PORTCHANNEL
+    - BREAKOUT_CFG
+  cli:
+    - show interfaces
+  yang: []
+---
+
+# show interfaces サブコマンド
+
+## 概要
+
+`show interfaces` は物理ポート・PortChannel・SubInterface の **状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ** を一覧表示する。`show/interfaces/__init__.py` がメインで、`show/main.py` 末尾の `cli.add_command(interfaces.interfaces)` で登録される[^1]。
+
+ほとんどのコマンドが内部で **`intfutil`** または **`portstat`** を `subprocess` で起動して整形済みテーブルを生成する。CONFIG_DB / STATE_DB / COUNTERS_DB から直接読むのは breakout 表示などごく一部。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `show interfaces alias [<intf>]` | name ↔ alias マップ表示 |
+| `show interfaces description [<intf>]` | `intfutil -c description` で oper / admin / desc 表示 |
+| `show interfaces naming_mode` | `default` / `alias` の設定値表示 |
+| `show interfaces status [<intf>]` | `intfutil -c status` (admin/oper/speed/MTU/FEC/lanes/...) |
+| `show interfaces tpid [<intf>]` | `intfutil -c tpid` |
+| `show interfaces breakout` | `BREAKOUT_CFG` + platform.json から JSON 出力 |
+| `show interfaces breakout current-mode [<intf>]` | 現在の breakout モード |
+| `show interfaces neighbor` | LLDP 情報を含む隣接表示 |
+| `show interfaces neighbor expected` | DEVICE_NEIGHBOR テーブルを表示 |
+| `show interfaces transceiver eeprom` 等 | xcvrd の transceiver データ表示（後述） |
+| `show interfaces counters` | `portstat` でカウンタ表示 (groups: errors / fec-stats / fec-histogram / detailed / rates / rif / trim) |
+| `show interfaces autoneg status [<intf>]` | autoneg 状態 |
+| `show interfaces link-training status [<intf>]` | link-training 状態 |
+| `show interfaces fec status [<intf>]` | FEC モード状態 |
+| `show interfaces switchport config / status` | switchport 関連 |
+| `show interfaces dhcp-mitigation-rate [<intf>]` | DHCP rate-limit 状態 |
+| `show interfaces fast-linkup status [<intf>]` | fast link-up 状態 |
+| `show interfaces phy-signal <intf>` | PHY 信号品質 |
+| `show interfaces phy-serdes <intf>` | PHY SerDes 情報 |
+| `show interfaces portchannel` | LAG とメンバ状態（`teamshow`） |
+
+## 主要コマンドの詳細
+
+### `show interfaces alias [<interfacename>]`
+
+**動作**:
+`multi_asic.get_port_table` で全 namespace の `PORT` テーブルから `alias` 列を集めて `tabulate` で出力。引数なしの場合は全ポート、`<interfacename>` 指定で 1 件のみ。`--display external/all` で internal port を除外可能。
+
+### `show interfaces status [<interfacename>]`
+
+**動作**:
+`intfutil -c status -i <intf> [-d <display>] [-n <namespace>]` を起動。表示列: Interface / Lanes / Speed / MTU / FEC / Alias / Vlan / Oper / Admin / Type / Asym PFC。
+
+### `show interfaces description [<interfacename>]`
+
+`intfutil -c description ...`。Oper / Admin / Description（PORT テーブルの description）を表示。
+
+### `show interfaces breakout`
+
+**動作**:
+`BREAKOUT_CFG` テーブルと、platform.json / hwsku.json を読み合わせて、各ポートの **Default / Current Breakout Mode**, 子ポート名, 子ポート速度を JSON 形式で出力する[^2]。
+
+### `show interfaces breakout current-mode [<interfacename>]`
+
+`BREAKOUT_CFG|<intf>` の `brkout_mode` のみ。
+
+### `show interfaces neighbor`
+
+`lldpctl -f json` 系を内部実行し、隣接情報をテーブル化。
+
+### `show interfaces neighbor expected`
+
+CONFIG_DB の `DEVICE_NEIGHBOR` テーブルを直接表示。lldpd が起動する前にケーブル配線が想定通りかを確認するのに使う。
+
+### `show interfaces transceiver` 配下
+
+| サブコマンド | 内容 |
+|------------|------|
+| `eeprom [<intf>] [-d|--dom]` | SFF-8636 / CMIS の EEPROM ダンプ |
+| `lpmode [<intf>]` | low-power mode 状態 |
+| `presence [<intf>]` | プレゼンスビット |
+| `info [<intf>]` | パワー / DOM / バルク情報 |
+| `pm [<intf>]` | performance monitoring |
+| `error-status [<intf>]` | xcvrd が検出したエラー |
+| `status [<intf>]` | 全般ステータス |
+
+実装は `xcvrd` が STATE_DB に書き込む `TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` 等を読み出す。
+
+### `show interfaces counters [<group>]`
+
+**用法**:
+
+```
+show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | trim | detailed]
+    [-p|--period <sec>] [-i|--interface <list>] [-a|--printall] [-j|--json] [-n|--namespace]
+```
+
+**動作**:
+`portstat -c <category> ...` を起動して整形 stdout を表示。`--period N` で前回の `portstat -d <ns>` cache との差分を出して **N 秒間のレート**を表示する。`fec-histogram` は SAI Bin 値を可視化する詳細サブコマンド。
+
+### `show interfaces autoneg status` / `link-training status` / `fec status`
+
+各々 `intfutil -c autoneg` / `-c link_training` / `-c fec` を起動。フィールドは `oper` `admin` の組合せで集約表示される。
+
+### `show interfaces switchport config` / `switchport status`
+
+`config` は `PORT` の `mode` (`access` / `trunk` / `routed`) と untagged-VLAN を、`status` はランタイム状態 (oper VLAN メンバシップ) を表示。
+
+### `show interfaces dhcp-mitigation-rate [<intf>]`
+
+`PORT|<intf>` の `dhcp_rate_limit` フィールドを表示。
+
+### `show interfaces fast-linkup status [<intf>]`
+
+`PORT|<intf>` の `fast_linkup` 関連と `STATE_DB` の `SWITCH_CAPABILITY` 由来の supported range を表示。
+
+### `show interfaces phy-signal <intf>` / `phy-serdes <intf>`
+
+`PHY` 関連 STATE_DB エントリ（`TRANSCEIVER_DOM_SENSOR`, `PORT_TX_FIR`, `PORT_RX_FIR` 等）を読み出し可視化。プラットフォーム実装依存。
+
+### `show interfaces portchannel`
+
+`show/interfaces/portchannel.py` 配下の `teamshow` ラッパで、`PORTCHANNEL_MEMBER` 各ポートの teamd ランタイム状態（runner, link, slave 状態）を表示する。
+
+## オプション・共通仕様
+
+- `-n|--namespace` ... multi-ASIC 専用。`asic0` / `asic1` などを指定して該当 namespace のみ出力
+- `-d|--display all|external|frontend` ... `--display all` で internal port も含む
+- 引数 `<interfacename>` は `alias` モード時に自動で正規名へ変換される
+
+## 関連する CONFIG_DB / STATE_DB
+
+| 種類 | テーブル | 表示するコマンド |
+|------|----------|------------------|
+| CONFIG_DB | `PORT` | `status` / `description` / `dhcp-mitigation-rate` / `switchport` |
+| CONFIG_DB | `PORTCHANNEL`, `PORTCHANNEL_MEMBER` | `portchannel` |
+| CONFIG_DB | `BREAKOUT_CFG` | `breakout` |
+| CONFIG_DB | `DEVICE_NEIGHBOR` | `neighbor expected` |
+| STATE_DB | `PORT_TABLE`, `TRANSCEIVER_INFO`, `TRANSCEIVER_DOM_SENSOR`, `TRANSCEIVER_STATUS`, `SWITCH_CAPABILITY` | `transceiver *`, `fast-linkup status`, `phy-*` |
+| COUNTERS_DB | `COUNTERS:*` | `counters` (via portstat) |
+
+## 引用元
+
+[^1]: `interfaces` グループ定義は `show/interfaces/__init__.py` L61-L64。`show/main.py` L316 で `cli.add_command(interfaces.interfaces)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py>
+
+[^2]: `breakout` の JSON 出力ロジックは `show/interfaces/__init__.py` L200-L259。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py#L200>
