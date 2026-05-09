@@ -1,0 +1,12 @@
+{
+  "page": "docs/architecture/port-profile-init-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "PortsOrch の bulk create_ports / remove_ports / set_ports_attribute 経路の sonic-swss 取り込み確認",
+    "syncd の -l / --enableBulk フラグ実装と vendor syncd_init_common.sh への反映確認",
+    "SAI PR #1460 の opencomputeproject/SAI への merge / 各 vendor SAI への波及確認",
+    "空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認",
+    "Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認"
+  ],
+  "priority": "medium"
+}
