@@ -931,7 +931,8 @@
         "multi-ASIC 機で namespace 分離により本問題が発症しない前提が現行 master でも維持されているか未確認"
       ],
       "priority": "medium",
-      "issue": 155
+      "issue": 155,
+      "pr": 156
     }
   ]
 }
