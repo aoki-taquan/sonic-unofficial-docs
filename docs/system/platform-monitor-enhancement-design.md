@@ -76,7 +76,7 @@ CHASSIS_INFO|<chassis_name>:
   vendor_ext1, ...
 ```
 
-PSU 系は `PSU_INFO|<name>`（`presence`, `status`, ...）に格納（[psud HLD](sonic-psu-daemon-design.md) と整合）[^1]。FAN 系は `FAN_INFO|<name>`、xcvr は既存 PORT_TABLE / TRANSCEIVER_INFO 拡張で eeprom 詳細を追加。
+PSU 系は `PSU_INFO|<name>`（`presence`, `status`, ...）に格納（`docs/platform/sonic-psu-daemon-design.md` の psud HLD と整合）[^1]。FAN 系は `FAN_INFO|<name>`、xcvr は既存 PORT_TABLE / TRANSCEIVER_INFO 拡張で eeprom 詳細を追加。
 
 ### Business logic の境界
 
