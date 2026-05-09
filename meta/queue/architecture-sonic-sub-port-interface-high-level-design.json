@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/sonic-sub-port-interface-high-level-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "intfsmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認",
+    "VLAN_SUB_INTERFACE スキーマと sonic-yang-models 取り込み確認",
+    "SAI_ROUTER_INTERFACE_TYPE_SUB_PORT の community SAI 取り込み確認",
+    "config subinterface CLI の sonic-utilities 取り込み確認",
+    "v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認",
+    "PortChannel 上 sub-port の LAG hash 連携の現行実装確認"
+  ],
+  "priority": "medium"
+}
