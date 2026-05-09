@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/reboot-cause-information-via-telemetry-agent.md",
+  "issue": 318,
+  "verification": "hld-only",
+  "concerns": [
+    "determine-reboot-cause / process-reboot-cause サービスの現行 master 実装確認",
+    "STATE_DB REBOOT_CAUSE スキーマ（cause/time/user/comment）の現行スキーマ整合確認",
+    "show reboot-cause history CLI の sonic-utilities 取り込み確認",
+    "HLD は 2020-09 改訂で 5 年以上経過、現行 master との乖離リスクあり"
+  ],
+  "priority": "high"
+}
