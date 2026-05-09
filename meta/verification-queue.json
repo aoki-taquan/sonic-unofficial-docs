@@ -157,7 +157,8 @@
         "本 HLD は 2023 年版 (Rev 0.1)。本機能は活発開発中の可能性あり、現行仕様との乖離を要点検"
       ],
       "priority": "high",
-      "issue": 481
+      "issue": 481,
+      "pr": 483
     },
     {
       "page": "docs/management/p4rt-application-hld.md",
