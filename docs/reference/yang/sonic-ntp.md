@@ -1,0 +1,100 @@
+---
+title: sonic-ntp YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-ntp.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [NTP, NTP_SERVER, NTP_KEY]
+  cli: ["config ntp"]
+  yang: []
+---
+
+# sonic-ntp YANG
+
+## 概要
+
+- module: `sonic-ntp`
+- namespace: `http://github.com/sonic-net/sonic-system-ntp`
+- revision: `2021-04-07`
+- import: `ietf-inet-types`, `sonic-port`, `sonic-mgmt_vrf`, `sonic-portchannel`, `sonic-loopback-interface`, `sonic-mgmt_port`, `sonic-types`
+- top container: `sonic-ntp`
+
+Network Time Protocol (NTP) client configuration YANG module for SONiC OS.[^1]
+
+## ツリー
+
+```
+module: sonic-ntp
+  +--rw sonic-ntp
+     +--rw NTP
+     |  +--rw global
+     |     +--rw src_intf*         union
+     |     +--rw vrf?              string
+     |     +--rw authentication?   stypes:admin_mode
+     |     +--rw dhcp?             stypes:admin_mode
+     |     +--rw server_role?      stypes:admin_mode
+     |     +--rw admin_state?      stypes:admin_mode
+     +--rw NTP_SERVER
+     |  +--rw NTP_SERVER_LIST* [server_address]
+     |     +--rw server_address      inet:host
+     |     +--rw association_type?   association-type
+     |     +--rw iburst?             stypes:on-off
+     |     +--rw key?                -> /sonic-ntp/NTP_KEY/NTP_KEY_LIST/id
+     |     +--rw resolve_as?         inet:host
+     |     +--rw admin_state?        stypes:admin_mode
+     |     +--rw trusted?            stypes:yes-no
+     |     +--rw version?            uint8
+     +--rw NTP_KEY
+        +--rw NTP_KEY_LIST* [id]
+           +--rw id         key-id
+           +--rw trusted?   stypes:yes-no
+           +--rw value?     string
+           +--rw type?      key-type
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `src_intf` | `sonic-ntp/NTP/global/src_intf` | `union` |  |  | union(leafref, leafref, leafref, leafref, string) | This is the interface whose IP address is used as the source IP address for generating NTP traffic. User is required to make sure that the NTP server is reachable via this IP address and the same I... |
+| `vrf` | `sonic-ntp/NTP/global/vrf` | `string` |  |  | pattern `mgmt|default` | NTP can be enabled only in one VRF at a time. In this revision, it is either default VRF or Management VRF. |
+| `authentication` | `sonic-ntp/NTP/global/authentication` | `stypes:admin_mode` |  | disabled |  | NTP authentication state |
+| `dhcp` | `sonic-ntp/NTP/global/dhcp` | `stypes:admin_mode` |  | enabled |  | Use NTP servers distributed by DHCP |
+| `server_role` | `sonic-ntp/NTP/global/server_role` | `stypes:admin_mode` |  | enabled |  | NTP server functionality state |
+| `admin_state` | `sonic-ntp/NTP/global/admin_state` | `stypes:admin_mode` |  | enabled |  | NTP feature state |
+| `server_address` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/server_address` | `inet:host` | yes |  |  | Hostname or IP address of the NTP server or pool. |
+| `association_type` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/association_type` | `association-type` |  | server |  | NTP remote association type: server or pool. |
+| `iburst` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/iburst` | `stypes:on-off` |  | on |  | NTP aggressive polling |
+| `key` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/key` | `leafref` |  |  | /ntp:sonic-ntp/ntp:NTP_KEY/ntp:NTP_KEY_LIST/ntp:id | NTP server key ID |
+| `resolve_as` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/resolve_as` | `inet:host` |  |  |  | Server resolved IP address |
+| `admin_state` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/admin_state` | `stypes:admin_mode` |  | enabled |  | NTP server state |
+| `trusted` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/trusted` | `stypes:yes-no` |  | no |  | Trust this server. It will force time synchronization only to this server when authentication is enabled |
+| `version` | `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/version` | `uint8` |  | 4 | range 3..4 | NTP proto version to communicate with NTP server |
+| `id` | `sonic-ntp/NTP_KEY/NTP_KEY_LIST/id` | `key-id` | yes |  |  | NTP key ID |
+| `trusted` | `sonic-ntp/NTP_KEY/NTP_KEY_LIST/trusted` | `stypes:yes-no` |  | no |  | Trust this NTP key |
+| `value` | `sonic-ntp/NTP_KEY/NTP_KEY_LIST/value` | `string` |  |  | length 1..64 | NTP encrypted authentication key |
+| `type` | `sonic-ntp/NTP_KEY/NTP_KEY_LIST/type` | `key-type` |  | md5 |  | NTP authentication key type |
+
+## leafref / 依存
+
+- `sonic-ntp/NTP_SERVER/NTP_SERVER_LIST/key` → `/ntp:sonic-ntp/ntp:NTP_KEY/ntp:NTP_KEY_LIST/ntp:id`
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `NTP`
+- CONFIG_DB: `NTP_SERVER`
+- CONFIG_DB: `NTP_KEY`
+- CLI: `config ntp`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ntp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+

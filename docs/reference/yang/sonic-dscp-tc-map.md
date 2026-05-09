@@ -1,0 +1,64 @@
+---
+title: sonic-dscp-tc-map YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [DSCP_TO_TC_MAP]
+  cli: []
+  yang: []
+---
+
+# sonic-dscp-tc-map YANG
+
+## 概要
+
+- module: `sonic-dscp-tc-map`
+- namespace: `http://github.com/sonic-net/sonic-dscp-tc-map`
+- revision: `2021-04-15`
+- import: `sonic-types`
+- top container: `sonic-dscp-tc-map`
+
+DSCP_TO_TC_MAP yang Module for SONiC OS[^1]
+
+## ツリー
+
+```
+module: sonic-dscp-tc-map
+  +--rw sonic-dscp-tc-map
+     +--rw DSCP_TO_TC_MAP
+        +--rw DSCP_TO_TC_MAP_LIST* [name]
+           +--rw name              string
+           +--rw DSCP_TO_TC_MAP* [dscp]
+              +--rw dscp    string
+              +--rw tc?     stypes:tc_type
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `name` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | Name of the DSCP to TC map. |
+| `dscp` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/DSCP_TO_TC_MAP/dscp` | `string` | yes |  | pattern `6[0-3]|[1-5][0-9]?|[0-9]?` | DSCP value (0-63). |
+| `tc` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/DSCP_TO_TC_MAP/tc` | `stypes:tc_type` |  |  |  | Target traffic class. |
+
+## leafref / 依存
+
+- なし（このモジュール内で直接 leafref を持つ leaf はない）
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `DSCP_TO_TC_MAP`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
