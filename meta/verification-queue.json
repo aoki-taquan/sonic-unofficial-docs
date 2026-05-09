@@ -959,7 +959,8 @@
         "sonic-installer の bootchart 設定 migration（HLD Open Item）が解消されているか未確認"
       ],
       "priority": "low",
-      "issue": 159
+      "issue": 159,
+      "pr": 160
     }
   ]
 }
