@@ -1,7 +1,7 @@
 ---
 title: CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2023 年 7 月版 (Rev 0.1, Status=Initial)。`SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE`、`SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY`、`SAI_PORT_ATTR_HOST_TX_READY_STATUS` の community SAI 取り込み、PortsOrch 側の TRANSCEIVER_INFO 監視ロジックは未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/portsorch.cpp` L948-953 で `SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE` capability query、L959-981 で `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` の switch attribute 設定、L1366 / L6024-6038 で port 単位の `HOST_TX_SIGNAL_ENABLE` set ロジックを確認（verified 2026-05-09）。
 
 # CMIS モジュール管理拡張（`host_tx_signal` / `host_tx_ready` の同期）
 

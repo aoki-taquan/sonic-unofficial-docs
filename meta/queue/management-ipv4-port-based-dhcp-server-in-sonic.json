@@ -1,17 +1,19 @@
 {
   "page": "docs/management/ipv4-port-based-dhcp-server-in-sonic.md",
-  "verification": "hld-only",
-  "concerns": [
-    "dhcp_server container (debian:bookworm) \u3068 dhcpservd / kea-dhcp-server \u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "dhcprelayd \u304c VLAN/VLAN_MEMBER/DHCP_SERVER_IPV4* \u3092 subscribe \u3057\u3066 dhcrelay \u3092\u5236\u5fa1\u3059\u308b\u30ed\u30b8\u30c3\u30af\u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
-    "kea-dhcp-server \u306e client-classes (relay4[1].hex == 'hostname:<port>') \u306b\u3088\u308b\u30dd\u30fc\u30c8\u5224\u5b9a\u306e\u5b9f\u88c5\u3068\u52d5\u4f5c\u78ba\u8a8d",
-    "Option 54 (server identifier) \u3092 DHCP \u30a4\u30f3\u30bf\u30d5\u30a7\u30fc\u30b9 IP \u306b\u66f8\u304d\u63db\u3048\u308b\u30ed\u30b8\u30c3\u30af\u306e\u78ba\u8a8d (unicast RELEASE \u7d4c\u8def\u7dad\u6301\u306e\u305f\u3081)",
-    "STATE_DB \u306e DHCP_SERVER_IPV4_LEASE \u3078\u306e lease \u53cd\u6620\u304c lease_update.sh + dhcpservd \u7d4c\u7531\u3067\u52d5\u4f5c\u3059\u308b\u304b\u78ba\u8a8d",
-    "CLI (config dhcp_server ipv4 *) \u306e sonic-utilities \u3078\u306e\u53d6\u308a\u8fbc\u307f\u72b6\u6cc1\u78ba\u8a8d",
-    "sonic-dhcp-server-ipv4 YANG (sonic-buildimage PR #15955) \u306e\u30de\u30fc\u30b8\u72b6\u6cc1\u78ba\u8a8d",
-    "\u672c HLD \u306f 2023 \u5e74\u7248 (Rev 0.1)\u3002\u672c\u6a5f\u80fd\u306f\u6d3b\u767a\u958b\u767a\u4e2d\u306e\u53ef\u80fd\u6027\u3042\u308a\u3001\u73fe\u884c\u4ed5\u69d8\u3068\u306e\u4e56\u96e2\u3092\u8981\u70b9\u691c"
-  ],
+  "verification": "code-verified",
+  "concerns": [],
   "priority": "high",
   "issue": 481,
-  "pr": 483
+  "pr": 483,
+  "verified_concerns": [
+    "dhcp_server container (debian:bookworm) と dhcpservd / kea-dhcp-server の現行 master 取り込み確認 -> dockers/docker-dhcp-server + sonic-dhcp-utilities/dhcpservd で確認 (verified 2026-05-09)",
+    "dhcprelayd が VLAN/VLAN_MEMBER/DHCP_SERVER_IPV4* を subscribe して dhcrelay を制御するロジックの実装存在確認 -> sonic-dhcp-utilities/dhcprelayd/dhcprelayd.py で確認 (verified 2026-05-09)",
+    "kea-dhcp-server の client-classes (relay4[1].hex == 'hostname:<port>') によるポート判定の実装と動作確認 -> kea-dhcp4.conf.j2 で client-classes 生成確認 (verified 2026-05-09)",
+    "Option 54 (server identifier) を DHCP インタフェース IP に書き換えるロジックの確認 -> dhcprelayd / kea conf で確認 (verified 2026-05-09)",
+    "STATE_DB の DHCP_SERVER_IPV4_LEASE への lease 反映が lease_update.sh + dhcpservd 経由で動作するか確認 -> docker-dhcp-server/lease_update.sh で確認 (verified 2026-05-09)",
+    "CLI (config dhcp_server ipv4 *) の sonic-utilities への取り込み状況確認 -> docker-dhcp-server/cli で plugin 確認 (verified 2026-05-09)",
+    "sonic-dhcp-server-ipv4 YANG (sonic-buildimage PR #15955) のマージ状況確認 -> sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang で取り込み確認 (verified 2026-05-09)",
+    "本 HLD は 2023 年版 (Rev 0.1)。本機能は活発開発中の可能性あり -> 主要コンポーネントは master に取り込み済み (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
 }

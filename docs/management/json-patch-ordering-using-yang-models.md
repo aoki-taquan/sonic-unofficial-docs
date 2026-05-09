@@ -1,7 +1,7 @@
 ---
 title: JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
     - sonic-extension
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021 年 3 月版 (Rev 0.1, Status=Initial)。`generic_config_updater` 内の patch orderer 実装、`sonic-extension` への `create-only` 拡張、libyang ラッパー (`sonic_yang.find_data_dependencies` / `validate_data_tree`) 利用、メモ化付き探索、ACL_TABLE.ports 全置換のような最適化は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-utilities/generic_config_updater/patch_sorter.py` L2129 `PatchSorterPath` / L2178 `DfsSorter` / L2229 `BfsSorter` / L2268 `MemoizationSorter` / L2349 `StrictPatchSorter` / L2543 `NonStrictPatchSorter` で patch orderer 実装を確認。`sonic-buildimage/src/sonic-yang-mgmt/sonic_yang.py` L283 `validate_data_tree` / L676 `find_data_dependencies` で libyang ラッパーを確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-common.yang` L39 ほかで `import sonic-extension` を確認（verified 2026-05-09）。
 
 # JSON Patch ordering（YANG 制約に従う `apply-patch` のステップ分割）
 

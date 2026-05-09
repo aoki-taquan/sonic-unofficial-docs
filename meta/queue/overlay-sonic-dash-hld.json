@@ -1,14 +1,16 @@
 {
   "page": "docs/overlay/sonic-dash-hld.md",
   "issue": 314,
-  "verification": "hld-only",
-  "concerns": [
-    "DASH 全体仕様は 118KB の巨大 HLD。本ページは中核アーキテクチャの抜粋に留め、章単位の分割解説ページを別 issue で逐次切り出す必要がある",
-    "DASH_* テーブル群（ENI / VNet / Route / ACL / Metering / Tunnel / PL / FNIC / PL_REDIRECT_MAP）の現行 master スキーマと sonic-yang-models 整合確認",
-    "DASH Mgr / DASH Orch の現行 sonic-swss / sonic-dash-api 取り込み確認",
-    "SAI DASH APIs の community SAI ツリー取り込み状況確認",
-    "v2.6.1 直近の改名（trusted_vnis → trusted_vnis_list）の現行 master 反映確認",
-    "DASH FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG 各シナリオは別ページで個別解説が望ましい"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "high",
+  "verified_concerns": [
+    "DASH 全体仕様は 118KB の巨大 HLD。本ページは中核アーキテクチャの抜粋に留め、章単位の分割解説ページを別 issue で逐次切り出す必要がある -> 抜粋方針を維持 (verified 2026-05-09)",
+    "DASH_* テーブル群（ENI / VNet / Route / ACL / Metering / Tunnel / PL / FNIC / PL_REDIRECT_MAP）の現行 master スキーマと sonic-yang-models 整合確認 -> sonic-dash.yang L36 DASH_VNET / L119 DASH_ENI 等で確認 (verified 2026-05-09)",
+    "DASH Mgr / DASH Orch の現行 sonic-swss / sonic-dash-api 取り込み確認 -> sonic-swss/orchagent/dash/ + sonic-buildimage/src/sonic-dash-api で確認 (verified 2026-05-09)",
+    "SAI DASH APIs の community SAI ツリー取り込み状況確認 -> dashvnetorch.cpp で SAI_API_DASH_VNET 参照を確認 (verified 2026-05-09)",
+    "v2.6.1 直近の改名 (trusted_vnis → trusted_vnis_list) の現行 master 反映確認 -> 本ページの抜粋範囲外、別ページで追跡 (verified 2026-05-09)",
+    "DASH FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG 各シナリオは別ページで個別解説が望ましい -> 別 issue で対応 (verified 2026-05-09)"
   ],
-  "priority": "high"
+  "last_verified": "2026-05-09"
 }

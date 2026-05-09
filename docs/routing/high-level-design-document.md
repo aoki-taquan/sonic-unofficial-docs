@@ -1,7 +1,7 @@
 ---
 title: Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021 年 11 月版 (Rev 0.2) で 4 年経過。`SwitchOrch` への `order_ecmp_group` フラグ取り込み、`RouteOrch` / `OverlayECMPOrch` の sequence_id 付与、SAI 属性 `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` / `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID` のサポート、capability query フォールバックは未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/switchorch.cpp` L488-501 で `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` の capability query と `SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE` (switchorch.h L18) の APP_DB 公開を確認。`routeorch.cpp` L1557 / `vnetorch.cpp` L804 で `checkOrderedEcmpEnable()` 経由の nexthop group type 切替を確認。`sonic-swss/tests/test_nhg.py` L1006 / `tests/vnet_lib.py` L1139-1187 で `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID` 検証 UT を確認（verified 2026-05-09）。
 
 # Ordered ECMP（IP ソート順で nexthop に `sequence_id` を付け同一フローを同 ToR/Appliance に固定）
 

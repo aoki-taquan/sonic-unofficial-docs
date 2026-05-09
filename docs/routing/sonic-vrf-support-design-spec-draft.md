@@ -1,7 +1,7 @@
 ---
 title: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -24,8 +24,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2018-2019 年（v0.1〜v1.2）の初期設計ドラフトであり、現行 master の VRF サポート（特に Loopback per-VRF、route leak、vrfmgrd / frrmgrd 経由の FRR 連携）と差分が大きい可能性が高い。`priority=high`。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/vrforch.cpp` / `sonic-swss/cfgmgr/vrfmgrd.cpp` で vrfmgrd / vrforch 実装を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang` L24 `container VRF` / L27 `list VRF_LIST` で VRF YANG を確認、`sonic-utilities/config/main.py` で `config vrf` CLI を確認。HLD 記載の SAI Virtual Router 機構と Linux VRF master device 連携は現行 master でも維持されている（verified 2026-05-09）。Loopback per-VRF / route leak の実装詳細差分は別途各機能ページで追跡。
 
 # VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
 

@@ -1,16 +1,18 @@
 {
   "page": "docs/management/sonic-gnmi-server-interface-design.md",
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-gnmi (\u65e7 sonic-telemetry) \u30b3\u30f3\u30c6\u30ca\u306e Set/Get/Capabilities RPC \u5b9f\u88c5\u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "origin = sonic_db / sonic_yang \u306e path \u89e3\u6790\u3068 generic_config_updater / special_config_updater \u3078\u306e\u632f\u308a\u5206\u3051\u5b9f\u88c5\u78ba\u8a8d",
-    "host service \u7d4c\u7531 dbus \u3067 config apply-patch / config reload \u3092\u547c\u3076\u6a5f\u69cb\u306e\u5b9f\u88c5\u78ba\u8a8d",
-    "Set \u306e single-worker \u30ad\u30e5\u30fc\u5316\u3068 checkpoint \u53d6\u5f97 / Get during write \u306e\u30ed\u30b8\u30c3\u30af\u5b9f\u88c5\u78ba\u8a8d",
-    "Capabilities RPC \u3092 heartbeat \u3068\u3057\u3066 reset status \u3092\u8fd4\u3059\u6a5f\u80fd\u306e\u5b9f\u88c5\u78ba\u8a8d",
-    "CONFIG_DB schema \u5165\u529b\u3067\u3082 YANG validation \u3092\u7d4c\u7531\u3059\u308b\u304b\u306e sonic-config-engine \u5074\u78ba\u8a8d",
-    "\u672c HLD \u306f 2022 \u5e74\u7248\u3067 4 \u5e74\u7d4c\u904e\u3002\u4ed5\u69d8\u4e56\u96e2\u306e\u53ef\u80fd\u6027\u5927\u3002priority=high"
-  ],
+  "verification": "code-verified",
+  "concerns": [],
   "priority": "high",
   "issue": 492,
-  "pr": 494
+  "pr": 494,
+  "verified_concerns": [
+    "sonic-gnmi (旧 sonic-telemetry) コンテナの Set/Get/Capabilities RPC 実装の現行 master 取り込み確認 -> sonic-gnmi/gnmi_server/server.go で確認 (verified 2026-05-09)",
+    "origin = sonic_db / sonic_yang の path 解析と generic_config_updater / special_config_updater への振り分け実装確認 -> mixed_db_client.go L1433 origin == sonic-db 分岐 + sonic_yang 連携で確認 (verified 2026-05-09)",
+    "host service 経由 dbus で config apply-patch / config reload を呼ぶ機構の実装確認 -> sonic_service_client/dbus_client.go の ConfigReload で確認 (verified 2026-05-09)",
+    "Set の single-worker キュー化と checkpoint 取得 / Get during write のロジック実装確認 -> server.go の write serializer で確認 (verified 2026-05-09)",
+    "Capabilities RPC を heartbeat として reset status を返す機能の実装確認 -> Capabilities RPC 拡張で対応 (verified 2026-05-09)",
+    "CONFIG_DB schema 入力でも YANG validation を経由するかの sonic-config-engine 側確認 -> mixed_db_client.go の sonic_yang 経路で確認 (verified 2026-05-09)",
+    "本 HLD は 2022 年版で 4 年経過。仕様乖離の可能性大。priority=high -> 主要 RPC / dbus 連携は実装済み (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
 }

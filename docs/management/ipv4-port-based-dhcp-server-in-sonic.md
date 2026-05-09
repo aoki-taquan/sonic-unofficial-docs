@@ -1,7 +1,7 @@
 ---
 title: ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -21,8 +21,8 @@ related:
     - sonic-dhcp-server-ipv4
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2023 年 2 月版 (Rev 0.1, Status=Initial)。新 container `dhcp_server` (debian:bookworm)、daemon `dhcpservd`、`dhcprelayd` の dhcrelay 起動制御、kea-dhcp-server `client-classes` ベースのポート判定、lease の STATE_DB 反映は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/dockers/docker-dhcp-server/` で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py` で dhcpservd daemon、`dhcp_utilities/dhcprelayd/dhcprelayd.py` で dhcprelayd を確認。`sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L92-93 で `[program:dhcprelayd]` の supervisord 起動を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` で YANG を確認（verified 2026-05-09）。
 
 # ポートベース IPv4 DHCP Server（`kea-dhcp-server` + `dhcrelay` Option 82 連携）
 
