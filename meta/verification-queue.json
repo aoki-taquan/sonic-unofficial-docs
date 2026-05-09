@@ -219,6 +219,18 @@
       "priority": "medium"
     },
     {
+      "page": "docs/architecture/sonic-port-configuration-refactor-design.md",
+      "issue": 65,
+      "verification": "hld-only",
+      "concerns": [
+        "portconfig.py 一元化の現行進捗（5 ファイルすべて移行完了か）",
+        "platform.json への完全移行が community master でどこまで進んでいるか",
+        "parse_port_config_file の戻り値が常に index を含むよう修正されているか",
+        "0-based SKU が 1-based に揃え終わっているか"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
       "issue": 63,
       "verification": "hld-only",
