@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dhcpv6-relay-agent/">
       
       
-        <link rel="prev" href="../sonic-fine-grained-ecmp/">
+        <link rel="prev" href="../debug-framework-in-sonic/">
       
       
-        <link rel="next" href="../sonic-management-vrf-design-document-201911-release/">
+        <link rel="next" href="../dip-sip-ptf-validation-high-level-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） - SONiC 非公式ドキュメント</title>
+        <title>DHCPv6 Relay Agent（Option 79 / dual ToR loopback） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp" class="md-skip">
+        <a href="#dhcpv6-relay-agentoption-79-dual-tor-loopback" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+              DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -269,13 +271,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -541,830 +541,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    アーキテクチャ
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    アーキテクチャ
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alpine 仮想 SONiC（ALViS / KNE デプロイ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルドプロファイル（rules/profiles/*.mk）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Debug Framework（コンポーネント dump 登録 / assert 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DIP=SIP PTF 検証テスト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reset-factory（keep-basic / keep-all-config / only-config）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAG（Static Anycast Gateway）for SONiC
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Bulk Counter（sai_bulk_object_get_stats / chunk size）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sonic policy based hashing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    port_config.ini パーサ統合（portconfig.py 一元化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC-VS のビルドと libvirt 起動手順
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -1374,34 +550,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -1470,7 +618,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1481,7 +629,7 @@
   <span class="md-ellipsis">
     
   
-    ルーティング
+    アーキテクチャ
   
 
     
@@ -1492,18 +640,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    ルーティング
+    アーキテクチャ
   
 
           </label>
@@ -1518,14 +666,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
+    ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
   
 
     
@@ -1546,14 +694,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../alpine-high-level-design/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+    Alpine 仮想 SONiC（ALViS / KNE デプロイ）
   
 
     
@@ -1574,14 +722,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
+    ビルドプロファイル（rules/profiles/*.mk）
   
 
     
@@ -1602,14 +750,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
+    ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
   
 
     
@@ -1630,14 +778,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
+    Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
   
 
     
@@ -1658,602 +806,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../debug-framework-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    linkmgrd のデフォルトルート連動（DualToR mux 制御）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../high-level-design-document/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MPLS TC → TC map（MPLS パケットの QoS classification）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ルータインタフェース (RIF) カウンタ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Fine Grained ECMP（FG_NHG / fgnhgorch）
+    Debug Framework（コンポーネント dump 登録 / assert 拡張）
   
 
     
@@ -2290,7 +850,7 @@
   <span class="md-ellipsis">
     
   
-    FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+    DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
   
 
     
@@ -2308,7 +868,7 @@
   <span class="md-ellipsis">
     
   
-    FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+    DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
   
 
     
@@ -2357,10 +917,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#relay" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        Relay 動作シーケンス
       
     </span>
   </a>
@@ -2368,21 +928,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgpcfgd-frrcfgd" class="md-nav__link">
+  <a href="#relay-agent-vs-isc-dhcrelay-dhcpv4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpcfgd と frrcfgd
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#management-framework" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Management Framework 側
+        Relay agent vs ISC dhcrelay (DHCPv4)
       
     </span>
   </a>
@@ -2393,7 +942,7 @@
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ（拡張部）
+        CONFIG_DB
       
     </span>
   </a>
@@ -2401,10 +950,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state-statistics" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        State / Statistics の取得
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-79-client-link-layer-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 79 (Client Link-Layer Address)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dual-tor-source-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual ToR の source IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp-radv-feature-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP / RADV / Feature table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / Counter
       
     </span>
   </a>
@@ -2417,46 +1010,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#performance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        Performance
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB の有効化フラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-nbi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / NBI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2467,7 +1032,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2478,18 +1043,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2515,7 +1069,1447 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証テスト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reset-factory-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reset-factory（keep-basic / keep-all-config / only-config）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAG（Static Anycast Gateway）for SONiC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bulk Counter（sai_bulk_object_get_stats / chunk size）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-packet-trimming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sonic policy based hashing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    port_config.ini パーサ統合（portconfig.py 一元化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC-VS のビルドと libvirt 起動手順
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../routing/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルーティング
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ルーティング
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/default-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    linkmgrd のデフォルトルート連動（DualToR mux 制御）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MPLS TC → TC map（MPLS パケットの QoS classification）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルータインタフェース (RIF) カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fine Grained ECMP（FG_NHG / fgnhgorch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -2543,7 +2537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2571,7 +2565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -2599,7 +2593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -2627,7 +2621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2655,7 +2649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-vpn-hld/" class="md-nav__link">
+      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2683,7 +2677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2711,7 +2705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-ip-route-configuration/" class="md-nav__link">
+      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2739,7 +2733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2767,7 +2761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2795,7 +2789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -12816,10 +12810,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#relay" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        Relay 動作シーケンス
       
     </span>
   </a>
@@ -12827,21 +12821,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgpcfgd-frrcfgd" class="md-nav__link">
+  <a href="#relay-agent-vs-isc-dhcrelay-dhcpv4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpcfgd と frrcfgd
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#management-framework" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Management Framework 側
+        Relay agent vs ISC dhcrelay (DHCPv4)
       
     </span>
   </a>
@@ -12852,7 +12835,7 @@
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ（拡張部）
+        CONFIG_DB
       
     </span>
   </a>
@@ -12860,10 +12843,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state-statistics" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        State / Statistics の取得
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-79-client-link-layer-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 79 (Client Link-Layer Address)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dual-tor-source-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dual ToR の source IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp-radv-feature-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP / RADV / Feature table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / Counter
       
     </span>
   </a>
@@ -12876,46 +12903,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#performance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        Performance
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB の有効化フラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-nbi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / NBI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12926,7 +12925,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12937,18 +12936,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12975,7 +12963,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/dhcpv6-relay-agent.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12983,133 +12971,142 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p>Verifier 2026-05-09: <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> 本体、<code>rules/sonic-frr-mgmt-framework.{mk,dep}</code> ビルドルールを確認。<code>sonic-buildimage/dockers/docker-fpm-frr/docker_init.sh:68</code> で <code>MGMT_FRAMEWORK_CONFIG=$(echo $FRR_VARS | jq -r '.frr_mgmt_framework_config')</code> の分岐により bgpcfgd / frrcfgd を切替えている。YANG は <code>sonic-bgp-{global,neighbor,peergroup,common,...}.yang</code> 群が community sonic-yang-models に存在。<code>bgpcfgd</code> と <code>frrcfgd</code> の併用は <code>frr_mgmt_framework_config</code> キーで一元的に制御される構成。HLD と整合。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>SONiC 独自の DHCPv6 relay agent (ISC dhcrelay 置換) について、Option 79 / dual ToR loopback / RADV M/O bit 連携の現行実装と CONFIG_DB 名 (<code>DHCP|&lt;intf&gt;</code> / <code>dhcpv6_servers</code> / <code>rfc6939_support</code>) は未裏取り。</p>
 </div>
-<h1 id="frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp">FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）<a class="headerlink" href="#frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp" title="Permanent link">&para;</a></h1>
+<h1 id="dhcpv6-relay-agentoption-79-dual-tor-loopback">DHCPv6 Relay Agent（Option 79 / dual ToR loopback）<a class="headerlink" href="#dhcpv6-relay-agentoption-79-dual-tor-loopback" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Management Framework（REST / gNMI / IS-CLI）から <strong>OpenConfig BGP</strong> モデル経由で FRR-BGP を一気通貫に扱えるようにする設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code>（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の <strong><code>frrcfgd</code></strong> daemon が CONFIG_DB の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。</p>
-<p>切り替えは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"</code> で行う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。default は <code>false</code>（従来 bgpcfgd）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。</p>
+<p>SONiC 専用の DHCPv6 relay agent<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 DHCPv4 relay は ISC dhcrelay を流用しているが、DHCPv6 では <strong>client link-layer address を server に伝える Option 79 (RFC 6939)</strong> を ISC が未対応であり、また CLI からの再構成のためにコンテナ再起動が必要だった点を解消するため、SONiC 自前実装に置換える。MAC 予約による DHCP Reservation を ToR/MoR 越しでも成立させ、Multi-hop DHCPv6 で client MAC を確実に server へ伝搬することがコア要件。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    NBI[gNMI / REST / IS-CLI] --&gt; MGMT[SONiC Management Framework]
-    MGMT --&gt;|transformer / CVL| CDB[(CONFIG_DB\nBGP_GLOBALS / BGP_NEIGHBOR /\nBGP_PEER_GROUP / PREFIX_LIST ...)]
-    CDB --&gt;|事象通知| FCFGD[frrcfgd]
-    FCFGD --&gt;|FRR vty cmd| FRR[FRR / bgpd / zebra]
-    FRR --&gt;|state / stats on-demand| MGMT
-    NBI -. 状態取得 .-&gt; MGMT</code></pre>
-<h3 id="bgpcfgd-frrcfgd">bgpcfgd と frrcfgd<a class="headerlink" href="#bgpcfgd-frrcfgd" title="Permanent link">&para;</a></h3>
+<h3 id="relay">Relay 動作シーケンス<a class="headerlink" href="#relay" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant C as Client
+    participant R as DHCPv6 Relay (SONiC)
+    participant S as DHCPv6 Server
+    C-&gt;&gt;R: SOLICIT (multicast All_DHCP_Relay_Agents_and_Servers)
+    R-&gt;&gt;S: RELAY-FORWARD (peer-address=client, link-address=link prefix, hop-count=0, opt 79=client MAC)
+    S--&gt;&gt;R: RELAY-REPLY (embedded ADVERTISE)
+    R--&gt;&gt;C: ADVERTISE
+    C-&gt;&gt;R: REQUEST
+    R-&gt;&gt;S: RELAY-FORWARD
+    S--&gt;&gt;R: RELAY-REPLY (embedded REPLY)
+    R--&gt;&gt;C: REPLY (lease)</code></pre>
+<p>ホップカウントは <code>HOP_COUNT_LIMIT</code> 超過で破棄。Relay-forward の <code>link-address</code> には対応 link の global / site-scope address を設定（server がどの subnet から address を割当てるかを判断するため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="relay-agent-vs-isc-dhcrelay-dhcpv4">Relay agent vs ISC dhcrelay (DHCPv4)<a class="headerlink" href="#relay-agent-vs-isc-dhcrelay-dhcpv4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>項目</th>
-<th>bgpcfgd（既存）</th>
-<th>frrcfgd（本 HLD）</th>
+<th></th>
+<th>DHCPv4 (ISC dhcrelay)</th>
+<th>DHCPv6 (SONiC 自前)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>起動条件</td>
-<td>default</td>
-<td><code>frr_mgmt_framework_config = true</code></td>
+<td>Option 82 / 79</td>
+<td>option 82</td>
+<td><strong>option 79 (RFC 6939)</strong> をデフォルト ON</td>
 </tr>
 <tr>
-<td>入力</td>
-<td>CONFIG_DB + Jinja template</td>
-<td>CONFIG_DB のみ</td>
+<td>設定変更</td>
+<td>container 再起動が必要</td>
+<td>CONFIG_DB 経由で動的反映を目指す</td>
 </tr>
 <tr>
-<td>出力</td>
-<td>startup config 生成（FRR 起動時にロード）+ 一部動的</td>
-<td>FRR 起動後の <strong>動的</strong> vty コマンド適用</td>
+<td>dual ToR 対応</td>
+<td>既存</td>
+<td><strong>loopback 送信元 IP オプション</strong></td>
 </tr>
 <tr>
-<td>機能網羅</td>
-<td>template が対応するもの限定</td>
-<td>フル BGP（neighbor / peer-group / prefix-list / route-map / policy / VRF）</td>
-</tr>
-<tr>
-<td>場所</td>
-<td><code>sonic-buildimage/dockers/docker-fpm-frr/</code></td>
-<td><code>sonic-buildimage/src/sonic-frr-mgmt-framework</code></td>
+<td>CoPP</td>
+<td>DHCPv4 trap</td>
+<td>DHCPv6 enable 時のみ trap<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
-<h3 id="management-framework">Management Framework 側<a class="headerlink" href="#management-framework" title="Permanent link">&para;</a></h3>
-<ul>
-<li>OpenConfig BGP YANG → SONiC YANG（ABNF）への annotation</li>
-<li>transformer methods（Go）が syntactic / semantic 検証 + Redis 書き込み</li>
-<li>Marshalling は <strong>YGOT</strong>、CAS（Check-And-Set）transaction で書く（lock / rollback なし）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="config_db">CONFIG_DB スキーマ（拡張部）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD は ABNF レベルの schema を網羅的に定義する。代表例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_GLOBALS|&lt;vrf&gt;:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  router_id, local_asn, ebgp_requires_policy, ...
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP_NEIGHBOR|&lt;vrf&gt;|&lt;peer-ip&gt;:
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  asn, local_asn, peer_group, hold_time, keepalive, password, ...
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>BGP_PEER_GROUP|&lt;vrf&gt;|&lt;group&gt;:
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  asn, ebgp_multihop_ttl, ...
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>PREFIX_LIST|&lt;name&gt;|&lt;seq&gt;:
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  ip_prefix, action, ge, le
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCP|&lt;intf-i&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  dhcpv6_servers          = [&quot;dhcp-server-0&quot;, &quot;dhcp-server-1&quot;, ...]
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  dhcpv6_option|rfc6939_support = &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
-<p>VRF キーが各 BGP テーブルの最上位に来る点（<code>&lt;vrf&gt;|...</code>）が、frrcfgd が VRF aware であることの帰結<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="state-statistics">State / Statistics の取得<a class="headerlink" href="#state-statistics" title="Permanent link">&para;</a></h3>
-<p><code>frrcfgd</code> は state / counters は持たず、Management Framework から要求が来たら <strong>FRR vtysh の <code>show ... json</code> を直接叩いて返す</strong>。COUNTERS_DB / STATE_DB に永続化しないため warm boot 復元の必要なし<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>&lt;intf-i&gt;</code> は VLAN interface 等、relay を有効化する interface 名。<code>rfc6939_support</code> で Option 79 を on/off できる（HLD は <strong>default on</strong> を要求）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-dhcpv6-relay.yang</code> で <code>DHCP</code> コンテナ下に <code>VLAN_LIST</code> を持ち、<code>dhcpv6_servers</code>（list of <code>inet6:ip-address</code>）と <code>dhcpv6_option|rfc6939_support</code>（bool）を leaf として定義<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="option-79-client-link-layer-address">Option 79 (Client Link-Layer Address)<a class="headerlink" href="#option-79-client-link-layer-address" title="Permanent link">&para;</a></h3>
+<p>SOLICIT/REQUEST 等を受けた relay agent が <strong>L2 source MAC を読み取り Relay-Forward の Option 79 として埋める</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより server は DUID と独立して MAC を取得でき、DUID-LL/LLT に依存しない MAC ベース予約が成立する。SONiC のデフォルトは on で CLI から無効化可。</p>
+<h3 id="dual-tor-source-ip">Dual ToR の source IP<a class="headerlink" href="#dual-tor-source-ip" title="Permanent link">&para;</a></h3>
+<p>active/standby 構成の dual ToR では、active ToR が relay-forward した結果の応答を <strong>standby 側 ToR が受け取る経路</strong> が発生し得る。VLAN SVI を送信元にすると応答先 ToR が自分宛と認識できないため、<strong>loopback IP を送信元に固定</strong> するオプション (<code>use-loopback-address</code>) を提供する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。peer ToR は受領後に loopback 宛 IP で配送先を判断し相手 ToR へ forward する。</p>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>送信元 IP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常</td>
+<td>VLAN SVI IP</td>
+</tr>
+<tr>
+<td>Dual ToR</td>
+<td>Loopback IP（CLI で enable）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="copp-radv-feature-table">CoPP / RADV / Feature table<a class="headerlink" href="#copp-radv-feature-table" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>CoPP</strong>: DHCPv6 が enable のときのみ DHCPv6 packet を CPU trap<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>RADV (Router Advertisement) との連携</strong>: RA の <code>M</code> bit (Managed-Config) で「DHCPv6 のみ使う」、<code>O</code> bit (Other-Config) で「SLAAC + DHCPv6 で他パラメタのみ取得」を host に通知。本 HLD は RADV モジュールの動作範囲との整合を要求する</li>
+<li><strong>Feature table</strong>: 既存 DHCP relay container に同居し、新規 feature table エントリは追加しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="cli-counter">CLI / Counter<a class="headerlink" href="#cli-counter" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show dhcp6relay_counters
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-clear dhcprelay_counters
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config dhcp6relay option79 (enable|disable)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config dhcp6relay use-loopback-address (enable|disable)
+</span></code></pre></div>
+<p>counter は SOLICIT / ADVERTISE / REQUEST / CONFIRM / RENEW / REBIND / REPLY / RELEASE / DECLINE / RELAY-FORWARD / RELAY-REPLY を per-interface で持つ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md#L42-L45 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Ability to start frrcfgd ... or bgpcfgd ... based on frr_mgmt_framework_config field with "true"/"false" in DEVICE_METADATA table
-  ... As state and statistics information is retrieved from FRR-BGP on demand there is no Warm Boot specific requirements for this feature.
-reasoning: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ外の根拠。
+  Providing option 79 in DHCPv6 Relay-Forward messages will help carry the client link-layer address explicitly. ...
+  ISC DHCP currently has no support for option 79.
+reasoning: ISC dhcrelay 置換動機と Option 79 採用の根拠。
 -->
 
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">CONFIG_DB の有効化フラグ<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DEVICE_METADATA|localhost:
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  frr_mgmt_framework_config = &quot;true&quot;
-</span></code></pre></div>
-<h3 id="cli-nbi">CLI / NBI<a class="headerlink" href="#cli-nbi" title="Permanent link">&para;</a></h3>
+<h2 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h2>
+<p>DHCP packet の到着頻度は低く、CPU 経由処理でも転送パフォーマンスへの影響は小さいと想定<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>IS-CLI: 業界標準風 BGP CLI を Management Framework が提供</li>
-<li>gNMI / REST: OpenConfig BGP モデル経由</li>
-<li>既存の <code>vtysh</code> 直叩きは「SONiC 側機能と衝突しないものに限り」併用可（HLD 明記）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>relay-forward の hop-count &gt; <code>HOP_COUNT_LIMIT</code> のメッセージは破棄</li>
+<li>設定動的反映のために CONFIG_DB 経由に統一する方針だが、ISC との互換 path は持たない</li>
+<li>Option 79 は default on だが、server 側で受け取れないと逆に互換性問題を起こす可能性がある</li>
+<li>dual ToR の loopback source IP は active/standby 切替の前提に依存</li>
 </ul>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code> と <code>frrcfgd</code> の <strong>同時起動は不可</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>既存の Jinja template ベース運用との互換性: フィールド名や VRF キー位置が異なる</li>
-<li><code>vtysh</code> 直叩きと CONFIG_DB 経由の両方で同じものを設定すると不整合になり得る</li>
-<li>transformer 機能差異（OpenConfig 標準にない SONiC 固有機能はカスタム YANG 拡張）</li>
+<li><strong>DHCPv4 relay (ISC dhcrelay)</strong>: 同 container に同居</li>
+<li><strong>dual ToR / mux</strong>: loopback source IP オプションは mux の active/standby 状態と連動</li>
+<li><strong>CoPP</strong>: DHCPv6 trap 切替が CoPP manager と連動</li>
+<li><strong>RADV (radvd)</strong>: M/O bit 設定の整合が必要</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>VRF</strong>: BGP テーブルが <code>&lt;vrf&gt;|...</code> キーになるため、VRF サポートと密に絡む</li>
-<li><strong>bgpcfgd</strong>: 排他関係。切替時は container 再起動を伴う</li>
-<li><strong>gNMI / REST</strong>: Management Framework 全体の動向に追随</li>
-<li><strong>Open Config 公式モデル更新</strong>: SONiC 側で transformer / annotation を追従する保守コストが発生</li>
-</ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>frr_mgmt_framework_config=true</code> にしたのに反映されない → BGP container を再起動。<code>bgpcfgd</code> プロセスが残っていないか確認</li>
-<li>gNMI で BGP set したのに FRR に反映されない → <code>frrcfgd</code> ログで vty コマンド生成エラーを確認</li>
-</ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- frrcfgd daemon (sonic-frr-mgmt-framework) の現行 master 採用 / メンテ状況確認
-- BGP_GLOBALS / BGP_NEIGHBOR / BGP_PEER_GROUP の YANG 取り込み状況（特に bgpcfgd 互換 vs frrcfgd 新スキーマ）
-- DEVICE_METADATA.frr_mgmt_framework_config の有効ケースが master でテストされているか確認
-- OpenConfig BGP transformer の sonic-mgmt-framework 取り込み確認
-- 2019-2021 年 HLD のため Management Framework 全体方針との整合性確認（priority=high）
-- frrcfgd と bgpcfgd の切替手順 / 同時起動防止の実装確認
+- dhcp6relay バイナリの sonic-dhcpv6relay リポジトリでの実装存在確認
+- DHCP|<intf-i> の dhcpv6_servers / rfc6939_support フィールドの sonic-yang-models 反映確認
+- show dhcp6relay_counters / config dhcp6relay の sonic-utilities 取り込み確認
+- dual ToR loopback source IP モードの linkmgrd 連動の確認
+- CoPP manager の DHCPv6 trap 動的切替の実装確認
+- RFC 6939 Option 79 の server 互換性および default on 妥当性
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
