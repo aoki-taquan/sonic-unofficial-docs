@@ -5474,9 +5474,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 1, 2025-07）のみを根拠に書かれている。<code>MACSecOrch</code> / <code>MACSecMgr</code> の POST 対応、<code>STATE_DB.FIPS_MACSEC_POST_TABLE</code> のスキーマ確定、SAI 側 POST capability クエリ・コールバックの利用可能性は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master の <code>sonic-swss/orchagent/macsecpost.cpp</code> (<code>STATE_FIPS_MACSEC_POST_TABLE_NAME</code> を読み書き)、<code>sonic-swss-common/common/schema.h:471</code> の <code>STATE_FIPS_MACSEC_POST_TABLE_NAME = "FIPS_MACSEC_POST_TABLE"</code>、<code>sonic-buildimage/build_image.sh:214</code> の <code>sonic_fips=1</code> カーネルコマンドライン、<code>build_debian.sh:691-692</code> の <code>/etc/fips/fips_enable</code> 初期化、<code>dockers/docker-macsec/cli/show/plugins/show_macsec.py:351-389</code> の FIPS_MACSEC_POST_TABLE 読み出し CLI を確認済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="fips-macsec-sai-postfips_macsec_post_table">FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）<a class="headerlink" href="#fips-macsec-sai-postfips_macsec_post_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
