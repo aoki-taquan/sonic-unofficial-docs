@@ -5055,6 +5055,8 @@
       
         
       
+        
+      
     
     
     
@@ -5936,6 +5938,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13699,9 +13729,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.1 (2024-01)。<code>DeviceGlobalCfgMgr.set_wcmp</code> 拡張、<code>bgpd.wcmp.conf.j2</code> テンプレート (<code>docker-fpm-frr/frr/bgpd/wcmp</code>) 配置、<code>BGP_DEVICE_GLOBAL|STATE.wcmp_enabled</code> の sonic-yang-models 反映、initial config の <code>init_cfg.json.j2</code> への注入は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py</code> で <code>wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2</code>、<code>wcmp_enabled</code> キー処理、<code>configure_wcmp(data)</code> を master で確認。<code>docker-fpm-frr/frr/bgpd/wcmp/</code> テンプレートディレクトリも存在。</p>
 </div>
 <h1 id="weighted-ecmpwcmp-bgp-link-bandwidth-ext-community">Weighted ECMP（WCMP / BGP link-bandwidth ext community）<a class="headerlink" href="#weighted-ecmpwcmp-bgp-link-bandwidth-ext-community" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

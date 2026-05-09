@@ -4856,6 +4856,8 @@
       
         
       
+        
+      
     
     
     
@@ -5947,6 +5949,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13721,9 +13751,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.4 (2019-12) で 6 年以上前。<code>config kdump</code> / <code>show kdump</code> の sonic-utilities 取り込み、<code>KDUMP</code> CONFIG_DB スキーマ、<code>/etc/default/kdump-tools</code> の <code>USE_KDUMP</code> 連動、<code>build_debian.sh</code> での kdump-tools 同梱は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/config/kdump.py</code> を master で確認、<code>sonic-buildimage/build_debian.sh</code> で <code>kdump</code> 関連処理も確認、<code>sonic-buildimage/files/image_config/kdump/kdump-tools</code> も存在。HLD 当時の主要要素は master 取り込み済み。</p>
 </div>
 <h1 id="kdumpkexec-kernel-crash-dump-makedumpfile">kdump（kexec ベース kernel crash dump / makedumpfile）<a class="headerlink" href="#kdumpkexec-kernel-crash-dump-makedumpfile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

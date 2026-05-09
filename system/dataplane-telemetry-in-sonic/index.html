@@ -4856,6 +4856,8 @@
       
         
       
+        
+      
     
     
     
@@ -5925,6 +5927,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13677,9 +13707,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (Barefoot 起源)。<code>DtelOrch</code> の sonic-swss 取り込み、SAI dtel attributes の vendor サポート、<code>AclRuleDTelDropWatchList</code> / <code>AclRuleDTelFlowWatchList</code> 拡張、euclid Python 設定モジュールの現行 master 取り込みは未裏取り。CLI は未提供。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss/orchagent/dtelorch.cpp</code> / <code>dtelorch.h</code> を master で確認。<code>DTEL_REPORT_SESSION</code> / <code>DTEL_INT_SESSION</code> 系のスキーマ定数は <code>sonic-swss-common/common/schema.h</code> に存在。CLI 未提供は HLD 通り。</p>
 </div>
 <h1 id="dataplane-telemetrydtel-int-postcard-drop-queue-report">Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）<a class="headerlink" href="#dataplane-telemetrydtel-int-postcard-drop-queue-report" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -4854,6 +4854,8 @@
       
         
       
+        
+      
     
     
     
@@ -5735,6 +5737,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13711,9 +13741,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>/usr/bin/readiness_probe.sh</code> の実体、各コンテナの <code>readiness_probe_hook</code> の有無、k8s controller 側の post-check ロジックは未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/readiness_probe.sh</code> を master で確認。各コンテナへの readiness probe 投入は ctrmgrd 経由で実装。</p>
 </div>
 <h1 id="health-checkk8s-readiness-probe">コンテナ health-check（k8s readiness probe）<a class="headerlink" href="#health-checkk8s-readiness-probe" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

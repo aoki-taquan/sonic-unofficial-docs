@@ -5161,6 +5161,8 @@
       
         
       
+        
+      
     
     
     
@@ -6042,6 +6044,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13911,9 +13941,15 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-utilities/scripts/ssdhealth</code>、<code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code>、ベンダ別 <code>ssdutil.py</code>、Pmon <code>ssdmond</code> のいずれも実装裏取り未済。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD と現行 master 実装に複数の齟齬がある。</p>
+<ul>
+<li>HLD は <code>sonic-utilities/scripts/ssdhealth</code> という独立スクリプトを示すが、master では Python パッケージ <code>sonic-utilities/ssdutil/</code> (<code>__init__.py</code> / <code>main.py</code>) が唯一の実体で、<code>ssdhealth</code> という名前のスクリプトは存在しない。<code>show platform ssdhealth</code> (sonic-utilities/show/platform.py) は内部で <code>sudo ssdutil -d &lt;device&gt;</code> を呼ぶラッパーになっている。</li>
+<li>HLD の抽象クラス配置 <code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code> は <strong>存在しない</strong>。master では <code>sonic-platform-common/sonic_platform_base/sonic_storage/</code> 配下に <code>storage_base.py</code> / <code>ssd.py</code> / <code>emmc.py</code> / <code>usb.py</code> / <code>storage_devices.py</code> として再構成されている。</li>
+<li>HLD オプションの pmon <code>ssdmond</code> デーモンは <code>sonic-platform-daemons</code> に <strong>存在しない</strong>（取り込まれていない）。</li>
+</ul>
+<p>本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (<code>ssdutil/main.py</code>) と <code>sonic_storage/</code> 構成を確認すること。</p>
 </div>
 <h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

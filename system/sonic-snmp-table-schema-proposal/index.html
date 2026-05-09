@@ -4856,6 +4856,8 @@
       
         
       
+        
+      
     
     
     
@@ -5740,6 +5742,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13811,9 +13841,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 提案文書</p>
-<p>本ドキュメントはスキーマ提案であり、実装ステータスは Initial Proposal 相当。<code>SNMP_COMMUNITY.TYPE</code> の <code>RW</code> は当時未実装（Read-only のみ実効）であると HLD に明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。現行 master で 3 テーブル全てが yang モデルに含まれているか、<code>docker-snmp</code> の <code>snmpd.conf.j2</code> が CONFIG_DB のみを読むよう変更されているかは未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang</code> で SNMP/CONTACT/LOCATION コンテナ定義を確認。<code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code> で <code>SNMP_COMMUNITY</code> の RO/RW、<code>SNMP_USER</code> の RO/RW + auth/encryption、<code>SNMP.LOCATION.Location</code> / <code>SNMP.CONTACT</code> 取り込みを確認。SNMP_USER 側の <code>SNMP_USER_PERMISSION=RW</code> は実装済（<code>rwuser</code> 行で生成）。</p>
 </div>
 <h1 id="snmp-table-snmp-snmp_community-snmp_user">SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）<a class="headerlink" href="#snmp-table-snmp-snmp_community-snmp_user" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13916,7 +13946,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 </span></code></pre></div>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>SNMP_COMMUNITY.TYPE = RW</code> は HLD 時点で未実装（コードでは未使用、Read-only のみ有効）と明記されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>SNMP_COMMUNITY.TYPE = RW</code> は HLD 時点で未実装（コードでは未使用、Read-only のみ有効）と明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>パスワードは平文格納。</li>
 <li><code>snmpd-config-updater</code> は caclmgrd への移行予定のため対象外と HLD で明言されている。</li>
 </ul>
@@ -13936,7 +13966,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/snmp/snmp-schema-addition.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/snmp/snmp-schema-addition.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -5094,6 +5094,8 @@
       
         
       
+        
+      
     
     
     
@@ -5975,6 +5977,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13777,9 +13807,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-utilities</code> の <code>wol</code> 実装、<code>sonic-gnmi</code> の <code>SonicWolService</code>、および <code>sonic-host-services</code> 側の D-Bus ハンドラ実装は未裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD と現行 master 実装に齟齬がある。</p>
+<ul>
+<li>HLD は CLI を <code>sonic-utilities</code> 側 Python スクリプトとして想定しているが、現行 <code>wol</code> CLI は <strong>Rust</strong> 実装（<code>sonic-buildimage/src/sonic-nettools/wol/</code> の <code>Cargo.toml</code> / <code>src/main.rs</code> / <code>src/wol.rs</code> / <code>src/socket.rs</code>）として配置されている。<code>sonic-utilities</code> 側に <code>wol</code> スクリプトは存在しない。</li>
+<li>HLD の <code>SonicWolService</code> / <code>WolRequest</code> proto を検索した範囲では、<code>sonic-gnmi</code> master に該当 gNOI service・proto の取り込みは見つからなかった（D-Bus 経路含め <code>sonic-host-services</code> 側にも未確認）。gNOI 経由の WoL は HLD 提案段階のままの可能性が高い。</li>
+</ul>
+<p>Rust CLI の引数体系・UDP モード対応については <code>sonic-buildimage/src/sonic-nettools/wol/src/wol.rs</code> を直接参照すること。</p>
 </div>
 <h1 id="wake-on-lanwol-cli-sonicwolservice-gnoi">Wake-on-LAN（wol CLI と SonicWolService gNOI）<a class="headerlink" href="#wake-on-lanwol-cli-sonicwolservice-gnoi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

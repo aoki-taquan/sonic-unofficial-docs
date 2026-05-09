@@ -4856,6 +4856,8 @@
       
         
       
+        
+      
     
     
     
@@ -5925,6 +5927,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13677,9 +13707,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は分析レポート寄り。<code>bgpmon.py</code> の <code>vtysh -H /dev/null</code> への置換、<code>/tmp</code> の tmpfs 化、<code>supervisor-proc-exit-listener</code> の log 出力先変更、<code>/var/lib/monit</code> / <code>/var/lib/logrotate</code> の tmpfs 化、<code>jbd2</code> 無効化（journaling off）の各 PR が現行 master に取り込まれているかは未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> で <code>--tmpfs /tmp</code> / <code>--tmpfs /var/tmp</code> を確認、<code>sonic_debian_extension.j2</code> に <code>/dev/shm/monit/</code> 用 <code>tmpfiles.d/tmpfs-monit.conf</code> 生成も確認。<code>/tmp</code> tmpfs 化と monit 状態の tmpfs 化は master 取り込み済み。</p>
 </div>
 <h1 id="sonic-disk-io-writer-tmpfs">SONiC Disk I/O 削減（writer 分析と tmpfs 化）<a class="headerlink" href="#sonic-disk-io-writer-tmpfs" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

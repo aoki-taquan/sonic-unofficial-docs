@@ -4856,6 +4856,8 @@
       
         
       
+        
+      
     
     
     
@@ -5892,6 +5894,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13614,7 +13644,7 @@
 <hr />
 <p>title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13625,9 +13655,9 @@ related:
   cli: []
   yang: []</p>
 <hr />
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.1 (2025-01) Initial Proposal。NPU 側 GNMI/GNOI Splitter、Offloader、<code>Containerz.*</code> GNOI 拡張、DPU Host Services の現行 master 取り込みは未裏取り。priority=high で queue 登録。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>sonic-gnmi master で DPU Proxy（GNMI/GNOI Splitter）が <code>pkg/interceptors/dpuproxy/proxy.go</code> に実装済み（<code>ForwardToDPU</code> / <code>HandleLocally</code>）。Containerz gNOI は <code>gnmi_server/gnoi_containerz.go</code> および <code>gnoi_client/containerz/</code> に、<code>System.SetPackage</code> 等は <code>pkg/gnoi/system/system.go</code> / <code>gnmi_server/gnoi_system.go</code> に実装。HLD で言及されている主要ハンドラ群は master に取り込み済み。</p>
 </div>
 <h1 id="smart-switch-dpu-gnoi">Smart Switch: DPU 独立アップグレード（gNOI 経路）<a class="headerlink" href="#smart-switch-dpu-gnoi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

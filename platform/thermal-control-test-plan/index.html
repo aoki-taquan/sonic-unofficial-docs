@@ -4854,6 +4854,8 @@
       
         
       
+        
+      
     
     
     
@@ -5735,6 +5737,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13777,9 +13807,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ドキュメントは <strong>テストプラン</strong> であり実装 HLD ではない。pytest テストケースとサンプル <code>valid_policy.json</code> / <code>invalid_*_policy.json</code> 配置の現行 SONiC-mgmt 取り込みは未裏取り。元設計の <code>thermal-control-design.md</code> は参考リンク。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-common/sonic_platform_base/sonic_thermal_control/</code>（<code>thermal_action_base.py</code> / <code>thermal_condition_base.py</code> / <code>thermal_json_object.py</code> / <code>thermal_policy.py</code> / <code>thermal_manager_base.py</code>）と <code>sonic-platform-daemons/sonic-thermalctld/</code> を master で確認。テストプラン側の SONiC-mgmt サンプル JSON は本リポジトリ範囲外（mgmt キャッシュ未配備）。</p>
 </div>
 <h1 id="thermal-control">Thermal Control テストプラン<a class="headerlink" href="#thermal-control" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

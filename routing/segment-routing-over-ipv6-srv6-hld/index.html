@@ -5033,6 +5033,8 @@
       
         
       
+        
+      
     
     
     
@@ -5914,6 +5916,34 @@
     
   
     SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
   
 
     
@@ -13655,9 +13685,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.5 (2024-04 に MySID counter 追加)。SRV6 系 CONFIG_DB / APPL_DB table の sonic-yang-models 反映、orchagent (Srv6Orch) の現行 master 取り込み、SAI SRv6 attributes、FRR からの fpmsyncd 経由経路は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss/orchagent/srv6orch.cpp</code> / <code>srv6orch.h</code> を master で確認。<code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> 等のスキーマ定数は <code>sonic-swss-common/common/schema.h</code> に取り込み済み。</p>
 </div>
 <h1 id="srv6segment-routing-over-ipv6-enddt46-hencapsred">SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）<a class="headerlink" href="#srv6segment-routing-over-ipv6-enddt46-hencapsred" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
