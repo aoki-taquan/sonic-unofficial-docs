@@ -973,7 +973,8 @@
         "HLD は 2021 年の Initial Proposal のため現行運用との乖離が大きい可能性"
       ],
       "priority": "high",
-      "issue": 161
+      "issue": 161,
+      "pr": 162
     }
   ]
 }
