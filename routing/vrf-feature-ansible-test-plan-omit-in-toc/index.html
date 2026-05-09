@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/test-plan-for-inner-packet-hashing-in-ecmp/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/vrf-feature-ansible-test-plan-omit-in-toc/">
       
       
-        <link rel="prev" href="../static-ip-route-configuration/">
+        <link rel="prev" href="../test-plan-for-inner-packet-hashing-in-ecmp/">
       
       
-        <link rel="next" href="../vrf-feature-ansible-test-plan-omit-in-toc/">
+        <link rel="next" href="../vrf-vs-test-plan/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） - SONiC 非公式ドキュメント</title>
+        <title>VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" class="md-skip">
+        <a href="#vrf-ansible-t0-bgpaclloopbackwarm-reboot-e2e" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+              VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
             
           </span>
         </div>
@@ -1983,6 +1983,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -2002,7 +2030,7 @@
   <span class="md-ellipsis">
     
   
-    ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+    VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
   
 
     
@@ -2020,7 +2048,7 @@
   <span class="md-ellipsis">
     
   
-    ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+    VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
   
 
     
@@ -2069,10 +2097,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pbh" class="md-nav__link">
+  <a href="#topology-vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PBH 構成
+        Topology / VRF 配置例
       
     </span>
   </a>
@@ -2080,10 +2108,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#bgpfrrvrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        測定方法
+        BGP（FRR）VRF 設定の生成
       
     </span>
   </a>
@@ -2091,10 +2119,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#acl-redirectvrf-nexthop" class="md-nav__link">
     <span class="md-ellipsis">
       
-        逆検証
+        ACL redirect（VRF 別 nexthop）
       
     </span>
   </a>
@@ -2102,10 +2130,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#symmetric-warm-boot" class="md-nav__link">
+  <a href="#10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        symmetric / warm-boot
+        テストケース 10 項目
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ptf-traffic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PTF traffic 判定
       
     </span>
   </a>
@@ -2118,7 +2157,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2129,7 +2168,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2140,7 +2179,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2154,34 +2193,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -11405,10 +11416,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pbh" class="md-nav__link">
+  <a href="#topology-vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PBH 構成
+        Topology / VRF 配置例
       
     </span>
   </a>
@@ -11416,10 +11427,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#bgpfrrvrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        測定方法
+        BGP（FRR）VRF 設定の生成
       
     </span>
   </a>
@@ -11427,10 +11438,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#acl-redirectvrf-nexthop" class="md-nav__link">
     <span class="md-ellipsis">
       
-        逆検証
+        ACL redirect（VRF 別 nexthop）
       
     </span>
   </a>
@@ -11438,10 +11449,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#symmetric-warm-boot" class="md-nav__link">
+  <a href="#10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        symmetric / warm-boot
+        テストケース 10 項目
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ptf-traffic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PTF traffic 判定
       
     </span>
   </a>
@@ -11454,7 +11476,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -11465,7 +11487,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11476,7 +11498,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11503,7 +11525,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11512,73 +11534,133 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021 年版 (Rev 1.1) で 4 年経過。<code>config pbh table/hash-field/hash/rule add/delete</code> CLI、PBH (Policy Based Hashing) Orchagent / SAI 連携、<code>SET_ECMP_HASH</code> action、warm-boot 跨ぎ動作は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>本テストプランは sonic-mgmt 上の <code>test_vrf.py</code> 設計記述。<code>config vrf</code> / <code>config interface vrf bind</code> CLI、<code>frr.conf.j2</code> の VRF テンプレート、<code>acl-loader</code> の <code>redirect:&lt;ip&gt;@&lt;intf&gt;</code> action、1000 VRF スケールテストの現行挙動は未裏取り。</p>
 </div>
-<h1 id="ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）<a class="headerlink" href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" title="Permanent link">&para;</a></h1>
+<h1 id="vrf-ansible-t0-bgpaclloopbackwarm-reboot-e2e">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）<a class="headerlink" href="#vrf-ansible-t0-bgpaclloopbackwarm-reboot-e2e" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ECMP nexthop の選択を <strong>outer ヘッダではなく inner パケットの 5-tuple</strong>（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。</p>
+<p><code>vrf-vs-test-plan</code> が SwSS 内部の DB 反映を見るのに対し、本プランは <strong>実 SONiC スイッチ上で VRF 機能を E2E 検証</strong> する。<code>t0</code> トポロジ前提で、PortChannel / VLAN を 2 つの VRF (<code>Vrf1</code> / <code>Vrf2</code>) に分け、neighbor / route 学習、ACL redirect、loopback、warm-reboot を網羅する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="pbh">PBH 構成<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#pbh" title="Permanent link">&para;</a></h3>
+<h3 id="topology-vrf">Topology / VRF 配置例<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#topology-vrf" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>構成要素</th>
-<th>内容</th>
+<th>VRF</th>
+<th>bind 対象</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>PBH table</td>
-<td>T0 トポロジの <strong>VLAN 内 PTF ポート</strong>を bind（Up かつ非 LAG）</td>
+<td><code>Vrf1</code></td>
+<td><code>PortChannel0001</code> / <code>PortChannel0002</code> / <code>Vlan1000</code></td>
 </tr>
 <tr>
-<td>hash field</td>
-<td><code>inner_ip_proto</code>/<code>inner_l4_dst_port</code>/<code>inner_l4_src_port</code>/<code>inner_dst_ipv4</code>/<code>inner_src_ipv4</code>/<code>inner_dst_ipv6</code>/<code>inner_src_ipv6</code>。L4 port と IP は <strong>symmetric=Yes</strong></td>
-</tr>
-<tr>
-<td>hash</td>
-<td>上記 7 フィールドをまとめた <code>inner_hash</code></td>
-</tr>
-<tr>
-<td>rule</td>
-<td>outer encap ごとに 8 ルール（NVGRE × {v4,v6}×{v4,v6} priority=2、VxLAN × {v4,v6}×{v4,v6} priority=1）。action=<code>SET_ECMP_HASH</code>、counter=ENABLED</td>
+<td><code>Vrf2</code></td>
+<td><code>PortChannel0003</code> / <code>PortChannel0004</code> / <code>Vlan2000</code></td>
 </tr>
 </tbody>
 </table>
-<p>VxLAN は L4 dst port = <code>0x3412 (4789)</code> をマッチ条件に含める。NVGRE は IP proto/IPv6 next header = <code>0x2f</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">測定方法<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  PTF[PTF: 4000 packets / dst prefix] --&gt; DUT
-  DUT --&gt;|inner 5-tuple&lt;br&gt;variation| ECMP[(4 ECMP next-hop = T1)]
-  ECMP --&gt; P1[port1] &amp; P2[port2] &amp; P3[port3] &amp; P4[port4]</code></pre>
+<p><code>PORTCHANNEL_INTERFACE</code> の <code>&lt;pc&gt;\|&lt;addr/prefix&gt;</code> で v4 / v6 アドレス、<code>&lt;pc&gt;</code> キーの <code>vrf_name</code> で VRF bind<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="bgpfrrvrf">BGP（FRR）VRF 設定の生成<a class="headerlink" href="#bgpfrrvrf" title="Permanent link">&para;</a></h3>
+<p><code>/usr/share/sonic/templates/frr.conf.j2</code> を VRF 対応に拡張。各 VRF に独立した <code>router bgp 65100 vrf VrfX</code> ブロックを生成し、IPv4/IPv6 unicast、neighbor、route-map (<code>set-next-hop-global-v6</code>、<code>RM_SET_SRC[6]</code> 等) を VRF 毎に持つ<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>router bgp 65100 vrf Vrf2
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  bgp router-id 10.1.0.32
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  neighbor 10.0.0.61 remote-as 64600
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  bgp listen range 10.255.0.0/25 peer-group BGPSLBPassive
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  ...
+</span></code></pre></div>
+<p><code>BGP_PEER_RANGE</code> / <code>BGP_NEIGHBOR</code> の各 entry にも <code>vrf_name</code> または <code>Vrf&lt;N&gt;|&lt;addr&gt;</code> キーで VRF を伝える<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="acl-redirectvrf-nexthop">ACL redirect（VRF 別 nexthop）<a class="headerlink" href="#acl-redirectvrf-nexthop" title="Permanent link">&para;</a></h3>
+<p>VRF 跨ぎリダイレクトでは <strong>outgoing interface も明示</strong> が必要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&quot;VRF_ACL_REDIRECT_V4|rule1&quot;: {
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  &quot;priority&quot;: &quot;55&quot;,
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  &quot;SRC_IP&quot;: &quot;10.0.0.1&quot;,
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  &quot;packet_action&quot;: &quot;redirect:&lt;ip1&gt;@&lt;intf1&gt;,&lt;ip2&gt;@&lt;intf2&gt;&quot;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>}
+</span></code></pre></div>
+<p><code>&lt;ip&gt;@&lt;intf&gt;</code> 形式で nexthop の interface を VRF とともに固定する。</p>
+<h3 id="10">テストケース 10 項目<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>観点</th>
+<th>主な手順</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>VRF 作成 / bind</td>
+<td><code>config load vrf</code> → kernel + APP_DB 確認</td>
+</tr>
+<tr>
+<td>2</td>
+<td>neighbor 学習</td>
+<td>DUT から VM へ ping、トラフィックで neighbor 検証</td>
+</tr>
+<tr>
+<td>3</td>
+<td>route 学習</td>
+<td>bgp で各 VM が 6.4K v4 + 6.4K v6 route を広報、トラフィック検証</td>
+</tr>
+<tr>
+<td>4</td>
+<td>VRF 隔離</td>
+<td>異 VRF で同一 prefix を広報し、neighbor / route が混ざらないこと</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ACL redirect</td>
+<td><code>&lt;ip&gt;@&lt;intf&gt;</code> リダイレクト先で受信、複数 nexthop の load balance</td>
+</tr>
+<tr>
+<td>6</td>
+<td>loopback IF</td>
+<td>異 VRF の loopback、loopback を bgp <code>update-source</code> に使い session Established</td>
+</tr>
+<tr>
+<td>7</td>
+<td>warm-reboot</td>
+<td>system warm + swss warm 中の連続トラフィック無断</td>
+</tr>
+<tr>
+<td>8</td>
+<td>1000 VRF</td>
+<td>1000 VLAN + 1000 VRF を CLI 生成、エラー無し + ping 通る</td>
+</tr>
+<tr>
+<td>9</td>
+<td>unbind</td>
+<td>VRF unbind 時の neighbor/route 削除と他 IF への波及無し</td>
+</tr>
+<tr>
+<td>10</td>
+<td>VRF 削除</td>
+<td>bind 中 IF ごと VRF 削除、IP/neighbor/route が連動削除、他 VRF 不変</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ptf-traffic">PTF traffic 判定<a class="headerlink" href="#ptf-traffic" title="Permanent link">&para;</a></h3>
+<p><code>src_mac</code> オプションテストでは PTF が L3 forward 後の dst_mac を見て、設定済 VRF <code>src_mac</code> と一致した場合のみ forward 判定する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ECMP nexthop あたり <strong>1000 パケット</strong> 送出 → 4 nexthop で 4000 packets</li>
-<li>期待値からの <strong>±25% 偏差以内</strong> で OK</li>
-<li>inner 5-tuple のうち 1 要素ずつ変えた 7 ケース実施</li>
+<li><code>t0</code> トポロジ前提</li>
+<li>TODO（HLD 末尾）: <code>fallback_lookup</code> 属性、VRF 間 route leak、everflow VRF 対応、ssh 等 application の VRF 対応 は <strong>本プラン範囲外</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>1000 VRF テストは生成時間 / メモリの観点で実機制約を受ける可能性あり</li>
 </ul>
-<h3 id="_4">逆検証<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>inner tuple を固定し outer tuple を変えた 4000 packets を流すと <strong>すべて単一 nexthop</strong> に着弾しなければならない。outer がハッシュに混ざっていない確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="symmetric-warm-boot">symmetric / warm-boot<a class="headerlink" href="#symmetric-warm-boot" title="Permanent link">&para;</a></h3>
-<p>オプションで symmetric ハッシュ確認（往復で同じ nexthop に landing）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm-boot 中に inner ハッシュテストを継続して通常時と同じ分布になることも確認<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>T0 トポロジ前提。他トポロジは将来拡張<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ハッシュ偏差許容は 25%。少サンプルでは偏差が大きいので <strong>1000 packets/nexthop</strong> が下限</li>
-<li>VxLAN dst port は <code>0x3412</code> 固定（little-endian で 4789）</li>
+<li><strong>FRR (zebra/bgpd)</strong>: VRF 別ルーティングテーブルの中核</li>
+<li><strong>ACL redirect</strong>: <code>redirect:&lt;ip&gt;@&lt;intf&gt;</code> action の VRF 跨ぎ振る舞い</li>
+<li><strong>warm-reboot</strong>: system + swss warm の双方で連続トラフィックを保証</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>既存 hash_test</strong>: outer 5-tuple ECMP のテスト。本テストは inner 版</li>
-<li><strong>ECMP / Overlay ECMP</strong>: PBH で書き換えられる ECMP ハッシュキーに依存</li>
-<li><strong>warm-boot</strong>: トラフィック継続テストの対象</li>
-</ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/ecmp/inner_packet_hashing_test_plan.md">sonic-net/SONiC doc/ecmp/inner_packet_hashing_test_plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/vrf/vrf-ansible-test-plan.md">sonic-net/SONiC doc/vrf/vrf-ansible-test-plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
