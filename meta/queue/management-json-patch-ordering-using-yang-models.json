@@ -1,0 +1,16 @@
+{
+  "page": "docs/management/json-patch-ordering-using-yang-models.md",
+  "verification": "hld-only",
+  "concerns": [
+    "generic_config_updater \u5185 patch_orderer \u5b9f\u88c5\u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u3068\u63a2\u7d22\u30a2\u30eb\u30b4\u30ea\u30ba\u30e0\u5b9f\u88c5\u78ba\u8a8d (DFS + memoization)",
+    "sonic-extension.yang \u3078\u306e create-only \u62e1\u5f35\u8ffd\u52a0\u72b6\u6cc1\u78ba\u8a8d",
+    "sonic-port.yang \u306e lanes leaf \u306b create-only \u304c\u4ed8\u4e0e\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "sonic-yang-mgmt \u306e sonic_yang.find_data_dependencies / validate_data_tree \u304c\u73fe\u884c\u3067\u5229\u7528\u53ef\u80fd\u304b\u78ba\u8a8d",
+    "Dynamic Port Breakout \u306e\u30ea\u30a2\u30eb apply-patch \u30b7\u30ca\u30ea\u30aa\u3067\u306e\u7d50\u679c JsonChange \u5217\u304c HLD \u60f3\u5b9a\u3068\u4e00\u81f4\u3059\u308b\u304b\u78ba\u8a8d",
+    "\u5927\u898f\u6a21 patch \u3078\u306e scalability heuristics \u306e\u8ffd\u52a0\u5b9f\u88c5\u72b6\u6cc1\u78ba\u8a8d",
+    "\u672c HLD \u306f 2021 \u5e74\u7248\u3067 5 \u5e74\u7d4c\u904e\u3002priority=high \u3067 queue \u767b\u9332"
+  ],
+  "priority": "high",
+  "issue": 499,
+  "pr": 500
+}
