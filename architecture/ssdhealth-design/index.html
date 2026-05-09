@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/zmq-producer-consumer-state-table-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design/">
       
       
-        <link rel="prev" href="../why-need-health-check/">
+        <link rel="prev" href="../sonic-ip-interface-loopback-action/">
       
       
-        <link rel="next" href="../../reference/">
+        <link rel="next" href="../../routing/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ZMQ ProducerStateTable / ConsumerStateTable 設計 - SONiC 非公式ドキュメント</title>
+        <title>SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#zmq-producerstatetable-consumerstatetable" class="md-skip">
+        <a href="#ssd-show-platform-ssdhealth-ssdutil" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ZMQ ProducerStateTable / ConsumerStateTable 設計
+              SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -562,20 +564,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -593,13 +598,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -619,7 +624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -647,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -675,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -700,10 +705,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -719,6 +751,281 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brief" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brief（既定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verbose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンドのチェーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssdhealth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ssdhealth ユーティリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラグイン構造
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラグイン構造">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssdbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        抽象クラス SsdBase
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssdutilssdbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダ実装 SsdUtil（SsdBase を継承）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 仕様
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        利用するユーティリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-pmon-ssdmond" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional: pmon ssdmond
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1913,8 +2220,6 @@
       
   
   
-    
-  
   
   
     
@@ -1938,23 +2243,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -1972,13 +2274,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1998,7 +2300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2026,7 +2328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -2054,7 +2356,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -2082,7 +2384,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -2107,37 +2409,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ZMQ ProducerStateTable / ConsumerStateTable 設計
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -2153,203 +2428,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体像
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#producer-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Producer 側の API
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#zmqclient" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ZmqClient のリトライポリシー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#server" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Server 側のディスパッチ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#consumer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Consumer 側の二系統通知
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pops" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        pops() でアプリ側に渡す
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2702,10 +2780,60 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brief" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brief（既定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verbose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verbose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体像
+        コマンドのチェーン
       
     </span>
   </a>
@@ -2713,10 +2841,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#producer-api" class="md-nav__link">
+  <a href="#ssdhealth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Producer 側の API
+        ssdhealth ユーティリティ
       
     </span>
   </a>
@@ -2724,10 +2852,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#zmqclient" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ZmqClient のリトライポリシー
+        プラグイン構造
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラグイン構造">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ssdbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        抽象クラス SsdBase
       
     </span>
   </a>
@@ -2735,10 +2875,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#server" class="md-nav__link">
+  <a href="#ssdutilssdbase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Server 側のディスパッチ
+        ベンダ実装 SsdUtil（SsdBase を継承）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 仕様
       
     </span>
   </a>
@@ -2746,10 +2902,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#consumer" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Consumer 側の二系統通知
+        利用するユーティリティ
       
     </span>
   </a>
@@ -2757,10 +2913,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pops" class="md-nav__link">
+  <a href="#optional-pmon-ssdmond" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pops() でアプリ側に渡す
+        Optional: pmon ssdmond
       
     </span>
   </a>
@@ -2773,7 +2929,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2796,7 +2952,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -2812,7 +2968,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2823,7 +2979,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2834,7 +2990,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2845,7 +3001,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2872,7 +3028,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/zmq-producer-consumer-state-table-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/ssdhealth-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2882,164 +3038,223 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-swss-common</code> 内の <code>ZmqClient</code> / <code>ZmqServer</code> / <code>ZmqProducerStateTable</code> / <code>ZmqConsumerStateTable</code> の実体・スレッド構成・DB 書き込みのオプション化（feature flag）の実装は未裏取り。</p>
+<p>このページは公式 HLD のみを根拠にしている。<code>sonic-utilities/scripts/ssdhealth</code>、<code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code>、ベンダ別 <code>ssdutil.py</code>、Pmon <code>ssdmond</code> のいずれも実装裏取り未済。</p>
 </div>
-<h1 id="zmq-producerstatetable-consumerstatetable">ZMQ ProducerStateTable / ConsumerStateTable 設計<a class="headerlink" href="#zmq-producerstatetable-consumerstatetable" title="Permanent link">&para;</a></h1>
+<h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の orchagent と他プロセス間の通知は基本的に <strong>Redis (ProducerStateTable / ConsumerStateTable)</strong> で行われている。Redis 経由は永続化・観測性に優れる一方、<strong>書き込みコストが Redis に縛られる</strong>。</p>
-<p>この HLD は同等のインターフェースを保ったまま <strong>ZMQ をトランスポートに使う</strong> バリエーション (<code>ZmqProducerStateTable</code> / <code>ZmqConsumerStateTable</code>) を定義している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Redis を経由せずに直接プロセス間でメッセージを飛ばせるため、低レイテンシかつ DB 書き込みを <strong>オプション化</strong> できる。Consumer 側に「DB 更新スレッドを ON/OFF できるフラグ」が用意されているのが特徴で、<code>より少ないメモリ</code> または <code>より高い性能</code> が必要なユースケース向けに割り切れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
+<p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
+</span></code></pre></div>
+<p>3 つの表示モード<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="brief">Brief（既定）<a class="headerlink" href="#brief" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic-switch: ~$ show platform ssdhealth
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Device Model : InnoDisk Corp. - mSATA 3ME
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Health: 72.9%
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Temperature: N/A
+</span></code></pre></div>
+<h4 id="verbose">Verbose<a class="headerlink" href="#verbose" title="Permanent link">&para;</a></h4>
+<p><code>FW Version</code> / <code>Serial Number</code> / <code>Capacity</code> / <code>Power On Hours</code> / <code>Power Cycle count</code> 等を追加表示。</p>
+<h4 id="vendor">Vendor<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h4>
+<p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">コマンドのチェーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    subgraph Producer Side
-        APP1[App / orchagent] --&gt; ZPST[ZmqProducerStateTable]
-        ZPST --&gt; ZC[ZmqClient]
-    end
-    ZC --&gt;|ZMQ socket\n(serialized msg)| ZS[ZmqServer m_mqPollThread]
-    subgraph Consumer Side
-        ZS --&gt; ZCST[ZmqConsumerStateTable]
-        ZCST --&gt; SEL[select event\nm_receivedQueue]
-        ZCST --&gt;|optional| DBT[m_dbUpdateThread]
-        DBT --&gt; REDIS[(Redis)]
-        SEL --&gt; APP2[App consume via pops]
-    end</code></pre>
-<p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    USER[user] --&gt; SHOW[show platform ssdhealth\n(show/main.py)]
+    SHOW --&gt;|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
+    UTIL --&gt; BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
+    BASE --&gt; VENDOR[SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)]
+    BASE -.fallback.-&gt; SCTL[smartctl]
+    VENDOR --&gt; ISMART[iSmart / SmartCmd 等\nベンダ純正]
+    UTIL --&gt; OUT[stdout]</code></pre>
+<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ。コア処理は <code>ssdhealth</code> スクリプト側にある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="ssdhealth"><code>ssdhealth</code> ユーティリティ<a class="headerlink" href="#ssdhealth" title="Permanent link">&para;</a></h3>
+<p>新規スクリプト。配置は <code>sonic-utilities/scripts/</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>usage: ssdhealth -d DEVICE [-h] [-v] [-e]
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -d, --device          disk device to get information for
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  -v, --verbose         show verbose output (more parameters)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -e, --vEndor          show vendor specific disk information
+</span></code></pre></div>
+<p>中で <code>SsdUtil</code> プラグインを import し、後述の API を呼んで結果を整形する設計。<code>-d</code> で device path を取るので <code>show</code> 側で <code>/dev/sda</code> 等を渡す<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">プラグイン構造<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>二段で抽象化する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="ssdbase">抽象クラス <code>SsdBase</code><a class="headerlink" href="#ssdbase" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code>ZmqClient</code> は <strong>複数の <code>ZmqProducerStateTable</code> から共有</strong> できる。送信は <code>sendMsg()</code> 一本で thread safe &amp; async。</li>
-<li><code>ZmqServer</code> は受信専用スレッド <code>m_mqPollThread</code> を持ち、来たメッセージを <strong>DB 名 + テーブル名</strong> で <code>ZmqConsumerStateTable</code> に振り分ける。</li>
-<li><code>ZmqConsumerStateTable</code> は select 通知用の <code>m_receivedQueue</code> と、Redis への書き込みを行う <code>m_dbUpdateThread</code> の二系統を管理する。後者は <strong>on/off できる</strong>。</li>
+<li>配置: <code>sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code></li>
+<li>役割: 汎用 API のジェネリック実装。既知の disk なら専用ユーティリティ、それ以外は <code>smartctl</code> 系へフォールバック。<strong>smartctl の DB に無いモデル</strong> は情報の一部が取得不能 or 不完全になりうる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h3 id="producer-api">Producer 側の API<a class="headerlink" href="#producer-api" title="Permanent link">&para;</a></h3>
-<p><code>ZmqProducerStateTable</code> がアプリケーションに見せる API は <strong>既存の <code>ProducerStateTable</code> と同形</strong> に揃えてある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="ssdutilssdbase">ベンダ実装 <code>SsdUtil</code>（<code>SsdBase</code> を継承）<a class="headerlink" href="#ssdutilssdbase" title="Permanent link">&para;</a></h4>
+<ul>
+<li>配置: <code>sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py</code></li>
+<li>役割: ベンダ提供ツールの出力をパースして API を実装。InnoDisk なら <code>iSmart</code>、StorFly / Virtium なら <code>SmartCmd</code> を呼ぶ前提<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<pre class="mermaid"><code>classDiagram
+    class SsdBase {
+        +get_disk_health(diskdev) float
+        +get_temperature(diskdev) string
+        +get_model(diskdev) string
+        +get_firmware(diskdev) string
+        +get_serial(diskdev) string
+        +get_vendor_output(diskdev) string
+    }
+    class SsdUtil
+    SsdBase &lt;|-- SsdUtil</code></pre>
+<h3 id="api">API 仕様<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<p><code>SsdBase</code> / <code>SsdUtil</code> が公開する API<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>操作</th>
-<th>シグネチャ</th>
+<th>メソッド</th>
+<th>戻り値</th>
+<th>取得不可時</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Set</td>
-<td><code>void set(const std::string &amp;key, const std::vector&lt;FieldValueTuple&gt; &amp;values, const std::string &amp;op = SET_COMMAND, const std::string &amp;prefix = EMPTY_PREFIX)</code></td>
+<td><code>get_disk_health(diskdev)</code></td>
+<td>float（0〜100、% 表現）</td>
+<td><code>-1</code></td>
 </tr>
 <tr>
-<td>Delete</td>
-<td><code>void del(const std::string &amp;key, const std::string &amp;op = DEL_COMMAND, const std::string &amp;prefix = EMPTY_PREFIX)</code></td>
+<td><code>get_temperature(diskdev)</code></td>
+<td>string（摂氏）</td>
+<td><code>0</code></td>
 </tr>
 <tr>
-<td>Batch Set</td>
-<td><code>void set(const std::vector&lt;KeyOpFieldsValuesTuple&gt;&amp; values)</code></td>
+<td><code>get_model(diskdev)</code></td>
+<td>string（人読 model）</td>
+<td>空文字</td>
 </tr>
 <tr>
-<td>Batch Delete</td>
-<td><code>void del(const std::vector&lt;std::string&gt;&amp; keys)</code></td>
+<td><code>get_firmware(diskdev)</code></td>
+<td>string（FW バージョン）</td>
+<td>空文字</td>
+</tr>
+<tr>
+<td><code>get_serial(diskdev)</code></td>
+<td>string（シリアル）</td>
+<td>空文字</td>
+</tr>
+<tr>
+<td><code>get_vendor_output(diskdev)</code></td>
+<td>string（ベンダツール出力そのまま）</td>
+<td>空文字</td>
 </tr>
 </tbody>
 </table>
-<p>呼び出すだけで内部で <code>ZmqClient::sendMsg</code> を叩く構造。Redis 版とコードを共通化しやすいよう <strong>シグネチャを意図的に維持</strong> している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="zmqclient">ZmqClient のリトライポリシー<a class="headerlink" href="#zmqclient" title="Permanent link">&para;</a></h3>
-<p><code>sendMsg()</code> は async で即 return するが、送信失敗時には次のケースで <strong>再試行</strong> が走る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>引数はいずれも <code>diskdev:string</code>（例: <code>/dev/sda</code>）。</p>
+<h3 id="_5">利用するユーティリティ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>HLD で挙げられているもの<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>失敗ケース</th>
-<th>対応</th>
+<th>ツール</th>
+<th>用途</th>
+<th>サイズ感</th>
+<th>備考</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ZMQ socket connection broken</td>
-<td>再接続→再送</td>
+<td><code>smartctl</code> (smartmontools)</td>
+<td>汎用 SMART 取得</td>
+<td>約 1.9M</td>
+<td><code>SsdBase</code> の fallback</td>
 </tr>
 <tr>
-<td>ZMQ 送信キュー満杯</td>
-<td>後で再送</td>
+<td><code>iSmart</code></td>
+<td>InnoDisk 製 SSD</td>
+<td>&lt;120K</td>
+<td>InnoDisk 公式配布のバイナリ</td>
 </tr>
 <tr>
-<td>signal 割り込みで send が失敗</td>
-<td>再送</td>
+<td><code>SmartCmd</code></td>
+<td>StorFly / Virtium</td>
+<td>約 2.2M</td>
+<td>ベンダ専用</td>
 </tr>
 </tbody>
 </table>
-<p>リトライしても失敗した場合と、connection が完全に切れたままの場合は <strong>例外を投げる</strong>。アプリケーション側で握りつぶす設計にはなっていない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="server">Server 側のディスパッチ<a class="headerlink" href="#server" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CLI as ZmqClient
-    participant ZMQ as ZMQ socket
-    participant POLL as ZmqServer.m_mqPollThread
-    participant CST as ZmqConsumerStateTable
-    participant DBT as m_dbUpdateThread
-    participant DB as Redis (optional)
-    participant SEL as select notify
-
-    CLI-&gt;&gt;ZMQ: serialize(db_name, table_name, key, op, fvs)
-    ZMQ-&gt;&gt;POLL: deliver
-    POLL-&gt;&gt;POLL: deserialize
-    POLL-&gt;&gt;POLL: lookup map[db_name+table_name]
-    POLL-&gt;&gt;CST: dispatch
-    CST-&gt;&gt;SEL: notify (m_receivedQueue)
-    alt DB update enabled
-        CST-&gt;&gt;DBT: enqueue (m_DbUpdateDataQueue)
-        DBT-&gt;&gt;DB: write
-    end
-    POLL-&gt;&gt;POLL: receive next</code></pre>
-<p><code>ZmqServer</code> がメッセージを受けるとき、シリアライズ済み payload には <strong>DB 名とテーブル名が含まれる</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを使って自前で持っている <code>(db_name, table_name) -&gt; ZmqConsumerStateTable</code> のマップを引き、対応する Consumer に投げる。Consumer 側は最初に <code>ZmqServer</code> に対して自分を register することでこのマップに載る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ディスパッチ後は <strong>次のメッセージの受信を即座に再開</strong> する。Handler 内で長時間ブロックする設計にはなっていない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="consumer">Consumer 側の二系統通知<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h3>
-<p><code>ZmqConsumerStateTable</code> は受け取ったメッセージを 2 か所に流す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>select event 通知</strong> — <code>m_receivedQueue</code> に積む。アプリケーション側は通常の Producer/Consumer 同様 <code>pops()</code> で取り出す。</li>
-<li><strong>DB 更新スレッド通知</strong> — <code>m_DbUpdateDataQueue</code> に積み、<code>m_dbUpdateThread</code> が Redis に書き込む。<strong>この経路は configurable で off にできる</strong>。</li>
-</ol>
-<blockquote>
-<p>"This is a configurable feature, could turn on/off this feature in use cases requiring less memory consumption or higher performance." <sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-</blockquote>
-<p>DB 更新を切ると <strong>Redis に痕跡が残らない</strong>。観測性は失うが、send → Consumer のデータパスから Redis を完全に外せるため最速になる。</p>
-<h3 id="pops"><code>pops()</code> でアプリ側に渡す<a class="headerlink" href="#pops" title="Permanent link">&para;</a></h3>
-<p>select で wake したアプリケーションは <code>ZmqConsumerStateTable::pops()</code> を呼んで <code>m_receivedQueue</code> から操作を取り出す。既存の <code>ConsumerStateTable::pops()</code> と同じ抽象を維持しているため、呼び出し側はトランスポートが ZMQ か Redis かを意識せずに書ける<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>smartctl</code> 同梱は <code>sonic-net/sonic-buildimage</code> PR 2703 で提案されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="optional-pmon-ssdmond">Optional: pmon <code>ssdmond</code><a class="headerlink" href="#optional-pmon-ssdmond" title="Permanent link">&para;</a></h3>
+<p>HLD は <strong>オプション</strong> として、pmon に常駐するデーモン <code>ssdmond</code> を提案している<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>周期的に <code>get_health()</code> を呼び出す。</li>
+<li>値が <strong>クリティカルしきい値を割った時にアラート</strong> を上げる。</li>
+<li>HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/sonic-swss-common/ZMQ producer-consumer state table design.md#L49-L55 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  When consumer table receive message from ZmqServer, consumer table will:
-    Send notification to select to handle received operation.
-    Send notification to DB update thread for write received operation to database.
-      This is a configurable feature, could turn on/off this feature in use cases requiring less memory consumption or higher performance.
-reasoning: DB 書き込みが optional であるという中核仕様の根拠。
+  Class SsdBase
+  Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
+  Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
+  Class SsdUtil
+  Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
+  Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
+reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
 -->
 
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>このページの機能はライブラリレベルの API であり、CONFIG_DB / CLI による直接の制御点は HLD で定義されていない。DB 更新の on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時に指定する</strong> 想定。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は HLD では未定義。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。</p>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show platform ssdhealth</code></td>
+<td>簡易表示</td>
+</tr>
+<tr>
+<td><code>show platform ssdhealth verbose</code></td>
+<td>詳細表示</td>
+</tr>
+<tr>
+<td><code>show platform ssdhealth vendor</code></td>
+<td>ベンダツール生出力</td>
+</tr>
+<tr>
+<td><code>ssdhealth -d /dev/sdX [-v|-e]</code></td>
+<td>内部ラッパが呼ぶスクリプトを直接実行</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>ZmqClient::sendMsg</code> はリトライしても失敗した場合に <strong>例外を投げる</strong>。呼び出し側でハンドリングしないとプロセスが落ちる前提<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ZMQ ベースの transport は <strong>Redis のような永続化・観測性が無い</strong>。DB 更新を off にすると <code>redis-cli</code> で状態を覗けないため、デバッグは別系統（ログ・メッセージダンプ）に依存する。</li>
-<li>HLD は HA / failover や複数 ZmqServer のロードバランシングに触れていない。前提は <strong>1 対 1 ないしは 1 対多の単純トポロジ</strong>。</li>
-<li><code>m_dbUpdateThread</code> を有効にした場合でも、<strong>select 通知と DB 書き込みの順序保証</strong> については HLD では明示されていない。アプリ側が DB を読む前提で設計する場合は実装の挙動を確認する必要がある。</li>
+<li><strong>smartctl のデータベースに無い disk</strong> は health / 温度の取得が <strong>N/A</strong> になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ベンダプラグインが用意されていないプラットフォームは <code>SsdBase</code> の fallback（smartctl）に依存。<code>vendor</code> モードの出力は基本的に空。</li>
+<li>pmon デーモン (<code>ssdmond</code>) は <strong>オプション</strong> であり、HLD では Open Question として残っている。常時監視・アラート発火が必要なら別途実装の確認が必要<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>値が取れない場合の表現が API ごとに異なる（health=<code>-1</code>、temp=<code>0</code>、文字列系=空）。<code>0 ℃</code> と「取得不可」が同義になり得る点に注意<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 <code>ProducerStateTable</code> / <code>ConsumerStateTable</code></strong>: API シグネチャは互換。同じアプリ内で両方使うことは可能だが、<code>ZmqConsumerStateTable</code> の DB 更新を off にするとそのテーブルだけ Redis に乗らなくなるため、<code>redis</code> を見ている他コンポーネントとの食い違いが起きる可能性がある。</li>
-<li><strong>orchagent 起動順序</strong>: ZMQ は永続化されないため、Producer 起動前に Consumer が起動していないと送信メッセージが落ちる。Redis 版にあった「あとから ConsumerStateTable を立ち上げて溜まりを読む」が成立しない点に注意。</li>
-<li><strong>swssloglevel / select イベントループ</strong>: Consumer 側のイベントは select に乗るので、既存の orchagent ループ構造との統合は容易だが、<code>m_receivedQueue</code> と <code>m_DbUpdateDataQueue</code> のバックプレッシャ挙動は確認が必要。</li>
+<li><strong>pmon (Platform Monitor)</strong>: <code>ssdmond</code> を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。</li>
+<li><strong>smartmontools / smartctl パッケージ</strong>: ビルドイメージに 1.9M 程度の追加。<code>sonic-buildimage</code> 側のパッケージ取り込みに依存<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>plugin 配置規約</strong>: <code>device/{{vendor}}/platform/plugins/ssdutil.py</code> は <strong>プラットフォームプラグインの一般則</strong> に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。</li>
+<li><strong>SNMP</strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Producer 側で例外: ZMQ socket / 送信キュー満杯のいずれか。Server 側の <code>m_mqPollThread</code> が止まっていないか、対向プロセスが生きているかを確認。</li>
-<li>Consumer に到達しない: <code>(db_name, table_name)</code> の register が走っているかを確認。マップ未登録のメッセージは Server 側で行き場を失う。</li>
-<li>期待した値が Redis に無い: DB 更新が off になっている可能性。コード上の <code>ZmqConsumerStateTable</code> 構築時のフラグを確認。</li>
-<li>送信は成功するが順序が乱れる: <code>ZmqClient</code> は async で、複数 Producer が同じ Client を共有している場合、送信順は呼び出し順と同じだがネットワーク側でのキューイングと Server の dispatch ループの兼ね合いで Consumer 視点の順序が変わる可能性がある。</li>
+<li><code>Health: N/A</code>: smartctl が当該 disk を識別できていない可能性。<code>smartctl -i /dev/sdX</code> で raw に確認。ベンダプラグインが装備されているか <code>device/&lt;vendor&gt;/platform/plugins/ssdutil.py</code> の存在を確認。</li>
+<li><code>vendor</code> モードが空: <code>SsdUtil</code> の <code>get_vendor_output()</code> が未実装、もしくはベンダツールバイナリが image に含まれていない。</li>
+<li><code>Temperature: 0</code> と <code>N/A</code> の区別: API の戻り値仕様上、温度の取得不可は <code>0</code> となる。<code>0℃</code> と取得不可が見分けにくい点は HLD の制約<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>show platform ssdhealth</code> が <code>command not found</code>: <code>show/main.py</code> の <code>platform</code> メニューに項目が登録されているか、<code>ssdhealth</code> スクリプトが PATH にあるかを確認。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-swss-common/ZMQ producer-consumer state table design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/ssdhealth/ssdhealth_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
