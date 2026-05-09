@@ -1059,7 +1059,8 @@
         "docker-fpm-frr の bgpd template directory への update.conf.j2 / delete.conf.j2 追加状況確認"
       ],
       "priority": "medium",
-      "issue": 173
+      "issue": 173,
+      "pr": 174
     }
   ]
 }
