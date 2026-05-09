@@ -1254,7 +1254,8 @@
         "warm boot / fast boot サポート (HLD は次フェーズと記載) の現行ステータス確認"
       ],
       "priority": "medium",
-      "issue": 199
+      "issue": 199,
+      "pr": 200
     }
   ]
 }
