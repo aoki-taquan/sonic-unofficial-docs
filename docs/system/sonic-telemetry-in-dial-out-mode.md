@@ -1,7 +1,7 @@
 ---
 title: gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `dialout_client_cli` バイナリ（旧 `sonic-telemetry`、現 `sonic-gnmi` リポジトリ）の現行 master 取り込み、`TELEMETRY_CLIENT` テーブルの YANG / CLI、OpenConfig telemetry yang model との互換性は未裏取り。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-gnmi/dialout/dialout_client_cli/dialout_client_cli.go` バイナリと `dialout/dialout_client/dialout_client.go` 内の `TELEMETRY_CLIENT|Global` / `TELEMETRY_CLIENT|DestinationGroup_<name>` / `TELEMETRY_CLIENT|Subscription_<name>` 各キー定義（同ファイル L414, L421, L428）、`proto/dial_out.proto` (`gNMIDialOut.Publish`)、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang` を確認。OpenConfig 互換は YANG 単独では未確認だがテーブル定義は HLD と整合。
 
 # gNMI dial-out モード（`dialout_client_cli` + `gNMIDialOut.Publish`）
 

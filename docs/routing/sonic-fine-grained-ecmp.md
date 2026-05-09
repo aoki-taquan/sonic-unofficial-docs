@@ -1,7 +1,7 @@
 ---
 title: Fine Grained ECMP（FG_NHG / fgnhgorch）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは `doc/ecmp/fine_grained_next_hop_hld.md`（Rev 1.5, 2024-09 改訂）に基づき再構成した。`fgnhgorch` の現行 master 実装、`FG_NHG*` テーブルの YANG 取り込み、SAI `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` の community SAI 取り込みは未確認である。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-swss/orchagent/fgnhgorch.{cpp,h}` の現行実装、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang`（`match_mode` に `prefix-based` を含む Rev 1.5 後の追加分も収容）、`sonic-sairedis/vslib/SwitchStateBase.cpp:4165` の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` capability 列挙を確認し HLD と整合。
 
 # Fine Grained ECMP（FG_NHG / fgnhgorch）
 

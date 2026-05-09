@@ -1,7 +1,7 @@
 ---
 title: SWSS docker warm restart（state restore / consistency / sync up）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は SONiC 初期の swss container 単体 warm restart 設計。`m_toSync` 空判定や ProducerStateTable の consumer-only modify などは現行 master と差分の可能性。`priority=high`。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-swss/orchagent/orch.cpp:606` `if (!m_toSync.empty())` の同期チェック、`sonic-swss-common/common/warm_restart.h:13` `class WarmStart`、`sonic-swss-common/common/producerstatetable.h:10` / `consumerstatetable.h:10` の `ProducerStateTable` / `ConsumerStateTable` 実装、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang` の `WARM_RESTART` テーブル、`sonic-buildimage/dockers/docker-pde/syncd_init_common.sh` の warm 起動分岐を確認。HLD の枠組みは現行 master に取り込み済み。
 
 # SWSS docker warm restart（state restore / consistency / sync up）
 

@@ -1,7 +1,7 @@
 ---
 title: BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    fpmsyncd の PUBLISH 削減・pipeline サイズ拡大・遅延 flush タイマ、orchagent ring buffer / assistant thread、sairedis の async 化、`PerformanceTimer` の現行 master 取り込み状況は未裏取り。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-swss/fpmsyncd/fpmsyncd.h:6` `#define ROUTE_SYNC_PPL_SIZE 50000`、`fpmsyncd.cpp:25` `FLUSH_TIMEOUT 500`（500ms）、`SMALL_TRAFFIC 500`、`pipeline.flush()` 経路を確認。`sonic-swss/orchagent/orch.cpp:19-` で `RingBuffer` クラス（`Orch::gRingBuffer` / `Executor::gRingBuffer` の static、`pauseThread` / `notify` / `IsIdle` / `IsFull` / `push`）を確認。`sonic-swss-common/common/performancetimer.h` で `PerformanceTimer` クラスを確認。
 
 # BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
 

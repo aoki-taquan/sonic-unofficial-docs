@@ -1,7 +1,7 @@
 ---
 title: libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
 area: system
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,11 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は warm-reboot 議事系。`ATTR2OID_*` / `OID2ATTR_*` / `DEFAULT_*` 各キープレフィックスを RESTORE_DB (DB 7) に置く設計が現行 sairedis の master ブランチに採用されているかは未裏取り（`syncd view comparison` 案との競合あり）。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! danger "裏取りステータス: discrepancy-found"
+    Verifier 2026-05-09: 本 HLD で提案された **`ATTR2OID_*` / `OID2ATTR_*` / `DEFAULT_ATTR2OID_*` / `DEFAULT_OID2ATTR_*` / `DEFAULT_OBJ_*` キープレフィックス、および RESTORE_DB (DB 7)** は現行 `sonic-sairedis` master に存在しない（`grep -rn 'RESTORE_DB\|ATTR2OID_\|DEFAULT_ATTR2OID' .cache/sonic-sources/sonic-sairedis/` で 0 件）。`g_objectOwner` / `UNDERLAY_INTERFACE_` / `OVERLAY_INTERFACE_` も `sonic-swss/orchagent/` に存在しない。一方、競合案であった **syncd 側 view comparison** は `sonic-sairedis/syncd/ComparisonLogic.{cpp,h}` および `Syncd.{cpp,h}` の `applyView` 経路として採用済み。よって本ページの提案設計は **採用されておらず**、現行 warm restart の同等機能は syncd の view comparison が担う。本ページは歴史的設計案として保持。
 
 # libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
 

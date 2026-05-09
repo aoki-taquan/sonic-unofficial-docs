@@ -35,42 +35,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/acl-qos/sonic-qos-scheduler-and-shaping.md",
-      "verification": "hld-only",
-      "concerns": [
-        "QosOrch (orchagent) で SCHEDULER / QUEUE / PORT_QOS_MAP テーブルから SAI scheduler を生成する実装の現行 master 確認",
-        "SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE / MAX_BANDWIDTH_RATE / SCHEDULING_WEIGHT 等の SAI 属性が community SAI でサポートされているか確認",
-        "VLAN / PortChannel に scheduler を適用した際のエラーハンドリング実装確認",
-        "warm-reboot 横断で scheduler profile と queue/port バインドが保持されるか確認",
-        "scheduler profile の最大個数 128 が現行 ASIC 群で妥当か確認",
-        "本 HLD は 2019 年版で 6 年以上経過しており Status=Initial。仕様が現行と乖離している可能性大"
-      ],
-      "priority": "high",
-      "issue": 464,
-      "pr": 465,
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
-    },
-    {
-      "page": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
-      "verification": "hld-only",
-      "concerns": [
-        "counterpoll queue/watermark/pg-drop enable 時の COUNTERS_DB マップ生成・削除ロジック (FlexCounterOrch / BufferOrch) の現行 master 実装確認",
-        "FLEX_COUNTER_DB 上の QUEUE_STAT_COUNTER / QUEUE_WATERMARK_STAT_COUNTER / PG_WATERMARK_STAT_COUNTER / PG_DROP_STAT_COUNTER の group key 命名整合性確認",
-        "watermark enable 時に PG / QUEUE 両マップを生成する実装が現存するか確認",
-        "config save / reload / reboot 横断で counterpoll の enable/disable 状態が保持されるか確認",
-        "本テスト (sonic-mgmt) の存在と PR Merge 状況確認",
-        "本 HLD は 2022 年 10 月版で 3 年以上経過しており現行 master との乖離リスクあり"
-      ],
-      "priority": "high",
-      "issue": 440,
-      "pr": 441,
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
-    },
-    {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
       "verification": "discrepancy-found",
@@ -366,22 +330,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md",
-      "verification": "hld-only",
-      "concerns": [
-        "frrcfgd (sonic-frr-mgmt-framework) の現行 master 採用 / メンテ状況確認",
-        "BGP_GLOBALS / BGP_NEIGHBOR / BGP_PEER_GROUP / PREFIX_LIST の YANG 取り込み確認",
-        "DEVICE_METADATA.frr_mgmt_framework_config の現行 master でのテスト / 既定値確認",
-        "OpenConfig BGP transformer の sonic-mgmt-framework 取り込み確認",
-        "frrcfgd と bgpcfgd の切替手順 / 同時起動防止の実装確認",
-        "2019-2021 年 HLD のため Management Framework 全体方針との整合性確認"
-      ],
-      "priority": "high",
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
-    },
-    {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
       "issue": 309,
       "verification": "code-verified",
@@ -410,24 +358,6 @@
         "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認 -> docker-fpm-frr 経由で vrf-aware FRR を採用 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md",
-      "verification": "hld-only",
-      "concerns": [
-        "config pbh table/hash-field/hash/rule add/delete CLI の sonic-utilities への取り込み確認",
-        "PBH Orchagent (PbhOrch?) と SAI ハッシュ属性 (SAI_ACL_ACTION_TYPE_SET_ECMP_HASH 等) の community SAI 取り込み確認",
-        "INNER_DST_IPV4 / INNER_SRC_IPV4 / INNER_DST_IPV6 / INNER_SRC_IPV6 等の hash field が現行 SAI でサポートされているか確認",
-        "VxLAN dst port 0x3412 (4789) と NVGRE IP proto 0x2f の rule マッチ動作確認",
-        "warm-boot 中の PBH ルール永続化と ECMP ハッシュ継続動作確認",
-        "本 HLD は 2021 年版 Rev 1.1。priority=high"
-      ],
-      "priority": "high",
-      "issue": 501,
-      "pr": 502,
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
     },
     {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
@@ -465,50 +395,32 @@
     },
     {
       "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "RESTORE_DB (DB 7) と ATTR2OID_* / DEFAULT_ATTR2OID_* / OID2ATTR_* / DEFAULT_OBJ_* キープレフィックスが現行 sonic-sairedis master に取り込まれているか確認",
-        "syncd view comparison (syncd_applyview.cpp) との競合関係。最終的にどちらが master 採用かの調査必要",
-        "g_objectOwner ベースの owner 区別 (UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_) が現行 orchagent 実装にあるか確認",
-        "DEFAULT_ATTR2OID_* / DEFAULT_OID2ATTR_* の 1 度だけ作成ロジックが現行 libsairedis にあるか確認",
-        "Performance 案 (in memory cache / producer-consumer 圧縮 / multiple redis instances / async write) の実装ステータス確認",
-        "本ドキュメントは旧 design draft。現行 warm-restart 実装はどの方式かを確認"
+        "本 HLD 提案 (RESTORE_DB / ATTR2OID_* / OID2ATTR_* / DEFAULT_* キープレフィックス) は現行 sonic-sairedis master に未取り込み (Verifier 2026-05-09 grep で 0 件)",
+        "g_objectOwner / UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_ も sonic-swss/orchagent/ に存在しない",
+        "代替として syncd 側 view comparison (sonic-sairedis/syncd/ComparisonLogic.{cpp,h} と Syncd.cpp::applyView) が現行 master の warm restart 経路を担う"
       ],
       "priority": "high",
       "issue": 524,
       "pr": 525,
       "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認",
+        "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認"
       ]
     },
     {
-      "page": "docs/system/sonic-swss-docker-warm-restart.md",
+      "page": "docs/system/warmboot-manager-hld.md",
       "verification": "hld-only",
       "concerns": [
-        "orchagent の m_toSync 空判定 + restart prepare API の実装確認",
-        "ProducerStateTable / ConsumerStateTable の consumer-only modify 改修取り込み確認",
-        "swss / syncd docker 分離の現行 systemd unit 構成確認",
-        "WARM_RESTART テーブルの sonic-yang-models 取り込み確認",
-        "warm start 失敗時の cold restart 自動 fallback 実装確認",
-        "Warmboot Manager との置換 / 共存関係の現行設計確認"
+        "Warmboot Manager daemon の現行 master 採用状況確認 (Rev 0.1, Google 2023 提案)",
+        "既存 fast-reboot / finalize-warmboot.sh との共存実装確認",
+        "Component Warmboot States の STATE_DB スキーマ実装確認",
+        "Quiescence Timer / Unfreeze on Failure ロジックの実装確認",
+        "各 critical container（orchagent / syncd / teamd / xcvrd）への freeze プロトコル取り込み確認",
+        "採否不明な提案 HLD のため master 取り込み有無の最終確認"
       ],
       "priority": "high"
-    },
-    {
-      "page": "docs/system/system-wide-warmboot.md",
-      "verification": "hld-only",
-      "concerns": [
-        "/host/warmboot/dump.rdb / sai-warmboot.bin の現行 fast-reboot スクリプト取り込み確認",
-        "SONIC_BOOT_TYPE 値の現行 master 表記確認 (fast-reboot vs fast)",
-        "SAI_SWITCH_ATTR_RESTART_WARM / SAI_KEY_WARM_BOOT_WRITE_FILE / SAI_KEY_BOOT_TYPE の community SAI 取り込み確認",
-        "WARM_RESTART_TABLE スキーマの sonic-yang-models 取り込み確認",
-        "Warmboot Manager (Google 2023) との共存 / 排他関係の現行設計確認",
-        "BGP graceful restart / teamd 90s timer 値の現行 master 確認"
-      ],
-      "priority": "high",
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
     },
     {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
@@ -944,25 +856,6 @@
       "pr": 198
     },
     {
-      "page": "docs/internals/p4-orchagent.md",
-      "verification": "hld-only",
-      "concerns": [
-        "P4Orch の orchagent への取り込み確認 (sonic-swss/orchagent/p4orch/)",
-        "7 つの Manager (RouterInterfaceManager 等) の現行実装と drain 順序確認",
-        "ObjectManagerInterface (enqueue/drain) の現行クラス構成確認",
-        "Centralized Mapper の object type → (sai_oid, ref_count) マップ実装確認",
-        "PortsOrch / VrfOrch / CrmOrch の public method 経由 ref_count 連携実装確認",
-        "同期 syncd モード + APPL_STATE_DB 応答経路の現行確認",
-        "warm boot / fast boot サポート (HLD は次フェーズと記載) の現行ステータス確認"
-      ],
-      "priority": "medium",
-      "issue": 199,
-      "pr": 200,
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
-    },
-    {
       "page": "docs/internals/sonic-counter-initialization-optimization.md",
       "issue": 139,
       "verification": "code-verified",
@@ -1325,21 +1218,6 @@
       "notes": "DASH SAI build profile / BMv2 / vms-kvm-dpu testbed トポロジは現行 master に取り込み済み。HLD で明示的に TBD とされる「DPU image with dataplane」「DPU+VPP NPU testbed」は仕様通り未着手。"
     },
     {
-      "page": "docs/platform/1-6t-support-in-sonic.md",
-      "issue": 215,
-      "pr": 216,
-      "verification": "hld-only",
-      "concerns": [
-        "xcvrd の get_interface_speed への 1.6T 分岐取り込み確認",
-        "PortsOrch porthlpr の maxPortSpeed=1600000 取り込み確認",
-        "port_rates.lua の lane_speed=200000 → 212.5e9 取り込み確認",
-        "sonic-utilities の config/show 1.6T 対応確認",
-        "sonic-port YANG の speed 制約 1600000 受理確認",
-        "SFF-8024 新 ID の sonic-platform-common 取り込み確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/platform/custom-si-settings-for-cmis-modules.md",
       "issue": 217,
       "pr": 218,
@@ -1531,19 +1409,6 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
-    },
-    {
-      "page": "docs/routing/bgp-loading-optimization-for-sonic.md",
-      "verification": "hld-only",
-      "concerns": [
-        "fpmsyncd の pipeline size 50k / 500ms 遅延 flush / PUBLISH 一回化の現行 master 取り込み確認",
-        "orchagent の ring buffer / assistant thread 実装存在確認",
-        "sairedis async API の有効化フローと ResponseThread 実装確認",
-        "PerformanceTimer ユーティリティの sonic-swss-common 取り込み確認",
-        "warm restart 経路での async / ring buffer の order 保証実装確認",
-        "2M routes ベンチの実測 vs HLD 主張 50% 高速化の検証"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
@@ -1742,19 +1607,6 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
-    },
-    {
-      "page": "docs/routing/sonic-fine-grained-ecmp.md",
-      "verification": "hld-only",
-      "concerns": [
-        "fgnhgorch の現行 master 実装存在確認",
-        "FG_NHG / FG_NHG_PREFIX / FG_NHG_MEMBER の YANG / sonic-buildimage 取り込み確認",
-        "SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP の community SAI 取り込み確認",
-        "config fg-nhg* CLI の sonic-utilities 取り込み確認",
-        "prefix-based モード (Rev 1.5, 2024 追加) の現行 master 取り込み確認",
-        "fast-reboot dump 経路への FG_ROUTE_TABLE 含有確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/sonic-route-flow-counter-design.md",
@@ -2052,6 +1904,19 @@
       "pr": 527
     },
     {
+      "page": "docs/system/fast-reboot-flow-improvements-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "warmboot-finalizer を fast-reboot 兼用にする現行 sonic-buildimage / sonic-utilities 取り込み確認",
+        "restore_neighbors.py の現行 sonic-swss/neighsyncd 取り込み確認",
+        "enable_counters.py 等の finalizer flag 待ちロジック確認",
+        "syncd INIT/APPLY view framework の現行 sonic-sairedis 取り込み確認",
+        "vendor NOS → SONiC ISSU dump 仕様の文書化状況確認",
+        "HLD 実測値 (28s/25s) の現行 master での再現性確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/kdump-remote-ssh.md",
       "verification": "code-verified",
       "concerns": [],
@@ -2209,18 +2074,17 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/sonic-telemetry-in-dial-out-mode.md",
+      "page": "docs/system/sonic-system-health-monitor-high-level-design.md",
       "verification": "hld-only",
       "concerns": [
-        "dialout_client_cli バイナリの sonic-gnmi (旧 sonic-telemetry) 内現行ビルド確認",
-        "TELEMETRY_CLIENT テーブルのスキーマ (Global / DestinationGroup_* / Subscription_*) の YANG / mgmt-framework 取り込み確認",
-        "gNMIDialOut.Publish の TLS 認証要件の現行運用確認",
-        "fail-over (dst_addr 複数指定時の順次接続) ロジックの現行実装確認",
-        "OpenConfig telemetry yang model との互換性現状確認"
+        "healthd / system health monitor の現行 master 取り込み確認（sonic-host-services 想定）",
+        "system_health_monitoring_config.json の filter 文法と現行実装の対応確認",
+        "external_checkers の出力フォーマット実装確認",
+        "/etc/supervisor/critical_processes の各 docker での更新状況確認",
+        "Monit を使わない経路（v0.2 追記）の現行実装確認",
+        "system status LED 制御 API（platform_chassis.set_status_led）との結線確認"
       ],
-      "priority": "medium",
-      "issue": 517,
-      "pr": 518
+      "priority": "medium"
     },
     {
       "page": "docs/system/static-dns-configuration.md",
@@ -2234,6 +2098,32 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/transceiver-and-sensor-monitoring-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "xcvrd の現行 sonic-platform-daemons 取り込み確認",
+        "TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS の現行 schema（CMIS 拡張）確認",
+        "transceiver error bitmap の現行 sonic-platform-common 定義確認",
+        "polling interval (60s) の現行 default 値確認",
+        "port config change handler (v1.2 追記) の実装存在確認",
+        "vendor platform API (sfputil base) と xcvrd の event 連携確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/system/twamp-light-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "twamp orch の sonic-swss 取り込み確認",
+        "SAI_TWAMP_SESSION_* 属性の community SAI 取り込み確認",
+        "CFG_TWAMP_SESSION_TABLE / STATE_TWAMP_SESSION_TABLE / STATE_SWITCH_CAPABILITY_TABLE の YANG 取り込み確認",
+        "config twamp-light / show twamp-light CLI の sonic-utilities 取り込み確認",
+        "COUNTERS_DB TWAMP counter polling の現行 flex counter 取り込み確認",
+        "ASIC vendor 別 TWAMP offload 対応状況（capability 判定の網羅性）確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/acl-qos/asymmetric-pfc-test-plan.md",

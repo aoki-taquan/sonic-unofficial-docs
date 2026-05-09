@@ -1,7 +1,7 @@
 ---
 title: ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,11 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021 年版 (Rev 1.1) で 4 年経過。`config pbh table/hash-field/hash/rule add/delete` CLI、PBH (Policy Based Hashing) Orchagent / SAI 連携、`SET_ECMP_HASH` action、warm-boot 跨ぎ動作は未裏取り。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-swss/orchagent/pbhorch.{cpp,h}` と `sonic-swss/orchagent/pbh/pbhmgr.cpp` を確認。`pbhmgr.cpp:36-42` で `INNER_DST_IPV4` / `INNER_SRC_IPV4` / `INNER_DST_IPV6` / `INNER_SRC_IPV6` / `INNER_L4_DST_PORT` / `INNER_L4_SRC_PORT` / `INNER_IP_PROTOCOL` の `SAI_NATIVE_HASH_FIELD_*` マッピングと VxLAN/NVGRE 用 case が実装済み。CLI は `sonic-utilities/config/plugins/pbh.py` および `utilities_common.helper.get_port_pbh_binding` で取り込み済み。HLD と整合。
 
 # ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
 

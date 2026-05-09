@@ -1,7 +1,7 @@
 ---
 title: 1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only / 未来の HW 対応"
-    HLD は 2024-07 改訂 v1.0。**HW がまだ存在しない時点で書かれた予定変更の列挙** であり、HLD 末尾でも「実装は最終的に異なる可能性あり」と明記されている[^1]。inner FEC や link training 等の追加検討点はオープンのまま。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: 主要 4 リポジトリへの取り込みを確認。`sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/common.py:201` `get_interface_speed` で `'1.6T' in ifname → 1600000` 分岐、`sonic-swss/orchagent/port/porthlpr.cpp:32` `static const std::uint32_t maxPortSpeed = 1600000;`、`sonic-swss/orchagent/port_rates.lua:110` `serdes = 212.5e+9`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:102,133` で `range 1..1600000`、`sonic-swss/orchagent/port_flr.lua:78` で `['1600000_8'] = 4` まで実装済み。HLD と整合。inner FEC / link training 等の検討点はオープンのまま。
 
 # 1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
 

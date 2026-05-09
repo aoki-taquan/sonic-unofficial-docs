@@ -1,18 +1,16 @@
 {
   "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "RESTORE_DB (DB 7) と ATTR2OID_* / DEFAULT_ATTR2OID_* / OID2ATTR_* / DEFAULT_OBJ_* キープレフィックスが現行 sonic-sairedis master に取り込まれているか確認",
-    "syncd view comparison (syncd_applyview.cpp) との競合関係。最終的にどちらが master 採用かの調査必要",
-    "g_objectOwner ベースの owner 区別 (UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_) が現行 orchagent 実装にあるか確認",
-    "DEFAULT_ATTR2OID_* / DEFAULT_OID2ATTR_* の 1 度だけ作成ロジックが現行 libsairedis にあるか確認",
-    "Performance 案 (in memory cache / producer-consumer 圧縮 / multiple redis instances / async write) の実装ステータス確認",
-    "本ドキュメントは旧 design draft。現行 warm-restart 実装はどの方式かを確認"
+    "本 HLD 提案 (RESTORE_DB / ATTR2OID_* / OID2ATTR_* / DEFAULT_* キープレフィックス) は現行 sonic-sairedis master に未取り込み (Verifier 2026-05-09 grep で 0 件)",
+    "g_objectOwner / UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_ も sonic-swss/orchagent/ に存在しない",
+    "代替として syncd 側 view comparison (sonic-sairedis/syncd/ComparisonLogic.{cpp,h} と Syncd.cpp::applyView) が現行 master の warm restart 経路を担う"
   ],
   "priority": "high",
   "issue": 524,
   "pr": 525,
   "verified_concerns": [
-    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認",
+    "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認"
   ]
 }

@@ -1,7 +1,7 @@
 ---
 title: System-wide Warmboot（going down / up path / SAI 期待値）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,11 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は SONiC 初期の system-wide warmboot 設計メモ。後発の `Warmboot Manager`（Google 2023, Rev 0.1）が同領域を再設計しているため、`/host/warmboot/dump.rdb` 経路や `SONIC_BOOT_TYPE` カーネル引数の現行有効性は要確認。`priority=high`。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-buildimage/files/build_templates/docker_image_ctl.j2:105` `WARM_DIR=/host/warmboot$DEV` と L107/L292 の `BOOT_TYPE` チェック（`warm` / `fastfast` / `express` / `fast` の 4 値、`-f $WARM_DIR/dump.rdb` ロード）、L737 の `-v /host/warmboot$DEV:/var/warmboot` bind mount を確認。`sonic-buildimage/dockers/docker-pde/syncd_init_common.sh:28-33` の `*SONIC_BOOT_TYPE=fastfast*` / `*SONIC_BOOT_TYPE=fast*|*fast-reboot*` 分岐、L169-170 の `SAI_KEY_WARM_BOOT_WRITE_FILE=/var/warmboot/sai-warmboot.bin` を確認（コンテナ内パスは `/var/warmboot/`、host 側は `/host/warmboot$DEV/`）。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang:46` `container WARM_RESTART` を確認。HLD と整合（`express` boot type は HLD 後追加されている）。
 
 # System-wide Warmboot（going down / up path / SAI 期待値）
 

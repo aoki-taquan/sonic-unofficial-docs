@@ -1,7 +1,7 @@
 ---
 title: counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,11 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本テストプランは 2022 年 10 月版 (Rev 0.1) で約 3.5 年経過。`counterpoll <type> enable/disable` が `COUNTERS_DB` の各種マップ (QUEUE / PG / PG_DROP / WATERMARK) と `FLEX_COUNTER_DB` の counter group を整合的に作成・削除する挙動の現行 master 実装は未裏取り。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09: `sonic-swss/orchagent/flexcounterorch.cpp:76-95` で `QUEUE → QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP`, `QUEUE_WATERMARK → QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_WATERMARK → PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_DROP → PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP`, `WRED_ECN_QUEUE → WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` のマッピングを確認。テストプランの 4 種 counter group が現行 FlexCounterOrch に揃って実装されており、`counterpoll <type> enable/disable` 経路と整合する。
 
 # `counterpoll` 種別と watermark / queue / pg-drop マップの整合テストプラン
 
