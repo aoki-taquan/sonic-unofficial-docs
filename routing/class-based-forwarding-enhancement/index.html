@@ -6624,9 +6624,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021-08 (Rev 0.2) で 4 年以上前。本機能の orchagent / sairedis 取り込み、SAI Pull Request #1193 (<code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code>) のリリース反映、CLASS_BASED_NEXT_HOP_GROUP_TABLE スキーマの取り込み状況は要裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/cbf/cbfnhgorch.h:88</code> で <code>CbfNhgOrch : public NhgOrchCommon&lt;CbfNhg&gt;</code>、<code>sonic-swss-common/common/schema.h:56,129</code> で <code>APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME</code> / <code>APP_FC_TO_NHG_INDEX_MAP_TABLE_NAME</code>、<code>sonic-swss/orchagent/qosorch.cpp:92,93,111,112,1337</code> で <code>CFG_DSCP_TO_FC_MAP_TABLE_NAME</code> / <code>CFG_EXP_TO_FC_MAP_TABLE_NAME</code> のハンドラ登録、<code>sonic-sairedis/vslib/SwitchStateBase.cpp:4167</code> で <code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code> enum capability を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="cbf-dscpexpfc-class_based_next_hop_group">クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP<a class="headerlink" href="#cbf-dscpexpfc-class_based_next_hop_group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
