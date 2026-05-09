@@ -5376,9 +5376,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>switchorch</code> の <code>setFastLinkupCapability</code> / <code>doCfgSwitchFastLinkupTableTask</code>、<code>portsorch</code> の <code>setPortFastLinkupEnabled</code>、SAI 属性 (<code>SAI_SWITCH_ATTR_FAST_LINKUP_*</code> / <code>SAI_PORT_ATTR_FAST_LINKUP_ENABLED</code>) の対応状況は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master の <code>sonic-swss/orchagent/switchorch.cpp:2094-2271</code> (<code>setFastLinkupCapability</code> / <code>setSwitchFastLinkup</code> / <code>doCfgSwitchFastLinkupTableTask</code>)、<code>portsorch.h:300</code> (<code>setPortFastLinkupEnabled</code>)、SAI 属性 <code>SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]</code> / <code>..._GUARD_TIMEOUT[_RANGE]</code> / <code>..._BER_THRESHOLD</code>、<code>sonic-utilities/show/main.py:2933</code> および <code>config/main.py:5095</code> の <code>switch-fast-linkup</code> CLI 群を確認済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-fast-link-up-eq">SONiC Fast Link-Up（リンク再起動時の EQ 再利用）<a class="headerlink" href="#sonic-fast-link-up-eq" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
