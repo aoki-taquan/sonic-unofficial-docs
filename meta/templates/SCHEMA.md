@@ -36,6 +36,13 @@
 - ページ末に **「引用元」セクション必須**。frontmatter `sources` と本文中の脚注を統合する
 - 本文中で込み入った主張には脚注 `[^1]` で commit パーマリンクを付与
 - HTML コメントで詳細なエビデンス（実コード抜粋・推論）を埋め込む。Verifier がここを根拠に裏取り判定する
+- evidence の `source: <repo>/<path>#L<start>-L<end>` の行範囲は **「該当行を含む」程度の精度で良い**。完全一致は要求しない（参照ヒントとしての誤差は許容する）
+
+## related フィールドの表記
+
+- `related.config_db`: テーブル名のみ（例: `BGP_NEIGHBOR`、`PORT_STORM_CONTROL`）
+- `related.cli`: コマンドの先頭フォーム（例: `config bgp`、`show interface counters`）
+- `related.yang`: YANG モジュール名のみ。**拡張子 `.yang` やリビジョンは付けない**（例: `sonic-bgp`、`sonic-port`）
 
 ## エビデンスコメントの形式
 

@@ -57,6 +57,10 @@ reasoning: <なぜこの記述が妥当か>
 config xxx ...
 ```
 
+## 制限事項
+
+<HLD の Restrictions / Limitations / Caveats / Out of Scope 節があればここに集約する。なければセクションごと省略可>
+
 ## 干渉する機能
 
 <このページの機能と相互作用する他の機能。例: BGP unnumbered → IPv6 LLA、interface MTU 等>

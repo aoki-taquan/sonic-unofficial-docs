@@ -46,6 +46,7 @@ Writer が出した PR を機械的に検査し、整合性チェックの結果
 ### 6. 裏取りキュー
 
 - [ ] `verification` が `hld-only` または `issue-confirmed` の場合、`meta/verification-queue.json` に該当エントリが追加されている（PR 内に変更が含まれていてよい）
+- [ ] 該当エントリに **`pr` フィールドが現在の PR 番号で埋まっている**（Writer が空のまま提出していたら Reviewer/Merger が後埋めする。pass の前提条件ではなく、**自動修正項目**として扱う）
 - [ ] `discrepancy-found` の場合は本文に注記があり、別 issue が立てられている（または PR 本文に立てる旨が記載されている）
 
 ## 出力
