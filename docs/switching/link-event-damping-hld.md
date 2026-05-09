@@ -1,0 +1,220 @@
+---
+title: リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+area: switching
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/link_event_damping/Link-event-damping-HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - PORT
+    - COUNTERS
+  cli:
+    - config interface link_event_damping_algorithm
+  yang:
+    - sonic-port
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD"
+    HLD は 2022-07 (Rev 0.1, Phase 1)。`syncd` の link event damping intercept、`sairedis.h` の port 拡張属性、CLI 取り込み、`SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION` 要件への適合は要裏取り。**詳細な状態遷移シナリオやテストケースは原文 HLD を参照**。
+
+# リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+
+## 概要
+
+光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。
+
+本機能は **インタフェース単位で link up / down イベントを抑制（damping）** する仕組みを SONiC に追加する。多くの NOS で標準的な慣習で、SONiC では SyncD で intercept する形で実装される[^1]。
+
+## 動作仕様
+
+### 配置（SyncD で intercept）
+
+```mermaid
+flowchart LR
+  ASIC[ASIC] -->|port state change| VSAI[Vendor SAI]
+  VSAI -->|callback| SD[SyncD<br>(damping intercept)]
+  SD -->|抑制 or 通知| ADB[(ASIC_DB)]
+  ADB --> PO[PortsOrch]
+  PO --> APP[Apps / Routing]
+```
+
+- 既存: SAI から SyncD に来た state change がそのまま ASIC_DB に書かれる[^1]。
+- 新方式: SyncD の **selectable loop** に link event damping ロジックを差し込み、抑制対象なら ASIC_DB 通知を **送らない**。
+- 設定は CONFIG_DB の `PORT` テーブル → OA → `sai_redis_port_attr_t` 経由で SyncD へ。
+
+将来的に SAI adapter または HW 側で damping を実装するベンダが現れた場合、OA は **`SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE`** で実装層を選び分ける[^1]。本提案では **`APPLICATION` mode 必須**（OA が hostif の oper-status を持つ）。SAI adapter 側で勝手に hostif を更新するモードでは抑制が効かない。
+
+### AIED アルゴリズム（Additive Increase, Exponential Decrease）
+
+各ポートに **accumulated penalty** 変数を持たせ、down イベントごとに `flap_penalty` を加算、時間とともに指数減衰させる[^1]。
+
+| 設定 | 単位 | 意味 |
+|------|------|------|
+| `link_event_damping_algorithm` | enum | `disabled` / `aied`（既定 `disabled`）|
+| `max_suppress_time` | sec | 最大抑制時間 |
+| `decay_half_life`   | sec | penalty が半減する時間 |
+| `suppress_threshold` | unitless | この値超で damping 開始 |
+| `reuse_threshold`    | unitless | この値以下で damping 解除 |
+| `flap_penalty`       | unitless | 1 down イベントあたりの penalty（既定 1000）|
+
+制約[^1]:
+
+- `decay_half_life ≤ max_suppress_time`
+- `reuse_threshold ≤ suppress_threshold`
+- 任意のフィールドが 0 だと「無効」扱い
+
+#### Penalty ceiling
+
+penalty は無制限に積めず、`max_suppress_time` を超えて damp し続けないよう **ceiling** で頭を打つ:
+
+\[ \text{ceiling} = 2^{\frac{\text{max\_suppress\_time}}{\text{decay\_half\_life}}} \times \text{reuse\_threshold} \]
+
+#### Damping timer
+
+damping 中の解除予定時刻を計算する:
+
+\[ t = -\text{decay\_half\_life} \times \log_2 \left( \frac{\text{reuse\_threshold}}{\text{accumulated\_penalty}} \right) \]
+
+- damping 中に DOWN が来ると **timer がリセット** される
+- UP イベントは penalty を増やさない（DOWN のみ加算）
+
+### 動作のポイント
+
+- **頻繁にフラップする interface ほど down で固定される時間が長くなる**。
+- damping 解除時、最後に抑制した link UP は **即時 advertise** される[^1]。
+- damping は「physical interface のイベント」を対象とし、netdev host interface の oper-status は OA が `SAI_HOSTIF_ATTR_OPER_STATUS` で post-damping 状態に追従させる[^1]。
+
+### COUNTERS DB
+
+各ポートで pre/post damping のトランジション数を持つ[^1]:
+
+| カウンタ | 意味 |
+|---------|------|
+| pre-damping transitions | 受信した link event 総数 |
+| post-damping transitions | applications に流した数 |
+| pre-damping UP / DOWN | UP / DOWN 別の受信数 |
+| post-damping UP / DOWN | UP / DOWN 別の advertise 数 |
+
+更新は **イベントごとではなく定期更新**（負荷を抑える）[^1]。
+
+### SAI / SAIREDIS 拡張
+
+`saiswitch.h`[^1]:
+
+```c
+typedef enum _sai_switch_hostif_oper_status_update_mode_t {
+    SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION = 0,
+    SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_SAI_ADAPTER = 1,
+} sai_switch_hostif_oper_status_update_mode_t;
+
+SAI_SWITCH_ATTR_HOSTIF_OPER_STATUS_UPDATE_MODE  // 新規 switch 属性
+```
+
+`sairedis.h`[^1]:
+
+```c
+typedef enum _sai_link_event_damping_algorithm_t {
+    SAI_LINK_EVENT_DAMPING_ALGORITHM_DISABLED = 0,
+    SAI_LINK_EVENT_DAMPING_ALGORITHM_AIED     = 1,
+} sai_link_event_damping_algorithm_t;
+
+typedef struct _sai_redis_link_event_damping_algo_aied_config_t {
+    sai_uint32_t max_suppress_time;
+    sai_uint32_t suppress_threshold;
+    sai_uint32_t reuse_threshold;
+    sai_uint32_t decay_half_life;
+    sai_uint32_t flap_penalty;
+} sai_redis_link_event_damping_algo_aied_config_t;
+
+// sai_redis_port_attr_t に 2 属性追加
+SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM
+SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG  // valid-only AIED
+```
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/link_event_damping/Link-event-damping-HLD.md#L294-L356 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  typedef struct _sai_redis_link_event_damping_algo_aied_config_t {
+    sai_uint32_t max_suppress_time;
+    ...
+  } ;
+  typedef enum _sai_redis_port_attr_t {
+    SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM = SAI_PORT_ATTR_CUSTOM_RANGE_START,
+    SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG,
+  } ;
+reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB
+
+`PORT` テーブルに 6 フィールド追加[^1]:
+
+```
+PORT|<port>
+  link_event_damping_algorithm = "disabled" | "aied"
+  max_suppress_time            = uint32 (sec)
+  decay_half_life              = uint32 (sec)
+  suppress_threshold           = uint32
+  reuse_threshold              = uint32
+  flap_penalty                 = uint32
+```
+
+例:
+
+```json
+"PORT": {
+  "Ethernet0": {
+    "link_event_damping_algorithm": "aied",
+    "max_suppress_time": "40",
+    "decay_half_life": "30",
+    "suppress_threshold": "1500",
+    "reuse_threshold": "1300",
+    "flap_penalty": "1000"
+  }
+}
+```
+
+### 関連する CLI
+
+`sonic-port` YANG にも leaf を追加（既定値 0 / `"disabled"`）[^1]。
+
+```
+config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>
+config interface link_event_damping_algorithm <if> disabled
+```
+
+例[^1]:
+
+```bash
+sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000
+sudo config interface link_event_damping_algorithm Ethernet0 disabled
+```
+
+## 制限事項
+
+- **vendor SAI が `APPLICATION` mode 必須**: SAI adapter モードや非対応プラットフォームでは feature が enable されない[^1]。
+- **設定の一括反映**: 6 フィールドは **transformer に組として渡される**。中途半端な設定は無効と見なされ damping が disable[^1]。
+- **damping 中の DOWN は timer リセット**: 連続 DOWN で抑制時間が伸びる挙動。意図しない長時間抑制を避けるため `max_suppress_time` で上限を設ける[^1]。
+- **SyncD intercept なので vendor SAI 通知の到達タイミングに依存**: 高頻度フラップでは SAI コールバックの inflight キューを溜める可能性。
+
+## 干渉する機能
+
+- **WCMP / ECMP 系**: 本機能の主要恩恵元。post-damping だけが PortsOrch → ルーティング層に届く。
+- **PortsOrch / hostif**: OA が `SAI_HOSTIF_ATTR_OPER_STATUS` で netdev oper-state を post-damping に揃える[^1]。netdev 状態を見る他コードパスにも影響。
+- **port flap counter / 既存 stats**: pre / post damping を別カウンタで持つので分析時に区別が必要[^1]。
+- **Warm/Fast boot**: HLD 内に Warmboot 影響セクションあり（本ページでは省略、原文参照）。
+
+## トラブルシューティング
+
+- damping が効かない: SAI 設定が `APPLICATION` mode かを確認。`sairedis.h` の port 属性が SyncD まで届いているか確認。
+- 期待より長く down のまま: 連続 DOWN で timer がリセットされている。`max_suppress_time` と decay の関係を再計算。
+- pre / post counter が乖離する: 抑制が効いている証拠。差分が大きい場合は flap 多発を疑う。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/link_event_damping/Link-event-damping-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
