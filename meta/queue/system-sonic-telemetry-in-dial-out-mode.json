@@ -9,5 +9,6 @@
     "OpenConfig telemetry yang model \u3068\u306e\u4e92\u63db\u6027\u73fe\u72b6\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 517
+  "issue": 517,
+  "pr": 518
 }

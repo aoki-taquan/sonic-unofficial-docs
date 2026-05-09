@@ -1781,7 +1781,8 @@
         "OpenConfig telemetry yang model との互換性現状確認"
       ],
       "priority": "medium",
-      "issue": 517
+      "issue": 517,
+      "pr": 518
     },
     {
       "page": "docs/system/static-dns-configuration.md",
