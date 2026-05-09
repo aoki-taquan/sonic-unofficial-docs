@@ -1,7 +1,7 @@
 ---
 title: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
 area: overlay
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -21,8 +21,8 @@ related:
     - sonic-port-qos-map
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`tunneldecaporch` / `muxorch` 実装、`qos_config.j2` の生成結果、`db_migrator` の `pfc_wd_sw_enable` 移行ロジックでの裏取りは未済。
+!!! warning "裏取りステータス: Discrepancy-found"
+    主要実装は現行 master で確認済みだが、HLD と実装で **PFC watchdog 用フィールド名に差異** がある。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
 
@@ -212,6 +212,13 @@ HLD 上に新規 SONiC CLI の追加記述は無い。設定は `qos_config.j2` 
 - decap 後の TC が想定外: `dscp_mode=pipe` になっているかを確認。`uniform` のままだと outer DSCP がそのまま inner に上書きされ、`DSCP_TO_TC_MAP|AZURE_TUNNEL` の効きが見えなくなる。
 - PFCWD の対象キューが想定と違う: `db_migrator` が `pfc_wd_sw_enable` を生成しているか、または手動で `PORT_QOS_MAP` に入っているかを確認。
 - terminator の競合: `MuxTunnel` と通常 IPinIP の両方を作っているのに decap 属性が片方にしか反映されない場合、terminator 分離 (P2P / P2MP) が orchagent で実装されているか裏取り。
+
+## 実装との乖離
+
+実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+
+- **PFCWD フィールド名**: HLD は `pfc_wd_sw_enable` と表記しているが、現行 master では `pfcwd_sw_enable`（アンダースコアの位置が異なる）として実装されている。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から `pfcwd_sw_enable` を派生している。CONFIG_DB / YANG (`sonic-port-qos-map`) を読む際は実装側の名称に合わせる必要がある。
+- 一方、`tunneldecaporch.cpp:834,1084`（`SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` / `..._TC_TO_PRIORITY_GROUP_MAP`）、`muxorch.cpp:259,2347`（MuxTunnel の `SAI_TUNNEL_PEER_MODE_P2P`）、`files/build_templates/qos_config.j2:441` の Dual-ToR 限定 `AZURE_TUNNEL` 出力は HLD どおり実装されていることを確認した。
 
 ## 引用元
 
