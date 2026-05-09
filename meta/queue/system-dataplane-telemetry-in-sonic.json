@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/dataplane-telemetry-in-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "DtelOrch の sonic-swss 取り込み確認",
+    "DTEL / DTEL_REPORT_SESSION / DTEL_INT_SESSION / DTEL_QUEUE_REPORT / DTEL_EVENT スキーマの sonic-yang-models 反映確認",
+    "SAI dtel attribute (saidtel.h) の opencomputeproject/SAI および vendor サポート確認",
+    "AclRuleDTelDropWatchList / AclRuleDTelFlowWatchList のサブクラス実装確認",
+    "ACL_TABLE_DTEL_FLOW_WATCHLIST / ACL_TABLE_DTEL_DROP_WATCHLIST の扱い確認",
+    "euclid Python モジュールの取り込みと利用例の確認"
+  ],
+  "priority": "medium"
+}
