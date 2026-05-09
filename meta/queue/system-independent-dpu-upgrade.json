@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/independent-dpu-upgrade.md",
+  "verification": "hld-only",
+  "concerns": [
+    "DPU Host Services / NPU Offloader バイナリの sonic-host-services 取り込み確認",
+    "GNMI/GNOI Splitter 実装と path-based 振分けの sonic-gnmi 取り込み確認",
+    "Containerz gNOI service の openconfig/gnoi 取り込みと SONiC 側ハンドラ確認",
+    "System.SetPackage / OS.Activate / System.Reboot の DPU 側 gNOI ハンドラ確認",
+    "v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認",
+    "DPU graceful shutdown / HA との race condition の整合確認"
+  ],
+  "priority": "high"
+}

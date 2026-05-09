@@ -1,0 +1,123 @@
+---
+title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/smart-switch/upgrade/dpu-upgrade-hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    HLD は v0.1 (2025-01) Initial Proposal。NPU 側 GNMI/GNOI Splitter、Offloader、`Containerz.*` GNOI 拡張、DPU Host Services の現行 master 取り込みは未裏取り。priority=high で queue 登録。
+
+# Smart Switch: DPU 独立アップグレード（gNOI 経路）
+
+## 概要
+
+SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を **NPU に offload** している[^1]。本 HLD は **gNOI API 駆動で 1 台ずつ DPU を独立アップグレード** する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として **DPU と NPU の SONiC Host Services / GNMI が健全** であること（不応答 DPU の復旧用途ではない）。
+
+## 動作仕様
+
+### コンポーネント
+
+```mermaid
+flowchart LR
+  CLI[External client<br/>gNOI client]
+  subgraph NPU[NPU]
+    NGMI[NPU GNMI Server]
+    SPL[GNMI/GNOI Splitter]
+    OFFL[Offloader<br/>GNOI client]
+    CT[Offloaded containers<br/>(Database / GNMI / HA)]
+  end
+  subgraph DPU[DPU]
+    DGMI[DPU GNMI Server]
+    DHOST[DPU Host Services]
+  end
+  CLI -- gNOI --> SPL
+  SPL -- GNMI --> NGMI
+  SPL -- GNOI --> DGMI
+  DGMI --> DHOST
+  OFFL -- gNOI --> NGMI
+  NGMI --> CT
+```
+
+NPU 側の **GNMI/GNOI Splitter** は GNMI 要求を NPU GNMI Server へ、GNOI 要求を DPU GNMI Server へ振り分ける[^1]。NPU 上の **Offloader** が DPU の代理で offloaded container 群を `Containerz` 経由で操作する。
+
+### Upgrade Sequence
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant N as NPU
+    participant D as DPU
+    C->>D: System.SetPackage (新 SONiC image)
+    C->>D: OS.Activate
+    C->>N: Containerz.Deploy (新 container image)
+    C->>D: System.Reboot
+    D-->>C: System.RebootStatus
+    C->>N: Containerz.ListImage / StopContainer / StartContainer
+    Note over C,D: 失敗時は OS.Activate(old) / Containerz.RemoveImage(old)
+```
+
+主要 step とロールバック[^1]:
+
+| Phase | gNOI API | 説明 |
+|-------|----------|------|
+| 1. Image 準備 | `System.SetPackage`, `OS.Activate`, `Containerz.Deploy` | DPU に新 SONiC image を deploy / activate、NPU に offloaded 新 container image を deploy |
+| 2. DPU upgrade | `System.Reboot`, `System.RebootStatus` | DPU を再起動し新 image で立ち上げ |
+| 2b. Container 切替 | `Containerz.ListImage`, `Containerz.StopContainer`, `Containerz.StartContainer` | offloaded container を新版で起動 |
+| Rollback | `OS.Activate`(old) / `Containerz.RemoveImage`(old) | 失敗時の復旧 |
+
+### 影響範囲
+
+- **他 DPU**: 影響なし（前提）
+- **NPU**: 該当 DPU 用 offloaded container の停止・起動はあるが NPU 自身は再起動しない
+- **front panel network**: 該当 DPU が処理していたフロー以外には影響しない（前提）
+
+### Non-goals
+
+- DPU fatal error / 不応答 DPU の復旧（BIOS から image 投入する経路は別 process）
+- GNMI 自体の bootstrap
+- DPU/NPU image **互換性**（client 責任）
+- 完全自動化: upgrade と rollback の両方が失敗した場合は **手動介入**[^1]
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/smart-switch/upgrade/dpu-upgrade-hld.md#L74-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Prepare Relevant Images: ... GNOI API: 'System.SetPackage', 'OS.Activate', 'Containerz.Deploy'
+  Upgrade DPU: ... 'System.Reboot', 'System.RebootStatus', 'Containerz.ListImage', 'Containerz.StopContainer', 'Containerz.StartContainer'
+reasoning: gNOI API 系列と各 phase の根拠。
+-->
+
+## 制限事項
+
+- DPU / NPU の SONiC Host Services / GNMI が **健全な状態** が前提
+- 提案段階（v0.1 Initial）。`Containerz` 系 gNOI 拡張は upstream で進行中
+- 互換性チェックは client 責任
+- DPU graceful shutdown HLD（同 SmartSwitch 系）と STATE_DB の race を考慮する必要
+
+## 干渉する機能
+
+- **DPU graceful shutdown**: 同 STATE_DB `CHASSIS_MODULE_INFO_TABLE` に書き込む可能性
+- **smartswitch HA / hamgrd**: HA scope の状態は upgrade 中も維持されるべき
+- **gNMI / sonic-telemetry**: GNMI/GNOI Splitter 経由のため依存
+- **Offloader / Containerz**: NPU 側 container 制御の標準 API
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/smart-switch/upgrade/dpu-upgrade-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- DPU Host Services / NPU Offloader バイナリの sonic-host-services 取り込み確認
+- GNMI/GNOI Splitter 実装と path-based 振分けの sonic-gnmi 取り込み確認
+- Containerz gNOI service の openconfig/gnoi 取り込みと SONiC 側ハンドラ確認
+- System.SetPackage / OS.Activate / System.Reboot の DPU 側 gNOI ハンドラ確認
+- v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認
+- DPU graceful shutdown / HA との race condition の整合確認
+-->
