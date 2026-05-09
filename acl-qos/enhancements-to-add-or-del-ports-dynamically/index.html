@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/persistent-log-level-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically/">
       
       
-        <link rel="prev" href="../kdump-remote-ssh/">
+        <link rel="prev" href="../enhancements-on-show-acl-commands/">
       
       
-        <link rel="next" href="../reboot-support-blockingmode-in-sonic/">
+        <link rel="next" href="../port-buffer-drop-counters-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行） - SONiC 非公式ドキュメント</title>
+        <title>ポートの動的 add / del（zero-port 起動と post-init 操作） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#loglevel_db-config_dblogger" class="md-skip">
+        <a href="#add-delzero-port-post-init" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+              ポートの動的 add / del（zero-port 起動と post-init 操作）
             
           </span>
         </div>
@@ -335,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -2397,500 +2397,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL & QoS
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    ACL & QoS
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    flexcounter の queue/PG map 生成と watermark 有効化の整合
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートの動的 add / del（zero-port 起動と post-init 操作）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WRED / ECN 統計（per-queue / per-port、capability ベース）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -2900,8 +2406,6 @@
       
         
           
-        
-      
         
       
         
@@ -2948,7 +2452,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -2959,7 +2463,7 @@
   <span class="md-ellipsis">
     
   
-    システム
+    ACL & QoS
   
 
     
@@ -2970,18 +2474,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
-    システム
+    ACL & QoS
   
 
           </label>
@@ -2996,14 +2500,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../acl-flex-counters-support/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
   
 
     
@@ -3024,14 +2528,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    バナーメッセージ（login / motd / logout）
+    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
   
 
     
@@ -3052,14 +2556,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../acl-user-defined-table-type-support/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    クリティカルリソースモニタリング (CRM) 要件
+    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
   
 
     
@@ -3080,14 +2584,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+    flexcounter の queue/PG map 生成と watermark 有効化の整合
   
 
     
@@ -3108,14 +2612,126 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    kdump リモート転送（SSH）
+    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dash-acl-tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
   
 
     
@@ -3152,7 +2768,7 @@
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    ポートの動的 add / del（zero-port 起動と post-init 操作）
   
 
     
@@ -3170,7 +2786,7 @@
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    ポートの動的 add / del（zero-port 起動と post-init 操作）
   
 
     
@@ -3219,65 +2835,127 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#app-db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ移行
+        初期化フェーズと App-DB フラグ
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ゼロポート起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-init: ポート追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-init_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-init: ポート削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgrd-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 mgrd / orch の対応状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex counter の動的扱い（portsorch 拡張）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrd-race-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgrd の改修と race condition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="buffermgrd の改修と race condition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#race" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加入時 race
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#race_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時 race（深刻）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の改修
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="lldpmgrd の改修">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swssloglevel の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
+        既存実装の問題
       
     </span>
   </a>
@@ -3288,10 +2966,15 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動時の挙動
+        提案
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -3335,21 +3018,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#zero-port" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（zero-port 起動からのポート追加）
       
     </span>
   </a>
@@ -3358,6 +3030,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
   
 </li>
       
@@ -3410,7 +3093,391 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WRED / ECN 統計（per-queue / per-port、capability ベース）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    システム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    システム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バナーメッセージ（login / motd / logout）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クリティカルリソースモニタリング (CRM) 要件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kdump リモート転送（SSH）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -3438,7 +3505,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -3466,7 +3533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -3494,7 +3561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -3522,7 +3589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -3550,7 +3617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -3578,7 +3645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -3606,7 +3673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -3634,7 +3701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -6029,65 +6096,127 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#app-db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ移行
+        初期化フェーズと App-DB フラグ
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ゼロポート起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-init: ポート追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-init_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-init: ポート削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgrd-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 mgrd / orch の対応状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex counter の動的扱い（portsorch 拡張）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrd-race-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgrd の改修と race condition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="buffermgrd の改修と race condition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#race" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加入時 race
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#race_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時 race（深刻）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の改修
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="lldpmgrd の改修">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swssloglevel の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
+        既存実装の問題
       
     </span>
   </a>
@@ -6098,10 +6227,15 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動時の挙動
+        提案
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -6145,21 +6279,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#zero-port" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（zero-port 起動からのポート追加）
       
     </span>
   </a>
@@ -6168,6 +6291,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
   
 </li>
       
@@ -6221,7 +6355,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/persistent-log-level-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6230,216 +6364,243 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss-common</code> の <code>logger.cpp</code> / <code>loglevel.cpp</code> 変更、各 <code>*mgrd</code> / <code>*syncd</code> の listener thread 変更、<code>db_migrator</code> の LOGLEVEL DB → CONFIG DB 変換、Phase 2 の LOGLEVEL_DB / <code>JINJA2_CACHE</code> 完全削除の進捗は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は 2021-09 (Rev 0.1)。<code>portsyncd</code> / <code>portmgrd</code> / <code>portsorch</code> の zero-port 起動対応、buffer ref counter による delete ガード、<code>lldpmgrd</code> の host-interface ステート確認の取り込みは要裏取り。</p>
 </div>
-<h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">area の経緯</p>
+<p>backlog 上では <code>acl-qos</code> カテゴリだが、実体はポートライフサイクル管理の話で他多くの章（routing / system / platform）とも干渉する。本ページは backlog の指定に従い <code>acl-qos</code> 配下に置く。</p>
+</div>
+<h1 id="add-delzero-port-post-init">ポートの動的 add / del（zero-port 起動と post-init 操作）<a class="headerlink" href="#add-delzero-port-post-init" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では <code>swssloglevel</code> コマンドで <code>orchagent</code> / <code>syncd</code> / 各種 <code>*mgrd</code> / <code>*syncd</code> / SAI API ごとに動的にログ深さを変えられる。しかし設定先が <strong>LOGLEVEL_DB (#3)</strong> に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 <code>NOTICE</code> に戻ってしまっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ目的で <code>DEBUG</code> を出していても、再起動を挟むと忘れられる運用上の不便があった。</p>
-<p>本機能はログレベルテーブルを <strong>CONFIG_DB (#4) の <code>LOGGER</code> テーブル</strong> に移し、<code>config save</code> の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と <code>JINJA2_CACHE</code> を完全削除する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに <strong>post-init で動的に CONFIG_DB の <code>PORT</code> テーブルに add/del</strong> することでポート追加・削除を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>全ポートを <code>config_db</code> に持って起動</li>
+<li>一部ポートだけ持って起動</li>
+<li><strong>ゼロポート</strong> で起動（line-card manager がプロビジョニング時に追加する想定）</li>
+</ul>
+<p>ポート削除前にユーザは ACL / VLAN / LAG / Buffer PG など <strong>全依存設定を先に削除する責任</strong> を負う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スキーマ移行<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>旧 LOGLEVEL_DB (#3) のキーは <code>&lt;component&gt;:&lt;component&gt;</code> 形式（例: <code>orchagent:orchagent</code>）だった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LOGLEVEL_DB (旧)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a> orchagent:orchagent
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   LOGLEVEL  = INFO
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a> SAI_API_BUFFER:SAI_API_BUFFER
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>   LOGLEVEL  = SAI_LOG_LEVEL_NOTICE
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a> JINJA2_CACHE:...   ← 旧 warm-reboot 高速化用キャッシュ
-</span></code></pre></div>
-<p>新スキーマは CONFIG_DB の <code>LOGGER</code> テーブルにフラット化する。キーは <strong>コンポーネント名のみ</strong>（<code>Logger:&lt;componentName&gt;</code> から最終的にコンポーネント名のみへ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;LOGGER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;orchagent&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span><span class="w">                  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;SAI_API_BUFFER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SAI_LOG_LEVEL_NOTICE&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>LOGOUTPUT</code> の値（<code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code>）も合わせて永続化される。</p>
-<h3 id="_4">全体フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    User[swssloglevel CLI] --&gt; CDB[(CONFIG_DB\nLOGGER)]
-    Save[config save] --&gt; CDB
-    Save --&gt;|copy| JSON[/etc/sonic/config_db.json]
-    CDB --&gt;|change event| LIS[各コンポーネントの settingThread\n(listener)]
-    LIS --&gt; COMP[Logger singleton\n(loglevel property)]
-    Boot[再起動] --&gt; JSON
-    JSON --&gt;|database container init| CDB</code></pre>
-<p>各 SONiC コンポーネントは <strong>Logger シングルトン + listener スレッド (<code>settingThread</code>)</strong> を持っており、購読対象 DB の変更を検知して loglevel プロパティを更新する。本機能はこの <code>settingThread</code> の購読先を LOGLEVEL_DB から CONFIG_DB に切り替える<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>影響を受けるコンポーネント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>buffermgrd</code>, <code>coppmgrd</code>, <code>fdbsyncd</code>, <code>fpmsyncd</code>, <code>gearsyncd</code>, <code>intfmgrd</code>, <code>portsyncd</code>, <code>syncd</code>, <code>teammgrd</code>, <code>teamsyncd</code>, <code>tlm_teamd</code>, <code>tunnelmgrd</code>, <code>vlanmgrd</code>, <code>vrfmgrd</code>, <code>vxlanmgrd</code>, <code>wjhd</code>, <code>nbrmgrd</code>, <code>neighsyncd</code>, <code>orchagent</code>, <code>portmgrd</code>。</p>
-<h3 id="swssloglevel"><code>swssloglevel</code> の変更<a class="headerlink" href="#swssloglevel" title="Permanent link">&para;</a></h3>
-<p>スクリプト本体は <code>sonic-swss-common/common/loglevel.cpp</code> 由来で、書き込み先を CONFIG_DB に変更する。さらに <strong>既定値に戻す <code>-d</code> オプション</strong> を新設し、全コンポーネントを既定値（<code>SWSS NOTICE</code>、<code>SAI_LOG_LEVEL_NOTICE</code>）にリセットできるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>swssloglevel -l NOTICE -c orchagent       # orchagent を NOTICE に
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swssloglevel -l SAI_LOG_LEVEL_DEBUG -s -a # 全 SAI_API_* を DEBUG に
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>swssloglevel -d                           # 全コンポーネント既定値に戻す（新規）
-</span></code></pre></div>
-<h3 id="reboot">永続化と reboot<a class="headerlink" href="#reboot" title="Permanent link">&para;</a></h3>
+<h3 id="app-db">初期化フェーズと App-DB フラグ<a class="headerlink" href="#app-db" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+  CDB[(CONFIG_DB:PORT)] --&gt; PSYNC[portsyncd]
+  PSYNC --&gt;|App-DB 反映| APPDB[(APP_DB)]
+  PSYNC --&gt;|完了| FLAG1[PortConfigDone]
+  FLAG1 --&gt; PORCH[portsorch / orchagent]
+  PORCH --&gt;|SAI port 作成| SAI[SAI / SDK]
+  SAI --&gt;|host i/f 作成| NL[netlink]
+  NL --&gt; PSYNC
+  PSYNC --&gt; SDB[(STATE_DB)]
+  PSYNC --&gt;|全 host i/f 完了| FLAG2[PortInitDone]</code></pre>
+<ul>
+<li><strong><code>PortConfigDone</code></strong>: portsyncd がポート設定を APP_DB に反映完了。orchagent は <strong>これを待ってから</strong> SAI ポート作成を始める<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PortInitDone</code></strong>: 全 host interface が作成完了。<code>xcvrd</code> / <code>buffermgrd</code> / <code>natmgr</code> / <code>natsync</code> は <strong>これを待つ</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h3 id="_3">ゼロポート起動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>新たに <strong>zero-port SKU</strong> が必要<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>hwsku.json</code> に interface セクション無し</li>
+<li><code>platform.json</code> に interface セクション無し</li>
+<li>SAI profile に port エントリ無し</li>
+</ul>
+<p><code>sonic-cfggen</code> は port 無しで <code>config_db.json</code> を生成する。Pre-existing PR で <code>cfggen</code> / <code>portsyncd</code> / buffer drop counter 周りが「port 0 でも動く」ように改修済み<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>操作</th>
-<th>永続化要件</th>
-<th>reboot 後の挙動</th>
+<th>PR</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ログレベル変更のみ</td>
-<td>不要</td>
-<td>cold/fast 後は既定値、warm 後は維持（CONFIG_DB は flush しない）</td>
+<td>sonic-buildimage #7999</td>
+<td><code>cfggen</code> を port 無しで動かす</td>
 </tr>
 <tr>
-<td>ログレベル変更 + <code>config save</code></td>
-<td>必要</td>
-<td>cold/fast/warm すべてで設定維持</td>
+<td>sonic-swss #1808</td>
+<td><code>portsyncd</code> を port 無しで動かす</td>
+</tr>
+<tr>
+<td>sonic-swss #1860</td>
+<td>port 削除時の buffer drop counter 削除</td>
 </tr>
 </tbody>
 </table>
-<h3 id="warm-upgrade">Warm upgrade の移行ロジック<a class="headerlink" href="#warm-upgrade" title="Permanent link">&para;</a></h3>
-<p>旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。HLD は <strong><code>db_migrator</code> を拡張</strong> して以下を行うと明記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ol>
-<li><code>db_migrator</code> に LOGLEVEL_DB コネクタを追加。</li>
-<li>LOGLEVEL_DB の Logger テーブルを CONFIG_DB に移し（キー名を変換）、LOGLEVEL_DB を消す。</li>
-<li><code>swss-common/sonicv2-connector.h</code> から <code>del</code> を公開して上記消去を可能にする。</li>
-</ol>
-<p>ダウングレード（新→旧）はシナリオが入り組み、HLD は <strong>完全サポートしない</strong> と明記する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新版で <code>config save</code> 済みのテーブルは旧バージョンでは未知のため、再 upgrade 時に「LOGLEVEL_DB 側の Logger テーブルが CONFIG_DB の未使用テーブルを上書きする」非対称が発生し得る。</p>
-<h3 id="phase-2-loglevel_db">Phase 2: LOGLEVEL_DB の完全削除<a class="headerlink" href="#phase-2-loglevel_db" title="Permanent link">&para;</a></h3>
-<p>LOGLEVEL_DB に残るのは <code>JINJA2_CACHE</code> のみとなる。これは jinja2 テンプレートのバイトコードキャッシュで、warm-reboot 高速化目的で導入された経緯があるが、その後の最適化により <strong>効果が無くなった</strong> ため Phase 2 で削除する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="post-init">Post-init: ポート追加<a class="headerlink" href="#post-init" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+  participant U as User / lc-manager
+  participant CDB as CONFIG_DB
+  participant PSY as portsyncd
+  participant ADB as APP_DB
+  participant POR as portsorch
+  participant SAI as SAI
+  participant SDB as STATE_DB
+  U-&gt;&gt;CDB: PORT|&lt;name&gt; 追加
+  CDB-&gt;&gt;PSY: set event
+  PSY-&gt;&gt;ADB: PORT_TABLE エントリ追加
+  ADB-&gt;&gt;POR: set event
+  POR-&gt;&gt;SAI: SAI port + host i/f 作成
+  SAI-&gt;&gt;PSY: netlink (host i/f 作成)
+  PSY-&gt;&gt;SDB: PORT_TABLE エントリ追加
+  SAI-&gt;&gt;POR: oper_state 通知 (ASIC_DB)
+  POR-&gt;&gt;ADB: oper_state 反映</code></pre>
+<h3 id="post-init_1">Post-init: ポート削除<a class="headerlink" href="#post-init_1" title="Permanent link">&para;</a></h3>
+<p><code>portmgrd</code> 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="mgrd-orch">各 mgrd / orch の対応状況<a class="headerlink" href="#mgrd-orch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>portsyncd</code> (SWSS)</td>
+<td>✅ ADD / DEL の追加対応必要</td>
+</tr>
+<tr>
+<td><code>portsorch</code> (SWSS)</td>
+<td>✅ flex counter 動的追加・削除を拡張</td>
+</tr>
+<tr>
+<td><code>portmgrd</code></td>
+<td>既存ロジックで OK<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>sflowmgr</code></td>
+<td>既存ロジックで OK<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>teammgrd</code></td>
+<td>既存ロジックで OK（state-db set で再 enslave）<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>macsecmgr</code></td>
+<td>既存ロジックで OK<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>snmpagent</code></td>
+<td>既存ロジックで OK（リクエスト時に APP_DB を読む）<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>xcvrd</code> (PMON)</td>
+<td>既存 PR で対応済み（sonic-buildimage #8422、sonic-platform-daemons #212）<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>buffermgrd</code></td>
+<td>改修必要（race condition 対応）</td>
+</tr>
+<tr>
+<td><code>lldpmgrd</code></td>
+<td>改修必要（host i/f up 確認、pending_cmds の cleanup）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flex-counter-portsorch">Flex counter の動的扱い（portsorch 拡張）<a class="headerlink" href="#flex-counter-portsorch" title="Permanent link">&para;</a></h3>
+<p>ポート単位で動的に作成・削除すべき counter group<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>schema.h</code> から <code>LOGLEVEL_DB</code> を削除。</li>
-<li><code>sonic-config-engine/build/lib/redis_bcc.py</code> を削除。</li>
-<li>約 50 ファイルの「全 DB リスト」から LOGLEVEL_DB を除く。</li>
-<li><code>fdbsyncd.cpp</code> で残っていた未使用 LOGLEVEL_DB connector を撤去。</li>
+<li><code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP</code>（既対応）</li>
+<li><code>PORT_STAT_COUNTER_FLEX_COUNTER_GROUP</code>（既対応）</li>
+<li>Queue port counters（queue / queue watermark）— <strong>追加要</strong></li>
+<li>PG counters — <strong>追加要</strong></li>
+<li>Debug counters: port ingress / egress drops（<code>DEBUG_COUNTER</code> table）— <strong>追加要</strong></li>
+<li>PFC watchdog counters — <strong>追加要</strong></li>
 </ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>旧 DB ID 番号
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> 0 APPL_DB
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> 1 ASIC_DB
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a> 2 COUNTERS_DB
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a> 3 LOGLEVEL_DB     ← Phase 2 で削除
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a> 4 CONFIG_DB
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a> ...
-</span></code></pre></div>
+<p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は sonic-swss #2019 で対応中。</p>
+<h3 id="buffermgrd-race-condition">buffermgrd の改修と race condition<a class="headerlink" href="#buffermgrd-race-condition" title="Permanent link">&para;</a></h3>
+<h4 id="race">加入時 race<a class="headerlink" href="#race" title="Permanent link">&para;</a></h4>
+<p>ユーザが port を追加 → buffer cfg を入れる順だが、port 加入と並行に buffermgr が cfg を見ると、APP_DB に未到着のうちに buffer cfg を流し込む可能性がある。<strong>APP_DB に port が存在することを buffermgr 側でチェックしてから書く</strong> 設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="race_1">削除時 race（深刻）<a class="headerlink" href="#race_1" title="Permanent link">&para;</a></h4>
+<p>依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。HLD の解決策<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>buffer cfg にも <strong>per-port reference counter</strong> を持たせる（既存の ACL/VLAN/INTERFACE と同じ仕組み）</li>
+<li>ref-count &gt; 0 の port は portsorch が削除を拒否する</li>
+<li>結果として SAI エラーは「依存解除前に削除しようとした」warning 1 回に集約される</li>
+</ul>
+<p>実装は sonic-swss #2022。</p>
+<h3 id="lldpmgrd">lldpmgrd の改修<a class="headerlink" href="#lldpmgrd" title="Permanent link">&para;</a></h3>
+<h4 id="_4">既存実装の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>ポート追加直後の <code>lldpcli</code> 実行が <strong>host interface 未 up で失敗</strong> する</li>
+<li>削除イベントが既に来ているのに <code>pending_cmds</code> に残ったコマンドが 10 秒ごとに実行され失敗し続ける<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h4 id="_5">提案<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>lldpcli</code> 実行前に <strong>STATE_DB の port エントリ（=host i/f 存在）を確認</strong></li>
+<li>APP_DB の del イベント受信時に <code>pending_cmds</code> から該当を <strong>除去</strong></li>
+<li>CONFIG_DB と APP_DB の両方を見る既存ロジックは整理する</li>
+</ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/logging/persistent_logger/persistent_loglevel.md#L246-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/port-add-del-dynamically/dynamic_port_add_del_hld.md#L240-L284 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  After moving the Logger's table from LOGLEVEL DB, the leftover in LOGLEVEL DB will be the JINJA2_CACHE key.
-  ... we recommend removing the jinja2 cache and the LOGLEVEL DB.
-  - Removing /sonic-config-engine/build/lib/redis_bcc.py file.
-reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除する設計の根拠。
+  Need to add to orchagent the ability to add the buffer configuration of a port and increase a reference counter for each port,
+  in the same way ACL cfg on port is working.
+  ... when a port is added - the lldpcli execution can failed since the host interface is not yet up.
+reasoning: buffer ref counter による delete ガードと lldp host-i/f チェックの根拠。
 -->
 
-<h3 id="_5">起動時の挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>database</code> コンテナ初期化中に <code>config_db.json</code> が CONFIG_DB に読み込まれる。<strong><code>rsyslog-config</code> は database コンテナ起動後</strong> に立ち上がるため、これより前にログメッセージが出ることは想定していない（出た場合は既定 loglevel）と HLD は明言している<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>LOGGER</code></td>
-<td><code>&lt;componentName&gt;</code></td>
-<td><code>LOGLEVEL</code></td>
-<td>SWSS or SAI のログレベル列挙値</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>LOGOUTPUT</code></td>
-<td><code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code></td>
-</tr>
-</tbody>
-</table>
-<p><code>&lt;componentName&gt;</code> の例: <code>orchagent</code>, <code>syncd</code>, <code>buffermgrd</code>, <code>vxlanmgrd</code>, <code>SAI_API_BUFFER</code> 等。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -c &lt;component&gt;</code></td>
-<td>コンポーネント単体の設定</td>
+<td><code>PORT</code></td>
+<td>動的 add/del の対象。<code>admin_status</code>、<code>speed</code>、<code>mtu</code> 等</td>
 </tr>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -a</code></td>
-<td>全コンポーネントに一括適用</td>
+<td><code>DEBUG_COUNTER</code></td>
+<td>port ingress/egress drop counter（動的に作成）</td>
 </tr>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -s -c &lt;api&gt;</code></td>
-<td><code>SAI_API_&lt;api&gt;</code> への適用</td>
-</tr>
-<tr>
-<td><code>swssloglevel -d</code></td>
-<td>全コンポーネントを既定値に戻す（新規）</td>
-</tr>
-<tr>
-<td><code>swssloglevel -p</code></td>
-<td>DB に登録されているコンポーネント一覧</td>
-</tr>
-<tr>
-<td><code>config save</code></td>
-<td>現在の CONFIG_DB を <code>config_db.json</code> に書き出す。本機能の永続化に必須</td>
+<td><code>BUFFER_PG</code> 系</td>
+<td>port 削除前に必ず先に削除</td>
 </tr>
 </tbody>
 </table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-logger.yang</code> モジュールに <code>LOGGER</code> テーブルを定義<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">EMERG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ALERT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">CRIT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_CRITICAL</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">container</span><span class="w"> </span><span class="nv">LOGGER</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">list</span><span class="w"> </span><span class="nv">LOGGER_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="p">;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGLEVEL</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">union</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGOUTPUT</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDOUT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDERR</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>特定 CLI は HLD 内で追加されない。<code>config_db.json</code> 直接編集または <code>redis-cli</code> で <code>CONFIG_DB.PORT</code> を操作する想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="zero-port">設定例（zero-port 起動からのポート追加）<a class="headerlink" href="#zero-port" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># zero-port SKU で起動後、redis 経由でポート追加</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HMSET<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>speed<span class="w"> </span><span class="m">100000</span><span class="w"> </span>admin_status<span class="w"> </span>down<span class="w"> </span>lanes<span class="w"> </span><span class="m">0</span>,1,2,3<span class="w"> </span>mtu<span class="w"> </span><span class="m">9100</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># buffer 設定は別途投入（ref counter 経由）</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># 最後に admin up</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status<span class="w"> </span>up
 </span></code></pre></div>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># orchagent を DEBUG にして恒久化</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-c<span class="w"> </span>orchagent
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>config<span class="w"> </span>save
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># 何もかも DEBUG にして調査</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-a
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>SAI_LOG_LEVEL_DEBUG<span class="w"> </span>-s<span class="w"> </span>-a
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 既定値に戻す</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>swssloglevel<span class="w"> </span>-d
-</span></code></pre></div>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>依存削除はユーザ責任</strong>: ACL / VLAN / LAG / buffer PG を <strong>先に消してから</strong> port を消す<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。</li>
+<li><strong>zero-port は「これまで未テスト」</strong>: HLD 自体が「new type of init that was never tested」と明記している<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実機投入前に十分検証が要る。</li>
+<li><strong>race condition が複数残存</strong>: buffermgr 加入・削除時の両方に race の可能性。実装側で順序保証が必要<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>config save</code></strong>: 永続化はこの CLI に完全依存。設定だけして save しないと cold/fast 後にロスト。</li>
-<li><strong>warm reboot</strong>: CONFIG_DB を flush しないため、save 不要で維持される（旧仕様も同様）。</li>
-<li><strong><code>db_migrator</code></strong>: warm upgrade 経路で LOGLEVEL_DB の値を CONFIG_DB に移す変換が走る。これが入っていない古い <code>db_migrator</code> だと旧設定が失われる。</li>
-<li><strong>ダウングレード</strong>: HLD で完全サポート外と明記。新→旧 移行は loglevel が既定にリセットされる前提。</li>
-<li><strong><code>JINJA2_CACHE</code> 削除（Phase 2）</strong>: warm-reboot 性能への影響が無いことが事前計測で確認されているが、特殊な構成では再計測が必要。</li>
+<li><strong>ACL / VLAN / LAG / Buffer PG</strong>: port 削除の事前条件。ref counter による orchagent の防御に依存。</li>
+<li><strong>flex counter</strong>: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。</li>
+<li><strong>line card manager (chassis 系)</strong>: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。</li>
+<li><strong><code>lldpmgrd</code></strong>: 改修依存度が高い。pending_cmds 処理が変わる。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ログレベルを変えたのに反映されない: 該当コンポーネントの <code>settingThread</code> が CONFIG_DB を購読する新版になっているか syslog で確認。古いバイナリだと LOGLEVEL_DB のままを見ている可能性。</li>
-<li>再起動後にロスト: <code>config save</code> 漏れ。<code>/etc/sonic/config_db.json</code> の <code>LOGGER</code> セクションを確認する。</li>
-<li>warm upgrade 後にロスト: <code>db_migrator</code> が走っているか、<code>swss-common</code> のバージョンに <code>del</code> がエクスポートされているか確認。</li>
-<li><code>swssloglevel -p</code> の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。</li>
+<li>ポート追加に時間がかかる: <code>PortConfigDone</code> / <code>PortInitDone</code> フラグの状態を確認。orchagent 連動が止まっている可能性。</li>
+<li>ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>LLDP が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/logging/persistent_logger/persistent_loglevel.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-add-del-dynamically/dynamic_port_add_del_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
