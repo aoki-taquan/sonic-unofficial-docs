@@ -46,7 +46,8 @@
         "本 HLD は 2019 年版で 6 年以上経過しており Status=Initial。仕様が現行と乖離している可能性大"
       ],
       "priority": "high",
-      "issue": 464
+      "issue": 464,
+      "pr": 465
     },
     {
       "page": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
