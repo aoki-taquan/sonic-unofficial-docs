@@ -47,6 +47,18 @@
       "priority": "high"
     },
     {
+      "page": "docs/architecture/debug-framework-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "libswsscommon に Debugframework クラス / linkWithFramework が現行で存在するか確認",
+        "DebugDumpOrch / addDbgCompMap の orchagent 取り込み確認",
+        "APPL_DB Dump table / Dump done table の sonic-yang-models 反映確認",
+        "show debug / show interfaces pktdrop CLI の sonic-utilities 取り込み確認",
+        "2019-07 v0.3 HLD で 6 年以上経過、現行実装との乖離可能性 高"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
       "verification": "discrepancy-found",
