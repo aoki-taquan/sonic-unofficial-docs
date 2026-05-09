@@ -1988,6 +1988,21 @@
       "priority": "low"
     },
     {
+      "page": "docs/architecture/sflow-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "hsflowd の SFLOW / SFLOW_COLLECTOR / SFLOW_SESSION テーブル subscribe 実装の現行 master 確認",
+        "config sflow * CLI 群の sonic-utilities 取り込み確認",
+        "collector 最大 2 個の上限が現行 hsflowd / CLI に強制されているか確認",
+        "agent-id del 時の挙動 (前値継続 vs 完全削除) の現行実装確認",
+        "config save → reboot / fast-reboot 横断での sflow 設定永続化確認",
+        "sonic-mgmt 配下 sflow テストの実装存在確認"
+      ],
+      "priority": "low",
+      "issue": 534,
+      "pr": 535
+    },
+    {
       "page": "docs/architecture/sonic-on-gns3-vm.md",
       "issue": 268,
       "verification": "hld-only",

@@ -1,0 +1,105 @@
+---
+title: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
+area: architecture
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/sflow/Sflow_test_plan.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - SFLOW
+    - SFLOW_COLLECTOR
+    - SFLOW_SESSION
+  cli:
+    - config sflow
+    - show sflow
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    本テストプランは sonic-mgmt 上の sFlow テスト設計記述。`hsflowd` の `SFLOW_*` テーブル subscribe、`config sflow` CLI、collector 上限 2、polling/sampling rate の動的変更、warm/fast-reboot 跨ぎでの永続化は未裏取り。
+
+# sFlow テストプラン（`hsflowd` + 2 collector / sampling rate / agent-id / counter polling）
+
+## 概要
+
+T0 上で SONiC sFlow 機能を機能検証するテスト[^1]。4 PortChannel から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。`sflowtool` を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。
+
+## 動作仕様
+
+### 6 つのテスト項目
+
+| TC | 観点 |
+|----|------|
+| 1 | `SFLOW_COLLECTOR` の add/del を `hsflowd` が処理する |
+| 2 | counter polling 間隔の変更（既定 20s → 0 で disable → 60s） |
+| 3 | agent-id 変更（Loopback / eth0） |
+| 4 | `SFLOW_SESSION` 単位の interface enable/disable |
+| 5 | per-interface sampling rate 変更（512 / 256 / 1024） |
+| 6 | config save + reboot / fast-reboot 横断保持 |
+
+### TC1 の詳細
+
+1. 4 IF で sflow 有効化 + collector 1 (default port 6343) + global enable → 両方の確認
+2. collector 削除 → trafffic で sample なし → 再追加で復活
+3. **2 つ目の collector** を非 default port (6344) で追加 → 両 collector が受信
+4. 2 つ目を削除 → 1 つ目だけが受信
+5. 2 つ目を復活 → 両者受信
+6. **3 つ目を追加 → エラー**: collector は **最大 2 個**[^1]
+7. 1 つ目を削除 → 2 つ目だけが受信を継続
+
+### TC2 の詳細[^1]
+
+| ステップ | 期待 |
+|---------|------|
+| 既定 20s | 両 collector が 20s ごとに counter sample を受信 |
+| 0s に設定 | counter polling disable、counter sample 受信なし |
+| 60s に設定 | 60s ごとに受信 |
+
+### TC3: agent-id
+
+`config sflow agent-id add Loopback0` 等で **agent-id を sample に乗せる**。delete すると **直前値が残る**（未設定状態に戻らない）[^1]。
+
+### TC4 / TC5: per-interface 制御
+
+`SFLOW_SESSION` テーブル add/del で IF 単位 enable/disable。`sample_rate` フィールドで sampling rate を IF ごとに変更可能。一括変更も可能[^1]。
+
+### TC6: 永続化
+
+- `config save` → `reboot` → 復元: collector / sampling / polling interval が再現
+- 同 → `fast-reboot` でも再現
+- 最終 sFlow disable + save + reboot → collector に sample が来ないことの逆検証
+
+## 関連 CLI
+
+```bash
+config sflow enable | disable
+config sflow polling-interval <seconds>
+config sflow agent-id add <if> | del
+config sflow collector add <name> <ip> [--port <udp_port>]
+config sflow collector del <name>
+config sflow interface enable <if> | disable <if>
+config sflow interface sample-rate <if> <rate>
+
+show sflow
+show sflow interface
+```
+
+## 制限事項
+
+- collector **最大 2 個**[^1]
+- counter polling 0 秒で disable（負値 / 範囲外は CLI 拒否のはず）
+- t0 トポロジ前提
+- `sflowtool` を PTF docker にインストールしておくこと
+
+## 干渉する機能
+
+- **`hsflowd` ホストデーモン**: `SFLOW*` テーブルを実装する中核
+- **CONFIG_DB / sonic-utilities**: テスト対象 CLI が依存
+- **fast/warm-reboot**: 永続化テストが対象
+
+## 引用元
+
+[^1]: [sonic-net/SONiC doc/sflow/Sflow_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sflow/Sflow_test_plan.md)
