@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-boot-chart/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/tacacs-authentication/">
       
       
-        <link rel="prev" href="../reboot-support-blockingmode-in-sonic/">
+        <link rel="prev" href="../ssh-server-global-config-hld/">
       
       
-        <link rel="next" href="../sonic-fips-deployment/">
+        <link rel="next" href="../tacacs-passkey-encryption/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC Boot Chart（systemd-bootchart 統合） - SONiC 非公式ドキュメント</title>
+        <title>TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-boot-chartsystemd-bootchart" class="md-skip">
+        <a href="#tacacs-pam_tacplus-nss_tacplus-aaa-tacplus" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC Boot Chart（systemd-bootchart 統合）
+              TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
             
           </span>
         </div>
@@ -357,13 +357,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -2711,6 +2711,530 @@
       
   
   
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    システム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    システム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バナーメッセージ（login / motd / logout）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クリティカルリソースモニタリング (CRM) 要件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kdump リモート転送（SSH）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Boot Chart（systemd-bootchart 統合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブルによるオプショナル機能の有効/無効制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC OS と Docker イメージのセマンティックバージョニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR 用 sysctl チューニングのデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -2720,6 +3244,18 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -2768,7 +3304,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -2779,7 +3315,7 @@
   <span class="md-ellipsis">
     
   
-    システム
+    マネジメント
   
 
     
@@ -2790,18 +3326,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
-    システム
+    マネジメント
   
 
           </label>
@@ -2816,14 +3352,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
   
 
     
@@ -2844,14 +3380,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    バナーメッセージ（login / motd / logout）
+    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
   
 
     
@@ -2872,14 +3408,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    クリティカルリソースモニタリング (CRM) 要件
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
   
 
     
@@ -2900,14 +3436,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
   
 
     
@@ -2928,14 +3464,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../gnmi-usage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    kdump リモート転送（SSH）
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
   
 
     
@@ -2956,14 +3492,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
   
 
     
@@ -2984,14 +3520,350 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnsi-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packetio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4Runtime PacketIO（generic netlink + send_to_ingress）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../save-on-set-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH サーバ全体設定（SSH_SERVER.POLICIES）
   
 
     
@@ -3028,7 +3900,7 @@
   <span class="md-ellipsis">
     
   
-    SONiC Boot Chart（systemd-bootchart 統合）
+    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
   
 
     
@@ -3046,7 +3918,7 @@
   <span class="md-ellipsis">
     
   
-    SONiC Boot Chart（systemd-bootchart 統合）
+    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
   
 
     
@@ -3098,18 +3970,41 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ビルド時オプション
+        全体構成
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#pam_tacplus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pam_tacplus の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nss_tacplus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nss_tacplus と権限テーブル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nss_tacplus と権限テーブル">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既定設定
+        既定の権限テーブル
       
     </span>
   </a>
@@ -3117,44 +4012,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-bootchart-cli" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-bootchart CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="sonic-bootchart CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#enable-disable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        enable / disable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show
+        有効化
       
     </span>
   </a>
@@ -3167,10 +4028,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#pam-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        出力先
+        PAM configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PAM configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-2-source_ip-fail_through" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パターン 1: 2 サーバ、source_ip 指定、fail_through 無効
       
     </span>
   </a>
@@ -3178,13 +4051,79 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#2-fail_through" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フロー
+        パターン 2: fail_through 有効
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tacacs-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パターン 3: TACACS+ 優先 + root はローカル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB スキーマ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacplus-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACPLUS (global)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacplus_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACPLUS_SERVER
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -3194,7 +4133,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3206,10 +4145,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli-yang-config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI / YANG / CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -3217,7 +4156,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -3233,7 +4172,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3244,7 +4183,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3255,7 +4194,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3266,7 +4205,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3292,879 +4231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブルによるオプショナル機能の有効/無効制御
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC OS と Docker イメージのセマンティックバージョニング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FRR 用 sysctl チューニングのデフォルト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    マネジメント
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    マネジメント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Master Arbitration（election ID と SetRequest 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4Runtime PacketIO（generic netlink + send_to_ingress）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSH サーバ全体設定（SSH_SERVER.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/tacacs-authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -5343,18 +5410,41 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ビルド時オプション
+        全体構成
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#pam_tacplus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pam_tacplus の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nss_tacplus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nss_tacplus と権限テーブル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nss_tacplus と権限テーブル">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既定設定
+        既定の権限テーブル
       
     </span>
   </a>
@@ -5362,44 +5452,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-bootchart-cli" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-bootchart CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="sonic-bootchart CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#enable-disable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        enable / disable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show
+        有効化
       
     </span>
   </a>
@@ -5412,10 +5468,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#pam-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        出力先
+        PAM configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PAM configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-2-source_ip-fail_through" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パターン 1: 2 サーバ、source_ip 指定、fail_through 無効
       
     </span>
   </a>
@@ -5423,13 +5491,79 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#2-fail_through" class="md-nav__link">
     <span class="md-ellipsis">
       
-        フロー
+        パターン 2: fail_through 有効
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tacacs-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パターン 3: TACACS+ 優先 + root はローカル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB スキーマ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacplus-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACPLUS (global)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacplus_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACPLUS_SERVER
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -5439,7 +5573,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5451,10 +5585,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli-yang-config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI / YANG / CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -5462,7 +5596,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -5478,7 +5612,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5489,7 +5623,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5500,7 +5634,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5511,7 +5645,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5538,7 +5672,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-boot-chart.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/tacacs-authentication.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5548,197 +5682,205 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>INCLUDE_BOOTCHART</code> ビルドフラグの sonic-buildimage への取り込み、<code>sonic-bootchart</code> CLI utility の sonic-utilities への取り込み、<code>/etc/systemd/bootchart.conf</code> の生成 / 更新パスは実コードでの裏取り未済。</p>
+<p>このページは公式 HLD のみを根拠に書かれている。HLD は改訂日付が記載されておらず実装からの差分は要裏取り。<code>hostcfgd</code> の AAA module、<code>pam_tacplus</code> の <code>source_ip</code> パッチ、<code>nss_tacplus</code> の <code>tacplus_nss.conf</code> 生成ロジックは未確認。</p>
 </div>
-<h1 id="sonic-boot-chartsystemd-bootchart">SONiC Boot Chart（<code>systemd-bootchart</code> 統合）<a class="headerlink" href="#sonic-boot-chartsystemd-bootchart" title="Permanent link">&para;</a></h1>
+<h1 id="tacacs-pam_tacplus-nss_tacplus-aaa-tacplus">TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）<a class="headerlink" href="#tacacs-pam_tacplus-nss_tacplus-aaa-tacplus" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は <strong>モジュール構成</strong> で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <code>systemd-bootchart</code> を SONiC に統合し、<strong>boot プロセスの sampling profiling</strong> を行う仕組みを定義する。出力は SVG で可視化される。</p>
-<p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC は SSH / コンソールログインで TACACS+ サーバを使った認証をサポートする。Linux の Pluggable Authentication Modules (PAM) と Name Service Switch (NSS) の枠組みに <strong><code>pam_tacplus</code></strong> と <strong><code>nss_tacplus</code></strong> を組み込み、CONFIG_DB の <code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> テーブルから <code>hostcfgd</code> が PAM/NSS 設定ファイルを生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主要要件（HLD §Requirements）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>systemd-bootchart</code> を SONiC OS に統合し、<strong>default install / default disable</strong></li>
-<li>ユーザは CLI で enable / disable</li>
-<li>sample 数 / 頻度を CLI で設定可能</li>
-<li>設定 / 生成 SVG を表示</li>
+<li>SSH と console の両方で TACACS+ ログイン認証</li>
+<li>TACACS+ パケットの送信元 IP 指定</li>
+<li>複数 TACACS+ サーバ + 優先度</li>
+<li>ローカル認証と TACACS+ 認証の順序設定</li>
+<li>fail_through（あるサーバで失敗したら次へ）</li>
+<li><strong>root のみローカル認証</strong> に固定</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">ビルド時オプション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p><code>INCLUDE_BOOTCHART=y/n</code> で SONiC build に含めるかを制御する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>make<span class="w"> </span><span class="nv">INCLUDE_BOOTCHART</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin<span class="w">   </span><span class="c1"># 含める</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span><span class="nv">INCLUDE_BOOTCHART</span><span class="o">=</span>n<span class="w"> </span>target/sonic-mellanox.bin<span class="w">   </span><span class="c1"># 含めない</span>
-</span></code></pre></div>
-<p><code>y</code> の場合、Debian upstream から <code>systemd-bootchart</code> パッケージ（128 KB）を SONiC host に install する。</p>
-<p><code>ENABLE_BOOTCHART=y</code> で <strong>default 状態の有効化</strong> を制御するフラグも追加される。</p>
-<h3 id="_4">既定設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>/etc/systemd/bootchart.conf</code> に SONiC 既定値を提供<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-ini highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[Bootchart]</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="na">Samples</span><span class="o">=</span><span class="s">4500</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="na">Frequency</span><span class="o">=</span><span class="s">25</span>
-</span></code></pre></div>
-<p>これは <strong>3 分間 × 25 sample/sec = 4500 sample</strong> を収集する設定。</p>
-<h3 id="sonic-bootchart-cli"><code>sonic-bootchart</code> CLI<a class="headerlink" href="#sonic-bootchart-cli" title="Permanent link">&para;</a></h3>
-<p><code>sonic-utilities</code> の <code>scripts/</code> に新ユーティリティ <code>sonic-bootchart</code> を追加する。位置付けは <code>sonic-kdump-config</code> や <code>sonic-installer</code> に近いスタンドアロン CLI<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ sudo sonic-bootchart
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Usage: sonic-bootchart [OPTIONS] COMMAND [ARGS]...
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Commands:
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  config   Configure bootchart  (要 root)
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  disable  Disable bootchart    (要 root)
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  enable   Enable bootchart     (要 root)
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  show     Display bootchart configuration
-</span></code></pre></div>
-<h4 id="enable-disable">enable / disable<a class="headerlink" href="#enable-disable" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Running<span class="w"> </span>command:<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>systemd-bootchart
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>disable
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Running<span class="w"> </span>command:<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>systemd-bootchart
-</span></code></pre></div>
-<p><code>INCLUDE_BOOTCHART=n</code> でビルドした image でこれを叩くとエラー<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sudo sonic-bootchart enable
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>systemd-bootchart is not installed
-</span></code></pre></div>
-<p>enable は <strong>永続的</strong>。<code>config save</code> / <code>config reload</code> の影響を受けず、<code>disable</code> するまで boot 毎に走る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="config">config<a class="headerlink" href="#config" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
-</span></code></pre></div>
-<p>このコマンドが <code>/etc/systemd/bootchart.conf</code> を直接更新する。<strong>次回 boot から</strong> 新値が使われる。</p>
-<p><code>samples = frequency × time-span</code> で換算される。</p>
-<h4 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ sudo sonic-bootchart show
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Status     Operational Status   Frequency  Time Span (sec)  Output
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    in-active            10         50               /run/log/bootchart-20220504-1325.svg
-</span></code></pre></div>
+<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI[config aaa / config tacacs] --&gt; CDB[(ConfigDB:&lt;br&gt;AAA / TACPLUS /&lt;br&gt;TACPLUS_SERVER)]
+  CDB --&gt; HC[hostcfgd&lt;br&gt;AAA Config Module]
+  HC --&gt; PAM[/etc/pam.d/common-auth-sonic/]
+  HC --&gt; NSS[/etc/tacplus_nss.conf]
+  HC --&gt; NSWITCH[/etc/nsswitch.conf]
+  SSH[SSH] --&gt; PAMLIB[PAM libs]
+  CON[Console] --&gt; PAMLIB
+  PAMLIB --&gt; PAM
+  PAMLIB --&gt; TAC[(TACACS+ Server)]</code></pre>
+<p><code>hostcfgd</code> の AAA module が CONFIG_DB を購読し、PAM/NSS 設定ファイルをホスト上に生成する。SSH/console の認証フローは標準 PAM 経由で <code>pam_tacplus.so</code> を呼ぶ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="pam_tacplus">pam_tacplus の拡張<a class="headerlink" href="#pam_tacplus" title="Permanent link">&para;</a></h3>
+<p><code>pam_tacplus</code> は server / secret / timeout 等の標準オプションは持つが <strong>送信元 IP 指定が無い</strong> ため、SONiC は <code>source_ip</code> を加えるパッチを当てている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="nss_tacplus">nss_tacplus と権限テーブル<a class="headerlink" href="#nss_tacplus" title="Permanent link">&para;</a></h3>
+<p>TACACS+ 認証ユーザは通常 <code>/etc/passwd</code> に存在しないため、TACACS+ 認証だけでは getpwnam が失敗してログインが切れる。SONiC は <strong><code>nss_tacplus</code></strong> を NSS プラグインとして導入し、<code>getpwnam_r()</code> で TACACS+ サーバから user privilege を取得し、ローカルにユーザレコードを擬似的に提供する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>/etc/tacplus_nss.conf</code> で TACACS+ 接続情報（と権限テーブル）を保持する。<code>hostcfgd</code> の AAA module がこのファイルを更新する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="_4">既定の権限テーブル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
-<th>意味</th>
+<th>user privilege</th>
+<th>user info</th>
+<th>gid</th>
+<th>secondary groups</th>
+<th>shell</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>Status</code></td>
-<td><code>systemctl is-enabled systemd-bootchart</code> 出力（boot 時に走るか）</td>
+<td>15</td>
+<td><code>remote_user_su</code></td>
+<td>1000</td>
+<td><code>sudo,docker</code></td>
+<td><code>/bin/bash</code></td>
 </tr>
 <tr>
-<td><code>Operational Status</code></td>
-<td><code>systemctl is-active systemd-bootchart</code> 出力（現在 sample 収集中か）</td>
-</tr>
-<tr>
-<td><code>Frequency</code></td>
-<td>sample/sec</td>
-</tr>
-<tr>
-<td><code>Time Span</code></td>
-<td>起動後何秒間 sampling するか</td>
-</tr>
-<tr>
-<td><code>Output</code></td>
-<td>完了している場合に SVG パスを表示。未完了なら空</td>
+<td>1 〜 14</td>
+<td><code>remote_user</code></td>
+<td>999</td>
+<td><code>docker</code></td>
+<td><code>/bin/bash</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_5">出力先<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>systemd-bootchart</code> は SVG を <strong><code>/run/log/</code></strong> に保存する。<code>/run</code> は tmpfs のため <strong>reboot で消える</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。永続化したければ <code>/var/log/</code> 等にコピーする運用が必要。</p>
-<h3 id="_6">フロー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CLI as sonic-bootchart
-    participant SD as systemd
-    participant BC as systemd-bootchart
-    participant FS as /run/log
-    U-&gt;&gt;CLI: sudo sonic-bootchart enable
-    CLI-&gt;&gt;SD: systemctl enable systemd-bootchart
-    U-&gt;&gt;U: sudo reboot
-    SD-&gt;&gt;BC: 起動 (boot 早期)
-    loop 3 minutes (default)
-        BC-&gt;&gt;BC: 25 Hz sampling
-    end
-    BC-&gt;&gt;FS: bootchart-&lt;ts&gt;.svg 出力
-    U-&gt;&gt;CLI: sudo sonic-bootchart show
-    CLI-&gt;&gt;FS: SVG 一覧表示</code></pre>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="cli-yang-config_db">CLI / YANG / CONFIG_DB<a class="headerlink" href="#cli-yang-config_db" title="Permanent link">&para;</a></h3>
-<p>本機能は <strong>YANG / CONFIG_DB に変更なし</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>/etc/systemd/bootchart.conf</code> の直接書き換えで設定する独立ユーティリティ。</p>
+<p><code>/etc/tacplus_nss.conf</code> で再定義した例<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<code>netops</code> と <code>operator</code> を分割）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>user_priv=7;pw_info=netops;gid=999;group=docker;shell=/bin/bash
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>user_priv=1;pw_info=operator;gid=999;group=docker;shell=/bin/rbash
+</span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>user privilege</th>
+<th>user info</th>
+<th>shell</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>sudo sonic-bootchart enable</code></td>
-<td>次回起動以降の sampling を有効化</td>
+<td>15</td>
+<td><code>remote_user_su</code></td>
+<td><code>/bin/bash</code></td>
 </tr>
 <tr>
-<td><code>sudo sonic-bootchart disable</code></td>
-<td>無効化</td>
+<td>14 〜 7</td>
+<td><code>netops</code></td>
+<td><code>/bin/bash</code></td>
 </tr>
 <tr>
-<td><code>sudo sonic-bootchart config --time-span &lt;s&gt; --frequency &lt;hz&gt;</code></td>
-<td>収集パラメータ更新</td>
-</tr>
-<tr>
-<td><code>sudo sonic-bootchart show</code></td>
-<td>状態 / 出力 SVG を表示</td>
+<td>1 〜 6</td>
+<td><code>operator</code></td>
+<td><code>/bin/rbash</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Image が INCLUDE_BOOTCHART=y でビルドされていることが前提</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 50 秒 × 10 Hz = 500 samples に縮小</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>config<span class="w"> </span>--time-span<span class="w"> </span><span class="m">50</span><span class="w"> </span>--frequency<span class="w"> </span><span class="m">10</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># reboot して計測</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>sudo<span class="w"> </span>reboot
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># 戻ってきたら SVG を確認</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>sudo<span class="w"> </span>sonic-bootchart<span class="w"> </span>show
+<p>ホームディレクトリは <code>/home/&lt;username&gt;</code> に作成される。</p>
+<h4 id="_5">有効化<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<p><code>nss_tacplus</code> は既定では無効。TACACS+ 認証を有効化したときに <code>/etc/nsswitch.conf</code> の <code>passwd</code> 行へ <code>tacplus</code> を追記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>passwd: compat tacplus
 </span></code></pre></div>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>build flag が必要</strong>。<code>INCLUDE_BOOTCHART=y</code> でビルドされていない image では使えない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>出力先 <code>/run/log</code> は <strong>tmpfs</strong> のため reboot で消失する。永続化が必要なら別途コピー</li>
-<li>設定変更は <strong>次回 boot から</strong> 適用。現在 boot 中の sampling は変えられない</li>
-<li>HLD の Open Items<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:<ul>
-<li>SONiC installer での bootchart 設定マイグレーション（S2S アップグレード時の引き継ぎ）</li>
-<li>boot 後 runtime に sampling を実行するモードの要望</li>
-</ul>
-</li>
-<li><code>enable</code> / <code>disable</code> 状態は <strong><code>config save</code> / <code>config reload</code> の影響を受けない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config_db.json</code> には載らないため</li>
-</ul>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>systemd</code></strong>: <code>systemd-bootchart</code> をサービスとして管理</li>
-<li><strong><code>sonic-installer</code></strong>: <code>INCLUDE_BOOTCHART</code> フラグの引き継ぎ（HLD 上は Open Item）</li>
-<li><strong>boot シーケンス全体</strong>: 早期に走る daemon のため、<code>hostcfgd</code> / <code>database.service</code> 起動前から sample 開始</li>
-<li><strong>既存 <code>systemd-bootchart</code></strong>: パッケージ自体の挙動（output / config パス）に従う</li>
-</ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>sonic-bootchart enable</code> で <code>not installed</code> → image を <code>INCLUDE_BOOTCHART=y</code> で再ビルド</li>
-<li>reboot 後 SVG が無い → <code>Operational Status</code> が <code>in-active</code> か（= 完了済み）、<code>Time Span</code> が経過しているかを確認</li>
-<li>SVG が生成されているのに古いまま → <code>/run/log/bootchart-*.svg</code> の timestamp、最新 boot の SVG が tmpfs に存在するか</li>
-<li>設定を変えても反映されない → <code>config</code> 後に <strong>必ず reboot</strong> が必要、<code>/etc/systemd/bootchart.conf</code> の現在値を直接確認</li>
-</ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage への取り込み確認
-- sonic-bootchart CLI の sonic-utilities scripts/ への取り込み確認
-- /etc/systemd/bootchart.conf の SONiC default 値（Samples=4500, Frequency=25）の現行確認
-- /run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認
-- sonic-installer に bootchart 設定 migration が取り込まれたか（HLD Open Item）の現状確認
+<h3 id="pam-configuration">PAM configuration<a class="headerlink" href="#pam-configuration" title="Permanent link">&para;</a></h3>
+<p>既存 <code>common-auth</code> をそのまま編集すると他のアプリ（cron など）に影響するため、SONiC は <strong><code>/etc/pam.d/common-auth-sonic</code></strong> を独立に作成し、SSH / login がこれを参照するように差し替える<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="1-2-source_ip-fail_through">パターン 1: 2 サーバ、<code>source_ip</code> 指定、<code>fail_through</code> 無効<a class="headerlink" href="#1-2-source_ip-fail_through" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_unix.so nullok try_first_pass
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>auth [success=1 default=ignore] pam_tacplus.so server=10.65.254.248:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>auth requisite pam_deny.so
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>auth required  pam_permit.so
+</span></code></pre></div>
+<p><code>auth_err=die</code> により最初のサーバで認証エラーが返ったら <strong>次サーバを試さない</strong>（fail_through 無効）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="2-fail_through">パターン 2: <code>fail_through</code> 有効<a class="headerlink" href="#2-fail_through" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>auth [success=done new_authtok_reqd=done default=ignore] pam_unix.so nullok try_first_pass
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>auth [success=1   new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.223:49 secret=test123 login=pap timeout=5 try_first_pass
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>auth requisite pam_deny.so
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>auth required  pam_permit.so
+</span></code></pre></div>
+<p><code>auth_err=die</code> を外すことで失敗時に次の TACACS+ 行へフォールスルーする。</p>
+<h4 id="3-tacacs-root">パターン 3: TACACS+ 優先 + root はローカル<a class="headerlink" href="#3-tacacs-root" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>auth [success=1 new_authtok_reqd=done default=ignore] pam_succeed_if.so user = root debug
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>auth [success=done new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 try_first_pass
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>auth requisite pam_deny.so
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>auth required  pam_permit.so
+</span></code></pre></div>
+<p>冒頭の <code>pam_succeed_if user=root</code> で root だけ TACACS+ をスキップさせる構造<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/aaa/TACACS+ Authentication.md#L104-L146 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  If TACACS+ Authentication is enabled, a new PAM configuration file "common-auth-sonic" is created
+  and replaced in login and ssh, and the other application which authentication include "common-auth" will not be affected.
+reasoning: 専用 PAM ファイル分離と root ローカル限定の根拠。
 -->
 
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h4 id="aaa"><code>AAA</code><a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>key = &quot;authentication&quot;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>protocol    = LIST(local, tacacs+)   ; pam modules
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>fallback    = &quot;True&quot;|&quot;False&quot;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>failthrough = &quot;True&quot;|&quot;False&quot;
+</span></code></pre></div>
+<h4 id="tacplus-global"><code>TACPLUS</code> (global)<a class="headerlink" href="#tacplus-global" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>key = &quot;global&quot;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>passkey   = 1*32VCHAR
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>auth_type = pap|chap|mschap
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>src_ip    = IPAddress
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>timeout   = 1-99
+</span></code></pre></div>
+<h4 id="tacplus_server"><code>TACPLUS_SERVER</code><a class="headerlink" href="#tacplus_server" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>key = &lt;server IP&gt;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tcp_port  = 1-65535
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>passkey   = 1*32VCHAR
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>auth_type = pap|chap|mschap
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>priority  = 1-64
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>timeout   = 1-99
+</span></code></pre></div>
+<p><code>TACPLUS_SERVER</code> のフィールドは <code>TACPLUS</code> のグローバル値を <strong>個別に上書き</strong> する形で評価される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>config aaa authentication login {local | tacacs+}
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>config aaa authentication failthrough enable|disable
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>show aaa
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>config tacacs src_ip &lt;ADDRESS&gt;
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>config tacacs timeout &lt;0-60&gt;
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>config tacacs authtype {pap|chap|mschap}
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>config tacacs passkey &lt;TEXT&gt;
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>config tacacs add &lt;ADDRESS&gt; --port &lt;1-65535&gt; --timeout &lt;0-60&gt; --key &lt;TEXT&gt; --type {pap|chap|mschap} --pri &lt;1-64&gt;
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>config tacacs delete &lt;ADDRESS&gt;
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>show tacacs
+</span></code></pre></div>
+<p>CLI は <code>sonic-utilities</code> の click モジュールで実装される<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>src_ip<span class="w"> </span><span class="m">100</span>.0.0.9
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.222<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.248<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>tacacs+
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>failthrough<span class="w"> </span><span class="nb">enable</span>
+</span></code></pre></div>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>root はローカルのみ</strong>: 要件として明示されており、TACACS+ では root を認証できない<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>pam_tacplus</code> 上流に <code>source_ip</code> が無い</strong>: SONiC は独自パッチで対応。upstream 取り込み状況は別途確認が必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>TACACS+ 認可・アカウンティング</strong>: 本 HLD は <strong>認証</strong> に閉じる。authorization / accounting は別の設計（pam_tacplus 自体は対応するが本 HLD では言及最小）<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ホームディレクトリ作成</strong>: 認証成功時に <code>/home/&lt;username&gt;</code> を作成する仕様。ディスク逼迫時の挙動は未規定。</li>
+</ul>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>hostcfgd</code></strong>: 本機能の本体。<code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> を購読して PAM/NSS ファイルを再生成する。<code>hostcfgd</code> 停止中は CONFIG_DB 変更が反映されない。</li>
+<li><strong><code>/etc/pam.d/common-auth</code></strong>: SONiC は <strong>触らない</strong>。共通 auth を変えると他サブシステム（cron 等）に波及するため、専用 <code>common-auth-sonic</code> を分離して使う<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>NSS の <code>passwd</code> ライン</strong>: 本機能を有効化すると <code>tacplus</code> が追記される。他 NSS プラグイン（ldap 等）と共存させる場合は順序に注意。</li>
+</ul>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ログインは認証通るがホームディレクトリが無い: <code>nss_tacplus</code> の <code>getpwnam_r</code> 経路、<code>/etc/tacplus_nss.conf</code> の権限テーブルを確認。</li>
+<li><code>source_ip</code> が反映されない: <code>pam_tacplus</code> のパッチ取り込み状況、PAM 設定行の <code>source_ip=</code> を確認。</li>
+<li>フェイルオーバーしない: PAM の <code>auth_err=die</code> の有無を確認。<code>failthrough enable</code> 時は <code>die</code> を外す構造。</li>
+<li>root が TACACS+ に流れる: <code>pam_succeed_if user=root</code> の前置きが入っているか確認。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/profiling/sonic_bootchart.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/aaa/TACACS+ Authentication.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
