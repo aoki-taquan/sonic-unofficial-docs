@@ -1708,7 +1708,8 @@
         "Barefoot 以外の ASIC (Broadcom 等) での DTel サポート状況確認"
       ],
       "priority": "medium",
-      "issue": 526
+      "issue": 526,
+      "pr": 527
     },
     {
       "page": "docs/system/kdump-remote-ssh.md",
