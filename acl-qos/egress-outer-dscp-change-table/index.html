@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/acl-support-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/egress-outer-dscp-change-table/">
       
       
-        <link rel="prev" href="../acl-ingress-egress-test-plan/">
+        <link rel="prev" href="../egress-mirroring-support-and-acl-action-capability-check/">
       
       
-        <link rel="next" href="../acl-user-defined-table-type-support/">
+        <link rel="next" href="../enhancements-on-show-acl-commands/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ） - SONiC 非公式ドキュメント</title>
+        <title>Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#acl-acl_table-acl_rule" class="md-skip">
+        <a href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+              Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
             
           </span>
         </div>
@@ -3509,37 +3509,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -3555,225 +3528,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_TABLE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_RULE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        サポートされる操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポート連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（HLD ベース）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4063,10 +3817,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../egress-outer-dscp-change-table/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4082,6 +3863,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-cdummy-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        採用案: Option-C（dummy table → 内部展開）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capability の公開
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Match field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bind-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bind point
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -12189,10 +12156,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
+  <a href="#option-cdummy-table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ACL_TABLE スキーマ
+        採用案: Option-C（dummy table → 内部展開）
       
     </span>
   </a>
@@ -12200,10 +12167,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ACL_RULE スキーマ
+        SAI 要件
       
     </span>
   </a>
@@ -12211,10 +12178,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#capability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされる操作
+        Capability の公開
       
     </span>
   </a>
@@ -12222,10 +12189,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#match-field" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート連携
+        Match field
       
     </span>
   </a>
@@ -12233,32 +12200,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#bind-point" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ
+        bind point
       
     </span>
   </a>
@@ -12271,7 +12216,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -12281,17 +12226,6 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
@@ -12305,10 +12239,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例（HLD ベース）
+        設定例
       
     </span>
   </a>
@@ -12321,7 +12255,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12332,7 +12266,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12343,7 +12277,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12354,7 +12288,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12381,7 +12315,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/acl-support-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/egress-outer-dscp-change-table.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12389,229 +12323,126 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
-<p>現行 master の <code>sonic-swss/orchagent/aclorch.cpp</code> で <strong>byte counter</strong> (<code>SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT</code> 周辺、aclorch.cpp:517)、<strong>IPv6 ルックアップ拡張</strong> (<code>SAI_ACL_IP_TYPE_IPV6ANY</code> / <code>..._NON_IPV6</code> / <code>MATCH_INNER_ETHER_TYPE</code> 等、aclorch.cpp:84,508-509)、<strong>LAG bind</strong> (<code>SAI_ACL_BIND_POINT_TYPE_LAG</code>、aclorch.cpp:106,3733)、<strong>MCLAG/portchannel リダイレクト</strong> が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>UNDERLAY_SET_DSCP</code> / <code>MARK_META</code> / <code>EGR_SET_DSCP</code> の AclOrch 内部展開、SAI metadata 属性の community SAI 取り込み、CLI の sonic-utilities 取り込みは未確認。</p>
 </div>
-<h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
+<h1 id="egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp">Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）<a class="headerlink" href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の data plane ACL の <strong>初期設計</strong> を定義する文書。ハードウェア（SAI）に降ろすための ACL テーブル / ルールの <strong>APP_DB スキーマ</strong> と、それを操作する <code>swssconfig</code> ベースの設定フローを規定している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>要件は <strong>Must Have (M)</strong> と <strong>Should Have (S)</strong> に分かれており、リリース必須機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>encapsulated 後の <strong>outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための ACL table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>
+<p>既存の手段の限界:</p>
 <ul>
-<li>データプレーン ACL のサポート</li>
-<li>ACL テーブルが <strong>predefined type</strong>（<code>l3</code> / <code>mirror</code> 等）を持ち、type ごとに使える match と action が決まる</li>
-<li>フロントパネル物理ポートへの bind</li>
-<li>同一ポートに <strong>複数の ACL テーブルを bind 可能</strong>（permit/deny の <code>l3</code> テーブルと mirror テーブルの併用が想定例）</li>
-<li>match: src/dst IP, IP protocol, TCP/UDP port, <strong>port range</strong></li>
-<li>action: permit/deny, <strong>erspan mirror</strong></li>
-<li>ルール毎の <strong>packet counter</strong>（byte counter は Should Have）</li>
+<li>Ingress L3 ACL で DSCP を書き換えると <strong>inner DSCP 自体が変わってしまう</strong>（後段で復元できない）</li>
+<li>Tunnel encap 設定で inner→outer DSCP コピーは可能だが、書き換えの自由度が無い</li>
+<li>Egress L3 ACL は outer の DSCP を書けるが、<strong>inner L3 フィールドにマッチできるかは ASIC 依存</strong></li>
 </ul>
-<p>スケール目標は <strong><code>l3</code> テーブルで 1K rule、<code>mirror</code> テーブルで 256 rule</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は ASIC ハードウェア要件として <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> を使うことで、platform 中立な解を出す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="acl_table"><code>ACL_TABLE</code> スキーマ<a class="headerlink" href="#acl_table" title="Permanent link">&para;</a></h3>
-<p>ACL テーブル定義<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key            = ACL_TABLE:name              ; name は unique
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>policy_desc    = 1*255VCHAR                  ; 説明文
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>type           = &quot;mirror&quot; | &quot;l3&quot;             ; テーブル種別
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ports          = port_name のリスト          ; bind 先ポート（空も可）
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mirror_session_name = name                   ; mirror 用にのみ意味を持つ
-</span></code></pre></div>
-<p><code>type</code> がそのテーブルで使える match field と action のセットを規定する。例えば <code>mirror</code> テーブルでは action は <strong>mirror のみ</strong> 利用可能<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="acl_rule"><code>ACL_RULE</code> スキーマ<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>key: ACL_RULE_TABLE:table_name:seq
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>action       = &quot;permit&quot; | &quot;deny&quot;            ; mirror table type なら mirror も
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>l2_prot_type = &quot;ipv4&quot;                       ; HLD 当初は v4 のみ
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>l3_prot_type = &quot;icmp&quot; | &quot;tcp&quot; | &quot;udp&quot; | &quot;any&quot;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ipv4_src     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ipv4_dst     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>l4_src_port  = port_num | [port_num_L - port_num_H]
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>l4_dst_port  = port_num | [port_num_L - port_num_H]
-</span></code></pre></div>
-<p>注意点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="option-cdummy-table">採用案: Option-C（dummy table → 内部展開）<a class="headerlink" href="#option-cdummy-table" title="Permanent link">&para;</a></h3>
+<p>3 案検討した上で、<strong>Option-C</strong> を推奨<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>seq</code> は <strong>同一 ACL ポリシ内でユニーク</strong> な数値。<strong>適用順序を決定する</strong> キーとなる。</li>
-<li><code>l2_prot_type</code> で IPv4/IPv6 を切り替える設計だが、初期版は <strong>v4 only</strong>。</li>
-<li>L4 ポートは <strong>単一値または範囲指定</strong>。範囲は <code>port_num_L &lt; port_num_H</code> の制約。</li>
-</ul>
-<pre class="mermaid"><code>classDiagram
-    class ACL_TABLE {
-      +name (key)
-      +policy_desc
-      +type: "mirror"|"l3"
-      +ports: list
-      +mirror_session_name
-    }
-    class ACL_RULE {
-      +table_name (key)
-      +seq (key)
-      +action: permit|deny|mirror
-      +l3_prot_type
-      +ipv4_src
-      +ipv4_dst
-      +l4_src_port
-      +l4_dst_port
-    }
-    ACL_TABLE "1" --&gt; "*" ACL_RULE : owns</code></pre>
-<h3 id="_3">サポートされる操作<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD の Supported operations<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ACL テーブルを <strong>type 指定</strong> で作成</li>
-<li>ACL ルールを作成し ACL テーブルに紐付け</li>
-<li>ACL テーブルをポートに <strong>attach / detach</strong></li>
-<li>ACL ルールの削除</li>
-</ul>
-<p>これだけが初期スコープ。LAG への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">ポート連携<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port の oper status up/down は ACL bind に影響しない</strong>。port が down でも binding は維持される<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port を削除した場合は unbind が必要</strong>だが、初期リリースでは未実装<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ユーザは <code>UNDERLAY_SET_DSCP</code> / <code>UNDERLAY_SET_DSCPV6</code> という新 table type に rule を書くだけ</li>
+<li>AclOrch が内部で <strong><code>MARK_META</code> / <code>MARK_METAV6</code>（ingress, metadata 設定）</strong> と <strong><code>EGR_SET_DSCP</code>（egress, metadata→DSCP）</strong> に展開</li>
+<li>metadata 値の管理（衝突回避）は AclOrch が握る</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
-    PKT[Packet] --&gt; P[Front panel port]
-    P --&gt; ACL_L3[l3 ACL table\nbind 済]
-    P --&gt; ACL_M[mirror ACL table\nbind 済]
-    ACL_L3 --&gt;|permit/deny| FWD[forwarding]
-    ACL_M --&gt;|mirror| ESPAN[ERSPAN]</code></pre>
-<p>同じポートに <strong><code>l3</code> と <code>mirror</code> の 2 つのテーブルを同時に bind</strong> できる。両者の action は競合しない（一方は permit/deny、他方は mirror）前提で運用する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">スケール<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>仕様目標<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>テーブル種別</th>
-<th>スケール</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>l3</code> ACL</td>
-<td>1K rules</td>
-</tr>
-<tr>
-<td>mirror ACL</td>
-<td>256 rules</td>
-</tr>
-</tbody>
-</table>
-<p>これはハードウェア依存の上限ではなく、<strong>機能として担保される下限</strong> という位置付け。</p>
-<h3 id="_6">設定の流れ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>swssconfig</code> で APP_DB に流し込む方式<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart LR
-    USER[ユーザ] --&gt; JSON[JSON 設定ファイル]
-    JSON --&gt; SC[swssconfig]
-    SC --&gt; APPDB[(APP_DB\nACL_TABLE / ACL_RULE_TABLE)]
-    APPDB --&gt; ORCH[aclorch]
-    ORCH --&gt; SAI[SAI ACL]</code></pre>
-<p><strong><code>swssconfig</code> には 2 つのモード</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>モード</th>
-<th>振る舞い</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>full</code></td>
-<td>既存の ACL ルールとテーブルを <strong>すべて削除</strong> し、新規構成で完全置換</td>
-</tr>
-<tr>
-<td><code>partial</code></td>
-<td>既存に対する <strong>差分</strong> として新構成を適用</td>
-</tr>
-</tbody>
-</table>
-<p>ステージングと本番反映の使い分けや、incremental update の運用に対応する設計。</p>
+    USER[ユーザ ACL\nUNDERLAY_SET_DSCP rule\n(SRC_IP, ..., DSCP=v)] --&gt; AO[AclOrch]
+    AO --&gt;|内部展開| ING[(MARK_META rule\nfield: SRC_IP\naction: SET_METADATA=N)]
+    AO --&gt;|内部展開| EGR[(EGR_SET_DSCP rule\nfield: ACL_USER_META=N\naction: SET_DSCP=v)]
+    PKT[ingress pkt] --&gt; ING
+    ING -. metadata=N をパケットに付与 .-&gt; EGR
+    EGR --&gt; ENC[encap 後の outer header DSCP=v]</code></pre>
+<h3 id="sai">SAI 要件<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code>: ingress 段で metadata を打つ</li>
+<li><code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code>: egress 段で metadata でマッチする</li>
+<li>platform が両方サポートしていない場合、本 ACL table type は <strong>作成不可</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="capability">Capability の公開<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
+<p><code>STATE_DB.ACL_ACTIONS</code> に <code>metadata range</code>（platform がサポートする値範囲）と capability を出す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI / orchagent が事前 check に使う。</p>
+<h3 id="match-field">Match field<a class="headerlink" href="#match-field" title="Permanent link">&para;</a></h3>
+<p>ユーザ ACL は標準 L3 IPv4 / IPv6 と同じ match セット（<code>MATCH_SRC_IP</code> / <code>DST_IP</code> / <code>IP_PROTOCOL</code> / <code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code> / <code>TCP_FLAGS</code> / <code>DSCP</code>）。出力は <code>SET_DSCP</code>（outer に効く）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="bind-point">bind point<a class="headerlink" href="#bind-point" title="Permanent link">&para;</a></h3>
+<p><code>PORT</code> / <code>LAG</code>。VLAN bind は HLD の表に無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/acl/acl.md#L103-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/acl/egress_outer_dscp_change_table.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  User generate json based configuration file based on the schema defined above, and then use the swssconfig to configure the ACl table and rules.
-  swssconfig should have two configuration mode, full and partial. In full configuration mode, all existing acl rules and table are removed and replaced by the new configuration. In partial configuration mode, new configuration are delta to current configuration.
-reasoning: 設定フローと full / partial モードの根拠。
+  Option-C: Create a dummy table type which translates into MARK_META/V6 and EGR_SET_DSCP as in the approach mentioned above. Manage the metadata internally
+  ... requires ASICs to support the SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA and SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META fields.
+reasoning: 採用案 Option-C と SAI 要件の根拠。
 -->
 
-<h3 id="_7">カウンタ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ルール毎の <strong>packet counter は Must Have</strong>（必須機能）。</li>
-<li>ルール毎の <strong>byte counter は Should Have</strong>（できれば実装）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<p>具体的なカウンタの保存テーブル名や CLI は本 HLD には記述がない（後続の watermark / flex counter 系 HLD と組み合わせて実装される）。</p>
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>主要フィールド</th>
+<th>Command</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ACL_TABLE</code></td>
-<td><code>&lt;name&gt;</code></td>
-<td><code>policy_desc</code>, <code>type</code>, <code>ports</code>, <code>mirror_session_name</code></td>
+<td><code>config acl add table &lt;name&gt; --stage egress --type UNDERLAY_SET_DSCP --ports ...</code></td>
+<td>テーブル作成（IPv4 用）</td>
 </tr>
 <tr>
-<td><code>ACL_RULE</code></td>
-<td><code>&lt;table_name&gt;:&lt;seq&gt;</code></td>
-<td><code>action</code>, <code>l2_prot_type</code>, <code>l3_prot_type</code>, <code>ipv4_src</code>, <code>ipv4_dst</code>, <code>l4_src_port</code>, <code>l4_dst_port</code></td>
+<td><code>config acl add table &lt;name&gt; --stage egress --type UNDERLAY_SET_DSCPV6 --ports ...</code></td>
+<td>IPv6 用</td>
 </tr>
 </tbody>
 </table>
-<p>注: HLD では実際のキー名として <code>ACL_RULE_TABLE</code> も登場する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、ここは APP_DB 側の表記揺れ（<code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code>）として整理されているため、最終実装では <code>aclorch</code> のソースを参照する必要がある（裏取り課題）。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の sonic-utilities では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
-<h3 id="hld">設定例（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE:DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Data plane ACL&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;l3&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0,Ethernet4&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE_TABLE:DATAACL:10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;permit&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;l3_prot_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">&quot;ipv4_src&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">&quot;ipv4_dst&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.1.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;l4_dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[8000-8999]&quot;</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
+<p>CLI 文法は HLD 例示。実装側で <code>--stage</code> の解釈差異がある可能性あり。</p>
+<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;OUTER_DSCP_TBL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UNDERLAY_SET_DSCP&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;egress&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Ethernet4&quot;</span><span class="p">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">&quot;OUTER_DSCP_TBL|RULE_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">      </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/24&quot;</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">&quot;SET_DSCP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;46&quot;</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>実際の CLI 構文は <code>config acl</code> 系コマンドや <code>aclshow</code> などの後続実装のドキュメントを参照する必要がある。</p>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>HLD 段階で明示されている制限<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>type は <code>l3</code> と <code>mirror</code> のみ</strong>（初期版）。</li>
-<li><strong><code>l2_prot_type</code> は <code>ipv4</code> のみ</strong>（IPv6 は当時未対応）。</li>
-<li>bind 対象は <strong>フロントパネル物理ポートのみ</strong>。<strong>LAG bind は初期版では未対応</strong>。</li>
-<li><strong>同一ポートに bind した複数テーブル間で action が競合しない</strong> ことが前提（<code>l3</code>+<code>mirror</code> の組み合わせを想定）。競合する組み合わせの挙動は HLD では定義されていない。</li>
-<li>ポート削除時の <strong>自動 unbind は初期版では未実装</strong>。</li>
-<li>byte counter は <strong>Should Have</strong> 扱いで、必須ではない。</li>
+<li><strong>SAI metadata 属性が必須</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応 platform では作成不可</li>
+<li>inner / outer の対象は encapsulated パケット限定。一般的な egress L3 ACL のように non-encap には掛けない設計</li>
+<li>metadata range は platform 依存。多数 rule が同 metadata 値で衝突しないよう AclOrch が管理する</li>
 </ul>
-<p>これらの多くは後続の HLD / 実装で拡張されている可能性が高く、本ページは <strong>基盤要件と APP_DB スキーマの起点</strong> として読むのが妥当。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>mirror_session</strong>: <code>mirror</code> ACL テーブルは <code>mirror_session_name</code> を介して mirror セッション設定と連動する。<code>MIRROR_SESSION</code> テーブルが先に存在する必要がある。</li>
-<li><strong>port 設定（PORT, PORTCHANNEL）</strong>: <code>ports</code> フィールドは物理ポート名で参照する。port 削除時に自動 unbind しないため、stale な binding が残る可能性がある<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>swssconfig</code> の full/partial モード</strong>: 運用上、本番系で <code>full</code> を打つと一瞬全 ACL が無効化される時間窓ができる。partial モードや stage 環境での試験を推奨。</li>
-<li><strong>後続機能</strong>: ACL flex counter、egress mirroring、egress ACL bug fix、ACL action capability check など、本 HLD 以降の HLD 群がこのスキーマを拡張している。</li>
+<li><strong>Tunnel encap orch</strong>: encap で outer header を作るのは Tunnel 機能。本 ACL は encap 後に outer DSCP を上書きする位置づけ</li>
+<li><strong>既存 L3 ingress ACL の SET_DSCP</strong>: inner DSCP を書き換える挙動なので併用注意</li>
+<li><strong>MARK_META / EGR_SET_DSCP table（内部）</strong>: AclOrch が暗黙生成するため、ユーザは直接触らない</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ルールが反映されない: <code>seq</code> 値が同一テーブル内で重複していないか、<code>type</code> で許される action のみ使っているかを確認。</li>
-<li>mirror が動かない: <code>mirror_session_name</code> で参照する <code>MIRROR_SESSION</code> の存在と、対象テーブルの <code>type</code> が <code>mirror</code> であることを確認<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>table 作成失敗 → <code>STATE_DB.ACL_ACTIONS</code> で <code>SET_ACL_META_DATA</code> / <code>ACL_USER_META</code> capability を確認</li>
+<li>DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- AclOrch 内部での UNDERLAY_SET_DSCP -> MARK_META + EGR_SET_DSCP 展開実装存在確認
+- SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA / FIELD_ACL_USER_META の community SAI 取り込み確認
+- STATE_DB.ACL_ACTIONS の metadata capability 公開実装確認
+- config acl add table CLI で type=UNDERLAY_SET_DSCP* を受け入れる sonic-utilities 取り込み確認
+- sonic-yang-models 側の ACL_TABLE_TYPE への追加確認
+- 提案 HLD（2024-07 初版）であり master 取り込み状況の確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/acl/acl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/acl/egress_outer_dscp_change_table.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
