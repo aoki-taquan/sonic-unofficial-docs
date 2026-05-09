@@ -919,6 +919,19 @@
       "priority": "high",
       "issue": 153,
       "pr": 154
+    },
+    {
+      "page": "docs/system/sonic-snmp-changes-to-support-ipv6.md",
+      "verification": "hld-only",
+      "concerns": [
+        "minigraph parser の SNMP_AGENT_ADDRESS_CONFIG 自動投入が現行 sonic-buildimage に取り込まれているか未確認 (PR #17045)",
+        "snmpd.conf 生成テンプレート (snmp.sh / Jinja) で SNMP_AGENT_ADDRESS_CONFIG を agentAddress に反映する経路確認",
+        "link-local IPv6 を agentAddress として bind する PR #16013 相当の取り込み確認",
+        "config_db.json 直接ロード時に SNMP_AGENT_ADDRESS_CONFIG が空でも snmpd が any IP に listen する挙動の現行確認",
+        "multi-ASIC 機で namespace 分離により本問題が発症しない前提が現行 master でも維持されているか未確認"
+      ],
+      "priority": "medium",
+      "issue": 155
     }
   ]
 }
