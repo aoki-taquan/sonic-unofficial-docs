@@ -1180,7 +1180,8 @@
         "他 vendor (Innolight / Eoptolink 等) の override 実装存在確認"
       ],
       "priority": "medium",
-      "issue": 530
+      "issue": 530,
+      "pr": 531
     },
     {
       "page": "docs/platform/everflow-support-on-voq-chassis.md",

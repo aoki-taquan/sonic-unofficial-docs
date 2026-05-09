@@ -9,5 +9,6 @@
     "\u4ed6 vendor (Innolight / Eoptolink \u7b49) \u306e override \u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 530
+  "issue": 530,
+  "pr": 531
 }
