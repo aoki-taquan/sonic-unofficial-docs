@@ -273,6 +273,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/ipv4-port-based-dhcp-server-in-sonic/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/openconfig-support-for-ethernet-interfaces/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -554,6 +558,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-bgp/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-feature/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
