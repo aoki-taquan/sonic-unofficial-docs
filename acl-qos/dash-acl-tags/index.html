@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-port-naming-convention-change/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/dash-acl-tags/">
       
       
-        <link rel="prev" href="../sonic-fast-link-up/">
+        <link rel="prev" href="../copp-neighbor-miss-trap-and-enhancements/">
       
       
-        <link rel="next" href="../../internals/">
+        <link rel="next" href="../dhcp-dos-mitigation-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC ポート命名規則の変更案（et[sX]pY[abcd]） - SONiC 非公式ドキュメント</title>
+        <title>DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-etsxpyabcd" class="md-skip">
+        <a href="#dash-acl-dash_prefix_tag_table-dash_acl_rule_table" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+              DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
             
           </span>
         </div>
@@ -335,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1797,6 +1797,8 @@
       
   
   
+    
+  
   
   
     
@@ -1832,20 +1834,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1863,13 +1868,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1889,7 +1894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
+      <a href="../acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -1917,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -1945,7 +1950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -1970,10 +1975,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1989,6 +2021,303 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#app_dbdash_prefix_tag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB.DASH_PREFIX_TAG_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_dbdash_acl_rule_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB.DASH_ACL_RULE_TABLE 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashaclorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashAclOrch の責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグのライフサイクル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="タグのライフサイクル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-tag-prefix_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update tag (prefix_list の更新)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL rule のライフサイクル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL rule のライフサイクル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-update-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove / update rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        展開例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2001,7 +2330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -2029,7 +2358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -2057,7 +2386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -2085,7 +2414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2113,7 +2442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -2141,7 +2470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2169,7 +2498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -2859,8 +3188,6 @@
       
   
   
-    
-  
   
   
     
@@ -2890,23 +3217,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -2924,13 +3248,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2950,7 +3274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -2978,7 +3302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -3006,7 +3330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -3034,7 +3358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -3062,7 +3386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -3090,7 +3414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -3118,7 +3442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3143,37 +3467,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -3189,203 +3486,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        現行の命名
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#etsxpyabcd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新提案: et[sX]pY[abcd]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        未解決の論点
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        移行ステージ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3992,10 +4092,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#app_dbdash_prefix_tag_table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        現行の命名
+        APP_DB.DASH_PREFIX_TAG_TABLE
       
     </span>
   </a>
@@ -4003,13 +4103,113 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#etsxpyabcd" class="md-nav__link">
+  <a href="#app_dbdash_acl_rule_table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新提案: et[sX]pY[abcd]
+        APP_DB.DASH_ACL_RULE_TABLE 拡張
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashaclorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashAclOrch の責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグのライフサイクル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="タグのライフサイクル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-tag-prefix_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update tag (prefix_list の更新)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL rule のライフサイクル
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL rule のライフサイクル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-update-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove / update rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -4017,7 +4217,35 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例
+        展開例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / YANG
       
     </span>
   </a>
@@ -4025,10 +4253,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        未解決の論点
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI / YANG
       
     </span>
   </a>
@@ -4039,7 +4289,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        移行ステージ
+        設定例
       
     </span>
   </a>
@@ -4055,56 +4305,6 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -4113,7 +4313,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4124,7 +4324,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4135,7 +4335,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4162,7 +4362,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-port-naming-convention-change.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/dash-acl-tags.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4171,183 +4371,237 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い提案</p>
-<p>本ページは公式 HLD（短いプロポーザル形式、改訂日不明）のみを根拠に書かれている。本提案は「<code>Ethernet0</code> 系から Linux 流の <code>et[sX]pY[abcd]</code> 系への移行」を提案しているが、SONiC コミュニティ master では現状も <code>EthernetN</code> の内部名が広く使われており、提案は <strong>未採用または部分採用</strong> の状態である可能性が高い。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 段階導入の HLD</p>
+<p>本 HLD は <strong>stage 1 のソフトウェアのみ実装</strong> を定義する初期版（採用ステータス未確認）。<code>DashAclOrch</code> の tag 展開ロジック、ENI 既 bind 時の <strong>ACL group 再生成パス</strong>、<code>APP_DB.DASH_PREFIX_TAG_TABLE</code> のスキーマ命名は実コードでの裏取り未済。stage 2 の SAI API 経由のタグ表現は本ページの範囲外。</p>
 </div>
-<h1 id="sonic-etsxpyabcd">SONiC ポート命名規則の変更案（<code>et[sX]pY[abcd]</code>）<a class="headerlink" href="#sonic-etsxpyabcd" title="Permanent link">&para;</a></h1>
+<h1 id="dash-acl-dash_prefix_tag_table-dash_acl_rule_table">DASH ACL タグ（<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> 拡張）<a class="headerlink" href="#dash-acl-dash_prefix_tag_table-dash_acl_rule_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は伝統的に <code>Ethernet0</code> / <code>Ethernet4</code> / ... のような <strong><code>Ethernet</code> プレフィクス + ASIC レーン番号</strong> をポート名に使ってきた。Microsoft からのプロポーザルとして本ドキュメントは以下の問題を指摘し、Linux Network Interface Naming に揃える命名規則を提案する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>プレフィクス <code>Ethernet</code> が冗長（長い）</li>
-<li>ポート番号（ASIC lane 起点）が <strong>前面パネル番号と一致しない</strong></li>
-<li>chassis（slot 概念あり）に対応できない</li>
-</ul>
-<p>提案する新規命名規則は <strong><code>et[sX]pY[abcd]</code></strong> で、systemd / udev の永続デバイス名規則に近いスタイルである。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">現行の命名<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Ethernet0, Ethernet1, ..., Ethernet(N-1)        # N=32 or 64
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Ethernet0, Ethernet4, Ethernet8, ...            # 4 lane 単位 / breakout 想定
-</span></code></pre></div>
-<p>問題点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>Ethernet</code> プレフィクスが長くタイピングしづらい</li>
-<li>前面パネルポートと番号が直結しない</li>
-<li>同じ ASIC を多重 slot に積む chassis では番号衝突を起こす</li>
-</ul>
-<h3 id="etsxpyabcd">新提案: <code>et[sX]pY[abcd]</code><a class="headerlink" href="#etsxpyabcd" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>et   sX        pY        [abcd]
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>↑    ↑         ↑          ↑
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>prefix slot番号  front panel   breakout
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>(任意, x=1..)  port  (必須)    (任意)
-</span></code></pre></div>
+<p>DASH (Disaggregated APIs for SONiC Hosts) の ACL では、<strong>サービスタグ</strong> が「あるサービスに属する IP プレフィックス群」を表す抽象である。コントローラはタグ配下のプレフィックスを管理し、メンバが変わった際にタグ自体を更新するだけで、これを参照する ACL ルールは設定変更が不要になる。プレフィックスを複数 ACL ルールに重複展開する必要がなくなり、メモリ効率も上がる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装は <strong>2 段階</strong> に分けられる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>部分</th>
-<th>必須/任意</th>
+<th>Stage</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stage 1</td>
+<td><strong>SWSS 側のソフトウェア展開のみ</strong>。タグはルール作成時にプレフィックス列に展開される（SAI 変更なし）</td>
+</tr>
+<tr>
+<td>Stage 2</td>
+<td><strong>SAI API 経由でタグを ASIC に下ろす</strong>。本 HLD の対象外</td>
+</tr>
+</tbody>
+</table>
+<p>本 HLD は <strong>Stage 1 (SONiC のみ)</strong> を定義する。</p>
+<p>要件 (Stage 1)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>orchagent が ACL タグの設定をサポート</li>
+<li>1 プレフィックスは <strong>複数タグに所属可能</strong></li>
+<li>タグからプレフィックスの <strong>追加 / 削除はいつでも</strong> 可能</li>
+<li>ルール生成時に <strong>タグをプレフィックス列に展開</strong> する</li>
+</ul>
+<p>スケール目標<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>目標値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>総タグ数</td>
+<td>4k</td>
+</tr>
+<tr>
+<td>タグあたり最大プレフィックス数</td>
+<td>24k</td>
+</tr>
+<tr>
+<td>ACL ルールあたり最大タグ数</td>
+<td>4k</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="app_dbdash_prefix_tag_table"><code>APP_DB.DASH_PREFIX_TAG_TABLE</code><a class="headerlink" href="#app_dbdash_prefix_tag_table" title="Permanent link">&para;</a></h3>
+<p>新規テーブル<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DASH_PREFIX_TAG_TABLE:&lt;tag_name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    &quot;ip_version&quot;: &quot;ipv4&quot; | &quot;ipv6&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    &quot;prefix_list&quot;: &quot;&lt;prefix1&gt;,&lt;prefix2&gt;,...&quot;
+</span></code></pre></div>
+<ul>
+<li><code>tag_name</code> は <strong>unique</strong></li>
+<li><code>prefix_list</code> は <strong>空も許される</strong>（空タグは「マッチするパケットなし」を意味）</li>
+</ul>
+<h3 id="app_dbdash_acl_rule_table"><code>APP_DB.DASH_ACL_RULE_TABLE</code> 拡張<a class="headerlink" href="#app_dbdash_acl_rule_table" title="Permanent link">&para;</a></h3>
+<p>既存テーブルに <strong><code>src_tag</code> / <code>dst_tag</code></strong> を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_ACL_RULE_TABLE:&lt;group_id&gt;:&lt;rule_num&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    &quot;priority&quot;:    INT32   ; 値が小さいほど優先
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    &quot;action&quot;:      &quot;allow&quot; | &quot;deny&quot;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    &quot;terminating&quot;: &quot;true&quot; | &quot;false&quot;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    &quot;protocol&quot;:    list of INT (例: 6-tcp, 17-udp)        OPTIONAL
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    &quot;src_tag&quot;:     list of tag names &#39;,&#39; separated         OPTIONAL
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    &quot;dst_tag&quot;:     list of tag names &#39;,&#39; separated         OPTIONAL
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    &quot;src_addr&quot;:    list of prefixes &#39;,&#39; separated          OPTIONAL
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    &quot;dst_addr&quot;:    list of prefixes &#39;,&#39; separated          OPTIONAL
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    &quot;src_port&quot;:    list of port ranges                     OPTIONAL
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    &quot;dst_port&quot;:    list of port ranges                     OPTIONAL
+</span></code></pre></div>
+<p>制約: <strong>同種の tag と prefix を同一ルールに同時設定しない</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>src_tag</code> と <code>src_addr</code> の併用は不可。<code>src_tag + dst_addr</code> のような <strong>異種混在は OK</strong>。</p>
+<h3 id="dashaclorch"><code>DashAclOrch</code> の責務<a class="headerlink" href="#dashaclorch" title="Permanent link">&para;</a></h3>
+<p><code>APP_DB.DASH_PREFIX_TAG_TABLE</code> と <code>APP_DB.DASH_ACL_RULE_TABLE</code> を購読し、以下を処理する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>タグの create / update / remove</li>
+<li>ルールの create / update / remove</li>
+<li>ルール作成時に <strong>タグ → プレフィックス展開</strong></li>
+</ul>
+<h3 id="_3">タグのライフサイクル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h4 id="add-tag">add tag<a class="headerlink" href="#add-tag" title="Permanent link">&para;</a></h4>
+<ol>
+<li>タグ設定の妥当性検証</li>
+<li>タグ設定を保存</li>
+</ol>
+<h4 id="remove-tag">remove tag<a class="headerlink" href="#remove-tag" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>flowchart LR
+    R[remove DASH_PREFIX_TAG_TABLE] --&gt; C{rule に attached?}
+    C --&gt;|yes| RT[retry ステータス返却&lt;br/&gt;削除を保留]
+    C --&gt;|no| D[タグ削除]</code></pre>
+<p>タグが ACL ルールから参照されている間は <strong>削除できず retry</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="update-tag-prefix_list">update tag (prefix_list の更新)<a class="headerlink" href="#update-tag-prefix_list" title="Permanent link">&para;</a></h4>
+<p>ENI に <strong>bind 済みの ACL group</strong> に属するルールが影響を受ける場合は <strong>「コピー → 新 group bind → 旧 group 削除」</strong> の段階で更新する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<pre class="mermaid"><code>flowchart TD
+    U[DASH_PREFIX_TAG_TABLE update] --&gt; A[影響を受ける ACL group を列挙]
+    A --&gt; B{group が ENI に bind 済?}
+    B --&gt;|yes| NG[新 ACL group を作成]
+    NG --&gt; NR[元 group の各 rule を新 group にコピー&lt;br/&gt;必要属性を更新]
+    NR --&gt; BIND[新 group を ENI に bind]
+    BIND --&gt; RM[旧 rule を削除]
+    RM --&gt; RG[旧 group を削除]
+    B --&gt;|no| INL[各 rule を in-place 更新]</code></pre>
+<p>ENI に bind されていない group では <strong>in-place 更新</strong> する。</p>
+<h3 id="acl-rule">ACL rule のライフサイクル<a class="headerlink" href="#acl-rule" title="Permanent link">&para;</a></h3>
+<h4 id="create-rule">create rule<a class="headerlink" href="#create-rule" title="Permanent link">&para;</a></h4>
+<ol>
+<li>ルールが tag を含むなら <strong>各 tag が <code>DASH_PREFIX_TAG_TABLE</code> に存在するか</strong> 検査</li>
+<li>1 つでも未存在なら <strong><code>retry</code></strong> を返し延期</li>
+<li>全て揃ったら <strong>タグをプレフィックス列に展開</strong> して ACL rule を作成</li>
+</ol>
+<h4 id="remove-update-rule">remove / update rule<a class="headerlink" href="#remove-update-rule" title="Permanent link">&para;</a></h4>
+<p>ACL group が <strong>ENI に bind 済み</strong> なら remove / update を <strong>エラーで拒否</strong> する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。bind されていない group のみで変更を許す。</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant App as controller
+    participant ADB as APP_DB
+    participant DAO as DashAclOrch
+    App-&gt;&gt;ADB: DASH_PREFIX_TAG_TABLE create
+    ADB-&gt;&gt;DAO: notify
+    DAO-&gt;&gt;DAO: validate + 保存
+    App-&gt;&gt;ADB: DASH_ACL_RULE_TABLE create (with src_tag)
+    ADB-&gt;&gt;DAO: notify
+    DAO-&gt;&gt;DAO: tag が存在?
+    alt 全 tag 存在
+        DAO-&gt;&gt;DAO: tag → prefix 列に展開
+        DAO-&gt;&gt;DAO: ACL rule 作成
+    else 未存在
+        DAO--&gt;&gt;ADB: retry
+    end</code></pre>
+<h3 id="_4">展開例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>タグ定義<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DASH_PREFIX_TAG_TABLE:Tag1  prefix_list = 1.1.1.0/24,1.1.2.0/24,1.1.3.0/24
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DASH_PREFIX_TAG_TABLE:Tag2  prefix_list = 2.2.2.0/24
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>DASH_PREFIX_TAG_TABLE:Tag3  prefix_list = 3.3.3.0/24
+</span></code></pre></div>
+<p>ルール定義<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    src_addr = &quot;Tag1,Tag2&quot;   # tag 参照
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    dst_addr = &quot;Tag3&quot;
+</span></code></pre></div>
+<p><code>DashAclOrch</code> 内部での展開後<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1 (展開後の論理表現)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    src_tag → 1.1.1.0/24,1.1.2.0/24,1.1.3.0/24,2.2.2.0/24
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    dst_tag → 3.3.3.0/24
+</span></code></pre></div>
+<p>(HLD の例ではフィールド名が <code>src_tag/dst_tag</code> で示されているが、Stage 1 の意味は <strong>これらが展開後のプレフィックス列に置き換わる</strong> ことを表している)</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli-yang">CLI / YANG<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h3>
+<p>Stage 1 は <strong>CLI / YANG 拡張なし</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。コントローラが APP_DB に直接書き込む設計。</p>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>CONFIG_DB</code> への変更は無い<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は <strong>APP_DB 側のみ</strong> に影響する。</p>
+<h3 id="app_db">関連する APP_DB<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>et</code></td>
-<td>必須</td>
-<td>SONiC が選んだ prefix。<code>em</code> / <code>en</code> 等の Linux predictable name と類似。よく使われる Linux 規則の一族</td>
+<td><code>DASH_PREFIX_TAG_TABLE</code></td>
+<td><code>&lt;tag_name&gt;</code></td>
+<td>tag 単位の prefix 集合</td>
 </tr>
 <tr>
-<td><code>sX</code></td>
-<td>任意</td>
-<td>slot 番号。chassis 構成で使う。X は通常 1 から</td>
-</tr>
-<tr>
-<td><code>pY</code></td>
-<td>必須</td>
-<td>前面パネルポート Y。通常 1 から</td>
-</tr>
-<tr>
-<td><code>[a\|b\|c\|d]</code></td>
-<td>任意</td>
-<td>breakout サブポート</td>
+<td><code>DASH_ACL_RULE_TABLE</code></td>
+<td><code>&lt;group_id&gt;:&lt;rule_num&gt;</code></td>
+<td><code>src_tag</code> / <code>dst_tag</code> を新たに受け付ける</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>構成</th>
-<th>ポート名例</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>breakout なし、32 ポート pizza box</td>
-<td><code>etp1, etp2, ..., etp32</code></td>
-</tr>
-<tr>
-<td>2 分割 breakout</td>
-<td><code>etp16a, etp16b</code></td>
-</tr>
-<tr>
-<td>4 分割 breakout</td>
-<td><code>etp18a, etp18b, etp18c, etp18d</code></td>
-</tr>
-<tr>
-<td>chassis 複数 line card</td>
-<td><code>ets0p1, ets1p10</code></td>
-</tr>
-</tbody>
-</table>
-<p>数字の起点は <strong>「通常 1 から」</strong>。Microsoft 提案のコメントとして、index を 1 起点にすると C/C++ 配列など 0 起点言語との橋渡しで「先頭エントリが無駄になる/ならない」が実装と言語に依存する旨の議論がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">未解決の論点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>提案文書時点で未解決として明示されているもの<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="cli-yang_1">関連する CLI / YANG<a class="headerlink" href="#cli-yang_1" title="Permanent link">&para;</a></h3>
+<p>該当なし<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a># tag 設定
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>DASH_PREFIX_TAG_TABLE:Tag1   ip_version=ipv4   prefix_list=1.1.1.0/24,1.1.2.0/24
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>DASH_PREFIX_TAG_TABLE:Tag2   ip_version=ipv4   prefix_list=2.2.2.0/24
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a># rule 設定
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    priority=1 action=allow terminating=false
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    src_addr=&quot;Tag1,Tag2&quot;   # tag 参照（DashAclOrch が展開）
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    dst_addr=&quot;3.3.3.0/24&quot;
+</span></code></pre></div>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>PortChannel（LAG）の命名規則</strong>: <code>et[sX]pY[abcd]</code> のような枠組みに乗せるか、別系統で持つか未定</li>
+<li><strong>Stage 1 は SAI API 不使用</strong>。タグは SWSS 内でプレフィックス列に展開され ASIC からはタグの存在は見えない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>warm / fast reboot は未サポート</strong>（DPU SONiC 自体が未対応）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>ENI に bind 済み ACL group のルール削除 / 更新は不可</strong>。タグ更新は「group コピー方式」で実現<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>同種 tag と prefix の併用不可</strong> (例: <code>src_tag + src_addr</code> 同時)<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>未存在 tag を参照するルール作成は <strong>retry で延期</strong>。controller は順序を意識して投入する必要</li>
+<li>HLD には <strong><code>DASH_PREFIX_TAG_TABLE</code> を ENI 単位にすべきか global にすべきか</strong> の Open Item が残る<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h3 id="_6">移行ステージ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>破壊的変更を一気にやるのではなく、4 段階に分けて段階移行する案<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart LR
-    S1[Stage 1\nport_config.ini\nalias を新規則に] --&gt; S2[Stage 2\nコード内の Ethernet\nプレフィクス依存を解消]
-    S2 --&gt; S3[Stage 3\nテストの Ethernet\n依存を解消]
-    S3 --&gt; S4[Stage 4\n内部ポート名を\n新規則に切替\nLinux IF 名も同一]</code></pre>
-<table>
-<thead>
-<tr>
-<th>Stage</th>
-<th>変更内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>port_config.ini</code> の <strong>alias 列</strong> を新命名で埋める。内部名はまだ <code>EthernetN</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td>SONiC コードベースから <code>Ethernet</code> プレフィクス前提（hardcode）を順次除去</td>
-</tr>
-<tr>
-<td>3</td>
-<td>テスト（DVS / pytest など）から <code>Ethernet</code> プレフィクス・<code>Ethernet0</code> ハードコードを除去</td>
-</tr>
-<tr>
-<td>4</td>
-<td>内部ポート名と Linux IF 名の両方を新命名に切替</td>
-</tr>
-</tbody>
-</table>
-<p>Stage 1 の段階で <strong>alias は新命名、内部名は EthernetN のまま</strong> という共存状態が続く。CLI 表示・SNMP・LLDP などユーザ視認領域は alias を出すことで命名移行を先行できる構成。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  ## Change stages ##
-  1. Change port_config.ini alias column to use the new naming convention.
-  2. Break SONiC code dependency of 'Ethernet' prefix.
-  3. Break SONiC test dependency of 'Ethernet' prefix and/or 'Ethernet0'.
-  4. Change SONiC port name to new naming convention.
-reasoning: 4 段階移行プランの根拠。
--->
-
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>本提案は CONFIG_DB のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>CLI 自体の追加・削除は提案されていない。<code>show interface</code> 等の出力や CLI 入力で使うキーが alias ベースに切替わるかが運用上のポイント。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>本ドキュメントは提案段階</strong>。コミュニティが採択して全 stage を完了したかは別途確認が必要</li>
-<li>Stage 4（内部名切替）は SONiC コードベース全体・テスト・自動化スクリプトに広く影響するため、移行には大規模な検証が必要</li>
-<li>PortChannel 等 LAG 系名称の取り扱いは <strong>未解決</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>1 起点インデクスとプログラミング言語の 0 起点との橋渡しは実装ごとに注意</li>
+<li><strong><code>DashAclOrch</code></strong>: 本 HLD の主役。tag → prefix 展開と ENI bind 状態管理</li>
+<li><strong>DASH ENI 管理</strong>: ACL group の ENI bind/unbind 状態が tag 更新時のフローを左右</li>
+<li><strong>APP_DB スキーマ</strong>: <code>DASH_ACL_RULE_TABLE</code> の <code>src_tag</code> / <code>dst_tag</code> を消費する CLI / コントローラ</li>
+<li><strong>将来の Stage 2</strong>: SAI API でタグを表現する設計に置き換わる可能性</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>port_config.ini</code> / hwsku パッケージング</strong>: alias 列の更新</li>
-<li><strong>CLI / <code>show interface</code> / SNMP / LLDP</strong>: alias がユーザ可視領域に出るので、運用ドキュメントとの整合</li>
-<li><strong>テスト基盤（DVS / pytest / sonic-mgmt）</strong>: <code>Ethernet0</code> 等のハードコード除去が必要</li>
-<li><strong>chassis HLD</strong>: slot 番号 (<code>sX</code>) を意識した命名は chassis ユースケースが主動機</li>
+<li>ACL rule が作成されない → 参照タグが <code>DASH_PREFIX_TAG_TABLE</code> に存在するか確認、syslog の DashAclOrch ログに <code>retry</code> メッセージが出ていないか</li>
+<li>tag を削除できない → 参照しているルールを先に削除する</li>
+<li>prefix_list を更新したのに反映されない → ENI bind 済み group の場合は <strong>新 group 再生成</strong> が走る。古い group が残っているか確認</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li>新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認</li>
-<li>chassis で <code>ets0p1</code> が <code>ets1p1</code> と衝突する場合、line card の slot 番号が想定どおりに振られているか確認</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- 本提案がどの Stage まで実装されたか（master では未だ EthernetN が主流）
-- port_config.ini alias 列の運用ガイドライン
-- chassis での ets<X>p<Y> 命名の実装事例
-- PortChannel 命名の最終決定
-- breakout (a/b/c/d) と CONFIG_DB.PORT のキーの整合
+- DashAclOrch の DASH_PREFIX_TAG_TABLE 購読と tag 展開ロジックの実装存在確認
+- DASH_ACL_RULE_TABLE の src_tag / dst_tag 受理ロジック確認
+- ENI bind 済み group での「コピー → bind → 旧削除」シーケンス実装確認
+- DASH_PREFIX_TABLE のスコープ（global / per ENI）の最終決定状況確認
+- Stage 2 (SAI API 経由) の進捗確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-port-name/sonic-port-name.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dash/dash-acl-tags/dash-acl-tags.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
