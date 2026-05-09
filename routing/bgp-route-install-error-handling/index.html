@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/ssh-server-global-config-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bgp-route-install-error-handling/">
       
       
-        <link rel="prev" href="../sonic-yang-model-guidelines/">
+        <link rel="prev" href="../bgp-route-aggregation-with-bbr-awareness/">
       
       
-        <link rel="next" href="../tacacs-authentication/">
+        <link rel="next" href="../bgp-router-id-explicitly-configured/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SSH サーバ全体設定（SSH_SERVER.POLICIES） - SONiC 非公式ドキュメント</title>
+        <title>BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ssh-ssh_serverpolicies" class="md-skip">
+        <a href="#bgp-route-install-error-handlingerror_route_table-fib-install-pending" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SSH サーバ全体設定（SSH_SERVER.POLICIES）
+              BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -1125,6 +1125,8 @@
       
   
   
+    
+  
   
   
     
@@ -1214,20 +1216,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1245,13 +1250,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1271,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1299,7 +1304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1327,7 +1332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -1355,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1380,10 +1385,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1399,6 +1431,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント間フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各レイヤの責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        表示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1411,7 +1618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1439,7 +1646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1467,7 +1674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -1495,7 +1702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1523,7 +1730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1551,7 +1758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1579,7 +1786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1607,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1635,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -1663,7 +1870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1691,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1719,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1747,7 +1954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1775,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1803,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1831,7 +2038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1859,7 +2066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -1887,7 +2094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1915,7 +2122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1943,7 +2150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1971,7 +2178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1999,7 +2206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2027,7 +2234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -2055,7 +2262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2083,7 +2290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -2111,7 +2318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -2139,7 +2346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2167,7 +2374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2195,7 +2402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2223,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2251,7 +2458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2279,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2307,7 +2514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -5095,8 +5302,6 @@
       
   
   
-    
-  
   
   
     
@@ -5178,23 +5383,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -5212,13 +5414,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5238,7 +5440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -5266,7 +5468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -5294,7 +5496,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -5322,7 +5524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -5350,7 +5552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -5378,7 +5580,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -5406,7 +5608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -5434,7 +5636,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -5462,7 +5664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -5490,7 +5692,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -5518,7 +5720,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -5546,7 +5748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -5574,7 +5776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -5602,7 +5804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -5630,7 +5832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -5658,7 +5860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -5686,7 +5888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -5714,7 +5916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -5742,7 +5944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -5770,7 +5972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -5798,7 +6000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -5826,7 +6028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5854,7 +6056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -5882,7 +6084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -5910,7 +6112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -5938,7 +6140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -5966,7 +6168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -5994,7 +6196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -6022,7 +6224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -6050,7 +6252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -6075,37 +6277,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSH サーバ全体設定（SSH_SERVER.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -6121,203 +6296,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各ポリシーのマッピング先
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ports" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ports の構文
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既定の出所
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -6330,7 +6308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -6358,7 +6336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -6386,7 +6364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -12050,7 +12028,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        コンポーネント間フロー
       
     </span>
   </a>
@@ -12061,7 +12039,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        各ポリシーのマッピング先
+        各レイヤの責務
       
     </span>
   </a>
@@ -12069,10 +12047,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ports" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ports の構文
+        CONFIG_DB
       
     </span>
   </a>
@@ -12083,7 +12061,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動シーケンス
+        表示
       
     </span>
   </a>
@@ -12091,10 +12069,38 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既定の出所
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
       
     </span>
   </a>
@@ -12110,65 +12116,15 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        制限事項
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12179,7 +12135,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12190,7 +12146,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12217,7 +12173,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/ssh-server-global-config-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/bgp-route-install-error-handling.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12225,234 +12181,130 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-host-services/scripts/hostcfgd</code> L1045 <code>class SshServer</code>、L2245-2478 で <code>init_data['SSH_SERVER']</code> を読み <code>self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))</code> する経路を確認。<code>SSH_CONFG = "/etc/ssh/sshd_config"</code> (L32) に書き込み、<code>LIMITS_CONF_TEMPLATE = "/usr/share/sonic/templates/limits.conf.j2"</code> (L82) と <code>PAM_LIMITS_CONF = "/etc/pam.d/pam-limits-conf"</code> (L83) を render する <code>limits.conf.j2</code> も <code>sonic-host-services/data/templates/limits.conf.j2</code> で確認。L1412-1478 で <code>SSH_SERVER</code> から <code>pam_limits</code> / <code>limits.conf</code> を render（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>本 HLD は 2019 年（Rev 0.1）の初期提案。同様の目的を持つ後発 HLD（<a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a>）が dplane_fpm_nl ベースで標準化されているため、本 HLD の <code>ERROR_ROUTE_TABLE</code> 経路が現行 master に残っているかは要確認。<code>priority=high</code>。</p>
 </div>
-<h1 id="ssh-ssh_serverpolicies">SSH サーバ全体設定（SSH_SERVER.POLICIES）<a class="headerlink" href="#ssh-ssh_serverpolicies" title="Permanent link">&para;</a></h1>
+<h1 id="bgp-route-install-error-handlingerror_route_table-fib-install-pending">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）<a class="headerlink" href="#bgp-route-install-error-handlingerror_route_table-fib-install-pending" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SSH サーバは Debian 標準 <code>sshd</code> をそのまま使う構成で、運用ポリシーを変えるたびに <code>/etc/ssh/sshd_config</code> を直接書き換える必要があった。本機能は CONFIG_DB の <code>SSH_SERVER</code> テーブルに 5 種のポリシーを集約し、<strong><code>hostcfgd</code> がテーブル変更を購読して <code>sshd_config</code> などを更新 → SSH サービスを再起動</strong> することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設定対象は次の 5 ポリシー<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>ポリシー</th>
-<th>説明</th>
-<th>値域</th>
-<th>既定 (Debian 由来)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>authentication_retries</code></td>
-<td>パスワード入力リトライ上限</td>
-<td>3..100</td>
-<td>6</td>
-</tr>
-<tr>
-<td><code>login_timeout</code></td>
-<td>ログイン未完了 timeout</td>
-<td>1..600 (秒)</td>
-<td>120</td>
-</tr>
-<tr>
-<td><code>ports</code></td>
-<td>sshd 待受ポート（複数指定可、カンマ区切り）</td>
-<td>1..65536</td>
-<td>22</td>
-</tr>
-<tr>
-<td><code>inactivity_timeout</code></td>
-<td>アイドルセッションの自動切断</td>
-<td>0..35000 (分、0 = 無効)</td>
-<td>15</td>
-</tr>
-<tr>
-<td><code>max_syslogins</code></td>
-<td>システム全体の並列ログイン上限</td>
-<td>0..100 (0 = 無制限)</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-<p>各ポリシーの既定は Debian の sshd デフォルトをそのまま継承している。<code>inactivity_timeout</code> だけは Linux 全般での既存設定を踏襲して 15 分を採用している。</p>
+<p>ASIC への route install が（CRM 制限などで）失敗した場合に、その情報を <code>ERROR_DB.ERROR_ROUTE_TABLE</code> 経由で fpmsyncd → zebra → bgpd まで伝搬し、<strong>bgpd 側で当該 prefix を "FIB-install pending" と marking して peer への advertise を抑止する</strong> 仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要点:</p>
+<ul>
+<li>ECMP の場合、NHG 内の一部 NH の install 失敗も route 全体の失敗として扱う</li>
+<li>BGP のリトライ機構は本 HLD のスコープ外（user が <code>clear</code> 系コマンドで手動 retry 必要）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>warm reboot / GR 対応は別物としてスコープ外</li>
+<li>グローバル ON/OFF は <code>BGP_ERROR_CFG_TABLE:config.enable=true/false</code>。default disabled。enabled→disabled の切替は <strong>BGP container 再起動推奨</strong></li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    User[CONFIG_DB 編集] --&gt; CDB[(CONFIG_DB\nSSH_SERVER.POLICIES)]
-    CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|update| SSHD[/etc/ssh/sshd_config]
-    HC --&gt;|render limits.conf.j2| LIM[/etc/security/limits.conf]
-    HC --&gt;|系列共通の inactivity flow| TM[/etc/profile.d/* など]
-    HC --&gt;|systemctl restart| SVC[ssh service]</code></pre>
-<p><code>hostcfgd</code> は <strong>ホスト直接動作（コンテナ内ではない）</strong> のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と HLD で明示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">各ポリシーのマッピング先<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_3">コンポーネント間フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant B as bgpd (FRR)
+    participant Z as zebra
+    participant K as kernel
+    participant F as fpmsyncd
+    participant A as APP_DB
+    participant O as orchagent
+    participant S as syncd / SAI
+    participant E as ERROR_DB
+    B-&gt;&gt;Z: install route
+    Z-&gt;&gt;K: route add (FIB)
+    Z-&gt;&gt;F: FPM RTM_NEWROUTE
+    F-&gt;&gt;A: ROUTE_TABLE
+    O-&gt;&gt;S: SAI route create -&gt; FAIL (CRM full)
+    S-&gt;&gt;E: ERROR_ROUTE_TABLE 書き込み
+    E--&gt;&gt;F: subscribe 通知
+    F-&gt;&gt;Z: zebra common-header msg "route failed"
+    Z-&gt;&gt;K: kernel から route withdraw
+    Z-&gt;&gt;B: NOTIFY: route not installed
+    B-&gt;&gt;B: RIB-IN に "FIB-install pending" mark
+    B-&gt;&gt;B: RIB-OUT から削除（advertise 取消）</code></pre>
+<h3 id="_4">各レイヤの責務<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>ポリシー</th>
-<th>反映先</th>
-<th>sshd 上の概念</th>
+<th>Layer</th>
+<th>責務</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>authentication_retries</code></td>
-<td><code>/etc/ssh/sshd_config</code> の <code>MaxAuthTries</code></td>
-<td>認証試行上限</td>
+<td><code>syncd</code> / <code>orchagent</code></td>
+<td>SAI 失敗を <code>ERROR_ROUTE_TABLE</code> に書き出す（既存 error handling framework 経由）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td><code>login_timeout</code></td>
-<td><code>LoginGraceTime</code></td>
-<td>ログイン猶予時間（秒）</td>
+<td><code>fpmsyncd</code></td>
+<td><code>BGP_ERROR_CFG_TABLE.enable=true</code> のとき <code>ERROR_ROUTE_TABLE</code> を subscribe。失敗を zebra socket 経由で送る（既存 FPM TCP socket を再利用）</td>
 </tr>
 <tr>
-<td><code>ports</code></td>
-<td><code>Port</code> （複数行可）</td>
-<td>待受ポート</td>
+<td><code>zebra</code></td>
+<td>失敗 route を kernel から withdraw、RIB に "Not installed in hardware" フラグ。次善 NH を fpmsyncd に流さない</td>
 </tr>
 <tr>
-<td><code>inactivity_timeout</code></td>
-<td>hostcfgd の <strong>既存 inactivity フロー</strong> で <code>TMOUT</code> 系を更新</td>
-<td>シェルレベル idle</td>
-</tr>
-<tr>
-<td><code>max_syslogins</code></td>
-<td><code>limits.conf.j2</code> 経由で <code>/etc/security/limits.conf</code> の <code>* - maxsyslogins &lt;N&gt;</code></td>
-<td>PAM レベルの全ユーザ並列ログイン上限</td>
+<td><code>bgpd</code></td>
+<td>"pending FIB install" を default 状態とし、success 通知でクリア。failure 通知では advertise しない / RIB-OUT から削除</td>
 </tr>
 </tbody>
 </table>
-<p><code>max_syslogins</code> は jinja2 テンプレートで条件分岐される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-jinja highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">{%</span> <span class="k">if</span> <span class="nv">max_sessions</span> -<span class="cp">%}</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="x">* - maxsyslogins </span><span class="cp">{{</span> <span class="nv">max_sessions</span> <span class="cp">}}</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">{%</span> <span class="k">endif</span> -<span class="cp">%}</span>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_ERROR_CFG_TABLE|config:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  enable = &quot;true&quot; | &quot;false&quot;   # default false
 </span></code></pre></div>
-<p><code>inactivity_timeout</code> 用の <code>TMOUT</code> は <strong>Serial console 機能の HLD と同じ既存 inactivity フロー</strong> に合流する設計（管理者シェル全般の自動ログアウト）。SSH 専用ではなく、シリアルと共通である<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ports"><code>ports</code> の構文<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>
-<p>YANG の正規表現で複数ポートを <code>,</code> 区切りで許可している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。例: <code>"22,2222"</code>. 数字は 1..65536（YANG 上は 65536 までの上限が確認できる正規表現）。</p>
-<h3 id="_5">起動シーケンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CFG as CONFIG_DB
-    participant HC as hostcfgd
-    participant FS as sshd_config / limits.conf
-    participant SVC as ssh service
-    U-&gt;&gt;CFG: SSH_SERVER|POLICIES = {ports:"22,2222", max_syslogins:"5", ...}
-    CFG--&gt;&gt;HC: notify
-    HC-&gt;&gt;FS: update /etc/ssh/sshd_config (Port, MaxAuthTries, LoginGraceTime)
-    HC-&gt;&gt;FS: render /etc/security/limits.conf (maxsyslogins)
-    HC-&gt;&gt;SVC: systemctl restart ssh</code></pre>
-<p>設定変更ごとに <strong>SSH サービスを再起動</strong> する設計である。既存セッションへの影響は仕様上「再起動による瞬断」と理解する必要がある（Debian の <code>sshd</code> 既定挙動）。</p>
+<h3 id="_5">表示<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>show bgp ipv4 unicast</code> の status code に <code>#</code>（FIB-install pending）が増える。<code>show ip route</code> でも <code>#</code>（Not installed in hardware）が出る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Status codes: ... # FIB install pending.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>*&gt;# 21.21.21.21/32   4.1.1.2   ...
+</span></code></pre></div>
+<h3 id="ecmp">ECMP の扱い<a class="headerlink" href="#ecmp" title="Permanent link">&para;</a></h3>
+<p><code>fpmsyncd</code> は ECMP route を NH list 込みで受け取る。NHG 単位でも install 失敗は「route 全体の失敗」とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。NH 1 件だけ失敗したような部分失敗は表現しない。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/ssh_config/ssh_config.md#L62-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md#L93-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  1. configDB - to include a dedicated table for configurations
-  2. hostcfg demon - to update ssh config files once configDB relevant areas are modified
-  3. OS ssh config files - specific for this stage we are only /etc/ssh/sshd_config is going to be modifed by the hostcfg demon.
-  4. OS ssh service - to be restarted after each configuration change.
-reasoning: 設定 → sshd_config 更新 → service 再起動 という反映経路の根拠。
+  A new class is added in fpmsyncd to subscribe to ERROR_ROUTE_TABLE present inside the ERROR_DB.
+  Subscription to this table is sufficient to handle the errors in route installation.
+  Currently, fpmsyncd has a TCP socket with Zebra listening on FPM_DEFAULT_PORT. ... We will reuse the same socket
+  to send information back to Zebra.
+reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 -->
 
-<h3 id="_6">既定の出所<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>init_cfg.json.j2</code> に既定値が埋め込まれており、ファクトリ起動時に <code>SSH_SERVER.POLICIES</code> が初期化される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SSH_SERVER</code></td>
-<td><code>POLICIES</code></td>
-<td><code>authentication_retries</code></td>
-<td>3..100（既定 6）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>login_timeout</code></td>
-<td>1..600 秒（既定 120）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>ports</code></td>
-<td>文字列。<code>"22"</code> または <code>"22,2222"</code> 等</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>inactivity_timeout</code></td>
-<td>0..35000 分（既定 15、0=無効）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>max_syslogins</code></td>
-<td>0..100（既定 0=無制限）</td>
-</tr>
-</tbody>
-</table>
-<p>JSON サンプル<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;SSH_SERVER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;POLICIES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">            </span><span class="nt">&quot;authentication_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6&quot;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">            </span><span class="nt">&quot;login_timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;120&quot;</span><span class="p">,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">            </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;22&quot;</span><span class="p">,</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">            </span><span class="nt">&quot;inactivity_timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">            </span><span class="nt">&quot;max_syslogins&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config bgp error-handling enable
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config bgp error-handling disable
 </span></code></pre></div>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 上では「<strong>現状は CONFIG_DB を手動で編集</strong>」しており、<code>config ssh ...</code> のような専用 CLI は Phase 1 では定義されていない。<code>config_db.json</code> 直接編集 / <code>sonic-cfggen</code> / gNMI 経由で投入する想定。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-ssh-server.yang</code> の <code>SSH_SERVER.POLICIES</code><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">POLICIES</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">authentication_retries</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint8</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">1..100</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="k">default</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">login_timeout</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">1..600</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="mi">120</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">ports</span><span class="w">                 </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s1">&#39;([1-9]|[1-9]\d{1,3}|...|6553[0-6])(,...)*&#39;</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;22&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">inactivity_timeout</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..35000</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">max_syslogins</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..100</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 待受ポートを 22 と 2222 の両方にし、最大同時ログインを 5 に制限</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span><span class="w"> </span>ports<span class="w"> </span><span class="s2">&quot;22,2222&quot;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span><span class="w"> </span>max_syslogins<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>config<span class="w"> </span>save
-</span></code></pre></div>
-<p>設定後、hostcfgd が <code>/etc/ssh/sshd_config</code> を書き換え、ssh サービスを再起動する。既存セッションは切断される可能性がある。</p>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p><code>enabled→disabled</code> 切替時は HLD 上 <strong>BGP docker 再起動が推奨</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。disabled の間に投入された route には機能が効かないため、enable 後は session reset が現実的。</p>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>シリアルコンソール HLD (<code>SERIAL_CONSOLE.POLICIES</code>)</strong>: <code>inactivity_timeout</code> は同じシェルレベル <code>TMOUT</code> フローを共有している。シリアル側 / SSH 側のどちらかで設定すると同じ値が両方に効く可能性。HLD では「既存の inactivity flow を使う」と明記されているため共有設計である<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>PAM <code>limits.conf</code></strong>: <code>max_syslogins</code> は SSH 限定ではなく <code>* - maxsyslogins</code> として <strong>全ユーザ全セッション</strong> に適用される。シリアルログインも対象になる点に注意。</li>
-<li><strong><code>ports</code> 変更</strong>: 自分が SSH で繋いでいるセッションが切れる可能性がある。事前にコンソール経路を確保したうえで変更する。</li>
-<li><strong>fail2ban / 外部認可</strong>: <code>authentication_retries</code> を上げすぎると brute-force 試行を検知しにくくなる。</li>
+<li>失敗 route の <strong>自動リトライは未実装</strong>（user 操作で手動 retry）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>warm reboot / GR for BGP はスコープ外</li>
+<li>部分 NH 失敗の表現はない（route 単位）</li>
+<li>enable/disable 切替時の挙動はやや不安定。container 再起動を推奨</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定が反映されない: <code>journalctl -u hostcfgd</code> で notification 受信ログを確認。<code>/etc/ssh/sshd_config</code> を <code>cat</code> して該当行が更新されているかチェック。</li>
-<li>ssh が落ちて戻ってこない: <code>ports</code> の YANG 正規表現に合わない値（範囲外、ゼロ詰め等）で sshd_config が壊れている可能性。コンソール経由で <code>/etc/ssh/sshd_config</code> を直接修正し <code>systemctl restart ssh</code>。</li>
-<li><code>max_syslogins</code> を効かせたのに無制限のまま: <code>/etc/security/limits.conf</code> に該当行が出ているか、PAM がそれを読む構成（<code>session required pam_limits.so</code>）になっているかを確認。</li>
-<li><code>inactivity_timeout</code> が SSH に効かない: <code>TMOUT</code> は login shell + interactive shell でのみ効く。<code>bash -c "command"</code> のような非対話起動では効かない。</li>
+<li><strong><a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending</a></strong>: 同じ目的で後発の dplane_fpm_nl + RTM_F_OFFLOAD 経路がある。両機能の共存・置き換え関係は要確認</li>
+<li><strong>CRM</strong>: ASIC リソース不足を警告するメカニズム。本機能と組み合わせ、CRM threshold 越え前から advertise 抑止できる</li>
+<li><strong>orchagent error framework</strong>: <code>ERROR_ROUTE_TABLE</code> 自体は SAI failure 一般の枠組みの一部</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show ip route</code> に <code>#</code> が増えない → <code>BGP_ERROR_CFG_TABLE.enable=true</code> 確認、fpmsyncd のログで subscribe 完了確認</li>
+<li>enable した直後の既存 route には適用されない → BGP session を <code>clear bgp *</code> で reset</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- ERROR_ROUTE_TABLE / ERROR_DB スキーマの現行 master 取り込み確認
+- fpmsyncd 側 ERROR_ROUTE_TABLE subscriber と Zebra への送信ロジック実装確認
+- BGP_ERROR_CFG_TABLE の sonic-yang-models 取り込み確認
+- config bgp error-handling CLI の sonic-utilities 取り込み確認
+- 後発 BGP Suppress FIB Pending（dplane_fpm_nl 経路）との置き換え関係 / 共存確認
+- 2019 年 HLD のため現行実装乖離リスク（priority=high）
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/ssh_config/ssh_config.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
