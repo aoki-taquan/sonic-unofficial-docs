@@ -1,0 +1,14 @@
+{
+  "page": "docs/architecture/sonic-trap-flow-counter-design.md",
+  "issue": 679,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-swss の Flow Counter Handler クラスと Copp Orch の generateHostIfTrapCounterIdList / clearHostIfTrapCounterIdList 実装存在確認",
+    "FLEX_COUNTER_TABLE の FLOW_CNT_TRAP group 取り込み確認",
+    "counterpoll flowcnt-trap CLI の sonic-utilities 取り込み確認",
+    "show flowcnt trap stats CLI の具体的なコマンド体系確認",
+    "COUNTERS_TRAP_NAME_MAP テーブルの CoPP code path 連携確認",
+    "SAI Generic Counter API の community SAI / syncd 取り込み確認"
+  ],
+  "priority": "medium"
+}
