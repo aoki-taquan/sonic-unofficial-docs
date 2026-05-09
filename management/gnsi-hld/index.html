@@ -4485,6 +4485,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -7064,6 +7075,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -7097,8 +7119,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い Initial Proposal</p>
-<p>HLD は 2023-11 改訂 v0.1 で 2 年超経過、Initial Proposal のまま。Certz の <code>gnxi</code> デフォルトプロファイル、<code>console_mgmt</code> / <code>ssh_mgmt</code> という host service モジュール、gNMI server に追加するフラグ群（<code>EnableAuthzPolicy</code> 等）の <strong>現行 master 実装は要確認</strong>。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>主要 gNSI サービス（Authz / Certz / Pathz）の handler 実装と host service モジュール（<code>gnsi_console.py</code> / <code>ssh_mgmt.py</code>）は確認済み。一方で <strong>Credentialz の gNMI server 側 handler は未実装</strong>（dbus client 経由の補助のみ）であり、gNMI server フラグ名も HLD 提案と若干異なる。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gnsicertz-authz-pathz-credentialz-rotate">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル<a class="headerlink" href="#gnsicertz-authz-pathz-credentialz-rotate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -7339,7 +7361,15 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <li>sshd が再起動ループ: <code>ssh_mgmt.set</code> で投入した <code>authorized_keys</code> / <code>sshd_config</code> が壊れている。<code>restore_checkpoint</code> で巻き戻す</li>
 <li><code>Pathz</code> の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）:</p>
+<ul>
+<li><strong>Credentialz handler の gNMI server 実装は未取り込み</strong>: HLD は Authz / Certz / Pathz / Credentialz の 4 サービスを並べて記述するが、現行 master の <code>sonic-gnmi/gnmi_server/</code> には <code>gnsi_authz.go</code> / <code>gnsi_certz.go</code> / <code>gnsi_pathz.go</code> のみが存在し、<code>gnsi_credentialz.go</code> 相当のサーバ側ハンドラは無い。Credentialz 関連は <code>sonic-gnmi/sonic_service_client/dbus_client.go:53-</code> の <strong>dbus client 補助コード</strong>として準備されているのみ（<code>TestCredentialzDbusMethods</code> 等のテストが存在）。</li>
+<li><strong>gNMI server フラグ名の差異</strong>: HLD で言及された <code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> という flag 名ではなく、<code>sonic-gnmi/gnmi_server/server.go:240,243</code> では <code>AuthzPolicy bool</code> / <code>PathzPolicy bool</code> という config 構造体フィールドとして実装されている。ポリシーファイルパスは <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>、CRL は <code>CertCRLConfig</code>（HLD の表記と差異あり）。</li>
+<li><strong>STATE_DB gNSI profile state テーブルは未確認</strong>: <code>sonic-swss-common/common/schema.h</code> 内に <code>GNSI</code> 関連テーブル定義は見当たらなかった（profile 状態は gNMI サーバプロセス内のメモリ／ファイルで保持される実装と推測される）。</li>
+</ul>
+<p>主要な合致点として、<code>sonic-gnmi/gnmi_server/gnsi_authz.go</code> (GNSIAuthzServer / Probe / Get / Rotate)、<code>gnsi_certz.go</code> (GNSICertzServer)、<code>gnsi_pathz.go</code> (GNSIPathzServer)、および <code>sonic-host-services/host_modules/gnsi_console.py</code> (<code>MOD_NAME = 'gnsi_console'</code>)、<code>ssh_mgmt.py</code> (<code>MOD_NAME = 'ssh_mgmt'</code>) は HLD どおり実装されている。</p>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否
 - console_mgmt / ssh_mgmt host service モジュール実装存否
