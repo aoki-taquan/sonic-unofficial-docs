@@ -1240,6 +1240,22 @@
       "priority": "high",
       "issue": 197,
       "pr": 198
+    },
+    {
+      "page": "docs/internals/p4-orchagent.md",
+      "verification": "hld-only",
+      "concerns": [
+        "P4Orch の orchagent への取り込み確認 (sonic-swss/orchagent/p4orch/)",
+        "7 つの Manager (RouterInterfaceManager 等) の現行実装と drain 順序確認",
+        "ObjectManagerInterface (enqueue/drain) の現行クラス構成確認",
+        "Centralized Mapper の object type → (sai_oid, ref_count) マップ実装確認",
+        "PortsOrch / VrfOrch / CrmOrch の public method 経由 ref_count 連携実装確認",
+        "同期 syncd モード + APPL_STATE_DB 応答経路の現行確認",
+        "warm boot / fast boot サポート (HLD は次フェーズと記載) の現行ステータス確認"
+      ],
+      "priority": "medium",
+      "issue": 199,
+      "pr": 200
     }
   ]
 }
