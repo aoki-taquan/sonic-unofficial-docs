@@ -121,7 +121,8 @@
         "本 HLD は 2023 年版で Status=Initial。実装ステータスは要確認"
       ],
       "priority": "high",
-      "issue": 486
+      "issue": 486,
+      "pr": 488
     },
     {
       "page": "docs/management/gnmi-master-arbitration-hld.md",

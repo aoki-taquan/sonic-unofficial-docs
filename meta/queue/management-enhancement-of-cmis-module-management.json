@@ -11,5 +11,6 @@
     "\u672c HLD \u306f 2023 \u5e74\u7248\u3067 Status=Initial\u3002\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u306f\u8981\u78ba\u8a8d"
   ],
   "priority": "high",
-  "issue": 486
+  "issue": 486,
+  "pr": 488
 }
