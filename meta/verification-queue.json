@@ -1258,6 +1258,21 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/subnet-decapsulation-with-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "TunnelDecapOrch の SUBNET_DECAP / TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE 取り込み確認",
+        "MP2MP decap term type の SAI 実装と各 ASIC 対応状況確認",
+        "IPINIP_SUBNET / IPINIP_V6_SUBNET の自動生成テンプレートが swssconfig 配下に追加されているか確認",
+        "src_ip / src_ip_v6 動的更新時に decap term の source IP が更新されるロジックの実装確認",
+        "swssconfig.sh の warm-reboot 拡張 (subnet decap 用 2 tunnel のみ書込) の実装確認",
+        "SUBNET_DECAP YANG モデルの取り込み状況確認"
+      ],
+      "priority": "medium",
+      "issue": 532,
+      "pr": 533
+    },
+    {
       "page": "docs/platform/support-bmc-flows-in-sonic.md",
       "verification": "hld-only",
       "concerns": [
