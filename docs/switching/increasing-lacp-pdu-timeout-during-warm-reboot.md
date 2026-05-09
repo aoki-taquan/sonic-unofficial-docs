@@ -1,7 +1,7 @@
 ---
 title: Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD のみを根拠に書かれている。`teamd` / libteam パッチの取り込み、`config portchannel retry-count` の sonic-utilities 反映状況は未確認。HLD には参考実装 PR が併記されているが、現行 master の最終形とのズレは別途検証が必要。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/libteam/patch/0015-add-support-for-custom-retry.patch` で libteam の retry count 拡張パッチ取り込みを、`0016-block-retry-count-changes.patch` で warm-reboot 中の保護を確認。`sonic-utilities/scripts/teamd_increase_retry_count.py` L39 で `version=0xf1` の LACPDU 拡張、L62-69 で `actor_retry_count_type=0x80` / `partner_retry_count_type=0x81` 新規 TLV scapy 定義を確認。`sonic-utilities/config/main.py` L3052 `portchannel_retry_count` クリックグループと L3061 で `teamdctl runner.enable_retry_count_feature` 状態取得、その後の get/set サブコマンドを確認（verified at: 2026-05-09）。
 
 # Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
 

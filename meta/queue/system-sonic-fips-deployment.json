@@ -1,15 +1,21 @@
 {
   "page": "docs/system/sonic-fips-deployment.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "hostcfgd の FIPS table handler の実装存在確認（sonic-host-services / PR #69 取り込み）",
-    "/etc/fips/fips_enabled の各 docker container への bind mount 設定確認",
-    "ENABLE_FIPS ビルドオプションが現行 sonic-buildimage rules/config にあるか未確認",
-    "STATE_DB.FIPS_STAT|state の enabled / enforced 書き込み実装確認",
-    "SymCrypt-OpenSSL engine 統合 (sonic-fips リポの openssl.patch) の現行取り込み状況確認",
-    "enforce mode の kernel cmdline 連動と warm/fast-reboot 必須化の実装確認"
+    "HLD は STATE_DB.FIPS_STAT|state と書くが、実装は STATE_DB.FIPS_STATS|state (hostcfgd L1792)",
+    "HLD は /etc/fips/fips_enabled と書くが、実装は /etc/fips/fips_enable (hostcfgd L102 OPENSSL_FIPS_CONFIG_FILE)"
+  ],
+  "verified_concerns": [
+    "hostcfgd の FIPS table handler -> sonic-host-services/scripts/hostcfgd L100-103 / L1756-1809 で FipsCfg クラスを確認 (verified 2026-05-09)",
+    "DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi'] -> hostcfgd L103 を確認 (verified 2026-05-09)",
+    "ENABLE_FIPS ビルドオプション -> sonic-buildimage/slave.mk L425 export ENABLE_FIPS、rules/sonic-fips.mk を確認 (verified 2026-05-09)",
+    "STATE_DB への書き込み -> hostcfgd L1792 state_db_conn.hset('FIPS_STATS|state', ...) を確認。HLD 表記の FIPS_STAT|state とは異なる (verified 2026-05-09)",
+    "SymCrypt-OpenSSL engine 統合 -> sonic-buildimage/src/sonic-fips ディレクトリで管理 (verified 2026-05-09)",
+    "sonic-fips.yang -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fips.yang を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 165,
-  "pr": 166
+  "pr": 166,
+  "last_verified": "2026-05-09",
+  "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
 }

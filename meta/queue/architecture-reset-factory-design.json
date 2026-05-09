@@ -1,14 +1,16 @@
 {
   "page": "docs/architecture/reset-factory-design.md",
   "issue": 137,
-  "verification": "hld-only",
-  "concerns": [
-    "/usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み",
-    "config-setup factory への keep-basic 拡張",
-    "config-setup.conf KEEP_BASIC_TABLES 最新値",
-    "default_users.json ビルド時生成",
-    "overlayfs upperdir クリア手順",
-    "gNOI FactoryReset との連携"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "/usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み -> sonic-buildimage/files/image_config/reset-factory/reset-factory を確認 (verified 2026-05-09)",
+    "config-setup factory への keep-basic 拡張 -> sonic-buildimage/files/image_config/config-setup/config-setup L245-251 で KEEP_BASIC_TABLES による jq フィルタを確認 (verified 2026-05-09)",
+    "config-setup.conf KEEP_BASIC_TABLES 最新値 -> sonic-buildimage/files/image_config/config-setup/config-setup.conf L4 で ['MGMT_PORT','MGMT_INTERFACE','MGMT_VRF_CONFIG','PASSW_HARDENING'] を確認 (verified 2026-05-09)",
+    "default_users.json ビルド時生成 -> sonic-buildimage/files/build_templates/default_users.json.j2 を確認 (verified 2026-05-09)",
+    "overlayfs upperdir クリア手順 -> reset-factory スクリプト本体に実装 (verified 2026-05-09)",
+    "gNOI FactoryReset との連携 -> 別 HLD (gNOI File/Factory Reset) で sonic_service_client 経由連携 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

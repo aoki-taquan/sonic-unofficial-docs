@@ -1,7 +1,7 @@
 ---
 title: SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
 area: system
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `hostcfgd` の `FIPS` テーブル handler、`/etc/fips/fips_enabled` の各 docker への mount、`telemetry` / `restapi` / `sshd` の再起動連動、`STATE_DB.FIPS_STAT|state` への `enabled` / `enforced` 反映、`ENABLE_FIPS` ビルドオプションの現行値は実コードでの裏取り未済。SymCrypt-OpenSSL engine 統合の現行ステータスも未確認。
+!!! danger "裏取りステータス: Discrepancy-found（実装名と HLD 記載に差異あり）"
+    `sonic-host-services/scripts/hostcfgd` L100-103 / L1756-1809 で `FipsCfg` クラスが `FIPS` テーブルハンドラを実装、`DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` の再起動連動を確認。`sonic-buildimage/slave.mk` L425 `export ENABLE_FIPS` でビルドオプション、`sonic-buildimage/rules/sonic-fips.mk` でパッケージビルド、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fips.yang` で YANG を確認（verified at: 2026-05-09）。**HLD と現行 master の差異**: (1) HLD の `/etc/fips/fips_enabled` は実装上 `/etc/fips/fips_enable`（`OPENSSL_FIPS_CONFIG_FILE = '/etc/fips/fips_enable'`, hostcfgd L102）。(2) HLD の `STATE_DB.FIPS_STAT|state` は実装上 `STATE_DB.FIPS_STATS|state`（hostcfgd L1792 `state_db_conn.hset('FIPS_STATS|state', ...)`）。本ページのキー名は HLD 表記のままなので参照時は実装側名を使うこと。
 
 # SONiC FIPS 140-3 デプロイ（`FIPS` table と `/etc/fips/fips_enabled`）
 

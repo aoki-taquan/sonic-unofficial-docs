@@ -1,7 +1,7 @@
 ---
 title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 (2025-01) で v0.1 (2024-07) から「Reboot 以外の System API を削除」と縮小済み。Time RPC や force 失敗時のサニティチェック実装、warm/NSF reboot の経路は別 HLD（[Warmboot Manager HLD](https://github.com/akarshgupta25/SONiC-NSF-Mgr-HLD/blob/9dd1ade0b48ce96d513468a54bf794efa43a9f54/doc/warm-reboot/Warmboot_Manager_HLD.md)）に分離しているため、master 実装での経路は要確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-gnmi/gnmi_server/gnoi_system.go` L34 `ValidateRebootRequest`、L116 `sendRebootReqOnNotifCh`（DB notification 経由で reboot 要求を書き込む）、L193 `Server.Reboot`、L241 `Server.RebootStatus`、L270 `Server.CancelReboot` のハンドラ実装を確認。`sonic-gnmi/pkg/gnoi/system/system.go` L22 `HandleReboot`、L180 `HandleDPUReboot` で DPU 対応も確認。`sonic-gnmi/gnoi_client/system/reboot.go` L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認（verified at: 2026-05-09）。
 
 # gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
 

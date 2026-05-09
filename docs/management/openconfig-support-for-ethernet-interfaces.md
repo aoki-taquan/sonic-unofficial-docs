@@ -1,7 +1,7 @@
 ---
 title: OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -21,8 +21,8 @@ related:
     - sonic-interface
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 (2025-05) で SPEED_200/400/600/800GB の identity 追加と new state leaves 追加が記載。translib App ベースから transformer ベースへの置換状態、subinterface index 0 のみサポートの実装、`oc-ip:enabled` から `ipv6_use_link_local_only` への mapping は実コード未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang` L162 `identity SPEED_400GB` / L172 `identity SPEED_800GB` を確認（200/600GB も同 yang 内）。`sonic-mgmt-common/translib/transformer/xfmr_intf.go` L3796-3828 で `ipv6_use_link_local_only` フィールドの YangToDb / DbToYang transformer 実装を確認（`oc-ip:enabled` ↔ `ipv6_use_link_local_only` mapping）。`sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang` L54-90 で `oc-eth:ethernet/state/oc-lag:aggregate-id` の deviation と PortChannel min-links field-transformer を確認。translib transformer 配下に統合済み（verified at: 2026-05-09）。
 
 # OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
 

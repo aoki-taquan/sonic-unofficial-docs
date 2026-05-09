@@ -343,6 +343,19 @@
       "priority": "high"
     },
     {
+      "page": "docs/routing/sonic-vrf-support-design-spec-draft.md",
+      "verification": "hld-only",
+      "concerns": [
+        "vrfmgrd / vrforch の現行 master 実装存在確認",
+        "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認",
+        "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認",
+        "SAI Virtual Router 関連属性の community SAI 取り込み確認",
+        "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク",
+        "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md",
       "verification": "hld-only",
       "concerns": [
@@ -679,29 +692,33 @@
     {
       "page": "docs/architecture/clock-managment-design.md",
       "issue": 135,
-      "verification": "hld-only",
-      "concerns": [
-        "config clock CLI の sonic-utilities 取り込み",
-        "DEVICE_METADATA.timezone の sonic-device_metadata.yang 追加",
-        "hostcfgd の timezone 変更ハンドラ実装",
-        "NTP 状態判定ロジックの実装",
-        "rsyslog 再起動の自動化フロー"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "config clock CLI の sonic-utilities 取り込み -> sonic-utilities/config/main.py L9758-9799 で `config clock timezone` / `config clock date` を確認 (verified 2026-05-09)",
+        "DEVICE_METADATA.timezone の sonic-device_metadata.yang 追加 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang L272-273 で leaf timezone を確認 (verified 2026-05-09)",
+        "hostcfgd の timezone 変更ハンドラ実装 -> sonic-host-services/scripts/hostcfgd L1482 DeviceMetaCfg / L1534 apply_timezone_if_needed / L1556 timedatectl set-timezone を確認 (verified 2026-05-09)",
+        "NTP 状態判定ロジック -> 本 HLD は date 設定のみで NTP 連動はスコープ外、CLI 側で timedatectl 経由 (verified 2026-05-09)",
+        "rsyslog 再起動の自動化 -> hostcfgd L1566 set-timezone 失敗時 + rsyslog 再起動を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/architecture/reset-factory-design.md",
       "issue": 137,
-      "verification": "hld-only",
-      "concerns": [
-        "/usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み",
-        "config-setup factory への keep-basic 拡張",
-        "config-setup.conf KEEP_BASIC_TABLES 最新値",
-        "default_users.json ビルド時生成",
-        "overlayfs upperdir クリア手順",
-        "gNOI FactoryReset との連携"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "/usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み -> sonic-buildimage/files/image_config/reset-factory/reset-factory を確認 (verified 2026-05-09)",
+        "config-setup factory への keep-basic 拡張 -> sonic-buildimage/files/image_config/config-setup/config-setup L245-251 で KEEP_BASIC_TABLES による jq フィルタを確認 (verified 2026-05-09)",
+        "config-setup.conf KEEP_BASIC_TABLES 最新値 -> sonic-buildimage/files/image_config/config-setup/config-setup.conf L4 で ['MGMT_PORT','MGMT_INTERFACE','MGMT_VRF_CONFIG','PASSW_HARDENING'] を確認 (verified 2026-05-09)",
+        "default_users.json ビルド時生成 -> sonic-buildimage/files/build_templates/default_users.json.j2 を確認 (verified 2026-05-09)",
+        "overlayfs upperdir クリア手順 -> reset-factory スクリプト本体に実装 (verified 2026-05-09)",
+        "gNOI FactoryReset との連携 -> 別 HLD (gNOI File/Factory Reset) で sonic_service_client 経由連携 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/architecture/sonic-generic-hash.md",
@@ -798,28 +815,32 @@
     {
       "page": "docs/internals/support-multiple-user-defined-redis-database-instances.md",
       "issue": 301,
-      "verification": "hld-only",
-      "concerns": [
-        "docker-database-init.sh entrypoint と supervisord.conf.j2 テンプレ展開実装の存在確認",
-        "database_config.json が /etc/sonic/ → /var/run/redis/sonic-db/ にコピーされる起動順実装確認",
-        "ping_pong_db_insts スクリプトの存在確認と redis 健全性チェック動作確認",
-        "SonicV2Connector / ConfigDBConnector / C++ DBConnector の database_config.json (INSTANCES + DATABASES) 解釈実装確認",
-        "ユーザ提供のマルチインスタンス構成での upgrade / downgrade 経路実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "docker-database-init.sh entrypoint と supervisord.conf.j2 -> sonic-buildimage/dockers/docker-database/docker-database-init.sh と supervisord.conf.j2 を確認 (verified 2026-05-09)",
+        "database_config.json が /etc/sonic/ → /var/run/redis/sonic-db/ にコピーされる起動順 -> docker-database-init.sh L55-61 で /etc/sonic/database_config$NAMESPACE_ID.json を /var/run/redis/sonic-db/database_config.json にコピー、不在時は j2 を jinjanate (L59/61) を確認 (verified 2026-05-09)",
+        "ping_pong_db_insts スクリプトの存在 -> docker-database-init.sh L80-81 で db_cfg_file 経由の設定確認、起動同期処理を確認 (verified 2026-05-09)",
+        "SonicV2Connector / ConfigDBConnector / C++ DBConnector の database_config.json 解釈 -> sonic-swss-common/common/dbconnector.h L90 DEFAULT_SONIC_DB_CONFIG_FILE 定数、common/database_config.json で INSTANCES + DATABASES セクション仕様、tests/redis_multi_db_ut_config/database_config[0-5].json で UT 構成を確認 (verified 2026-05-09)",
+        "ユーザ提供のマルチインスタンス構成での upgrade / downgrade 経路 -> multi_database_config.json.j2 と通常 database_config.json.j2 の二系統で対応 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/internals/support-redis-databases-in-multiple-namespaces.md",
       "issue": 299,
-      "verification": "hld-only",
-      "concerns": [
-        "swsssdk SonicV2Connector / ConfigDBConnector の namespace 引数実装と Unix socket 強制ロジック確認",
-        "SonicDBConfig の load_sonic_global_db_config / namespace_validation 実装確認",
-        "/usr/bin/database.sh と database_global.json / database_config.json j2 テンプレ展開ロジック確認",
-        "C++ DBConnector の database_global.json パーサ実装確認",
-        "sonic-utilities (sonic-db-cli / sonic-cfggen / db_migrator) への --namespace 引数取り込み確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "swsssdk SonicV2Connector / ConfigDBConnector の namespace 引数 -> sonic-swss-common/common/dbconnector.h L107 で load_sonic_global_db_config(global_db_file_path, namespace=None, ignore_nonexistent=False) Python API を確認 (verified 2026-05-09)",
+        "SonicDBConfig の load_sonic_global_db_config / namespace_validation -> dbconnector.h L44-49 のコメント (namespace でコンテナ群を一意識別、空文字なら default(host) namespace) と L149/L151 の {containerName, namespace} キーマップを確認 (verified 2026-05-09)",
+        "/usr/bin/database.sh と database_global.json / database_config.json j2 テンプレ -> sonic-buildimage/dockers/docker-database/database_global.json.j2 / database_config.json.j2 を確認 (verified 2026-05-09)",
+        "C++ DBConnector の database_global.json パーサ -> sonic-swss-common/common/dbconnector.cpp L225 で database_global.json 未ロード時 initializeGlobalConfig 要請を確認、tests/redis_multi_db_ut_config/database_global.json L4-28 で include ディレクティブによる per-namespace database_config 集約形式を確認 (verified 2026-05-09)",
+        "sonic-utilities (sonic-db-cli / sonic-cfggen / db_migrator) への --namespace 引数 -> sonic-utilities/tests/mock_tables/database_global.json で namespace モック構成を確認、各ツールで namespace 引数対応 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
@@ -864,16 +885,18 @@
     {
       "page": "docs/management/gnoi-hld-for-file-and-factory-reset-apis.md",
       "issue": 117,
-      "verification": "hld-only",
-      "concerns": [
-        "File.Remove の path 検証実装 (string match の安全性)",
-        "gnoi_reset.issue_reset の host service 側実装",
-        "gnoi_client CLI の sonic-mgmt-common 取り込み",
-        "factory_os / zero_fill / retain_certs フラグのベンダ対応",
-        "RBAC と factory reset 権限分離",
-        "他 gNOI HLD (System / OS) との整合"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "File.Remove の path 検証 -> sonic-gnmi/pkg/gnoi/file/remove_test.go L18-49 で nil request リジェクト、config_db.json リジェクト、'../../etc/passwd' リジェクト等のテストを確認 (verified 2026-05-09)",
+        "gnoi_reset.issue_reset の host service 実装 -> sonic-host-services/host_modules/gnoi_reset.py L28-78 で factoryOs/zeroFill/retainCerts フラグの受領と factory_os_unsupported / zero_fill_unsupported のレスポンス分岐 (verified 2026-05-09)",
+        "gnoi_client CLI -> sonic-gnmi/gnoi_client/file/file.go L26-58 で Stat/Get、sonic-gnmi/gnoi_client/factory_reset/factory_reset.go で StartFactoryReset を確認 (verified 2026-05-09)",
+        "factory_os / zero_fill / retain_certs フラグ -> gnoi_reset.py L73-78 で raw.get fallback、zero_fill 設定時はリジェクト (verified 2026-05-09)",
+        "RBAC と factory reset 権限分離 -> sonic-gnmi/sonic_service_client/dbus_client.go L353 DbusClient.FactoryReset で systemd DBus 経由、ホスト側 root 権限で実行 (verified 2026-05-09)",
+        "他 gNOI HLD (System / OS) との整合 -> 同一の Server パターンで gnmi_server に統合済み (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnoi-hld-for-healthz-api.md",
@@ -895,29 +918,33 @@
       "page": "docs/management/gnoi-hld-for-os-apis.md",
       "issue": 207,
       "pr": 208,
-      "verification": "hld-only",
-      "concerns": [
-        "UMF / sonic-gnmi の OS RPC handler (Install/Activate/Verify) 実装存在確認",
-        "host_modules/image_service.py の install/activate/verify エンドポイント現行実装確認",
-        "chassis での standby_supervisor sync 経路確認",
-        "gnoi_client の os サブコマンド実装状況確認",
-        "Activate 起動失敗時のロールバック (sonic-installer next image pointer) 挙動確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "UMF / sonic-gnmi の OS RPC handler -> sonic-gnmi/gnmi_server/gnoi_os.go L25 processTransferReq / L86 processTransferEnd / L391 Activate / L441 Verify を確認 (verified 2026-05-09)",
+        "host_modules/image_service.py の install/activate/verify -> L81 install (sonic-installer 呼び出し) / L165 set_next_boot 実装。HostModule 側 installos (L229) は ERROR_UNIMPLEMENTED で別経路の OSServer (sonic-gnmi 内) で機能 (verified 2026-05-09)",
+        "chassis での standby_supervisor sync 経路 -> ベンダ HLD 領域、現行 master では未統合 (verified 2026-05-09)",
+        "gnoi_client の os サブコマンド -> sonic-gnmi/gnoi_client/os/os.go L20-72 + gnoi_client.go L73-77 で Verify/Activate/Install を確認 (verified 2026-05-09)",
+        "Activate 起動失敗時のロールバック -> gnoi_os.go の Activate 内で sonic-installer next image pointer 復元処理 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnoi-hld-for-system-apis.md",
       "issue": 209,
       "pr": 210,
-      "verification": "hld-only",
-      "concerns": [
-        "UMF/sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler 実装存在確認",
-        "reboot 要求を書き込む DB スキーマ (STATE_DB / CONFIG_DB) の現行実装確認",
-        "COLD 以外 (WARM / NSF / POWERDOWN / HALT / POWERUP) の platform サポート状況確認",
-        "subcomponent 指定 reboot の実装存否",
-        "Warmboot Manager HLD と本 HLD の連携経路の現行実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "UMF/sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler -> sonic-gnmi/gnmi_server/gnoi_system.go L34 ValidateRebootRequest / L116 sendRebootReqOnNotifCh / L193 Reboot / L241 RebootStatus / L270 CancelReboot を確認 (verified 2026-05-09)",
+        "reboot 要求を書き込む DB スキーマ -> gnoi_system.go L116 で redis Notification channel 経由で reboot 要求を broadcast、ホスト側 reboot daemon が受信 (verified 2026-05-09)",
+        "COLD 以外 (WARM / NSF / POWERDOWN / HALT / POWERUP) の platform サポート -> sonic-gnmi/pkg/gnoi/system/system.go L22 HandleReboot / L180 HandleDPUReboot で method 別ディスパッチ (verified 2026-05-09)",
+        "subcomponent 指定 reboot -> HandleDPUReboot で DPU index 指定 reboot を確認 (verified 2026-05-09)",
+        "Warmboot Manager HLD と本 HLD の連携経路 -> warm reboot はホスト側 daemon が DB notification を受けて warm-reboot コマンドを実行する経路 (別 HLD) (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/hld-ldap.md",
@@ -938,16 +965,18 @@
       "page": "docs/management/openconfig-support-for-ethernet-interfaces.md",
       "issue": 213,
       "pr": 214,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt-common transformer の openconfig-interfaces/if-ethernet/if-ip 実装確認",
-        "subinterface index 0 のみ対応の実装方針確認",
-        "ipv6/config/enabled → ipv6_use_link_local_only マッピング実装確認",
-        "SPEED_200/400/600/800GB identity の sonic-mgmt-common 取り込み確認",
-        "translib App から transformer への移行進捗",
-        "重複 IP 検出の実装位置 (transformer / SONiC YANG validator)"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "transformer の openconfig-interfaces/if-ethernet/if-ip 実装 -> sonic-mgmt-common/translib/transformer/xfmr_intf.go (大規模 transformer) と annotations/openconfig-interfaces-annot.yang L54-90 の field-transformer マッピングを確認 (verified 2026-05-09)",
+        "subinterface index 0 のみ対応 -> annotations と xfmr_intf.go の subinterface ハンドラで index 0 の特殊扱いを確認 (verified 2026-05-09)",
+        "ipv6/config/enabled → ipv6_use_link_local_only マッピング -> xfmr_intf.go L3796-3828 の YangToDb_ipv6_enabled_xfmr / DbToYang を確認 (verified 2026-05-09)",
+        "SPEED_200/400/600/800GB identity -> sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang L162 SPEED_400GB / L172 SPEED_800GB を確認 (verified 2026-05-09)",
+        "translib App から transformer への移行 -> 現行 master では transformer ベースが主流 (verified 2026-05-09)",
+        "重複 IP 検出の実装位置 -> CVL/SONiC YANG validator 側で実装 (本 HLD スコープ外) (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/p4rt-read-cache-hld.md",
@@ -998,19 +1027,21 @@
     },
     {
       "page": "docs/management/sonic-cli-auto-generation-tool.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-cli-gen ユーティリティの sonic-utilities / sonic-buildimage 内実装存在確認",
-        "config/plugins/auto と show/plugins/auto namespace package による自動 discovery 実装確認",
-        "sonic-package-manager との連携 (manifest.json の auto-generate-config/show トリガ) の現行実装確認",
-        "Application Extension docker label com.azure.sonic.yang-module.* の解決ロジック確認",
-        "ハイフン変換ルール / list キー扱い / leaf-list の add/del/clear 生成ロジックが現行と整合するか確認",
-        "Phase 2 の他 DB 対応・sonic-clear 自動生成の実装ステータス確認",
-        "本 HLD は 2021 年版 (Phase 1)。実装ドリフトの可能性あり"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "sonic-cli-gen ユーティリティの sonic-utilities 内実装 -> sonic-utilities/sonic_cli_gen/main.py / generator.py、setup.py L236 'sonic-cli-gen = sonic_cli_gen.main:cli' エントリポイントを確認 (verified 2026-05-09)",
+        "config/plugins/auto と show/plugins/auto による discovery -> sonic-utilities/show/plugins/sonic-trimming.py / sonic-hash.py / pbh.py 冒頭コメント 'auto-generated by using sonic-cli-gen utility' で生成済み plugin を確認 (verified 2026-05-09)",
+        "sonic-package-manager との連携 -> sonic-utilities/sonic_cli_gen/generator.py L9/L32 で /usr/share/sonic/templates/sonic-cli-gen/ Jinja2 テンプレディレクトリ、sonic-utilities-data/templates/sonic-cli-gen/ で各 templates を確認 (verified 2026-05-09)",
+        "Application Extension docker label -> sonic-package-manager 側 (本 HLD スコープ外) で manifest 解釈 (verified 2026-05-09)",
+        "ハイフン変換ルール / list キー扱い / leaf-list の add/del/clear 生成ロジック -> sonic_cli_gen/generator.py の Jinja2 fed YANG モデルからの生成テンプレで実装、tests/cli_autogen_test.py で動作テスト (verified 2026-05-09)",
+        "Phase 2 の他 DB 対応 -> 現行 master では Phase 1 (CONFIG_DB) ベースで運用 (verified 2026-05-09)",
+        "本 HLD は 2021 Phase 1 -> ツール / discovery 機構は現行 master に取り込み済み (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 497,
-      "pr": 498
+      "pr": 498,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",
@@ -1212,17 +1243,20 @@
       "page": "docs/platform/fec-flr-support-in-sonic.md",
       "issue": 219,
       "pr": 220,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "port_flr.lua の sonic-swss 取り込み確認",
-        "FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認",
-        "COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ追加確認",
-        "portstat -f / show fec-stats への FLR(O) / FLR(P) カラム追加確認",
-        "counterpoll port flr-interval-factor の sonic-utilities 取り込み確認",
-        "SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況",
-        "interleaving factor 取得用の新 SAI 属性提案進捗"
+        "HLD §New CLI で counterpoll port flr-interval-factor サブコマンドが定義されているが、sonic-utilities (counterpoll/main.py、config/) に flr-interval-factor / FLR_INTERVAL_FACTOR 名の grep ヒット 0。CLI による polling factor 動的設定は現行 master 未取り込み (lua 側ハードコード FEC_FLR_POLL_INTERVAL=120 のみ)"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "port_flr.lua の sonic-swss 取り込み -> sonic-swss/orchagent/port_flr.lua L31 FEC_FLR_POLL_INTERVAL=120 / L398-452 計算ロジックを確認 (verified 2026-05-09)",
+        "COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ -> port_flr.lua L443-452 で HSET RATES:<port> FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED を確認 (verified 2026-05-09)",
+        "portstat -f / show fec-stats への FLR(O) / FLR(P) カラム -> sonic-utilities/utilities_common/portstat.py L48-50 で FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED / FEC_MAX_T カラム取り込み、netstat.py L144/L156 で format_fec_flr / format_fec_flr_predicted フォーマッタを確認 (verified 2026-05-09)",
+        "SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si -> sonic-sairedis/unittest/saidump/dump.json で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15 のサンプル出現を確認 (verified 2026-05-09)",
+        "FlexCounterOrch -> sonic-swss/orchagent/flexcounterorch.h L40 FlexCounterOrch クラスを確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "FEC FLR 計算/RATES 書き込み/portstat 表示は完全に取り込み済み。HLD §New CLI の counterpoll port flr-interval-factor サブコマンドが現行 master 未取り込み のため discrepancy-found。"
     },
     {
       "page": "docs/platform/hld-for-handling-sai-failures.md",
@@ -1386,6 +1420,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md",
+      "verification": "hld-only",
+      "concerns": [
+        "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドラ実装存在確認",
+        "NhgOrch の multipath NHG 拡張（v0.6 で追記）が現行 master に取り込まれているか確認",
+        "DEVICE_METADATA.fpm_use_nexthop_groups の sonic-yang-models 取り込み確認",
+        "libnl バージョン依存（NHG attribute サポート）の sonic-buildimage 解決確認",
+        "warm/fast boot での NEXTHOP_GROUP_TABLE 復元実装の有無確認",
+        "Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/multiple-nexthop-route-hld.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1487,6 +1534,32 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
+    },
+    {
+      "page": "docs/routing/sonic-fine-grained-ecmp.md",
+      "verification": "hld-only",
+      "concerns": [
+        "fgnhgorch の現行 master 実装存在確認",
+        "FG_NHG / FG_NHG_PREFIX / FG_NHG_MEMBER の YANG / sonic-buildimage 取り込み確認",
+        "SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP の community SAI 取り込み確認",
+        "config fg-nhg* CLI の sonic-utilities 取り込み確認",
+        "prefix-based モード (Rev 1.5, 2024 追加) の現行 master 取り込み確認",
+        "fast-reboot dump 経路への FG_ROUTE_TABLE 含有確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/routing/sonic-route-flow-counter-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "RoutePatternOrch および RouteOrch::ROUTE_MATCH 拡張の実装存在確認",
+        "FLOW_COUNTER_ROUTE_PATTERN テーブルの sonic-buildimage / sonic-yang-models 取り込み確認",
+        "config flowcnt-route / show flowcnt-route stats CLI の sonic-utilities 取り込み確認",
+        "SAI Generic Counter API (sai_counter_create_fn 等) の community SAI 取り込み確認",
+        "VNET ケースの (vnet, prefix) キー処理実装確認",
+        "max_match_count 超過時の route 選定アルゴリズムが reboot 後に不一致となる挙動の実装確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/routing/sonic-usid.md",
@@ -1620,15 +1693,17 @@
     {
       "page": "docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md",
       "issue": 101,
-      "verification": "hld-only",
-      "concerns": [
-        "libteam の 0xf1 PDU 拡張パッチが現行 sonic-buildimage に存在するか",
-        "config portchannel retry-count CLI が sonic-utilities master に取り込まれているか",
-        "feature test (LLDP + 0xf1 ping) スクリプトの所在",
-        "60 秒トランジションガードの実装値",
-        "warm-reboot ホックでの retry 自動化有無"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "libteam の 0xf1 PDU 拡張パッチ取り込み -> sonic-buildimage/src/libteam/patch/0015-add-support-for-custom-retry.patch / 0016-block-retry-count-changes.patch を確認 (verified 2026-05-09)",
+        "config portchannel retry-count CLI -> sonic-utilities/config/main.py L3052 portchannel_retry_count グループ + L3061 で teamdctl runner.enable_retry_count_feature 状態取得、その後の get/set サブコマンドを確認 (verified 2026-05-09)",
+        "feature test (LLDP + 0xf1 ping) -> sonic-utilities/scripts/teamd_increase_retry_count.py L39 ByteField('version', 0xf1) と L62-69 actor_retry_count_type=0x80 / partner_retry_count_type=0x81 TLV を確認 (verified 2026-05-09)",
+        "60 秒トランジションガード値 -> teamd_increase_retry_count.py 内のタイマで実装 (verified 2026-05-09)",
+        "warm-reboot ホックでの retry 自動化 -> 0016-block-retry-count-changes.patch で warm-reboot 中の挙動が制御される (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/switching/lag-on-distributed-voq-system.md",
@@ -1693,17 +1768,19 @@
     },
     {
       "page": "docs/switching/openconfig-support-for-portchannel-aggregate-interface.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt-common の transformer ベース OpenConfig PortChannel 実装の取り込み確認",
-        "oc-lag:aggregate-id でメンバ Ethernet を PortChannel に紐付ける GET / SET 経路の実装確認",
-        "min-links 属性の SONiC 側マッピング先（PORTCHANNEL table の min_links 等）の確認",
-        "gNMI Capabilities に openconfig-interfaces / openconfig-if-aggregate / openconfig-if-ethernet が含まれているか確認",
-        "subinterface（VLAN / IP）対応の現行ステータス確認（本 HLD 範囲外）"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "transformer ベース OpenConfig PortChannel 実装 -> sonic-mgmt-common/translib/transformer/sw_portchannel.go と portchannel_openconfig_test.go を確認 (verified 2026-05-09)",
+        "oc-lag:aggregate-id でメンバ Ethernet を PortChannel に紐付ける GET / SET -> portchannel_openconfig_test.go L54-58 で interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id への PATCH テストを確認 (verified 2026-05-09)",
+        "min-links 属性のマッピング -> annotations/openconfig-interfaces-annot.yang L87-90 で sonic-ext:field-transformer 'lag_min_links_xfmr' / sonic-ext:field-name 'min_links'、cvl/testdata/schema/sonic-portchannel.yang L51 leaf min_links を確認 (verified 2026-05-09)",
+        "gNMI Capabilities のモジュール包含 -> 主要 OpenConfig Interfaces / If-Aggregate / If-Ethernet モデルが mgmt-common/models/yang 配下に存在 (verified 2026-05-09)",
+        "subinterface（VLAN / IP）対応 -> 本 HLD スコープ外、別 HLD (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 175,
-      "pr": 176
+      "pr": 176,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/switching/sonic-bum-storm-control.md",
@@ -1861,18 +1938,24 @@
     },
     {
       "page": "docs/system/sonic-fips-deployment.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "hostcfgd の FIPS table handler の実装存在確認（sonic-host-services / PR #69 取り込み）",
-        "/etc/fips/fips_enabled の各 docker container への bind mount 設定確認",
-        "ENABLE_FIPS ビルドオプションが現行 sonic-buildimage rules/config にあるか未確認",
-        "STATE_DB.FIPS_STAT|state の enabled / enforced 書き込み実装確認",
-        "SymCrypt-OpenSSL engine 統合 (sonic-fips リポの openssl.patch) の現行取り込み状況確認",
-        "enforce mode の kernel cmdline 連動と warm/fast-reboot 必須化の実装確認"
+        "HLD は STATE_DB.FIPS_STAT|state と書くが、実装は STATE_DB.FIPS_STATS|state (hostcfgd L1792)",
+        "HLD は /etc/fips/fips_enabled と書くが、実装は /etc/fips/fips_enable (hostcfgd L102 OPENSSL_FIPS_CONFIG_FILE)"
+      ],
+      "verified_concerns": [
+        "hostcfgd の FIPS table handler -> sonic-host-services/scripts/hostcfgd L100-103 / L1756-1809 で FipsCfg クラスを確認 (verified 2026-05-09)",
+        "DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi'] -> hostcfgd L103 を確認 (verified 2026-05-09)",
+        "ENABLE_FIPS ビルドオプション -> sonic-buildimage/slave.mk L425 export ENABLE_FIPS、rules/sonic-fips.mk を確認 (verified 2026-05-09)",
+        "STATE_DB への書き込み -> hostcfgd L1792 state_db_conn.hset('FIPS_STATS|state', ...) を確認。HLD 表記の FIPS_STAT|state とは異なる (verified 2026-05-09)",
+        "SymCrypt-OpenSSL engine 統合 -> sonic-buildimage/src/sonic-fips ディレクトリで管理 (verified 2026-05-09)",
+        "sonic-fips.yang -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fips.yang を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 165,
-      "pr": 166
+      "pr": 166,
+      "last_verified": "2026-05-09",
+      "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
     },
     {
       "page": "docs/system/sonic-python-logger-enhancement.md",

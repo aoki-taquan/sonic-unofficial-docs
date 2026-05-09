@@ -2,13 +2,15 @@
   "page": "docs/management/gnoi-hld-for-system-apis.md",
   "issue": 209,
   "pr": 210,
-  "verification": "hld-only",
-  "concerns": [
-    "UMF/sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler 実装存在確認",
-    "reboot 要求を書き込む DB スキーマ (STATE_DB / CONFIG_DB) の現行実装確認",
-    "COLD 以外 (WARM / NSF / POWERDOWN / HALT / POWERUP) の platform サポート状況確認",
-    "subcomponent 指定 reboot の実装存否",
-    "Warmboot Manager HLD と本 HLD の連携経路の現行実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "UMF/sonic-gnmi の System Reboot/RebootStatus/CancelReboot handler -> sonic-gnmi/gnmi_server/gnoi_system.go L34 ValidateRebootRequest / L116 sendRebootReqOnNotifCh / L193 Reboot / L241 RebootStatus / L270 CancelReboot を確認 (verified 2026-05-09)",
+    "reboot 要求を書き込む DB スキーマ -> gnoi_system.go L116 で redis Notification channel 経由で reboot 要求を broadcast、ホスト側 reboot daemon が受信 (verified 2026-05-09)",
+    "COLD 以外 (WARM / NSF / POWERDOWN / HALT / POWERUP) の platform サポート -> sonic-gnmi/pkg/gnoi/system/system.go L22 HandleReboot / L180 HandleDPUReboot で method 別ディスパッチ (verified 2026-05-09)",
+    "subcomponent 指定 reboot -> HandleDPUReboot で DPU index 指定 reboot を確認 (verified 2026-05-09)",
+    "Warmboot Manager HLD と本 HLD の連携経路 -> warm reboot はホスト側 daemon が DB notification を受けて warm-reboot コマンドを実行する経路 (別 HLD) (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,7 +1,7 @@
 ---
 title: reset-factory（keep-basic / keep-all-config / only-config）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Phase 1, Rev 0.1, 2023-01）のみを根拠に書かれている。`/usr/bin/reset-factory` および `config-setup factory` の実装、`/etc/sonic/default_users.json`、overlayfs upperdir のクリア手順、`KEEP_BASIC_TABLES` の最新値は未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/files/image_config/reset-factory/reset-factory` で `/usr/bin/reset-factory` スクリプト本体を確認。`sonic-buildimage/files/image_config/config-setup/config-setup` L245-251 で `KEEP_BASIC_TABLES` で指定された CONFIG_DB テーブルのみ `jq` でフィルタする keep-basic 実装、`sonic-buildimage/files/image_config/config-setup/config-setup.conf` L4 で `KEEP_BASIC_TABLES='["MGMT_PORT","MGMT_INTERFACE","MGMT_VRF_CONFIG","PASSW_HARDENING"]'` の現行値を確認。`sonic-buildimage/files/build_templates/default_users.json.j2` の存在を確認（verified at: 2026-05-09）。
 
 # `reset-factory`（keep-basic / keep-all-config / only-config）
 

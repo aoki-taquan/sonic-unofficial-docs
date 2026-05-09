@@ -1,7 +1,7 @@
 ---
 title: Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - sonic-device_metadata
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2023-01）のみを根拠に書かれている。`hostcfgd` の timezone 反映、`config clock` CLI、`DEVICE_METADATA.timezone` の YANG 取り込み、NTP 状態と date 設定のブロックは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-utilities/config/main.py` L9758-9799 で `config clock timezone <tz>` / `config clock date <date> <time>` が `timedatectl` の薄いラッパーとして CONFIG_DB の `DEVICE_METADATA|localhost` の `timezone` を更新することを確認。`sonic-host-services/scripts/hostcfgd` L1482 の `DeviceMetaCfg` クラスが `apply_timezone_if_needed` (L1534) で `timedatectl set-timezone` を呼び、L1577 で `timezone` 変更ハンドラとして登録されることを確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang` L272-273 で `leaf timezone` の YANG 定義を確認（verified at: 2026-05-09）。
 
 # Clock 設定（`config clock date/timezone`, `DEVICE_METADATA.timezone`）
 

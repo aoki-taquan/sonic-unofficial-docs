@@ -1,14 +1,16 @@
 {
   "page": "docs/switching/openconfig-support-for-portchannel-aggregate-interface.md",
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-mgmt-common の transformer ベース OpenConfig PortChannel 実装の取り込み確認",
-    "oc-lag:aggregate-id でメンバ Ethernet を PortChannel に紐付ける GET / SET 経路の実装確認",
-    "min-links 属性の SONiC 側マッピング先（PORTCHANNEL table の min_links 等）の確認",
-    "gNMI Capabilities に openconfig-interfaces / openconfig-if-aggregate / openconfig-if-ethernet が含まれているか確認",
-    "subinterface（VLAN / IP）対応の現行ステータス確認（本 HLD 範囲外）"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "transformer ベース OpenConfig PortChannel 実装 -> sonic-mgmt-common/translib/transformer/sw_portchannel.go と portchannel_openconfig_test.go を確認 (verified 2026-05-09)",
+    "oc-lag:aggregate-id でメンバ Ethernet を PortChannel に紐付ける GET / SET -> portchannel_openconfig_test.go L54-58 で interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id への PATCH テストを確認 (verified 2026-05-09)",
+    "min-links 属性のマッピング -> annotations/openconfig-interfaces-annot.yang L87-90 で sonic-ext:field-transformer 'lag_min_links_xfmr' / sonic-ext:field-name 'min_links'、cvl/testdata/schema/sonic-portchannel.yang L51 leaf min_links を確認 (verified 2026-05-09)",
+    "gNMI Capabilities のモジュール包含 -> 主要 OpenConfig Interfaces / If-Aggregate / If-Ethernet モデルが mgmt-common/models/yang 配下に存在 (verified 2026-05-09)",
+    "subinterface（VLAN / IP）対応 -> 本 HLD スコープ外、別 HLD (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 175,
-  "pr": 176
+  "pr": 176,
+  "last_verified": "2026-05-09"
 }

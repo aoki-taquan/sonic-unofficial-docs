@@ -1,7 +1,7 @@
 ---
 title: gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2025-01）のみを根拠に書かれている。`infra_host` / `gnoi_reset` ホストサービスモジュールの実装、`gnoi_client` CLI、`config_db.json` のみを許す string match の取り扱いは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-host-services/host_modules/gnoi_reset.py` L28-78 で `factoryOs` / `zeroFill` / `retainCerts` フラグの受領と `factory_os_unsupported` / `zero_fill_unsupported` のレスポンス分岐実装を確認。`sonic-gnmi/gnmi_server/gnoi_reset.go` L16-41 で `factory_reset.Start` ハンドラが DBus 経由 `FactoryReset` を呼ぶ実装を、`sonic-gnmi/sonic_service_client/dbus_client.go` L353 で `DbusClient.FactoryReset` を確認。`sonic-gnmi/pkg/gnoi/file/remove_test.go` L18-49 で File.Remove のパス検証（nil / config_db.json / `../../etc/passwd` リジェクト等）を確認。`sonic-gnmi/gnoi_client/file/file.go` L26-58 で File Stat/Get クライアント、`sonic-gnmi/gnoi_client/factory_reset/factory_reset.go` を確認（verified at: 2026-05-09）。
 
 # gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
 
