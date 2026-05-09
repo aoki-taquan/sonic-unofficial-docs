@@ -669,6 +669,19 @@
         "他 gNOI HLD (System / OS) との整合"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/platform/sonic-port-naming-convention-change.md",
+      "issue": 119,
+      "verification": "hld-only",
+      "concerns": [
+        "本提案 (et[sX]pY[abcd]) のうちどの Stage まで master に取り込まれたか",
+        "port_config.ini alias 列の運用ガイドライン現況",
+        "chassis での ets<X>p<Y> 命名事例",
+        "PortChannel 命名の最終決定",
+        "breakout 表記 (a/b/c/d) と CONFIG_DB.PORT キーの整合"
+      ],
+      "priority": "low"
     }
   ]
 }
