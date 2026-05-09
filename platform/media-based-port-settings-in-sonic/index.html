@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnoi-hld-for-file-and-factory-reset-apis/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/media-based-port-settings-in-sonic/">
       
       
-        <link rel="prev" href="../gnmi-usage/">
+        <link rel="prev" href="../liquid-cooling-leakage-detection-in-sonic/">
       
       
-        <link rel="next" href="../gnoi-hld-for-healthz-api/">
+        <link rel="next" href="../pcieinfo-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service） - SONiC 非公式ドキュメント</title>
+        <title>Media-based Port Settings（media_settings.json による SerDes プロファイル） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service" class="md-skip">
+        <a href="#media-based-port-settingsmedia_settingsjson-serdes" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+              Media-based Port Settings（media_settings.json による SerDes プロファイル）
             
           </span>
         </div>
@@ -379,13 +379,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -5875,8 +5875,6 @@
       
   
   
-    
-  
   
   
     
@@ -5912,6 +5910,1224 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../management/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    マネジメント
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    マネジメント
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/aaa-improvements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/packetio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4Runtime PacketIO（generic netlink + send_to_ingress）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/pins-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/radius-management-user-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/redis-client-manager-rcm-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Redis client manager rcm hld
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Application Extension 開発・移植ガイド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-console-switch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Console Switch（serial hub の reverse SSH 集約）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH サーバ全体設定（SSH_SERVER.POLICIES）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ 認証テストプラン（pam_tacplus + ssh login）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
         
       
         
@@ -5980,7 +7196,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -5991,7 +7207,7 @@
   <span class="md-ellipsis">
     
   
-    マネジメント
+    プラットフォーム
   
 
     
@@ -6002,18 +7218,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
-    マネジメント
+    プラットフォーム
   
 
           </label>
@@ -6028,14 +7244,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../aaa-improvements/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
+    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
   
 
     
@@ -6056,14 +7272,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
+    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
   
 
     
@@ -6084,14 +7300,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
+    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
   
 
     
@@ -6112,14 +7328,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
+    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
   
 
     
@@ -6140,14 +7356,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
+    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
   
 
     
@@ -6168,14 +7384,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    gNMI Master Arbitration（election ID と SetRequest 拡張）
+    拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
   
 
     
@@ -6196,14 +7412,154 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICMP Hardware Offload（DualToR link prober の NPU 化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
   
 
     
@@ -6240,7 +7596,7 @@
   <span class="md-ellipsis">
     
   
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+    Media-based Port Settings（media_settings.json による SerDes プロファイル）
   
 
     
@@ -6258,7 +7614,7 @@
   <span class="md-ellipsis">
     
   
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+    Media-based Port Settings（media_settings.json による SerDes プロファイル）
   
 
     
@@ -6310,7 +7666,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        データフロー
       
     </span>
   </a>
@@ -6318,49 +7674,76 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gnoi-fileremove" class="md-nav__link">
+  <a href="#file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        gNOI File.Remove
+        File の所在と必要性
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#gnoi-factoryresetstart" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNOI FactoryReset.Start
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="gNOI FactoryReset.Start">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フロー
+        検索キー構成
       
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マッチ優先順位
+      
+    </span>
+  </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-warmboot-fastboot" class="md-nav__link">
+  <a href="#sample" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI / Warmboot / Fastboot
+        Sample（要点抜粋）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-serdes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom SerDes 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakout
       
     </span>
   </a>
@@ -6373,63 +7756,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        CLI / CONFIG_DB / YANG
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（呼び出しイメージ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6459,17 +7792,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -6493,1363 +7815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4Runtime PacketIO（generic netlink + send_to_ingress）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pins-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../radius-management-user-authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../redis-client-manager-rcm-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Redis client manager rcm hld
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Application Extension 開発・移植ガイド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-console-switch/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Console Switch（serial hub の reverse SSH 集約）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSH サーバ全体設定（SSH_SERVER.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ 認証テストプラン（pam_tacplus + ssh login）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    プラットフォーム
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    プラットフォーム
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICMP Hardware Offload（DualToR link prober の NPU 化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Media-based Port Settings（media_settings.json による SerDes プロファイル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -7877,7 +7843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -7905,7 +7871,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -7933,7 +7899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -7961,7 +7927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -7989,7 +7955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -8017,7 +7983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -8045,7 +8011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -8073,7 +8039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -8101,7 +8067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -8129,7 +8095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -8157,7 +8123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -13027,7 +12993,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構成
+        データフロー
       
     </span>
   </a>
@@ -13035,49 +13001,76 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gnoi-fileremove" class="md-nav__link">
+  <a href="#file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        gNOI File.Remove
+        File の所在と必要性
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#gnoi-factoryresetstart" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNOI FactoryReset.Start
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="gNOI FactoryReset.Start">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フロー
+        検索キー構成
       
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マッチ優先順位
+      
+    </span>
+  </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-warmboot-fastboot" class="md-nav__link">
+  <a href="#sample" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI / Warmboot / Fastboot
+        Sample（要点抜粋）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-serdes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom SerDes 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breakout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakout
       
     </span>
   </a>
@@ -13090,63 +13083,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        CLI / CONFIG_DB / YANG
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（呼び出しイメージ）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -13176,17 +13119,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -13211,7 +13143,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnoi-hld-for-file-and-factory-reset-apis.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/media-based-port-settings-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13219,189 +13151,141 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-host-services/host_modules/gnoi_reset.py</code> L28-78 で <code>factoryOs</code> / <code>zeroFill</code> / <code>retainCerts</code> フラグの受領と <code>factory_os_unsupported</code> / <code>zero_fill_unsupported</code> のレスポンス分岐実装を確認。<code>sonic-gnmi/gnmi_server/gnoi_reset.go</code> L16-41 で <code>factory_reset.Start</code> ハンドラが DBus 経由 <code>FactoryReset</code> を呼ぶ実装を、<code>sonic-gnmi/sonic_service_client/dbus_client.go</code> L353 で <code>DbusClient.FactoryReset</code> を確認。<code>sonic-gnmi/pkg/gnoi/file/remove_test.go</code> L18-49 で File.Remove のパス検証（nil / config_db.json / <code>../../etc/passwd</code> リジェクト等）を確認。<code>sonic-gnmi/gnoi_client/file/file.go</code> L26-58 で File Stat/Get クライアント、<code>sonic-gnmi/gnoi_client/factory_reset/factory_reset.go</code> を確認（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>media_settings_parser、<code>SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION</code> の opencomputeproject/SAI 取り込み、PortsOrch の <code>custom_serdes_attrs</code> 経路は未裏取り。HLD は 2019 初版 + 後年の Custom SerDes 拡張がパッチで追加された形。</p>
 </div>
-<h1 id="gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service">gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）<a class="headerlink" href="#gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service" title="Permanent link">&para;</a></h1>
+<h1 id="media-based-port-settingsmedia_settingsjson-serdes">Media-based Port Settings（media_settings.json による SerDes プロファイル）<a class="headerlink" href="#media-based-port-settingsmedia_settingsjson-serdes" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gNOI（gRPC Network Operations Interface）は CLI の代替として <strong>gRPC マイクロサービスで運用コマンドを実行</strong> するための仕様で、protobuf 定義は <a href="https://github.com/openconfig/gnoi">openconfig/gnoi</a> にある。SONiC では gNMI/telemetry サーバ（UMF: Unified Management Framework）が gNOI も同じ TCP ポート（標準 9339）で受け、認証認可後にバックエンドへ振り分ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD はそのうち以下 2 つの RPC を SONiC に追加する設計を定める<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>gnoi.file.File.Remove</code>: target のファイルを削除（<strong>現状は <code>config_db.json</code> 限定</strong>）</li>
-<li><code>gnoi.factory_reset.FactoryReset.Start</code>: 工場出荷状態に戻す</li>
-</ul>
-<p>バックエンドは host service（python ベース、プラグイン構成）に対し DBUS で要求を投げる形を取る。詳細は <a href="https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md">SONiC GNMI Server Interface Design</a> と <a href="https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/Docker%20to%20Host%20communication.md">Docker to Host communication</a> を参照<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>vendor / media type / cable length ごとに <strong>異なる SerDes 設定</strong>（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、<strong><code>media_settings.json</code></strong> を vendor が提供し xcvrd 経由で APPL_DB → PortsOrch → SAI に橋渡しする仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため <strong>opt-in</strong>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">データフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CL[gNOI client] --&gt;|gRPC :9339\nauthn/authz| UMF[gNMI/UMF サーバ\n(telemetry container)]
-    UMF --&gt;|FE: protobuf 受領| FE[GNOI*Server]
-    FE --&gt;|JSON / 文字列| TR[transformer\nFileRemove / FactoryReset]
-    TR --&gt;|HostQuery| DBUS[(DBUS)]
-    DBUS --&gt; HS[SONiC Host Service\n(host process, plugin: infra_host / gnoi_reset)]
-    HS --&gt;|exec_cmd / issue_reset| OS[Linux host]</code></pre>
-<p>要点:</p>
+  FILE[/device/&amp;lt;vendor&amp;gt;/&amp;lt;ONIE_PLATFORM&amp;gt;/&lt;br/&gt;media_settings.json/]
+  MEDIA[Media insert event] --&gt; XCVRD[xcvrd]
+  FILE --&gt; XCVRD
+  XCVRD -- preemphasis / idriver /&lt;br/&gt;custom_serdes_attrs --&gt; APP[(APPL_DB PORT_TABLE)]
+  APP --&gt; PORTS[PortsOrch]
+  PORTS --&gt; SAI[SAI port_set_attribute /&lt;br/&gt;SAI_PORT_SERDES_*]
+  SAI --&gt; HW[(ASIC SerDes)]</code></pre>
+<p>xcvrd が media insert event で <strong>(media key, vendor key, lane)</strong> を構成し、<code>media_settings.json</code> を検索 → 一致した key/value を APPL_DB の <code>PORT_TABLE:&lt;port&gt;</code> に書き込む<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。PortsOrch が SAI 属性に変換して syncd 経由で HW に program。</p>
+<h3 id="file">File の所在と必要性<a class="headerlink" href="#file" title="Permanent link">&para;</a></h3>
 <ul>
-<li>gNOI と gNMI は <strong>同じ TCP ポート 9339</strong> で受ける<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>container（telemetry）から host への到達手段として DBUS + host service を使う</li>
-<li>危険な操作（factory reset / ファイル削除）はホスト側で実行する</li>
+<li>パス: <code>device/&lt;vendor-name&gt;/&lt;ONIE_PLATFORM_STRING&gt;/media_settings.json</code></li>
+<li>ファイル不在 = 機能無効。<strong>vendor が opt-in</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>同 platform の全 SKU で同一 file を共有</li>
 </ul>
-<h3 id="gnoi-fileremove">gNOI File.Remove<a class="headerlink" href="#gnoi-fileremove" title="Permanent link">&para;</a></h3>
-<p>protobuf（<a href="https://github.com/openconfig/gnoi/blob/main/file/file.proto">openconfig/gnoi/file</a>）:</p>
-<div class="language-proto highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">service</span><span class="w"> </span><span class="n">File</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="k">rpc</span><span class="w"> </span><span class="n">Remove</span><span class="p">(</span><span class="n">RemoveRequest</span><span class="p">)</span><span class="w"> </span><span class="k">returns</span><span class="w"> </span><span class="p">(</span><span class="n">RemoveResponse</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kd">message</span><span class="w"> </span><span class="nc">RemoveRequest</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="na">remote_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">message</span><span class="w"> </span><span class="nc">RemoveResponse</span><span class="w"> </span><span class="p">{}</span>
-</span></code></pre></div>
-<p>SONiC 実装の特徴<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong><code>config_db.json</code> のみ削除可</strong>。host service backend で <code>rm ..../etc/sonic/config_db.json</code> の文字列マッチで検証し、それ以外は失敗させる</li>
-<li>フロントエンド（gNMI UMF サーバの <code>GNOIFileServer.Remove</code>）は <code>transformer.FileRemove(req.GetRemoteFile())</code> を呼ぶ</li>
-<li><code>transformer.FileRemove</code> 内では <code>HostQuery("infra_host.exec_cmd", "rm "+remoteFile)</code> で host service に DBUS でコマンドを投げる</li>
-<li><code>fileMu</code> ロックで同時実行を抑制</li>
-</ul>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CL as Client
-    participant SV as GNOIFileServer
-    participant TR as transformer.FileRemove
-    participant HS as host service\n(infra_host)
-    CL-&gt;&gt;SV: Remove(remote_file=/etc/sonic/config_db.json)
-    SV-&gt;&gt;TR: FileRemove(remote_file)
-    TR-&gt;&gt;HS: HostQuery("infra_host.exec_cmd", "rm /etc/sonic/config_db.json")
-    HS-&gt;&gt;HS: string match\n("rm ..../etc/sonic/config_db.json")
-    alt match OK
-        HS-&gt;&gt;HS: rm を実行
-        HS--&gt;&gt;TR: ok
-        TR--&gt;&gt;SV: ok
-        SV--&gt;&gt;CL: RemoveResponse{}
-    else 不一致
-        HS--&gt;&gt;TR: error
-        SV--&gt;&gt;CL: codes.Internal
-    end</code></pre>
-<blockquote>
-<p>注: 「<code>config_db.json</code> 以外を削除させない」を <strong>string match</strong> で守るのは脆弱な実装に見える。実コード上で正規表現や allow list がどうなっているか要検証。</p>
-</blockquote>
-<h3 id="gnoi-factoryresetstart">gNOI FactoryReset.Start<a class="headerlink" href="#gnoi-factoryresetstart" title="Permanent link">&para;</a></h3>
-<p>protobuf（<a href="https://github.com/openconfig/gnoi/blob/main/factory_reset/factory_reset.proto">openconfig/gnoi/factory_reset</a>）抜粋:</p>
-<div class="language-proto highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">message</span><span class="w"> </span><span class="nc">StartRequest</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">factory_os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">   </span><span class="c1">// OS を出荷時イメージにロールバック</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">zero_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">    </span><span class="c1">// 永続ストレージをゼロ埋め</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">retain_certs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="c1">// 証明書を保持</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kd">message</span><span class="w"> </span><span class="nc">StartResponse</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="k">oneof</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">ResetSuccess</span><span class="w"> </span><span class="na">reset_success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">ResetError</span><span class="w">   </span><span class="na">reset_error</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>Start</code> の意味は強烈で、<strong>storage / configuration / logs / certificates / licenses を全消去</strong> し、出荷状態で再起動する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>retain_certs</code> だけ証明書を残すなど例外を許す。</p>
-<h4 id="_4">実装フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CL as Client
-    participant SV as GNOIFactoryResetServer
-    participant TR as transformer.FactoryReset
-    participant HS as host service\n(gnoi_reset)
-    CL-&gt;&gt;SV: Start(StartRequest)
-    SV-&gt;&gt;SV: protojson.Marshal(req)
-    SV-&gt;&gt;TR: factoryReset(jsonReq)
-    TR-&gt;&gt;HS: HostQuery("gnoi_reset.issue_reset", jsonReq)
-    HS-&gt;&gt;HS: storage / config / logs / certs / licenses クリーン
-    HS--&gt;&gt;TR: jsonResp (ResetSuccess or ResetError)
-    SV--&gt;&gt;CL: StartResponse</code></pre>
-<p>ポイント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>フロントエンドはリクエストを <strong>JSON シリアライズ</strong> してホスト側へ渡す</li>
-<li>バックエンドも JSON で応答を返す</li>
-<li><code>resetMu</code> ロックで同時実行を抑制</li>
-<li>フラグが指定されたが未対応の場合、<code>INVALID_ARGUMENT</code> + <code>ResetError</code> で返す（gNOI 仕様準拠）</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md#L154-L176 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  The front end implementation marshals the request, and sends it to the sonic-host-service via the host module `gnoi_reset`.
-  The back end is expected to return the response in JSON format.
-  ...
-  func FactoryReset(reqStr string) (string, error) {
-      resetMu.Lock()
-      defer resetMu.Unlock()
-      return checkQueryOutput(HostQuery("gnoi_reset.issue_reset", reqStr))
-  }
-reasoning: 「FE が JSON 化して DBUS 経由 gnoi_reset.issue_reset に渡す + ロック」という実装ルールの根拠。
--->
-
-<h3 id="sai-warmboot-fastboot">SAI / Warmboot / Fastboot<a class="headerlink" href="#sai-warmboot-fastboot" title="Permanent link">&para;</a></h3>
-<ul>
-<li>SAI API の変更なし<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Warmboot / Fastboot への影響なし<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>専用 CONFIG_DB スキーマは無い。gNMI 認証認可・証明書配置などの既存の telemetry 経路を再利用する。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h3 id="_4">検索キー構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>種別</th>
+<th>構成</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>gnoi_client ...</code></td>
-<td>UMF が提供する gNOI 呼び出し用クライアント。JSON / proto いずれの形式もサポート予定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>Vendor key</td>
+<td><code>&lt;vendor-name&gt;-&lt;vendor-PN&gt;</code>（例: <code>AMPHENOL-1234</code>）</td>
+</tr>
+<tr>
+<td>Media key</td>
+<td><code>&lt;form-factor&gt;-&lt;compliance&gt;[-&lt;length&gt;]</code>（例: <code>QSFP28-40GBASE-CR4-1M</code> / <code>40GBASE-SR4</code>）</td>
+</tr>
+<tr>
+<td>Default</td>
+<td>上記キーで一致しない場合の fallback</td>
 </tr>
 </tbody>
 </table>
-<p>UMF 同梱の <code>gnoi_client</code> はテスト・運用検証向け。<code>go-grpc</code> ベースの汎用 gNOI クライアントでも当然呼べる。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
-<h3 id="_6">設定例（呼び出しイメージ）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># config_db.json 削除（target が許可した場合）</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>file<span class="w"> </span>remove<span class="w"> </span>--remote_file<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># factory reset（証明書だけ残す）</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gnoi_client<span class="w"> </span>factory_reset<span class="w"> </span>start<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--factory_os<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--zero_fill<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--retain_certs<span class="o">=</span><span class="nb">true</span>
+<h3 id="_5">マッチ優先順位<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>GLOBAL_MEDIA_SETTINGS</strong>: port を range / list / list-of-ranges / 単一 port で指定</li>
+<li>一致 block 内で <strong>Vendor key → Media key → Default</strong> の順に検索</li>
+<li>一致しなければ <strong>PORT_MEDIA_SETTINGS</strong> の単一 port block を同順で検索</li>
+</ol>
+<p><code>port_config.ini</code> の index で port を識別する点に注意<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sample">Sample（要点抜粋）<a class="headerlink" href="#sample" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;GLOBAL_MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;1-32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;AMPHENOL-1234&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x001234&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;QSFP28-40GBASE-CR4-1M&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;idriver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">&quot;PORT_MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="nt">&quot;Default&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;idriver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">&quot;DELL-5678&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;preemphasis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;idriver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
 </span></code></pre></div>
+<h3 id="custom-serdes">Custom SerDes 拡張<a class="headerlink" href="#custom-serdes" title="Permanent link">&para;</a></h3>
+<p>公的に標準化しづらい vendor 固有 SerDes 設定向けに <strong><code>SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION</code></strong> という単一 JSON string 属性が追加されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> 側では:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;CUSTOM_MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;1-32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;Default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;CUSTOM:XYZ&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="p">},</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">&quot;CUSTOM:ABC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mode_a&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>xcvrd の <code>media_settings_parser</code> が <code>CUSTOM:</code> prefix を剥がし、APPL_DB <code>PORT_TABLE</code> の <strong><code>custom_serdes_attrs</code> フィールド</strong> に集約 JSON で書き込む<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="nt">&quot;attributes&quot;</span><span class="p">:[</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;XYZ&quot;</span><span class="p">:{</span><span class="nt">&quot;value&quot;</span><span class="p">:[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span><span class="p">]}},</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;ABC&quot;</span><span class="p">:{</span><span class="nt">&quot;value&quot;</span><span class="p">:[</span><span class="s2">&quot;mode_a&quot;</span><span class="p">,</span><span class="s2">&quot;mode_b&quot;</span><span class="p">,</span><span class="s2">&quot;mode_c&quot;</span><span class="p">,</span><span class="s2">&quot;mode_d&quot;</span><span class="p">]}}</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">]}</span>
+</span></code></pre></div>
+<p>実際 APPL_DB に書かれる value は spaces / newlines を圧縮した最小形式。PortsOrch は中身を解釈せず <strong>そのまま <code>SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION</code> に pass-through</strong>。</p>
+<h3 id="_6">配置タイミング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>初期化時 + media detect イベント時に xcvrd が PortsOrch へ通知</li>
+<li><strong>media remove では何もしない</strong>（取り外し時に SerDes リセット不要）</li>
+<li><strong>warm reboot では通知しない</strong>（HW が既に正しい状態を保持している前提）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="breakout">Breakout<a class="headerlink" href="#breakout" title="Permanent link">&para;</a></h3>
+<p>Breakout は <code>port_config.ini</code> 編集 + <code>config reload</code> で扱う既存仕組みに乗る。reload で xcvrd が再起動し全 media を再通知するため特別扱い不要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/media-settings/Media-based-Port-settings.md#L24-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  When a media is detected, the front panel port is identified and index number is derived.
+  First the global level is looked up ... If vendor key doesn't match, then media key
+  ... A no-match on vendor and media keys will make the search fall back to individual port based block.
+reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順の根拠。
+-->
+
+<h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
+<p>CLI / CONFIG_DB / YANG への追加は無し<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> は image build 時に platform tree に同梱される静的 file。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>File.Remove</code> は <strong><code>/etc/sonic/config_db.json</code> 限定</strong>。それ以外のパスは host service が拒否する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>File.Remove</code> の path 検証が <strong>string match</strong> ベースなのは表現として脆い。<code>../</code> 系の path traversal で抜けないか実装で要確認</li>
-<li><code>FactoryReset.Start</code> は <strong>デバイス上の状態を破壊する重操作</strong>。誤実行防止のために認可ロールを最小限に絞る運用が必須</li>
-<li>各種フラグ（<code>factory_os</code>, <code>zero_fill</code>, <code>retain_certs</code>）の <strong>対応状況はベンダ依存</strong>。未対応の場合 <code>INVALID_ARGUMENT</code> で返す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>同時実行は <code>fileMu</code> / <code>resetMu</code> で防がれる</li>
+<li><code>media_settings.json</code> が無ければ機能しない（opt-in）</li>
+<li>breakout / dynamic port で port index と front panel の対応が変わる場合の整合は <code>port_config.ini</code> 側責任</li>
+<li>warm reboot 中は通知しないため、reboot を跨いだ media 交換のタイミングによっては再起動を要する</li>
+<li>vendor key は <strong>vendor name + PN の組</strong> が一意であることが前提</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>gNMI / telemetry</strong>: 同じ 9339 ポート・同じ認証経路。証明書設定や RBAC が共通</li>
-<li><strong>SONiC Host Service / DBUS</strong>: docker → host 通信の汎用機構を共有<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong><code>config save</code> / <code>config reload</code></strong>: <code>config_db.json</code> 削除直後の挙動（再生成・初期化）と整合させる必要</li>
-<li><strong>証明書管理（gNMI 用）</strong>: <code>retain_certs=true</code> のとき残るのは何か（gNMI 用の <code>/etc/sonic/telemetry/...</code> を含むか）が運用上の要点</li>
+<li><strong>xcvrd</strong>（platform monitor / pmon enhancement HLD と密接連携）</li>
+<li><strong>PortsOrch</strong>（<code>SAI_PORT_SERDES_*</code> 属性 set）</li>
+<li><strong>Dynamic Port Breakout</strong>: 通常 reboot シーケンス相当として処理</li>
+<li><strong>gearbox / port-link-training</strong>: 同じく serdes 系設定との潜在競合</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>Remove</code> が <code>INTERNAL</code> で失敗する場合、host service ログで <code>infra_host.exec_cmd</code> の string match 結果を確認</li>
-<li><code>FactoryReset</code> が <code>INVALID_ARGUMENT</code> で返る場合、未対応フラグ（<code>zero_fill</code> 等）が指定されていないか確認</li>
-<li>DBUS 経由の host service が応答しない場合、<code>SONiC Host Service</code> が host で動いているかと、container ↔ host の DBUS proxy 設定を確認</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- File.Remove の path 検証実装 (string match か allow list か)
-- gnoi_reset.issue_reset の host service 実装
-- gnoi_client CLI の sonic-mgmt-common / sonic-utilities への取り込み
-- factory_os / zero_fill / retain_certs フラグのベンダ実装状況
-- 認証認可 (RBAC) と factory reset 権限の分離
-- HLD 後の他 gNOI RPC (System / OS) 拡張との関係
+- xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認
+- SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認
+- PortsOrch の custom_serdes_attrs pass-through 実装確認
+- preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認
+- 2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/media-settings/Media-based-Port-settings.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
