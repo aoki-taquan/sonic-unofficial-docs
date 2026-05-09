@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/control-sonic-behaviors-with-system-defaults-table/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic/">
       
       
-        <link rel="prev" href="../brief-introduction-of-iccp-code/">
+        <link rel="prev" href="../vnet-local-endpoint-forwarding/">
       
       
-        <link rel="next" href="../increasing-lacp-pdu-timeout-during-warm-reboot/">
+        <link rel="next" href="../../acl-qos/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 - SONiC 非公式ドキュメント</title>
+        <title>VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#system_defaults-sonic" class="md-skip">
+        <a href="#vxlan-vnet-vxlanorch-vnetorch-vrf-mapper" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+              VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
             
           </span>
         </div>
@@ -291,13 +291,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -315,11 +313,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../overlay/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1139,8 +1139,6 @@
       
   
   
-    
-  
   
   
     
@@ -1156,6 +1154,344 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../switching/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    スイッチング
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    スイッチング
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUM ストームコントロール（PORT_STORM_CONTROL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ProducerStateTable の view switching（warm reboot 用の差分適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wake-on-LAN（wol CLI と SonicWolService gNOI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
         
       
         
@@ -1184,7 +1520,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1195,7 +1531,7 @@
   <span class="md-ellipsis">
     
   
-    スイッチング
+    オーバーレイ
   
 
     
@@ -1206,18 +1542,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
-    スイッチング
+    オーバーレイ
   
 
           </label>
@@ -1232,14 +1568,98 @@
   
   
     <li class="md-nav__item">
-      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NVGRE トンネル（nvgreorch / decap mapper）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
   
 
     
@@ -1276,7 +1696,7 @@
   <span class="md-ellipsis">
     
   
-    SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+    VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
   
 
     
@@ -1294,7 +1714,7 @@
   <span class="md-ellipsis">
     
   
-    SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+    VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
   
 
     
@@ -1343,10 +1763,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#phase-1-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スケール（Phase 1, VNet ピアリング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm restart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スコープ
+        コンポーネントとデータフロー
       
     </span>
   </a>
@@ -1354,10 +1796,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DB スキーマ
+        CONFIG_DB スキーマ
       
     </span>
   </a>
@@ -1365,22 +1807,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#app_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既定値の供給経路
+        APP_DB スキーマ
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="既定値の供給経路">
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent 各論
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Orchagent 各論">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-init_cfgjson" class="md-nav__link">
+  <a href="#vxlanorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 1: init_cfg.json（イメージビルド時の既定値）
+        VxlanOrch
       
     </span>
   </a>
@@ -1388,10 +1841,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-minigraphxmlminigraph" class="md-nav__link">
+  <a href="#vrfmgrd-vrforch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 2: minigraph.xml（minigraph リロード時）
+        VrfMgrD / VrfOrch
       
     </span>
   </a>
@@ -1399,10 +1852,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#vnetorch-vnetrouteorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 3: ランタイム書き込み
+        VnetOrch / VnetRouteOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IntfMgrD / IntfsOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fdborch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FdbOrch
       
     </span>
   </a>
@@ -1415,41 +1890,13 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンシューマ側の取り込み
+        SAI 属性の対応
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        必要なコード改修
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="必要なコード改修">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#device_metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DEVICE_METADATA から移行するフラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1459,7 +1906,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -1471,10 +1918,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -1482,10 +1929,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -1504,10 +1951,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#vnet" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        設定例（VNet ピアリング）
       
     </span>
   </a>
@@ -1520,7 +1967,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -1531,7 +1989,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -1542,7 +2000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -1556,426 +2014,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BUM ストームコントロール（PORT_STORM_CONTROL）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ProducerStateTable の view switching（warm reboot 用の差分適用）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Wake-on-LAN（wol CLI と SonicWolService gNOI）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../overlay/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    オーバーレイ
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    オーバーレイ
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NVGRE トンネル（nvgreorch / decap mapper）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -3478,10 +3516,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#phase-1-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スケール（Phase 1, VNet ピアリング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm restart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スコープ
+        コンポーネントとデータフロー
       
     </span>
   </a>
@@ -3489,10 +3549,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DB スキーマ
+        CONFIG_DB スキーマ
       
     </span>
   </a>
@@ -3500,22 +3560,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#app_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既定値の供給経路
+        APP_DB スキーマ
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="既定値の供給経路">
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent 各論
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Orchagent 各論">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-init_cfgjson" class="md-nav__link">
+  <a href="#vxlanorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 1: init_cfg.json（イメージビルド時の既定値）
+        VxlanOrch
       
     </span>
   </a>
@@ -3523,10 +3594,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-minigraphxmlminigraph" class="md-nav__link">
+  <a href="#vrfmgrd-vrforch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 2: minigraph.xml（minigraph リロード時）
+        VrfMgrD / VrfOrch
       
     </span>
   </a>
@@ -3534,10 +3605,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#vnetorch-vnetrouteorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路 3: ランタイム書き込み
+        VnetOrch / VnetRouteOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IntfMgrD / IntfsOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fdborch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FdbOrch
       
     </span>
   </a>
@@ -3550,41 +3643,13 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンシューマ側の取り込み
+        SAI 属性の対応
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        必要なコード改修
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="必要なコード改修">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#device_metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DEVICE_METADATA から移行するフラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -3594,7 +3659,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3606,10 +3671,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -3617,10 +3682,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -3639,10 +3704,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#vnet" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        設定例（VNet ピアリング）
       
     </span>
   </a>
@@ -3655,7 +3720,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3666,7 +3742,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3677,7 +3753,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3704,7 +3780,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/control-sonic-behaviors-with-system-defaults-table.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/vxlan-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3714,207 +3790,313 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>db_migrator.py</code> / <code>minigraph.py</code> / <code>sonic-cfggen</code> 等の実装による裏取りは未済。</p>
+<p>本ページは公式 HLD（Rev 1.3、初版が比較的古い）のみを根拠に書かれている。SONiC の VXLAN / VNet は本 HLD 以降に EVPN 統合・Active-Active dual-ToR 等の拡張で大きく変わっており、現行 master の実装とは乖離している可能性が高い。</p>
 </div>
-<h1 id="system_defaults-sonic">SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約<a class="headerlink" href="#system_defaults-sonic" title="Permanent link">&para;</a></h1>
+<h1 id="vxlan-vnet-vxlanorch-vnetorch-vrf-mapper">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）<a class="headerlink" href="#vxlan-vnet-vxlanorch-vnetorch-vrf-mapper" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が <code>CONFIG_DB</code> の <code>DEVICE_METADATA|localhost</code> に蓄積されてきた。<code>default_bgp_status</code>, <code>default_pfcwd_status</code>, <code>synchronous_mode</code>, <code>dhcp_server</code> などである。フラグが増えるにつれて <code>DEVICE_METADATA</code> が肥大化し、本来「デバイスのメタデータ」とは性格の異なるフラグが混在する状況が生じた。</p>
-<p>本 HLD は、これらのフラグを <strong>新規テーブル <code>SYSTEM_DEFAULTS</code></strong> に切り出し、初期値設定・更新・購読を一元化することを提案している。<code>DEVICE_METADATA</code> 内の該当フィールドは <code>db_migrator.py</code> で <code>SYSTEM_DEFAULTS</code> に移行され、<code>sonic-device_metadata.yang</code> の該当エントリは新たな YANG モデルへ切り出される。</p>
+<p>SONiC の VXLAN は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される。HLD は次のスコープを定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>Phase 1</strong>: VTEP として動作。顧客 VM とベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング</li>
+<li><strong>Phase 2</strong>: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備</li>
+</ul>
+<p>Kernel VRF（L3mdev）の programming は <strong>本 HLD のスコープ外</strong>（別資料）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主要な orchagent 群:</p>
+<ul>
+<li><code>VxlanOrch</code>: VXLAN tunnel object、encap/decap mapper、tunnel termination</li>
+<li><code>VnetOrch</code> / <code>VnetRouteOrch</code>: VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路</li>
+<li><code>VrfMgrD</code> / <code>VrfOrch</code>: kernel L3mdev と SAI VRF の同期</li>
+<li><code>IntfMgrD</code> / <code>IntfsOrch</code>: VNet 配下の RIF</li>
+<li><code>FdbOrch</code>: remote VTEP の MAC 学習</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スコープ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>本 HLD のスコープは <code>SYSTEM_DEFAULTS</code> テーブルの <strong>設計</strong> に限定される。具体的には DB スキーマ、初期値の供給経路、ランタイムでの更新方法、コンシューマ側の取り込み方法、そして移行と必要なコード改修を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="db">DB スキーマ<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
-<p><code>SYSTEM_DEFAULTS</code> のキーは <code>feature_name</code> 単独で、各エントリに少なくとも <code>status</code> フィールドを持つ。<code>status</code> の値は <code>enable</code> / <code>disable</code> / <code>up</code> / <code>down</code> を含む任意の文字列で良い。実装側でフラグごとに必要な追加フィールド（<code>custom_field</code>）を自由に持てる設計である。</p>
+<h3 id="phase-1-vnet">スケール（Phase 1, VNet ピアリング）<a class="headerlink" href="#phase-1-vnet" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>Field</th>
-<th>値</th>
+<th>項目</th>
+<th>想定値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>SYSTEM_DEFAULTS</code></td>
-<td><code>feature_name</code></td>
-<td><code>status</code></td>
-<td>任意文字列。例: <code>enable</code> / <code>disable</code> / <code>up</code> / <code>down</code></td>
+<td>VNI 数</td>
+<td>8K</td>
 </tr>
 <tr>
-<td><code>SYSTEM_DEFAULTS</code></td>
-<td><code>feature_name</code></td>
-<td><code>&lt;custom&gt;</code></td>
-<td>任意文字列。フィールド名・値ともフラグ実装側が定義</td>
+<td>Tunnel encap 数</td>
+<td>128K</td>
+</tr>
+<tr>
+<td>VM 数</td>
+<td>512K</td>
+</tr>
+<tr>
+<td>VRF 数</td>
+<td>128</td>
+</tr>
+<tr>
+<td>ルート数</td>
+<td>512K</td>
 </tr>
 </tbody>
 </table>
-<p>サンプル：</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;SYSTEM_DEFAULTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;tunnel_qos_remap&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;default_bgp_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;synchronous_mode&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;dhcp_server&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+<p>これは設計目標であり、実 ASIC のスケールに依存する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warm-restart">Warm restart<a class="headerlink" href="#warm-restart" title="Permanent link">&para;</a></h3>
+<p><strong>Phase 1 では Warm Restart 非対応</strong>。SAI VR（Virtual Router）オブジェクトが warm restart 非互換のため、Phase 2 で再検討される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">コンポーネントとデータフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    subgraph CONFIG_DB
+      VXT[VXLAN_TUNNEL]
+      VXM[VXLAN_TUNNEL_MAP]
+      VNET[VNET]
+      INTF[INTERFACE / VLAN_INTERFACE]
+      NEIGH[NEIGH_TABLE]
+    end
+    VNET --&gt; VRFM[VrfMgrD]
+    VRFM --&gt;|kernel L3mdev 作成| KERN[Linux kernel]
+    VRFM --&gt; VNETT[(APP_DB VNET_TABLE)]
+    VNETT --&gt; VNO[VnetOrch]
+    INTF --&gt; IM[IntfMgrD]
+    IM --&gt;|VRF 確認後| ITT[(APP_DB INTF_TABLE)]
+    ITT --&gt; IO[IntfsOrch]
+    IO --&gt; VNO
+    VXT --&gt; VXO[VxlanOrch]
+    VXM --&gt; VXO
+    NEIGH --&gt; NB[NeighOrch]
+    VNO --&gt; VXO
+    VNO --&gt; VRO[VnetRouteOrch]
+    VRO --&gt; APPR[(APP_DB VNET_ROUTE_*\nTABLE)]
+    APPR --&gt; VRO
+    VRO --&gt; SAI[SAI/SDK]
+    VXO --&gt; SAI
+    FDB[FdbOrch] --&gt; VXO</code></pre>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VXLAN_TUNNEL|&lt;tunnel_name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    src_ip : &lt;ipv4&gt;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    dst_ip : &lt;ipv4&gt;  (OPTIONAL, P2P トンネル用)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>VXLAN_TUNNEL_MAP|&lt;tunnel_name&gt;|&lt;map_name&gt;
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    vni  : &lt;int&gt;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    vlan : &lt;vlan_id&gt;
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>VNET|&lt;vnet_name&gt;
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    vxlan_tunnel : &lt;tunnel_name&gt;
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    vni          : &lt;int&gt;
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    scope        : &quot;default&quot;     (OPTIONAL)
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    peer_list    : &lt;vnet_name,...&gt; (OPTIONAL)
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>INTERFACE|&lt;intf&gt;
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    vnet_name : &lt;vnet_name&gt;
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>INTERFACE|&lt;intf&gt;|&lt;prefix&gt;
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    {}
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>VLAN_INTERFACE|&lt;vlan_intf&gt;
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    vnet_name : &lt;vnet_name&gt;
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>VLAN_INTERFACE|&lt;vlan_intf&gt;|&lt;prefix&gt;
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    {}
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>NEIGH_TABLE|&lt;intf&gt;|&lt;ip&gt;
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    family : IPv4 | IPv6
 </span></code></pre></div>
+<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で VLAN ↔ VNI を関連付ける<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="app_db">APP_DB スキーマ<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>VNET_ROUTE_TABLE:&lt;vnet&gt;:&lt;prefix&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    nexthop : &lt;ip&gt;      (OPTIONAL)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    ifname  : &lt;intf&gt;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>VNET_ROUTE_TUNNEL_TABLE:&lt;vnet&gt;:&lt;prefix&gt;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    endpoint    : &lt;vtep ip&gt;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    mac_address : &lt;mac&gt;     (OPTIONAL: encapsulated パケットの inner DST MAC)
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    vni         : &lt;int&gt;     (OPTIONAL)
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>VXLAN_FDB_TABLE:&lt;tunnel&gt;:&lt;vni&gt;:&lt;mac&gt;
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    remote_vtep : &lt;ip&gt;
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>VNET_TABLE:&lt;vnet&gt;
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    vxlan_tunnel : &lt;tunnel&gt;
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    vni          : &lt;int&gt;
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    scope        : &quot;default&quot;
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    peer_list    : &lt;vnet,...&gt;
+</span></code></pre></div>
+<p><code>VNET_ROUTE_TABLE</code> は <strong>subnet / local route</strong>（同 VNet 内の直接到達）、<code>VNET_ROUTE_TUNNEL_TABLE</code> は <strong>tunnel nexthop 経由のリモート経路</strong> に対応する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="orchagent">Orchagent 各論<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<h4 id="vxlanorch">VxlanOrch<a class="headerlink" href="#vxlanorch" title="Permanent link">&para;</a></h4>
+<p>VXLAN の中核。<code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（VLAN ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach する。</p>
+<h4 id="vrfmgrd-vrforch">VrfMgrD / VrfOrch<a class="headerlink" href="#vrfmgrd-vrforch" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CDB as CONFIG_DB.VNET
+    participant VM as VrfMgrD
+    participant KERN as Linux kernel (L3mdev)
+    participant ST as STATE_DB
+    participant ADB as APP_DB.VNET_TABLE
+    participant VO as VrfOrch / VnetOrch
+    CDB--&gt;&gt;VM: SET
+    VM-&gt;&gt;KERN: L3mdev 作成
+    VM-&gt;&gt;ST: VRF status 更新
+    VM-&gt;&gt;ADB: VNET_TABLE に複製
+    ADB--&gt;&gt;VO: SET
+    VO-&gt;&gt;VO: SAI VRF / Bridge 作成</code></pre>
+<ul>
+<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作る + STATE_DB に状態を出す</li>
+<li><code>VrfOrch</code>: 通常の（VNet ではない）VRF を APP_DB から SAI に流す。RouteOrch がこれを使う<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h4 id="vnetorch-vnetrouteorch">VnetOrch / VnetRouteOrch<a class="headerlink" href="#vnetorch-vnetrouteorch" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>VnetOrch</code>: VNet 単位の <strong>ingress/egress VRF または BRIDGE</strong> を SAI に作成。<code>peer_list</code> を保持</li>
+<li><code>VnetRouteOrch</code>: <code>VNET_ROUTE_TABLE</code> → subnet/local route、<code>VNET_ROUTE_TUNNEL_TABLE</code> → tunnel nexthop 経路 を SAI に投入。<code>peer_list</code> がある場合はピア VNet にも経路を複製<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h4 id="intfmgrd-intfsorch">IntfMgrD / IntfsOrch<a class="headerlink" href="#intfmgrd-intfsorch" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>IntfMgrD</code>: kernel 側の routing IF を作って L3mdev に enslave。STATE_DB の VRF 確立を待ってから APP_DB の <code>INTF_TABLE</code> に書く</li>
+<li><code>IntfsOrch</code>: <code>INTF_TABLE</code> + VRF 情報で SAI Router Interface を作る。VNet 用 IF は <code>VnetOrch</code> の API 経由で作成<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h4 id="fdborch">FdbOrch<a class="headerlink" href="#fdborch" title="Permanent link">&para;</a></h4>
+<p>VxlanOrch をメンバとして持ち、<strong>remote VTEP で学習した MAC</strong> を <code>app-fdb-table</code> 経由で SAI に書く。BridgeIf / Remote VTEP の対応は VxlanOrch から取得する（HLD 当時 TBD）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai">SAI 属性の対応<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>VXLAN コンポーネント</th>
+<th>SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VXLAN tunnel 種別</td>
+<td><code>SAI_TUNNEL_TYPE_VXLAN</code></td>
+</tr>
+<tr>
+<td>Encap mapper</td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI</code></td>
+</tr>
+<tr>
+<td>Decap mapper</td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code></td>
+</tr>
+<tr>
+<td>Nexthop tunnel</td>
+<td><code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code></td>
+</tr>
+<tr>
+<td>Tunnel termination</td>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP</code></td>
+</tr>
+<tr>
+<td>VXLAN MAC</td>
+<td><code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC</code></td>
+</tr>
+<tr>
+<td>VXLAN UDP port</td>
+<td><code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_PORT</code></td>
+</tr>
+</tbody>
+</table>
+<p>L3 VXLAN は <code>VIRTUAL_ROUTER_ID ↔ VNI</code> の mapper が中核。VTEP は P2MP の termination として登録する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md#L52-L79 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/vxlan/Vxlan_hld.md#L299-L330 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  key  = SYSTEM_DEFAULTS|feature_name; feature name must bt unique
-  field = status ; The value is a string, which can be 'enable'/'disable', 'down'/'up' or any string.
-  custom_field = ... ; The name of custom_field can be any custom string.
-reasoning: スキーマ定義（キー一意性・status の自由度・custom_field 拡張性）の根拠。
+  VxlanOrch creates the tunnel and attaches encap and decap mappers. Seperate tunnels are created for L2 Vxlan and L3 Vxlan ...
+  VnetOrch creates ingress/Egress (based on context) VRF or BRIDGE in SAI for a VNet and also maintains the peering list.
+  VnetRouteOrch fetch the VRF and peering information for replicating the routes
+reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経路複製の根拠。
 -->
 
-<h3 id="_4">既定値の供給経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>SYSTEM_DEFAULTS</code> の値は次の 3 経路で書き込まれる。経路の優先順位（後勝ち）は <strong>イメージビルド &lt; minigraph &lt; ランタイム書き込み</strong> という直感に沿う。</p>
-<pre class="mermaid"><code>flowchart LR
-    IB[イメージビルド時オプション\nshutdown_bgp_on_start 等] --&gt; ICJ[init_cfg.json]
-    MG[minigraph.xml\nSystemDefaultsDeclaration] --&gt; MGP[minigraph.py]
-    ICJ --&gt; CDB[(CONFIG_DB\nSYSTEM_DEFAULTS)]
-    MGP --&gt; CDB
-    USR[sonic-cfggen / configlet\n/ config apply-patch] --&gt; CDB
-    CDB --&gt; SVC[各サービス起動時 or 購読]</code></pre>
-<h4 id="1-init_cfgjson">経路 1: <code>init_cfg.json</code>（イメージビルド時の既定値）<a class="headerlink" href="#1-init_cfgjson" title="Permanent link">&para;</a></h4>
-<p>ビルド時オプション（例: <code>shutdown_bgp_on_start=y</code>）に応じて <code>init_cfg.json</code> の値が決まり、起動時に DB へロードされる。<code>docker_image_ctl.j2</code> の起動フローでは <strong><code>init_cfg.json</code> を先に</strong>、続いて <code>config_db.json</code> を <code>--write-to-db</code> でロードするため、ユーザが <code>config_db.json</code> で書き換えた値は <code>init_cfg.json</code> に上書きされない（後勝ち）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># docker_image_ctl.j2 抜粋（HLD 引用）</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">$SONIC_CFGGEN</span><span class="w"> </span>-j<span class="w"> </span>/etc/sonic/init_cfg.json<span class="w"> </span>-j<span class="w"> </span>/etc/sonic/config_db<span class="nv">$DEV</span>.json<span class="w"> </span>--write-to-db
-</span></code></pre></div>
-<p>つまり <code>default_bgp_status: down</code> がビルド由来でも、ユーザが <code>config_db.json</code> で <code>up</code> に書けばランタイムでは <code>up</code> が残る。</p>
-<h4 id="2-minigraphxmlminigraph">経路 2: <code>minigraph.xml</code>（minigraph リロード時）<a class="headerlink" href="#2-minigraphxmlminigraph" title="Permanent link">&para;</a></h4>
-<p>リコンフィグで変えたいフラグは <code>minigraph.xml</code> の <code>&lt;SystemDefaultsDeclaration&gt;</code> セクションに置く。<code>minigraph.py</code> がこれをパースして <code>SYSTEM_DEFAULTS</code> に反映する。<strong><code>init_cfg.json</code> と重複するキーがある場合、<code>minigraph.xml</code> が勝つ</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&lt;SystemDefaultsDeclaration&gt;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&lt;a:SystemDefaults</span><span class="w"> </span><span class="na">xmlns:a=</span><span class="s">&quot;http://schemas.datacontract.org/2004/07/Microsoft.Search.Autopilot.Evolution&quot;</span><span class="nt">&gt;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&lt;a:SystemDefault&gt;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&lt;a:Name&gt;</span>TunnelQosRemapEnabled<span class="nt">&lt;/a:Name&gt;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&lt;a:Value&gt;</span>True<span class="nt">&lt;/a:Value&gt;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">&lt;/a:SystemDefault&gt;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&lt;/a:SystemDefaults&gt;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nt">&lt;/SystemDefaultsDeclaration&gt;</span>
-</span></code></pre></div>
-<h4 id="3">経路 3: ランタイム書き込み<a class="headerlink" href="#3" title="Permanent link">&para;</a></h4>
-<p>ハートビート影響なく切り替えたい挙動については、起動済みの DB に対して <code>sonic-cfggen</code> / <code>configlet</code> / <code>config apply-patch</code> で直接書き込む。</p>
-<h3 id="_5">コンシューマ側の取り込み<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>コンシューマ（フラグを参照するサービス）は次の 2 通りで値を読む。</p>
-<ol>
-<li><strong>サービス起動時 / リロード時</strong>: 既存実装と同じく、テンプレート展開や起動時条件分岐に使う。これが標準パターンである。</li>
-<li><strong>購読によるオンザフライ反映</strong>: <code>SYSTEM_DEFAULTS</code> テーブルを購読しておき、メモリ上の値変化に追随する。HLD は「対応すれば再起動なしで反映できる」可能性を示すが、<strong>現時点ではすべての orch / daemon が再起動を要する</strong> ため、本機能のための新規購読コードは要らないと明記している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ol>
-<h3 id="_6">必要なコード改修<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>領域</th>
-<th>改修内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>テンプレート</td>
-<td><code>DEVICE_METADATA|localhost</code> に既定フラグを生成しているテンプレを <code>SYSTEM_DEFAULTS</code> 出力に切り替える</td>
-</tr>
-<tr>
-<td>テンプレート</td>
-<td><code>DEVICE_METADATA|localhost</code> を参照しているテンプレを <code>SYSTEM_DEFAULTS</code> 参照に追従させる</td>
-</tr>
-<tr>
-<td>YANG</td>
-<td><code>sonic-device_metadata.yang</code> から該当フラグの定義を削除し、<code>SYSTEM_DEFAULTS</code> 用の新 YANG モデルを追加</td>
-</tr>
-<tr>
-<td><code>db_migrator.py</code></td>
-<td><code>DEVICE_METADATA|localhost</code> から下表のフラグを <code>SYSTEM_DEFAULTS</code> に移行</td>
-</tr>
-<tr>
-<td>購読対応</td>
-<td>必要なコンポーネントのみ <code>SYSTEM_DEFAULTS</code> 購読を追加（HLD 時点では追加不要）</td>
-</tr>
-</tbody>
-</table>
-<h4 id="device_metadata"><code>DEVICE_METADATA</code> から移行するフラグ<a class="headerlink" href="#device_metadata" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>フラグ</th>
-<th>ビルド由来</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>default_bgp_status</code></td>
-<td><code>init_cfg.json</code> 経由。ビルドオプション <code>shutdown_bgp_on_start</code> で決定</td>
-</tr>
-<tr>
-<td><code>default_pfcwd_status</code></td>
-<td><code>init_cfg.json</code> 経由。ビルドオプション <code>enable_pfcwd_on_start</code> で決定</td>
-</tr>
-<tr>
-<td><code>synchronous_mode</code></td>
-<td><code>init_cfg.json</code> 経由。ビルドオプション <code>include_p4rt</code> で決定</td>
-</tr>
-<tr>
-<td><code>buffer_model</code></td>
-<td><code>init_cfg.json</code> 経由。ビルドオプション <code>default_buffer_model</code> で決定</td>
-</tr>
-<tr>
-<td><code>dhcp_server</code></td>
-<td><code>minigraph.xml</code> 経由</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SYSTEM_DEFAULTS</code></td>
-<td><code>feature_name</code></td>
-<td>機能ごとの既定状態。<code>status</code> と任意の <code>custom_field</code> を持つ</td>
-</tr>
-<tr>
-<td><code>DEVICE_METADATA</code></td>
-<td><code>localhost</code></td>
-<td>移行元。<code>db_migrator.py</code> 適用後は上記フラグが抜ける</td>
-</tr>
-</tbody>
-</table>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には CLI 追加要件の記述がない。ランタイム書き込みは <code>sonic-cfggen</code> / <code>configlet</code> / <code>config apply-patch</code> の <strong>既存ツール</strong> 流用と明記されている。</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; vni &lt;vni&gt;</code></td>
+<td>VLAN ↔ VNI マッピング</td>
+</tr>
+<tr>
+<td><code>config vxlan &lt;name&gt; src_if &lt;intf&gt;</code></td>
+<td>VTEP の source IF</td>
+</tr>
+<tr>
+<td><code>config vxlan &lt;name&gt; vlan &lt;vid&gt; flood vtep &lt;ip,...&gt;</code></td>
+<td>HER 用 flood list</td>
+</tr>
+<tr>
+<td><code>show vxlan &lt;name&gt;</code></td>
+<td>VXLAN tunnel 情報</td>
+</tr>
+<tr>
+<td><code>show mac vxlan &lt;name&gt; &lt;vni&gt;</code></td>
+<td>VNI 別の learned MAC</td>
+</tr>
+</tbody>
+</table>
+<p>VNet ピアリングの設定は CLI スコープ外で、CONFIG_DB を直接編集する想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<p><code>VXLAN_TUNNEL</code>, <code>VXLAN_TUNNEL_MAP</code>, <code>VNET</code>, <code>INTERFACE</code>, <code>VLAN_INTERFACE</code>, <code>NEIGH_TABLE</code> の組合せで構成（前述スキーマ）。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>新規 YANG モデルが追加される予定（モジュール名は HLD では未指定）。同時に <code>sonic-device_metadata.yang</code> から該当エントリが削除される。</p>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># minigraph リロードで反映</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>load_minigraph
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># あるいはランタイムで個別に書き換え</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;SYSTEM_DEFAULTS&quot;: {&quot;tunnel_qos_remap&quot;: {&quot;status&quot;: &quot;enabled&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="vnet">設定例（VNet ピアリング）<a class="headerlink" href="#vnet" title="Permanent link">&para;</a></h3>
+<p><code>Vnet_2000</code>（VNI 2000、ベアメタル <code>Ethernet1</code> 経由）と <code>Vnet_3000</code>（VNI 3000、<code>Vlan2000</code> 経由、<code>Vnet_2000</code> をピア）を作る最小構成:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;VXLAN_TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;tunnel1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.10.10.10&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;VNET&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;Vnet_2000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vxlan_tunnel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tunnel1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;peer_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;Vnet_3000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vxlan_tunnel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tunnel1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3000&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;peer_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_2000&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;Ethernet1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vnet_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_2000&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;Ethernet1|100.100.3.1/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="nt">&quot;VLAN_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;Vlan2000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vnet_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet_3000&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="nt">&quot;Vlan2000|100.100.4.1/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>APP_DB 側で <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を投入することで、ベアメタル subnet の経路と VM への tunnel nexthop 経路を作る<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>db_migrator.py</code></strong>: 既存システムからの移行で <code>DEVICE_METADATA|localhost</code> のフラグを移送する。マイグレータのバージョンとイメージのバージョンが揃わないと、片方のテーブルにしか書かれない過渡状態が生じうる。</li>
-<li><strong><code>minigraph.py</code></strong>: minigraph リロード時の上書き優先順位を保つため、テンプレート側で <code>SYSTEM_DEFAULTS</code> を参照していないと反映されない。</li>
-<li><strong>既存 orch / daemon</strong>: 動的な追従が必要な機能はサービス再起動が必要。HLD はこの制約を明示している。</li>
-<li><strong><code>sonic-device_metadata.yang</code></strong>: 該当フラグの YANG 定義削除を伴うため、外部の管理ツールが旧 YANG パスで書こうとすると失敗する可能性がある。</li>
+<li><strong>Phase 1 では BGP EVPN 統合なし</strong>。経路は外部から <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> に書き込まれる前提</li>
+<li><strong>Warm restart 未対応</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>L3 VXLAN（symmetric IRB / RIOT）と L2 VXLAN は <strong>別トンネル</strong> として作成される</li>
+<li>Kernel VRF（L3mdev）の programming は HLD スコープ外。VrfMgrD は kernel と APP_DB の橋渡しのみを担う</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>フラグを書き換えたのに挙動が変わらない場合、対象サービスの再起動可否を確認する（HLD では <code>SYSTEM_DEFAULTS</code> 購読対応は必須にされていない）。</li>
-<li>マイグレーション後にフラグが見当たらない場合、<code>DEVICE_METADATA|localhost</code> 側に残っていないか、<code>SYSTEM_DEFAULTS|&lt;feature&gt;</code> 側に移っているかを <code>redis-cli -n 4 KEYS '*SYSTEM_DEFAULTS*'</code> 等で確認する。</li>
-<li><code>init_cfg.json</code> で書いた値が反映されない場合、<code>config_db.json</code> 側に同名フラグがあると <strong><code>config_db.json</code> が勝つ</strong>（ロード順による）。</li>
+<li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める</li>
+<li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping が前提</li>
+<li><strong>VRF（通常 VRF）</strong>: <code>VrfOrch</code> が APP_DB から SAI VRF を作る経路は本 HLD でも共通</li>
+<li><strong>DASH / SmartSwitch</strong>: より新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用する</li>
+<li><strong>MC-LAG / dual-ToR</strong>: HLD 後に Active-Active dual-ToR 等の拡張が入っており、本 HLD だけでは説明し切れない</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>VTEP が上がらない場合、<code>VXLAN_TUNNEL.src_ip</code> が実在 IF（Loopback 等）の IP かを確認</li>
+<li>L2 VXLAN で MAC が伝搬しない場合、<code>VXLAN_FDB_TABLE</code>（APP_DB）に remote_vtep が入っているか確認</li>
+<li>L3 VXLAN で経路が乗らない場合、<code>VNET_ROUTE_TUNNEL_TABLE</code> の <code>endpoint</code> が remote VTEP IP と一致しているかを確認</li>
+<li>VRF が SAI に作られない場合、<code>VrfMgrD</code> の STATE_DB 更新が間に合っているか（IntfMgrD は STATE_DB の VRF 確立を待つ）</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- HLD 初版が古いため、現行 master の VxlanOrch / VnetOrch 実装と乖離している可能性が高い
+- BGP EVPN 統合 (Phase 2) の現状
+- Warm restart 対応状況 (Phase 2 で再検討予定だった)
+- VXLAN_TUNNEL_MAP の最終スキーマ (VNI ↔ VLAN / VNI ↔ VRF)
+- FdbOrch と VxlanOrch の協調実装 (HLD で TBD だった部分)
+- HER (head-end replication) の現行実装
+- CLI (config vxlan / show vxlan) の sonic-utilities への取り込み形
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vxlan/Vxlan_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
