@@ -11917,9 +11917,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは GitHub PR (15487 / 16013 / 17045) の実装を前提とした HLD 記述に基づく。minigraph parser の <code>SNMP_AGENT_ADDRESS_CONFIG</code> 自動投入、link-local IPv6 を agentAddress として使う処理、SNMP docker 内 <code>snmpd.conf</code> 生成テンプレートの現行実装は実コードでの裏取り未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code> L27-33 で <code>SNMP_AGENT_ADDRESS_CONFIG</code> をループして <code>agentAddress {{ protocol(agentip) }}:[{{ agentip }}]{...}</code> を出力、未設定時は L32-33 で <code>agentAddress udp:161</code> / <code>udp6:161</code> をフォールバックする経路を確認。<code>sonic-buildimage/src/sonic-config-engine/minigraph.py</code> L2310-2324 で minigraph 解析時に Management IP / Loopback IP から <code>SNMP_AGENT_ADDRESS_CONFIG</code> を生成する処理を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="snmp-ipv6-src-ip-snmp_agent_address_config">SNMP IPv6 応答の SRC IP 不整合と <code>SNMP_AGENT_ADDRESS_CONFIG</code> による回避<a class="headerlink" href="#snmp-ipv6-src-ip-snmp_agent_address_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

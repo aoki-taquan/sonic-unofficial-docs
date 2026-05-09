@@ -11805,9 +11805,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>hostcfgd</code> の SSH_SERVER ハンドラ、<code>/etc/ssh/sshd_config</code> への書き込みフロー、<code>limits.conf.j2</code> テンプレートの存在は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-host-services/scripts/hostcfgd</code> L1045 <code>class SshServer</code>、L2245-2478 で <code>init_data['SSH_SERVER']</code> を読み <code>self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))</code> する経路を確認。<code>SSH_CONFG = "/etc/ssh/sshd_config"</code> (L32) に書き込み、<code>LIMITS_CONF_TEMPLATE = "/usr/share/sonic/templates/limits.conf.j2"</code> (L82) と <code>PAM_LIMITS_CONF = "/etc/pam.d/pam-limits-conf"</code> (L83) を render する <code>limits.conf.j2</code> も <code>sonic-host-services/data/templates/limits.conf.j2</code> で確認。L1412-1478 で <code>SSH_SERVER</code> から <code>pam_limits</code> / <code>limits.conf</code> を render（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="ssh-ssh_serverpolicies">SSH サーバ全体設定（SSH_SERVER.POLICIES）<a class="headerlink" href="#ssh-ssh_serverpolicies" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

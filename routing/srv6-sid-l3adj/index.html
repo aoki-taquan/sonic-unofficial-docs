@@ -11761,9 +11761,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>SRv6Orch</code> での L3Adj 取り扱い、<code>m_pendingSRv6MySIDEntries</code> キュー、<code>NeighOrch::hasNextHop()</code> 連携、Neighbor ADD/DEL 通知購読、<code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> の現行 sairedis 反映状況は実コードでの裏取り未済（参考 PR: sonic-swss#2902）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/srv6orch.h</code> L189 で <code>createUpdateMysidEntry(my_sid_string, vrf, adj, end_action)</code> シグネチャを、L277 で <code>m_pendingSRv6MySIDEntries: map&lt;NextHopKey, set&lt;tuple&lt;...&gt;&gt;&gt;</code> を確認。<code>srv6orch.cpp</code> L1227-1259 で Neighbor 確定時の pending 解決、L1341/L1533/L1541 で未解決時の queue 投入、L1544 で <code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> を SAI に渡す経路を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="srv6-sid-l3-ua-endx-udx4-udx6-enddx4-enddx6">SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）<a class="headerlink" href="#srv6-sid-l3-ua-endx-udx4-udx6-enddx4-enddx6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

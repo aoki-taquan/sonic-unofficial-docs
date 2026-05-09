@@ -11827,9 +11827,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2024-06 改訂 v0.2。<code>bfdsyncd</code> プロセスが <code>bgp</code> コンテナで実際に起動するか、<code>FEATURE.bgp.bfd_hw_offload</code> フラグの supervisord テンプレート分岐が現行 master に取り込まれているかは未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>HLD で導入予定の <code>bfdsyncd</code> プロセスは現行 master の <code>sonic-buildimage/dockers/docker-fpm-frr/</code> に未取り込み（grep ヒット 0）。<code>FEATURE.bgp.bfd_hw_offload</code> フラグも supervisord テンプレートに見当たらない。<code>sonic-swss/orchagent/bfdorch.cpp</code> L420-466 では <code>SAI_BFD_SESSION_ATTR_LOCAL_DISCRIMINATOR</code> / <code>REMOTE_DISCRIMINATOR</code> / <code>MIN_TX</code> / <code>MIN_RX</code> / <code>MULTIPLIER</code> の <strong>設定 (set)</strong> は実装済みだが、HLD が要求する <code>SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX</code> / <code>REMOTE_MIN_RX</code> / <code>REMOTE_MULTIPLIER</code> の <strong>取得 (get) → STATE_DB 反映</strong> ロジックは未取り込み（grep ヒット 0）。本ページは HLD 仕様としての参考情報に留まる（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="bgp-bfd-bfdsyncd">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）<a class="headerlink" href="#bgp-bfd-bfdsyncd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

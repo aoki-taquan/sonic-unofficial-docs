@@ -11849,9 +11849,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 0.2, 2023-03）のみを根拠に書かれている。<code>aclorch</code> の STATE_DB 書き込み、<code>show acl table</code> / <code>show acl rule</code> の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/aclorch.cpp</code> L4201-4202 で <code>m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)</code> / <code>m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)</code> を確認、<code>sonic-swss-common/common/schema.h</code> L514-515 で <code>STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"</code> / <code>STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"</code> を確認。<code>sonic-utilities/show/acl.py</code> の <code>show acl table</code> / <code>show acl rule</code> が <code>acl-loader show table/rule</code> を呼び、<code>sonic-utilities/acl_loader/main.py</code> L76-80/L324-340 で STATE_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> ステータスを参照することを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="show-acl-state_dbacl_table_table-acl_rule_table-status">show acl 強化（<code>STATE_DB.ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> の status）<a class="headerlink" href="#show-acl-state_dbacl_table_table-acl_rule_table-status" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -11995,9 +11995,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。HLD は改訂日付が記載されておらず実装からの差分は要裏取り。<code>hostcfgd</code> の AAA module、<code>pam_tacplus</code> の <code>source_ip</code> パッチ、<code>nss_tacplus</code> の <code>tacplus_nss.conf</code> 生成ロジックは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-host-services/scripts/hostcfgd</code> L354 <code>class AaaCfg</code>、L2185 で <code>self.aaacfg = AaaCfg(self.config_db)</code>、L2224-2225 で <code>init_data['TACPLUS']</code> / <code>init_data['TACPLUS_SERVER']</code> 初期化、L748-752 で <code>/etc/pam.d/sshd</code> と <code>/etc/pam.d/login</code> を <code>common-auth</code> ↔ <code>common-auth-sonic</code> で切替、L28-35 で <code>PAM_AUTH_CONF_TEMPLATE = "common-auth-sonic.j2"</code> / <code>NSS_TACPLUS_CONF_TEMPLATE = "tacplus_nss.conf.j2"</code> を確認。<code>pam_tacplus</code> の <code>source_ip</code> パッチは <code>sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch</code> で当たっている。CLI は <code>sonic-utilities/config/aaa.py</code> L200-318 に <code>config tacacs</code> / <code>add</code> / <code>delete</code> 全部取り込み済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="tacacs-pam_tacplus-nss_tacplus-aaa-tacplus">TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）<a class="headerlink" href="#tacacs-pam_tacplus-nss_tacplus-aaa-tacplus" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

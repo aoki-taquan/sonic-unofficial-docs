@@ -11927,9 +11927,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（v0.1 / 2024-08）のみを根拠に書かれている。<code>VnetOrch</code> の primary/secondary 切替実装、<code>VNET_MONITOR_TABLE</code> の APPL_DB / STATE_DB 取り込み、<code>pinned_state</code> 等の追加フィールドが現行 master にあるかは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/vnetorch.cpp</code> L445/L477-479 で <code>overlay_dmac</code> MAC 属性、L1029-1067 で <code>nexthops_primary</code> / <code>nexthops_secondary</code> / <code>tx_monitor_timer</code> / <code>rx_monitor_timer</code> / <code>monitor_addr_to_pinned_state</code> を伴う ECMP セットアップ、L1013-1015 で <code>PINNED_STATE_UP</code> / <code>PINNED_STATE_DOWN</code> による BFD 状態オーバーライドを確認。<code>sonic-swss-common/common/schema.h</code> L133/L500 で <code>APP_VNET_MONITOR_TABLE_NAME</code> / <code>STATE_VNET_MONITOR_TABLE_NAME = "VNET_MONITOR_TABLE"</code> を確認。<code>vnetorch.cpp</code> L747 の <code>monitor_session_producer_(APP_VNET_MONITOR_TABLE_NAME)</code> も登録済み。<code>overlay_dmac</code> は <code>sonic-yang-models/yang-models/sonic-vnet.yang</code> に取り込み済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="overlay-ecmp-primarysecondarybfd">Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張<a class="headerlink" href="#overlay-ecmp-primarysecondarybfd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

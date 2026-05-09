@@ -11827,9 +11827,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>portmgrd</code> の TC 投入ロジック、<code>db_migrator.py</code> の <code>dhcp_rate_limit</code> 既定値挿入、ドロップ監視デーモンの実装、CoPP デフォルト値削除との整合は未裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p><code>dhcp_rate_limit</code> の <strong>データ層</strong> （<code>sonic-yang-models/yang-models/sonic-port.yang</code> L106、<code>sonic-utilities/scripts/db_migrator.py</code> L514-524 で既存ポートに既定値 300 を挿入、<code>sonic-utilities/config/main.py</code> L5948-6002 と <code>utilities_common/cli.py</code> L846 の CLI）は取り込み済み。一方、HLD が要求する <strong>portmgrd / portmgr の <code>tc qdisc</code> / <code>tc filter</code> 投入ロジック</strong> は <code>sonic-swss/cfgmgr/</code> で未取り込み（grep ヒット 0）。<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> には依然 <code>dhcp_relay: trap_ids="dhcp,dhcpv6"</code> が <code>queue4_group3</code> に残っており、HLD が前提とする「CoPP のシステム全体 DHCP 制限削除」は実施されていない。本ページは仕様参考扱い（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dhcp-dos-dhcp-linux-tc">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）<a class="headerlink" href="#dhcp-dos-dhcp-linux-tc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

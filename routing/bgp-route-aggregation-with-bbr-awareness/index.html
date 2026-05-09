@@ -11783,9 +11783,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>bgpcfgd</code> の <code>BGP_AGGREGATE_ADDRESS</code> / <code>BGP_BBR</code> 購読、State-DB 反映、CLI 取り込みは要裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py</code> L23 <code>AggregateAddressMgr</code> が L41 で <code>BGP_BBR</code> を、L43 で STATE_DB <code>BGP_AGGREGATE_ADDRESS</code> を扱い、L73-81 で BBR 状態に応じた集約広告制御を実装。<code>main.py</code> L106 で <code>AggregateAddressMgr</code> が登録済み。CLI は <code>sonic-utilities/config/bgp_cli.py</code> / <code>show/bgp_cli.py</code> に取り込まれており、YANG は <code>sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang</code> に存在（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="bbr-bgp-bgp_aggregate_address">BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）<a class="headerlink" href="#bbr-bgp-bgp_aggregate_address" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
