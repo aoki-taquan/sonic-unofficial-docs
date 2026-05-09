@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/brief-introduction-of-iccp-code/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic/">
       
       
-        <link rel="prev" href="../add-support-for-vlan-interface-using-openconfig-yang/">
+        <link rel="prev" href="../dip-sip-ptf-validation-high-level-design/">
       
       
-        <link rel="next" href="../control-sonic-behaviors-with-system-defaults-table/">
+        <link rel="next" href="../port-illegal-packets-drop-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） - SONiC 非公式ドキュメント</title>
+        <title>Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#iccpd-mc-lag-mlacp-fsm" class="md-skip">
+        <a href="#error-handling-frameworkerror_db-sai-app" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+              Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -291,13 +293,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -606,20 +608,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -637,13 +642,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -663,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -691,7 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
+      <a href="../alpine-high-level-design/" class="md-nav__link">
         
   
   
@@ -719,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -747,7 +752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -775,7 +780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -803,7 +808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
+      <a href="../debug-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -831,7 +836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
+      <a href="../dhcpv6-relay-agent/" class="md-nav__link">
         
   
   
@@ -859,7 +864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -884,10 +889,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/error-handling-framework-in-sonic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -903,6 +935,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネントとデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対象 table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error code の抽象化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERROR_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application 側 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warm-boot-scalability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot / scalability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -915,7 +1116,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -943,7 +1144,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -971,7 +1172,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -999,7 +1200,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -1027,7 +1228,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
+      <a href="../sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -1055,7 +1256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -1083,7 +1284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1111,7 +1312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1139,7 +1340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1167,7 +1368,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1195,7 +1396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
+      <a href="../sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1223,7 +1424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1251,7 +1452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1279,7 +1480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1307,7 +1508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1335,7 +1536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1363,7 +1564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -2639,8 +2840,6 @@
       
   
   
-    
-  
   
   
     
@@ -2690,23 +2889,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../switching/" class="md-nav__link ">
               
   
   
@@ -2724,13 +2920,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2750,7 +2946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../add-support-for-vlan-interface-using-openconfig-yang/" class="md-nav__link">
+      <a href="../../switching/add-support-for-vlan-interface-using-openconfig-yang/" class="md-nav__link">
         
   
   
@@ -2775,37 +2971,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -2821,247 +2990,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態機械
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ロード経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / 表示経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MC-LAG リンクイベント処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ピア整合性検査（iccp_consistency_check.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3074,7 +3002,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -3102,7 +3030,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -3130,7 +3058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lag-on-distributed-voq-system/" class="md-nav__link">
+      <a href="../../switching/lag-on-distributed-voq-system/" class="md-nav__link">
         
   
   
@@ -3158,7 +3086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../layer-2-forwarding-enhancements/" class="md-nav__link">
+      <a href="../../switching/layer-2-forwarding-enhancements/" class="md-nav__link">
         
   
   
@@ -3186,7 +3114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../link-event-damping-hld/" class="md-nav__link">
+      <a href="../../switching/link-event-damping-hld/" class="md-nav__link">
         
   
   
@@ -3214,7 +3142,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../macsec-sonic-high-level-design-document/" class="md-nav__link">
+      <a href="../../switching/macsec-sonic-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -3242,7 +3170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-spanning-tree-protocol/" class="md-nav__link">
+      <a href="../../switching/multiple-spanning-tree-protocol/" class="md-nav__link">
         
   
   
@@ -3270,7 +3198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
+      <a href="../../switching/openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
         
   
   
@@ -3298,7 +3226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-basic-l2-mode-test-plan/" class="md-nav__link">
+      <a href="../../switching/sonic-basic-l2-mode-test-plan/" class="md-nav__link">
         
   
   
@@ -3326,7 +3254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -3354,7 +3282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
         
   
   
@@ -3382,7 +3310,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -3410,7 +3338,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -3438,7 +3366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../switch-port-modes-and-vlan-cli-enhancement/" class="md-nav__link">
+      <a href="../../switching/switch-port-modes-and-vlan-cli-enhancement/" class="md-nav__link">
         
   
   
@@ -3466,7 +3394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -3494,7 +3422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -12904,7 +12832,40 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構造
+        コンポーネントとデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対象 table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error code の抽象化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERROR_DB スキーマ
       
     </span>
   </a>
@@ -12915,7 +12876,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態機械
+        イベント遷移
       
     </span>
   </a>
@@ -12923,10 +12884,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#application-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定ロード経路
+        Application 側 API
       
     </span>
   </a>
@@ -12937,62 +12898,7 @@
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI / 表示経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MC-LAG リンクイベント処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ピア整合性検査（iccp_consistency_check.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
+        CLI
       
     </span>
   </a>
@@ -13005,57 +12911,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#warm-boot-scalability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        Warm boot / scalability
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13066,7 +12933,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13077,18 +12944,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13115,7 +12971,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/brief-introduction-of-iccp-code.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/error-handling-framework-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13124,234 +12980,131 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（コードイントロドキュメント）のみを根拠に書かれている。各ファイルの関数名・状態遷移名は記載時点のもので、現行 master の <code>sonic-buildimage/dockers/docker-iccp/</code> 以下の実コードとは差異がある可能性がある。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は v0.1 (2019-05) で 6 年以上前。<strong>Initial Proposal のまま</strong>で現行 master に取り込まれているか不確か。priority=high で queue 登録。</p>
 </div>
-<h1 id="iccpd-mc-lag-mlacp-fsm">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）<a class="headerlink" href="#iccpd-mc-lag-mlacp-fsm" title="Permanent link">&para;</a></h1>
+<h1 id="error-handling-frameworkerror_db-sai-app">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）<a class="headerlink" href="#error-handling-frameworkerror_db-sai-app" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン <strong>ICCPd</strong>（ICCP daemon、<code>docker-iccp</code> コンテナ内）で実装されている。ICCPd は IETF <a href="https://www.rfc-editor.org/rfc/rfc7275">RFC 7275</a> の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは ICCPd ソースコードのファイル別役割を、HLD のコード解説ドキュメントから再構成した <strong>読み手のためのコードマップ</strong> である。実装を追う際の入口に使う。</p>
+<p>従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを廃し、<strong>ERROR_DB 経由で app（特に BGP）に失敗を通知する</strong> 汎用フレームワークが提案された。BGP は <code>ROUTE_TABLE</code> 失敗を受け取り、announce 済み route を withdraw する等のリカバリを app 側で実施できる。framework 自体は <strong>報告のみ</strong>で retry/rollback は行わない。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph 入口
-      MAIN[iccp_main.c\nmain()]
-      SCHED[scheduler.c\nscheduler_loop()]
-    end
-    subgraph 設定/CLI
-      CONF[iccp_cmd.c\n/etc/iccpd/iccpd.conf 読み込み]
-      CLI[iccp_cli.c\nパラメータ設定]
-      SHOW[iccp_cmd_show.c\nmclagdctl 表示応答]
-    end
-    subgraph 状態機械
-      ICCP_CSM[iccp_csm.c\nICCP CSM (RFC7275 4.2.1)]
-      APP_CSM[app_csm.c\nApp State Machine]
-      MLACP[mlacp_fsm.c\nMLACP FSM]
-    end
-    subgraph 同期
-      PREP[mlacp_sync_prepare.c\n送信ペイロード組立]
-      UPD[mlacp_sync_update.c\n受信処理]
-    end
-    subgraph 反映
-      LINK[mlacp_link_handler.c\nlink up/down/iso]
-      NET[iccp_netlink.c\nnetlink 経由カーネル操作]
-      PORT[port.c\nlocal/peer port 事象]
-      IFM[iccp_ifm.c\nIF / ARP 取得]
-      CHECK[iccp_consistency_check.c\nピア整合性検査]
-    end
-    MAIN --&gt; SCHED
-    CONF --&gt; MAIN
-    CLI --&gt; CONF
-    SCHED --&gt; ICCP_CSM
-    ICCP_CSM --&gt; APP_CSM
-    APP_CSM --&gt; MLACP
-    MLACP --&gt; PREP
-    MLACP --&gt; UPD
-    MLACP --&gt; LINK
-    LINK --&gt; NET
-    LINK --&gt; PORT
-    IFM --&gt; NET
-    SHOW -.-&gt; APP_CSM
-    CHECK -.-&gt; ICCP_CSM</code></pre>
-<h3 id="_4">状態機械<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ICCPd は <strong>3 階層の状態機械</strong> で構成される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>階層</th>
-<th>ファイル</th>
-<th>状態数</th>
-<th>概要</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ICCP Connection SM</td>
-<td><code>iccp_csm.c</code></td>
-<td>6 状態（RFC 7275 §4.2.1）</td>
-<td>TCP コネクションと ICCP セッションのライフサイクル</td>
-</tr>
-<tr>
-<td>Application SM</td>
-<td><code>app_csm.c</code></td>
-<td>OPERATIONAL に追随</td>
-<td>ICCP CSM が OPERATIONAL になると即 OPERATIONAL<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>MLACP FSM</td>
-<td><code>mlacp_fsm.c</code></td>
-<td>4 状態</td>
-<td>MC-LAG 同期のメイン</td>
-</tr>
-</tbody>
-</table>
-<p>MLACP FSM の 4 状態:</p>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; INIT
-    INIT --&gt; STAGE1: peer connection 確立
-    STAGE1 --&gt; STAGE2: ARP/MAC 同期完了\n(active が要求)
-    STAGE2 --&gt; EXCHANGE: 同期完了
-    EXCHANGE --&gt; EXCHANGE: 通常運用
-    EXCHANGE --&gt; INIT: peer 切断</code></pre>
-<ul>
-<li><strong>INIT</strong>: ピア未接続</li>
-<li><strong>STAGE1</strong>: ピア接続確立直後。最初に ARP / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期</li>
-<li><strong>STAGE2</strong>: active 側が standby へ sync request を投げ、standby が応答すると active へ全同期</li>
-<li><strong>EXCHANGE</strong>: 定常状態。<code>mlacp_exchange_handler()</code> が動く</li>
-</ul>
-<h3 id="_5">設定ロード経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_3">コンポーネントとデータフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CFG[(CONFIG_DB)] --&gt; CFGGEN[sonic-cfggen -d -t iccpd.j2]
-    CFGGEN --&gt; ICCPCONF[/etc/iccpd/iccpd.conf]
-    ICCPCONF --&gt; CMD[iccp_cmd.c]
-    CMD --&gt; SYS[ICCPd 内部構造]
-    CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --&gt; SYS</code></pre>
-<p>ICCPd 起動時、CONFIG_DB から <code>iccpd.j2</code> テンプレートを通じて <code>/etc/iccpd/iccpd.conf</code> を生成し、<code>iccp_cmd.c</code> がそれを読む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>system-id</code> は <code>localhost.mac</code>（DEVICE_METADATA 配下）を使う <strong>グローバル設定</strong> であり、CLI で変えるものではない。</p>
-<h3 id="cli">CLI / 表示経路<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mclagdctl -i &lt;MC-LAG-id&gt; dump arp
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   │
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   ▼ TCP 接続
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
+    APP[App&lt;br/&gt;例: bgpcfgd / fpmsyncd] -- register ErrorListener --&gt; EL[Error Listener]
+    SYNCD[syncd] -- ASIC_DB notif channel --&gt; OA[OrchAgent&lt;br/&gt;Error Reporter]
+    OA --&gt; EDB[(ERROR_DB)]
+    EDB -- pub/sub --&gt; EL
+    EL -- callback --&gt; APP
+    CLI[show / clear error-database] --&gt; EDB</code></pre>
+<ul>
+<li><code>OrchAgent</code> が <strong>唯一の ERROR_DB producer</strong>。SAI 失敗を受け、SAI 型 → ERROR_DB 型へ翻訳して書き込み + publish<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>app は <code>ErrorListener</code> で table 名 / opcode (CREATE/DELETE/UPDATE) / 通知種別 (failure / success / both) を指定して register</li>
+<li>single notification channel で順序保証</li>
+</ul>
+<h3 id="table">対象 table<a class="headerlink" href="#table" title="Permanent link">&para;</a></h3>
+<p>初版で対応するのは <code>ROUTE_TABLE</code> と <code>NEIGH_TABLE</code>（BGP ユースケース駆動）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。他 table は後付け拡張可能。</p>
+<h3 id="error-code">Error code の抽象化<a class="headerlink" href="#error-code" title="Permanent link">&para;</a></h3>
+<p>app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで <strong>SWSS error code を定義し SAI error code にマップ</strong> する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>SWSS code</th>
+<th>SAI status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SWSS_RC_SUCCESS</code></td>
+<td><code>SAI_STATUS_SUCCESS</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_INVALID_PARAM</code></td>
+<td><code>SAI_STATUS_INVALID_PARAMETER</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_UNAVAIL</code></td>
+<td><code>SAI_STATUS_NOT_SUPPORTED</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_NOT_FOUND</code></td>
+<td><code>SAI_STATUS_ITEM_NOT_FOUND</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_NO_MEMORY</code></td>
+<td><code>SAI_STATUS_NO_MEMORY</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_EXISTS</code></td>
+<td><code>SAI_STATUS_ITEM_ALREADY_EXISTS</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_FULL</code></td>
+<td><code>SAI_STATUS_TABLE_FULL</code></td>
+</tr>
+<tr>
+<td><code>SWSS_RC_IN_USE</code></td>
+<td><code>SAI_STATUS_OBJECT_IN_USE</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="error_db">ERROR_DB スキーマ<a class="headerlink" href="#error_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ERROR_ROUTE_TABLE|&lt;prefix&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  operation = CREATE | SET | DELETE
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  nexthop   = &lt;ip&gt;[, &lt;ip&gt;...]
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  intf      = &lt;ifindex csv&gt;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  rc        = &lt;SWSS_RC_*&gt;
 </span></code></pre></div>
-<p><code>mclagdctl</code> プロセスが ICCPd へ TCP で接続し、コマンドを送って結果を受け取る。表示系の応答は <code>iccp_cmd_show.c</code> がまとめて担当<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="mc-lag">MC-LAG リンクイベント処理<a class="headerlink" href="#mc-lag" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_link_handler.c</code> がリンク状態変化時の主要動作を担う。代表的な分岐は次のとおり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ERROR_NEIGH_TABLE|(INTF_TABLE|VLAN_INTF_TABLE|LAG_INTF_TABLE).name|&lt;prefix&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  operation = CREATE | SET | DELETE
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  neigh     = &lt;mac&gt;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  family    = IPv4 | IPv6
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  rc        = &lt;SWSS_RC_*&gt;
+</span></code></pre></div>
+<h3 id="_4">イベント遷移<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>イベント</th>
-<th>動作</th>
+<th>直前</th>
+<th>今回</th>
+<th>framework 動作</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>MC-LAG link add</td>
-<td>peer-link との <strong>isolation を必ず付ける</strong>（自リンクと peer-link で二重経路にならないように）</td>
+<td>Create failure</td>
+<td>Update failure</td>
+<td>エントリ更新 + 通知</td>
 </tr>
 <tr>
-<td>MC-LAG link delete</td>
-<td>peer-link からの isolation を解除</td>
+<td>Create failure</td>
+<td>Delete failure</td>
+<td>エントリ削除 + 通知</td>
 </tr>
 <tr>
-<td>自 MC-LAG link up</td>
-<td>ピア側で同名 portchannel が up なら自リンクを peer-link から isolate（down なら isolation 解除）。同名ポート学習 MAC を ASIC へ、同名 IF 学習 ARP を Linux kernel へ追加</td>
+<td>Create failure</td>
+<td>Update success</td>
+<td>エントリ削除 + 通知</td>
 </tr>
 <tr>
-<td>自 MC-LAG link down</td>
-<td>peer-link と peer 側同名 LAG が共に up なら、同名ポート学習 MAC を peer-link 経由にリダイレクト。同名 IF 学習 ARP を kernel から削除</td>
+<td>Create success</td>
+<td>Delete failure</td>
+<td>エントリ追加 + 通知</td>
 </tr>
 <tr>
-<td>Peer link up</td>
-<td>peer-link を経路とする MAC エントリを ASIC に登録</td>
-</tr>
-<tr>
-<td>Peer link down</td>
-<td>同 MAC エントリを ASIC から削除</td>
+<td>Delete failure</td>
+<td>Create success</td>
+<td>エントリ削除 + 通知</td>
 </tr>
 </tbody>
 </table>
-<p>「peer-link を経由する MAC を ASIC で操作する」のが peer-link のキーアクションである。</p>
-<h3 id="iccp_consistency_checkc">ピア整合性検査（<code>iccp_consistency_check.c</code>）<a class="headerlink" href="#iccp_consistency_checkc" title="Permanent link">&para;</a></h3>
-<p>接続受理時に <code>scheduler_server_accept()</code> 経路で次を検査する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ピアの local-IP / peer-IP がローカル設定と一致するか（不一致なら接続拒否）</li>
-<li>MC-LAG portchannel のモード（L2 / L3）が両ピアで揃っているか</li>
-<li>L3 構成なら IP アドレスが一致するか</li>
-<li>VLAN メンバなら同じ VLAN に属しているか</li>
-</ul>
-<h3 id="mlacp">MLACP 同期コンテンツ<a class="headerlink" href="#mlacp" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_sync_prepare.c</code>（送信側）/ <code>mlacp_sync_update.c</code>（受信側）が以下を交換する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>System ID</td>
-<td>standby 側を active の system ID に揃える</td>
-</tr>
-<tr>
-<td>MC-LAG portchannel state</td>
-<td>port isolation / MAC redirect 判定</td>
-</tr>
-<tr>
-<td>portchannel 名と MAC</td>
-<td>peer interface 作成に使用</td>
-</tr>
-<tr>
-<td>MAC エントリ</td>
-<td>MC-LAG / orphan を問わず全 MAC を同期</td>
-</tr>
-<tr>
-<td>ARP エントリ</td>
-<td>MC-LAG IF または MC-LAG メンバ VLAN IF 由来のみ同期</td>
-</tr>
-<tr>
-<td>portchannel 設定</td>
-<td>mode / IPv4 / 参加 VLAN（整合性検査用）</td>
-</tr>
-<tr>
-<td>peer-link 情報</td>
-<td>種別（VLAN / VXLAN）と VXLAN 名</td>
-</tr>
-<tr>
-<td>Warm reboot 情報</td>
-<td>local 側の warm-reboot 開始通知</td>
-</tr>
-</tbody>
-</table>
-<h3 id="warm-reboot">Warm reboot 経路<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<p><code>iccp_main.c</code> の <code>iccpd_signal_init()</code> / <code>iccpd_signal_handler()</code> が <code>SIGUSR1</code> を warm-reboot トリガとして扱う<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant SUP as supervisor
-    participant ICCP as iccpd
-    participant PEER as peer iccpd
-    SUP-&gt;&gt;ICCP: SIGUSR1
-    ICCP-&gt;&gt;PEER: warm-reboot 通知メッセージ
-    ICCP-&gt;&gt;ICCP: system_finalize() でクリーンアップ</code></pre>
-<h3 id="netlink-arp-iccp_ifmc-iccp_netlinkc">netlink / ARP の扱い（<code>iccp_ifm.c</code> / <code>iccp_netlink.c</code>）<a class="headerlink" href="#netlink-arp-iccp_ifmc-iccp_netlinkc" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ICCPd は <strong>MC-LAG enabled IF または MC-LAG メンバが入っている VLAN IF 由来の ARP のみ</strong> を保持する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ポートチャネルメンバの取得、リンク MAC の付け替え（standby 側の IP/MAC を active と整合させる <code>update_if_ipmac_on_standby()</code> / <code>recover_if_ipmac_on_standby()</code>）、リンク作成・削除イベント処理を netlink 経由で実装</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  There are four states in MCLAG finite state machine:
-  - MLACP_STATE_INIT: Peer connection is not established.
-  - MLACP_STATE_STAGE1: ... first sync up ARP and MAC info with peer ...
-  - MLACP_STATE_STAGE2: ...
-  - MLACP_STATE_EXCHANGE: This is the steady state. Function mlacp_exchange_handler() handle some events in this switch.
-reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
--->
-
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MC_LAG_DOMAIN</code>, <code>MC_LAG_INTERFACE</code> 等）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<p>正常完了系は <strong>デフォルトでは ERROR_DB に書かない</strong>（メモリ節約）が、register 時 <code>ERR_NOTIFY_POSITIVE_ACK</code> を指定すれば通知だけ受け取れる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="application-api">Application 側 API<a class="headerlink" href="#application-api" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ErrorListener</span><span class="w"> </span><span class="nf">fpmErrorListener</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="p">(</span><span class="n">ERR_NOTIFY_FAIL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ERR_NOTIFY_POSITIVE_ACK</span><span class="p">));</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">Select</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">s</span><span class="p">.</span><span class="n">addSelectable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fpmErrorListener</span><span class="p">);</span>
+</span></code></pre></div>
+<p>複数 table 監視は ErrorListener を複数 instance 作る。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -13361,44 +13114,61 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 </thead>
 <tbody>
 <tr>
-<td><code>mclagdctl -i &lt;id&gt; dump arp</code> 等</td>
-<td>ICCPd 内部の ARP / MAC / state を表示（ICCPd へ TCP 接続して取得）</td>
+<td><code>show error-database [TableName]</code></td>
+<td>現在の失敗エントリ表示</td>
+</tr>
+<tr>
+<td><code>sonic-clear error-database [TableName]</code></td>
+<td>エントリ全削除（OrchAgent は同期削除のみ実施し app 通知はしない）</td>
 </tr>
 </tbody>
 </table>
-<p><code>config mclag ...</code> 等のユーザ向け CLI は本ドキュメントの守備範囲外（MC-LAG HLD 側）。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>本ドキュメントでは YANG モジュールに言及していない。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Router# show error-database route
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Route             Nexthop                Operation  Failure
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>2.2.2.0/24        10.10.10.2             Create     TABLE FULL
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>192.168.10.12/24  12.12.10.2,11.11.11.2  Update     PARAM
+</span></code></pre></div>
+<!-- evidence:
+source: sonic-net/SONiC/doc/error-handling/error_handling_design_spec.md#L121-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  A new database, ERROR_DB, is introduced to store the details of failed entries/objects ...
+  OrchAgent is registered as producer of ERROR_DB table. If the SAI CREATE/SET method fails,
+  Syncd informs OrchAgent using the notification channel of ASIC_DB.
+reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
+-->
+
+<h2 id="warm-boot-scalability">Warm boot / scalability<a class="headerlink" href="#warm-boot-scalability" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本ドキュメントは ICCPd の <strong>コード概略を解説</strong> したもので、CLI / CONFIG_DB / 運用手順を完全に網羅するものではない</li>
-<li>関数名・ファイル名は HLD 記載時点のもの。リファクタやリネームが入っている可能性</li>
+<li>ERROR_DB は <strong>warm boot 越しに永続化されない</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>scalability への直接影響は無いと記述</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>peer-link</strong>: peer-link の up/down が ASIC 側 MAC エントリのテーブル化に直接影響する</li>
-<li><strong>VXLAN tunnel</strong>: peer-link が VXLAN tunnel の場合、両ピアで同じ VXLAN tunnel 名が必要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Warm reboot</strong>: <code>SIGUSR1</code> で <code>system_finalize()</code> が走り、peer に warm-reboot 状態を通知</li>
+<li>初版は <code>ROUTE_TABLE</code> / <code>NEIGH_TABLE</code> のみ</li>
+<li>GET 失敗は対象外</li>
+<li>retry / rollback は app の責務</li>
+<li>v0.1 (2019-05) のまま改訂が無く、現行 master への取り込み未確認</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ICCP セッションが上がらない場合、まず <code>iccp_consistency_check.c</code> 的な観点（local/peer IP 設定、MC-LAG IF mode 一致、L3 IP 一致、VLAN 一致）を確認</li>
-<li>MLACP FSM が STAGE1/STAGE2 で止まる場合、ARP/MAC 同期メッセージの欠落・サイズ過大を疑う</li>
-<li>standby 側の system-id が active と異なる場合、MLACP の system-id 同期段が完了していない可能性</li>
+<li><strong>OrchAgent (RouteOrch / NeighOrch)</strong>: ERROR_DB の producer</li>
+<li><strong>fpmsyncd / bgpcfgd</strong>: route 失敗の receiver 候補</li>
+<li><strong>debug-framework</strong>: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- 各ファイル名・関数名が現行 master の sonic-buildimage/src/iccpd 配下と一致するか
-- iccpd.j2 テンプレートと CONFIG_DB スキーマの最新形
-- mclagdctl CLI の sonic-utilities 取り込み状況
-- Warm-reboot シグナル経路 (SIGUSR1) の現行実装
+- ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE が現行 swss-common で定義されているか確認",
+- SWSS_RC_* error code 体系の libswsscommon 取り込み確認",
+- ErrorListener / Error Reporter クラスの sonic-swss 取り込み確認",
+- show error-database / sonic-clear error-database CLI の sonic-utilities 取り込み確認",
+- 2019-05 v0.1 Initial で 6 年以上経過、master への取り込み・採否未確認"
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mclag/iccpd-code-introduction.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/error-handling/error_handling_design_spec.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
