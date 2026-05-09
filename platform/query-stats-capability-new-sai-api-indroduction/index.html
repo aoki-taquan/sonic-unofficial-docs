@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-active-dual-tor/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/query-stats-capability-new-sai-api-indroduction/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../platform-capability-file-enhancement/">
       
       
-        <link rel="next" href="../active-standby-dual-tor/">
+        <link rel="next" href="../recirculation-port-support-on-voq-chassis/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） - SONiC 非公式ドキュメント</title>
+        <title>sai_query_stats_capability による Counter Capability 一括取得 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" class="md-skip">
+        <a href="#sai_query_stats_capability-counter-capability" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+              sai_query_stats_capability による Counter Capability 一括取得
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1963,8 +1963,6 @@
       
   
   
-    
-  
   
   
     
@@ -1994,23 +1992,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -2028,13 +2023,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2051,37 +2046,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
         
   
   
@@ -2097,336 +2065,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クラスタトポロジ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        サーバ NIC 側要件
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-app_db-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / APP_DB / STATE_DB 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkmgrd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkmgrd の役割
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="linkmgrd の役割">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#link-prober-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Link Prober の 4 状態
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#admin-operational-forwarding-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        admin / operational forwarding state
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active-active 状態決定
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        default route 監視
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態決定表
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orchagent 側
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Orchagent 側">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPinIP tunnel + MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefix-based neighbor architecture
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transceiver-daemon-grpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transceiver Daemon と gRPC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#grpc-traffic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gRPC traffic の特殊扱い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bgp-update-delay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BGP update delay
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ingress-drop-acl-skip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ingress drop ACL の skip
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2439,7 +2077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-standby-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
         
   
   
@@ -2467,7 +2105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-sonic-kvm/" class="md-nav__link">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -2495,7 +2133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -2523,7 +2161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -2551,7 +2189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -2579,7 +2217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -2607,7 +2245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -4361,6 +3999,8 @@
       
   
   
+    
+  
   
   
     
@@ -4406,20 +4046,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4437,13 +4080,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4463,7 +4106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -4491,7 +4134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -4519,7 +4162,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -4547,7 +4190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -4575,7 +4218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -4603,7 +4246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -4631,7 +4274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -4659,7 +4302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -4687,7 +4330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -4715,7 +4358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -4740,10 +4383,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sai_query_stats_capability による Counter Capability 一括取得
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4759,6 +4429,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新実装（2 段呼び出し）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ヘッダ定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        改修対象関数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-cli-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB / CLI / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4771,7 +4616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -4799,7 +4644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -4827,7 +4672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -4855,7 +4700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -4883,7 +4728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -5603,7 +5448,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        クラスタトポロジ
+        既存実装
       
     </span>
   </a>
@@ -5611,10 +5456,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#nic" class="md-nav__link">
+  <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サーバ NIC 側要件
+        新実装（2 段呼び出し）
       
     </span>
   </a>
@@ -5622,66 +5467,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db-app_db-state_db" class="md-nav__link">
+  <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / APP_DB / STATE_DB 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkmgrd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkmgrd の役割
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="linkmgrd の役割">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#link-prober-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Link Prober の 4 状態
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#admin-operational-forwarding-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        admin / operational forwarding state
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active-active 状態決定
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        default route 監視
+        SAI ヘッダ定義
       
     </span>
   </a>
@@ -5692,95 +5481,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態決定表
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orchagent 側
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Orchagent 側">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPinIP tunnel + MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefix-based neighbor architecture
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transceiver-daemon-grpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transceiver Daemon と gRPC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#grpc-traffic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gRPC traffic の特殊扱い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bgp-update-delay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BGP update delay
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ingress-drop-acl-skip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ingress drop ACL の skip
+        改修対象関数
       
     </span>
   </a>
@@ -5805,10 +5506,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-cli-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / CLI / YANG
       
     </span>
   </a>
@@ -5816,21 +5517,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#sai_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        関連する SAI 属性
       
     </span>
   </a>
@@ -5843,7 +5533,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5854,7 +5544,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5865,7 +5555,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5876,7 +5566,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5903,7 +5593,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/active-active-dual-tor.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/query-stats-capability-new-sai-api-indroduction.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5912,404 +5602,129 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>linkmgrd</code> の active-active 用 state machine、<code>MuxOrch</code> の prefix-based neighbor 実装（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> + 別 prefix route）、<code>HW_FORWARDING_STATE_PEER</code> などの新規 APP_DB / STATE_DB テーブル、<code>config mux mode detach</code> の <code>xcvrd</code> への取り込みは実コードでの裏取り未済。warm reboot 対応は HLD では TBD。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / upstream 由来</p>
+<p>HLD は SAI に追加された <code>sai_query_stats_capability</code> API を SONiC 側 <code>FlexCounter</code> で使う改修の説明。SAI 上流での API 取り込み状況、<code>sonic-sairedis</code> の <code>FlexCounter.cpp</code> 改修取り込み状況は要裏取り。</p>
 </div>
-<h1 id="active-active-dual-torgrpc-cable-control-prefix-based-neighbor">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）<a class="headerlink" href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" title="Permanent link">&para;</a></h1>
+<h1 id="sai_query_stats_capability-counter-capability">sai_query_stats_capability による Counter Capability 一括取得<a class="headerlink" href="#sai_query_stats_capability-counter-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>active-active dual ToR は <strong>active-standby dual ToR の進化形</strong> であり、<strong>両 ToR が常時トラフィックを処理する</strong> 設計である。サーバ NIC は 2 本の 100Gbps DAC を介して上下 2 つの ToR (UT0 / LT0) と接続し、ToR は同じ VLAN IP / MAC を提示する。NIC は 5-tuple 単位でフローを 2 リンクに分散し、ToR から <code>gRPC</code> 経由で「どのリンクを active にするか」の指示を受ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>active-standby との主な違い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>active-standby</th>
-<th>active-active</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>帯域</td>
-<td>1 リンク分</td>
-<td>2 リンク分</td>
-</tr>
-<tr>
-<td>Northbound</td>
-<td>両 ToR に複製</td>
-<td>NIC が分散</td>
-</tr>
-<tr>
-<td>cable control</td>
-<td>I2C (smart y-cable)</td>
-<td>gRPC over DAC (ToR ⇔ SoC NIC)</td>
-</tr>
-<tr>
-<td>MuxOrch ingress drop</td>
-<td>必要</td>
-<td>不要（NIC 側が制御）</td>
-</tr>
-<tr>
-<td>state machine</td>
-<td>y-cable 方向ベース</td>
-<td>リンク健全性ベース（独立判断）</td>
-</tr>
-</tbody>
-</table>
+<p>SONiC <code>syncd</code> の <code>FlexCounter</code> は、各オブジェクト（Port / Queue / Priority Group / RIF / Buffer Pool）について <strong>「どの統計 ID が SAI でサポートされているか」を <code>getStats()</code> を 1 ID ずつ叩いて確認</strong> していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は SAI に追加された <strong><code>sai_query_stats_capability()</code></strong> API を使って <strong>オブジェクトの全 counter capability を 1 コールで取得</strong> するように <code>FlexCounter</code> を改修する。fast-reboot のような時間制約のあるパスで特に効果が大きい<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">クラスタトポロジ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>graph TD
-    T1A[T1] &amp; T1B[T1] &amp; T1C[T1] &amp; T1D[T1]
-    UT0[ToR UT0] --&gt;|VLAN 同じ IP/MAC| T1A &amp; T1B &amp; T1C &amp; T1D
-    LT0[ToR LT0] --&gt;|VLAN 同じ IP/MAC| T1A &amp; T1B &amp; T1C &amp; T1D
-    UT0 ---|100G DAC| NIC[Server NIC&lt;br/&gt;200G に見える]
-    LT0 ---|100G DAC| NIC
-    NIC --- HOST[Server Host]</code></pre>
-<p>両 ToR が <strong>同じ VLAN IP / MAC</strong> を T1 に広告し、T1 から見ると 2 つの ECMP next hop が存在する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="nic">サーバ NIC 側要件<a class="headerlink" href="#nic" title="Permanent link">&para;</a></h3>
-<p>NIC は <strong>同一 IP / MAC を 2 リンクで受ける</strong> 前提で southbound を上位スタックに渡し、northbound は <strong>5-tuple ベースで 2 リンクへ分散</strong> する。一部のパケットは <strong>両リンクへ複製</strong> する必要がある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>パケット種別</th>
-<th>動作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ARP / IPv6 RS / NS / NA (133/135/136)</td>
-<td><strong>両ポート複製</strong></td>
-</tr>
-<tr>
-<td>ICMP / ICMPv6 heartbeat (Loopback2 宛)</td>
-<td><strong>両ポート複製</strong></td>
-</tr>
-<tr>
-<td>gRPC reply (Loopback3_Port0_IP / Port1_IP 宛)</td>
-<td><strong>対応ポートにのみ送信</strong>（Port が UP の場合）</td>
-</tr>
-<tr>
-<td>その他</td>
-<td>NIC が任意のリンクを選択</td>
-</tr>
-</tbody>
-</table>
-<p>各 ToR は <strong>個別の loopback IP</strong> を持ち、NIC はそれを基に gRPC 応答先を決定する。</p>
-<h3 id="config_db-app_db-state_db">CONFIG_DB / APP_DB / STATE_DB 拡張<a class="headerlink" href="#config_db-app_db-state_db" title="Permanent link">&para;</a></h3>
-<p>新規スキーマ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CONFIG_DB.MUX_CABLE</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>cable_type: active-standby \| active-active</code></td>
-<td>cable 種別</td>
-</tr>
-<tr>
-<td><code>APP_DB.FORWARDING_STATE_COMMAND</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>command: probe / set_active_self / set_standby_self / set_standby_peer</code></td>
-<td>linkmgrd → xcvrd への問い合わせ・設定要求</td>
-</tr>
-<tr>
-<td><code>APP_DB.FORWARDING_STATE_RESPONSE</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>response</code>, <code>response_peer ∈ {active, standby, unknown, error}</code></td>
-<td>xcvrd の応答</td>
-</tr>
-<tr>
-<td><code>APP_DB.PORT_TABLE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>oper_status: up/down</code></td>
-<td>xcvrd が peer link 状態を linkmgrd に通知</td>
-</tr>
-<tr>
-<td><code>APP_DB.HW_FORWARDING_STATE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>state: active/standby/unknown</code></td>
-<td>linkmgrd → xcvrd: peer の admin forwarding state 設定要求</td>
-</tr>
-<tr>
-<td><code>STATE_DB.HW_MUX_CABLE_TABLE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>state</code></td>
-<td>xcvrd が peer の admin forwarding state を linkmgrd に書き戻し</td>
-</tr>
-</tbody>
-</table>
-<h3 id="linkmgrd">linkmgrd の役割<a class="headerlink" href="#linkmgrd" title="Permanent link">&para;</a></h3>
-<p>linkmgrd は active-standby から <strong>link prober</strong> をそのまま流用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong>default 100ms</strong> で ICMP heartbeat を送出（src MAC = SVI MAC、payload TLV に ToR GUID を載せる）</li>
-<li><strong>3 連続損失</strong> で unhealthy と判定</li>
-<li>ICMP reply は NIC が両 ToR に複製するため <strong>peer の health も観測可能</strong></li>
-</ul>
-<h4 id="link-prober-4">Link Prober の 4 状態<a class="headerlink" href="#link-prober-4" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>状態</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>LinkProberUnknown</code></td>
-<td>初期 / ICMP reply 受信なし</td>
-</tr>
-<tr>
-<td><code>LinkProberActive</code></td>
-<td>self ToR ID 入りの reply を受信</td>
-</tr>
-<tr>
-<td><code>LinkProberPeerUnknown</code></td>
-<td>peer ToR ID 入りの reply 未受信（peer link 不調の可能性）</td>
-</tr>
-<tr>
-<td><code>LinkProberPeerActive</code></td>
-<td>peer ToR ID 入りの reply を受信</td>
-</tr>
-</tbody>
-</table>
-<h4 id="admin-operational-forwarding-state">admin / operational forwarding state<a class="headerlink" href="#admin-operational-forwarding-state" title="Permanent link">&para;</a></h4>
-<p>ToR は NIC に <strong>admin forwarding state</strong> (active/standby) を gRPC で通知する。NIC 側は別途 <strong>operational forwarding state</strong> を持ち、自身が link down を検知した場合は admin が <code>active</code> であってもそのリンクへの送信を停止する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これで「ToR 側の制御権」と「NIC の即時反応」を両立する。</p>
-<h4 id="active-active">active-active 状態決定<a class="headerlink" href="#active-active" title="Permanent link">&para;</a></h4>
-<p>active-standby のように y-cable 方向で同期せず、<strong>self / peer をそれぞれ独立に判定</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>self: link prober が active かつ link state が up → admin = active、それ以外 → standby</li>
-<li>peer rescue: 自身 active かつ peer の heartbeat reply が無い → peer を standby と判定</li>
-<li>gRPC unreachable: forwarding は止めず、定期的に gRPC server health を確認しつつ admin state を再同期</li>
-</ul>
-<h4 id="default-route">default route 監視<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h4>
-<p>T1 への default route が消えると northbound パケロスが起きるため、<strong>linkmgrd は default route 監視を行い、消失中は ICMP probing を停止し unhealthy を fake する</strong>（無効化可）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_4">状態決定表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th>Default Route</th>
-<th>Link State</th>
-<th>LP self</th>
-<th>LP peer</th>
-<th>Link Manager State</th>
-<th>gRPC self</th>
-<th>gRPC peer</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Available</td>
-<td>Up</td>
-<td>Active</td>
-<td>Active</td>
-<td>Active</td>
-<td>set active</td>
-<td>no-op</td>
-</tr>
-<tr>
-<td>Available</td>
-<td>Up</td>
-<td>Active</td>
-<td>Unknown</td>
-<td>Active</td>
-<td>set active</td>
-<td>set standby</td>
-</tr>
-<tr>
-<td>Available</td>
-<td>Up</td>
-<td>Unknown</td>
-<td>*</td>
-<td>Standby</td>
-<td>set standby</td>
-<td>no-op</td>
-</tr>
-<tr>
-<td>Available</td>
-<td>Down</td>
-<td>*</td>
-<td>*</td>
-<td>Standby</td>
-<td>set standby</td>
-<td>no-op</td>
-</tr>
-<tr>
-<td>Missing</td>
-<td>*</td>
-<td>*</td>
-<td>*</td>
-<td>Standby</td>
-<td>set standby</td>
-<td>no-op</td>
-</tr>
-</tbody>
-</table>
-<h3 id="orchagent">Orchagent 側<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
-<h4 id="ipinip-tunnel-muxorch">IPinIP tunnel + MuxOrch<a class="headerlink" href="#ipinip-tunnel-muxorch" title="Permanent link">&para;</a></h4>
-<p>orchagent 起動時に <strong>peer ToR への IPinIP tunnel</strong> を作る。<code>MuxOrch</code> は linkmgrd の状態変化を購読し、neighbor prefix route の next hop を <strong>直接 next hop ↔ tunnel next hop</strong> で切り替える<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>MuxCfgOrch</code>: <code>MUX_CABLE</code> を読み port ↔ server IP マップを <code>MuxOrch</code> に渡す</li>
-<li><code>TunnelOrch</code>: <code>MUX_TUNNEL</code> を購読し、tunnel object と termination / decap entry を作成（<code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を MuxOrch が next hop として参照）</li>
-<li><code>MuxOrch</code>: linkmgrd の state 変化に応じ neighbor prefix route の next hop を更新</li>
-</ul>
-<h4 id="prefix-based-neighbor-architecture">prefix-based neighbor architecture<a class="headerlink" href="#prefix-based-neighbor-architecture" title="Permanent link">&para;</a></h4>
-<p>従来は SAI neighbor + nexthop で <strong>暗黙的 host route (/32 or /128)</strong> が SDK に作られ、active/standby 切替で neighbor を <strong>add/remove</strong> していた。これを以下に変更する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>neighbor entry は <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true</code> で作る（<strong>暗黙 host route なし</strong>）</li>
-<li>別途 <code>server_ip/32</code> (または <code>/128</code>) <strong>prefix route</strong> を明示的に作る</li>
-<li>prefix route の next hop を直接 neighbor next hop ↔ tunnel next hop で <strong>更新するだけ</strong> にする</li>
-<li>neighbor entry 自体は <strong>永続化</strong> され、状態遷移で削除しない</li>
-</ul>
-<pre class="mermaid"><code>flowchart LR
-    subgraph Active
-      A1[incoming pkt] --&gt; A2[prefix route lookup&lt;br/&gt;server_ip/32]
-      A2 --&gt; A3[direct neighbor nexthop]
-      A3 --&gt; A4[Server]
-    end
-    subgraph Standby
-      S1[incoming pkt] --&gt; S2[prefix route lookup&lt;br/&gt;server_ip/32]
-      S2 --&gt; S3[tunnel nexthop]
-      S3 --&gt; S4[IPinIP encap → Peer ToR]
-      S4 --&gt; S5[Server]
-    end</code></pre>
-<p>利点<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>状態遷移で neighbor add/remove を行わないため <strong>stability + 性能</strong> 改善</li>
-<li>next hop 変更だけなので <strong>mux toggle latency が短い</strong></li>
-</ul>
-<h3 id="transceiver-daemon-grpc">Transceiver Daemon と gRPC<a class="headerlink" href="#transceiver-daemon-grpc" title="Permanent link">&para;</a></h3>
-<p>SoC NIC 側で gRPC server が動作。linkmgrd は xcvrd 経由で以下の RPC を発行する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>DualToRActive</code><ul>
-<li>port 単位で self / peer の forwarding state を query</li>
-<li>port 単位で self / peer のサーバ側 link state を query</li>
-<li>port 単位で self / peer の forwarding state を set</li>
-</ul>
-</li>
-<li><code>GracefulRestart</code>: SoC からの shutdown / restart 通知</li>
-</ul>
-<h3 id="grpc-traffic">gRPC traffic の特殊扱い<a class="headerlink" href="#grpc-traffic" title="Permanent link">&para;</a></h3>
-<p>両 ToR が standby になると gRPC traffic も tunnel 経由で投げられ blackhole する。これを防ぐため <code>MuxOrch</code> は <strong>neighbor が NIC IP の場合 Tunnelmgrd への通知を skip</strong> し、kernel route を tunnel 化させない。これで standby 中でも <strong>gRPC 制御プレーン traffic は local で送出</strong> され、NIC に到達できる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="bgp-update-delay">BGP update delay<a class="headerlink" href="#bgp-update-delay" title="Permanent link">&para;</a></h3>
-<p>active-active T0 は BGP セッション確立後、T1 に default route が広告される前に T1 から traffic が降りてくる時期がある。standby T0 は tunnel 経由で peer に投げるが、自身に default route が無ければ tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong> を導入し、T0 が T1 から default を学習する時間を確保する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ingress-drop-acl-skip">ingress drop ACL の skip<a class="headerlink" href="#ingress-drop-acl-skip" title="Permanent link">&para;</a></h3>
-<p>旧設計では standby 移行時に <code>MuxOrch</code> が <strong>ingress drop ACL</strong> を貼っていたが、NIC 側の admin state 切替が gRPC 経由で完了する前に upstream traffic が drop される間隙が問題だった。新設計では <strong>standby 切替時の ingress drop ACL を貼らない</strong> ことで、その間隙でも best effort で forwarding する<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MUX_CABLE</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>cable_type=active-active</code> で本機能を選択。<code>server_ipv4 / ipv6 / soc_ipv4</code> も保持</td>
-</tr>
-<tr>
-<td><code>MUX_TUNNEL</code></td>
-<td>(定義)</td>
-<td>TunnelOrch が IPinIP tunnel を作る根拠</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show mux status</code></td>
-<td>port / status / server_status / health / hwstatus / last_switchover_time</td>
-</tr>
-<tr>
-<td><code>show mux config</code></td>
-<td>peer ToR / cable_type / mux state / soc_ipv4</td>
-</tr>
-<tr>
-<td><code>show mux tunnel-route [--json] &lt;port&gt;</code></td>
-<td>server_ipv4 / server_ipv6 / soc_ipv4 の tunnel route が kernel / asic に存在するか</td>
-</tr>
-<tr>
-<td><code>config mux mode &lt;auto\|manual\|active\|standby\|detach&gt; &lt;port&gt;</code></td>
-<td>mux 動作モード設定</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 既定動作（auto: self / peer 双方の failover を有効化）</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>auto<span class="w"> </span>Ethernet4
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># メンテナンス時に self の failover のみ有効・peer 側を触らない</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>detach<span class="w"> </span>Ethernet4
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 強制 active 化（toggle 後 manual モードで固定）</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>active<span class="w"> </span>Ethernet4
+<h3 id="_3">既存実装<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_PORT_STAT_IF_IN_OCTETS</span><span class="p">;</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">SAI_PORT_STAT_IF_OUT_FABRIC_DATA_UNITS</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">sai_port_stat_t</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">sai_port_stat_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vendorSai</span><span class="o">-&gt;</span><span class="n">getStats</span><span class="p">(</span><span class="n">SAI_OBJECT_TYPE_PORT</span><span class="p">,</span><span class="w"> </span><span class="n">portRid</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                                                </span><span class="p">(</span><span class="n">sai_stat_id_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">counter</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">m_supportedPortCounters</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">counter</span><span class="p">);</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>show mux status</code> 例<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT        STATUS    SERVER_STATUS    HEALTH    HWSTATUS    LAST_SWITCHOVER_TIME
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:43
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet8   active    active           healthy   consistent  2023-Mar-27 07:59:33
+<p>各 ID について実際に値を取得しに行き、SUCCESS なら supported とみなす。失敗ログも 1 ID ずつ出る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="2">新実装（2 段呼び出し）<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p><code>sai_query_stats_capability</code> は標準的な「サイズ問い合わせ → 実取得」の 2 段パターンを取る<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">sai_stat_capability_list_t</span><span class="w"> </span><span class="n">stats_capability</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">};</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vendorSai</span><span class="o">-&gt;</span><span class="n">queryStatsCapability</span><span class="p">(</span><span class="n">portRid</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_OBJECT_TYPE_PORT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stats_capability</span><span class="p">);</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// status == BUFFER_OVERFLOW で count に必要要素数がセットされる</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_BUFFER_OVERFLOW</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_stat_capability_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">statCapabilityList</span><span class="p">(</span><span class="n">stats_capability</span><span class="p">.</span><span class="n">count</span><span class="p">);</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">stats_capability</span><span class="p">.</span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">statCapabilityList</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vendorSai</span><span class="o">-&gt;</span><span class="n">queryStatsCapability</span><span class="p">(</span><span class="n">portRid</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_OBJECT_TYPE_PORT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stats_capability</span><span class="p">);</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cap</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">statCapabilityList</span><span class="p">)</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">            </span><span class="n">m_supportedPortCounters</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">sai_port_stat_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">cap</span><span class="p">.</span><span class="n">stat_enum</span><span class="p">));</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>HEALTH</code> は以下を満たすと <code>healthy</code><sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>port status が up</li>
-<li>self link probe の reply 受信</li>
-<li><code>STATUS</code> と <code>SERVER_STATUS</code> 一致 or <code>SERVER_STATUS=unknown</code></li>
-<li>T1 への default route 存在</li>
-</ul>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>warm reboot</strong> は HLD で TBD<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>gRPC server (SoC) と ToR の信頼関係 / 認証は HLD では詳細未定</li>
-<li><strong>両 ToR が standby</strong> の状況では tunneled control plane traffic も blackhole する。NIC IP 宛 traffic を local で送る特別扱いに依存</li>
-<li>BGP update delay (10 秒) は active-active 専用設定。session 確立後の routing convergence が遅延する</li>
-<li>ingress drop ACL を貼らない方針は <strong>standby 期の上り traffic が ToR に届く</strong> ため、ベストエフォート前提</li>
-</ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>linkmgrd</code> (sonic-linkmgrd)</strong>: state machine + link prober + default route 監視</li>
-<li><strong><code>xcvrd</code> (transceiver daemon)</strong>: gRPC client / server の橋渡し</li>
-<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>TunnelOrch</code> / <code>MuxOrch</code>)</strong>: prefix route と tunnel next hop の切替</li>
-<li><strong><code>bgpd</code></strong>: 両 ToR が同じ VLAN を広告。update delay の追加</li>
-<li><strong>NIC ファームウェア</strong>: 5-tuple 分散 + ARP/NDP 複製 + gRPC reply 振り分けの仕様遵守</li>
-</ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>show mux status</code> の <code>HEALTH=unhealthy</code> → port up / link probe reply / default route の有無を順に確認</li>
-<li><code>HWSTATUS=inconsistent</code> → ToR 側 admin state と NIC 側 admin state が乖離。gRPC 通信ログ / xcvrd ログ確認</li>
-<li>standby 切替で traffic 断 → prefix route の next hop が tunnel に切り替わっているか <code>show mux tunnel-route &lt;port&gt;</code> で確認</li>
-<li>両 ToR が standby 化して通信不能 → linkmgrd の rescue ロジック / default route 状態を確認</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- linkmgrd の active-active state machine 実装存在確認（sonic-linkmgrd）
-- MuxOrch の prefix-based neighbor (SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true + prefix route) 実装確認
-- 新規 APP_DB / STATE_DB テーブル（FORWARDING_STATE_COMMAND, PORT_TABLE_PEER, HW_FORWARDING_STATE_PEER, HW_MUX_CABLE_TABLE_PEER）の現行スキーマ確認
-- config mux mode detach の sonic-utilities / xcvrd 取り込み確認
-- BGP update delay 10s 設定の現行 master 取り込み確認
-- ingress drop ACL skip の MuxOrch 実装確認
+<p>ベンダ SAI が <code>SAI_STATUS_NOT_IMPLEMENTED</code> を返した場合は <strong>既存の per-ID 取得方式にフォールバック</strong> する。これにより SAI 未対応ベンダでも互換性を維持する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai">SAI ヘッダ定義<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cm">/**</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="cm"> * @brief Query statistics capability for statistics bound at object level</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cm"> *</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="cm"> * @param[in]    switch_id        SAI Switch object id</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="cm"> * @param[in]    object_type      SAI object type</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cm"> * @param[inout] stats_capability List of implemented enum values, and the statistics modes (bit mask) supported per value</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cm"> *</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cm"> * @return #SAI_STATUS_SUCCESS on success, #SAI_STATUS_BUFFER_OVERFLOW if lists size insufficient,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cm"> *         failure status code on error</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cm"> */</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_stats_capability</span><span class="p">(</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w">                 </span><span class="n">switch_id</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="n">_In_</span><span class="w">    </span><span class="n">sai_object_type_t</span><span class="w">               </span><span class="n">object_type</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="n">_Inout_</span><span class="w"> </span><span class="n">sai_stat_capability_list_t</span><span class="w">     </span><span class="o">*</span><span class="n">stats_capability</span><span class="p">);</span>
+</span></code></pre></div>
+<p>各エントリ <code>sai_stat_capability_t</code> は <code>stat_enum</code>（counter ID）と stats mode のビットマスク（READ / READ_AND_CLEAR 等）を持つ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">改修対象関数<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>syncd</code> の <code>FlexCounter.cpp</code> で次の関数が新 API を使うよう書き換わる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>関数</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>updateSupportedPortCounters(portRid)</code></td>
+<td>Port</td>
+</tr>
+<tr>
+<td><code>updateSupportedQueueCounters(queueRid, counterIds)</code></td>
+<td>Queue</td>
+</tr>
+<tr>
+<td><code>updateSupportedPriorityGroupCounters(priorityGroupRid, counterIds)</code></td>
+<td>PG</td>
+</tr>
+<tr>
+<td><code>updateSupportedRifCounters(rifRid)</code></td>
+<td>RIF</td>
+</tr>
+<tr>
+<td><code>updateSupportedBufferPoolCounters(bufferPoolRid, counterIds, statsMode)</code></td>
+<td>Buffer Pool</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence:
+source: sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  The affected functions with this new API will take place on FlexCounter.cpp:
+  - void updateSupportedPortCounters(_In_ sai_object_id_t portRid)
+  - void updateSupportedQueueCounters(...)
+  ...
+  The implementation will support backwards compatibility, so if a SAI vendor is currently not supporting this API it will fall back to the legacy approach.
+reasoning: 改修対象関数とフォールバック動作の根拠。
 -->
 
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
+<p>外部設定表面は無い。SAI capability の検出方式が変わるだけで、ユーザに見える挙動は「起動時間が短くなる」のみ。</p>
+<h3 id="sai_1">関連する SAI 属性<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
+<p>該当なし（API そのものの追加）。<code>sai_stat_capability_t.stat_enum</code> と <code>stats_modes</code> ビットマスクが個別 counter の能力情報を返す。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SAI ベンダ実装依存</strong>: 新 API を実装するか、<code>SAI_STATUS_NOT_IMPLEMENTED</code> を返すかのいずれかが要求される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。誤った status を返すベンダではフォールバックが働かない可能性。</li>
+<li><strong>互換のためのコードパス二重化</strong>: 旧 per-ID ループ実装も残す必要があり、メンテナンスコストは増える。</li>
+<li><strong>mode 情報の扱い</strong>: 新 API は stats mode のビットマスクも返すが、SONiC <code>FlexCounter</code> 側でどこまで活用するかは HLD では明記されていない（counter 集合判定のみ言及）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Fast-reboot / Warm-reboot</strong>: 起動経路で counter capability 検出を含むため、本改修は時間制約のある reboot シーケンスで特に意味がある<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>FlexCounter</code>/<code>FlexCounterManager</code></strong>: 統計収集の中核。同 cpp 内の他関数と連動するため、メンバ変数 <code>m_supportedPortCounters</code> 等の読み出し側もそのまま使える設計。</li>
+<li><strong>個別 vendor SAI</strong>: 実装状況がバラつくと本機能の有効性も差が出る。<code>SAI_STATUS_NOT_IMPLEMENTED</code> を正しく返さないベンダはエラー扱いされる可能性。</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>起動が依然遅い: vendor SAI が新 API を実装していない可能性。<code>syncd</code> ログで <code>queryStatsCapability</code> の status を確認。<code>SAI_STATUS_NOT_IMPLEMENTED</code> ならフォールバック動作中。</li>
+<li>一部 counter が認識されない: 新 API が返す <code>stat_enum</code> 集合と旧 per-ID 列挙の差が無いか、SAI バージョン依存を疑う。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dualtor/active_active_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
