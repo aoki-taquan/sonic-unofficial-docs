@@ -219,6 +219,17 @@
       "priority": "medium"
     },
     {
+      "page": "docs/architecture/build-profiles.md",
+      "issue": 59,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-buildimage の Makefile に PROFILE 変数取り込みロジックが現存するか確認",
+        "rules/profiles/ ディレクトリ配下に実例が存在するか確認",
+        "rules/config / config.user / profiles の取り込み優先順位が HLD どおりか確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/internals/sonic-flexcounter-refactor.md",
       "issue": 57,
       "verification": "hld-only",
