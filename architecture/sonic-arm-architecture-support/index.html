@@ -8686,9 +8686,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は ARM サポート初期の設計文書で、<code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> の現行構成、<code>PLATFORM_ARCH</code> / <code>CONFIGURED_ARCH</code> の現行 Makefile 変数命名、<code>onie-image-armhf.conf</code> / <code>onie-image-arm64.conf</code> の存在、ARM 用 onie installer / sonic-installer の uboot 連携実装は実コードでの裏取り未済（priority=high）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（slave 命名のみ進化）</p>
+<p>現行 master で枠組みが維持されていることを確認。<code>sonic-buildimage/Makefile.work:121-177</code> で <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code> 変数（default <code>amd64</code>）と <code>SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)</code> を確認。<code>onie-image.conf</code> / <code>onie-image-armhf.conf</code> / <code>onie-image-arm64.conf</code> がリポジトリルートに揃っており、<code>platform/aspeed/onie-image-arm64.conf</code> 等も追加されている。<code>installer/install.sh</code> も存在。slave docker は <code>sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2</code> の per-distribution テンプレートに進化し、<code>-march-&lt;arch&gt;</code> サフィックスを実行時に付ける形（HLD の <code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> 固定ディレクトリは廃止）。動作の枠組み・変数名は HLD と一致（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-arm-armhf-arm64-platform_arch-qemu-static">SONiC の ARM (armhf / arm64) ビルドサポート（<code>PLATFORM_ARCH</code> と qemu-static）<a class="headerlink" href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
