@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
+      "issue": 277,
+      "verification": "hld-only",
+      "concerns": [
+        "portsyncd / portmgrd / portsorch の zero-port 起動と post-init add/del 経路実装確認 (PR #1808 等の取り込み状況)",
+        "portsorch の per-port flex counter 動的 add/del (Queue / PG / DEBUG / PFC-WD) 拡張実装確認",
+        "buffermgrd の port 加入/削除 race 対応と orchagent 側 buffer ref counter (sonic-swss #2022) の取り込み状況",
+        "lldpmgrd の host-interface ステート確認と pending_cmds cleanup 改修確認",
+        "zero-port SKU (hwsku.json / platform.json / SAI profile) の現行サンプル存在確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/acl-qos/acl-user-defined-table-type-support.md",
       "issue": 273,
       "verification": "hld-only",

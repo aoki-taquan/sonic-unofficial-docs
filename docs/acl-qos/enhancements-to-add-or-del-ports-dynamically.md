@@ -1,0 +1,212 @@
+---
+title: ポートの動的 add / del（zero-port 起動と post-init 操作）
+area: acl-qos
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - PORT
+    - DEBUG_COUNTER
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD"
+    HLD は 2021-09 (Rev 0.1)。`portsyncd` / `portmgrd` / `portsorch` の zero-port 起動対応、buffer ref counter による delete ガード、`lldpmgrd` の host-interface ステート確認の取り込みは要裏取り。
+
+!!! note "area の経緯"
+    backlog 上では `acl-qos` カテゴリだが、実体はポートライフサイクル管理の話で他多くの章（routing / system / platform）とも干渉する。本ページは backlog の指定に従い `acl-qos` 配下に置く。
+
+# ポートの動的 add / del（zero-port 起動と post-init 操作）
+
+## 概要
+
+SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに **post-init で動的に CONFIG_DB の `PORT` テーブルに add/del** することでポート追加・削除を可能にする[^1]:
+
+- 全ポートを `config_db` に持って起動
+- 一部ポートだけ持って起動
+- **ゼロポート** で起動（line-card manager がプロビジョニング時に追加する想定）
+
+ポート削除前にユーザは ACL / VLAN / LAG / Buffer PG など **全依存設定を先に削除する責任** を負う[^1]。
+
+## 動作仕様
+
+### 初期化フェーズと App-DB フラグ
+
+```mermaid
+flowchart TD
+  CDB[(CONFIG_DB:PORT)] --> PSYNC[portsyncd]
+  PSYNC -->|App-DB 反映| APPDB[(APP_DB)]
+  PSYNC -->|完了| FLAG1[PortConfigDone]
+  FLAG1 --> PORCH[portsorch / orchagent]
+  PORCH -->|SAI port 作成| SAI[SAI / SDK]
+  SAI -->|host i/f 作成| NL[netlink]
+  NL --> PSYNC
+  PSYNC --> SDB[(STATE_DB)]
+  PSYNC -->|全 host i/f 完了| FLAG2[PortInitDone]
+```
+
+- **`PortConfigDone`**: portsyncd がポート設定を APP_DB に反映完了。orchagent は **これを待ってから** SAI ポート作成を始める[^1]。
+- **`PortInitDone`**: 全 host interface が作成完了。`xcvrd` / `buffermgrd` / `natmgr` / `natsync` は **これを待つ**[^1]。
+
+### ゼロポート起動
+
+新たに **zero-port SKU** が必要[^1]:
+
+- `hwsku.json` に interface セクション無し
+- `platform.json` に interface セクション無し
+- SAI profile に port エントリ無し
+
+`sonic-cfggen` は port 無しで `config_db.json` を生成する。Pre-existing PR で `cfggen` / `portsyncd` / buffer drop counter 周りが「port 0 でも動く」ように改修済み[^1]:
+
+| PR | 内容 |
+|----|------|
+| sonic-buildimage #7999 | `cfggen` を port 無しで動かす |
+| sonic-swss #1808 | `portsyncd` を port 無しで動かす |
+| sonic-swss #1860 | port 削除時の buffer drop counter 削除 |
+
+### Post-init: ポート追加
+
+```mermaid
+sequenceDiagram
+  participant U as User / lc-manager
+  participant CDB as CONFIG_DB
+  participant PSY as portsyncd
+  participant ADB as APP_DB
+  participant POR as portsorch
+  participant SAI as SAI
+  participant SDB as STATE_DB
+  U->>CDB: PORT|<name> 追加
+  CDB->>PSY: set event
+  PSY->>ADB: PORT_TABLE エントリ追加
+  ADB->>POR: set event
+  POR->>SAI: SAI port + host i/f 作成
+  SAI->>PSY: netlink (host i/f 作成)
+  PSY->>SDB: PORT_TABLE エントリ追加
+  SAI->>POR: oper_state 通知 (ASIC_DB)
+  POR->>ADB: oper_state 反映
+```
+
+### Post-init: ポート削除
+
+`portmgrd` 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う[^1]。
+
+### 各 mgrd / orch の対応状況
+
+| モジュール | 対応 |
+|-----------|------|
+| `portsyncd` (SWSS) | ✅ ADD / DEL の追加対応必要 |
+| `portsorch` (SWSS) | ✅ flex counter 動的追加・削除を拡張 |
+| `portmgrd` | 既存ロジックで OK[^1] |
+| `sflowmgr` | 既存ロジックで OK[^1] |
+| `teammgrd` | 既存ロジックで OK（state-db set で再 enslave）[^1] |
+| `macsecmgr` | 既存ロジックで OK[^1] |
+| `snmpagent` | 既存ロジックで OK（リクエスト時に APP_DB を読む）[^1] |
+| `xcvrd` (PMON) | 既存 PR で対応済み（sonic-buildimage #8422、sonic-platform-daemons #212）[^1] |
+| `buffermgrd` | 改修必要（race condition 対応）|
+| `lldpmgrd` | 改修必要（host i/f up 確認、pending_cmds の cleanup）|
+
+### Flex counter の動的扱い（portsorch 拡張）
+
+ポート単位で動的に作成・削除すべき counter group[^1]:
+
+- `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP`（既対応）
+- `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP`（既対応）
+- Queue port counters（queue / queue watermark）— **追加要**
+- PG counters — **追加要**
+- Debug counters: port ingress / egress drops（`DEBUG_COUNTER` table）— **追加要**
+- PFC watchdog counters — **追加要**
+
+これら counter は従来 init 完了後に **全ポートまとめて作成** されていた。動的化すれば未存在ポートに対する誤登録が消える[^1]。実装は sonic-swss #2019 で対応中。
+
+### buffermgrd の改修と race condition
+
+#### 加入時 race
+
+ユーザが port を追加 → buffer cfg を入れる順だが、port 加入と並行に buffermgr が cfg を見ると、APP_DB に未到着のうちに buffer cfg を流し込む可能性がある。**APP_DB に port が存在することを buffermgr 側でチェックしてから書く** 設計[^1]。
+
+#### 削除時 race（深刻）
+
+依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。HLD の解決策[^1]:
+
+- buffer cfg にも **per-port reference counter** を持たせる（既存の ACL/VLAN/INTERFACE と同じ仕組み）
+- ref-count > 0 の port は portsorch が削除を拒否する
+- 結果として SAI エラーは「依存解除前に削除しようとした」warning 1 回に集約される
+
+実装は sonic-swss #2022。
+
+### lldpmgrd の改修
+
+#### 既存実装の問題
+
+- ポート追加直後の `lldpcli` 実行が **host interface 未 up で失敗** する
+- 削除イベントが既に来ているのに `pending_cmds` に残ったコマンドが 10 秒ごとに実行され失敗し続ける[^1]
+
+#### 提案
+
+- `lldpcli` 実行前に **STATE_DB の port エントリ（=host i/f 存在）を確認**
+- APP_DB の del イベント受信時に `pending_cmds` から該当を **除去**
+- CONFIG_DB と APP_DB の両方を見る既存ロジックは整理する
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/port-add-del-dynamically/dynamic_port_add_del_hld.md#L240-L284 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Need to add to orchagent the ability to add the buffer configuration of a port and increase a reference counter for each port,
+  in the same way ACL cfg on port is working.
+  ... when a port is added - the lldpcli execution can failed since the host interface is not yet up.
+reasoning: buffer ref counter による delete ガードと lldp host-i/f チェックの根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | 用途 |
+|-------|------|
+| `PORT` | 動的 add/del の対象。`admin_status`、`speed`、`mtu` 等 |
+| `DEBUG_COUNTER` | port ingress/egress drop counter（動的に作成）|
+| `BUFFER_PG` 系 | port 削除前に必ず先に削除 |
+
+### 関連する CLI
+
+特定 CLI は HLD 内で追加されない。`config_db.json` 直接編集または `redis-cli` で `CONFIG_DB.PORT` を操作する想定[^1]。
+
+### 設定例（zero-port 起動からのポート追加）
+
+```bash
+# zero-port SKU で起動後、redis 経由でポート追加
+redis-cli -n 4 HMSET 'PORT|Ethernet0' \
+  speed 100000 admin_status down lanes 0,1,2,3 mtu 9100
+
+# buffer 設定は別途投入（ref counter 経由）
+# 最後に admin up
+redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
+```
+
+## 制限事項
+
+- **依存削除はユーザ責任**: ACL / VLAN / LAG / buffer PG を **先に消してから** port を消す[^1]。HLD は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。
+- **zero-port は「これまで未テスト」**: HLD 自体が「new type of init that was never tested」と明記している[^1]。実機投入前に十分検証が要る。
+- **race condition が複数残存**: buffermgr 加入・削除時の両方に race の可能性。実装側で順序保証が必要[^1]。
+
+## 干渉する機能
+
+- **ACL / VLAN / LAG / Buffer PG**: port 削除の事前条件。ref counter による orchagent の防御に依存。
+- **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。
+- **line card manager (chassis 系)**: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。
+- **`lldpmgrd`**: 改修依存度が高い。pending_cmds 処理が変わる。
+
+## トラブルシューティング
+
+- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。orchagent 連動が止まっている可能性。
+- ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
+- LLDP が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
+- zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
