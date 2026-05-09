@@ -174,6 +174,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/overlay/sonic-dash-hld.md",
+      "issue": 314,
+      "verification": "hld-only",
+      "concerns": [
+        "DASH 全体仕様は 118KB の巨大 HLD。本ページは中核アーキテクチャの抜粋に留め、章単位の分割解説ページを別 issue で逐次切り出す必要がある",
+        "DASH_* テーブル群（ENI / VNet / Route / ACL / Metering / Tunnel / PL / FNIC / PL_REDIRECT_MAP）の現行 master スキーマと sonic-yang-models 整合確認",
+        "DASH Mgr / DASH Orch の現行 sonic-swss / sonic-dash-api 取り込み確認",
+        "SAI DASH APIs の community SAI ツリー取り込み状況確認",
+        "v2.6.1 直近の改名（trusted_vnis → trusted_vnis_list）の現行 master 反映確認",
+        "DASH FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG 各シナリオは別ページで個別解説が望ましい"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/platform/icmp-hardware-offload.md",
       "issue": 43,
       "verification": "code-verified",
@@ -217,6 +231,19 @@
         "show bfd session の sonic-utilities 取り込み → show/main.py:2669 で実装確認 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
+      "issue": 309,
+      "verification": "hld-only",
+      "concerns": [
+        "本 HLD は 201911 release (Stretch / Linux 4.9) 専用。Buster 以降の SONiC リリースで設計が変わっているか高優先で確認",
+        "MGMT_VRF_CONFIG / MGMT_INTERFACE の現行 sonic-yang-models / interfaces-config 取り込み確認",
+        "TACPLUS_SERVER の vrf=mgmt フィールド対応が現行 NSS/PAM コードにあるか未確認",
+        "udp_l3mdev_accept パッチの現行カーネル取り込み状況",
+        "cgexec -g l3mdev:mgmt 経由の NTP 起動ラッパーが現行 sonic-buildimage にあるか未確認"
+      ],
+      "priority": "high"
     },
     {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
@@ -1257,6 +1284,33 @@
       "priority": "medium"
     },
     {
+      "page": "docs/switching/macsec-sonic-high-level-design-document.md",
+      "issue": 312,
+      "verification": "hld-only",
+      "concerns": [
+        "wpa_supplicant への SONiC 拡張パッチ（XPN / proactive SAK refresh / 可変 max-SA）が現行 sonic-buildimage にあるか未確認",
+        "MACsec Mgr / MACsec Orch の現行 sonic-swss 実装確認",
+        "MACSEC_PROFILE CONFIG_DB / MACSEC_*_TABLE APPL_DB スキーマと sonic-yang-models 整合確認",
+        "SAI MACsec オブジェクトの community SAI 取り込み確認",
+        "PFC バイパス ACL (0x8808) 実装の現行確認",
+        "60KB の大型 HLD のため要点抜粋。詳細フローは元 HLD 参照"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/switching/multiple-spanning-tree-protocol.md",
+      "issue": 313,
+      "verification": "hld-only",
+      "concerns": [
+        "stp コンテナ / stpd / stpmgrd の現行 sonic-buildimage / sonic-swss 取り込み確認",
+        "STP_MST / STP_MST_INST / STP_MST_PORT CONFIG_DB スキーマと sonic-yang-models 反映確認",
+        "config spanning-tree mst 系 CLI の sonic-utilities 取り込み確認",
+        "SAI_STP_OBJECT_ID の MSTI 複数インスタンス対応の community SAI 確認",
+        "50KB の大型 HLD のため要点抜粋。完全な MSTI 状態機械とシーケンスは元 HLD 参照"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/switching/openconfig-support-for-portchannel-aggregate-interface.md",
       "verification": "hld-only",
       "concerns": [
@@ -1572,6 +1626,18 @@
         "if constexpr による per-instance stats_mode の分岐実装の有無確認",
         "BaseCounterContext の flag 設計（capability query 有無, getStats vs getStatsExt）が現行コードに存在するか確認",
         "POC からの最終実装の差分（HLD 上「demonstration only」と明記）"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/internals/swss-schema.md",
+      "issue": 334,
+      "verification": "hld-only",
+      "concerns": [
+        "swss-schema.md は生きたドキュメントで master 更新で常に変わる。コミット SHA 4305596 のスナップショット",
+        "本ページに列挙した中心テーブル名と sonic-swss-common/common/schema.h の整合確認",
+        "CONFIG_DB ↔ APPL_DB 投影を担う *Mgr プロセスのテーブル変換マッピングの最新性確認",
+        "本ページは概観のみで完全定義は元 HLD 参照という構成。詳細 verify は実装側 schema.h と突き合わせて行う"
       ],
       "priority": "low"
     },
