@@ -886,7 +886,8 @@
         "counterpoll disable で FLEX_COUNTER_DB の entry を削除しない既存挙動が維持されているか未確認"
       ],
       "priority": "medium",
-      "issue": 149
+      "issue": 149,
+      "pr": 150
     }
   ]
 }
