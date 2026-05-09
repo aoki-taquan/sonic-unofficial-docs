@@ -1,0 +1,81 @@
+---
+title: show nat サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: show/nat.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - STATIC_NAT
+    - STATIC_NAPT
+    - NAT_POOL
+    - NAT_BINDINGS
+    - NAT_GLOBAL
+  cli:
+    - show nat
+    - config nat
+  yang: []
+---
+
+# show nat サブコマンド
+
+## 概要
+
+`show nat` は SONiC の NAT 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
+
+実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は ASIC_DB / COUNTERS_DB を参照し、`natconfig` は CONFIG_DB を整形して出すように分業されている。
+
+## コマンド一覧
+
+| コマンド | 用途 | 内部呼び出し |
+|---------|------|-------------|
+| `show nat statistics` | NAT 変換のカウンタ統計 | `natshow -s` |
+| `show nat translations` | 現在の動的変換テーブル | `natshow -t` |
+| `show nat translations count` | 変換エントリ数 | `natshow -c` |
+| `show nat config` | 全体設定の一括表示 | `natconfig -g/-s/-p/-b/-z` を順に |
+| `show nat config static` | static エントリのみ | `natconfig -s` |
+| `show nat config pool` | pool 設定のみ | `natconfig -p` |
+| `show nat config bindings` | binding 設定のみ | `natconfig -b` |
+| `show nat config globalvalues` | グローバル設定のみ | `natconfig -g` |
+| `show nat config zones` | NAT zone 設定のみ | `natconfig -z` |
+
+各コマンドに `--verbose` オプションがあり、内部で実行する `sudo natshow ...` / `sudo natconfig ...` の起動コマンドラインを表示する。
+
+## 各コマンドの詳細
+
+### `show nat statistics`
+
+`natshow -s` を起動。NAT 変換ごとの hit カウンタ・packet bytes 等を表で表示する。`STATE_DB` / `COUNTERS_DB` のカウンタを集計しているため、リアルタイムに更新される。
+
+### `show nat translations [count]`
+
+サブコマンド無しで実行 (`@nat.group(invoke_without_command=True)`) すると `natshow -t` が呼ばれ、現在 ASIC に入っている変換 (static + 動的に学習されたもの) を表示する。`count` サブコマンド付きでは件数のみ。
+
+### `show nat config [<sub>]`
+
+サブコマンド無しの実行ではグローバル → static → pool → bindings → zones の順で 5 ブロックを連続出力する。それぞれ `natconfig -g/-s/-p/-b/-z` の独立呼び出しに対応し、ブロック間に `click.echo` で見出しを差し込む。
+
+サブコマンド付きでは指定 1 ブロックのみ。
+
+## 関連する CONFIG_DB
+
+| テーブル | キー | 表示するコマンド |
+|----------|------|------------------|
+| `STATIC_NAT` | `<global_ip>` | `show nat config static` |
+| `STATIC_NAPT` | `<global_ip>\|TCP/UDP\|<port>` | `show nat config static` |
+| `NAT_POOL` | `<pool_name>` | `show nat config pool` |
+| `NAT_BINDINGS` | `<binding_name>` | `show nat config bindings` |
+| `NAT_GLOBAL` | `Values` | `show nat config globalvalues` |
+| `PORT` / `PORTCHANNEL` / `VLAN` / `LOOPBACK_INTERFACE` の `nat_zone` | `<if_name>` | `show nat config zones` |
+
+## 注意
+
+- `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または STATE_DB / CONFIG_DB を直接読むしかない。
+- `show nat translations` は **NAT が実際にハード offload されている前提**。`config nat feature disable` 状態では空表示になる。
+
+## 引用元
+
+[^1]: `nat` グループは `show/nat.py` L9-L12。`config/nat.py` 側は CONFIG_DB を書き、`show/nat.py` は別 binary 経由で読むという分担。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9>
