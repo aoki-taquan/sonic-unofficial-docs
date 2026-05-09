@@ -361,6 +361,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/global-platform-specific-psuutil-class-instance/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/hld-for-handling-sai-failures/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -398,6 +402,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-fast-link-up/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-port-fec-ber/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
@@ -521,6 +529,14 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/acl-rule/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/acl-table/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-device-global/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -549,11 +565,23 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dhcp-server-ipv4/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dhcpv4-relay/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dscp-to-tc-map/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/feature/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/flex-counter-table/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
@@ -570,6 +598,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mgmt-port/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp-server/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
@@ -594,6 +626,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/scheduler/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/syslog-server/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
@@ -693,6 +729,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/overlay-ecmp-with-bfd-monitoring/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/prefix-based-mux-neighbors/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -714,6 +754,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/srv6-sid-l3adj/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/srv6-vpn-hld/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
