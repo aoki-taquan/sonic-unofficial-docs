@@ -6799,6 +6799,8 @@
       
         
       
+        
+      
     
     
     
@@ -6980,6 +6982,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10417,9 +10447,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大型 HLD</p>
-<p>HLD は v0.2 / 2025-01 改訂、サイズ 50KB 超。<code>stpd</code> プロセスを <code>stp</code> コンテナで動かす設計、<code>STP_MST_*</code> テーブル群、IST / MSTI の SAI マッピング、MSTP 専用 CLI 体系が現行 master でこの仕様どおりかは未確認。<strong>詳細は HLD <code>doc/MSTP/MSTP.md</code> を参照（要点のみ抜粋）</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/cfgmgr/stpmgrd.cpp:47-49</code> で <code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> テーブルを TableConnector に登録、<code>stpmgr</code> クラスが存在することを確認。<code>sonic-yang-models</code> の <code>sonic-spanning-tree.yang</code> も存在。CLI / IS-IS のような MSTP 専用 CLI 詳細は元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="multiple-spanning-tree-protocol-mstp-on-sonic">Multiple Spanning Tree Protocol (MSTP) on SONiC<a class="headerlink" href="#multiple-spanning-tree-protocol-mstp-on-sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

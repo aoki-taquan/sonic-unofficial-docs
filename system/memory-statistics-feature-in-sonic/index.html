@@ -6777,6 +6777,8 @@
       
         
       
+        
+      
     
     
     
@@ -6958,6 +6960,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10373,9 +10403,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v1.0 / 2024-07 改訂。<code>memorystatsd</code> プロセス、<code>hostcfgd</code> の <code>MEMORY_STATISTICS</code> 監視と SIGHUP 連携、<code>config memory-stats</code> / <code>show memory-stats</code> CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-host-services/scripts/hostcfgd:1848</code> に <code>MemoryStatisticsCfg</code> クラスがあり MEMORY_STATISTICS テーブル監視と SIGHUP 連携が実装。<code>sonic-utilities/config/memory_statistics.py</code> と <code>show/memory_statistics.py</code> で CLI が整備、<code>sonic-yang-models</code> の <code>sonic-memory-statistics.yang</code> も存在。memorystatsd デーモン名そのものは別ファイル名で実装されている可能性あり（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="memorystatsd-memory_statistics">メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）<a class="headerlink" href="#memorystatsd-memory_statistics" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

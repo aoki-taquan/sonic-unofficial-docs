@@ -6772,6 +6772,8 @@
       
         
       
+        
+      
     
     
     
@@ -6953,6 +6955,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10363,9 +10393,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>coppmgrd</code> の trap install/uninstall 判定ロジック、<code>always_enabled</code> フラグの実装、<code>feature</code> テーブル削除（hdel）への反応、warm/fast-reboot 後の trap 状態保持が現行 master にどう取り込まれているかは未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/cfgmgr/coppmgr.cpp</code> に <code>always_enabled</code> フラグ判定 (line 88, 365)、CFG_FEATURE_TABLE 監視 (line 300)、trap 状態保持と差分処理 (543-619) を確認。<code>sonic-utilities/tests/copp_test.py</code>、<code>sonic-swss/tests/mock_tests/copp_ut.cpp</code> のテストハーネスも存在。Test plan の主要 4 ルールは coppmgr.cpp で網羅されている（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="copp-manager-feature-always_enabled">CoPP Manager 再設計テストプラン（feature テーブル整合性 + <code>always_enabled</code>）<a class="headerlink" href="#copp-manager-feature-always_enabled" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

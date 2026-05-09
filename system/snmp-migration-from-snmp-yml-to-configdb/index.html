@@ -6766,6 +6766,8 @@
       
         
       
+        
+      
     
     
     
@@ -6947,6 +6949,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10351,9 +10381,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本 HLD は SNMP 設定を <code>/etc/sonic/snmp.yml</code> から CONFIG_DB に移行する設計を述べる。<code>config snmp ...</code> / <code>show run snmp ...</code> CLI 系の sonic-utilities への取り込み状況、<code>docker-snmp</code> の <code>snmpd.conf.j2</code> 改修と Python 変換スクリプトの現行 master 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master で <code>config snmp</code> グループ (<code>sonic-utilities/config/main.py:4261</code>)、<code>docker-snmp/snmpd.conf.j2</code> の CONFIG_DB ベース設定、<code>sonic-yang-models</code> の <code>sonic-snmp.yang</code> を確認。SNMP / SNMP_COMMUNITY / SNMP_USER テーブルは現行 yang に取り込まれている。<code>snmp.yml</code> → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="snmp-snmpyml-config_db">SNMP 設定の snmp.yml → CONFIG_DB 移行<a class="headerlink" href="#snmp-snmpyml-config_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

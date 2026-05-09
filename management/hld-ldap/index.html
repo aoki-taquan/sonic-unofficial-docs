@@ -6799,6 +6799,8 @@
       
         
       
+        
+      
     
     
     
@@ -6980,6 +6982,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10417,9 +10447,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Phase 1</p>
-<p>HLD は v0.1 / 2023-09 改訂の Phase 1 設計。<code>LDAP_TABLE</code> / <code>LDAP_SERVER</code> / <code>AAA</code> テーブル、<code>hostcfgd</code> 内 AAA クラスでの PAM/NSS テンプレート再生成、<code>config aaa authentication</code> 系 CLI 拡張、<code>sonic-system-ldap</code> YANG が現行 master でこの仕様どおりかは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-utilities/config/plugins/sonic-system-ldap_yang.py</code> で <code>ldap-server</code> グループ CLI が自動生成、<code>sonic-yang-models</code> の <code>sonic-system-ldap.yang</code> を確認。<code>hostcfgd</code> 内 AAA / LDAP 連携も sonic-host-services 側で対応している。Debian パッケージ (libnss-ldapd 等) のインストール経路は image_config では直接見つからなかったが、後続の host-services レイヤで取り込まれている（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="ldap-hostcfgd-nslcd-nss-pam">LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）<a class="headerlink" href="#ldap-hostcfgd-nslcd-nss-pam" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

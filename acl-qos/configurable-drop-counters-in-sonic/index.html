@@ -6799,6 +6799,8 @@
       
         
       
+        
+      
     
     
     
@@ -6980,6 +6982,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10417,9 +10447,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v1.1 / 2024-09 改訂（v1.0 は 2019-11）。<code>DEBUG_COUNTER</code> 型 SAI 抽象化と <code>flexcounter</code> 経由の集計、<code>config dropcounters install</code> 系 CLI、persistent drop counter monitoring 拡張（v1.1）が現行 master の <code>sonic-swss</code> / <code>sonic-utilities</code> でこの仕様どおりかは未確認。<strong>詳細は HLD <code>doc/drop_counters/drop_counters_HLD.md</code> を参照（28KB 超のため要点のみ抜粋）</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/orchagent/debugcounterorch.cpp</code> で <code>DebugCounterOrch</code> クラスと <code>STATE_DEBUG_COUNTER_CAPABILITIES</code> テーブル登録 (debugcounterorch.cpp:31) を確認。<code>sonic-utilities</code> 側に <code>config dropcounters install/...</code> (config/main.py:8163-)、<code>show dropcounters persistent_drops</code> (show/dropcounters.py) が存在し、v1.1 の persistent drop monitoring まで取り込み済み。<code>sonic-yang-models/yang-models/sonic-debug-counter.yang</code> も存在。詳細属性は元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="drop-counterdebug_counter-sai-debug-counter">設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）<a class="headerlink" href="#drop-counterdebug_counter-sai-debug-counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

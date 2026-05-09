@@ -6799,6 +6799,8 @@
       
         
       
+        
+      
     
     
     
@@ -6980,6 +6982,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10417,9 +10447,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2021-04 改訂、4 年以上経過）</p>
-<p>HLD は v0.4 / 2021-04。<code>STATIC_ROUTE</code> テーブルとフィールド設計、<code>frrcfgd</code> による vtysh への注入、OpenConfig YANG マッピングが現行 master でこの仕様どおりかは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> で STATIC_ROUTE 監視 (<code>'STATIC_ROUTE': ['mgmtd']</code>, <code>nexthop/ifname/distance/nexthop-vrf/blackhole/track</code> フィールド) を確認、staticd.db.conf.j2 テンプレートで実 staticd 設定生成。<code>sonic-utilities/config/main.py</code> に <code>config route add/del</code>、テストでも STATIC_ROUTE への書き込みを検証。HLD は古いが現行実装と整合（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="static-ip-route-static_route-frrcfgd-frr">Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）<a class="headerlink" href="#static-ip-route-static_route-frrcfgd-frr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

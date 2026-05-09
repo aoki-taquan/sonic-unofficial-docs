@@ -6838,6 +6838,8 @@
       
         
       
+        
+      
     
     
     
@@ -7019,6 +7021,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10495,9 +10525,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2022-04 改訂、約 4 年経過）</p>
-<p>HLD は v1.6 / 2022-04。<code>VnetOrch</code> の ECMP/NHG 編成、<code>BFD_SESSION</code> テーブル経由の BfdOrch 連動、<code>ADVERTISE_NETWORK_TABLE</code> / <code>BGP_PROFILE_TABLE</code> による BGP 広報連携が現行 master でこの仕様どおりかは未確認。<strong>詳細は HLD <code>doc/vxlan/Overlay ECMP with BFD.md</code> を参照（25KB のため要点のみ抜粋）</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/orchagent/vnetorch.cpp:746</code> で <code>STATE_ADVERTISE_NETWORK_TABLE_NAME</code> テーブル管理を確認、<code>sonic-swss-common/common/schema.h:131</code> に <code>APP_BGP_PROFILE_TABLE_NAME = "BGP_PROFILE_TABLE"</code> を定義。<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</code> で <code>RouteMapMgr</code> が APPL_DB の BGP_PROFILE_TABLE 更新時に route-map 追加を行う設計（main.py:102）も確認済み。HLD と現行実装は整合（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="overlay-ecmp-with-bfd-monitoringvxlan-vnet-bfd">Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）<a class="headerlink" href="#overlay-ecmp-with-bfd-monitoringvxlan-vnet-bfd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

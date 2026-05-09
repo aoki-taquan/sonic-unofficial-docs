@@ -6777,6 +6777,8 @@
       
         
       
+        
+      
     
     
     
@@ -6958,6 +6960,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10373,9 +10403,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 / 2025-09 改訂。ポート/Port-Channel 単位の SPAN ingress/egress、ERSPAN、Mirror Capability Discovery 関連の実装が現行 master の <code>MirrorOrch</code> / <code>sonic-utilities</code> でこの仕様どおりかは未確認。<strong>詳細は HLD <code>doc/port-mirroring/SONiC_Port_Mirroring_HLD.md</code> を参照（30KB 超のため要点のみ抜粋）</strong>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/orchagent/mirrororch.cpp</code> に <code>MirrorOrch</code> クラス、SAI Mirror セッションの利用可能数取得 (<code>SAI_OBJECT_TYPE_MIRROR_SESSION</code> の object availability query, mirrororch.cpp:362) を確認。<code>sonic-utilities/config/main.py</code> の <code>mirror_session</code> グループ (3148-) と <code>validate_mirror_session_config</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</code> も存在。Mirror Capability Discovery 名（<code>MIRROR_SESSION_CAPABILITY</code> テーブル）は明示見つからず、object availability query API 経由で代替されている可能性あり。詳細フロー / SAI 属性マッピングは元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-port-mirroringspan-erspan">SONiC Port Mirroring（SPAN / ERSPAN）<a class="headerlink" href="#sonic-port-mirroringspan-erspan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

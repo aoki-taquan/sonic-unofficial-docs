@@ -6827,6 +6827,8 @@
       
         
       
+        
+      
     
     
     
@@ -7008,6 +7010,34 @@
     
   
     config interface サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/config-nat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config nat サブコマンド
   
 
     
@@ -10473,9 +10503,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Initial Proposal</p>
-<p>HLD は SONiC 202305 リリースを目指した Alibaba 由来の SRv6 VPN 実装提案。<code>SRv6_POLICY_TABLE</code> (APPL_DB) や <code>vpn_sid</code> / <code>policy</code> フィールドの ROUTE_TABLE 拡張、SRv6 VPN 用 SAI 属性が現行 master に取り込まれているかは未確認。コア HLD は別途 <a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> を参照。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/orchagent/srv6orch.cpp</code> に <code>srv6_prefix_agg_id_table_</code> (1721-)、<code>createSrv6Vpn</code>/<code>deleteSrv6Vpn</code> (1025/776)、<code>vpn_sid</code> 管理が実装され、HLD の Prefix AGG_ID / VPN encap mapper 設計と一致。SRV6_MY_SID テーブル管理も APP_SRV6_MY_SID_TABLE_NAME / CFG_SRV6_MY_SID_TABLE_NAME 経由で確認済み。SRV6_POLICY_TABLE のキー名そのものは見えなかったが、内部データ構造として agg_id/vpn_sid が存在することを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="srv6-vpnl3vpn-over-srv6-srv6-policy">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）<a class="headerlink" href="#srv6-vpnl3vpn-over-srv6-srv6-policy" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
