@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/dscp-remapping-for-tunnel-traffic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/acl-user-defined-table-type-support/">
       
       
-        <link rel="prev" href="../dash-sonic-kvm/">
+        <link rel="prev" href="../acl-support-in-sonic/">
       
       
-        <link rel="next" href="../nvgre-tunnel-in-sonic/">
+        <link rel="next" href="../align-watermark-flow-with-port-configuration-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） - SONiC 非公式ドキュメント</title>
+        <title>ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dscp-tc-dual-tor-pfc" class="md-skip">
+        <a href="#acl-acl_table_type-acltabletype" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+              ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -337,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -2083,6 +2083,320 @@
       
   
   
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../overlay/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    オーバーレイ
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    オーバーレイ
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DASH SONiC KVM（BMv2 ベース仮想 DPU）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NVGRE トンネル（nvgreorch / decap mapper）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -2092,6 +2406,16 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -2126,7 +2450,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -2137,7 +2461,7 @@
   <span class="md-ellipsis">
     
   
-    オーバーレイ
+    ACL & QoS
   
 
     
@@ -2148,18 +2472,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
-    オーバーレイ
+    ACL & QoS
   
 
           </label>
@@ -2174,14 +2498,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-active-dual-tor/" class="md-nav__link">
+      <a href="../acl-flex-counters-support/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
   
 
     
@@ -2202,42 +2526,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-standby-dual-tor/" class="md-nav__link">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dash-sonic-kvm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DASH SONiC KVM（BMv2 ベース仮想 DPU）
+    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
   
 
     
@@ -2274,7 +2570,7 @@
   <span class="md-ellipsis">
     
   
-    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
   
 
     
@@ -2292,7 +2588,7 @@
   <span class="md-ellipsis">
     
   
-    トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
   
 
     
@@ -2341,10 +2637,98 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コントロールプレーン ACL の分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB の Capability 公開
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfgjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg.json の活用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-acltabletype" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent: AclTableType データ構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL ルールオブジェクトモデルの統合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aclorch-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AclOrch 公開 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        バウンスバック経路と問題
+        フロー
       
     </span>
   </a>
@@ -2352,65 +2736,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#swss" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SWSS スキーマ追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tunnel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TUNNEL テーブルの更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lossless-pfcwd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 lossless キューと PFCWD の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        終端オブジェクトの分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dscp3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        バウンスバック経路の例（DSCP=3 トラフィック）
+        CLI
       
     </span>
   </a>
@@ -2423,7 +2752,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2435,43 +2764,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（既出）
       
     </span>
   </a>
@@ -2480,6 +2776,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2509,17 +2816,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -2543,303 +2839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NVGRE トンネル（nvgreorch / decap mapper）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL & QoS
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    ACL & QoS
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -2867,7 +2867,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -2895,7 +2895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
+      <a href="../dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -2923,7 +2923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -2951,7 +2951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -2979,7 +2979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -3007,7 +3007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3035,7 +3035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -3063,7 +3063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3091,7 +3091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -5950,10 +5950,98 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コントロールプレーン ACL の分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB の Capability 公開
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfgjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg.json の活用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-acltabletype" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orchagent: AclTableType データ構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL ルールオブジェクトモデルの統合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aclorch-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AclOrch 公開 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        バウンスバック経路と問題
+        フロー
       
     </span>
   </a>
@@ -5961,65 +6049,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#swss" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SWSS スキーマ追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tunnel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TUNNEL テーブルの更新
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lossless-pfcwd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 lossless キューと PFCWD の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        終端オブジェクトの分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dscp3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        バウンスバック経路の例（DSCP=3 トラフィック）
+        CLI
       
     </span>
   </a>
@@ -6032,7 +6065,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -6044,43 +6077,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（既出）
       
     </span>
   </a>
@@ -6089,6 +6089,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
   
 </li>
       
@@ -6118,17 +6129,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -6153,7 +6153,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/dscp-remapping-for-tunnel-traffic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/acl-user-defined-table-type-support.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6162,282 +6162,181 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
-<p>主要実装は現行 master で確認済みだが、HLD と実装で <strong>PFC watchdog 用フィールド名に差異</strong> がある。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
+<p>HLD は Rev 0.1（日付未記載）で Open Questions が複数残る Proposal 段階の文書。<code>AclOrch</code> の <code>AclTableType</code> データ構造、<code>ACL_TABLE_TYPE</code> CONFIG_DB スキーマ取り込み、<code>ACL_STAGE_CAPABILITY</code> STATE_DB 公開、CLI 検証は要裏取り。</p>
 </div>
-<h1 id="dscp-tc-dual-tor-pfc">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）<a class="headerlink" href="#dscp-tc-dual-tor-pfc" title="Permanent link">&para;</a></h1>
+<h1 id="acl-acl_table_type-acltabletype">ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）<a class="headerlink" href="#acl-acl_table_type-acltabletype" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR（Active / Standby）構成では、サーバ側で輻輳が起きると <strong>upper / lower 両方の ToR に PFC pause が同時に伝搬</strong> する状況が起こり得る。Standby ToR はサウスバウンド（T1 → ToR → サーバ）方向に来たトラフィックを <strong>同じキューでバウンスバック</strong> して T1 を介して Active ToR に流すため、輻輳ポイントが解消されても T1 ↔ ToR 間で pause が固着する <strong>PFC デッドロック</strong> が発生する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は、tunnel encap 時に <strong>キュー / DSCP を別系統に書き換え</strong>、tunnel decap 時に <strong>port 単位のマップを上書きして TC / PG を再設定</strong> することで、バウンスバック経路と通常経路を物理的に別キューへ分離する。SAI に新規追加された tunnel 属性を使うため、<code>202012</code> / <code>202205</code> ブランチを最初のターゲットにすると HLD は明記している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>従来の ACL は <code>L3</code> / <code>L3V6</code> / <code>MIRROR</code> / <code>PFC_WD</code> 等の <strong>事前定義テーブルタイプ</strong> を <code>AclOrch</code> 内に持っており、新機能追加のたびに orchagent を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で <strong>必要以上の HW リソースを消費</strong> していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は <strong>ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを CONFIG_DB から作れる</strong> ようにする。新タイプは <code>ACL_TABLE_TYPE</code> テーブルに定義し、<code>ACL_TABLE</code> の <code>TYPE</code> フィールドからその名前を参照する。</p>
+<p>組み込みタイプ（<code>L3</code>、<code>MIRROR</code> 等）は <strong>特殊扱いが必要なため</strong> orchagent 側に残る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（特に <code>MIRROR</code> / <code>MIRRORV6</code>）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">バウンスバック経路と問題<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>Standby ToR が受け取った南向きトラフィックは、対向 ToR (Active 側) へ MuxTunnel (IPinIP) で encap して送り返される。元のポート単位の TC / Queue がそのまま使われると、T1 → Standby ToR → T1 の往復が同一キューで連結し、PFC pause が解消しない。HLD は <strong>encap 側で DSCP / Queue を変える</strong> のと、<strong>decap 側で受信ポート単位 TC / PG を上書きする</strong> の 2 段で経路を分離する。</p>
-<pre class="mermaid"><code>flowchart LR
-    T1 --&gt;|DSCP=3, TC3, PG3, Q3| StandbyToR
-    StandbyToR --&gt;|encap MuxTunnel\nouter DSCP=2, Q2| T1b[T1]
-    T1b --&gt;|TC2, PG2| ActiveToR
-    ActiveToR --&gt;|decap; inner DSCP=3 維持\nDSCP_TO_TC_MAP TUNNEL → TC3, PG2| Server</code></pre>
-<h3 id="swss">SWSS スキーマ追加<a class="headerlink" href="#swss" title="Permanent link">&para;</a></h3>
-<p>新規・更新される QoS マップは 4 つ。<code>AZURE_TUNNEL</code> 系として既存の <code>AZURE</code> 系と並置される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>用途</th>
-<th>テーブル</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>decap 時 outer DSCP → TC</td>
-<td><code>DSCP_TO_TC_MAP\|AZURE_TUNNEL</code></td>
-<td>既存 <code>AZURE</code> から <code>5→1</code>, <code>33→8</code>, <code>48→7</code> を変更</td>
-</tr>
-<tr>
-<td>decap 時 TC → PG</td>
-<td><code>TC_TO_PRIORITY_GROUP_MAP\|AZURE_TUNNEL</code></td>
-<td>TC3→PG2, TC4→PG6 にずらす</td>
-</tr>
-<tr>
-<td>encap 時 TC → Queue</td>
-<td><code>TC_TO_QUEUE_MAP\|AZURE_TUNNEL</code></td>
-<td>TC3→Q2, TC4→Q6 等</td>
-</tr>
-<tr>
-<td>encap 時 (TC, color) → DSCP</td>
-<td><code>TC_TO_DSCP_MAP\|AZURE_TUNNEL</code></td>
-<td><strong>新設</strong>。<code>sonic-tc-dscp.yang</code> を新規追加</td>
-</tr>
-</tbody>
-</table>
-<p>ポート側マップ (<code>AZURE</code>) も合わせて更新される。<code>TC_TO_PRIORITY_GROUP_MAP|AZURE</code> は <code>TC2→PG2</code>, <code>TC6→PG6</code> を有効化し、tunnel 側で使う追加 lossy PG (PG2 / PG6) を成立させる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これらは Dual-ToR 限定で生成される: <code>DEVICE_METADATA['localhost']['subtype'] = 'DualToR'</code> のときのみ <code>qos_config.j2</code> がレンダリングする。</p>
-<h3 id="tunnel">TUNNEL テーブルの更新<a class="headerlink" href="#tunnel" title="Permanent link">&para;</a></h3>
-<p>既存 <code>TUNNEL|MuxTunnel0</code> を以下のように拡張する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nt">&quot;dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="nt">&quot;dst_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.32&quot;</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nt">&quot;ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copy_from_outer&quot;</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="nt">&quot;encap_ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">&quot;ttl_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">&quot;tunnel_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPINIP&quot;</span><span class="p">,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;decap_dscp_to_tc_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[DSCP_TO_TC_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="nt">&quot;decap_tc_to_pg_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="nt">&quot;encap_tc_to_queue_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_QUEUE_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="nt">&quot;encap_tc_color_to_dscp_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_DSCP_MAP|AZURE_TUNNEL]&quot;</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-abnf highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nc">key</span>:<span class="w">           </span>ACL_TABLE_<span class="nc">TYPE</span>:&lt;<span class="nc">name</span>&gt;<span class="w">     </span><span class="c1">; ユーザ任意の名前</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nc">matches</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nc">match-list</span><span class="w">                </span><span class="c1">; ACL_RULE と同じマッチ識別子</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nc">actions</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nc">action-list</span><span class="w">               </span><span class="c1">; ACL_RULE と同じアクション識別子</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>bind_<span class="nc">points</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nc">bind-points-list</span><span class="w">          </span><span class="c1">; &quot;PORT&quot; / &quot;PORTCHANNEL&quot;</span>
 </span></code></pre></div>
-<p>注目点は次の 2 つ。</p>
-<ul>
-<li><code>dscp_mode</code> は <strong><code>pipe</code> に変更</strong>（従来の <code>uniform</code> ではない）。decap 時 outer DSCP を捨てて inner DSCP を保つ。</li>
-<li><code>encap_tc_color_to_dscp_map</code> が <strong>新規キー</strong>。SAI の <code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code> に対応する。</li>
-</ul>
-<h3 id="lossless-pfcwd">追加 lossless キューと PFCWD の分離<a class="headerlink" href="#lossless-pfcwd" title="Permanent link">&para;</a></h3>
-<p>PG2 / PG6 が新たに lossy として有効になる一方で、追加 lossless キュー（Q2 / Q6 系）に対しては <strong>PFC watchdog を必ずしも有効化したくない</strong> という要件があるため、<code>PORT_QOS_MAP</code> に新フィールド <code>pfc_wd_sw_enable</code> が追加される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>pfc_enable</code></td>
-<td>PFC を有効にするキュー一覧</td>
-</tr>
-<tr>
-<td><code>pfc_wd_sw_enable</code></td>
-<td>PFC watchdog をソフトウェア側で有効にするキュー一覧</td>
-</tr>
-</tbody>
-</table>
-<p>例:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT_QOS_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;pfc_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3,4,2,6&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;pfc_wd_sw_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3,4&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+<p>具体例<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;CUSTOM_L3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;MATCHES&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">[</span><span class="s2">&quot;IN_PORTS&quot;</span><span class="p">,</span><span class="s2">&quot;OUT_PORTS&quot;</span><span class="p">,</span><span class="s2">&quot;SRC_IP&quot;</span><span class="p">],</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">&quot;ACTIONS&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">[</span><span class="s2">&quot;PACKET_ACTION&quot;</span><span class="p">,</span><span class="s2">&quot;MIRROR_INGRESS_ACTION&quot;</span><span class="p">],</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;BIND_POINTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span><span class="s2">&quot;PORTCHANNEL&quot;</span><span class="p">]</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">&quot;DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;STAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INGRESS&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CUSTOM_L3&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PORTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span><span class="s2">&quot;PortChannel1&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">&quot;DATAACL|RULE0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;999&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.1.1/32&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>旧構成からの移行で互換性を保つため、<code>db_migrator</code> を更新して既存 <code>pfc_enable</code> から <code>pfc_wd_sw_enable</code> を派生させる必要がある。新フィールドのため <code>sonic-port-qos-map.yang</code> の更新も伴う。</p>
-<h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>新規・既存を問わず、本機能で使う tunnel SAI 属性は次の 4 つ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>SAI 属性</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code></td>
-<td>encap で outer DSCP を (TC, color) からリマップ</td>
-</tr>
-<tr>
-<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP</code></td>
-<td>encap で送出キューを TC からリマップ</td>
-</tr>
-<tr>
-<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code></td>
-<td>decap で outer DSCP → TC をポート単位マップから上書き</td>
-</tr>
-<tr>
-<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code></td>
-<td>decap で TC → PG をポート単位マップから上書き</td>
-</tr>
-</tbody>
-</table>
-<p>orchagent 側では:</p>
-<ul>
-<li><code>tunneldecaporch</code>: decap tunnel 作成時に <code>DECAP_QOS_*</code> を投入。</li>
-<li><code>muxorch::create_tunnel</code>: encap 側 <code>ENCAP_QOS_*</code> を投入。</li>
-</ul>
-<h3 id="_4">終端オブジェクトの分離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>MuxTunnel</code> と通常の IPinIP tunnel が <strong>同じ Loopback (<code>10.1.0.32</code>) を <code>dst_ip</code></strong> として使うと、decap terminator がぶつかって追加属性を一方だけに付与できない。HLD は次のように <strong>terminator を 2 つに分離</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>トンネル種別</th>
-<th>terminator type</th>
-<th>理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MuxTunnel</code></td>
-<td><code>P2P</code></td>
-<td>対向 ToR の Loopback を <code>src_ip</code> に持てる</td>
-</tr>
-<tr>
-<td>通常 IPinIP</td>
-<td><code>P2MP</code></td>
-<td><code>src_ip</code> 不定。従来どおり</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dscp3">バウンスバック経路の例（DSCP=3 トラフィック）<a class="headerlink" href="#dscp3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant T1
-    participant Standby as Standby ToR
-    participant Active as Active ToR
-    participant Server
-    T1-&gt;&gt;Standby: DSCP=3, TC3, PG3, Q3 (port-level)
-    Standby-&gt;&gt;Standby: encap MuxTunnel
-    Note over Standby: outer DSCP := TC_TO_DSCP_MAP|AZURE_TUNNEL[3] = 2&lt;br/&gt;queue := TC_TO_QUEUE_MAP|AZURE_TUNNEL[3] = 2
-    Standby-&gt;&gt;T1: outer DSCP=2, Q2
-    T1-&gt;&gt;T1: port-level: DSCP2 → TC2 → PG2 (lossy 路)
-    T1-&gt;&gt;Active: TC2 路で転送
-    Active-&gt;&gt;Active: decap MuxTunnel (dscp_mode=pipe, inner DSCP=3 維持)
-    Note over Active: DSCP_TO_TC_MAP|AZURE_TUNNEL[3] = TC3&lt;br/&gt;TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL[3] = PG2
-    Active-&gt;&gt;Server: inner DSCP=3, queue は port-level (Q3)</code></pre>
+<h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>ACL_TABLE_TYPE</code> 用コンテナを追加し、<code>ACL_TABLE.type</code> を <strong><code>union(leafref to ACL_TABLE_TYPE_NAME, builtin acl_table_type)</code></strong> に拡張する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。組み込み名と任意名を共存させるため。</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">ACL_TABLE_TYPE</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">list</span><span class="w"> </span><span class="nv">ACL_TABLE_TYPE_LIST</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;ACL_TABLE_TYPE_NAME&quot;</span><span class="p">;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">MATCHES</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">ACTIONS</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">leaf-list</span><span class="w"> </span><span class="nv">BIND_POINTS</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">PORT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">PORTCHANNEL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="acl">コントロールプレーン ACL の分離<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h3>
+<p>データプレーン（HW）ACL と紛らわしいので、<code>CTRL_PLANE_ACL_TABLE</code> を <strong>別テーブル</strong> として独立させる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;CTRL_PLANE_ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;SSH_ONLY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SSH only&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;services&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;SSH&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ingress&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="state_db-capability">STATE_DB の Capability 公開<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch</code> 起動時に SAI から取得した capability を STATE_DB に書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL_STAGE_CAPABILITY|&lt;INGRESS|EGRESS&gt;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  is_action_list_mandatory = true|false
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  action_list = &quot;PACKET_ACTION,MIRROR_INGRESS_ACTION,REDIRECT_ACTION&quot;
+</span></code></pre></div>
+<p><code>is_action_list_mandatory=true</code> のステージでは、ACL テーブル作成時に <code>actions</code> リスト指定が必須となる。orchagent はテーブル作成時に <strong>action 一覧と capability を突合</strong> する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="init_cfgjson"><code>init_cfg.json</code> の活用<a class="headerlink" href="#init_cfgjson" title="Permanent link">&para;</a></h3>
+<p><code>L3</code> / <code>L3V6</code> 等の従来タイプを将来的に <strong><code>init_cfg.json</code> に移植</strong> することで「組み込みハードコード」を減らす方針が言及されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。当面は orchagent 側にコードとして残る。</p>
+<h3 id="orchagent-acltabletype">Orchagent: <code>AclTableType</code> データ構造<a class="headerlink" href="#orchagent-acltabletype" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">AclTableType</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w">                             </span><span class="n">m_name</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_acl_bind_point_type_t</span><span class="o">&gt;</span><span class="w">     </span><span class="n">m_bpoint_types</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_attribute_id_t</span><span class="o">&gt;</span><span class="w">            </span><span class="n">m_matches</span><span class="p">;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_acl_action_type_t</span><span class="o">&gt;</span><span class="w">         </span><span class="n">m_acl_actions</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">};</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">AclTable</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="k">public</span><span class="o">:</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="n">AclTable</span><span class="p">(</span><span class="n">AclOrch</span><span class="w"> </span><span class="o">*</span><span class="n">pAclOrch</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">AclTableType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">validateAddType</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclTableType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">private</span><span class="o">:</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="n">AclTableType</span><span class="w"> </span><span class="n">m_type</span><span class="p">;</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">};</span>
+</span></code></pre></div>
+<p><code>AclOrch</code> は <code>ACL_TABLE_TYPE</code> を購読し、<code>AclTable</code> 生成時にこの型を渡す<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="acl_1">ACL ルールオブジェクトモデルの統合<a class="headerlink" href="#acl_1" title="Permanent link">&para;</a></h3>
+<p>従来は <code>AclRuleL3</code> / <code>AclRuleL3V6</code> 等の派生クラスがマッチ/アクションごとの validation を持っていた。ユーザ定義タイプではこれが事前に決まらないため、<strong>1 つの汎用 <code>AclRuleBase</code> がすべてのマッチ・アクションを扱い、<code>AclTable</code> の SAI 属性集合に対して generic validate</strong> する設計に統合する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AclRule</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">public</span><span class="o">:</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">create</span><span class="p">();</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">remove</span><span class="p">();</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclRule</span><span class="o">&amp;</span><span class="w"> </span><span class="n">updatedRule</span><span class="p">);</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">AclCapabilities</span><span class="o">&amp;</span><span class="w"> </span><span class="n">capabilities</span><span class="p">);</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">protected</span><span class="o">:</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w">          </span><span class="n">m_priority</span><span class="p">;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="n">AclEntryAttrMap</span><span class="w">   </span><span class="n">m_matches</span><span class="p">;</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="n">AclEntryAttrMap</span><span class="w">   </span><span class="n">m_actions</span><span class="p">;</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="k">private</span><span class="o">:</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w">       </span><span class="n">m_name</span><span class="p">;</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w">   </span><span class="n">m_oid</span><span class="w"> </span><span class="p">{</span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">};</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">AclTable</span><span class="o">&amp;</span><span class="w">   </span><span class="n">m_table</span><span class="p">;</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">};</span>
+</span></code></pre></div>
+<p>create/update/remove は protected で、外部からは AclOrch の public API（<code>addAclRule</code> 等）経由でしか呼べない。これにより CRM / Flex Counter 管理が AclOrch に集約される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="aclorch-api">AclOrch 公開 API<a class="headerlink" href="#aclorch-api" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">addAclTable</span><span class="w">   </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclTable</span><span class="p">);</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">removeAclTable</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">);</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">updateAclTable</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclTable</span><span class="p">);</span><span class="w">   </span><span class="c1">// 注: 更新できるのはバインドされた port のみ</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">addAclRule</span><span class="w">    </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclRule</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclRule</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">);</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">removeAclRule</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">aclRuleName</span><span class="p">);</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">updateAclRule</span><span class="w"> </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclRule</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updatedAclRule</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>updateAclRule</code> は他 orch（<code>pfcwdorch</code> / <code>pbhorch</code> / <code>macsecorch</code>）の用途向け。CONFIG_DB から来る ACL ルール変更は <strong>remove + recreate</strong> で扱われる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/qos/tunnel_dscp_remapping.md#L283-L302 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Bounced back traffic from Standby ToR to T1 ... outer DSCP is rewritten to 2 ...
-  Traffic is delivered in Queue 2 ...
-  At Active ToR ... DSCP_TO_TC_MAP|AZURE_TUNNEL ... TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL ... PG 2
-reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
+  The create/update/remove methods are protected allowing the child classes to be overwritten for custom behavior...
+  bool addAclTable(shared_ptr<AclTable> aclTable); ...
+  NOTE: Updating ACL table allows only for updating ports bound to it.
+  NOTE: ACL rules coming from CONFIG DB are updated by removal and re-creation, an updateAclRule is mostly used for other orch's use cases.
+reasoning: 公開 API と更新セマンティクスの根拠。
 -->
 
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="_3">フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>用途</th>
+<th>フロー</th>
+<th>概要</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>DSCP_TO_TC_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>DSCP → TC</td>
-<td>tunnel decap 用</td>
+<td>Create</td>
+<td><code>ACL_TABLE_TYPE</code> 受領 → <code>AclTableType</code> 作成 → 該当 <code>ACL_TABLE</code> の <code>validateAddType</code> 通過 → SAI ACL テーブル作成</td>
 </tr>
 <tr>
-<td><code>TC_TO_PRIORITY_GROUP_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → PG</td>
-<td>tunnel decap 用</td>
+<td>Update</td>
+<td>テーブルタイプ自体の更新は <strong>未サポート</strong>（matches / actions / bind points の変更不可）。port バインドのみ更新可</td>
 </tr>
 <tr>
-<td><code>TC_TO_QUEUE_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → Queue</td>
-<td>tunnel encap 用</td>
-</tr>
-<tr>
-<td><code>TC_TO_DSCP_MAP</code></td>
-<td><code>AZURE_TUNNEL</code></td>
-<td>TC → DSCP</td>
-<td>tunnel encap 用（新設）</td>
-</tr>
-<tr>
-<td><code>TUNNEL</code></td>
-<td><code>MuxTunnel0</code></td>
-<td><code>decap_dscp_to_tc_map</code> 等</td>
-<td>tunnel に上記マップを紐付け</td>
-</tr>
-<tr>
-<td><code>PORT_QOS_MAP</code></td>
-<td><code>Ethernet*</code></td>
-<td><code>pfc_wd_sw_enable</code></td>
-<td>PFCWD のキュー一覧（新設）</td>
+<td>Remove</td>
+<td>参照する <code>ACL_TABLE</code> が無くなったら type も削除可。orchagent はキャッシュからも消す</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 上に新規 SONiC CLI の追加記述は無い。設定は <code>qos_config.j2</code> で生成される <code>config_db.json</code> の更新と、<code>db_migrator</code> 経由で旧構成から派生する。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>sonic-tc-dscp.yang</code> — <code>TC_TO_DSCP_MAP</code> を表す <strong>新設モジュール</strong></li>
-<li><code>sonic-port-qos-map.yang</code> — <code>pfc_wd_sw_enable</code> フィールド追加</li>
-</ul>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="nt">&quot;dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;tunnel_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPINIP&quot;</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="nt">&quot;decap_dscp_to_tc_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[DSCP_TO_TC_MAP|AZURE_TUNNEL]&quot;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">            </span><span class="nt">&quot;encap_tc_color_to_dscp_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[TC_TO_DSCP_MAP|AZURE_TUNNEL]&quot;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 </span></code></pre></div>
+<p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 HLD では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / config_db.json 直接編集または gNMI から作る前提。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="_5">設定例（既出）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>CUSTOM_L3</code> を定義して <code>DATAACL</code> テーブルがそれを使うパターンを参照。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>table type の matches / actions / bind_points は CREATE-only</strong>: テーブルタイプを変えるには、テーブル＋ルールも作り直しが必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>組み込みタイプは残る</strong>: <code>L3</code> / <code>MIRROR</code> 等は依然 orchagent ハードコード。完全な汎用化ではない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>CLI からカスタムタイプは作れない</strong>: CLI 改修は本 HLD のスコープ外。<code>config_db.json</code> 直接編集または gNMI ルート<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>YANG validation の限界</strong>: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>マッチ capability の SAI クエリ</strong>: <code>sai_query_attribute_capability</code> は CREATE/SET/GET 実装の有無は返すが「サポートか否か」を直接返さない。HLD は Open Question として残している<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>MuxTunnel</strong>: 本機能の主対象。terminator が <code>P2P</code> に分離される変更が入る。</li>
-<li><strong>通常の IPinIP tunnel</strong>: terminator は <code>P2MP</code> 維持。属性は付かない。</li>
-<li><strong>PFC watchdog</strong>: <code>pfc_enable</code> と <code>pfc_wd_sw_enable</code> の分離が前提。<code>db_migrator</code> を当てないと WD が無条件に有効化される旧挙動になる可能性。</li>
-<li><strong>port-level <code>AZURE</code> マップ</strong>: <code>TC2→PG2</code>, <code>TC6→PG6</code> を成立させるためポート側マップも書き換わる。同テーブルを上書きしているプラットフォーム固有設定があると衝突する可能性。</li>
+<li><strong><code>pfcwdorch</code> / <code>pbhorch</code> / <code>macsecorch</code></strong>: 公開 API（<code>addAclRule</code> 等）を使う想定。これら orch のコードパスにも影響。</li>
+<li><strong>Everflow (Mirror)</strong>: <code>MIRROR</code> / <code>MIRRORV6</code> 組み込みタイプは独立扱いのまま。User-defined と混ぜて使うときの作法に注意<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>CRM / Flex Counter</strong>: AclOrch が ACL counter / range オブジェクトのライフサイクルも管理する。AclRule の create/update/remove で連動して作成・破棄される<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>init_cfg.json</code></strong>: 既定の組み込みタイプを <code>init_cfg.json</code> に移すと、新規プラットフォームでもデフォルトタイプが揃う。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>バウンスバック経路でも輻輳が伝搬する場合: <code>MuxTunnel0</code> に <code>encap_tc_to_queue_map</code> / <code>encap_tc_color_to_dscp_map</code> が反映されているか CONFIG_DB と ASIC_DB（<code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code>）で確認する。</li>
-<li>decap 後の TC が想定外: <code>dscp_mode=pipe</code> になっているかを確認。<code>uniform</code> のままだと outer DSCP がそのまま inner に上書きされ、<code>DSCP_TO_TC_MAP|AZURE_TUNNEL</code> の効きが見えなくなる。</li>
-<li>PFCWD の対象キューが想定と違う: <code>db_migrator</code> が <code>pfc_wd_sw_enable</code> を生成しているか、または手動で <code>PORT_QOS_MAP</code> に入っているかを確認。</li>
-<li>terminator の競合: <code>MuxTunnel</code> と通常 IPinIP の両方を作っているのに decap 属性が片方にしか反映されない場合、terminator 分離 (P2P / P2MP) が orchagent で実装されているか裏取り。</li>
+<li>ACL テーブル作成が失敗: STATE_DB の <code>ACL_STAGE_CAPABILITY|&lt;stage&gt;</code> を見て、要求した actions が <code>action_list</code> に入っているか確認。<code>is_action_list_mandatory=true</code> で actions が空ならエラー<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>table type 削除できない: 参照する <code>ACL_TABLE</code> が残っている可能性。YANG validation または orchagent ログで確認。</li>
+<li>ルール挙動が古い派生クラス通りでない: 新方式は単一 <code>AclRuleBase</code> で動的に validate する設計。古い <code>AclRuleL3</code> 等の挙動を期待しないこと<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
-<ul>
-<li><strong>PFCWD フィールド名</strong>: HLD は <code>pfc_wd_sw_enable</code> と表記しているが、現行 master では <code>pfcwd_sw_enable</code>（アンダースコアの位置が異なる）として実装されている。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から <code>pfcwd_sw_enable</code> を派生している。CONFIG_DB / YANG (<code>sonic-port-qos-map</code>) を読む際は実装側の名称に合わせる必要がある。</li>
-<li>一方、<code>tunneldecaporch.cpp:834,1084</code>（<code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>..._TC_TO_PRIORITY_GROUP_MAP</code>）、<code>muxorch.cpp:259,2347</code>（MuxTunnel の <code>SAI_TUNNEL_PEER_MODE_P2P</code>）、<code>files/build_templates/qos_config.j2:441</code> の Dual-ToR 限定 <code>AZURE_TUNNEL</code> 出力は HLD どおり実装されていることを確認した。</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/qos/tunnel_dscp_remapping.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/acl/ACL-Table-Type-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
