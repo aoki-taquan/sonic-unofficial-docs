@@ -1,0 +1,134 @@
+---
+title: Redis Client Manager（RCM: connection pool / transactional client）
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/mgmt/redis_client_manager.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    `sonic-mgmt-common` 上の RCM 4 関数（`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` / `CloseRedisClient`）の現行 master 取り込み、`DBStats` への counter 統合は未確認。
+
+# Redis Client Manager（RCM: connection pool / transactional client）
+
+## 概要
+
+`sonic-mgmt-common` の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で **大量の Redis client** を作成し、Redis TCP/Unix socket に負荷をかけていた[^1]。Google 提案（2024-09 v0.1）の RCM は、go-redis の **connection pool** をフル活用しつつ transactional 操作（MULTI / EXEC / PSUBSCRIBE 等）も扱える 4 関数を新設して **全部この経路に集約** する設計。
+
+ポイント:
+
+- pool 付き共有 client は **DBNum ごとに 1 個 init で作成し再利用**。pool size 上限 20
+- transactional 操作は別 API で per-call client（pool size 1）。使い終わったら明示 close
+- 中央集権で **接続数 / リクエスト数の counter** を取れる
+- pool 化により go-redis の素朴な使い方（`redis.NewClient` / `Close` の連打）を撲滅する
+
+## 動作仕様
+
+### 4 つの関数
+
+```mermaid
+flowchart LR
+    CALLER[caller in sonic-mgmt-common] --> RC[RedisClient(db)]
+    CALLER --> TRC[TransactionalRedisClient(db)]
+    CALLER --> TRCO[TransactionalRedisClientWithOpts(opts)]
+    CALLER --> CL[CloseRedisClient(client)]
+    RC --> CACHE[(client cache\nDBNum -> *redis.Client\nPoolSize 20)]
+    TRC --> NEW[redis.NewClient\nPoolSize 1]
+    TRCO --> NEW
+    CL --> CHECK{PoolSize == 1?}
+    CHECK -->|yes| RCLOSE[redis.Close]
+    CHECK -->|no| NOOP[no-op（共有 client は閉じない）]
+```
+
+| Function | 振る舞い |
+|----------|---------|
+| `RedisClient(db DBNum)` | 共有 pool 付き client。MULTI/EXEC 不可。複数 goroutine 同時利用 OK |
+| `TransactionalRedisClient(db DBNum)` | poolSize=1 の専用 client。transactional 操作可。close 必須 |
+| `TransactionalRedisClientWithOpts(opts *redis.Options)` | カスタム opts 版。実装は上と類似 |
+| `CloseRedisClient(client *redis.Client)` | poolSize==1 のときだけ close。共有 pool は no-op |
+
+### Init: 共有 client cache の事前構築
+
+Go init process でしっかり mostly-once に DBNum 分の client を作る。
+
+```mermaid
+sequenceDiagram
+    participant INIT as Go init
+    participant ADJ as adjustRedisOpts(db)
+    participant NEW as redis.NewClient(opts)
+    participant CACHE as cache map
+    INIT->>ADJ: 各 DBNum
+    ADJ-->>INIT: opts (PoolSize=20)
+    INIT->>NEW: client
+    NEW-->>INIT: *redis.Client
+    INIT->>CACHE: store
+```
+
+### Connection 失敗の検知
+
+新規 client 生成直後に **ping を打つ** ことで、translib の上位 `UMF`（unified management framework）が早期にログ出力できる[^1]。
+
+### Counter
+
+`DBStats` API に統合し公開する counter[^1]:
+
+- `curTransactionalClients`: 現在 active な transactional client 数
+- `totalPoolClientsRequested`: 共有 pool client の取得回数
+- `totalTransactionalClientsRequested`: transactional client の取得回数
+
+加えて go-redis 内部の pool stats（hit / miss / timeouts 等）も `DBStats` 経由で出す。
+
+### Transactional 操作の隔離
+
+transactional 操作は connection 1 本占有が前提。`TransactionalRedisClient` は **PoolSize=1** で生成し、明示 close 後にコネクション解放[^1]。共有 client に対して MULTI を投げてはいけない。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/mgmt/redis_client_manager.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Redis Clients with a connection pool must be reused wherever possible instead of creating a new Redis Client each time one is needed.
+  ... a cache of Redis Clients that are initialized during the Go init process. One client is created for each DBNum and stored in a map.
+  ... max pool size is set to 20
+reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
+-->
+
+## 設定
+
+ユーザに公開される CONFIG_DB / CLI は無い。`sonic-mgmt-common` 内部 API。
+
+## 制限事項
+
+- 共有 client は **transactional 不可**
+- transactional client を close し忘れるとリソースリーク → CloseRedisClient 必須
+- pool size 20 はチューニング対象（負荷試験で見直し）
+- go-redis library への依存
+
+## 干渉する機能
+
+- **gNMI / REST**: translib 経由のすべての処理が間接的に高速化
+- **CVL（Config Validation Library）**: Redis 経由検証も RCM 配下に乗る
+- **DBStats**: 統計集約口
+
+## トラブルシューティング
+
+- pool 枯渇でレスポンス遅延 → `DBStats` の go-redis pool stats（timeouts / waits）を確認
+- connection refused がログ → init での ping 失敗、Redis 起動順を確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/mgmt/redis_client_manager.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- sonic-mgmt-common/translib/db/ 配下への RCM 4 関数取り込み確認
+- 既存 redis.NewClient / Close 直叩きの撲滅状況確認
+- DBStats への RCM counter 統合確認
+- pool size 20 default の現行コード確認
+- TransactionalRedisClient 利用箇所での close 完備確認（leak 検出）
+- ping ベースの早期 connection 失敗検出ロジックの実装確認
+-->
