@@ -3524,6 +3524,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -4602,6 +4613,8 @@
       
         
       
+        
+      
     
     
     
@@ -5063,6 +5076,34 @@
     
   
     P4Runtime PacketIO（generic netlink + send_to_ingress）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
   
 
     
@@ -8766,6 +8807,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8798,9 +8850,36 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021-09 (Rev 0.1)。<code>portsyncd</code> / <code>portmgrd</code> / <code>portsorch</code> の zero-port 起動対応、buffer ref counter による delete ガード、<code>lldpmgrd</code> の host-interface ステート確認の取り込みは要裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（buffer ref counter PR は close、それ以外は merge 済み）</p>
+<p>HLD で参照されている関連 PR の現状を 2026-05-09 に確認:</p>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>内容</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sonic-swss #1808</td>
+<td>portsyncd を port 無しで動かす</td>
+<td>✅ MERGED (2021-07)</td>
+</tr>
+<tr>
+<td>sonic-swss #2019</td>
+<td>flex counter 動的 add/del</td>
+<td>✅ MERGED (2022-04)</td>
+</tr>
+<tr>
+<td>sonic-swss #2022</td>
+<td>port buffer cfg ref counter</td>
+<td>❌ CLOSED（未マージ）</td>
+</tr>
+</tbody>
+</table>
+<p><code>dockers/docker-lldp/lldpmgrd:129-130</code> で <code>netdev_oper_status</code> チェック、<code>lldpmgrd:46-198</code> で <code>pending_cmds</code> の管理を確認。<code>sonic-swss/portsyncd/portsyncd.cpp</code> 配下に <code>PortConfigDone</code> も存在。<strong>ただし HLD が要求する「buffer cfg per-port reference counter による delete ガード」は #2022 が close されており現行 master に未取り込み</strong>。削除時 race の防御は HLD 設計通りには動かない（verified at: 2026-05-09）。</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">area の経緯</p>
@@ -9030,7 +9109,14 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li>LLDP が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。</p>
+<ul>
+<li><strong>取り込み済み</strong>: <code>sonic-swss/portsyncd</code> の zero-port 対応 (#1808 MERGED)、<code>portsorch</code> の per-port flex counter 動的 add/del (#2019 MERGED)、<code>sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130,46-198</code> の <code>netdev_oper_status</code> チェックと <code>pending_cmds</code> 管理。</li>
+<li><strong>未取り込み</strong>: <code>sonic-swss</code> PR #2022 (port buffer cfg per-port reference counter) は <strong>CLOSED で未マージ</strong>。HLD で「ref-count &gt; 0 のポート削除拒否」の核となる防御策が現行 master に存在しない。削除時 race の防御は HLD 設計通り動かず、ユーザは依存設定の事前削除順序を厳格に守る必要がある。</li>
+<li>buffermgrd の加入時 race（APP_DB に port 存在チェック）の取り込み状況は未検証。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-express-reboot-hld-spec/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/portable-console-device-design/">
       
       
-        <link rel="prev" href="../sonic-boot-chart/">
+        <link rel="prev" href="../packetio/">
       
       
-        <link rel="next" href="../sonic-fips-deployment/">
+        <link rel="next" href="../save-on-set-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） - SONiC 非公式ドキュメント</title>
+        <title>Portable Console Device 設計（USB ベンダー console デバイスの抽象化） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#express-rebootcisco-8000" class="md-skip">
+        <a href="#portable-console-device-usb-console" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+              Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
             
           </span>
         </div>
@@ -357,13 +357,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3401,6 +3401,830 @@
       
   
   
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    システム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    システム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バナーメッセージ（login / motd / logout）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クリティカルリソースモニタリング (CRM) 要件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show techsupport での SFP EEPROM ページダンプ取り込み
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kdump リモート転送（SSH）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reboot-cause 履歴の STATE_DB / テレメトリ公開
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP 設定の snmp.yml → CONFIG_DB 移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Boot Chart（systemd-bootchart 統合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブルによるオプショナル機能の有効/無効制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC OS と Docker イメージのセマンティックバージョニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR 用 sysctl チューニングのデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -3410,6 +4234,8 @@
       
         
           
+        
+      
         
       
         
@@ -3478,7 +4304,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -3489,7 +4315,7 @@
   <span class="md-ellipsis">
     
   
-    システム
+    マネジメント
   
 
     
@@ -3500,18 +4326,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
-    システム
+    マネジメント
   
 
           </label>
@@ -3526,14 +4352,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
   
 
     
@@ -3554,14 +4380,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    バナーメッセージ（login / motd / logout）
+    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
   
 
     
@@ -3582,14 +4408,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    クリティカルリソースモニタリング (CRM) 要件
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
   
 
     
@@ -3610,14 +4436,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    show techsupport での SFP EEPROM ページダンプ取り込み
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
   
 
     
@@ -3638,14 +4464,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../gnmi-usage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
   
 
     
@@ -3666,14 +4492,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    kdump リモート転送（SSH）
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
   
 
     
@@ -3694,14 +4520,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
+    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
   
 
     
@@ -3722,14 +4548,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
   
 
     
@@ -3750,14 +4576,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
   
 
     
@@ -3778,14 +4604,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../gnsi-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
   
 
     
@@ -3806,14 +4632,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../hld-ldap/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Reboot-cause 履歴の STATE_DB / テレメトリ公開
+    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
   
 
     
@@ -3834,14 +4660,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
   
 
     
@@ -3862,14 +4688,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../p4rt-application-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SNMP 設定の snmp.yml → CONFIG_DB 移行
+    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
   
 
     
@@ -3890,14 +4716,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SONiC Boot Chart（systemd-bootchart 統合）
+    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packetio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4Runtime PacketIO（generic netlink + send_to_ingress）
   
 
     
@@ -3934,7 +4788,7 @@
   <span class="md-ellipsis">
     
   
-    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
   
 
     
@@ -3952,7 +4806,7 @@
   <span class="md-ellipsis">
     
   
-    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
   
 
     
@@ -4004,41 +4858,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fast-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        fast-reboot スクリプトの拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#syncd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        syncd の拡張
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="syncd の拡張">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pre-shutdown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pre-shutdown
+        前提
       
     </span>
   </a>
@@ -4049,7 +4869,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動後
+        セットアップフロー
       
     </span>
   </a>
@@ -4057,26 +4877,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-done" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Config Done 通知
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_switch_attr_fast_api_enable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI_SWITCH_ATTR_FAST_API_ENABLE の意味の使い分け
+        CONFIG_DB
       
     </span>
   </a>
@@ -4084,10 +4888,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#build-infra-host-services" class="md-nav__link">
+  <a href="#python-apisonic_platform_commonsonic_console" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build infra / host-services 影響
+        Python API（sonic_platform_common/sonic_console/）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factory-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factory Function
       
     </span>
   </a>
@@ -4112,7 +4927,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -4220,861 +5035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Logging & System Dumps（要件レベル仕様）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブルによるオプショナル機能の有効/無効制御
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC OS と Docker イメージのセマンティックバージョニング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FRR 用 sysctl チューニングのデフォルト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    マネジメント
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    マネジメント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Master Arbitration（election ID と SetRequest 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/hld-ldap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4Runtime PacketIO（generic netlink + send_to_ingress）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/portable-console-device-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -5102,7 +5063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -5130,7 +5091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5158,7 +5119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -5186,7 +5147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -5214,7 +5175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -5242,7 +5203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -5270,7 +5231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5298,7 +5259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-authentication/" class="md-nav__link">
+      <a href="../tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -5326,7 +5287,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -8525,41 +8486,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fast-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        fast-reboot スクリプトの拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#syncd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        syncd の拡張
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="syncd の拡張">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pre-shutdown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pre-shutdown
+        前提
       
     </span>
   </a>
@@ -8570,7 +8497,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動後
+        セットアップフロー
       
     </span>
   </a>
@@ -8578,26 +8505,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-done" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Config Done 通知
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_switch_attr_fast_api_enable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI_SWITCH_ATTR_FAST_API_ENABLE の意味の使い分け
+        CONFIG_DB
       
     </span>
   </a>
@@ -8605,10 +8516,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#build-infra-host-services" class="md-nav__link">
+  <a href="#python-apisonic_platform_commonsonic_console" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build infra / host-services 影響
+        Python API（sonic_platform_common/sonic_console/）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factory-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factory Function
       
     </span>
   </a>
@@ -8633,7 +8555,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -8742,7 +8664,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-express-reboot-hld-spec.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/portable-console-device-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -8751,146 +8673,109 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / プラットフォーム固有</p>
-<p>本機能は <strong>Cisco 8000 限定</strong> とスクリプト側で強制される設計。<code>syncd_request_shutdown -pxe</code> / <code>SAI_START_TYPE_EXPRESS_BOOT</code> / <code>SYNCD_RESTART_TYPE_EXPRESS</code> 列挙値、<code>SONIC_BOOT_TYPE=express</code> フラグの扱いが現行 master の sonic-utilities / sonic-sairedis / sonic-host-services に取り込まれているかは未確認。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.1 / 2022-12 改訂。<code>sonic_platform_common/sonic_console/</code> 配下の API クラス階層、<code>CONSOLE_SWITCH</code> テーブルへのフィールド追加、ベンダー .deb パッケージの自動インストール経路が現行 master でこの仕様どおりかは未確認。</p>
 </div>
-<h1 id="express-rebootcisco-8000">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）<a class="headerlink" href="#express-rebootcisco-8000" title="Permanent link">&para;</a></h1>
+<h1 id="portable-console-device-usb-console">Portable Console Device 設計（USB ベンダー console デバイスの抽象化）<a class="headerlink" href="#portable-console-device-usb-console" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Express Reboot は SONiC の再起動シーケンスを拡張し、<strong>サブ秒のデータプレーン断</strong> で SW アップグレードを行うためのモード。Warm Reboot と異なり、外部 PHY を再初期化せず、NPU は <strong>設定再投入が完了してから</strong> 初期化する点が要点<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は SAI 側の既存 fastfast boot 用属性 <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> を拡張流用する。</p>
+<p>SONiC のホストにプラグインされる <strong>USB 接続のポータブル console デバイス</strong> に対して、ベンダー横断の抽象 API を定義する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ベンダーは <code>&lt;vendor&gt;-&lt;model&gt;.deb</code> パッケージで driver と udev rules を提供し、Python の Platform 層で <code>PortableConsoleDeviceBase</code> を継承した実装クラスを <code>/sonic_platform_common/sonic_console/&lt;vendor&gt;/console_&lt;model&gt;.py</code> に置く。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as User
-    participant FR as fast-reboot
-    participant SD as syncd
-    participant SAI as SAI/SDK
-    U-&gt;&gt;FR: express-reboot
-    FR-&gt;&gt;FR: enforce platform == Cisco 8000
-    FR-&gt;&gt;SD: docker exec syncd /usr/bin/syncd_request_shutdown -pxe
-    SD-&gt;&gt;SAI: setPreShutdownOnAllSwitches\n SAI_SWITCH_ATTR_FAST_API_ENABLE = true
-    SAI--&gt;&gt;SD: ack（外部 PHY 非初期化指示）
-    FR-&gt;&gt;U: kexec/boot, SONIC_BOOT_TYPE=express
-    Note over U,SAI: 再起動後
-    SD-&gt;&gt;SAI: SAI_KEY_BOOT_TYPE = SAI_START_TYPE_EXPRESS_BOOT で init
-    SD-&gt;&gt;SAI: APPLY_VIEW 受信時に\n SAI_SWITCH_ATTR_FAST_API_ENABLE = false
-    SAI--&gt;&gt;SD: bulk programming 開始</code></pre>
-<h3 id="fast-reboot">fast-reboot スクリプトの拡張<a class="headerlink" href="#fast-reboot" title="Permanent link">&para;</a></h3>
+<h3 id="_3">前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>新エントリポイント <code>express-reboot</code> は <code>fast-reboot</code> への symlink として追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>起動時に <strong>Cisco 8000 プラットフォームかどうかを強制チェック</strong>（他プラットフォームでは即座に拒否）。</li>
-<li>shutdown フェーズで <code>docker exec syncd /usr/bin/syncd_request_shutdown -pxe</code> を呼ぶ。</li>
-<li><code>kexec</code> の cmdline に <code>SONIC_BOOT_TYPE=express</code> を追加。</li>
+<li>USB のみサポート（v0.1）。</li>
+<li>同時に動かせるのは <strong>同一モデル 1 種類だけ</strong>。異なるモデルが混在し、<code>vendor_name</code> / <code>model_name</code> の手動指定もない場合は機能しない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>同一ベンダー・同一モデルの複数台 daisy-chain は可（最大数はベンダー実装依存）。</li>
 </ul>
-<h3 id="syncd">syncd の拡張<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h3>
-<p>新規 enum 値が追加される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>：</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_syncd_restart_type_t</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_COLD</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_WARM</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_FAST</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_PRE_SHUTDOWN</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_EXPRESS</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="n">SYNCD_RESTART_TYPE_EXPRESS_PRE_SHUTDOWN</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span><span class="w"> </span><span class="n">syncd_restart_type_t</span><span class="p">;</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="cp">#define STRING_SAI_START_TYPE_EXPRESS_BOOT &quot;express&quot;</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_start_type_t</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="n">SAI_START_TYPE_COLD_BOOT</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="n">SAI_START_TYPE_WARM_BOOT</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="n">SAI_START_TYPE_FAST_BOOT</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="n">SAI_START_TYPE_FASTFAST_BOOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">  </span><span class="cm">/* Mellanox */</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="n">SAI_START_TYPE_EXPRESS_BOOT</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">  </span><span class="cm">/* Cisco */</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="n">SAI_START_TYPE_UNKNOWN</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_start_type_t</span><span class="p">;</span>
+<h3 id="_4">セットアップフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    USB[USB plug-in] --&gt; UDEV[udev rules]
+    UDEV --&gt; MAP[/dev/ttyUSB&lt;id&gt; → /dev/console-&lt;line&gt;/]
+    BUILD[sonic-buildimage] --&gt; DEB[&lt;vendor&gt;-&lt;model&gt;.deb]
+    DEB --&gt;|install| RULES[/etc/udev/rules.d/50-&lt;vendor&gt;-&lt;model&gt;.rules]
+    POSTINST[postinst hook] --&gt;|udevadm trigger -c add| UDEV</code></pre>
+<p>ベンダー側 deb には <code>50-&lt;vendor&gt;-&lt;model&gt;.rules</code> を <code>/etc/udev/rules.d/</code> に配置し、postinst で <code>udevadm trigger -c add</code> を呼ぶ運用が標準とされる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。優先度番号 50 はベンダー間衝突を避ける慣例。</p>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONSOLE_SWITCH|console_mgmt
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    autodetect   = &quot;enable&quot; | &quot;disable&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    vendor_name  = string    ; autodetect=enable のとき空必須
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    model_name   = string    ; autodetect=enable のとき空必須
 </span></code></pre></div>
-<h4 id="pre-shutdown">Pre-shutdown<a class="headerlink" href="#pre-shutdown" title="Permanent link">&para;</a></h4>
-<p><code>Syncd::setPreShutdownOnAllSwitches()</code> で <code>shutdownType == SYNCD_RESTART_TYPE_EXPRESS</code> のとき <code>SAI_SWITCH_ATTR_FAST_API_ENABLE = true</code> をセットする。これは「reboot 時に外部 PHY を再初期化しないこと」「NPU を設定完了通知が来てから初期化すること」を SDK に伝える信号として扱われる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_4">起動後<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p><code>vendorSai</code> 初期化時に <code>SAI_KEY_BOOT_TYPE = SAI_START_TYPE_EXPRESS_BOOT</code> を渡す。これに応じて OCP SAI の <code>SAI_KEY_BOOT_TYPE</code> が express をサポートするよう更新される必要がある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="config-done">Config Done 通知<a class="headerlink" href="#config-done" title="Permanent link">&para;</a></h4>
-<p>設定再投入が終わった合図として、<code>Syncd::processNotifySyncd()</code> が <code>SAI_REDIS_NOTIFY_SYNCD_APPLY_VIEW</code> を受けた際に <strong>express boot ならば fastfast boot と同じパスで</strong> <code>onApplyViewInFastFastBoot()</code> を呼ぶ。これで <code>SAI_SWITCH_ATTR_FAST_API_ENABLE = false</code> がセットされ、bulk programming が始まる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="sai_switch_attr_fast_api_enable"><code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> の意味の使い分け<a class="headerlink" href="#sai_switch_attr_fast_api_enable" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>値</th>
-<th>Express boot</th>
-<th>Fastfast boot</th>
-<th>意味</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TRUE</td>
-<td>Pre-shutdown</td>
-<td>未使用</td>
-<td>Express 用の pre-shutdown シグナル</td>
-</tr>
-<tr>
-<td>FALSE</td>
-<td>起動後</td>
-<td>起動後</td>
-<td>bulk programming 開始</td>
-</tr>
-</tbody>
-</table>
-<h3 id="build-infra-host-services">Build infra / host-services 影響<a class="headerlink" href="#build-infra-host-services" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>docker_image_ctl.j2</code> を更新して <code>{service}.sh</code> で express boot タイプを扱えるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>sonic-host-services</code> の <code>show reboot-reason</code> を拡張して <code>express</code> を表示する。</li>
-</ul>
+<p><code>autodetect=disable</code> のときに <code>vendor_name</code> / <code>model_name</code> を読んで factory 関数が対応クラスをインスタンス化する設計<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="python-apisonic_platform_commonsonic_console">Python API（<code>sonic_platform_common/sonic_console/</code>）<a class="headerlink" href="#python-apisonic_platform_commonsonic_console" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic_console/
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── console_base.py    # PortableConsoleDeviceBase
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>├── factory.py         # vendor/model から具象クラスを返す
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>├── line_info.py       # ConsoleLineInfo
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>├── microsoft/
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>│   └── console_simulator.py
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>└── &lt;vendor&gt;/
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    └── console_&lt;model&gt;.py
+</span></code></pre></div>
+<p><code>ConsoleLineInfo</code> は 1 つの console 回線を表現するレコードで、<code>device_index</code> / <code>port_name</code> / <code>virtual_device_path</code> を持つ<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PortableConsoleDeviceBase</code> の派生クラスがベンダー固有挙動を実装する。</p>
+<h3 id="factory-function">Factory Function<a class="headerlink" href="#factory-function" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># factory.py（概念）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">vendor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">if</span> <span class="n">vendor</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="c1"># autodetect: 既知ベンダー一覧で USB 列挙して特定</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="n">vendor</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">autodetect</span><span class="p">()</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sonic_console.</span><span class="si">{</span><span class="n">vendor</span><span class="si">}</span><span class="s2">.console_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">return</span> <span class="n">mod</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+</span></code></pre></div>
+<p>autodetect 時に複数ベンダーの USB を同時検出した場合は失敗させる仕様（前述の前提）。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述は無い（コマンドラインからの起動シーケンスのみ）。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>Table</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>express-reboot</code></td>
-<td>Cisco 8000 で express モードでリブート</td>
-</tr>
-<tr>
-<td><code>show reboot-cause</code></td>
-<td>直近 reboot の原因として <code>express</code> が表示される</td>
+<td><code>CONSOLE_SWITCH</code></td>
+<td>console-switch 機能設定。ポータブルデバイス制御用に <code>autodetect</code> / <code>vendor_name</code> / <code>model_name</code> フィールド追加</td>
 </tr>
 </tbody>
 </table>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>HLD には新規 CLI の正式定義は含まれない。既存の <code>config console</code> 系で <code>vendor_name</code> / <code>model_name</code> を設定すると示唆される。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>HLD に YANG モデルの記述は無い。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Cisco 8000 上でのみ動作</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>express-reboot
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># autodetect モード</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>console-switch<span class="w"> </span>autodetect<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 手動指定</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>console-switch<span class="w"> </span>autodetect<span class="w"> </span>disable
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>console-switch<span class="w"> </span>vendor<span class="w"> </span>microsoft
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>console-switch<span class="w"> </span>model<span class="w"> </span>simulator
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Cisco 8000 専用</strong>。他のプラットフォームでは fast-reboot スクリプトが拒否する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>punt-header / inject-header の V1↔V2 互換性が SDK 内で保証される必要があり、構造変更が起きると上位互換が壊れる。HLD では「punt/inject ヘッダの後方互換維持が express boot 成功の前提」と明記し、ジェネリックな解決は phase-2 で別途共有予定とする<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>外部 PHY を再初期化しないため、PHY 状態の変化（リンクフラップ等）が起きていると挙動が読めない。</li>
-<li>HLD 自体の改訂日は記載されていない（<code>Initial Proposal</code> 相当）。</li>
+<li><strong>USB 専用</strong>。シリアル直結の console 拡張デバイスは対象外。</li>
+<li>異なるモデルの混在は不可（autodetect では 1 種類だけ動く）。</li>
+<li>daisy-chain サポート可否はベンダー実装依存（HLD では台数制限を規定しない）。</li>
+<li>ベンダー実装は <strong><code>sonic-platform-common</code></strong> に貢献する形で取り込まれることを想定（独立 plugin ではない）。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Warm Reboot / Fast Reboot</strong>: 同じ <code>fast-reboot</code> スクリプトを共有する。<code>SONIC_BOOT_TYPE</code> で識別。</li>
-<li><strong>fastfast boot (Mellanox)</strong>: <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> の起動後セマンティクスを共有する（pre-shutdown のみ express 固有）。</li>
-<li><strong><code>show reboot-cause</code></strong>: <code>cause</code> に <code>express</code> が出る拡張を <code>sonic-host-services</code> 側で行う。</li>
+<li><strong>新 Platform API（sonic_platform）</strong>: 同じく Python クラス階層で抽象化される設計思想を共有する。</li>
+<li><strong>udev</strong>: console line ↔ /dev mapping は udev に依存。他の udev rules との優先順位衝突に注意。</li>
+<li><strong><code>show line</code> / <code>config line</code>（既存 console-switch CLI）</strong>: ポータブルデバイス追加で行数が動的に変わるため、既存 CLI 側でラインインデックスを再計算する必要がある（HLD では明示なし、要確認）。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>他プラットフォームで <code>express-reboot</code> を叩いた場合、即座に拒否される（プラットフォームチェック）。</li>
-<li>ブート後にデータプレーン断が長い場合、<code>SAI_SWITCH_ATTR_FAST_API_ENABLE = true</code> が pre-shutdown でセットされていたか syslog で確認する。</li>
-<li><code>show reboot-cause</code> で <code>unknown</code> になる場合、<code>sonic-host-services</code> 側の express ハンドリングが入っていない可能性。</li>
+<li>USB 装着時にラインが見えない → <code>lsusb</code> でデバイス認識を確認、<code>udevadm monitor</code> で rules 発火を確認。</li>
+<li>異なるモデル混在時に動かない → 仕様。1 種類だけプラグインするか、autodetect を disable にして手動指定する。</li>
+<li>daisy-chain で奥のデバイスが見えない → ベンダー実装の最大段数を確認。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/console/Portable-Console-Device-High-Level-Design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
