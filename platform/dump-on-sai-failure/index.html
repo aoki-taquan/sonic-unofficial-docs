@@ -6476,6 +6476,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -12049,6 +12060,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -12081,9 +12103,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 列挙値、<code>/usr/bin/syncd_dump.sh</code> / <code>/usr/bin/platform_syncd_dump.sh</code>、<code>/var/log/sai_failure_dump/</code> 出力、<code>SAI_MAX_FAILURE_DUMPS=10</code> のローテーション、techsupport の収集 / クリア経路は未裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（汎用スクリプト名がリネーム）</p>
+<p><code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 列挙値、<code>/var/log/sai_failure_dump/</code> 出力ディレクトリ、<code>SAI_MAX_FAILURE_DUMPS=10</code> 既定値、<code>platform_syncd_dump.sh</code> プラットフォーム固有スクリプトは実装と一致 (<code>sonic-sairedis/syncd/Syncd.cpp</code> L4493、<code>syncd/scripts/sai_failure_dump.sh</code> L8/L10/L12)。<strong>ただし HLD で <code>/usr/bin/syncd_dump.sh</code> と書かれている汎用スクリプト名は実装では <code>/usr/bin/sai_failure_dump.sh</code> にリネームされている</strong>。<code>Syncd.cpp</code> L45 と <code>tests.cpp</code> L46 の <code>SAI_FAILURE_DUMP_SCRIPT</code> 定数、<code>syncd/scripts/</code> 配下のファイル名がそれを示す。記述上の名前は HLD 当時の名称であり、現行コードでは別名となっている点に注意（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）<a class="headerlink" href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -12220,7 +12242,13 @@ reasoning: notify 機構と汎用スクリプト・rotation 既定値の根拠�
 <li>techsupport を取ったのに dump が同梱されない: techsupport 側の収集ロジックが本ディレクトリを対象にしているか確認。HLD は対応を要件化している<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、実装裏取りが必要。</li>
 <li>abort が遅い: <code>platform_syncd_dump.sh</code> の処理時間を計測。長すぎる SDK dump は問題報告に値する。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>HLD</strong>: 汎用 dump 起点スクリプトを <code>/usr/bin/syncd_dump.sh</code> と表記。</li>
+<li><strong>現行 master</strong>: <code>sonic-sairedis/syncd/Syncd.cpp</code> L45 / <code>tests.cpp</code> L46 の <code>#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"</code>、<code>sonic-sairedis/syncd/scripts/sai_failure_dump.sh</code> L8/L10/L12 で確認したとおり、汎用スクリプトは <strong><code>/usr/bin/sai_failure_dump.sh</code></strong> にリネームされている。<code>SAI_MAX_FAILURE_DUMPS=10</code> の既定値、<code>/var/log/sai_failure_dump/</code> 出力先、<code>platform_syncd_dump.sh</code> の有無確認 → 呼び出しという挙動は HLD のとおり。</li>
+<li>上記以外の HLD 表現（<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 列挙値、<code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> 経由のディスパッチ）は <code>Syncd.cpp</code> L4493 で確認済みで一致。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

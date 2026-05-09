@@ -12049,9 +12049,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-swss-common</code> の <code>ProducerStateTable::create_temp_view</code> / <code>apply_temp_view</code> 実装、<code>m_tempViewState</code> / <code>m_tempViewActive</code> メンバの存在、<code>fpmsyncd</code> 等の利用側コードは未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss-common/common/producerstatetable.h</code> L51/L53 で <code>create_temp_view()</code> / <code>apply_temp_view()</code>、L58 で <code>bool m_tempViewActive</code>、L66 で <code>TableDump m_tempViewState</code> を確認。<code>producerstatetable.cpp</code> L31 で <code>m_tempViewActive(false)</code> 初期化、L132/L172/L205/L254 の各 set/del 系で <code>m_tempViewActive</code> 分岐により <code>m_tempViewState</code> を更新、L324-479 で <code>create_temp_view</code> / <code>apply_temp_view</code> の差分計算（既存 key の比較 + 新規 add + 既存削除）と Lua 引数組み立てを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="producerstatetable-view-switchingwarm-reboot">ProducerStateTable の view switching（warm reboot 用の差分適用）<a class="headerlink" href="#producerstatetable-view-switchingwarm-reboot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

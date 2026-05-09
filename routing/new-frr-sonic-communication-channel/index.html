@@ -12105,9 +12105,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>dplane_fpm_sonic.c</code> モジュールの sonic-buildimage/sonic-frr 配下への取り込み、<code>build-dplane-fpm-sonic-module.patch</code> の適用、zebra <code>supervisor.conf.j2</code> の <code>-M dplane_fpm_sonic</code> 切替、<code>RTM_NEWSRV6LOCALSID</code> / <code>RTM_DELSRV6LOCALSID</code> Netlink message type と <code>onSrv6LocalSidMsg()</code> callback の現行 master 実装は実コードでの裏取り未済（参考 PR: sonic-buildimage#18715, sonic-swss#3123）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c</code> L170/L3467 で <code>prov_name = "dplane_fpm_sonic"</code> と provider 登録、<code>Makefile</code> L9 で <code>DPLANE_FPM_SONIC_MODULE</code> ビルドターゲット、<code>patch/series</code> L11 で <code>0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch</code> 適用を確認。<code>dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L46 で <code>zebra ... -M dplane_fpm_sonic -M snmp --asic-offload=notify_on_offload</code> 起動コマンドを確認。<code>sonic-swss/fpmsyncd/fpmlink.h</code> L18 で <code>RTM_NEWSRV6LOCALSID = 1000</code>、<code>fpmlink.cpp</code> L46 で <code>RTM_NEWSRV6LOCALSID</code> / <code>RTM_DELSRV6LOCALSID</code> の dispatch、<code>tests/mock_tests/fpmsyncd/receive_srv6_mysids_ut.cpp</code> で SRv6 MySID Netlink テストを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="frr-sonic-dplane_fpm_sonic">新 FRR-SONiC 通信チャネル（<code>dplane_fpm_sonic</code> モジュール）<a class="headerlink" href="#frr-sonic-dplane_fpm_sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

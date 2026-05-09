@@ -12215,9 +12215,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 段階導入の HLD</p>
-<p>本 HLD は <strong>stage 1 のソフトウェアのみ実装</strong> を定義する初期版（採用ステータス未確認）。<code>DashAclOrch</code> の tag 展開ロジック、ENI 既 bind 時の <strong>ACL group 再生成パス</strong>、<code>APP_DB.DASH_PREFIX_TAG_TABLE</code> のスキーマ命名は実コードでの裏取り未済。stage 2 の SAI API 経由のタグ表現は本ページの範囲外。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（Stage 1 のみ）</p>
+<p><code>sonic-swss-common/common/schema.h</code> L183 で <code>APP_DASH_PREFIX_TAG_TABLE_NAME = "DASH_PREFIX_TAG_TABLE"</code> を確認。<code>sonic-swss/orchagent/dash/dashaclorch.cpp</code> L111-112 で <code>APP_DASH_PREFIX_TAG_TABLE_NAME</code> の SET/DEL を <code>taskUpdateDashPrefixTag</code> / <code>taskRemoveDashPrefixTag</code> が処理することを確認、L283-310 で tag CRUD ハンドラを確認。<code>tests/dash/test_dash_acl.py</code> L186-194/L511 で <code>PrefixTag</code> proto による tag → prefix 群の登録 / 削除テストを確認（verified at: 2026-05-09）。Stage 2（SAI API 経由のタグ表現）は本 HLD の範囲外。</p>
 </div>
 <h1 id="dash-acl-dash_prefix_tag_table-dash_acl_rule_table">DASH ACL タグ（<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> 拡張）<a class="headerlink" href="#dash-acl-dash_prefix_tag_table-dash_acl_rule_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

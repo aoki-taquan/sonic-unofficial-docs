@@ -12015,9 +12015,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-swss-common</code> 内の <code>ZmqClient</code> / <code>ZmqServer</code> / <code>ZmqProducerStateTable</code> / <code>ZmqConsumerStateTable</code> の実体・スレッド構成・DB 書き込みのオプション化（feature flag）の実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss-common/common/</code> 配下に <code>zmqclient.{h,cpp}</code> / <code>zmqserver.{h,cpp}</code> / <code>zmqproducerstatetable.{h,cpp}</code> / <code>zmqconsumerstatetable.{h,cpp}</code> の実体を確認。<code>zmqproducerstatetable.h</code> L16-49 で <code>ZmqProducerStateTable : public ProducerStateTable</code> 継承と <code>ZmqClient&amp;</code> メンバ、コンストラクタ引数 <code>bool dbPersistence = true</code> を確認。<code>zmqconsumerstatetable.h</code> L22 / cpp L20-36 で Consumer 側コンストラクタ既定 <code>dbPersistence = false</code>、フラグに応じた DB 書き込み分岐を確認（DB 書き込みのオプション化）。Python バインディングは <code>pyext/swsscommon.i</code> L296-346 で <code>ZmqProducerStateTable</code> の director 化と <code>zmqWait</code> ヘルパを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="zmq-producerstatetable-consumerstatetable">ZMQ ProducerStateTable / ConsumerStateTable 設計<a class="headerlink" href="#zmq-producerstatetable-consumerstatetable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

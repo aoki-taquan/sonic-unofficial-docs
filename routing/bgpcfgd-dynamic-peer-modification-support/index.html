@@ -12159,9 +12159,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase</code> が <code>update.conf.j2</code> / <code>delete.conf.j2</code> をロードして dynamic peer 更新時に diff を rendering するロジック、<code>STATE_DB.BGP_PEER_CONFIGURED_TABLE</code> の書き込み、<code>show ip bgp vrf &lt;name&gt; {summary|network|neighbors}</code> の sonic-utilities 取り込みは実コードでの裏取り未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> L87 で <code>BGPPeerMgrBase</code> 定義、L112-115 で <code>update.conf.j2</code> / <code>delete.conf.j2</code> を <code>searchpath</code> 上で確認しロード、L287-297 で <code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME</code> への CRUD を確認。<code>sonic-swss-common/common/schema.h</code> L511 で <code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"</code> を確認。<code>dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2</code> で <code>add_ranges</code> / <code>delete_ranges</code> の <code>bgp listen range ... peer-group</code> 反映ロジックを確認。<code>sonic-utilities/show/bgp_frr_v4.py</code> L103-168 で <code>show ip bgp vrf &lt;name&gt; {summary|neighbors|network}</code> 系コマンド、<code>utilities_common/bgp_util.py</code> L304-320 で vtysh 経由の vrf JSON 取得を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="bgpcfgd-dynamic-bgp-peer-updateconfj2-deleteconfj2">bgpcfgd の dynamic BGP peer 動的変更（<code>update.conf.j2</code> / <code>delete.conf.j2</code>）<a class="headerlink" href="#bgpcfgd-dynamic-bgp-peer-updateconfj2-deleteconfj2" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
