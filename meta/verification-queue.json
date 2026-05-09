@@ -206,6 +206,17 @@
         "PATCH 緩和ロジック (MAJOR.MINOR のみ比較) の実装有無確認"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/architecture/sonic-ip-interface-loopback-action.md",
+      "issue": 47,
+      "verification": "hld-only",
+      "concerns": [
+        "intfmgrd / intfsorch の loopback_action ハンドラ実装の存在確認",
+        "config interface loopback-action / show ip interfaces loopback-action CLI の sonic-utilities 実装確認",
+        "TX_ERR 計上が本機能の drop パケットを含むか実測検証"
+      ],
+      "priority": "medium"
     }
   ]
 }
