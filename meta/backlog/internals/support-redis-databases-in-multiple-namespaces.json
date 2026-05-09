@@ -1,0 +1,20 @@
+{
+  "title": "Support redis databases in multiple namespaces",
+  "slug": "support-redis-databases-in-multiple-namespaces",
+  "area": "internals",
+  "type": "hld-port",
+  "target_path": "docs/internals/support-redis-databases-in-multiple-namespaces.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/database/multi_namespace_db_instances.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Design'?",
+    "What is described in 'Enhancements to Multi-DB design to support Multiple namespaces'?",
+    "What is described in 'New Design of Python Interface: SonicDBConfig()'?"
+  ],
+  "notes": "size_bytes=18148"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Generic SAI Extension Critical Resource Monitoring (CRM)",
+  "slug": "generic-sai-extension-critical-resource-monitoring-crm",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/generic-sai-extension-critical-resource-monitoring-crm.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/crm/Generic_SAI_Extensions_CRM.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Introduction <a name=\"Introduction\"></a>'?",
+    "What is described in 'Scope <a name=\"Scope\"></a>'?",
+    "What is described in 'Requirements <a name=\"Requirements\"></a>'?"
+  ],
+  "notes": "size_bytes=3550"
+}

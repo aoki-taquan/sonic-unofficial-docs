@@ -1,0 +1,20 @@
+{
+  "title": "1. SONiC on Multi ASIC platforms",
+  "slug": "1-sonic-on-multi-asic-platforms",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/1-sonic-on-multi-asic-platforms.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/multi_asic/SONiC_multi_asic_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.4. Design'?",
+    "What is described in '2.4.3. Configuration'?",
+    "What is described in '2.4.3.6. BGP configuration'?"
+  ],
+  "notes": "size_bytes=71261"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "vrf-vs-test-plan",
+  "slug": "vrf-vs-test-plan",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/vrf-vs-test-plan.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/vrf/vrf-vs-test-plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'overview'?"
+  ],
+  "notes": "size_bytes=6613"
+}

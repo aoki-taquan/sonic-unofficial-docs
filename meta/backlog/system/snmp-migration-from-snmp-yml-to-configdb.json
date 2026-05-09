@@ -1,0 +1,16 @@
+{
+  "title": "SNMP Migration from snmp.yml to ConfigDB",
+  "slug": "snmp-migration-from-snmp-yml-to-configdb",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/snmp/snmp-configdb-migration-hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=10263"
+}

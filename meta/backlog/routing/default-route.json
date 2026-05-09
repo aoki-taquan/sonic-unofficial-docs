@@ -1,0 +1,18 @@
+{
+  "title": "Default Route",
+  "slug": "default-route",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/default-route.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/sonic-linkmgrd",
+      "path": "doc/default_route.md",
+      "ref": "65f563308c689e3225fdf3fc249a132350e9879b"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=5413"
+}

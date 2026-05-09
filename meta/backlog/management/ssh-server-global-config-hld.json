@@ -1,0 +1,20 @@
+{
+  "title": "SSH server global config HLD",
+  "slug": "ssh-server-global-config-hld",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/ssh-server-global-config-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ssh_config/ssh_config.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.2. Scope'?",
+    "What is described in '1.4. Overview'?",
+    "What is described in '1.5. Requirements'?"
+  ],
+  "notes": "size_bytes=11022"
+}

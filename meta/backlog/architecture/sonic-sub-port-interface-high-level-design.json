@@ -1,0 +1,19 @@
+{
+  "title": "SONiC sub port interface high level design",
+  "slug": "sonic-sub-port-interface-high-level-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/sonic-sub-port-interface-high-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/subport/sonic-sub-port-intf-hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.1 Configuration'?",
+    "What is described in '3.4 Sub port MTU Configuration'?"
+  ],
+  "notes": "size_bytes=34954"
+}

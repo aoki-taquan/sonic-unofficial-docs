@@ -1,0 +1,20 @@
+{
+  "title": "ICMP Hardware Offload",
+  "slug": "icmp-hardware-offload",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/icmp-hardware-offload.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Requirement Overview'?",
+    "What is described in 'Overview'?"
+  ],
+  "notes": "size_bytes=19624"
+}

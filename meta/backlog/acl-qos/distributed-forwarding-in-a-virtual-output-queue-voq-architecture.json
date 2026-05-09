@@ -1,0 +1,20 @@
+{
+  "title": "Distributed Forwarding in a Virtual Output Queue (VOQ) Architecture",
+  "slug": "distributed-forwarding-in-a-virtual-output-queue-voq-architecture",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/voq/architecture.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.2 Configuration and Management Requirements'?",
+    "What is described in '2.1 Design Assumptions'?",
+    "What is described in '2.7 Failure Scenarios'?"
+  ],
+  "notes": "size_bytes=16557"
+}

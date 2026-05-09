@@ -1,0 +1,20 @@
+{
+  "title": "SmartSwitch PMON High Level Design",
+  "slug": "smartswitch-pmon-high-level-design",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/smartswitch-pmon-high-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/pmon/smartswitch-pmon.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1. Introduction'?",
+    "What is described in '2.\tRequirements and Assumptions'?",
+    "What is described in 'Use case'?"
+  ],
+  "notes": "size_bytes=67039"
+}

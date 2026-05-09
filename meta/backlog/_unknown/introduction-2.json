@@ -1,0 +1,20 @@
+{
+  "title": "Introduction",
+  "slug": "introduction",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/introduction.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/kubernetes/Kubernetes-support.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'A high level overview on setup:'?",
+    "What is described in 'Current behavior'?",
+    "What is described in 'Proposed behavior at high level'?"
+  ],
+  "notes": "size_bytes=45190"
+}

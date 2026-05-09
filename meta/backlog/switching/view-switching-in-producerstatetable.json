@@ -1,0 +1,16 @@
+{
+  "title": "View Switching in ProducerStateTable",
+  "slug": "view-switching-in-producerstatetable",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/view-switching-in-producerstatetable.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/view_switch.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=6794"
+}

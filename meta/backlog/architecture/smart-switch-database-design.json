@@ -1,0 +1,20 @@
+{
+  "title": "Smart Switch Database design",
+  "slug": "smart-switch-database-design",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/smart-switch-database-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=18099"
+}

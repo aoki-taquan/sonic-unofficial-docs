@@ -1,0 +1,18 @@
+{
+  "title": "DB Design for multi-ASIC scenarios",
+  "slug": "db-design-for-multi-asic-scenarios",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/db-design-for-multi-asic-scenarios.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/multi_asic/DB_Design_for_multi_asic.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '5.4 show runningconfiguration all'?"
+  ],
+  "notes": "size_bytes=7779"
+}

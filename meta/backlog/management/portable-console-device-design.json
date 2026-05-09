@@ -1,0 +1,20 @@
+{
+  "title": "Portable Console Device Design",
+  "slug": "portable-console-device-design",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/portable-console-device-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/console/Portable-Console-Device-High-Level-Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Portable Console Device API Design'?",
+    "What is described in '`ConsoleLineInfo` Class Design'?"
+  ],
+  "notes": "size_bytes=20599"
+}

@@ -1,0 +1,19 @@
+{
+  "title": "High Level Design Document",
+  "slug": "high-level-design-document",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/high-level-design-document.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ecmp/ordered_ecmp_next_hop_hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Use case'?",
+    "What is described in '1.3 Functional requirements'?"
+  ],
+  "notes": "size_bytes=8261"
+}

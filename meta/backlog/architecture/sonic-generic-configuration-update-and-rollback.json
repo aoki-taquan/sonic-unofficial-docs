@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Generic Configuration Update and Rollback",
+  "slug": "sonic-generic-configuration-update-and-rollback",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/sonic-generic-configuration-update-and-rollback.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/config-generic-update-rollback/SONiC_Generic_Config_Update_and_Rollback_Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Requirements'?",
+    "What is described in '1.1.1 Functional Requirements'?",
+    "What is described in '1.1.2 Configuration and Management Requirements'?"
+  ],
+  "notes": "size_bytes=65223"
+}

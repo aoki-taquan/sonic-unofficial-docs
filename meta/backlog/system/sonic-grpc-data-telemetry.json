@@ -1,0 +1,16 @@
+{
+  "title": "SONiC gRPC data telemetry",
+  "slug": "sonic-grpc-data-telemetry",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-grpc-data-telemetry.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/system-telemetry/grpc_telemetry.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=43127"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "SONiC-DASH HLD",
+  "slug": "sonic-dash-hld",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/sonic-dash-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dash/dash-sonic-hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'High Level Design Document'?",
+    "What is described in '1.1 Functional requirements'?",
+    "What is described in '1.2 CLI requirements'?"
+  ],
+  "notes": "size_bytes=118843"
+}

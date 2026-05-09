@@ -1,0 +1,20 @@
+{
+  "title": "kdump_Remote_SSH",
+  "slug": "kdump-remote-ssh",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/kdump-remote-ssh.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/kdump/kdump_Remote_SSH_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'High Level Design Document'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Scope'?"
+  ],
+  "notes": "size_bytes=7609"
+}

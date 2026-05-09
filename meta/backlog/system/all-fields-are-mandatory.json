@@ -1,0 +1,20 @@
+{
+  "title": "All fields are mandatory",
+  "slug": "all-fields-are-mandatory",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/all-fields-are-mandatory.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/dut-monitor/DUT_monitor_HLD.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Module design'?"
+  ],
+  "notes": "size_bytes=10516"
+}

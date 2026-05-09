@@ -1,0 +1,20 @@
+{
+  "title": "BGP Loading Optimization for SONiC",
+  "slug": "bgp-loading-optimization-for-sonic",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/bgp-loading-optimization-for-sonic.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/bgp_loading_optimization/bgp-loading-optimization-hld.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '[fpmsyncd] Changes on pipeline flush behavior'?",
+    "What is described in 'WarmRestart scenario'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=20288"
+}

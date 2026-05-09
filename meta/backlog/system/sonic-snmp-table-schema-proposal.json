@@ -1,0 +1,20 @@
+{
+  "title": "SONiC SNMP TABLE schema proposal",
+  "slug": "sonic-snmp-table-schema-proposal",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-snmp-table-schema-proposal.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/snmp/snmp-schema-addition.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope of the change'?",
+    "What is described in 'Current configurtions for SNMP'?",
+    "What is described in 'Proposal: integrate the SNMP configuration into config DB'?"
+  ],
+  "notes": "size_bytes=4998"
+}

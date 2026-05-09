@@ -1,0 +1,20 @@
+{
+  "title": "JSON Patch Ordering using YANG Models",
+  "slug": "json-patch-ordering-using-yang-models",
+  "area": "management",
+  "type": "hld-port",
+  "target_path": "docs/management/json-patch-ordering-using-yang-models.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Requirements'?",
+    "What is described in '1.1.1 Functional Requirements'?",
+    "What is described in '1.1.2 Configuration and Management Requirements'?"
+  ],
+  "notes": "size_bytes=29860"
+}

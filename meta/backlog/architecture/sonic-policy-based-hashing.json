@@ -1,0 +1,20 @@
+{
+  "title": "SONiC Policy Based Hashing",
+  "slug": "sonic-policy-based-hashing",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/sonic-policy-based-hashing.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pbh/pbh-design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'High Level Design document'?",
+    "What is described in 'Scope'?",
+    "What is described in '1.1 Feature overview'?"
+  ],
+  "notes": "size_bytes=40534"
+}

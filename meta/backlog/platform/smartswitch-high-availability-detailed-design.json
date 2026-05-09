@@ -1,0 +1,20 @@
+{
+  "title": "SmartSwitch High Availability Detailed Design",
+  "slug": "smartswitch-high-availability-detailed-design",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/smartswitch-high-availability-detailed-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.1. External facing configuration tables'?",
+    "What is described in '2.1.1.2. HA global configurations'?",
+    "What is described in '2.1.2.1. HA set configurations'?"
+  ],
+  "notes": "size_bytes=61717"
+}

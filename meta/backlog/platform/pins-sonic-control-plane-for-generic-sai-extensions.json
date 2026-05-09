@@ -1,0 +1,20 @@
+{
+  "title": "PINS SONiC Control Plane for Generic SAI Extensions",
+  "slug": "pins-sonic-control-plane-for-generic-sai-extensions",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/pins-sonic-control-plane-for-generic-sai-extensions.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pins/PINS_SONiC_Design_for_SaiGenericExt.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Introduction <a name=\"Introduction\"></a>'?",
+    "What is described in 'Scope <a name=\"Scope\"></a>'?",
+    "What is described in 'Requirements <a name=\"Requirements\"></a>'?"
+  ],
+  "notes": "size_bytes=32063"
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Everflow support on VOQ Chassis",
+  "slug": "everflow-support-on-voq-chassis",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/everflow-support-on-voq-chassis.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/voq/everflow.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=6725"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Steps to Bring-Up SONiC-VS",
+  "slug": "steps-to-bring-up-sonic-vs",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/steps-to-bring-up-sonic-vs.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Pre-requisites: Install and Configure KVM'?"
+  ],
+  "notes": "size_bytes=2401"
+}

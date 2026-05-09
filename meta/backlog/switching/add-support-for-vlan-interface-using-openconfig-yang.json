@@ -1,0 +1,20 @@
+{
+  "title": "Add support for VLAN interface using OpenConfig YANG.",
+  "slug": "add-support-for-vlan-interface-using-openconfig-yang",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/mgmt/OpenConfig_VLAN_Interface.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Requirements'?",
+    "What is described in '1.1.1 Functional Requirements'?",
+    "What is described in '1.1.2 Configuration and Management Requirements'?"
+  ],
+  "notes": "size_bytes=37640"
+}

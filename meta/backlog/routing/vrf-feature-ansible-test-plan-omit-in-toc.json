@@ -1,0 +1,20 @@
+{
+  "title": "VRF feature ansible test plan <!-- omit in toc -->",
+  "slug": "vrf-feature-ansible-test-plan-omit-in-toc",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/vrf/vrf-ansible-test-plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'overview'?",
+    "What is described in 'Scope'?",
+    "What is described in 'Setup configuration'?"
+  ],
+  "notes": "size_bytes=19349"
+}

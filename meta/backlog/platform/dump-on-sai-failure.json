@@ -1,0 +1,20 @@
+{
+  "title": "Dump on SAI failure",
+  "slug": "dump-on-sai-failure",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/dump-on-sai-failure.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/SAI_failure_handling/dump_on_sai_failure.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'Requirements'?"
+  ],
+  "notes": "size_bytes=4266"
+}

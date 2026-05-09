@@ -1,0 +1,19 @@
+{
+  "title": "BGP Setup for VoQ Chassis",
+  "slug": "bgp-setup-for-voq-chassis",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/bgp-setup-for-voq-chassis.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/voq/bgp_voq_chassis.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '2.2 iBGP Configuration'?",
+    "What is described in '2.5 FRR Configuration Templates'?"
+  ],
+  "notes": "size_bytes=13018"
+}

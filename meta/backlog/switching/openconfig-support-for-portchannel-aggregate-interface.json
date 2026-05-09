@@ -1,0 +1,20 @@
+{
+  "title": "OpenConfig support for PortChannel (aggregate) interface.",
+  "slug": "openconfig-support-for-portchannel-aggregate-interface",
+  "area": "switching",
+  "type": "hld-port",
+  "target_path": "docs/switching/openconfig-support-for-portchannel-aggregate-interface.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/mgmt/OpenConfig_PortChannel_Interface.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Requirements'?",
+    "What is described in '1.1.1 Functional Requirements'?",
+    "What is described in '1.1.2 Configuration and Management Requirements'?"
+  ],
+  "notes": "size_bytes=16390"
+}

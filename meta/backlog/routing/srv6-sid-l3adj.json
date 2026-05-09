@@ -1,0 +1,20 @@
+{
+  "title": "SRv6 SID L3Adj",
+  "slug": "srv6-sid-l3adj",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/srv6-sid-l3adj.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/srv6/srv6_sid_l3adj.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Scope'?",
+    "What is described in 'Overview'?",
+    "What is described in 'High-Level Design'?"
+  ],
+  "notes": "size_bytes=6708"
+}

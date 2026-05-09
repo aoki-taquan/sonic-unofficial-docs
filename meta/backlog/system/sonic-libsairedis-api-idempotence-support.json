@@ -1,0 +1,16 @@
+{
+  "title": "SONiC libsairedis API idempotence support",
+  "slug": "sonic-libsairedis-api-idempotence-support",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/sonic-libsairedis-api-idempotence-support.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/sai_redis_api_idempotence.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=10485"
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Thermal Control Test Plan",
+  "slug": "thermal-control-test-plan",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/thermal-control-test-plan.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pmon/sonic_thermal_control_test_plan.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Overview'?",
+    "What is described in 'Scope'?",
+    "What is described in 'Setup Configuration'?"
+  ],
+  "notes": "size_bytes=10687"
+}

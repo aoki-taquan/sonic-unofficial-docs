@@ -1,0 +1,16 @@
+{
+  "title": "Flow charts",
+  "slug": "flow-charts",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/flow-charts.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/qos/graphs.flow-chart.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=5864"
+}

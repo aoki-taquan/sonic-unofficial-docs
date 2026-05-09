@@ -1,0 +1,20 @@
+{
+  "title": "SONiC QoS Scheduler and Shaping",
+  "slug": "sonic-qos-scheduler-and-shaping",
+  "area": "acl-qos",
+  "type": "hld-port",
+  "target_path": "docs/acl-qos/sonic-qos-scheduler-and-shaping.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '1.1 Requirements'?",
+    "What is described in '1.1.1 Functional Requirements'?",
+    "What is described in '1.1.2 Configuration and Management Requirements'?"
+  ],
+  "notes": "size_bytes=24765"
+}

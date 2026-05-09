@@ -1,0 +1,16 @@
+{
+  "title": "System-wide Warmboot",
+  "slug": "system-wide-warmboot",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/system-wide-warmboot.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/warm-reboot/system-warmboot.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=11269"
+}

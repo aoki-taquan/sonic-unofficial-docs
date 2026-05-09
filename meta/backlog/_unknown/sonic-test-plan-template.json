@@ -1,0 +1,16 @@
+{
+  "title": "SONiC Test Plan Template",
+  "slug": "sonic-test-plan-template",
+  "area": "unknown",
+  "type": "hld-port",
+  "target_path": "docs/internals/sonic-test-plan-template.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/test-plans/SONiC Test Plan Template.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=3053"
+}

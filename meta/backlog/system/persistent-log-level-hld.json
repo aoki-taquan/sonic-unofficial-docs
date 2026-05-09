@@ -1,0 +1,18 @@
+{
+  "title": "Persistent log level HLD",
+  "slug": "persistent-log-level-hld",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/persistent-log-level-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/logging/persistent_logger/persistent_loglevel.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in '3.1 High-level design'?"
+  ],
+  "notes": "size_bytes=18797"
+}

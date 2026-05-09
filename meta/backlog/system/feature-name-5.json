@@ -1,0 +1,18 @@
+{
+  "title": "Feature Name",
+  "slug": "feature-name",
+  "area": "system",
+  "type": "hld-port",
+  "target_path": "docs/system/feature-name.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/port-si/Port_SI_Per_Speed.md",
+      "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06"
+    }
+  ],
+  "reader_questions": [
+    "What is described in 'Port SI configuration (flows)'?"
+  ],
+  "notes": "size_bytes=14958"
+}
