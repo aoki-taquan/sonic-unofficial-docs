@@ -1,0 +1,150 @@
+---
+title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/xrcvd/transceiver-monitor-hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - show interface transceiver info
+    - show interface transceiver eeprom
+    - show interface transceiver presence
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    `xcvrd` の現行構造、`TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` テーブルの現行スキーマ（CMIS 拡張で多数フィールド追加）、polling interval 60s の妥当性は未確認。
+
+# Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
+
+## 概要
+
+PMON コンテナ内の **`xcvrd` daemon** が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitoring）センサ値を読み、`STATE_DB` の `TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` テーブルへ反映する仕組み[^1]。
+
+設計の要点:
+
+- **静的情報**（type, vendor, S/N, model, cable type 等）は plug 時に 1 回だけ更新
+- **DOM センサ値**（temperature, voltage, rx/tx power, bias）は **約 60s 周期で polling**（HLD 段階では tentative）
+- transceiver error event は bitmap で 1 つにまとまる（旧 7 種値とは互換）。EEPROM 読み取り不能時は **DOM 更新を停止し、static info は保持** する
+- port config 変更（speed / lane mapping）にも追随[^1]
+
+## 動作仕様
+
+### コンポーネント構成
+
+```mermaid
+flowchart LR
+    EEPROM[EEPROM\n(sysfs / vendor API)] --> XCVRD[xcvrd]
+    EVT[transceiver event\n(plug / error bitmap)] --> XCVRD
+    XCVRD --> INFO[(STATE_DB\nTRANSCEIVER_INFO)]
+    XCVRD --> DOM[(STATE_DB\nTRANSCEIVER_DOM_SENSOR)]
+    XCVRD --> STAT[(STATE_DB\nTRANSCEIVER_STATUS)]
+    INFO --> CLI[show interface transceiver info]
+    DOM --> CLI2[show interface transceiver dom]
+    STAT --> CLI3[show interface transceiver presence]
+```
+
+### TRANSCEIVER_INFO
+
+```
+TRANSCEIVER_INFO|<ifname>:
+  type, hardwarerev, serialnum, manufacturename, modelname, vendor_oui,
+  vendor_date, Connector, encoding, ext_identifier, ext_rateselect_compliance,
+  cable_type, cable_length, specification_compliance, nominal_bit_rate
+```
+
+### TRANSCEIVER_DOM_SENSOR
+
+```
+TRANSCEIVER_DOM_SENSOR|<ifname>:
+  temperature, voltage,
+  rx1power..rx4power, tx1bias..tx4bias,
+  temphighalarm/warning, templowalarm/warning,
+  vcchighalarm/warning, vcclowalarm/warning,
+  txpowerhighalarm/warning, txpowerlowalarm/warning,
+  rxpowerhighalarm/warning, rxpowerlowalarm/warning,
+  txbiashighalarm/warning, txbiaslowalarm/warning
+```
+
+### TRANSCEIVER_STATUS の error bitmap
+
+旧 status code（'0'〜'6'）から、複数エラーを **bitmap** で同時に表現できる仕様に拡張[^1]:
+
+| bit | 意味 |
+|-----|------|
+| 32 | 0 = removed, 1 = inserted |
+| 31 | EEPROM 読み取り不能 |
+| 30 | I2C bus stuck |
+| 29 | Bad eeprom |
+| 28 | Unsupported cable |
+| 27 | High Temperature |
+| 26 | Bad cable |
+
+### Plug / Error イベント
+
+- plug-in / plug-out イベント: vendor platform API から通知され、xcvrd が静的 info を書く / 削除する
+- error event（EEPROM 不能）: DOM 更新を一時停止、static info は保持。recovery で再開[^1]
+- port config 変更: speed / lane などが変わると DOM の field 構成も変わるため再読込
+
+### Polling interval
+
+HLD 段階では **60s**。HLD 内で「open question 1: 全 vendor で妥当か要 後検証」と明記[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/xrcvd/transceiver-monitor-hld.md#L18-L26 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  The transceiver dom sensor information(temperature, power,voltage, etc.) can change frequently,
+  these information need to be updated periodically, for now the time period temporarily set to 60s
+  ... if transceiver on a error status which blocking EEPROM access, Xcvrd will stop updating
+  and remove the transceiver DOM info from DB until it recovered from the error
+reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
+-->
+
+## 設定
+
+### CLI
+
+| Command | 用途 |
+|---------|------|
+| `show interface transceiver info` | TRANSCEIVER_INFO |
+| `show interface transceiver eeprom` | EEPROM dump |
+| `show interface transceiver presence` | plug 状態 |
+| `show interface transceiver dom` | DOM センサ |
+
+### EEPROM access
+
+vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または vendor SDK API が選択肢[^1]。
+
+## 制限事項
+
+- HLD 提示の DOM フィールドは **当時の SFP/QSFP 想定**。CMIS（QSFP-DD / OSFP）導入後はフィールドが大幅増（VDM, page advertise 等）
+- polling interval 60s は妥当性検証済みではない
+- error bitmap は high temperature / bad cable などで「block を意味するか単なる warning か」は HLD では明記されない
+
+## 干渉する機能
+
+- **Port auto FEC / Port link training**: speed / lane と DOM フィールド構成の対応
+- **CMIS LPO 拡張デバッグレジスタ**: VDM / advertise byte に伴う TRANSCEIVER_INFO / DOM 拡張
+- **SNMP transceiver-mib**: TRANSCEIVER_DOM_SENSOR を SNMP MIB に橋渡しする別 HLD あり
+
+## トラブルシューティング
+
+- DOM が更新されない → `TRANSCEIVER_STATUS` の error bitmap で I2C stuck / EEPROM 不能を確認
+- plug 後すぐに info が出ない → vendor platform API のイベント通知遅延を確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/xrcvd/transceiver-monitor-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- xcvrd の現行 PMON 取り込み確認（sonic-platform-daemons）
+- TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS の現行 schema（CMIS 拡張対応）確認
+- error bitmap の現行 sonic-platform-common での定義確認
+- polling interval（60s）の現行 default 値確認
+- port config change handler（v1.2 追記）の実装存在確認
+- vendor platform API（sfputil base）と xcvrd の event 連携確認
+-->
