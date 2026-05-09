@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/reclaim-reserved-buffer.md",
+  "verification": "hld-only",
+  "concerns": [
+    "buffermgrd の admin-down hook で zero_profile を APPL_DB に push する実装存在確認",
+    "BUFFER_PG / BUFFER_QUEUE / BUFFER_PORT_*_PROFILE_LIST の YANG 取り込み確認",
+    "db_migrator の admin-down ポート処理ロジック実装確認",
+    "Mellanox SAI 側で zero_pool / zero profile を受けて size=0 になる挙動確認",
+    "vendor 別 zero_profile 提供有無の現行 sonic-buildimage 確認",
+    "shared headroom pool model など複数 buffer model における zero_profile 互換性確認"
+  ],
+  "priority": "medium"
+}
