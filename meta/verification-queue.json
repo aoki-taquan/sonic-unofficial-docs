@@ -750,6 +750,19 @@
         "後発 HLD (event-driven reload, delayed services) との関係"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/system/reboot-support-blockingmode-in-sonic.md",
+      "issue": 131,
+      "verification": "hld-only",
+      "concerns": [
+        "reboot スクリプト (sonic-buildimage) の -b / -v 引数実装",
+        "/etc/sonic/reboot.conf パーサ実装",
+        "blocking_mode_timeout デフォルト値",
+        "platform reboot 検出ロジック",
+        "fast-reboot / warm-reboot への適用可否"
+      ],
+      "priority": "medium"
     }
   ]
 }
