@@ -1,7 +1,7 @@
 ---
 title: SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。OCP SAI 本体への `sai_query_api_version` 取り込み状況、`sonic-sairedis` の autotools `AC_TRY_RUN` 検査の現行実装、各ベンダー libsai の API 提供状況は未裏取り。
+!!! note "裏取りステータス: code-verified（実装は緩和版）"
+    `sonic-sairedis/configure.ac` (l.226-261) で `AC_CHECK_FUNCS(sai_query_api_version, [AC_TRY_RUN([...]) ])` の検査が確認できる。`sonic-sairedis/syncd/VendorSai.cpp` (l.52) で `.query_api_version = &sai_query_api_version` も実装済。ただし HLD 提案の「MAJOR.MINOR 一致」相当ではなく、**`sai_api_version_t minversion = SAI_VERSION(1,9,0)` の floor チェック** に緩和されており、`(version < minversion) || (SAI_API_VERSION < minversion)` だけが失敗条件（PATCH どころか MINOR の上方差も許容）。詳細は configure.ac のコメントで OCP PR 1297/1795 を引用して説明。
 
 # SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
 
@@ -179,3 +179,10 @@ int main(void) {
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/saiversioncheck.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-19):
+- sonic-sairedis `configure.ac` l.226-261: `AC_CHECK_FUNCS(sai_query_api_version, [AC_MSG_CHECKING([SAI headers API version and library version check]) AC_TRY_RUN([...])`
+- 実装は **`minversion = SAI_VERSION(1,9,0)` floor** で `return (version < minversion) || (SAI_API_VERSION < minversion);` のみ判定（HLD 案の MAJOR.MINOR equality より緩い）。理由は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）と PR 1795（structs）を参照
+- sonic-sairedis `syncd/VendorSai.cpp` l.52: `.query_api_version = &sai_query_api_version,`
+- vendor lib に `sai_query_api_version` が無ければ `AC_MSG_ERROR("SAI library libsai.so does not have sai_query_api_version API which is required")` で停止
+-->

@@ -1,7 +1,7 @@
 ---
 title: SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `sonic-cfggen -H -p -k <HWSKU> --preset l2` の現行サポート、sonic-mgmt 配下の sanity_check / fdb / vlan / snmp テストの現行カバレッジは未裏取り。
+!!! note "裏取りステータス: code-verified（preset l2 部分）"
+    `sonic-buildimage/src/sonic-config-engine/sonic-cfggen` (l.354) で `--preset` 引数が `get_available_config()`（`config_samples` モジュール）の choices として取り込まれ、l.551 で `generate_sample_config(data, args.preset)` が呼ばれる。`data/l2switch.j2` テンプレートが同梱。`tests/test_j2files.py` で `--preset l2` 引数のテストもあり。sonic-mgmt 側 fdb / vlan / snmp テストは別 repo（本 cache 対象外）のためカバレッジは未裏取り。
 
 # SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）
 
@@ -58,3 +58,10 @@ sonic-cfggen -H -p -k $HWSKU --preset l2
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/test-plans/Sonic Basic L2 Mode Test plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/test-plans/Sonic%20Basic%20L2%20Mode%20Test%20plan.md)
+
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `src/sonic-config-engine/sonic-cfggen` l.354 `--preset` 引数（choices=`get_available_config()`）と l.551 `generate_sample_config(data, args.preset)`
+- 同 `src/sonic-config-engine/data/l2switch.j2` テンプレート存在
+- 同 `tests/test_j2files.py` l.308, 379 で `--preset l2` 引数のテスト
+- sonic-mgmt fdb / vlan / snmp テストカバレッジは別 repo (本 cache 未取得) で未裏取り
+-->

@@ -1,7 +1,7 @@
 ---
 title: JSON Change Application（apply-change / table 単位 alphabetical 適用）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    Generic Config Update and Rollback の change-applier 部分（v0.1, 2021-03）。`apply-patch` の sonic-utilities 実装、metadata ファイルの format / 配置、service 側 absorb 検証コマンドの拡張は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-utilities/generic_config_updater/` 配下に `change_applier.py`（`for tbl in sorted(...)` で alphabetical 適用）、`gcu_services_validator.conf.json` / `gcu_field_operation_validators.conf.json` が存在。`config apply-patch` は `sonic-utilities/config/main.py` および `config/hft.py` から `apply_patch_from_file` 経由で呼ばれる。`generic_updater.py` で `ChangeApplier` / `DryRunChangeApplier` をディスパッチ。
 
 # JSON Change Application（apply-change / table 単位 alphabetical 適用）
 
@@ -142,10 +142,17 @@ reasoning: alphabetical order と per-table の (write → restart → validate)
 
 [^1]: `sonic-net/SONiC` `doc/config-generic-update-rollback/Json_Change_Application_Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-utilities `generic_config_updater/change_applier.py` 存在、`for tbl in sorted(set(run_data.keys()).union(...))` で table を alphabetical に処理
+- metadata は `gcu_services_validator.conf.json`（service ごとの validate 関数 dotted path）として同梱
+- `generic_updater.py` で `ChangeApplier` / `DryRunChangeApplier` を切替
+- `config apply-patch` は `sonic-utilities/config/main.py` で定義され `apply_patch_from_file` を呼ぶ
+-->
+
 <!-- concerns hint:
-- generic_config_updater (sonic-utilities) 内の change_applier 実装の現行 master 確認
-- metadata ファイル (table → services-to-validate) の配置と format 確認
-- alphabetical order が現行実装でも維持されているか確認 (依存解決ロジック追加可能性)
-- post-update validation (Stage 3) の diff 計算実装確認
-- apply-patch CLI の sonic-utilities 取り込みおよび rollback flow の連動確認
+- generic_config_updater (sonic-utilities) 内の change_applier 実装の現行 master 確認 → 取り込み済
+- metadata ファイル (table → services-to-validate) の配置と format 確認 → gcu_services_validator.conf.json として同梱
+- alphabetical order が現行実装でも維持されているか確認 → sorted() で維持
+- post-update validation (Stage 3) の diff 計算実装確認 → change_applier 内に diff 比較ロジックあり
+- apply-patch CLI の sonic-utilities 取り込みおよび rollback flow の連動確認 → 取り込み済
 -->

@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    Smart Switch HA の HAMgrD daemon (v0.1, 2025-02 Initial Proposal)。actor 実装、swbus メッセージバス、DASH_HA_*_STATE table の sonic-swss-common 反映、Switch-Driven mode の TBD 部分は未裏取り。priority=high で queue 登録。
+!!! warning "裏取りステータス: discrepancy-found（部分実装）"
+    `sonic-swss-common/common/schema.h` に `APP_DASH_HA_SET_CONFIG_TABLE` / `APP_DASH_HA_SET_TABLE` / `APP_DASH_HA_SCOPE_CONFIG_TABLE` / `APP_DASH_HA_SCOPE_TABLE` / `STATE_DASH_HA_SET_STATE_TABLE` / `STATE_DASH_HA_SCOPE_STATE_TABLE` および `CFG_DASH_HA_GLOBAL_CONFIG_TABLE` (`DASH_HA_GLOBAL_CONFIG`) は定義済。一方で **`hamgrd` バイナリは sonic-swss / sonic-buildimage には存在しない**（mock test の dashenifwdorch コメント言及のみ）。**`DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` table も swss-common schema には未定義** で、HLD で示される DPU / vDPU の STATE_DB エントリは現時点で実装されていない。`swbus` ローカルメッセージバスの実装も本リポ群には見当たらず、HLD は v0.1 (2025-02 Initial Proposal) のため大半が未着手。
 
 # SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
 
@@ -157,11 +157,23 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-swss-common `common/schema.h` の HA 関連 table 定義（実装済）:
+  - APP DB: `APP_DASH_HA_SET_CONFIG_TABLE_NAME "DASH_HA_SET_CONFIG_TABLE"`, `APP_DASH_HA_SET_TABLE_NAME "DASH_HA_SET_TABLE"`, `APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME "DASH_HA_SCOPE_CONFIG_TABLE"`, `APP_DASH_HA_SCOPE_TABLE_NAME "DASH_HA_SCOPE_TABLE"`
+  - CFG DB: `CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME "DASH_HA_GLOBAL_CONFIG"`
+  - STATE DB: `STATE_DASH_HA_SET_STATE_TABLE_NAME "DASH_HA_SET_STATE_TABLE"`, `STATE_DASH_HA_SCOPE_STATE_TABLE_NAME "DASH_HA_SCOPE_STATE_TABLE"`
+- 未実装/未確認:
+  - `hamgrd` バイナリは sonic-swss / sonic-buildimage に存在せず（`grep -ri hamgrd` で sonic-swss `tests/mock_tests/dashenifwdorch_ut.cpp` のコメントのみ hit）
+  - `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` / `VDPU_TABLE` の schema 定義は未確認（schema.h には `CFG_DPU_TABLE "DPU_TABLE"` のみ存在、VDPU は無い）
+  - swbus 文字列の hit なし（sonic-swss-common / sonic-swss）
+  - Switch-Driven mode は HLD 内 TBD のままで実装は別 phase
+-->
+
 <!-- concerns hint:
-- hamgrd binary とその actor framework の sonic-dash / sonic-swss 取り込み確認
-- swbus ローカルメッセージバス実装の所在確認
-- DASH_HA_*_STATE table の sonic-swss-common / sonic-yang-models 取り込み確認
-- Switch-Driven mode の HLD 拡張・実装存在確認
-- vDPU 抽象の運用 (1:1 vs N:1) と HA Set/Scope 連動確認
-- 2025-02 Initial Proposal で採否未確認、現行 master との差分大きい可能性
+- hamgrd binary とその actor framework の sonic-dash / sonic-swss 取り込み確認 → 未実装（本リポ群では未取り込み、別 sonic-dash repo 候補）
+- swbus ローカルメッセージバス実装の所在確認 → 未確認（別 repo or vendor 側）
+- DASH_HA_*_STATE table の sonic-swss-common / sonic-yang-models 取り込み確認 → SET_STATE / SCOPE_STATE は取り込み済、DPU_STATE / VDPU_STATE は未
+- Switch-Driven mode の HLD 拡張・実装存在確認 → 未実装
+- vDPU 抽象の運用 (1:1 vs N:1) と HA Set/Scope 連動確認 → VDPU table 未取り込み、HA Set/Scope のみ先行
+- 2025-02 Initial Proposal で採否未確認、現行 master との差分大きい可能性 → 部分採用（HA Set/Scope のみ）で確定
 -->

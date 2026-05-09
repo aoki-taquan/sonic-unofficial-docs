@@ -1,7 +1,7 @@
 ---
 title: PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    PINS HLD は v0.1.1 (2021-08)。P4RT container / P4Orch / APPL_STATE_DB / send_to_ingress netdev / SAI P4 / `saip4ext.h` の現行 master 取り込みは未裏取り。supplementary HLD（p4rt_app_hld.md / p4orch_hld.md など）の解像度差があるため詳細は分割 issue 候補。
+!!! note "裏取りステータス: code-verified（部分）"
+    `sonic-swss/orchagent/p4orch/`（p4orch.cpp / p4orch.h ほか）と `sonic-buildimage/dockers/docker-sonic-p4rt/`（p4rt.sh, p4rt_vars.j2, p4rt.service.j2）、`rules/p4rt.{mk,dep}` を確認済。`sonic-swss-common/common/schema.h` に `APPL_STATE_DB=14` を定義（`DPU_APPL_STATE_DB=16` も追加されている）。`send_to_ingress` netdev は HLD ドキュメント (`SONiC/doc/pins/Packet_io.md`) では設計されているが本リポ群（buildimage 側 host config / kernel）には現れず、vendor SAI / P4Runtime app 側で扱われる前提。`saip4ext.h` は OCP SAI submodule 側のため本リポでは展開していない。
 
 # PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
 
@@ -110,11 +110,19 @@ reasoning: 並行 path 方式と将来統合の方針の根拠。
 
 [^1]: `sonic-net/SONiC` `doc/pins/pins_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-swss `orchagent/p4orch/` 配下に p4orch.{cpp,h}, p4orch_util.{cpp,h} ほか実装あり
+- sonic-buildimage `dockers/docker-sonic-p4rt/`（p4rt.sh, p4rt_vars.j2）と `files/build_templates/p4rt.service.j2`, `rules/p4rt.{mk,dep}`, `rules/docker-p4rt.{mk,dep}` 存在
+- sonic-swss-common `common/schema.h` で `APPL_STATE_DB=14`, `DPU_APPL_STATE_DB=16` 定義済
+- `send_to_ingress` の文字列は HLD `SONiC/doc/pins/{pins_hld,Packet_io,send_to_ingress_hld}.md` に記載のみ。本リポ群の host config では未確認（vendor SAI / P4Runtime app 側で実装される前提）
+- `saip4ext.h` は OCP SAI submodule 側で本リポでは展開していない
+-->
+
 <!-- concerns hint:
-- p4rt-app container と p4rt-orch (sonic-pins / sonic-swss) の現行 master 取り込み確認
-- APPL_STATE_DB / response path の libswsscommon 取り込み確認
-- send_to_ingress netdev の sonic-buildimage / kernel module 取り込み確認
-- saip4ext.h の opencomputeproject/SAI 取り込み確認
-- supplementary HLD（in_progress 表記）の現行版確認と分割 issue 化
-- gRPC port 9559 の固定 / config 化の進捗確認
+- p4rt-app container と p4rt-orch (sonic-pins / sonic-swss) の現行 master 取り込み確認 → p4orch / docker-sonic-p4rt 共に取り込み済
+- APPL_STATE_DB / response path の libswsscommon 取り込み確認 → schema.h に DB id 14 定義済
+- send_to_ingress netdev の sonic-buildimage / kernel module 取り込み確認 → 本リポでは未確認（vendor SAI / P4RT app 依存）
+- saip4ext.h の opencomputeproject/SAI 取り込み確認 → submodule 側で要確認
+- supplementary HLD（in_progress 表記）の現行版確認と分割 issue 化 → 別 issue 候補
+- gRPC port 9559 の固定 / config 化の進捗確認 → p4rt.sh は ConfigDB から `--p4rt_port` 含む引数を組み立てており config 化済
 -->
