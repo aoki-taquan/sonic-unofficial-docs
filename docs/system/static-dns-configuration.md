@@ -1,7 +1,7 @@
 ---
 title: 静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-dns
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`resolv-config.service` / `resolv-config.sh` / `resolv.conf.j2` の配置、`update-containers` resolvconf プラグイン、`sonic-cfggen` の minigraph 変換実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/files/image_config/resolv-config/` 配下に `resolv-config.service` / `resolv-config.sh` / `resolv.conf.j2` / `resolv.conf.head` / `update-containers` がすべて存在することを確認。`sonic-buildimage/src/sonic-config-engine/minigraph.py` L2648-2667 で `DnsNameserverResources` を `dns.j2` テンプレートで展開し `results['DNS_NAMESERVER']` に格納する実装を確認 (verified at: 2026-05-09)。
 
 # 静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
 

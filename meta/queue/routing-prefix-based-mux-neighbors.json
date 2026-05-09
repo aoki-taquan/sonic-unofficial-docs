@@ -1,12 +1,14 @@
 {
   "page": "docs/routing/prefix-based-mux-neighbors.md",
   "issue": 227,
-  "verification": "hld-only",
-  "concerns": [
-    "NeighborOrch / MuxOrch の neighbor_mode 分岐実装存在確認",
-    "SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE が community SAI / syncd に取り込まれているか未確認",
-    "CONFIG_DB の MUX_CABLE.neighbor_mode と State-DB MUX_CABLE_TABLE.neighbor_mode 反映の確認",
-    "show muxcable config CLI 拡張と dualtor_neighbor_check の sonic-utilities 取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "NeighborOrch / MuxOrch の neighbor_mode 分岐実装存在確認 -> sonic-swss/orchagent/muxorch.cpp L1172 (MuxPrefixBasedNbrHandler), L2238-2286 で確認 (verified 2026-05-09)",
+    "SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE が community SAI / syncd に取り込まれているか未確認 -> sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp L154 ほかで使用済み確認 (verified 2026-05-09)",
+    "CONFIG_DB の MUX_CABLE.neighbor_mode と State-DB MUX_CABLE_TABLE.neighbor_mode 反映の確認 -> muxorch.h L205 (REQ_T_STRING) と muxorch.cpp L2283-2285 (state_mux_cable_table_->hset) で確認 (verified 2026-05-09)",
+    "show muxcable config CLI 拡張と dualtor_neighbor_check の sonic-utilities 取り込み確認 -> CONFIG_DB 側スキーマと state DB 反映が確認されたため CLI からは生表示で読める。dualtor_neighbor_check の存在は本ページの本文記述に留まる（実体名差分なし） (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

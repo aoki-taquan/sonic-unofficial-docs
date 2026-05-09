@@ -1,15 +1,17 @@
 {
   "page": "docs/management/packetio.md",
-  "verification": "hld-only",
-  "concerns": [
-    "CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認",
-    "SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認",
-    "SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認",
-    "ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認",
-    "copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認",
-    "P4Runtime / PINS スタックの SONiC master 取り込み状況確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認 -> sonic-swss/orchagent/copporch.h L44-46 / copporch.cpp L446 (CHANNEL_TYPE_GENETLINK), L657-669 (createGenetlinkHostIf), L833-844 で確認 (verified 2026-05-09)",
+    "SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認 -> sonic-swss/orchagent/portsorch.cpp L771 (Table 登録), L7106-7120 (addSendToIngressHostIf), orchdaemon.cpp L219 で確認 (verified 2026-05-09)",
+    "SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認 -> copporch.cpp で SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK と genetlink_mcgrp_name attr 設定を確認 (verified 2026-05-09)",
+    "ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認 -> SONiC リポジトリ範囲外のためスコープ外（HLD でも vendor 依存と明記） (verified 2026-05-09)",
+    "copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認 -> sonic-buildimage/files/image_config/copp/copp_cfg.j2 L76-83 で queue2_group1 に genetlink_mcgrp_name=packets / genetlink_name=psample を確認 (verified 2026-05-09)",
+    "P4Runtime / PINS スタックの SONiC master 取り込み状況確認 -> sonic-swss/orchagent/p4orch/ ディレクトリ存在を確認、PINS 一部は取り込み済み。本ページ範囲では packetio 共通基盤のみ verify (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 183,
-  "pr": 184
+  "pr": 184,
+  "last_verified": "2026-05-09"
 }

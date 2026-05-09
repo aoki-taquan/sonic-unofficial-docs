@@ -1,14 +1,16 @@
 {
   "page": "docs/routing/multiple-nexthop-route-hld.md",
-  "verification": "hld-only",
-  "concerns": [
-    "MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)",
-    "MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認",
-    "NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認",
-    "routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認",
-    "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "MuxOrch::updateRoute() の現行 master 実装存在確認 -> sonic-swss/orchagent/muxorch.cpp L1585 で確認 (verified 2026-05-09)",
+    "MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認 -> muxorch.cpp L2058 / L1824/1926/2019/2045/2050 で確認 (verified 2026-05-09)",
+    "NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認 -> 関連箇所として MuxCable::updateRoutes / updateRoutesForNextHop (muxorch.cpp L700/L724) から updateRoute(prefix) を駆動 (verified 2026-05-09)",
+    "routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認 -> MuxCable::updateRoutes 経路で MuxOrch 経由の route 更新を確認 (verified 2026-05-09)",
+    "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認 -> MuxCable::updateRoutes() (muxorch.cpp L700) で全 mux_route 再評価を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 169,
-  "pr": 170
+  "pr": 170,
+  "last_verified": "2026-05-09"
 }

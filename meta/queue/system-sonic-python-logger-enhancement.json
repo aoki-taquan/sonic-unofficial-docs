@@ -1,13 +1,18 @@
 {
   "page": "docs/system/sonic-python-logger-enhancement.md",
   "issue": 133,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "SysLogger の singleton 化と enable_runtime_config 引数の sonic-py-common 取り込み",
-    "LOGGER.require_manual_refresh フィールドのスキーマ確定",
-    "config syslog level CLI の sonic-utilities 取り込み",
-    "redis 未起動時の fallback 経路実装",
-    "swssloglevel の deprecation 計画"
+    "SysLogger の singleton 化が現行 master で実装されていない (sonic_py_common/syslogger.py L18 にて通常の class 定義のまま)。HLD と乖離",
+    "swssloglevel の deprecation 計画は未確認"
   ],
-  "priority": "medium"
+  "verified_concerns": [
+    "enable_runtime_config 引数の sonic-py-common 取り込み -> sonic_py_common/syslogger.py L26 で確認 (verified 2026-05-09)",
+    "LOGGER.require_manual_refresh フィールドのスキーマ確定 -> syslogger.py L9 (FIELD_REQUIRE_REFRESH) と L62-66 で初期登録時に 'true' 書き込みを確認 (verified 2026-05-09)",
+    "config syslog level CLI の sonic-utilities 取り込み -> sonic-utilities/config/syslog.py L647-686 で確認 (verified 2026-05-09)",
+    "redis 未起動時の fallback 経路実装 -> syslogger.py L67-69 で例外時 (False, msg) を返す。上位呼び出し側が try する設計で HLD と整合 (verified 2026-05-09)"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "HLD は SysLogger の singleton 化 (__new__ / _instance) を要求しているが、現行 master の sonic_py_common/syslogger.py L18 は通常の class 定義のままで singleton ではない。実害は限定的（同 name の logger は logging.getLogger 経由で共有される）だが、HLD 文面と実装手段が異なるため discrepancy-found として記録。"
 }

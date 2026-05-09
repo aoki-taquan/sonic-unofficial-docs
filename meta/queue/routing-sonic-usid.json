@@ -1,12 +1,14 @@
 {
   "page": "docs/routing/sonic-usid.md",
   "issue": 95,
-  "verification": "hld-only",
-  "concerns": [
-    "srv6orch の end_behavior_map / end_flavor_map に un/ua/udt*/udx* が追加済みか",
-    "SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か",
-    "FRR 系の SRv6 制御プレーン対応進捗",
-    "APPL_DB SRV6_MY_SID_TABLE のスキーマ確定形"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "srv6orch の end_behavior_map / end_flavor_map に un/ua/udt*/udx* が追加済みか -> sonic-swss/orchagent/srv6orch.cpp L41-62 で確認 (verified 2026-05-09)",
+    "SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か -> srv6orch.cpp L60-61 で参照済み、SAI ヘッダで利用可能 (verified 2026-05-09)",
+    "FRR 系の SRv6 制御プレーン対応進捗 -> 本 HLD のスコープ外（HLD 明記）。引き続き未取り込み (verified 2026-05-09)",
+    "APPL_DB SRV6_MY_SID_TABLE のスキーマ確定形 -> srv6orch.cpp L1305-1410 の field 名で確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

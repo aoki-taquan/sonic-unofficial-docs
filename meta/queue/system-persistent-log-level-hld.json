@@ -1,12 +1,14 @@
 {
   "page": "docs/system/persistent-log-level-hld.md",
   "issue": 33,
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-swss-common の logger.cpp/loglevel.cpp 変更が CONFIG_DB 購読に切替済か未確認",
-    "swssloglevel -d オプション実装の存在確認",
-    "db_migrator が LOGLEVEL_DB→CONFIG_DB 移行を実装済みか未確認",
-    "Phase 2 の LOGLEVEL_DB / JINJA2_CACHE 削除が現在 master で完了しているか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "sonic-swss-common の logger.cpp/loglevel.cpp 変更が CONFIG_DB 購読に切替済か未確認 -> sonic-swss-common/common/logger.cpp L126-127 (DBConnector CONFIG_DB + Table CFG_LOGGER_TABLE_NAME) と L195-198 (SubscriberStateTable CFG_LOGGER_TABLE_NAME) で確認 (verified 2026-05-09)",
+    "swssloglevel -d オプション実装の存在確認 -> sonic-swss-common/common/loglevel.cpp L31/L37/L99 で確認 (verified 2026-05-09)",
+    "db_migrator が LOGLEVEL_DB→CONFIG_DB 移行を実装済みか未確認 -> sonic-utilities/scripts/db_migrator.py L94/L1207-1226 で確認 (verified 2026-05-09)",
+    "Phase 2 の LOGLEVEL_DB / JINJA2_CACHE 削除が現在 master で完了しているか未確認 -> logger.cpp 内に LOGLEVEL_DB 参照が残っていないことを確認、Phase 1 / 2 移行は完了 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

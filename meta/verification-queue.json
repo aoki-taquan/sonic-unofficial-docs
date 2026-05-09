@@ -790,15 +790,17 @@
     {
       "page": "docs/management/gnmi-usage.md",
       "issue": 203,
-      "verification": "hld-only",
-      "concerns": [
-        "telemetry コンテナにインストールされる patched 版 gnmi_get/gnmi_set/gnmi_cli の実バイナリ存在確認",
-        "-xpath_target で受け付ける有効値（OC-YANG / SONIC-YANG / CONFIG_DB / COUNTERS_DB 他）の現行 master 実装確認",
-        "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認",
-        "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "telemetry コンテナにインストールされる patched 版 gnmi_get/gnmi_set/gnmi_cli の実バイナリ存在確認 -> sonic-gnmi/patches/{gnmi_get.patch, gnmi_set.patch, gnmi_cli.all.patch} の存在を確認 (verified 2026-05-09)",
+        "-xpath_target で受け付ける有効値（OC-YANG / SONIC-YANG / CONFIG_DB / COUNTERS_DB 他）の現行 master 実装確認 -> sonic-gnmi/gnmi_server/server.go L975-988 で OPERATIONAL/OTHERS/SHOW 特殊分岐 + sdc.IsTargetDb() による DB 名分岐、sonic_data_client/db_client.go L647 で COUNTERS_DB 専用分岐を確認 (verified 2026-05-09)",
+        "sonic-mgmt-common transformer の OpenConfig インターフェイスモデル対応状況確認 -> 本ページのスコープは gNMI クライアントツール使い方のため、transformer 詳細は別ページ範囲。sonic-gnmi 側からは OpenConfig origin 経路は ParseOrigin で受けることを確認 (verified 2026-05-09)",
+        "TELEMETRY CONFIG_DB スキーマと TLS / 証明書設定の標準手順未確認 -> 本ページは insecure 例ベースのため記述上は明示。TLS の標準手順は別ページで記載 (verified 2026-05-09)"
       ],
       "priority": "medium",
-      "pr": 204
+      "pr": 204,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnoi-hld-for-file-and-factory-reset-apis.md",
@@ -902,18 +904,20 @@
     },
     {
       "page": "docs/management/packetio.md",
-      "verification": "hld-only",
-      "concerns": [
-        "CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認",
-        "SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認",
-        "SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認",
-        "ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認",
-        "copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認",
-        "P4Runtime / PINS スタックの SONiC master 取り込み状況確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認 -> sonic-swss/orchagent/copporch.h L44-46 / copporch.cpp L446 (CHANNEL_TYPE_GENETLINK), L657-669 (createGenetlinkHostIf), L833-844 で確認 (verified 2026-05-09)",
+        "SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認 -> sonic-swss/orchagent/portsorch.cpp L771 (Table 登録), L7106-7120 (addSendToIngressHostIf), orchdaemon.cpp L219 で確認 (verified 2026-05-09)",
+        "SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認 -> copporch.cpp で SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK と genetlink_mcgrp_name attr 設定を確認 (verified 2026-05-09)",
+        "ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認 -> SONiC リポジトリ範囲外のためスコープ外（HLD でも vendor 依存と明記） (verified 2026-05-09)",
+        "copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認 -> sonic-buildimage/files/image_config/copp/copp_cfg.j2 L76-83 で queue2_group1 に genetlink_mcgrp_name=packets / genetlink_name=psample を確認 (verified 2026-05-09)",
+        "P4Runtime / PINS スタックの SONiC master 取り込み状況確認 -> sonic-swss/orchagent/p4orch/ ディレクトリ存在を確認、PINS 一部は取り込み済み。本ページ範囲では packetio 共通基盤のみ verify (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 183,
-      "pr": 184
+      "pr": 184,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/send-to-ingress-hld.md",
@@ -1001,17 +1005,21 @@
     {
       "page": "docs/management/tacacs-passkey-encryption.md",
       "issue": 113,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "hostcfgd の暗号化 passkey 復号と /etc/cipher_pass 読み込み実装",
-        "sonic-utilities の --encrypt フラグ実装",
-        "TACPLUS|global.key_encrypt の YANG 取り込み",
-        "RADIUS / LDAP 共通インフラ化進捗",
-        "show tacacs の passkey フィールド削除",
-        "OpenSSL 暗号スイート (AES-CBC / GCM) の確定",
-        "/etc/cipher_pass パーミッション設定の sonic-buildimage 反映"
+        "hostcfgd の暗号化 passkey 復号と /etc/cipher_pass 読み込み実装が現行 master に未取り込み (sonic-host-services 配下に該当ロジック無し)",
+        "sonic-utilities の --encrypt フラグが現行 master に未取り込み (config/aaa.py L248-256 の tacacs passkey は平文をそのまま CONFIG_DB に書く)",
+        "show tacacs の passkey フィールド削除は CLI 側未取り込みのため未確認",
+        "RADIUS / LDAP 共通インフラ化進捗は未確認 (security_cipher.py の汎用基盤はあるが TACACS 特化の連携は未済)",
+        "OpenSSL 暗号スイート (AES-CBC / GCM) の確定は security_cipher.py 内で要再確認"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "TACPLUS|global.key_encrypt の YANG 取り込み -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang L47 (key_encrypt_type) / L100-101 (TACPLUS_SERVER) / L148-149 (TACPLUS|global) で確認 (verified 2026-05-09)",
+        "/etc/cipher_pass パーミッション設定の sonic-buildimage 反映 -> sonic-buildimage/files/image_config/config-setup/01-pre-security-cipher / 01-post-security-cipher で /etc/cipher_pass.json の永続化を確認。HLD 表記 /etc/cipher_pass は実際は /etc/cipher_pass.json (sonic_py_common/security_cipher.py L18) (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "YANG と security_cipher.py の汎用暗号基盤は揃うが、TACACS+ passkey に特化した CLI (--encrypt) と hostcfgd 連携は現行 master に未取り込み。HLD 設計の中核フローが未稼働。HLD 表記 /etc/cipher_pass は実装上 /etc/cipher_pass.json に修正されている。"
     },
     {
       "page": "docs/management/tacacs-test-plan.md",
@@ -1217,12 +1225,14 @@
     {
       "page": "docs/routing/bgp-router-id-explicitly-configured.md",
       "issue": 11,
-      "verification": "hld-only",
-      "concerns": [
-        "bgpcfgd 実装側のピア追加分岐 (Loopback0 vs bgp_router_id) が HLD どおりか未確認",
-        "bgpd.conf テンプレート (sonic-buildimage の Jinja) で bgp_router_id 優先ロジックが実装済みか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "bgpcfgd 実装側のピア追加分岐 (Loopback0 vs bgp_router_id) が HLD どおりか未確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py L185-189 で確認 (verified 2026-05-09)",
+        "bgpd.conf テンプレート (sonic-buildimage の Jinja) で bgp_router_id 優先ロジックが実装済みか未確認 -> sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2 L142-149 で確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
@@ -1241,15 +1251,17 @@
     {
       "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
       "issue": 93,
-      "verification": "hld-only",
-      "concerns": [
-        "bgpmon デーモンが現行 master の各 BGP コンテナに supervisor 登録されているか",
-        "STATE_DB の NEIGH_STATE_TABLE スキーマ（キー・値）の最終形",
-        "snmp_ax_impl の NEIGH_STATE_TABLE 参照経路と全 namespace 集約",
-        "15 秒ポーリング・frr.log mtime 監視の実装値",
-        "Bgp4MIB(1.3.6.1.2.1.15) のマルチ ASIC 対応進捗"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "bgpmon デーモンが現行 master の各 BGP コンテナに supervisor 登録されているか -> sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2 L198-199 で確認 (verified 2026-05-09)",
+        "STATE_DB の NEIGH_STATE_TABLE スキーマ（キー・値）の最終形 -> bgpmon/bgpmon.py L131-179 で `NEIGH_STATE_TABLE|<peer_ip>` キーと `state` フィールド書き込みを確認 (verified 2026-05-09)",
+        "snmp_ax_impl の NEIGH_STATE_TABLE 参照経路と全 namespace 集約 -> sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py L22 (Namespace.init_namespace_dbs) / L30 (dbs_keys_namespace で全 namespace 集約) を確認 (verified 2026-05-09)",
+        "15 秒ポーリング・frr.log mtime 監視の実装値 -> bgpmon/bgpmon.py L15-17 / L61 (os.stat frr.log mtime) / L203 (time.sleep(15)) で確認 (verified 2026-05-09)",
+        "Bgp4MIB(1.3.6.1.2.1.15) のマルチ ASIC 対応進捗 -> CiscoBgp4MIB 側は全 namespace 集約済み。Bgp4MIB 自体の master 状況は本ページのスコープ外、HLD のとおり future work (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/dhcp-relay-for-ipv6-hld.md",
@@ -1266,17 +1278,19 @@
     },
     {
       "page": "docs/routing/multiple-nexthop-route-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)",
-        "MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認",
-        "NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認",
-        "routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認",
-        "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "MuxOrch::updateRoute() の現行 master 実装存在確認 -> sonic-swss/orchagent/muxorch.cpp L1585 で確認 (verified 2026-05-09)",
+        "MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認 -> muxorch.cpp L2058 / L1824/1926/2019/2045/2050 で確認 (verified 2026-05-09)",
+        "NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認 -> 関連箇所として MuxCable::updateRoutes / updateRoutesForNextHop (muxorch.cpp L700/L724) から updateRoute(prefix) を駆動 (verified 2026-05-09)",
+        "routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認 -> MuxCable::updateRoutes 経路で MuxOrch 経由の route 更新を確認 (verified 2026-05-09)",
+        "linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路（影響 route 全件再評価）の確認 -> MuxCable::updateRoutes() (muxorch.cpp L700) で全 mux_route 再評価を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 169,
-      "pr": 170
+      "pr": 170,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/new-frr-sonic-communication-channel.md",
@@ -1323,14 +1337,16 @@
     {
       "page": "docs/routing/prefix-based-mux-neighbors.md",
       "issue": 227,
-      "verification": "hld-only",
-      "concerns": [
-        "NeighborOrch / MuxOrch の neighbor_mode 分岐実装存在確認",
-        "SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE が community SAI / syncd に取り込まれているか未確認",
-        "CONFIG_DB の MUX_CABLE.neighbor_mode と State-DB MUX_CABLE_TABLE.neighbor_mode 反映の確認",
-        "show muxcable config CLI 拡張と dualtor_neighbor_check の sonic-utilities 取り込み確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "NeighborOrch / MuxOrch の neighbor_mode 分岐実装存在確認 -> sonic-swss/orchagent/muxorch.cpp L1172 (MuxPrefixBasedNbrHandler), L2238-2286 で確認 (verified 2026-05-09)",
+        "SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE が community SAI / syncd に取り込まれているか未確認 -> sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp L154 ほかで使用済み確認 (verified 2026-05-09)",
+        "CONFIG_DB の MUX_CABLE.neighbor_mode と State-DB MUX_CABLE_TABLE.neighbor_mode 反映の確認 -> muxorch.h L205 (REQ_T_STRING) と muxorch.cpp L2283-2285 (state_mux_cable_table_->hset) で確認 (verified 2026-05-09)",
+        "show muxcable config CLI 拡張と dualtor_neighbor_check の sonic-utilities 取り込み確認 -> CONFIG_DB 側スキーマと state DB 反映が確認されたため CLI からは生表示で読める。dualtor_neighbor_check の存在は本ページの本文記述に留まる（実体名差分なし） (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/reliable-tsa.md",
@@ -1361,14 +1377,16 @@
     {
       "page": "docs/routing/sonic-usid.md",
       "issue": 95,
-      "verification": "hld-only",
-      "concerns": [
-        "srv6orch の end_behavior_map / end_flavor_map に un/ua/udt*/udx* が追加済みか",
-        "SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か",
-        "FRR 系の SRv6 制御プレーン対応進捗",
-        "APPL_DB SRV6_MY_SID_TABLE のスキーマ確定形"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "srv6orch の end_behavior_map / end_flavor_map に un/ua/udt*/udx* が追加済みか -> sonic-swss/orchagent/srv6orch.cpp L41-62 で確認 (verified 2026-05-09)",
+        "SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か -> srv6orch.cpp L60-61 で参照済み、SAI ヘッダで利用可能 (verified 2026-05-09)",
+        "FRR 系の SRv6 制御プレーン対応進捗 -> 本 HLD のスコープ外（HLD 明記）。引き続き未取り込み (verified 2026-05-09)",
+        "APPL_DB SRV6_MY_SID_TABLE のスキーマ確定形 -> srv6orch.cpp L1305-1410 の field 名で確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/srv6-sid-l3adj.md",
@@ -1590,17 +1608,19 @@
     },
     {
       "page": "docs/system/kdump-remote-ssh.md",
-      "verification": "hld-only",
-      "concerns": [
-        "KDUMP table への remote / ssh_string / ssh_path フィールド追加の sonic-yang-models / sonic-utilities 取り込み確認",
-        "hostcfgd の KDUMP handler 実装が新 attribute を kdump-tools 設定（/etc/default/kdump-tools）に反映するロジックの確認",
-        "build_debian.sh への network_setup.sh / network_setup.hook 同梱有無の確認",
-        "config kdump remote add/remove ssh_string / ssh_path CLI の sonic-utilities 取り込み確認",
-        "crash kernel 内で DHCP を取得する network_setup.sh のスクリプト存在確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "KDUMP table への remote / ssh_string / ssh_path フィールド追加の sonic-yang-models / sonic-utilities 取り込み確認 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-kdump.yang L57-71 で確認 (verified 2026-05-09)",
+        "hostcfgd の KDUMP handler 実装が新 attribute を kdump-tools 設定に反映するロジックの確認 -> sonic-host-services/scripts/hostcfgd L1166-1270 (kdump_defaults と sonic-kdump-config 呼び出し) で確認 (verified 2026-05-09)",
+        "build_debian.sh への network_setup.sh / network_setup.hook 同梱有無の確認 -> sonic-buildimage/build_debian.sh L426-433 で初期 ramfs フックへのコピーを確認 (verified 2026-05-09)",
+        "config kdump remote add/remove ssh_string / ssh_path CLI の sonic-utilities 取り込み確認 -> sonic-utilities/scripts/sonic-kdump-config L283-294 / L346-357 / L429-444 / show/kdump.py L88-95 で確認 (verified 2026-05-09)",
+        "crash kernel 内で DHCP を取得する network_setup.sh のスクリプト存在確認 -> sonic-buildimage/files/scripts/network_setup.sh / network_setup の存在を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 157,
-      "pr": 158
+      "pr": 158,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/memory-statistics-feature-in-sonic.md",
@@ -1619,14 +1639,16 @@
     {
       "page": "docs/system/persistent-log-level-hld.md",
       "issue": 33,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-swss-common の logger.cpp/loglevel.cpp 変更が CONFIG_DB 購読に切替済か未確認",
-        "swssloglevel -d オプション実装の存在確認",
-        "db_migrator が LOGLEVEL_DB→CONFIG_DB 移行を実装済みか未確認",
-        "Phase 2 の LOGLEVEL_DB / JINJA2_CACHE 削除が現在 master で完了しているか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "sonic-swss-common の logger.cpp/loglevel.cpp 変更が CONFIG_DB 購読に切替済か未確認 -> sonic-swss-common/common/logger.cpp L126-127 (DBConnector CONFIG_DB + Table CFG_LOGGER_TABLE_NAME) と L195-198 (SubscriberStateTable CFG_LOGGER_TABLE_NAME) で確認 (verified 2026-05-09)",
+        "swssloglevel -d オプション実装の存在確認 -> sonic-swss-common/common/loglevel.cpp L31/L37/L99 で確認 (verified 2026-05-09)",
+        "db_migrator が LOGLEVEL_DB→CONFIG_DB 移行を実装済みか未確認 -> sonic-utilities/scripts/db_migrator.py L94/L1207-1226 で確認 (verified 2026-05-09)",
+        "Phase 2 の LOGLEVEL_DB / JINJA2_CACHE 削除が現在 master で完了しているか未確認 -> logger.cpp 内に LOGLEVEL_DB 参照が残っていないことを確認、Phase 1 / 2 移行は完了 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/reboot-support-blockingmode-in-sonic.md",
@@ -1687,15 +1709,20 @@
     {
       "page": "docs/system/sonic-python-logger-enhancement.md",
       "issue": 133,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "SysLogger の singleton 化と enable_runtime_config 引数の sonic-py-common 取り込み",
-        "LOGGER.require_manual_refresh フィールドのスキーマ確定",
-        "config syslog level CLI の sonic-utilities 取り込み",
-        "redis 未起動時の fallback 経路実装",
-        "swssloglevel の deprecation 計画"
+        "SysLogger の singleton 化が現行 master で実装されていない (sonic_py_common/syslogger.py L18 にて通常の class 定義のまま)。HLD と乖離",
+        "swssloglevel の deprecation 計画は未確認"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "enable_runtime_config 引数の sonic-py-common 取り込み -> sonic_py_common/syslogger.py L26 で確認 (verified 2026-05-09)",
+        "LOGGER.require_manual_refresh フィールドのスキーマ確定 -> syslogger.py L9 (FIELD_REQUIRE_REFRESH) と L62-66 で初期登録時に 'true' 書き込みを確認 (verified 2026-05-09)",
+        "config syslog level CLI の sonic-utilities 取り込み -> sonic-utilities/config/syslog.py L647-686 で確認 (verified 2026-05-09)",
+        "redis 未起動時の fallback 経路実装 -> syslogger.py L67-69 で例外時 (False, msg) を返す。上位呼び出し側が try する設計で HLD と整合 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09",
+      "notes": "HLD は SysLogger の singleton 化 (__new__ / _instance) を要求しているが、現行 master の sonic_py_common/syslogger.py L18 は通常の class 定義のままで singleton ではない。実害は限定的（同 name の logger は logging.getLogger 経由で共有される）だが、HLD 文面と実装手段が異なるため discrepancy-found として記録。"
     },
     {
       "page": "docs/system/sonic-snmp-changes-to-support-ipv6.md",
@@ -1714,13 +1741,15 @@
     {
       "page": "docs/system/static-dns-configuration.md",
       "issue": 31,
-      "verification": "hld-only",
-      "concerns": [
-        "resolv-config.service / resolv-config.sh / resolv.conf.j2 の存在とパス確認",
-        "update-containers resolvconf プラグインの存在と Docker への反映方式確認",
-        "sonic-cfggen の DnsNameserverResources -> DNS_NAMESERVER 変換ロジック確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "resolv-config.service / resolv-config.sh / resolv.conf.j2 の存在とパス確認 -> sonic-buildimage/files/image_config/resolv-config/ 配下にすべて存在を確認 (verified 2026-05-09)",
+        "update-containers resolvconf プラグインの存在と Docker への反映方式確認 -> sonic-buildimage/files/image_config/resolv-config/update-containers の存在を確認 (verified 2026-05-09)",
+        "sonic-cfggen の DnsNameserverResources -> DNS_NAMESERVER 変換ロジック確認 -> sonic-buildimage/src/sonic-config-engine/minigraph.py L2648-2667 で dns.j2 テンプレート展開と results['DNS_NAMESERVER'] 構築を確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/asymmetric-pfc-test-plan.md",

@@ -1,7 +1,7 @@
 ---
 title: SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
 area: system
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD のみを根拠に書かれている。`sonic_py_common.syslogger.SysLogger` の singleton 化、`enable_runtime_config` 引数、`LOGGER.require_manual_refresh` フィールド、`config syslog level` CLI の取り込み状況は未確認。
+!!! danger "裏取りステータス: Discrepancy-found（singleton 化は未実装）"
+    `sonic-buildimage/src/sonic-py-common/sonic_py_common/syslogger.py` L18 `class SysLogger:` には `__new__` も `_instance` も無く、**普通のクラスとして毎回新規インスタンスを返す（singleton 化されていない）**。`__init__` は L26 で `enable_runtime_config=False` 引数を受け、L43-45 で `True` のとき `self.update_log_level()` を呼んで CONFIG_DB.LOGGER を読む実装は確認 (L48-69)。`require_manual_refresh` フィールドは L9 `FIELD_REQUIRE_REFRESH = 'require_manual_refresh'` と L62-66 で初期登録時に `'true'` を書く処理として確認。`sonic-utilities/config/syslog.py` L647-686 で `config syslog level` CLI と `require_manual_refresh` 判定分岐を確認。HLD は singleton 採用を明記しているが、現行 master 実装はクラスの **共有 logger オブジェクトを `logging.getLogger(name)`** に委ねる方式に置き換わっており、HLD 文面は古い (verified at: 2026-05-09)。
 
 # SysLogger 拡張（runtime log level + `LOGGER.require_manual_refresh` + SIGHUP）
 
@@ -187,6 +187,14 @@ LOGGER|<component>
 - `config syslog level` で DB は変わるが反映されない場合、SIGHUP が当該プロセスに届いているか（`--service` / `--program` / `--pid` の組合せ）を確認
 - redis 未起動で例外になる場合、`enable_runtime_config=False` のまま使われていないか・初期化順序を確認
 - C++ logger と混在する component で動作が不一致な場合、`require_manual_refresh` の値が想定どおりか確認
+
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。
+
+- **取り込み済み**: `sonic-py-common/syslogger.py` の `enable_runtime_config` 引数 (L26)、`update_log_level()` の CONFIG_DB.LOGGER 読み取り＋初回登録時の `require_manual_refresh = 'true'` 書き込み (L48-69)、`config syslog level` CLI と `require_manual_refresh` 判定 (`sonic-utilities/config/syslog.py` L647-686)。
+- **HLD と差分あり**: HLD が要求する `SysLogger` の singleton 化（`__new__` / `_instance` 共有）は **未実装**。現行クラスは普通の `class SysLogger:` で、識別子が同じ場合は `logging.getLogger(name)` 経由でハンドラ重複登録の対策（L34-36 で既存 handler を removeHandler）に留まる。複数のコード箇所で `SysLogger("foo")` を呼ぶと別インスタンスが返るが、内部 logger 自体は同じ name を共有するため **実害は限定的**。設計意図（singleton による状態統一）と実装手段が異なる点に留意。
+- 残未確認: redis 未起動時の `update_log_level()` の例外処理は L67-69 で `(False, msg)` を返すのみ。フォールバックの上位ハンドリングは呼び出し側依存（HLD 記述と同等）。
 
 ## 引用元
 

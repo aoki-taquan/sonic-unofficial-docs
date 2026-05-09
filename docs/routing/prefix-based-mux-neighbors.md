@@ -1,7 +1,7 @@
 ---
 title: プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`NeighborOrch` / `MuxOrch` の `neighbor_mode` 分岐実装、`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` の syncd / SAI 側サポート、CLI 拡張は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/muxorch.h` L205 で MUX_CABLE の `neighbor_mode` フィールドが `REQ_T_STRING` で受け付けられ、`muxorch.cpp` L1172 `MuxPrefixBasedNbrHandler` クラス、L2238-2286 で `neighbor_mode` 値を読み取り `MuxNbrHandlerType::NBR_HANDLER_PREFIX_BASED / HOST_ROUTE` に分岐し、STATE_DB `MUX_CABLE_TABLE` に `neighbor_mode = "prefix-route" / "host-route"` を反映することを確認。`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` は `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp` L154 ほかで使用済み (verified at: 2026-05-09)。
 
 # プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
 

@@ -1,7 +1,7 @@
 ---
 title: ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-logger
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-swss-common` の `logger.cpp` / `loglevel.cpp` 変更、各 `*mgrd` / `*syncd` の listener thread 変更、`db_migrator` の LOGLEVEL DB → CONFIG DB 変換、Phase 2 の LOGLEVEL_DB / `JINJA2_CACHE` 完全削除の進捗は未裏取り。
+!!! success "裏取りステータス: Code-verified（Phase 1 / 2 移行完了）"
+    `sonic-swss-common/common/logger.cpp` L126-127 / L195-198 で `DBConnector("CONFIG_DB", 0)` + `Table(&db, CFG_LOGGER_TABLE_NAME)` および `SubscriberStateTable(CFG_LOGGER_TABLE_NAME)` 経由の購読を確認（LOGLEVEL_DB から完全に CONFIG_DB.LOGGER に移行済み）。`sonic-swss-common/common/loglevel.cpp` L31/L37/L99 で `swssloglevel -d`（全コンポーネントを default に戻す）オプションの実装を確認。`sonic-utilities/scripts/db_migrator.py` L94/L1207-1226 で旧 `LOGLEVEL_DB` → `CONFIG_DB.LOGGER` 変換と旧キー削除を確認 (verified at: 2026-05-09)。
 
 # ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
 

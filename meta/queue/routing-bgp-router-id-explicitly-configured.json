@@ -1,10 +1,12 @@
 {
   "page": "docs/routing/bgp-router-id-explicitly-configured.md",
   "issue": 11,
-  "verification": "hld-only",
-  "concerns": [
-    "bgpcfgd 実装側のピア追加分岐 (Loopback0 vs bgp_router_id) が HLD どおりか未確認",
-    "bgpd.conf テンプレート (sonic-buildimage の Jinja) で bgp_router_id 優先ロジックが実装済みか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "bgpcfgd 実装側のピア追加分岐 (Loopback0 vs bgp_router_id) が HLD どおりか未確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py L185-189 で確認 (verified 2026-05-09)",
+    "bgpd.conf テンプレート (sonic-buildimage の Jinja) で bgp_router_id 優先ロジックが実装済みか未確認 -> sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2 L142-149 で確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

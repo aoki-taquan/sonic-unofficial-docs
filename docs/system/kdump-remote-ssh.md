@@ -1,7 +1,7 @@
 ---
 title: kdump リモート転送（SSH）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-kdump
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `KDUMP` table への `remote / ssh_string / ssh_path` 追加、`hostcfgd` での `kdump-tools` (kdump.conf) 生成、`build_debian.sh` への `network_setup.sh` フック追加、`config kdump remote` CLI の `sonic-utilities` への取り込みは実コードでの裏取り未済。kernel crash 中の DHCP / SSH 認証フローは Linux 側 `kdump-tools` 実装に依存。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-kdump.yang` L57-71 で `remote / ssh_string / ssh_path` の YANG leaf を確認。`sonic-utilities/scripts/sonic-kdump-config` L261/283-294/346-357/429-444 で同 3 フィールドの読み書きと kdump-tools 設定反映、`sonic-utilities/show/kdump.py` L88-95 で `show kdump config` 拡張を確認。`sonic-host-services/scripts/hostcfgd` L1166-1270 で `kdump_defaults` に新 3 フィールドが入り `sonic-kdump-config --remote / --ssh_string / --ssh_path` を呼ぶハンドラを確認。`sonic-buildimage/build_debian.sh` L426-433 で `network_setup.sh` / `network_setup` フックを `/etc/initramfs-tools/scripts/init-premount/` および `/etc/initramfs-tools/hooks/` に配置することを確認 (verified at: 2026-05-09)。
 
 # kdump リモート転送（SSH）
 
