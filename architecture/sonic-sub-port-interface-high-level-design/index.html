@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/build-system-improvements/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-sub-port-interface-high-level-design/">
       
       
-        <link rel="prev" href="../build-profiles/">
+        <link rel="prev" href="../sonic-port-configuration-refactor-design/">
       
       
-        <link rel="next" href="../clock-managment-design/">
+        <link rel="next" href="../ssdhealth-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） - SONiC 非公式ドキュメント</title>
+        <title>Sub-port Interface（dot1q encap / VRF RIF / 命名規則） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dockerfile-buildkit-dh-sairedis" class="md-skip">
+        <a href="#sub-port-interfacedot1q-encap-vrf-rif" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
+              Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
             
           </span>
         </div>
@@ -713,37 +713,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -759,231 +732,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-dockerfile" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 1: Dockerfile のレイヤ数削減
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        開発時に強制するためのマクロ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-docker-1809-buildkit" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 2: Docker 18.09 + BuildKit
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="最適化 2: Docker 18.09 + BuildKit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-squash" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --squash の不具合（既知）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-bind-mount-copy-debs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 2 の発展形: bind mount で COPY debs/ 自体を回避
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-dpkg-buildpackage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 3: dpkg-buildpackage の並列化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-sairedis-rpc-rpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 4: sairedis の RPC / 非 RPC 分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        累積改善
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連するビルドフラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1441,10 +1189,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1460,6 +1235,203 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        命名規則
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネントとデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-admin-status-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime admin status / MTU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm reboot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -12765,82 +12737,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-dockerfile" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 1: Dockerfile のレイヤ数削減
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        開発時に強制するためのマクロ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-docker-1809-buildkit" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 2: Docker 18.09 + BuildKit
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="最適化 2: Docker 18.09 + BuildKit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-squash" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --squash の不具合（既知）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-bind-mount-copy-debs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 2 の発展形: bind mount で COPY debs/ 自体を回避
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-dpkg-buildpackage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 3: dpkg-buildpackage の並列化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-sairedis-rpc-rpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最適化 4: sairedis の RPC / 非 RPC 分離
+        命名規則
       
     </span>
   </a>
@@ -12851,7 +12751,62 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        累積改善
+        コンポーネントとデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-admin-status-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime admin status / MTU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm reboot
       
     </span>
   </a>
@@ -12876,21 +12831,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連するビルドフラグ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        CLI
       
     </span>
   </a>
@@ -12903,7 +12847,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12914,7 +12858,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12925,7 +12869,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12936,7 +12880,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12963,7 +12907,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/build-system-improvements.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-sub-port-interface-high-level-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12972,222 +12916,151 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は Debian Stretch 時代のスナップショット（Python 3.6、docker 18.09 への upgrade を提案）。<code>SONIC_USE_DOCKER_BUILDKIT</code> フラグ、<code>dockers/dockerfile-macros.j2</code>、<code>SAIREDIS_DPKG_TARGET=binary-syncd</code> の取り込み状況は要裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>intfsmgrd</code> / <code>intfsorch</code> の sub-port 拡張、SAI Router Interface 属性 (vlan id 付き)、Linux host sub-interface との sync、CLI / YANG 取り込みは未確認。</p>
 </div>
-<h1 id="dockerfile-buildkit-dh-sairedis">ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）<a class="headerlink" href="#dockerfile-buildkit-dh-sairedis" title="Permanent link">&para;</a></h1>
+<h1 id="sub-port-interfacedot1q-encap-vrf-rif">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）<a class="headerlink" href="#sub-port-interfacedot1q-encap-vrf-rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC ビルドは大別すると 2 段階で構成される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>Debian / Python パッケージ コンパイル — 比較的速い</li>
-<li><strong>Docker イメージビルド</strong> — 遅い（特に複数ユーザ並列時）</li>
-</ol>
-<p>本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>Dockerfile の <strong><code>COPY</code> / <code>RUN</code> をマージしてレイヤ数を削減</strong></li>
-<li>Docker 18.09 + <strong>BuildKit</strong> の有効化</li>
-<li><code>swss</code> / <code>swss-common</code> / <code>sairedis</code> の <strong><code>dh --parallel</code></strong> 並列ビルド</li>
-<li><code>sairedis</code> の RPC / 非 RPC 分離</li>
-</ol>
+<p>物理 port または PortChannel に <strong><code>.&lt;vlan-id&gt;</code> 付きの 802.1Q encap sub-interface</strong> を作成し、VRF binding した L3 router interface（RIF）として使う設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スコープ:</p>
+<ul>
+<li>物理 port または PortChannel 上の sub-port を <strong>VRF RIF</strong> として使う（一般的な L3 用途）</li>
+<li>L3 forwarding / BGP / VRRP / static / ACL redirect / counter 等の通常 L3 機能をサポート</li>
+</ul>
+<p>スコープ外:</p>
+<ul>
+<li>sub-port を <code>.1D bridge</code> の bridge port として使う（L2 用途）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>同 physical / PortChannel 上の異 sub-port 間の L2 bridging（明示的に「異 bridge domain」と扱う）</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="1-dockerfile">最適化 1: Dockerfile のレイヤ数削減<a class="headerlink" href="#1-dockerfile" title="Permanent link">&para;</a></h3>
-<p>各 <code>COPY</code> / <code>RUN</code> 行は新しい Docker レイヤを生成する。<code>--no-cache --squash</code> で最終出力を 1 レイヤに潰しているため、<strong>ビルド中の細かいレイヤ分割は無意味なコスト</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><strong>Before</strong>: 各 deb パッケージごとに 1 行ずつ <code>COPY</code> / <code>RUN</code>（SNMP docker で 52 ステップ）</p>
-<div class="language-Dockerfile highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">COPY</span><span class="w"> </span>debs/libnl-3-200_3.2.27-2_amd64.deb<span class="w"> </span>/debs/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">COPY</span><span class="w"> </span>debs/libsnmp-base_5.7.3+dfsg-1.5_all.deb<span class="w"> </span>/debs/
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>...
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">RUN</span><span class="w"> </span>dpkg_apt<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>...<span class="w"> </span><span class="o">}</span><span class="p">;</span><span class="w"> </span>dpkg_apt<span class="w"> </span>/debs/libnl-3-200_3.2.27-2_amd64.deb
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>...
-</span></code></pre></div>
-<p><strong>After</strong>: Jinja で 1 つの <code>COPY</code> 命令に展開（20 ステップ）</p>
-<div class="language-Dockerfile highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">COPY</span><span class="w"> </span>debs/libnl-3-200_3.2.27-2_amd64.deb<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">     </span>debs/libsnmp-base_5.7.3+dfsg-1.5_all.deb<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">     </span>...
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>/debs/
-</span></code></pre></div>
-<p>実測（HLD の数値）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_3">命名規則<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>v0.2（2020-12, Broadcom）で命名規則が整備<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>条件</th>
-<th><code>target/docker-snmp-sv2.gz</code></th>
+<th>親</th>
+<th>sub-interface 例</th>
+<th>備考</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>旧（52 ステップ）</td>
-<td><strong>27m48s</strong></td>
+<td><code>Ethernet0</code></td>
+<td><code>Eth0.10</code></td>
+<td>短縮形</td>
 </tr>
 <tr>
-<td>新（20 ステップ）</td>
-<td><strong>10m50s</strong></td>
+<td><code>PortChannel100</code></td>
+<td><code>Po100.20</code></td>
+<td>LAG 上</td>
 </tr>
 </tbody>
 </table>
-<p>ビルド時間はステップ数にほぼ線形（27/10 ≒ 52/20）であり、約 2.7× 高速化される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">開発時に強制するためのマクロ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p><code>dockers/dockerfile-macros.j2</code> に共通マクロを用意し、新規 <code>Dockerfile.j2</code> 作成者が個別 <code>COPY</code>/<code>RUN</code> を書かないよう誘導する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>copy_files
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>install_debian_packages
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>install_python_wheels
+<p>dot1q vlan id は 1〜4094。同一親 port 上で重複不可。異親なら同 id 可（互いに別 bridge domain）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">コンポーネントとデータフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    USER[(CONFIG_DB\nVLAN_SUB_INTERFACE)] --&gt; IM[intfsmgrd]
+    IM --&gt;|netlink: add/del subif| KERN[Linux kernel host\nsub-interface]
+    IM --&gt; APP[(APPL_DB\nINTF_TABLE)]
+    APP --&gt; IO[intfsorch]
+    IO --&gt; SAI[(SAI Router Interface\nport+vlan)]
+    KERN -. RTM_NEWADDR / NEIGH .-&gt; APP
+    USER --&gt; RM[routes / neighbors]
+    RM --&gt; IO</code></pre>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VLAN_SUB_INTERFACE|&lt;subif&gt;:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  admin_status = up | down
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  vrf_name     = &lt;vrf&gt;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  mtu          = &lt;int&gt;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>VLAN_SUB_INTERFACE|&lt;subif&gt;|&lt;prefix&gt;:
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  scope = global
 </span></code></pre></div>
-<h3 id="2-docker-1809-buildkit">最適化 2: Docker 18.09 + BuildKit<a class="headerlink" href="#2-docker-1809-buildkit" title="Permanent link">&para;</a></h3>
-<p><code>sonic-slave-stretch</code> の docker を 18.09 に上げ、<code>docker build</code> 時に環境変数 <code>DOCKER_BUILDKIT=1</code> を渡す<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>subif = &lt;Eth|Po&gt;&lt;parent-id&gt;.&lt;vlan-id&gt;</code> で表現。IP は別キーで紐付ける<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p>SAI Router Interface に <strong>port + vlan</strong> の組合せで 1 つの RIF を作成<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
-<th>条件（最適化 1 適用済み）</th>
-<th>時間</th>
+<th>SAI 属性</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>BuildKit なし</td>
-<td>11m02s</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code></td>
 </tr>
 <tr>
-<td>BuildKit あり</td>
-<td>4m20s</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID</code></td>
+<td>親 port または LAG OID</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code></td>
+<td>dot1q vlan id</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code></td>
+<td>VRF OID</td>
 </tr>
 </tbody>
 </table>
-<p>最大累積効果で <strong>約 6.5×</strong> の高速化<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="-squash"><code>--squash</code> の不具合（既知）<a class="headerlink" href="#-squash" title="Permanent link">&para;</a></h4>
-<p>BuildKit の <code>--squash</code> は <strong>base image ごと squash</strong> する不具合があり、SONiC のような派生イメージで <strong>600 MB → 1.5 GB</strong> に膨張する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD はこの段階では <code>SONIC_USE_DOCKER_BUILDKIT</code> を <strong>opt-in</strong> とし、ユーザに警告メッセージを出す方針:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>warning: using docker buildkit will produce increase image size
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> (more details: https://github.com/moby/moby/issues/38903)
-</span></code></pre></div>
-<p>将来 upstream で修正されたら既定で有効化する想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="2-bind-mount-copy-debs">最適化 2 の発展形: bind mount で <code>COPY debs/</code> 自体を回避<a class="headerlink" href="#2-bind-mount-copy-debs" title="Permanent link">&para;</a></h3>
-<p>BuildKit の experimental syntax を使うと、<code>debs/</code> を毎回 image にコピーせずに <strong>bind mount で参照</strong> できる<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-Dockerfile highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c"># syntax = docker/dockerfile:experimental</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">RUN</span><span class="w"> </span>--mount<span class="o">=</span><span class="nv">type</span><span class="o">=</span>bind,target<span class="o">=</span>/debs/,source<span class="o">=</span>debs/<span class="w"> </span>dpkg_apt<span class="o">()</span><span class="w"> </span>deb1<span class="w"> </span>deb2<span class="w"> </span>deb3...
-</span></code></pre></div>
-<p>最適化 1 込みで <strong>3m57s</strong> まで短縮される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="3-dpkg-buildpackage">最適化 3: dpkg-buildpackage の並列化<a class="headerlink" href="#3-dpkg-buildpackage" title="Permanent link">&para;</a></h3>
-<p><code>man dh build</code> 抜粋<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<blockquote>
-<p>If your package can be built in parallel, please either use compat 10 or pass <code>--parallel</code> to dh. Then <code>dpkg-buildpackage -j</code> will work.</p>
-</blockquote>
-<p>並列化対応で改善が見込めるパッケージ<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>パッケージ</th>
-<th>Before</th>
-<th>After</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>swss</code></td>
-<td>~7m</td>
-<td>~2m</td>
-</tr>
-<tr>
-<td><code>swss-common</code></td>
-<td>並列化可</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>sairedis</code></td>
-<td>~20m</td>
-<td>~7m</td>
-</tr>
-</tbody>
-</table>
-<h3 id="4-sairedis-rpc-rpc">最適化 4: sairedis の RPC / 非 RPC 分離<a class="headerlink" href="#4-sairedis-rpc-rpc" title="Permanent link">&para;</a></h3>
-<p><code>sairedis</code> は多くのターゲットの依存元で、build を <strong>2 回</strong> 走らせている（RPC 版 + 非 RPC 版）。<code>ENABLE_SYNCD_RPC != y</code> の場合 <code>libthrift</code> / <code>saithrift</code> のビルドは不要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>rules/sairedis.mk</code> で次のように指定:</p>
-<div class="language-make highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">SAIREDIS_DPKG_TARGET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>binary-syncd
-</span></code></pre></div>
-<p><code>ENABLE_SYNCD_RPC</code> で <code>libthrift</code> を条件付き注入する。これにより全体で約 10 分短縮、<code>sairedis</code> ターゲット単体は ~3 分まで短縮できる<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="linux">Linux 連携<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
+<p>intfsmgrd は kernel host 側に <strong>vlan device</strong>（<code>ip link add link Ethernet0 name Eth0.10 type vlan id 10</code>）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="runtime-admin-status-mtu">Runtime admin status / MTU<a class="headerlink" href="#runtime-admin-status-mtu" title="Permanent link">&para;</a></h3>
+<p>サブセットの SAI 属性のみ runtime 変更可（admin status, MTU）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VLAN id 変更は不可（削除→再作成）。</p>
+<h3 id="warm-reboot">Warm reboot<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/sonic-build-system/build_system_improvements.md#L160-L173 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  - No need to build libthrift, saithrift when 'ENABLE_SYNCD_RPC != y'
-  - The debian/rules in sairedis is written in a way that it will built sairedis from scratch twice - non-rpc and rpc version.
-  This improvement is achivable by specifying in rules/sairedis.mk: SAIREDIS_DPKG_TARGET = binary-syncd
-reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
+  A sub port interface is a logical interface that can be created on a physical port or a port channel.
+  ... This design focuses on the use case of creating a sub port interface on a physical port or a port channel
+  and using it as a router interface to a VRF
+reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根拠。
 -->
 
-<h3 id="_4">累積改善<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>12 CPU のビルドサーバでの実測<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>環境</th>
-<th>全ビルド時間</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>数ヶ月前（最適化前）</td>
-<td>~6h</td>
-</tr>
-<tr>
-<td>現在（最適化 1〜4 適用）</td>
-<td>~2.5h</td>
-</tr>
-<tr>
-<td><code>SONIC_USE_BUILD_KIT=y</code> 追加</td>
-<td>~1.5h</td>
-</tr>
-</tbody>
-</table>
-<p>linux kernel をスクラッチビルドした条件での値。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="_6">関連するビルドフラグ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>フラグ</th>
-<th>既定</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SONIC_USE_DOCKER_BUILDKIT</code></td>
-<td><code>n</code></td>
-<td>BuildKit を使う（image size 注意）</td>
-</tr>
-<tr>
-<td><code>ENABLE_SYNCD_RPC</code></td>
-<td><code>n</code></td>
-<td>RPC 版 sairedis を必要とする場合</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>make<span class="w"> </span><span class="nv">SONIC_USE_DOCKER_BUILDKIT</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config subinterface add Eth0.10 10 --vrf Vrf-Red
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config interface ip add Eth0.10 192.0.2.1/24
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config subinterface admin-status Eth0.10 up
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config subinterface mtu Eth0.10 1500
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>show subinterface status
 </span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>BuildKit <code>--squash</code> の image size バグ</strong>: 上流 fix まで opt-in に留める方針<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>古い HLD</strong>: Stretch / Python 3.6 / docker 18.09 が前提の文章であり、現行 master では Bookworm / 新 docker への移行が進んでいる可能性が高い。</li>
-<li><strong>bind mount は experimental</strong>: Dockerfile 冒頭の <code># syntax = docker/dockerfile:experimental</code> が必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>個別 PR が散在</strong>: sairedis 分離は既に作業中だが当時 PR 化されていない（HLD は issue #333 を参照）<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>L2 bridge port 用途は対象外</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>VLAN id 変更は不可（削除して再作成）</li>
+<li>同 parent 上で VLAN id 重複不可</li>
+<li>異 parent でも同 sub-port 同士の L2 bridging は意図しない（別 bridge domain）</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>dockers/Dockerfile.j2</code> テンプレート全般</strong>: <code>copy_files</code> / <code>install_debian_packages</code> 等のマクロに置き換える際、ビルド時のコピー単位が変わるため <code>COPY</code> 順序前提のスクリプト（<code>sonic_debian_extension.sh</code> 等）と干渉しないか確認が必要。</li>
-<li><strong>キャッシュ系</strong>: BuildKit はキャッシュ仕様が異なる。レイヤ数削減と組み合わせるとキャッシュヒット率が変わる。</li>
-<li><strong><code>ENABLE_SYNCD_RPC</code></strong>: sairedis の RPC 版が必要なテストベンチ等では本最適化と両立する経路を選ぶ。</li>
+<li><strong>VRF</strong>: sub-port は通常 VRF に bind して使う</li>
+<li><strong>PortChannel / LAG</strong>: PortChannel 上の sub-port は LAG hash と組み合わせ</li>
+<li><strong>VLAN trunk</strong>: 親 port を VLAN trunk として使う場合と整理が必要</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>イメージサイズが極端に大きい: <code>SONIC_USE_DOCKER_BUILDKIT=y</code> で base image 込み squash されている可能性<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>BuildKit が効かない: docker version 18.09 以上か確認、<code>DOCKER_BUILDKIT=1</code> 環境変数。</li>
-<li>並列ビルドで失敗: dh compat 10 以上または <code>dh --parallel</code> 設定、各 debian/rules で並列実行に対応しているか確認。</li>
+<li>L3 が機能しない → SAI RIF が作成されているか asicdb で確認、Linux host 側 <code>ip -d link show Eth0.10</code> で vlan device 確認</li>
+<li>異 parent で同 vlan が混信したように見える → 仕様上 別 bridge domain。L2 broadcast は親 port 単位</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- intfsmgrd / intfsorch の sub-port 拡張の現行 master 取り込み確認
+- VLAN_SUB_INTERFACE スキーマと sonic-yang-models 取り込み確認
+- SAI_ROUTER_INTERFACE_TYPE_SUB_PORT の community SAI 取り込み確認
+- config subinterface CLI の sonic-utilities 取り込み確認
+- v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認
+- PortChannel 上 sub-port の LAG hash 連携の現行実装確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/build_system_improvements.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/subport/sonic-sub-port-intf-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
