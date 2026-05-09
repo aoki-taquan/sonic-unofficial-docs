@@ -7,5 +7,6 @@
     "vlan_configure PortChannel \u4f9d\u5b58\u7b87\u6240\u306e\u73fe\u72b6\uff08\u4fee\u6b63\u6e08\u307f\u304b\uff09\u78ba\u8a8d"
   ],
   "priority": "low",
-  "issue": 513
+  "issue": 513,
+  "pr": 514
 }

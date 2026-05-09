@@ -2176,7 +2176,8 @@
         "vlan_configure PortChannel 依存箇所の現状（修正済みか）確認"
       ],
       "priority": "low",
-      "issue": 513
+      "issue": 513,
+      "pr": 514
     },
     {
       "page": "docs/switching/wake-on-lan-in-sonic.md",
