@@ -1180,6 +1180,20 @@
       "priority": "medium",
       "issue": 189,
       "pr": 190
+    },
+    {
+      "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
+      "verification": "hld-only",
+      "concerns": [
+        "port_config.ini / platform.json の role=Rec/Inb 受理コード（portsyncd / sonic-cfggen）の現行実装確認",
+        "portsorch が recycle port に対し host interface / SAI port を作成する経路の現行確認",
+        "intfsorch が recycle port に router interface を作る挙動の確認",
+        "recycle-to-routed の DMAC / 設定条件と TTL 2 重 decrement の現行 ASIC SAI 挙動確認",
+        "Everflow / mirror が Rec role port を選択するロジックの実装確認",
+        "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認"
+      ],
+      "priority": "medium",
+      "issue": 191
     }
   ]
 }
