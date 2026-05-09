@@ -1,7 +1,7 @@
 ---
 title: Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`CrmResourceType::CRM_EXT_TABLE` 列挙、`CrmOrch::incCrmExtTableUsedCounter` / `decCrmExtTableUsedCounter`、P4Orch extension table manager との連携、`sai_object_type_get_availability` 経由の available 取得、`CRM:EXT_TABLE_STATS:<table>` 命名は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/crmorch.h` で `CRM_EXT_TABLE` enum (l.37)、`incCrmExtTableUsedCounter(...)` (l.88)、`decCrmExtTableUsedCounter(...)` (l.90) を確認。`crmorch.cpp` (l.51) `{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }` の resource name 登録。`tests/p4rt/test_viplb.py` で `EXT_TABLE_STATS:<TBL_NAME>` の `crm_stats_extension_table_used` / `crm_stats_extension_table_available` を P4Orch test が参照しており命名規則も整合。
 
 # Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
 
@@ -166,3 +166,9 @@ redis-cli -n 2 HGETALL CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/Generic_SAI_Extensions_CRM.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-19):
+- sonic-swss `orchagent/crmorch.h` l.37 `CRM_EXT_TABLE,` enum, l.88 `void incCrmExtTableUsedCounter(CrmResourceType resource, std::string table_name);`, l.90 `decCrmExtTableUsedCounter(...)`
+- sonic-swss `orchagent/crmorch.cpp` l.51 `{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }` resource name registration
+- sonic-swss `tests/p4rt/test_viplb.py` で `EXT_TABLE_STATS:<TBL_NAME>` の `crm_stats_extension_table_used` / `crm_stats_extension_table_available` を assertion 対象としている（命名規則一致）
+-->

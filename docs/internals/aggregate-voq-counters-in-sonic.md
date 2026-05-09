@@ -1,7 +1,7 @@
 ---
 title: VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`docker_image_ctl.j2` の midplane 公開、`sonicv2connector` の新 API、`sonic-py-swsssdk` の dbconnector、`show queue counters --voq` 集約モードのいずれも実装裏取り未済。
+!!! note "裏取りステータス: code-verified"
+    `sonic-buildimage/files/build_templates/docker_image_ctl.j2` で `midplane_ip` 取得（chassis 系）と `redis-cli ... config set bind "$bound_ips $midplane_ip"` (l.370-373) を確認。`sonic-utilities/scripts/queuestat` に `voq` モード（`QUEUE_TYPE_VOQ`, `voq_header`, `voq_counter_bucket_dict`）あり。`sonic-swss-common/common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, ...)` の hostname/port 引数コンストラクタが存在し、midplane IP 経由接続に使える。
 
 # VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
 
@@ -151,3 +151,9 @@ HLD が明示している制限[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/aggregate_voq_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `files/build_templates/docker_image_ctl.j2` で `midplane_ip` 変数（l.196〜265）と `redis-cli -h $ip -p $port config set bind "$bound_ips $midplane_ip"` + `config rewrite` (l.370-373) を確認
+- sonic-utilities `scripts/queuestat` に `QUEUE_TYPE_VOQ='VOQ'`, `SAI_QUEUE_TYPE_UNICAST_VOQ`, `COUNTERS_VOQ_NAME_MAP`, `voq_header` テーブル、`Queuestat(... voq=...)` 引数 (l.71-206)
+- sonic-swss-common `common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, unsigned int timeout_ms);` (l.217) の hostname/port 直指定コンストラクタあり
+-->

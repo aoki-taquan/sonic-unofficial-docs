@@ -1,7 +1,7 @@
 ---
 title: Port Profile Init（SAI bulk port API による fast-boot 高速化）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    PortsOrch の bulk create / set 経路、`syncd -l/--enableBulk` フラグ、SAI PR #1460 の取り込みコミットは未裏取り。bulk 非対応 vendor の legacy fallback も実コード未確認。
+!!! note "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/portsorch.cpp` で `sai_port_api->create_ports(...)` (l.1445) と `sai_port_api->remove_ports(...)` (l.1549) を bulk 呼出。`sonic-sairedis/syncd/CommandLineOptionsParser.cpp` に `-l --enableBulk` オプションあり（`unittest/syncd/TestCommandLineOptions.cpp` も同オプションをテスト）。SAI 側 `create_ports` / `remove_ports` シンボルは sonic-sairedis SAI submodule 経由で利用可能。
 
 # Port Profile Init（SAI bulk port API による fast-boot 高速化）
 
@@ -122,10 +122,16 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 
 [^1]: `sonic-net/SONiC` `doc/port-profile-init/port-profile-init-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-swss `orchagent/portsorch.cpp` line 1445: `sai_port_api->create_ports(...)`、line 1549: `sai_port_api->remove_ports(...)` 確認
+- sonic-sairedis `syncd/CommandLineOptionsParser.cpp` line 208: `-l --enableBulk`、`unittest/syncd/TestCommandLineOptions.cpp` line 29 でテスト対象
+- 空 list NOT_IMPLEMENTED 判定や vendor `syncd_init_common.sh` 反映は vendor リポ側 (sonic-buildimage の platform/* 配下にも明示同期 sh は未確認)
+-->
+
 <!-- concerns hint:
-- PortsOrch の bulk create_ports / remove_ports / set_ports_attribute 経路の sonic-swss 取り込み確認
-- syncd の -l / --enableBulk フラグ実装と vendor syncd_init_common.sh への反映確認
-- SAI PR #1460 の opencomputeproject/SAI への merge / 各 vendor SAI への波及確認
-- 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認
-- Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認
+- PortsOrch の bulk create_ports / remove_ports / set_ports_attribute 経路の sonic-swss 取り込み確認 → 取り込み済
+- syncd の -l / --enableBulk フラグ実装と vendor syncd_init_common.sh への反映確認 → syncd 側は確認済、vendor sh は別 vendor リポ
+- SAI PR #1460 の opencomputeproject/SAI への merge / 各 vendor SAI への波及確認 → 別 repo
+- 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認 → vendor SAI 側
+- Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認 → 別途調査
 -->

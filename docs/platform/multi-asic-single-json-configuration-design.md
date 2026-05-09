@@ -1,7 +1,7 @@
 ---
 title: Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    sonic-utilities の `config reload / save / apply-patch / override-config-table` における multi-ASIC 用 `localhost` / `asicN` 階層対応の現行 master 実装、ループ展開された patch の実装は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-utilities/show/main.py` の `runningconfiguration all` は multi-ASIC で `output['localhost'] = ...` + `for ns in ns_list: output[ns] = ...` の Golden Config 形式で出力する実装を確認。`config/main.py` に `apply-patch` コマンドと `override-config-table` の呼び出し（`load_minigraph --override_config`）が存在。namespace ごとのループ展開と YANG validate は generic_config_updater 側で扱われる。
 
 # Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
 
@@ -118,10 +118,16 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 
 [^1]: `sonic-net/SONiC` `doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-utilities `show/main.py` `runningconfiguration all`: multi-ASIC 時 `output['localhost']` + `for ns in ns_list: output[ns] = get_config_json_by_namespace(ns)` で Golden Config 形式を出力
+- sonic-utilities `config/main.py` line 1917 に `@config.command('apply-patch')` 定義、`apply_patch_from_file as _gcu_apply_patch_from_file` を import
+- `load_minigraph --override_config` (l.2345) で `override_config_by(golden_config_path)` → `config override-config-table <path>` を呼び出し
+-->
+
 <!-- concerns hint:
-- sonic-utilities config_main の reload / save / override で localhost / asicN 階層対応の取り込み確認
-- apply-patch の patch ループ展開実装の sonic-utilities 取り込み確認
-- show runningconfiguration all の出力 schema 切替の実装確認
-- YANG validation を namespace 単位に分割する helper 実装確認
-- minigraph 廃止フェーズの進捗と Golden Config 採用の現行スコープ確認
+- sonic-utilities config_main の reload / save / override で localhost / asicN 階層対応の取り込み確認 → show / override 経路は取り込み済
+- apply-patch の patch ループ展開実装の sonic-utilities 取り込み確認 → apply-patch 取り込み済（namespace ループは generic_config_updater 側）
+- show runningconfiguration all の出力 schema 切替の実装確認 → 確認済
+- YANG validation を namespace 単位に分割する helper 実装確認 → generic_config_updater で分担
+- minigraph 廃止フェーズの進捗と Golden Config 採用の現行スコープ確認 → load_minigraph に override_config オプションが残存（共存フェーズ）
 -->

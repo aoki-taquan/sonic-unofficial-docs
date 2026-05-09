@@ -1,7 +1,7 @@
 ---
 title: Media-based Port Settings（media_settings.json による SerDes プロファイル）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    media_settings_parser、`SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION` の opencomputeproject/SAI 取り込み、PortsOrch の `custom_serdes_attrs` 経路は未裏取り。HLD は 2019 初版 + 後年の Custom SerDes 拡張がパッチで追加された形。
+!!! note "裏取りステータス: code-verified"
+    `sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py` に `CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'` (l.175) と `CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'` (l.177) を確認。`sonic-swss/orchagent/port/portschema.h` に `PORT_CUSTOM_SERDES_ATTRS = "custom_serdes_attrs"` (l.94)。`portsorch.cpp` line 559 で `map[SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION] = SerdesValue(serdes.custom_collection.value)` の pass-through 実装あり。`tests/test_xcvrd.py` で `CUSTOM:XYZ` / `CUSTOM:ABC` 例も網羅。
 
 # Media-based Port Settings（media_settings.json による SerDes プロファイル）
 
@@ -147,10 +147,17 @@ CLI / CONFIG_DB / YANG への追加は無し[^1]。`media_settings.json` は ima
 
 [^1]: `sonic-net/SONiC` `doc/media-settings/Media-based-Port-settings.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+<!-- evidence (verifier-batch-19):
+- sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py` 存在: `CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'` (l.175), `CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'` (l.177)
+- sonic-swss `orchagent/port/portschema.h` `PORT_CUSTOM_SERDES_ATTRS "custom_serdes_attrs"` (l.94)
+- sonic-swss `orchagent/portsorch.cpp` l.559 で `SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION` への pass-through
+- tests `test_xcvrd.py` に `CUSTOM:XYZ` / `CUSTOM:ABC` の lane mapping テスト
+-->
+
 <!-- concerns hint:
-- xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認
-- SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認
-- PortsOrch の custom_serdes_attrs pass-through 実装確認
-- preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認
-- 2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性
+- xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認 → 取り込み済
+- SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認 → SAI submodule + sonic-swss で参照済（vendor 側は別 repo）
+- PortsOrch の custom_serdes_attrs pass-through 実装確認 → portsorch.cpp で確認済
+- preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認 → portsorch.cpp 内 SerdesAttrType マッピング参照
+- 2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性 → CUSTOM 系は後年追加と整合
 -->

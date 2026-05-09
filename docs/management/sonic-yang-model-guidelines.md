@@ -1,7 +1,7 @@
 ---
 title: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-interface
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ガイドラインは `sonic-yang-models` の記述ルール集。`sonic-ext` 拡張 (`map-list` / `db-name` / `key-delim`)、CVL / Mgmt Framework との連携、ABNF.json と現行 sonic-yang-models の整合性は未裏取り。
+!!! warning "裏取りステータス: discrepancy-found（拡張一部のみ）"
+    `sonic-buildimage/src/sonic-yang-models/yang-models/` 配下に `sonic-{feature}.yang` の命名規約に沿った 130+ ファイルが存在することは確認済（rule #1）。一方 `yang-templates/sonic-extension.yang.j2` を読むと、定義されている拡張は `db-name` と CVL 用 `custom-validation-cvl` / `dependent-on` 等のみで、**ガイドラインで言及される `map-list` / `key-delim` 拡張は本リポの sonic-extension モジュールには存在しない**。これらは別実装（mgmt-framework 側 yang-extensions など）に分散している可能性があり、ガイドラインの table 5/11/19 に挙げる構文は本リポ単体のスキーマには適合しない。`error-app-tag` の付与状況も yang-models 配下では限定的で、ガイドライン 14 とは差がある。
 
 # SONiC YANG モデル記述ガイドライン（ABNF.json → `sonic-*.yang`）
 
@@ -172,3 +172,18 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/SONiC_YANG_Model_Guidelines.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/SONiC_YANG_Model_Guidelines.md)
+
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `src/sonic-yang-models/yang-models/` に `sonic-*.yang` が 130 件以上存在（命名規約 #1 整合）
+- `src/sonic-yang-models/yang-templates/sonic-extension.yang.j2` で定義済の拡張は `db-name`（l.18）のみ。`{% if yang_model_type == "cvl" %}` ブロックで `custom-validation-cvl`, `dependent-on` 等が条件付き追加
+- **`map-list` / `key-delim` 拡張の定義は本リポの sonic-extension モジュールに無し**（grep で 0 hit）。HLD ガイドラインで言及されるが、本リポ内 yang ファイルでは未使用
+- `error-app-tag` は sonic-acl.yang などでは未付与（ガイドライン 14 と差分）
+-->
+
+<!-- concerns hint:
+- sonic-yang-models 配下の現行 yang ファイル群が本ガイドライン (1 ファイル 1 機能, sonic-{feature} 命名, namespace, revision) に従っているかサンプリング確認 → 命名・1 ファイル 1 機能は整合
+- sonic-ext 拡張 (map-list / db-name / key-delim) が CVL / mgmt-framework の現行コードで実装されているか確認 → db-name のみ、map-list / key-delim は本リポでは未取り込み
+- ガイドライン #18 のリスト分割衝突ルール (Rev 1.1) が pyang ベースのバリデータに組み込まれているか確認 → 別途要確認
+- must / when 条件の error-app-tag が NB 側 (gNMI/REST) でエラー応答に反映されるか確認 → yang-models 側は未網羅
+- ABNF.json と sonic-yang-models のドリフト検出ツールの存在確認 → 別途
+-->

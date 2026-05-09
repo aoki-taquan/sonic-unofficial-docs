@@ -1,7 +1,7 @@
 ---
 title: シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
     - sonic-serial-console
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`hostcfgd` の SERIAL_CONSOLE ハンドラ、`serial-config.service` / `serial-config.sh`、jinja テンプレートの存在は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-buildimage/files/image_config/cli_sessions/` 配下に `serial-config.service`, `serial-config.sh`, `tmout-env.sh.j2`, `sysrq-sysctl.conf.j2` が存在。`sonic-host-services/scripts/hostcfgd` 内 `serial_console_config_handler`（`config_db.subscribe('SERIAL_CONSOLE', ...)` を含む）と `init_data.get('SERIAL_CONSOLE', {})` 初期化を確認。
 
 # シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
 
@@ -182,3 +182,17 @@ config save
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/serial-console-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-19):
+- sonic-buildimage `files/image_config/cli_sessions/serial-config.service` / `serial-config.sh` 存在
+- 同 `files/image_config/cli_sessions/tmout-env.sh.j2` / `sysrq-sysctl.conf.j2` 存在
+- sonic-host-services `scripts/hostcfgd` 内 `init_data.get('SERIAL_CONSOLE', {})` (l.2258), `serial_console_config_handler` (l.2439), `config_db.subscribe('SERIAL_CONSOLE', ...)` (l.2481)
+- `init_cfg.json.j2` 既定値 / `inactivity_timeout=0` 動作は引き続きランタイム検証要
+-->
+
+<!-- concerns hint:
+- serial-config.service / serial-config.sh 実装の存在とパス確認 → `files/image_config/cli_sessions/` 配下で確認
+- tmout-env.sh.j2 / sysrq-sysctl.conf.j2 テンプレートの配置確認 → 同パスで確認
+- init_cfg.json.j2 に既定値が入っているか確認 → 別途要確認
+- inactivity_timeout=0 の扱い (無効化か即ログアウトか) の動作確認 → 実機検証要
+-->
