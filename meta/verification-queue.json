@@ -883,6 +883,22 @@
       "priority": "medium"
     },
     {
+      "page": "docs/management/sonic-cli-auto-generation-tool.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-cli-gen ユーティリティの sonic-utilities / sonic-buildimage 内実装存在確認",
+        "config/plugins/auto と show/plugins/auto namespace package による自動 discovery 実装確認",
+        "sonic-package-manager との連携 (manifest.json の auto-generate-config/show トリガ) の現行実装確認",
+        "Application Extension docker label com.azure.sonic.yang-module.* の解決ロジック確認",
+        "ハイフン変換ルール / list キー扱い / leaf-list の add/del/clear 生成ロジックが現行と整合するか確認",
+        "Phase 2 の他 DB 対応・sonic-clear 自動生成の実装ステータス確認",
+        "本 HLD は 2021 年版 (Phase 1)。実装ドリフトの可能性あり"
+      ],
+      "priority": "medium",
+      "issue": 497,
+      "pr": 498
+    },
+    {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",
       "issue": 240,
       "verification": "hld-only",
