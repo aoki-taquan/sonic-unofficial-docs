@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-swss-docker-warm-restart.md",
+  "verification": "hld-only",
+  "concerns": [
+    "orchagent の m_toSync 空判定 + restart prepare API の実装確認",
+    "ProducerStateTable / ConsumerStateTable の consumer-only modify 改修取り込み確認",
+    "swss / syncd docker 分離の現行 systemd unit 構成確認",
+    "WARM_RESTART テーブルの sonic-yang-models 取り込み確認",
+    "warm start 失敗時の cold restart 自動 fallback 実装確認",
+    "Warmboot Manager との置換 / 共存関係の現行設計確認"
+  ],
+  "priority": "high"
+}
