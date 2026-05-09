@@ -1,7 +1,7 @@
 ---
 title: Multiple Spanning Tree Protocol (MSTP) on SONiC
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大型 HLD"
-    HLD は v0.2 / 2025-01 改訂、サイズ 50KB 超。`stpd` プロセスを `stp` コンテナで動かす設計、`STP_MST_*` テーブル群、IST / MSTI の SAI マッピング、MSTP 専用 CLI 体系が現行 master でこの仕様どおりかは未確認。**詳細は HLD `doc/MSTP/MSTP.md` を参照（要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/cfgmgr/stpmgrd.cpp:47-49` で `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` テーブルを TableConnector に登録、`stpmgr` クラスが存在することを確認。`sonic-yang-models` の `sonic-spanning-tree.yang` も存在。CLI / IS-IS のような MSTP 専用 CLI 詳細は元 HLD 参照（verified at: 2026-05-09）。
 
 # Multiple Spanning Tree Protocol (MSTP) on SONiC
 

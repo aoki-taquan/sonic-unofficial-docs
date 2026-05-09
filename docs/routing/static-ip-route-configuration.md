@@ -1,7 +1,7 @@
 ---
 title: Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - openconfig-local-routing
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2021-04 改訂、4 年以上経過）"
-    HLD は v0.4 / 2021-04。`STATIC_ROUTE` テーブルとフィールド設計、`frrcfgd` による vtysh への注入、OpenConfig YANG マッピングが現行 master でこの仕様どおりかは未確認。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` で STATIC_ROUTE 監視 (`'STATIC_ROUTE': ['mgmtd']`, `nexthop/ifname/distance/nexthop-vrf/blackhole/track` フィールド) を確認、staticd.db.conf.j2 テンプレートで実 staticd 設定生成。`sonic-utilities/config/main.py` に `config route add/del`、テストでも STATIC_ROUTE への書き込みを検証。HLD は古いが現行実装と整合（verified at: 2026-05-09）。
 
 # Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
 

@@ -1,7 +1,7 @@
 ---
 title: SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / Initial Proposal"
-    HLD は SONiC 202305 リリースを目指した Alibaba 由来の SRv6 VPN 実装提案。`SRv6_POLICY_TABLE` (APPL_DB) や `vpn_sid` / `policy` フィールドの ROUTE_TABLE 拡張、SRv6 VPN 用 SAI 属性が現行 master に取り込まれているかは未確認。コア HLD は別途 [SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) を参照。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/srv6orch.cpp` に `srv6_prefix_agg_id_table_` (1721-)、`createSrv6Vpn`/`deleteSrv6Vpn` (1025/776)、`vpn_sid` 管理が実装され、HLD の Prefix AGG_ID / VPN encap mapper 設計と一致。SRV6_MY_SID テーブル管理も APP_SRV6_MY_SID_TABLE_NAME / CFG_SRV6_MY_SID_TABLE_NAME 経由で確認済み。SRV6_POLICY_TABLE のキー名そのものは見えなかったが、内部データ構造として agg_id/vpn_sid が存在することを確認（verified at: 2026-05-09）。
 
 # SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）
 

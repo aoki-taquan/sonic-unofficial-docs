@@ -1,7 +1,7 @@
 ---
 title: CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `coppmgrd` の trap install/uninstall 判定ロジック、`always_enabled` フラグの実装、`feature` テーブル削除（hdel）への反応、warm/fast-reboot 後の trap 状態保持が現行 master にどう取り込まれているかは未裏取り。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/cfgmgr/coppmgr.cpp` に `always_enabled` フラグ判定 (line 88, 365)、CFG_FEATURE_TABLE 監視 (line 300)、trap 状態保持と差分処理 (543-619) を確認。`sonic-utilities/tests/copp_test.py`、`sonic-swss/tests/mock_tests/copp_ut.cpp` のテストハーネスも存在。Test plan の主要 4 ルールは coppmgr.cpp で網羅されている（verified at: 2026-05-09）。
 
 # CoPP Manager 再設計テストプラン（feature テーブル整合性 + `always_enabled`）
 

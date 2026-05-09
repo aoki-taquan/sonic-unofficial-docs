@@ -1,7 +1,7 @@
 ---
 title: Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2022-04 改訂、約 4 年経過）"
-    HLD は v1.6 / 2022-04。`VnetOrch` の ECMP/NHG 編成、`BFD_SESSION` テーブル経由の BfdOrch 連動、`ADVERTISE_NETWORK_TABLE` / `BGP_PROFILE_TABLE` による BGP 広報連携が現行 master でこの仕様どおりかは未確認。**詳細は HLD `doc/vxlan/Overlay ECMP with BFD.md` を参照（25KB のため要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/vnetorch.cpp:746` で `STATE_ADVERTISE_NETWORK_TABLE_NAME` テーブル管理を確認、`sonic-swss-common/common/schema.h:131` に `APP_BGP_PROFILE_TABLE_NAME = "BGP_PROFILE_TABLE"` を定義。`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py` で `RouteMapMgr` が APPL_DB の BGP_PROFILE_TABLE 更新時に route-map 追加を行う設計（main.py:102）も確認済み。HLD と現行実装は整合（verified at: 2026-05-09）。
 
 # Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
 

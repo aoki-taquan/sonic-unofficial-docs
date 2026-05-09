@@ -1,7 +1,7 @@
 ---
 title: SONiC Port Mirroring（SPAN / ERSPAN）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 / 2025-09 改訂。ポート/Port-Channel 単位の SPAN ingress/egress、ERSPAN、Mirror Capability Discovery 関連の実装が現行 master の `MirrorOrch` / `sonic-utilities` でこの仕様どおりかは未確認。**詳細は HLD `doc/port-mirroring/SONiC_Port_Mirroring_HLD.md` を参照（30KB 超のため要点のみ抜粋）**。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/mirrororch.cpp` に `MirrorOrch` クラス、SAI Mirror セッションの利用可能数取得 (`SAI_OBJECT_TYPE_MIRROR_SESSION` の object availability query, mirrororch.cpp:362) を確認。`sonic-utilities/config/main.py` の `mirror_session` グループ (3148-) と `validate_mirror_session_config`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang` も存在。Mirror Capability Discovery 名（`MIRROR_SESSION_CAPABILITY` テーブル）は明示見つからず、object availability query API 経由で代替されている可能性あり。詳細フロー / SAI 属性マッピングは元 HLD 参照（verified at: 2026-05-09）。
 
 # SONiC Port Mirroring（SPAN / ERSPAN）
 

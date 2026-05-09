@@ -1,15 +1,17 @@
 {
   "page": "docs/acl-qos/copp-manager-redesign-test-plan.md",
-  "verification": "hld-only",
-  "concerns": [
-    "coppmgrd \u306e install/uninstall \u5224\u5b9a\u30ed\u30b8\u30c3\u30af\u304c\u672c\u30c6\u30b9\u30c8\u30d7\u30e9\u30f3\u8a18\u8f09\u306e 4 \u30eb\u30fc\u30eb\u3068\u4e00\u81f4\u3059\u308b\u304b\u5b9f\u88c5\u78ba\u8a8d",
-    "COPP_TRAP \u306e always_enabled \u30d5\u30e9\u30b0\u3092\u53c2\u7167\u3059\u308b\u7b87\u6240\u306e\u73fe\u884c master \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "FEATURE entry \u304c hdel \u3067\u524a\u9664\u3055\u308c\u305f\u969b\u306b CoppMgr \u304c\u5373\u5ea7\u306b trap \u3092 uninstall \u3059\u308b\u30a4\u30d9\u30f3\u30c8\u30cf\u30f3\u30c9\u30ea\u30f3\u30b0\u5b9f\u88c5\u78ba\u8a8d",
-    "fast-reboot / warm-reboot \u6a2a\u65ad\u3067 COPP_TRAP / always_enabled \u306e\u72b6\u614b\u4fdd\u6301\u304c config save \u3092\u7d4c\u7531\u3057\u3066\u4fdd\u6301\u3055\u308c\u308b\u304b\u78ba\u8a8d",
-    "PTF \u30c6\u30b9\u30c8\u30b9\u30af\u30ea\u30d7\u30c8 (sonic-mgmt) \u306b\u304a\u3051\u308b\u672c\u30c6\u30b9\u30c8\u30d7\u30e9\u30f3\u306e\u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
-    "vendor invisible default trap \u306e\u30c6\u30b9\u30c8\u524d\u9664\u53bb\u624b\u9806\u304c\u73fe\u884c\u30c6\u30b9\u30c8\u30d5\u30ec\u30fc\u30e0\u30ef\u30fc\u30af\u306b\u7d44\u307f\u8fbc\u307e\u308c\u3066\u3044\u308b\u304b\u672a\u78ba\u8a8d"
-  ],
+  "verification": "code-verified",
+  "concerns": [],
   "priority": "medium",
   "issue": 438,
-  "pr": 439
+  "pr": 439,
+  "verified_concerns": [
+    "coppmgrd の install/uninstall 判定ロジックが本テストプラン記載の 4 ルールと一致するか実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "COPP_TRAP の always_enabled フラグを参照する箇所の現行 master 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "FEATURE entry が hdel で削除された際に CoppMgr が即座に trap を uninstall するイベントハンドリング実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "fast-reboot / warm-reboot 横断で COPP_TRAP / always_enabled の状態保持が config save を経由して保持されるか確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "PTF テストスクリプト (sonic-mgmt) における本テストプランの実装存在確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "vendor invisible default trap のテスト前除去手順が現行テストフレームワークに組み込まれているか未確認 -> 実コードで存在を確認 (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
 }

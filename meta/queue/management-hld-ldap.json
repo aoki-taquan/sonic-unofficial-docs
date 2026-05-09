@@ -1,13 +1,15 @@
 {
   "page": "docs/management/hld-ldap.md",
   "issue": 329,
-  "verification": "hld-only",
-  "concerns": [
-    "hostcfgd AAA クラスの LDAP テンプレート再生成ハンドラ実装の現行確認",
-    "LDAP_TABLE / LDAP_SERVER スキーマの sonic-yang-models (sonic-system-ldap) 取り込み確認",
-    "config ldap / config aaa authentication ldap CLI の sonic-utilities 取り込み確認",
-    "libnss-ldapd / libpam-ldapd / nslcd / ldap-utils パッケージの sonic-buildimage 取り込み確認",
-    "TLS/StartTLS および SASL サポートの後続 phase 進捗確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "hostcfgd AAA クラスの LDAP テンプレート再生成ハンドラ実装の現行確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "LDAP_TABLE / LDAP_SERVER スキーマの sonic-yang-models (sonic-system-ldap) 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "config ldap / config aaa authentication ldap CLI の sonic-utilities 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "libnss-ldapd / libpam-ldapd / nslcd / ldap-utils パッケージの sonic-buildimage 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "TLS/StartTLS および SASL サポートの後続 phase 進捗確認 -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

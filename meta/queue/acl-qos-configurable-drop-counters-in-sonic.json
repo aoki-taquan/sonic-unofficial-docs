@@ -1,13 +1,15 @@
 {
   "page": "docs/acl-qos/configurable-drop-counters-in-sonic.md",
   "issue": 326,
-  "verification": "hld-only",
-  "concerns": [
-    "DebugCounterOrch / sonic-swss の SAI debug counter ハンドリング実装確認",
-    "DEBUG_COUNTER / DEBUG_COUNTER_DROP_REASON CONFIG_DB スキーマと sonic-yang-models 取り込み確認",
-    "config dropcounters / show dropcounters CLI の sonic-utilities 取り込み確認",
-    "v1.1 で追加された persistent drop counter monitoring の現行 master 取り込み確認",
-    "DEBUG_COUNTER_CAPABILITIES STATE_DB テーブルの syncd 取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "DebugCounterOrch / sonic-swss の SAI debug counter ハンドリング実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "DEBUG_COUNTER / DEBUG_COUNTER_DROP_REASON CONFIG_DB スキーマと sonic-yang-models 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "config dropcounters / show dropcounters CLI の sonic-utilities 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "v1.1 で追加された persistent drop counter monitoring の現行 master 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "DEBUG_COUNTER_CAPABILITIES STATE_DB テーブルの syncd 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

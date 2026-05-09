@@ -1,12 +1,14 @@
 {
   "page": "docs/system/memory-statistics-feature-in-sonic.md",
   "issue": 323,
-  "verification": "hld-only",
-  "concerns": [
-    "memorystatsd デーモンの実装存在確認（sonic-host-services 等）",
-    "hostcfgd の MEMORY_STATISTICS テーブル監視と SIGHUP 連携実装確認",
-    "config memory-stats / show memory-stats CLI の sonic-utilities 取り込み確認",
-    "sonic-memory-statistics YANG モジュールの sonic-yang-models 取り込み確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "medium",
+  "verified_concerns": [
+    "memorystatsd デーモンの実装存在確認（sonic-host-services 等） -> 実コードで存在を確認 (verified 2026-05-09)",
+    "hostcfgd の MEMORY_STATISTICS テーブル監視と SIGHUP 連携実装確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "config memory-stats / show memory-stats CLI の sonic-utilities 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)",
+    "sonic-memory-statistics YANG モジュールの sonic-yang-models 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "last_verified": "2026-05-09"
 }

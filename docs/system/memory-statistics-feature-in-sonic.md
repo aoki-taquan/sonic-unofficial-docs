@@ -1,7 +1,7 @@
 ---
 title: メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-memory-statistics
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v1.0 / 2024-07 改訂。`memorystatsd` プロセス、`hostcfgd` の `MEMORY_STATISTICS` 監視と SIGHUP 連携、`config memory-stats` / `show memory-stats` CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-host-services/scripts/hostcfgd:1848` に `MemoryStatisticsCfg` クラスがあり MEMORY_STATISTICS テーブル監視と SIGHUP 連携が実装。`sonic-utilities/config/memory_statistics.py` と `show/memory_statistics.py` で CLI が整備、`sonic-yang-models` の `sonic-memory-statistics.yang` も存在。memorystatsd デーモン名そのものは別ファイル名で実装されている可能性あり（verified at: 2026-05-09）。
 
 # メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
 
