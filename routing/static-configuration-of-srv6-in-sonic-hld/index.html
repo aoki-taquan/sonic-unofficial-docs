@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/wake-on-lan-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/static-configuration-of-srv6-in-sonic-hld/">
       
       
-        <link rel="prev" href="../view-switching-in-producerstatetable/">
+        <link rel="prev" href="../srv6-sid-l3adj/">
       
       
-        <link rel="next" href="../../overlay/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Wake-on-LAN（wol CLI と SonicWolService gNOI） - SONiC 非公式ドキュメント</title>
+        <title>SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wake-on-lanwol-cli-sonicwolservice-gnoi" class="md-skip">
+        <a href="#srv6-static-sidlocator-config_db-bgpcfgd-frr" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Wake-on-LAN（wol CLI と SonicWolService gNOI）
+              SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -291,13 +293,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -1035,650 +1035,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ルーティング
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    ルーティング
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    linkmgrd のデフォルトルート連動（DualToR mux 制御）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MPLS TC → TC map（MPLS パケットの QoS classification）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ルータインタフェース (RIF) カウンタ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -1688,6 +1044,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -1736,7 +1100,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1747,7 +1111,7 @@
   <span class="md-ellipsis">
     
   
-    スイッチング
+    ルーティング
   
 
     
@@ -1758,18 +1122,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    スイッチング
+    ルーティング
   
 
           </label>
@@ -1784,14 +1148,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../add-support-for-vlan-interface-using-openconfig-yang/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
+    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
   
 
     
@@ -1812,14 +1176,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+    BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
   
 
     
@@ -1840,14 +1204,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+    BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
   
 
     
@@ -1868,14 +1232,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
+    VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
   
 
     
@@ -1896,14 +1260,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../lag-on-distributed-voq-system/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）
+    bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
   
 
     
@@ -1924,14 +1288,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../layer-2-forwarding-enhancements/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+    CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
   
 
     
@@ -1952,14 +1316,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../link-event-damping-hld/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+    クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
   
 
     
@@ -1980,14 +1344,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
+    linkmgrd のデフォルトルート連動（DualToR mux 制御）
   
 
     
@@ -2008,14 +1372,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    BUM ストームコントロール（PORT_STORM_CONTROL）
+    DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
   
 
     
@@ -2036,14 +1400,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+    MPLS TC → TC map（MPLS パケットの QoS classification）
   
 
     
@@ -2064,14 +1428,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
+    dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
   
 
     
@@ -2092,14 +1456,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
+    新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
   
 
     
@@ -2120,14 +1484,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../switch-port-modes-and-vlan-cli-enhancement/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+    プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
   
 
     
@@ -2148,14 +1512,126 @@
   
   
     <li class="md-nav__item">
-      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ProducerStateTable の view switching（warm reboot 用の差分適用）
+    Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルータインタフェース (RIF) カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-usid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
   
 
     
@@ -2192,7 +1668,7 @@
   <span class="md-ellipsis">
     
   
-    Wake-on-LAN（wol CLI と SonicWolService gNOI）
+    SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
   
 
     
@@ -2210,7 +1686,7 @@
   <span class="md-ellipsis">
     
   
-    Wake-on-LAN（wol CLI と SonicWolService gNOI）
+    SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
   
 
     
@@ -2262,7 +1738,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        モジュール構成
       
     </span>
   </a>
@@ -2270,10 +1746,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#magic-packet-ethernet" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Magic Packet 形式（Ethernet ペイロード版）
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB スキーマ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_locators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRV6_MY_LOCATORS
       
     </span>
   </a>
@@ -2281,43 +1769,76 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#magic-packet-udp-u" class="md-nav__link">
+  <a href="#srv6_my_sids" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Magic Packet 形式（UDP ペイロード版、-u）
+        SRV6_MY_SIDS
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI 引数の組み合わせ規則
-      
-    </span>
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#gnoi" class="md-nav__link">
+  <a href="#bgpcfgd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        gNOI サービス
+        bgpcfgd によるコンパイル
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="bgpcfgd によるコンパイル">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        ロケータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-sids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        static-sids
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         バリデーション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm Boot
       
     </span>
   </a>
@@ -2330,7 +1851,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2342,7 +1863,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -2353,7 +1874,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -2375,7 +1896,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -2391,7 +1912,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2402,7 +1934,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2413,7 +1945,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2427,6 +1959,530 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../switching/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    スイッチング
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    スイッチング
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/add-support-for-vlan-interface-using-openconfig-yang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/lag-on-distributed-voq-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/layer-2-forwarding-enhancements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/link-event-damping-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUM ストームコントロール（PORT_STORM_CONTROL）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/switch-port-modes-and-vlan-cli-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ProducerStateTable の view switching（warm reboot 用の差分適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wake-on-LAN（wol CLI と SonicWolService gNOI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -6381,7 +6437,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        モジュール構成
       
     </span>
   </a>
@@ -6389,10 +6445,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#magic-packet-ethernet" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Magic Packet 形式（Ethernet ペイロード版）
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB スキーマ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_locators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRV6_MY_LOCATORS
       
     </span>
   </a>
@@ -6400,43 +6468,76 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#magic-packet-udp-u" class="md-nav__link">
+  <a href="#srv6_my_sids" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Magic Packet 形式（UDP ペイロード版、-u）
+        SRV6_MY_SIDS
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI 引数の組み合わせ規則
-      
-    </span>
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#gnoi" class="md-nav__link">
+  <a href="#bgpcfgd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        gNOI サービス
+        bgpcfgd によるコンパイル
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="bgpcfgd によるコンパイル">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        ロケータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-sids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        static-sids
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         バリデーション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm Boot
       
     </span>
   </a>
@@ -6449,7 +6550,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -6461,7 +6562,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -6472,7 +6573,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -6494,7 +6595,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -6510,7 +6611,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -6521,7 +6633,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -6532,7 +6644,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6559,7 +6671,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/wake-on-lan-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/static-configuration-of-srv6-in-sonic-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6569,162 +6681,171 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-utilities</code> の <code>wol</code> 実装、<code>sonic-gnmi</code> の <code>SonicWolService</code>、および <code>sonic-host-services</code> 側の D-Bus ハンドラ実装は未裏取り。</p>
+<p>このページは公式 HLD（v0.4 / 2025-11 改訂）のみを根拠に書かれている。<code>bgpcfgd</code> の SRv6 Manager 実装、<code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> テーブルの現行 master 取り込み状況、FRR 側 <code>static-sids</code> CLI の存在 (<a href="https://github.com/FRRouting/frr/pull/16894">FRR PR#16894</a>) は未確認。</p>
 </div>
-<h1 id="wake-on-lanwol-cli-sonicwolservice-gnoi">Wake-on-LAN（wol CLI と SonicWolService gNOI）<a class="headerlink" href="#wake-on-lanwol-cli-sonicwolservice-gnoi" title="Permanent link">&para;</a></h1>
+<h1 id="srv6-static-sidlocator-config_db-bgpcfgd-frr">SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）<a class="headerlink" href="#srv6-static-sidlocator-config_db-bgpcfgd-frr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。本機能は SONiC スイッチを <strong>Magic Packet の送信元</strong> として使えるようにするもので、運用ツールから WoL を発行することでサーバ群を遠隔起動できる。NIC 側で WoL 受信が動作するかは別問題（受信側 BIOS / NIC 設定）であり、本 HLD のスコープ外である。</p>
-<p>機能は 2 経路で利用できる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ul>
-<li><code>sonic-utilities</code> の <code>wol</code> CLI スクリプト（管理者がスイッチに SSH してから実行）</li>
-<li><code>sonic-gnmi</code> の <code>SonicWolService</code> gNOI サービス（外部から RPC で叩く。最終的には <code>sonic-host-services</code> 経由で同じ <code>wol</code> CLI が実行される）</li>
-</ul>
-<p>リビジョン 1.1 (2024-10-11) で <strong>UDP ペイロード形式の Magic Packet</strong> が追加され、ルーティング越しの WoL に対応している。</p>
+<p>SRv6 SDN を BGP に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を <strong>静的に</strong> 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。</p>
+<p>既存の SONiC では FRR が SRv6 関連テーブルを APPL_DB に書く経路（<code>fpmsyncd</code> 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は <code>bgpcfgd</code> に <strong>SRv6 Manager</strong> モジュールを追加し、2 つの新規 CONFIG_DB テーブル <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を購読して FRR の <code>segment-routing srv6</code> config に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>なお <code>frrcfgd</code> 側にも SRv6 を FRR にプログラムする経路は別途存在するが、そちらは BGP で SID を伝搬するシナリオ向けで、本ページの仕組みとはユースケースが異なる（コントローラはどちらかを選択する）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    User1[admin SSH] --&gt; CLI[wol CLI\n(sonic-utilities)]
-    Client[gNOI Client] --&gt;|gRPC| GNMI[sonic-gnmi\nSonicWolService.Wol]
-    GNMI --&gt;|D-Bus| HOST[sonic-host-service]
-    HOST --&gt; CLI
-    CLI --&gt;|raw socket / UDP| NET[ターゲット (MAC)]</code></pre>
-<p>gNOI 側は最終的に同じ <code>wol</code> CLI を呼び出す形で実装される設計になっており、Magic Packet の組み立てと送信は CLI スクリプトに一本化される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="magic-packet-ethernet">Magic Packet 形式（Ethernet ペイロード版）<a class="headerlink" href="#magic-packet-ethernet" title="Permanent link">&para;</a></h3>
-<p>「Magic Pattern」自体は固定で、<strong>6 バイトの <code>0xff</code> + ターゲット MAC を 16 回連結 + 任意のパスワード (4 or 6 バイト)</strong> という構造を取る。Ethernet ペイロード版ではこれを EtherType <code>0x0842</code> のフレームの payload に詰めて送る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>| Dst MAC (6) | Src MAC (6) | EtherType=0x0842 (2) |
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| 0xff x6 | TargetMAC x16 (96) | Password (0/4/6) |
+    SDN[SDN コントローラ] --&gt;|SRV6_MY_LOCATORS / SRV6_MY_SIDS| CDB[(CONFIG_DB)]
+    CDB --&gt; SRV6M[bgpcfgd: SRv6 Manager]
+    SRV6M --&gt;|vtysh / FRR config| FRR[FRR zebra/bgpd]
+    FRR --&gt;|fpmsyncd| APPL[(APPL_DB)]</code></pre>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h4 id="srv6_my_locators">SRV6_MY_LOCATORS<a class="headerlink" href="#srv6_my_locators" title="Permanent link">&para;</a></h4>
+<p>ロケータ（block + node-id 部）の定義。キーはロケータ名、値は IPv6 プレフィクスとビット長。<code>block_len</code> / <code>node_len</code> / <code>func_len</code> / <code>arg_len</code> は省略時のデフォルトが 32 / 16 / 16 / 0 で、<code>vrf</code> 省略時は <code>default</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key = SRV6_MY_LOCATORS|locator_name
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>prefix     = ipv6 address    ; ロケータプレフィクス（SID 共通の上位ビット）
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>block_len  = uint            ; default 32
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>node_len   = uint            ; default 16
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>func_len   = uint            ; default 16
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>arg_len    = uint            ; default 0
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>vrf        = VRF_TABLE.key   ; default &quot;default&quot;
 </span></code></pre></div>
-<p>宛先 MAC の選択は次のとおり。</p>
-<ul>
-<li>既定: ターゲットデバイスの MAC（<code>-b</code> 未指定時）</li>
-<li><code>-b</code> 指定時: ブロードキャスト <code>ff:ff:ff:ff:ff:ff</code></li>
-</ul>
-<h3 id="magic-packet-udp-u">Magic Packet 形式（UDP ペイロード版、<code>-u</code>）<a class="headerlink" href="#magic-packet-udp-u" title="Permanent link">&para;</a></h3>
-<p>ルーティング境界を越える WoL 用途のため、UDP ペイロード版が用意されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>| Ethernet Header | IP Header (Dst=任意 v4/v6) | UDP Header (Dst port=任意) |
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| UDP payload: 0xff x6 + TargetMAC x16 + Password (0/4/6) |
+<h4 id="srv6_my_sids">SRV6_MY_SIDS<a class="headerlink" href="#srv6_my_sids" title="Permanent link">&para;</a></h4>
+<p>local SID 定義と behavior 割り当て。キーは <code>locator|ip_prefix</code> の複合キーで、SID プレフィクス（uSID 上での圧縮形式を含む）と動作を紐付ける<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>key = SRV6_MY_SIDS|locator|ip_prefix
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>action          = uN | uDT46 | uA       ; default uN
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>decap_dscp_mode = pipe | uniform        ; mandatory
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>decap_vrf       = VRF_TABLE.key         ; uDT4/uDT46/uDT6 のみ、default &quot;default&quot;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>interface       = string                ; uA 必須
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>adj             = ipv6 address          ; uA 任意（省略時は interface から解決）
 </span></code></pre></div>
-<p>宛先 IP は既定 <code>255.255.255.255</code>、宛先 UDP ポートは既定 <code>9</code> で、<code>-a</code> / <code>-t</code> で上書きできる。<code>-u</code> 指定時は宛先 MAC は OS のネットワークスタックに任せる（ARP / ND の解決結果で決まる）。<code>-u</code> と <code>-b</code> は同時指定できない。</p>
-<h3 id="cli">CLI 引数の組み合わせ規則<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD はパラメータ間の依存関係を明示している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>サポート behavior（HLD 時点）は次の 3 種類。</p>
 <table>
 <thead>
 <tr>
-<th>規則</th>
-<th>内容</th>
+<th>Alias</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>-b</code> と <code>-u</code> 同時指定</td>
-<td>不可</td>
+<td><code>uN</code></td>
+<td>End with NEXT-CSID（uSID transit）</td>
 </tr>
 <tr>
-<td><code>-a</code> / <code>-t</code></td>
-<td><code>-u</code> がある時のみ有効</td>
+<td><code>uDT46</code></td>
+<td>End.DT46 with CSID（VPN decap, IPv4/IPv6 共通）</td>
 </tr>
 <tr>
-<td><code>-c</code> と <code>-i</code></td>
-<td>一緒に指定する必要がある（片方だけは不可）</td>
-</tr>
-<tr>
-<td><code>count</code> 範囲</td>
-<td>1〜5</td>
-</tr>
-<tr>
-<td><code>interval</code> 範囲</td>
-<td>0〜2000 (ms)</td>
+<td><code>uA</code></td>
+<td>End.X with NEXT-CSID（隣接ノード向け）</td>
 </tr>
 </tbody>
 </table>
-<p>複数 MAC を指定する場合、<code>count=3</code> × MAC 2 件 = 計 6 個の Magic Packet が送信される。</p>
-<h3 id="gnoi">gNOI サービス<a class="headerlink" href="#gnoi" title="Permanent link">&para;</a></h3>
-<p><code>SonicWolService.Wol</code> の入出力は次のとおり<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-proto highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">service</span><span class="w"> </span><span class="n">SonicWolService</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">rpc</span><span class="w"> </span><span class="n">Wol</span><span class="p">(</span><span class="n">WolRequest</span><span class="p">)</span><span class="w"> </span><span class="k">returns</span><span class="w"> </span><span class="p">(</span><span class="n">WolResponse</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="kd">message</span><span class="w"> </span><span class="nc">WolRequest</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="kt">string</span><span class="w"> </span><span class="na">interface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="k">repeated</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="na">target_mac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="na">broadcast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kt">int32</span><span class="w"> </span><span class="na">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="k">optional</span><span class="w"> </span><span class="kt">int32</span><span class="w"> </span><span class="na">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span>
+<h3 id="bgpcfgd">bgpcfgd によるコンパイル<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
+<h4 id="_4">ロケータ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<p>CONFIG_DB の <code>SRV6_MY_LOCATORS</code> エントリは、FRR 側の <code>segment-routing &gt; srv6 &gt; locators &gt; locator &lt;name&gt;</code> ブロックに変換される。<code>prefix</code> は HLD 上 <code>block_len + node_len</code> を <code>/&lt;bits&gt;</code> に詰める形でセットされる（例: <code>block_len=32, node_len=16</code> → <code>/48</code>）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="static-sids">static-sids<a class="headerlink" href="#static-sids" title="Permanent link">&para;</a></h4>
+<p><code>SRV6_MY_SIDS</code> エントリは FRR の <code>static-sids</code> ブロックに変換される。<code>uA</code> の場合は <code>interface</code> と <code>nexthop</code> がそのまま付与される。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>segment-routing
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  srv6
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    locators
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>      locator loc1
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        prefix fcbb:bbbb:20::/48 block-len 32 node-len 32 func-bits 16
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        behavior usid
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>      locator loc2
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        prefix fcbb:bbbb:21::/48 block-len 32 node-len 16 func-bits 16
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        behavior usid
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    static-sids
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>      sid fcbb:bbbb:20::/48        locator loc1 behavior uN
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>      sid fcbb:bbbb:20:f1::/64     locator loc1 behavior uDT46 vrf Vrf1
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>      sid fcbb:bbbb:21::/48        locator loc2 behavior uN
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>      sid fcbb:bbbb:21:fe24::/64   locator loc2 behavior uA interface Ethernet24 nexthop 2001:db8:4:501::5
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>      sid fcbb:bbbb:fe28::/48      locator loc2 behavior uA interface Ethernet28
 </span></code></pre></div>
-<p>注意点として、HLD 時点の proto には <code>-u</code> (UDP モード) / <code>-a</code> / <code>-t</code> に対応するフィールドが入っていない。CLI のリビジョン 1.1 で UDP モードが拡張された一方で、proto 側の更新は未反映の可能性があり、実装で齟齬がないか裏取りが必要。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/wol/Wake-on-LAN-HLD.md#L168-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/srv6/srv6_static_config_hld.md#L221-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  message WolRequest {
-    string interface = 1;
-    repeated string target_mac = 2;
-    optional bool broadcast = 3;
-    optional string password = 4;
-    optional int32 count = 5;
-    optional int32 interval = 6;
-  }
-reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれていないことの根拠。
+  Bgpcfgd will compile the following configuration in FRR:
+  segment-routing
+    srv6
+      locators
+        locator loc1
+          prefix fcbb:bbbb:20::/48 block-len 32 node-len 32 func-bits 16
+          behavior usid
+      static-sids
+        sid fcbb:bbbb:20:f1::/64 locator loc1 behavior uDT46 vrf Vrf1
+        sid fcbb:bbbb:21:fe24::/64 locator loc2 behavior uA interface Ethernet24 nexthop 2001:db8:4:501::5
+reasoning: HLD 3.2.1 / 3.2.2 セクションのコンパイル例。CONFIG_DB エントリと FRR config の対応関係の根拠。
 -->
 
-<h3 id="_4">バリデーション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>CLI 側は以下を検査する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ul>
-<li>インタフェース名が SONiC で有効</li>
-<li>対応インタフェースが <code>up</code></li>
-<li><code>target_mac</code> / <code>password</code> の書式</li>
-<li>数値範囲と相互依存（前述）</li>
-<li>送信失敗時はユーザー向けエラーメッセージで返す</li>
-</ul>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>本機能は send-only のオペレーションコマンドであり、永続設定を持たない。CONFIG_DB エントリは無い。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<h3 id="_5">バリデーション<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>SRv6 Manager</code> は CONFIG_DB エントリを FRR に投入する前にバリデーションする。<code>action</code> フィールド未指定、未サポート action、必須フィールド欠落のエントリは syslog に出すだけで FRR には反映されない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warm-boot">Warm Boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
+<p>HLD は「planned warm reboot で SRv6 設定が保持される」要件を立てているのみで、具体的な保存・復元シーケンスは記述していない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>Table</th>
+<th>Key</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>wol &lt;intf&gt; &lt;target_mac&gt;[,...] [-b] [-u] [-a IP] [-t PORT] [-p PWD] [-c N -i MS]</code></td>
-<td>指定 SONiC インタフェースから Magic Packet を送出</td>
+<td><code>SRV6_MY_LOCATORS</code></td>
+<td><code>&lt;locator_name&gt;</code></td>
+<td>ロケータプレフィクスとビット長分割</td>
+</tr>
+<tr>
+<td><code>SRV6_MY_SIDS</code></td>
+<td><code>&lt;locator&gt;|&lt;ip_prefix&gt;</code></td>
+<td>local SID と behavior（uN / uDT46 / uA）</td>
 </tr>
 </tbody>
 </table>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>HLD には新規 SONiC CLI（<code>config srv6 ...</code> 等）の追加記述はない。SDN コントローラから直接 CONFIG_DB に書き込む運用が想定されている。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モジュール定義の記載は無い（永続設定を持たないため）。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Ethernet10 経由で 1 台に Magic Packet</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>wol<span class="w"> </span>Ethernet10<span class="w"> </span><span class="m">00</span>:11:22:33:44:55
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Vlan1000 経由でブロードキャスト + パスワード</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>wol<span class="w"> </span>Vlan1000<span class="w"> </span><span class="m">00</span>:11:22:33:44:55,11:33:55:77:99:bb<span class="w"> </span>-b<span class="w"> </span>-p<span class="w"> </span><span class="m">00</span>:22:44:66:88:aa
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># UDP モードで IPv4 サブネットブロードキャストへ送出</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>wol<span class="w"> </span>Vlan1000<span class="w"> </span><span class="m">00</span>:11:22:33:44:55<span class="w"> </span>-u<span class="w"> </span>-a<span class="w"> </span><span class="m">192</span>.168.255.255<span class="w"> </span>-t<span class="w"> </span><span class="m">7</span>
+<p><code>sonic-srv6</code> モジュールが新規追加され、上記 2 テーブルを反映する。HLD には簡略化された tree が示されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="s1">  &quot;SRV6_MY_LOCATORS&quot;: {</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="s1">    &quot;loc2&quot;: {&quot;prefix&quot;: &quot;FCBB:BBBB:21::&quot;}</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="s1">  },</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="s1">  &quot;SRV6_MY_SIDS&quot;: {</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s1">    &quot;loc2|FCBB:BBBB:21::/48&quot;: {&quot;action&quot;: &quot;uN&quot;, &quot;decap_dscp_mode&quot;: &quot;pipe&quot;},</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s1">    &quot;loc2|FCBB:BBBB:21:FE24::/64&quot;: {</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s1">      &quot;action&quot;: &quot;uA&quot;,</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s1">      &quot;decap_dscp_mode&quot;: &quot;pipe&quot;,</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s1">      &quot;interface&quot;: &quot;Ethernet24&quot;,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">      &quot;adj&quot;: &quot;2001:db8:4:501::5&quot;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">    }</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">  }</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s1">}&#39;</span><span class="w"> </span>--write-to-db
 </span></code></pre></div>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VLAN / ポートチャネル</strong>: <code>&lt;interface&gt;</code> には VLAN 名 / PortChannel 名も指定可能。送出は OS のネットワークスタックを通る（特に <code>-u</code> モード）。</li>
-<li><strong>gNOI / sonic-gnmi</strong>: <code>SonicWolService</code> は他の gNOI サービスと同じく D-Bus 経由で sonic-host-service に橋渡しされる。<code>Docker to Host communication</code> の枠組みに乗る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>インタフェース状態</strong>: HLD は対象インタフェースが <code>down</code> の場合をエラーとして規定している。事前に <code>show interface status</code> で確認するか、<code>config interface startup</code> で起こす。</li>
+<li>HLD 時点でサポートされる behavior は <code>uN</code> / <code>uDT46</code> / <code>uA</code> のみ。<code>uDT4</code> / <code>uDT6</code> 単独や <code>End.B6.Encaps</code> などは未サポート。</li>
+<li>FRR 側に PR#16894 の <code>static-sids</code> CLI が必要。古い FRR バージョンでは投入できない。</li>
+<li><code>bgpcfgd</code> 経路と <code>frrcfgd</code> 経路の二重設定は想定されていない（コントローラはどちらかに統一する）。</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>送信は成功するのに対象機器が起きない場合: 対象 NIC の WoL 受信設定（BIOS / OS / NIC ドライバ）と、経路上のスイッチが Magic Packet を遮断していないかを確認する。SONiC 側は送出までしか責任を持たない。</li>
-<li><code>-u</code> で IPv6 Multicast を狙う場合、<code>-a</code> に IPv6 アドレスを直接指定可能（HLD 上「IPv4 / IPv6 どちらも可」と明記）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>gNOI 側で UDP モードを使いたい場合、本 HLD 時点の proto では <code>-u</code> 系オプションが無く、CLI ラッパー経由の機能を完全には呼び出せない可能性がある。proto / 実装側の更新を確認する。</li>
+<li><strong>fpmsyncd / SRV6_MY_SID_TABLE (APPL_DB)</strong>: FRR は今回投入された static-sids を最終的に APPL_DB の SRv6 関連テーブルに書き出すため、orchagent / SAI 側の SRv6 サポートが前提となる。</li>
+<li><strong>VRF</strong>: <code>decap_vrf</code> / <code>vrf</code> 引数は <code>VRF_TABLE</code> に該当キーが存在することが前提。</li>
+<li><strong>BGP SRv6 (frrcfgd 経路)</strong>: 同一ノードで BGP signaling 由来の SID と本機能の static SID が重複しないよう、コントローラ側で名前空間を整理する必要がある。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li>設定が FRR に反映されない場合、まず syslog で <code>bgpcfgd</code> の SRv6 Manager がバリデーションエラーを出していないか確認する。</li>
+<li>FRR 側の取り込み状況は <code>vtysh -c 'show running-config' | grep -A20 srv6</code> で確認する。</li>
+<li>APPL_DB に SID が出ていない場合は FRR バージョンと PR#16894 の有無を疑う。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/wol/Wake-on-LAN-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/srv6/srv6_static_config_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
