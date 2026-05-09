@@ -1,0 +1,12 @@
+{
+  "page": "docs/architecture/error-handling-framework-in-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE が現行 swss-common で定義されているか確認",
+    "SWSS_RC_* error code 体系の libswsscommon 取り込み確認",
+    "ErrorListener / Error Reporter クラスの sonic-swss 取り込み確認",
+    "show error-database / sonic-clear error-database CLI の sonic-utilities 取り込み確認",
+    "2019-05 v0.1 Initial で 6 年以上経過、master への取り込み・採否未確認"
+  ],
+  "priority": "high"
+}
