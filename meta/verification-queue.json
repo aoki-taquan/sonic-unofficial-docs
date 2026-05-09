@@ -1193,7 +1193,8 @@
         "VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認"
       ],
       "priority": "medium",
-      "issue": 191
+      "issue": 191,
+      "pr": 192
     }
   ]
 }
