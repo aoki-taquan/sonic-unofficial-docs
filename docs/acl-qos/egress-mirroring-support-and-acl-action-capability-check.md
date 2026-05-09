@@ -1,12 +1,24 @@
 ---
 title: ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
     path: doc/acl/acl_stage_capability.md
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-utilities
+    path: acl_loader/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-sairedis
+    path: lib/RedisRemoteSaiInterface.cpp
+    ref: 88bc51ae95df66977601957515e5527119ffd4c5
 related:
   config_db:
     - ACL_RULE
@@ -16,8 +28,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本ページは 2019-05 改訂の古い HLD を根拠に書かれている。実装は HLD 提案の上に **`MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` キー** や **`SWITCH_CAPABILITY` テーブル** として現行 master に取り込まれているが、`acl-loader --mirror_stage` オプションや `SWITCH_CAPABILITY` のキー命名（`ACL_ACTIONS|INGRESS` 等）が現行版どおりかは未確認。HLD 末尾の TODO（`sai_query_attribute_enum_values_capability` の libsairedis 対応）が解消されているかも未確認。
+!!! success "裏取りステータス: code-verified"
+    HLD で提案された主要要素は現行 master に取り込まれている: `ACTION_MIRROR_INGRESS_ACTION` / `ACTION_MIRROR_EGRESS_ACTION` 定数（`aclorch.h:70-71`）、`AclOrch::queryAclActionCapability()` と `putAclActionCapabilityInDB()`（`aclorch.cpp:3975`, `4056`）、`SWITCH_CAPABILITY` テーブルへの `ACL_ACTIONS|<stage>` フィールド書き込み（`aclorch.cpp:4061`）、`acl-loader full --mirror_stage {ingress,egress}` オプション（`acl_loader/main.py:1209,1238`）、libsairedis の `queryAttributeEnumValuesCapability`（`RedisRemoteSaiInterface.cpp:1245`、各 SAI 層に実装あり）。詳細は後段「実装との乖離 / 補足」。
 
 # ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
 
@@ -247,6 +259,15 @@ acl-loader update incremental \
 - ACL ルールが ASIC_DB に降りない → `redis-cli -n 6 hgetall "SWITCH_CAPABILITY|switch"` で stage 別 action リストを確認
 - `MIRROR_EGRESS_ACTION` を入れても効かない → vslib / ベンダ SAI 側で `SAI_SWITCH_ATTR_ACL_STAGE_EGRESS` の戻り値に `MIRROR_EGRESS` が含まれているかを確認
 - 旧 `PACKET_ACTION: redirect:<port>` を使いつつ新 `REDIRECT_ACTION` も書く → 両者の扱いは互換ルートが優先されるため、片方に統一する
+
+## 実装との乖離 / 補足
+
+現行 master（2026-05 時点）の実コード裏取り結果:
+
+- **`MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` キー**: `sonic-swss/orchagent/aclorch.h:70-71` にマクロ定義、`aclorch.cpp:124-125` で SAI ACL_ENTRY ATTR にマッピング済み。
+- **AclOrch capability 問い合わせ**: 関数名は HLD の `queryAclCapabilities` ではなく `AclOrch::queryAclActionCapability()`（`aclorch.cpp:3975`）。`putAclActionCapabilityInDB()`（`aclorch.cpp:4056`）が `SWITCH_CAPABILITY|switch` HSET に `ACL_ACTIONS|INGRESS` / `ACL_ACTIONS|EGRESS` フィールドを書き込む（`aclorch.cpp:4061`）。HLD 想定どおりの key 命名。
+- **`sai_query_attribute_enum_values_capability` の libsairedis 対応**: HLD 末尾の TODO は解消済み。`sonic-sairedis/lib/{ClientSai,ServerSai,ClientServerSai,RedisRemoteSaiInterface}` に `queryAttributeEnumValuesCapability` メソッドが実装されている。`aclorch.cpp:4156` で実際に呼び出している。
+- **acl-loader `--mirror_stage`**: `sonic-utilities/acl_loader/main.py:1209,1238` の `full` / `update full` サブコマンドに `click.Choice(["ingress","egress"])` で実装済み。`set_mirror_stage()` が ACL_RULE 書き込み時にどちらの mirror action キーを使うか分岐する（`main.py:491-496`）。
 
 ## 引用元
 
