@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/nvgre-tunnel-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/reset-local-users-passwords-during-init-hld/">
       
       
-        <link rel="prev" href="../dscp-remapping-for-tunnel-traffic/">
+        <link rel="prev" href="../reboot-support-blockingmode-in-sonic/">
       
       
-        <link rel="next" href="../smartswitch-eni-based-forwarding/">
+        <link rel="next" href="../snmp-migration-from-snmp-yml-to-configdb/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>NVGRE トンネル（nvgreorch / decap mapper） - SONiC 非公式ドキュメント</title>
+        <title>ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nvgre-nvgreorch-decap-mapper" class="md-skip">
+        <a href="#init-long-reset-button-reset-local-users-passwordsservice" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              NVGRE トンネル（nvgreorch / decap mapper）
+              ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -2713,8 +2713,6 @@
       
   
   
-    
-  
   
   
     
@@ -2746,23 +2744,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -2780,13 +2775,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2806,7 +2801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-active-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
         
   
   
@@ -2834,7 +2829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-standby-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
         
   
   
@@ -2862,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-sonic-kvm/" class="md-nav__link">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -2890,7 +2885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -2915,37 +2910,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NVGRE トンネル（nvgreorch / decap mapper）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -2961,225 +2929,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネント構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI マッピング
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トンネル作成シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        削除の注意
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warmfast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm/Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3192,7 +2941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -3220,7 +2969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-dash-hld/" class="md-nav__link">
+      <a href="../../overlay/sonic-dash-hld/" class="md-nav__link">
         
   
   
@@ -3248,7 +2997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -3276,7 +3025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -4102,6 +3851,8 @@
       
   
   
+    
+  
   
   
     
@@ -4171,20 +3922,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4202,13 +3956,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4228,7 +3982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4256,7 +4010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4284,7 +4038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -4312,7 +4066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -4340,7 +4094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -4368,7 +4122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -4396,7 +4150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -4424,7 +4178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -4452,7 +4206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -4480,7 +4234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4508,7 +4262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4536,7 +4290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -4561,10 +4315,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4580,6 +4361,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemd-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        クラス階層
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmfast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        状態判定 + warm/fast-reboot 共存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パフォーマンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4592,7 +4531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -4620,7 +4559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -4648,7 +4587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -4676,7 +4615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -4704,7 +4643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -4732,7 +4671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -4760,7 +4699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -4788,7 +4727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -4816,7 +4755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -4844,7 +4783,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -4872,7 +4811,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -4900,7 +4839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -4928,7 +4867,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -4956,7 +4895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -4984,7 +4923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -11649,10 +11588,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#systemd-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント構成
+        クラス階層
       
     </span>
   </a>
@@ -11660,93 +11610,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#warmfast-reboot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI マッピング
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トンネル作成シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        削除の注意
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warmfast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm/Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
+        状態判定 + warm/fast-reboot 共存
       
     </span>
   </a>
@@ -11757,7 +11624,7 @@
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        CLI
       
     </span>
   </a>
@@ -11768,18 +11635,7 @@
   <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        YANG
       
     </span>
   </a>
@@ -11792,7 +11648,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パフォーマンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11803,7 +11681,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -11814,7 +11692,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11841,7 +11719,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/nvgre-tunnel-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/reset-local-users-passwords-during-init-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11851,213 +11729,103 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss</code> の <code>nvgreorch</code> 実装、<code>sonic-swss-common</code> のスキーマ追加、<code>sonic-utilities</code> の CLI 追加は未裏取り。</p>
+<p>HLD は 2024 年 1〜2 月版 (Rev 2.1)。<code>reset-local-users-passwords.service</code>、<code>sonic-platform-common</code> の <code>LocalUsersConfigurationResetBase</code>、各 vendor 実装、<code>/etc/sonic/default_users.json</code> のフォーマット、<code>ENABLE_LOCAL_USERS_PASSWORDS_RESET</code> ビルドフラグの現行 master 取り込みは未裏取り。</p>
 </div>
-<h1 id="nvgre-nvgreorch-decap-mapper">NVGRE トンネル（nvgreorch / decap mapper）<a class="headerlink" href="#nvgre-nvgreorch-decap-mapper" title="Permanent link">&para;</a></h1>
+<h1 id="init-long-reset-button-reset-local-users-passwordsservice">ローカルユーザパスワード init 時リセット（long reset button + <code>reset-local-users-passwords.service</code>）<a class="headerlink" href="#init-long-reset-button-reset-local-users-passwordsservice" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NVGRE (Network Virtualization using Generic Routing Encapsulation) は、L3 ネットワーク上に多数の仮想 L2 セグメントをトンネル経由で実装するための方式である。VxLAN と同じファミリの「L2 over L3」だが、カプセル化に GRE を使い、24 bit の VSID (Virtual Subnet Identifier) でテナントを識別する。本機能は SONiC に NVGRE トンネル <strong>の decap 受信側機能</strong> を追加するもので、外部からカプセル化されてきた NVGRE フレームを、内側の VLAN または Bridge にマップして転送できるようにする。Phase 1 設計として <strong>encap mapper は範囲外</strong>、decap のみが対象である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>カウンタ統計は本 HLD のスコープ外。NVGRE トンネルの SAI 実装は <strong>SAI 1.9 以上</strong> を要求する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Boot 時に <strong>long reset button (&gt;=15 秒押下)</strong> が検知されたら、非デフォルトユーザを削除しデフォルトユーザのパスワードを工場出荷状態に戻し expire 化する init-time セキュリティ機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:
+- vendor 毎にトリガ条件を上書き可（既定は long reset button）
+- ビルドフラグ + CLI で enable/disable
+- <strong>既定 disabled</strong>
+- platform が long reset サポートする場合のみ起動
+- warm/fast-reboot 影響なし</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    User[CLI / YANG] --&gt; CDB[(CONFIG_DB\nNVGRE_TUNNEL\nNVGRE_TUNNEL_MAP)]
-    CDB --&gt;|subscribe| ORCH[nvgreorch]
-    ORCH --&gt;|register| OD[orchdaemon]
-    ORCH --&gt;|create_tunnel\ncreate_tunnel_map| SAI[SAI]</code></pre>
-<p>新規 orchestration agent <code>nvgreorch</code> を <code>orchdaemon</code> に登録し、CONFIG_DB の <code>NVGRE_TUNNEL</code> / <code>NVGRE_TUNNEL_MAP</code> を購読する。トンネル作成時に <strong>VLAN マッパーと Bridge マッパーの両方を既定で生成</strong> するので、ユーザは <code>vlan_id</code> を渡しても、bridge ベースのマッピングを後から付け足しても動作する設計になっている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NVGRE_TUNNEL|&lt;tunnel_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    src_ip = &lt;ipv4 or ipv6&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>NVGRE_TUNNEL_MAP|&lt;tunnel_name&gt;|&lt;tunnel_map_name&gt;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    vsid    = &lt;0..16777214&gt;
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    vlan_id = &lt;1..4094&gt;
-</span></code></pre></div>
+<h3 id="systemd-service">systemd service<a class="headerlink" href="#systemd-service" title="Permanent link">&para;</a></h3>
+<p>新 service <code>reset-local-users-passwords.service</code> を以下の依存で組み込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>src_ip</code> は IPv4 / IPv6 どちらも許容（YANG では <code>inet:ip-address</code>）。</li>
-<li>VSID は 24 bit のため最大値は <code>16,777,214</code>。</li>
-<li>VLAN ID は標準範囲 <code>1..4094</code>。</li>
+<li><strong>after</strong>: <code>database.service</code>（CONFIG_DB から feature state を読むため）</li>
+<li><strong>before</strong>: <code>sshd.service</code> / <code>getty.target</code> / <code>systemd-logind.service</code> / <code>serial-getty@ttyS0.service</code>（接続を許す前にリセットを完了する）</li>
 </ul>
-<h3 id="sai">SAI マッピング<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<h3 id="_3">クラス階層<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>classDiagram
+  class LocalUsersConfigurationResetBase {
+    +should_trigger()
+    +start()
+  }
+  class LocalUsersConfigurationResetPlatform {
+    +should_trigger() vendor 拡張
+    +start() vendor 拡張
+  }
+  LocalUsersConfigurationResetBase &lt;|-- LocalUsersConfigurationResetPlatform</code></pre>
+<p>ファイル<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>NVGRE 概念</th>
-<th>SAI 属性 / 列挙値</th>
+<th>ファイル</th>
+<th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>トンネル種別</td>
-<td><code>SAI_TUNNEL_TYPE_NVGRE</code></td>
+<td><code>src/sonic-platform-common/.../reset_local_users_passwords_base.py</code></td>
+<td>既定実装 (long reset button + <code>/etc/sonic/default_users.json</code> の参照)</td>
 </tr>
 <tr>
-<td>Decap mapper（VLAN）</td>
-<td><code>SAI_TUNNEL_MAP_TYPE_VSID_TO_VLAN_ID</code></td>
+<td><code>platform/&lt;vendor&gt;/sonic_platform/reset_local_users_passwords.py</code></td>
+<td>vendor ごとの上書き</td>
 </tr>
 <tr>
-<td>Decap mapper（Bridge）</td>
-<td><code>SAI_TUNNEL_MAP_TYPE_VSID_TO_BRIDGE_IF</code></td>
-</tr>
-<tr>
-<td>終端エントリ</td>
-<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP</code></td>
+<td><code>src/sonic-host-services/scripts/reset-local-users-passwords</code></td>
+<td>service の entry point。vendor クラスを import して <code>start()</code> 呼び出し</td>
 </tr>
 </tbody>
 </table>
-<p><code>P2MP</code> 終端で受けるため、対向側 <code>src_ip</code> は不定でも構わない。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/nvgre_tunnel/nvgre_tunnel.md#L181-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  | NVGRE tunnel type | SAI_TUNNEL_TYPE_NVGRE |
-  | Decap mapper | SAI_TUNNEL_MAP_TYPE_VSID_TO_VLAN_ID |
-  | Decap mapper | SAI_TUNNEL_MAP_TYPE_VSID_TO_BRIDGE_IF |
-  | NVGRE tunnel termination entry type | SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP |
-reasoning: SAI 種別と P2MP 終端、二系統の decap mapper の根拠。
--->
-
-<h3 id="_4">トンネル作成シーケンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user (CLI)
-    participant C as CONFIG_DB
-    participant O as nvgreorch
-    participant S as SAI
-    U-&gt;&gt;C: NVGRE_TUNNEL|tunnel1 = {src_ip: 2.2.2.2}
-    C--&gt;&gt;O: notify
-    O-&gt;&gt;S: create_tunnel(NVGRE, src_ip=2.2.2.2)
-    O-&gt;&gt;S: create_tunnel_map(VSID_TO_VLAN_ID)
-    O-&gt;&gt;S: create_tunnel_map(VSID_TO_BRIDGE_IF)
-    O-&gt;&gt;S: create_tunnel_term(P2MP)
-    U-&gt;&gt;C: NVGRE_TUNNEL_MAP|tunnel1|Vlan2000 = {vsid:2000, vlan_id:2000}
-    C--&gt;&gt;O: notify
-    O-&gt;&gt;S: create_tunnel_map_entry(VSID 2000 -&gt; VLAN 2000)</code></pre>
-<h3 id="_5">削除の注意<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>トンネル削除は <strong>ユーザが先にすべての関連設定（マップ）を削除する責務</strong> を負う。<code>nvgreorch</code> がカスケード削除する設計ではなく、依存が残った tunnel の delete は拒否される旨が HLD に明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="warmfast-boot">Warm/Fast boot<a class="headerlink" href="#warmfast-boot" title="Permanent link">&para;</a></h3>
-<p>本機能は warm/fast boot に <strong>影響を与えない</strong> と HLD は明記している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。トンネルの再作成は通常起動と同様のシーケンスで行われる。</p>
-<h3 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>decap のみ</strong> 対応。NVGRE encap は本 Phase の範囲外。</li>
-<li>カウンタ未対応。</li>
-<li>トンネル数の上限は SONiC 側では定めず、SAI / ASIC のリソース上限に到達したら SAI エラーで <code>nvgreorch</code> が abort する。</li>
-</ul>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>NVGRE_TUNNEL</code></td>
-<td><code>&lt;tunnel_name&gt;</code></td>
-<td><code>src_ip</code></td>
-<td>トンネル送信元 IP（v4/v6）</td>
-</tr>
-<tr>
-<td><code>NVGRE_TUNNEL_MAP</code></td>
-<td><code>&lt;tunnel_name&gt;\|&lt;tunnel_map_name&gt;</code></td>
-<td><code>vsid</code></td>
-<td>0..16,777,214</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>vlan_id</code></td>
-<td>1..4094</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config nvgre-tunnel add &lt;name&gt; --src-ip &lt;IP&gt;</code></td>
-<td>トンネル追加</td>
-</tr>
-<tr>
-<td><code>config nvgre-tunnel delete &lt;name&gt;</code></td>
-<td>トンネル削除（マップ削除済みであること）</td>
-</tr>
-<tr>
-<td><code>config nvgre-tunnel-map add &lt;tunnel&gt; &lt;map_name&gt; --vlan-id &lt;ID&gt; --vsid &lt;VSID&gt;</code></td>
-<td>VLAN/VSID マップ追加</td>
-</tr>
-<tr>
-<td><code>config nvgre-tunnel-map delete &lt;tunnel&gt; &lt;map_name&gt;</code></td>
-<td>マップ削除</td>
-</tr>
-<tr>
-<td><code>show nvgre-tunnel</code></td>
-<td>トンネル一覧</td>
-</tr>
-<tr>
-<td><code>show nvgre-tunnel-map</code></td>
-<td>マップ一覧</td>
-</tr>
-</tbody>
-</table>
-<p>CLI は YANG モデルから <strong>CLI auto-generation tool</strong> で生成する設計になっている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-nvgre-tunnel</code> モジュールに <code>NVGRE_TUNNEL</code> / <code>NVGRE_TUNNEL_MAP</code> の 2 コンテナを定義<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">module</span><span class="w"> </span><span class="nv">sonic-nvgre-tunnel</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">NVGRE_TUNNEL</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="k">list</span><span class="w"> </span><span class="nv">NVGRE_TUNNEL_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">            </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;tunnel_name&quot;</span><span class="p">;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">            </span><span class="k">leaf</span><span class="w"> </span><span class="nv">src_ip</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nn">inet</span><span class="p">:</span><span class="nv">ip-address</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">NVGRE_TUNNEL_MAP</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="k">list</span><span class="w"> </span><span class="nv">NVGRE_TUNNEL_MAP_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">            </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;tunnel_name tunnel_map_name&quot;</span><span class="p">;</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">            </span><span class="k">leaf</span><span class="w"> </span><span class="nv">vlan_id</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint16</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">1..4094</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">            </span><span class="k">leaf</span><span class="w"> </span><span class="nv">vsid</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..16777214</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
+<h3 id="warmfast-reboot">状態判定 + warm/fast-reboot 共存<a class="headerlink" href="#warmfast-reboot" title="Permanent link">&para;</a></h3>
+<p><code>reset-local-users-passwords</code> スクリプトは:</p>
+<ol>
+<li>warm/fast boot 進行中なら待機</li>
+<li>CONFIG_DB の <code>LOCAL_USERS_PASSWORDS_RESET</code> テーブル状態を読む</li>
+<li>enabled かつ <code>should_trigger()</code> が true なら <code>start()</code> を呼ぶ</li>
+</ol>
+<p>ビルド時に <code>rules/config</code> の <code>ENABLE_LOCAL_USERS_PASSWORDS_RESET ?= y</code> と既存 <code>CHANGE_DEFAULT_PASSWORD ?= y</code> が必要<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>local-users-passwords-reset<span class="w"> </span>state<span class="w"> </span><span class="o">{</span>enabled<span class="p">|</span>disabled<span class="o">}</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show<span class="w"> </span>local-users-passwords-reset
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>state
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>-------
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>enabled
 </span></code></pre></div>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>nvgre-tunnel<span class="w"> </span>add<span class="w"> </span>tunnel1<span class="w"> </span>--src-ip<span class="w"> </span><span class="m">2</span>.2.2.2
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>nvgre-tunnel-map<span class="w"> </span>add<span class="w"> </span>tunnel1<span class="w"> </span>Vlan2000<span class="w"> </span>--vlan-id<span class="w"> </span><span class="m">2000</span><span class="w"> </span>--vsid<span class="w"> </span><span class="m">2000</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>nvgre-tunnel
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># TUNNEL NAME    SRC IP</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># tunnel1        2.2.2.2</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>show<span class="w"> </span>nvgre-tunnel-map
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># TUNNEL NAME    TUNNEL MAP NAME    VLAN ID    VSID</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># tunnel1        Vlan2000           2000       2000</span>
-</span></code></pre></div>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-local-users-passwords-reset.yang</code> を新設。<code>LOCAL_USERS_PASSWORDS_RESET / STATE / state</code> を <code>enumeration {enabled, disabled}</code> 既定 <code>disabled</code> で定義<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">パフォーマンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p><code>reset-local-users-passwords.service</code> は long reset 検出時 <strong>150〜300 ms</strong> で完了し init 全体を遅延させない要件<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VxLAN</strong>: 同じく L2 over L3 だがカプセル化方式と orch が別系統。<code>nvgreorch</code> と <code>vxlanorch</code> は独立。両方を有効にすることはできるが、リソース競合は ASIC 依存。</li>
-<li><strong>Bridge / VLAN</strong>: NVGRE decap mapper は VLAN ベースと Bridge ベースの両方を <code>nvgreorch</code> が <strong>既定で両方作る</strong>。後から bridge 経由のマップ追加にも対応できる。</li>
-<li><strong>Warm/Fast boot</strong>: 設計上の影響なしと HLD で明記。<code>nvgreorch</code> は通常起動と同じシーケンスで CONFIG_DB を再投入する想定。</li>
+<li>platform が long reset 検知をサポートしないと service 自体起動しない</li>
+<li>起動時のみ動作。実行中の running config への影響なし</li>
+<li>warm/fast-reboot では何もしない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>decap が効かない場合: <code>redis-cli -n 4 keys 'NVGRE_TUNNEL*'</code> で CONFIG_DB を確認、その後 <code>ASIC_DB</code> で <code>SAI_OBJECT_TYPE_TUNNEL</code> および <code>SAI_TUNNEL_TYPE_NVGRE</code> のオブジェクトが作成されているかを確認する。</li>
-<li><code>nvgreorch</code> が abort する場合: SAI / ASIC のリソース上限到達が疑われる。tunnel / tunnel map の数を減らす。</li>
-<li>削除が拒否される場合: 紐付く <code>NVGRE_TUNNEL_MAP</code> を先に削除する。HLD は明示的にカスケード削除しない設計と記載<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>SAI バージョンの問題: SAI 1.9 未満のベンダーでは未対応。<code>syncd</code> の SAI バージョンを確認する。</li>
+<li><strong><code>CHANGE_DEFAULT_PASSWORD</code></strong> ビルドフラグ: 既存機能。本機能とともに <code>y</code> でないと組み込まれない</li>
+<li><strong><code>/etc/sonic/default_users.json</code></strong>: デフォルトユーザ群とパスワードの基準</li>
+<li><strong>systemd 起動順</strong>: sshd / getty / serial-getty より先に動く</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>systemctl status reset-local-users-passwords.service</code> で起動状態</li>
+<li><code>journalctl -u reset-local-users-passwords</code> で実行ログ</li>
+<li><code>redis-cli -n 4 hgetall "LOCAL_USERS_PASSWORDS_RESET|STATE"</code> で feature state</li>
+<li>vendor 実装の <code>should_trigger()</code> の実体 (例: GPIO 経由の long reset 判定) を vendor specific docker または <code>sonic_platform</code> 配下に確認</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/nvgre_tunnel/nvgre_tunnel.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/password-reset/SONiC_local_users_password_reset_hld.md">sonic-net/SONiC doc/password-reset/SONiC_local_users_password_reset_hld.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
