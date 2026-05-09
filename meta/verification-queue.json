@@ -219,6 +219,18 @@
       "priority": "medium"
     },
     {
+      "page": "docs/switching/view-switching-in-producerstatetable.md",
+      "issue": 75,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-swss-common ProducerStateTable に create_temp_view / apply_temp_view が実装済みか確認",
+        "m_tempViewState / m_tempViewActive メンバの存在確認",
+        "fpmsyncd が nexthop ソート等の正規化を実装しているか確認",
+        "差分計算の擬似コードどおりの判定ロジック実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/mpls-tc-to-tc-map.md",
       "issue": 73,
       "verification": "hld-only",
