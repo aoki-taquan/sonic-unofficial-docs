@@ -1,7 +1,7 @@
 ---
 title: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.5 (2024-04 に MySID counter 追加)。SRV6 系 CONFIG_DB / APPL_DB table の sonic-yang-models 反映、orchagent (Srv6Orch) の現行 master 取り込み、SAI SRv6 attributes、FRR からの fpmsyncd 経由経路は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/srv6orch.cpp` / `srv6orch.h` を master で確認。`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` 等のスキーマ定数は `sonic-swss-common/common/schema.h` に取り込み済み。
 
 # SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
 

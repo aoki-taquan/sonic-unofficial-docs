@@ -1,7 +1,7 @@
 ---
 title: Thermal Control テストプラン
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ドキュメントは **テストプラン** であり実装 HLD ではない。pytest テストケースとサンプル `valid_policy.json` / `invalid_*_policy.json` 配置の現行 SONiC-mgmt 取り込みは未裏取り。元設計の `thermal-control-design.md` は参考リンク。
+!!! info "裏取りステータス: code-verified"
+    `sonic-platform-common/sonic_platform_base/sonic_thermal_control/`（`thermal_action_base.py` / `thermal_condition_base.py` / `thermal_json_object.py` / `thermal_policy.py` / `thermal_manager_base.py`）と `sonic-platform-daemons/sonic-thermalctld/` を master で確認。テストプラン側の SONiC-mgmt サンプル JSON は本リポジトリ範囲外（mgmt キャッシュ未配備）。
 
 # Thermal Control テストプラン
 

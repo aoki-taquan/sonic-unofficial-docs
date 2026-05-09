@@ -1,7 +1,7 @@
 ---
 title: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,14 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-utilities/scripts/ssdhealth`、`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`、ベンダ別 `ssdutil.py`、Pmon `ssdmond` のいずれも実装裏取り未済。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD と現行 master 実装に複数の齟齬がある。
+    
+    - HLD は `sonic-utilities/scripts/ssdhealth` という独立スクリプトを示すが、master では Python パッケージ `sonic-utilities/ssdutil/` (`__init__.py` / `main.py`) が唯一の実体で、`ssdhealth` という名前のスクリプトは存在しない。`show platform ssdhealth` (sonic-utilities/show/platform.py) は内部で `sudo ssdutil -d <device>` を呼ぶラッパーになっている。
+    - HLD の抽象クラス配置 `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` は **存在しない**。master では `sonic-platform-common/sonic_platform_base/sonic_storage/` 配下に `storage_base.py` / `ssd.py` / `emmc.py` / `usb.py` / `storage_devices.py` として再構成されている。
+    - HLD オプションの pmon `ssdmond` デーモンは `sonic-platform-daemons` に **存在しない**（取り込まれていない）。
+    
+    本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (`ssdutil/main.py`) と `sonic_storage/` 構成を確認すること。
 
 # SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
 

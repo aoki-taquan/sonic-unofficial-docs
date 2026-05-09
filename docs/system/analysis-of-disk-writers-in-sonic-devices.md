@@ -1,7 +1,7 @@
 ---
 title: SONiC Disk I/O 削減（writer 分析と tmpfs 化）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は分析レポート寄り。`bgpmon.py` の `vtysh -H /dev/null` への置換、`/tmp` の tmpfs 化、`supervisor-proc-exit-listener` の log 出力先変更、`/var/lib/monit` / `/var/lib/logrotate` の tmpfs 化、`jbd2` 無効化（journaling off）の各 PR が現行 master に取り込まれているかは未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/files/build_templates/docker_image_ctl.j2` で `--tmpfs /tmp` / `--tmpfs /var/tmp` を確認、`sonic_debian_extension.j2` に `/dev/shm/monit/` 用 `tmpfiles.d/tmpfs-monit.conf` 生成も確認。`/tmp` tmpfs 化と monit 状態の tmpfs 化は master 取り込み済み。
 
 # SONiC Disk I/O 削減（writer 分析と tmpfs 化）
 

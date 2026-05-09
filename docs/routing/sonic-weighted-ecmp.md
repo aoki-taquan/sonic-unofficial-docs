@@ -1,7 +1,7 @@
 ---
 title: Weighted ECMP（WCMP / BGP link-bandwidth ext community）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 (2024-01)。`DeviceGlobalCfgMgr.set_wcmp` 拡張、`bgpd.wcmp.conf.j2` テンプレート (`docker-fpm-frr/frr/bgpd/wcmp`) 配置、`BGP_DEVICE_GLOBAL|STATE.wcmp_enabled` の sonic-yang-models 反映、initial config の `init_cfg.json.j2` への注入は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py` で `wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2`、`wcmp_enabled` キー処理、`configure_wcmp(data)` を master で確認。`docker-fpm-frr/frr/bgpd/wcmp/` テンプレートディレクトリも存在。
 
 # Weighted ECMP（WCMP / BGP link-bandwidth ext community）
 
