@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/persistent-log-level-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/reboot-support-blockingmode-in-sonic/">
       
       
-        <link rel="prev" href="../generic-sai-extension-critical-resource-monitoring-crm/">
+        <link rel="prev" href="../persistent-log-level-hld/">
       
       
-        <link rel="next" href="../reboot-support-blockingmode-in-sonic/">
+        <link rel="next" href="../sonic-optional-feature-control-enhancement/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行） - SONiC 非公式ドキュメント</title>
+        <title>reboot コマンドの blocking mode（reboot.conf / -b / -v） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#loglevel_db-config_dblogger" class="md-skip">
+        <a href="#reboot-blocking-moderebootconf-b-v" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+              reboot コマンドの blocking mode（reboot.conf / -b / -v）
             
           </span>
         </div>
@@ -2193,6 +2193,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -2212,7 +2240,7 @@
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
   
 
     
@@ -2230,7 +2258,7 @@
   <span class="md-ellipsis">
     
   
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
   
 
     
@@ -2279,10 +2307,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        旧挙動（非 blocking）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新挙動（blocking mode）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ移行
+        有効化方法（オプトイン、両立可能）
       
     </span>
   </a>
@@ -2290,10 +2340,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#verbosedot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
+        Verbose（dot 出力）
       
     </span>
   </a>
@@ -2301,10 +2351,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
+  <a href="#etcsonicrebootconf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        swssloglevel の変更
+        /etc/sonic/reboot.conf
       
     </span>
   </a>
@@ -2312,43 +2362,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
+  <a href="#platform-reboot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時の挙動
+        Platform reboot との関係
       
     </span>
   </a>
@@ -2361,7 +2378,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2373,10 +2390,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -2384,10 +2401,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -2406,7 +2423,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -2422,7 +2439,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2433,7 +2461,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2444,7 +2472,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2458,34 +2486,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -3774,10 +3774,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        旧挙動（非 blocking）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新挙動（blocking mode）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ移行
+        有効化方法（オプトイン、両立可能）
       
     </span>
   </a>
@@ -3785,10 +3807,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#verbosedot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
+        Verbose（dot 出力）
       
     </span>
   </a>
@@ -3796,10 +3818,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
+  <a href="#etcsonicrebootconf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        swssloglevel の変更
+        /etc/sonic/reboot.conf
       
     </span>
   </a>
@@ -3807,43 +3829,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
+  <a href="#platform-reboot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時の挙動
+        Platform reboot との関係
       
     </span>
   </a>
@@ -3856,7 +3845,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3868,10 +3857,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CLI
       
     </span>
   </a>
@@ -3879,10 +3868,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -3901,7 +3890,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -3917,7 +3906,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3928,7 +3928,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3939,7 +3939,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3966,7 +3966,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/persistent-log-level-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/reboot-support-blockingmode-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3976,134 +3976,148 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss-common</code> の <code>logger.cpp</code> / <code>loglevel.cpp</code> 変更、各 <code>*mgrd</code> / <code>*syncd</code> の listener thread 変更、<code>db_migrator</code> の LOGLEVEL DB → CONFIG DB 変換、Phase 2 の LOGLEVEL_DB / <code>JINJA2_CACHE</code> 完全削除の進捗は未裏取り。</p>
+<p>本ページは公式 HLD（Rev 1.0, 2025-06）のみを根拠に書かれている。<code>reboot</code> スクリプト本体（sonic-buildimage）の <code>-b</code> / <code>-v</code> フラグ実装、<code>/etc/sonic/reboot.conf</code> パーサ、平台固有 reboot との関係は未確認。</p>
 </div>
-<h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>
+<h1 id="reboot-blocking-moderebootconf-b-v"><code>reboot</code> コマンドの blocking mode（<code>reboot.conf</code> / <code>-b</code> / <code>-v</code>）<a class="headerlink" href="#reboot-blocking-moderebootconf-b-v" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では <code>swssloglevel</code> コマンドで <code>orchagent</code> / <code>syncd</code> / 各種 <code>*mgrd</code> / <code>*syncd</code> / SAI API ごとに動的にログ深さを変えられる。しかし設定先が <strong>LOGLEVEL_DB (#3)</strong> に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 <code>NOTICE</code> に戻ってしまっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ目的で <code>DEBUG</code> を出していても、再起動を挟むと忘れられる運用上の不便があった。</p>
-<p>本機能はログレベルテーブルを <strong>CONFIG_DB (#4) の <code>LOGGER</code> テーブル</strong> に移し、<code>config save</code> の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と <code>JINJA2_CACHE</code> を完全削除する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <code>reboot</code> スクリプトは内部で <code>systemctl reboot</code> を呼ぶが、これは <strong>非同期</strong> であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。結果、コンソール出力は次の 2 パターンがランダムに発生する:</p>
+<ul>
+<li>A: <code>systemctl reboot</code> 戻り後にユーザシェルがプロンプトを 1 行表示してから切断</li>
+<li>B: シェルが先に kill されてプロンプト無しで切断</li>
+</ul>
+<p>自動化システムから見ると <strong><code>reboot</code> 完了の判定が安定しない</strong>。本 HLD はこれを <strong>B 動作（プロンプトを出さずブロックして切断まで待つ）</strong> に統一する <strong>blocking mode</strong> を導入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>破壊的変更を避けるため、blocking mode は <strong>明示的にオプトイン</strong>（<code>-b</code> または <code>reboot.conf</code>）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スキーマ移行<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>旧 LOGLEVEL_DB (#3) のキーは <code>&lt;component&gt;:&lt;component&gt;</code> 形式（例: <code>orchagent:orchagent</code>）だった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LOGLEVEL_DB (旧)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a> orchagent:orchagent
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   LOGLEVEL  = INFO
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a> SAI_API_BUFFER:SAI_API_BUFFER
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>   LOGLEVEL  = SAI_LOG_LEVEL_NOTICE
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a> JINJA2_CACHE:...   ← 旧 warm-reboot 高速化用キャッシュ
-</span></code></pre></div>
-<p>新スキーマは CONFIG_DB の <code>LOGGER</code> テーブルにフラット化する。キーは <strong>コンポーネント名のみ</strong>（<code>Logger:&lt;componentName&gt;</code> から最終的にコンポーネント名のみへ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;LOGGER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;orchagent&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span><span class="w">                  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;SAI_API_BUFFER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SAI_LOG_LEVEL_NOTICE&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>LOGOUTPUT</code> の値（<code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code>）も合わせて永続化される。</p>
-<h3 id="_4">全体フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    User[swssloglevel CLI] --&gt; CDB[(CONFIG_DB\nLOGGER)]
-    Save[config save] --&gt; CDB
-    Save --&gt;|copy| JSON[/etc/sonic/config_db.json]
-    CDB --&gt;|change event| LIS[各コンポーネントの settingThread\n(listener)]
-    LIS --&gt; COMP[Logger singleton\n(loglevel property)]
-    Boot[再起動] --&gt; JSON
-    JSON --&gt;|database container init| CDB</code></pre>
-<p>各 SONiC コンポーネントは <strong>Logger シングルトン + listener スレッド (<code>settingThread</code>)</strong> を持っており、購読対象 DB の変更を検知して loglevel プロパティを更新する。本機能はこの <code>settingThread</code> の購読先を LOGLEVEL_DB から CONFIG_DB に切り替える<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>影響を受けるコンポーネント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>buffermgrd</code>, <code>coppmgrd</code>, <code>fdbsyncd</code>, <code>fpmsyncd</code>, <code>gearsyncd</code>, <code>intfmgrd</code>, <code>portsyncd</code>, <code>syncd</code>, <code>teammgrd</code>, <code>teamsyncd</code>, <code>tlm_teamd</code>, <code>tunnelmgrd</code>, <code>vlanmgrd</code>, <code>vrfmgrd</code>, <code>vxlanmgrd</code>, <code>wjhd</code>, <code>nbrmgrd</code>, <code>neighsyncd</code>, <code>orchagent</code>, <code>portmgrd</code>。</p>
-<h3 id="swssloglevel"><code>swssloglevel</code> の変更<a class="headerlink" href="#swssloglevel" title="Permanent link">&para;</a></h3>
-<p>スクリプト本体は <code>sonic-swss-common/common/loglevel.cpp</code> 由来で、書き込み先を CONFIG_DB に変更する。さらに <strong>既定値に戻す <code>-d</code> オプション</strong> を新設し、全コンポーネントを既定値（<code>SWSS NOTICE</code>、<code>SAI_LOG_LEVEL_NOTICE</code>）にリセットできるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>swssloglevel -l NOTICE -c orchagent       # orchagent を NOTICE に
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swssloglevel -l SAI_LOG_LEVEL_DEBUG -s -a # 全 SAI_API_* を DEBUG に
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>swssloglevel -d                           # 全コンポーネント既定値に戻す（新規）
-</span></code></pre></div>
-<h3 id="reboot">永続化と reboot<a class="headerlink" href="#reboot" title="Permanent link">&para;</a></h3>
+<h3 id="blocking">旧挙動（非 blocking）<a class="headerlink" href="#blocking" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as user shell
+    participant R as reboot script
+    participant S as systemctl reboot
+    participant SD as systemd
+    U-&gt;&gt;R: sudo reboot
+    R-&gt;&gt;S: systemctl reboot
+    S--&gt;&gt;R: return (async)
+    par 競合
+        R--&gt;&gt;U: 戻り値で次プロンプト
+        SD--&gt;&gt;U: shell kill
+    end
+    Note over U: タイミング次第で\nプロンプトが見えたり見えなかったり</code></pre>
+<h3 id="blocking-mode">新挙動（blocking mode）<a class="headerlink" href="#blocking-mode" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as user shell
+    participant R as reboot script
+    participant S as systemctl reboot
+    participant SD as systemd
+    U-&gt;&gt;R: sudo reboot -b   (or reboot.conf blocking_mode=true)
+    R-&gt;&gt;S: systemctl reboot
+    S--&gt;&gt;R: return (async)
+    Note over R: ループで sleep 10s\n(timeout まで)
+    SD-&gt;&gt;U: shell kill (R も巻き添えで終了)
+    Note over U: 必ずプロンプト無しで切断</code></pre>
+<p>要点:</p>
+<ul>
+<li><code>systemctl reboot</code> 戻り後、<code>reboot</code> スクリプトは <strong>dead loop</strong> で待機。これによりシェルが kill されるまでプロンプトが出ない</li>
+<li>何らかの理由で systemd が reboot しない場合、loop が永久に続くと困るので <strong>timeout</strong> を導入</li>
+</ul>
+<h3 id="_3">有効化方法（オプトイン、両立可能）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>操作</th>
-<th>永続化要件</th>
-<th>reboot 後の挙動</th>
+<th>方式</th>
+<th>設定</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ログレベル変更のみ</td>
-<td>不要</td>
-<td>cold/fast 後は既定値、warm 後は維持（CONFIG_DB は flush しない）</td>
+<td>パラメータ</td>
+<td><code>reboot -b</code></td>
 </tr>
 <tr>
-<td>ログレベル変更 + <code>config save</code></td>
-<td>必要</td>
-<td>cold/fast/warm すべてで設定維持</td>
+<td>設定ファイル</td>
+<td><code>/etc/sonic/reboot.conf</code> で <code>blocking_mode=true</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="warm-upgrade">Warm upgrade の移行ロジック<a class="headerlink" href="#warm-upgrade" title="Permanent link">&para;</a></h3>
-<p>旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。HLD は <strong><code>db_migrator</code> を拡張</strong> して以下を行うと明記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ol>
-<li><code>db_migrator</code> に LOGLEVEL_DB コネクタを追加。</li>
-<li>LOGLEVEL_DB の Logger テーブルを CONFIG_DB に移し（キー名を変換）、LOGLEVEL_DB を消す。</li>
-<li><code>swss-common/sonicv2-connector.h</code> から <code>del</code> を公開して上記消去を可能にする。</li>
-</ol>
-<p>ダウングレード（新→旧）はシナリオが入り組み、HLD は <strong>完全サポートしない</strong> と明記する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新版で <code>config save</code> 済みのテーブルは旧バージョンでは未知のため、再 upgrade 時に「LOGLEVEL_DB 側の Logger テーブルが CONFIG_DB の未使用テーブルを上書きする」非対称が発生し得る。</p>
-<h3 id="phase-2-loglevel_db">Phase 2: LOGLEVEL_DB の完全削除<a class="headerlink" href="#phase-2-loglevel_db" title="Permanent link">&para;</a></h3>
-<p>LOGLEVEL_DB に残るのは <code>JINJA2_CACHE</code> のみとなる。これは jinja2 テンプレートのバイトコードキャッシュで、warm-reboot 高速化目的で導入された経緯があるが、その後の最適化により <strong>効果が無くなった</strong> ため Phase 2 で削除する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ul>
-<li><code>schema.h</code> から <code>LOGLEVEL_DB</code> を削除。</li>
-<li><code>sonic-config-engine/build/lib/redis_bcc.py</code> を削除。</li>
-<li>約 50 ファイルの「全 DB リスト」から LOGLEVEL_DB を除く。</li>
-<li><code>fdbsyncd.cpp</code> で残っていた未使用 LOGLEVEL_DB connector を撤去。</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>旧 DB ID 番号
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> 0 APPL_DB
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> 1 ASIC_DB
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a> 2 COUNTERS_DB
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a> 3 LOGLEVEL_DB     ← Phase 2 で削除
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a> 4 CONFIG_DB
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a> ...
+<p>どちらか有効なら blocking mode になる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="verbosedot">Verbose（dot 出力）<a class="headerlink" href="#verbosedot" title="Permanent link">&para;</a></h3>
+<p>blocking mode 中、生存表示として <strong>10 秒ごとに <code>.</code> を出力、50 個ごとに改行</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。出力例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Fri 20 Oct 2023 06:03:33 AM UTC Issuing OS-level reboot ...
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>..................................................
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>..................................................
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>..............................Connection to 10.150.22.134 closed by remote host.
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Connection to 10.150.22.134 closed.
 </span></code></pre></div>
-<!-- evidence:
-source: sonic-net/SONiC/doc/logging/persistent_logger/persistent_loglevel.md#L246-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  After moving the Logger's table from LOGLEVEL DB, the leftover in LOGLEVEL DB will be the JINJA2_CACHE key.
-  ... we recommend removing the jinja2 cache and the LOGLEVEL DB.
-  - Removing /sonic-config-engine/build/lib/redis_bcc.py file.
-reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除する設計の根拠。
--->
-
-<h3 id="_5">起動時の挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>database</code> コンテナ初期化中に <code>config_db.json</code> が CONFIG_DB に読み込まれる。<strong><code>rsyslog-config</code> は database コンテナ起動後</strong> に立ち上がるため、これより前にログメッセージが出ることは想定していない（出た場合は既定 loglevel）と HLD は明言している<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>dot 出力の有効化には <strong>blocking mode が前提</strong>。その上で次のいずれか<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
+<th>方式</th>
+<th>設定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>パラメータ</td>
+<td><code>reboot -v -b</code></td>
+</tr>
+<tr>
+<td>設定ファイル</td>
+<td><code>reboot.conf</code> で <code>show_timer=true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="etcsonicrebootconf"><code>/etc/sonic/reboot.conf</code><a class="headerlink" href="#etcsonicrebootconf" title="Permanent link">&para;</a></h3>
+<p>ファイル不在なら全部デフォルト<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>Config</th>
+<th>型</th>
+<th>デフォルト</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>LOGGER</code></td>
-<td><code>&lt;componentName&gt;</code></td>
-<td><code>LOGLEVEL</code></td>
-<td>SWSS or SAI のログレベル列挙値</td>
+<td><code>blocking_mode</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>blocking mode を有効化</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>LOGOUTPUT</code></td>
-<td><code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code></td>
+<td><code>blocking_mode_timeout</code></td>
+<td>int (秒)</td>
+<td><code>180</code></td>
+<td>blocking ループの上限。超えると script 終了（reboot がハングしている兆候）</td>
+</tr>
+<tr>
+<td><code>show_timer</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>10 秒ごとの dot 出力。<code>blocking_mode=true</code> が前提</td>
 </tr>
 </tbody>
 </table>
-<p><code>&lt;componentName&gt;</code> の例: <code>orchagent</code>, <code>syncd</code>, <code>buffermgrd</code>, <code>vxlanmgrd</code>, <code>SAI_API_BUFFER</code> 等。</p>
+<p>例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>blocking_mode=true
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>blocking_mode_timeout=10
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show_timer=true
+</span></code></pre></div>
+<p>CLI 経由の <code>Ctrl+C</code> で抜けたい場合は手動でも止められるため、CLI パラメータ側にはタイムアウトオプションを置かない（reboot.conf のみ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/reboot/Reboot_BlockingMode_HLD.md#L60-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  We don't want to make a break change to SONIC reboot command, so we introduce 2 options ...
+  - Parameter: Use command optional parameter `-b` to enable blocking mode for reboot script.
+  - Config file: ... `blocking_mode` is enabled in `reboot.conf` config file.
+  ... If the systemctl reboot failed, the deadloop might block the console thread.
+  So we introduce the timeout config to exit when reboot takes too long.
+reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop からの脱出を保証」という設計の根拠。
+-->
+
+<h3 id="platform-reboot">Platform reboot との関係<a class="headerlink" href="#platform-reboot" title="Permanent link">&para;</a></h3>
+<p><strong>Platform reboot が有効なときは blocking mode が効かない</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。プラットフォーム固有のフローに従う。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4114,77 +4128,68 @@ reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除す�
 </thead>
 <tbody>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -c &lt;component&gt;</code></td>
-<td>コンポーネント単体の設定</td>
+<td><code>reboot</code></td>
+<td>デフォルト（非 blocking）</td>
 </tr>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -a</code></td>
-<td>全コンポーネントに一括適用</td>
+<td><code>reboot -b</code></td>
+<td>blocking mode</td>
 </tr>
 <tr>
-<td><code>swssloglevel -l &lt;level&gt; -s -c &lt;api&gt;</code></td>
-<td><code>SAI_API_&lt;api&gt;</code> への適用</td>
-</tr>
-<tr>
-<td><code>swssloglevel -d</code></td>
-<td>全コンポーネントを既定値に戻す（新規）</td>
-</tr>
-<tr>
-<td><code>swssloglevel -p</code></td>
-<td>DB に登録されているコンポーネント一覧</td>
-</tr>
-<tr>
-<td><code>config save</code></td>
-<td>現在の CONFIG_DB を <code>config_db.json</code> に書き出す。本機能の永続化に必須</td>
+<td><code>reboot -v -b</code></td>
+<td>blocking + dot 出力</td>
 </tr>
 </tbody>
 </table>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB スキーマには変更なし。設定は <strong><code>/etc/sonic/reboot.conf</code></strong>（ファイル）で行う。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-logger.yang</code> モジュールに <code>LOGGER</code> テーブルを定義<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">EMERG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ALERT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">CRIT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_CRITICAL</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">container</span><span class="w"> </span><span class="nv">LOGGER</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">list</span><span class="w"> </span><span class="nv">LOGGER_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="p">;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGLEVEL</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">union</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGOUTPUT</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDOUT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDERR</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 自動化向け: 全 reboot を blocking 化</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/sonic/reboot.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s">blocking_mode=true</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s">blocking_mode_timeout=300</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s">show_timer=true</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s">EOF</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 手動でその場限りで blocking</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>sudo<span class="w"> </span>reboot<span class="w"> </span>-b<span class="w"> </span>-v
 </span></code></pre></div>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># orchagent を DEBUG にして恒久化</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-c<span class="w"> </span>orchagent
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>config<span class="w"> </span>save
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># 何もかも DEBUG にして調査</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-a
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>SAI_LOG_LEVEL_DEBUG<span class="w"> </span>-s<span class="w"> </span>-a
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 既定値に戻す</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>swssloglevel<span class="w"> </span>-d
-</span></code></pre></div>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>config save</code></strong>: 永続化はこの CLI に完全依存。設定だけして save しないと cold/fast 後にロスト。</li>
-<li><strong>warm reboot</strong>: CONFIG_DB を flush しないため、save 不要で維持される（旧仕様も同様）。</li>
-<li><strong><code>db_migrator</code></strong>: warm upgrade 経路で LOGLEVEL_DB の値を CONFIG_DB に移す変換が走る。これが入っていない古い <code>db_migrator</code> だと旧設定が失われる。</li>
-<li><strong>ダウングレード</strong>: HLD で完全サポート外と明記。新→旧 移行は loglevel が既定にリセットされる前提。</li>
-<li><strong><code>JINJA2_CACHE</code> 削除（Phase 2）</strong>: warm-reboot 性能への影響が無いことが事前計測で確認されているが、特殊な構成では再計測が必要。</li>
+<li><strong>後方互換オプトイン</strong>。指定しない限り従来どおりの非 blocking 動作<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>Platform reboot 有効時は無効</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>timeout を超えると blocking ループは抜ける。その時点で systemd reboot が来ていない場合、運用者は別途確認する必要がある</li>
+<li><code>reboot.conf</code> のフォーマットは単純な <code>key=value</code> ファイル。INI / TOML 等ではない</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ログレベルを変えたのに反映されない: 該当コンポーネントの <code>settingThread</code> が CONFIG_DB を購読する新版になっているか syslog で確認。古いバイナリだと LOGLEVEL_DB のままを見ている可能性。</li>
-<li>再起動後にロスト: <code>config save</code> 漏れ。<code>/etc/sonic/config_db.json</code> の <code>LOGGER</code> セクションを確認する。</li>
-<li>warm upgrade 後にロスト: <code>db_migrator</code> が走っているか、<code>swss-common</code> のバージョンに <code>del</code> がエクスポートされているか確認。</li>
-<li><code>swssloglevel -p</code> の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。</li>
+<li><strong><code>systemctl reboot</code></strong>: 内部で呼ぶコマンド。挙動は変えず、後段の wait の有無を変える</li>
+<li><strong>Platform reboot</strong>: 有効時は本機能を上書き</li>
+<li><strong>コンソールセッション管理 / 自動化（Ansible 等）</strong>: 「shell が必ず prompt 無しで切れる」を期待できるようになる</li>
+<li><strong>fast-reboot / warm-reboot</strong>: 本 HLD は通常 reboot を対象とする。fast/warm への適用は HLD 未言及</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>reboot -b</code> でも extra prompt が出る場合、<code>reboot.conf</code> でも有効化されているか・タイミングの再現条件を確認</li>
+<li><code>blocking_mode_timeout</code> 超過で抜けた場合、<code>systemctl reboot</code> 自体が失敗している可能性。<code>journalctl</code> で reboot ターゲットの遷移を確認</li>
+<li>dot が出ない場合、<code>-v</code> または <code>show_timer=true</code> が同時に有効か確認</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- reboot スクリプト (sonic-buildimage) の -b / -v 引数実装
+- /etc/sonic/reboot.conf パーサ実装
+- blocking_mode_timeout の最終デフォルト値 (180 vs 他)
+- platform reboot 検出ロジック
+- fast-reboot / warm-reboot への blocking mode 適用可否
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/logging/persistent_logger/persistent_loglevel.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/reboot/Reboot_BlockingMode_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
