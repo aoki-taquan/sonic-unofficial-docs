@@ -1,7 +1,7 @@
 ---
 title: NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
-    このページは公式 HLD のみを根拠に書かれている。HLD は 2020-11 の Rev 0.1 (Initial) のままで、現行 master に取り込まれているか未確認。`orchagent` 側の `NhgOrch` 実装存在およびスキーマ取り込みは要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/nhgorch.h:117` で `NhgOrch` クラス（`NhgOrchCommon<NextHopGroup>` 派生）、`sonic-swss-common/common/schema.h:56` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME`（CBF 拡張）、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` フィールドのパース、`routeorch.cpp:807-815` での `nexthop_group` と `ips/aliases` 排他検証を確認（verified at: 2026-05-09）。
 
 # NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
 
