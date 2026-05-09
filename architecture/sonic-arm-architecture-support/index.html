@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/everflow-support-on-voq-chassis/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-arm-architecture-support/">
       
       
-        <link rel="prev" href="../dump-on-sai-failure/">
+        <link rel="prev" href="../reset-factory-design/">
       
       
-        <link rel="next" href="../icmp-hardware-offload/">
+        <link rel="next" href="../sonic-ip-interface-loopback-action/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite） - SONiC 非公式ドキュメント</title>
+        <title>SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#voq-chassis-everflow-recycle-port-rewrite" class="md-skip">
+        <a href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+              SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -572,20 +574,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -603,13 +608,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -629,7 +634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -657,7 +662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -685,7 +690,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -713,7 +718,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -741,7 +746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -766,10 +771,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -785,6 +817,281 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルド時オプション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#makefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Makefile 変数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-base-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker base image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-slave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-slave クロスビルド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arm-x86" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARM 固有 / X86 固有パッケージの分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform レイアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apt-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apt repo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onie-image-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ONIE image / installer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONIE image / installer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ストレージとブートローダ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-installer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-arm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel ARM サポート
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kernel ARM サポート">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-kernel-expert-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Kernel (Expert Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -797,7 +1104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -825,7 +1132,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -853,7 +1160,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -3459,8 +3766,6 @@
       
   
   
-    
-  
   
   
     
@@ -3496,23 +3801,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -3530,13 +3832,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3556,7 +3858,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -3584,7 +3886,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -3612,7 +3914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -3637,37 +3939,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -3683,236 +3958,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        問題の所在
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#recycle-port" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        解決アイデア: Recycle port 経由
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#option-1-implicit-recyclesai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Option 1: Implicit Recycle（SAI 主導）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#option-2-explicit-recyclesonic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Option 2: Explicit Recycle（SONiC 主導）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#option-1-vs-option-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Option 1 vs Option 2 の比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        対象 orchagent の責務
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#future-work" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Future work / 未確定事項
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3925,7 +3970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -3953,7 +3998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -3981,7 +4026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -4009,7 +4054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -4037,7 +4082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -4065,7 +4110,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -4093,7 +4138,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -4718,7 +4763,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        問題の所在
+        ビルド時オプション
       
     </span>
   </a>
@@ -4726,10 +4771,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#recycle-port" class="md-nav__link">
+  <a href="#makefile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        解決アイデア: Recycle port 経由
+        Makefile 変数
       
     </span>
   </a>
@@ -4737,10 +4782,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-1-implicit-recyclesai" class="md-nav__link">
+  <a href="#docker-base-image" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Option 1: Implicit Recycle（SAI 主導）
+        Docker base image
       
     </span>
   </a>
@@ -4748,10 +4793,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-2-explicit-recyclesonic" class="md-nav__link">
+  <a href="#sonic-slave" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Option 2: Explicit Recycle（SONiC 主導）
+        sonic-slave クロスビルド
       
     </span>
   </a>
@@ -4759,10 +4804,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-1-vs-option-2" class="md-nav__link">
+  <a href="#arm-x86" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Option 1 vs Option 2 の比較
+        ARM 固有 / X86 固有パッケージの分岐
       
     </span>
   </a>
@@ -4770,10 +4815,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
+  <a href="#platform" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対象 orchagent の責務
+        Platform レイアウト
       
     </span>
   </a>
@@ -4781,10 +4826,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#future-work" class="md-nav__link">
+  <a href="#apt-repo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Future work / 未確定事項
+        apt repo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onie-image-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ONIE image / installer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONIE image / installer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ストレージとブートローダ
       
     </span>
   </a>
@@ -4795,9 +4863,53 @@
     </nav>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-installer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-arm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel ARM サポート
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kernel ARM サポート">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-kernel-expert-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Kernel (Expert Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4809,10 +4921,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        CLI / CONFIG_DB / YANG
       
     </span>
   </a>
@@ -4820,29 +4932,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4858,7 +4948,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4869,7 +4959,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4880,7 +4970,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4891,7 +4981,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4918,7 +5008,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/everflow-support-on-voq-chassis.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-arm-architecture-support.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4928,186 +5018,234 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本ページは公式 HLD（Rev 1, 2020-12）のみを根拠に書かれている。<code>mirrororch</code> / <code>neighorch</code> の VoQ 拡張、SYSTEM_PORT 対応の SAI 実装、recycle port のセットアップは未確認。HLD は 2020 年で 3 年以上経過しており、Option 1 / Option 2 のどちらが採用されたかは別途検証が必要。</p>
+<p>本 HLD は ARM サポート初期の設計文書で、<code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> の現行構成、<code>PLATFORM_ARCH</code> / <code>CONFIGURED_ARCH</code> の現行 Makefile 変数命名、<code>onie-image-armhf.conf</code> / <code>onie-image-arm64.conf</code> の存在、ARM 用 onie installer / sonic-installer の uboot 連携実装は実コードでの裏取り未済（priority=high）。</p>
 </div>
-<h1 id="voq-chassis-everflow-recycle-port-rewrite">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）<a class="headerlink" href="#voq-chassis-everflow-recycle-port-rewrite" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-arm-armhf-arm64-platform_arch-qemu-static">SONiC の ARM (armhf / arm64) ビルドサポート（<code>PLATFORM_ARCH</code> と qemu-static）<a class="headerlink" href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow</a> は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。<strong>通常スイッチ</strong> では <code>mirrororch</code> が <code>routeorch</code> / <code>neighorch</code> に問い合わせ、出力 IF と DST MAC を決定し、SAI <code>create_mirror_session</code> を呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、<strong>ミラー送信元と宛先が別 LC</strong> という構成が普通に発生する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC ビルドシステムを <strong>ARM32 (armhf) / ARM64</strong> に対応させるための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は元々 x86_64 中心で書かれており、Makefile / docker / onie installer / kernel ビルド / sonic-installer 等が AMD64 をハードコードしていた。本 HLD は変更対象を整理する。</p>
+<p>変更対象モジュール<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>各 FSI（line card 上の SONiC instance）からは「他 LC のポートは <code>SYSTEM_PORT</code> としてのみ見える」</li>
-<li>パケットの egress rewrite は宛先 LC の egress ASIC で行う</li>
-<li>そのままでは <code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> に他 LC のポートを指定できない</li>
+<li><code>sonic-slave</code> (ビルド環境 docker)</li>
+<li><code>dockers/</code>（base / ptf 等の docker image）</li>
+<li><code>rules/</code> / <code>Makefile</code> / build script</li>
+<li><code>apt</code> repo list</li>
+<li>ONIE image / installer</li>
 </ul>
-<p>本 HLD はこの問題を <strong>「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」</strong> 方式で解く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">問題の所在<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    SRC[ミラー対象パケット\n(LC0 ingress)] --&gt; M0[LC0 mirrororch]
-    M0 --&gt; Q{宛先 LC}
-    Q --&gt;|local| LOCAL[同 LC で完結]
-    Q --&gt;|remote LC1| RFAIL[× 通常パスでは MONITOR_PORT に\n他 LC のポートを指定できない]</code></pre>
-<p>「LC0 にミラー設定を入れて、宛先が LC1 のポート」というケースを成り立たせる仕組みが必要。</p>
-<h3 id="recycle-port">解決アイデア: Recycle port 経由<a class="headerlink" href="#recycle-port" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    PKT[原パケット] --&gt; IN[Ingress ASIC]
-    IN --&gt;|GRE encap 済みに rewrite| RP[Recycle port]
-    RP --&gt; IN2[Ingress ASIC を再通過]
-    IN2 --&gt;|switch fabric| EG[Egress LC ASIC]
-    EG --&gt; OUT[Mirror destination port]</code></pre>
-<p><code>mirrororch</code> が GRE encap 済みの新パケットを <strong>ingress ASIC で完成させ recycle port に流す</strong>。再注入後は <strong>既存の switch fabric forwarding</strong> に乗るため、宛先 LC への到達は通常パケットと同じ機構で済む<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。recycle port の有効化方法自体は HLD のスコープ外。</p>
-<h3 id="option-1-implicit-recyclesai">Option 1: Implicit Recycle（SAI 主導）<a class="headerlink" href="#option-1-implicit-recyclesai" title="Permanent link">&para;</a></h3>
-<p>SAI 側に手を入れる方式<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> 属性が <strong><code>SYSTEM_PORT</code> を受理できるよう拡張</strong> する</li>
-<li><code>mirrororch</code> は普段どおり destination IP → routeorch / neighorch で解決</li>
-<li><code>neighorch</code> が「remote neighbor の場合、interface alias まで返せる」ように拡張</li>
-<li><code>mirrororch</code> は remote neighbor だと判定したら <strong>その remote IF の SYSTEM_PORT</strong> を MONITOR_PORT として SAI に渡す</li>
-<li>SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。FDB も SAI 側で適切に設定</li>
-</ul>
-<p>つまり SONiC 側の変更は最小で、ASIC ベンダーの SAI 実装に責任が寄る。</p>
-<p>「destination port が同 LC（local）の場合は recycle するメリットが無いので <strong>local では recycle しない</strong>」のが推奨<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="option-2-explicit-recyclesonic">Option 2: Explicit Recycle（SONiC 主導）<a class="headerlink" href="#option-2-explicit-recyclesonic" title="Permanent link">&para;</a></h3>
-<p>SAI 側変更を最小化する代わり、<code>mirrororch</code> が頑張る方式<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>recycle port を <strong>L3 port として作成可能</strong> であることが前提</li>
-<li><code>neighorch</code> の拡張は Option 1 と同じ</li>
-<li><code>mirrororch</code> は remote neighbor だと判定したら <strong>MONITOR_PORT に「recycle port」、DST MAC に「router MAC」</strong> を設定</li>
-<li>SAI から見れば普通の single-chip ミラーと同じ。GRE encap 済みパケットが recycle port から出る</li>
-<li>再注入時は DST MAC が router MAC のため <strong>routing される</strong>。GRE の destination IP に対するルーティングが効くので、複数 nexthop なら <strong>load balance</strong> されるおまけ付き</li>
-</ul>
-<p>local 宛のときも recycle を使う方が <code>mirrororch</code> の実装が両ケース共通になり単純化する。さらに local でも複数 nexthop で LB できるメリットがある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="option-1-vs-option-2">Option 1 vs Option 2 の比較<a class="headerlink" href="#option-1-vs-option-2" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>観点</th>
-<th>Option 1（SAI 主導）</th>
-<th>Option 2（SONiC 主導）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SAI 変更</td>
-<td>大（SYSTEM_PORT 受理＋recycle ロジック）</td>
-<td>小（recycle port を L3 として持てれば良い）</td>
-</tr>
-<tr>
-<td>SONiC 変更</td>
-<td>小</td>
-<td>大（mirrororch が recycle port + router MAC 設定）</td>
-</tr>
-<tr>
-<td>local 宛で recycle</td>
-<td>非推奨</td>
-<td>推奨（実装統一・LB）</td>
-</tr>
-<tr>
-<td>パケットの再注入時動作</td>
-<td>bridging（FDB 経由）</td>
-<td>routing（router MAC + DST IP）</td>
-</tr>
-<tr>
-<td>LB（複数 nexthop）</td>
-<td>不可</td>
-<td>可（routing なので ECMP 効く）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-</tbody>
-</table>
-<!-- evidence:
-source: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  This option can be implemented with minimal changes to SAI as long as a recycle port can be created.
-  ... mirrororch needs to use the recycle port as the mirror destination port and the router mac as the destination MAC address.
-  ... When the mirror destination port is a local port, it's recommended to recycle mirror packets too
-  for the following reasons: The implementation of mirrororch is simplified ... mirrored packets can be load-balanced
-reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
--->
-
-<h3 id="orchagent">対象 orchagent の責務<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>役割</th>
-<th>コンポーネント</th>
-<th>拡張</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>neighbor 解決</td>
-<td><code>neighorch</code></td>
-<td>remote neighbor の interface alias / system port を返せるようにする</td>
-</tr>
-<tr>
-<td>route 解決</td>
-<td><code>routeorch</code></td>
-<td>既存どおり</td>
-</tr>
-<tr>
-<td>ミラーセッション SAI 化</td>
-<td><code>mirrororch</code></td>
-<td>SYSTEM_PORT or recycle port + router MAC への切替</td>
-</tr>
-<tr>
-<td>ASIC 側パケット処理</td>
-<td>SAI</td>
-<td>（Option 1）SYSTEM_PORT 受理・recycle・FDB 設定</td>
-</tr>
-</tbody>
-</table>
-<h3 id="future-work">Future work / 未確定事項<a class="headerlink" href="#future-work" title="Permanent link">&para;</a></h3>
-<ul>
-<li>HLD の <code>3 Testing</code> と <code>4 Future Work</code> 節は <strong>TBD</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>recycle port 自体の作成方法はスコープ外</li>
-</ul>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>通常の Everflow と同じく <code>MIRROR_SESSION</code> テーブル（destination IP・GRE 情報など）を使う。VoQ chassis 固有の追加スキーマは HLD で提案されていない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>VoQ chassis 固有 CLI は提案されていない。<code>config mirror_session</code> / <code>show mirror_session</code> 等の既存 CLI を流用する想定。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>Everflow1<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span><span class="m">10</span>.0.0.11<span class="w"> </span>0x88be<span class="w"> </span>0x6<span class="w"> </span><span class="m">0</span>
+<h3 id="_3">ビルド時オプション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>ユーザーは <code>make configure</code> 時に <code>PLATFORM</code> と一緒に <code>PLATFORM_ARCH</code> (or <code>SONIC_ARCH</code>) を指定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># armhf</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-armhf<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>armhf
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># arm64</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-arm64<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>arm64
 </span></code></pre></div>
-<p>VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Option 2 で recycle 経由の経路が組まれる。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>未指定なら <strong><code>amd64</code></strong> が default<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="makefile">Makefile 変数<a class="headerlink" href="#makefile" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PLATFORM_ARCH</code></td>
+<td>ターゲットアーキテクチャ（<code>armhf</code> / <code>arm64</code> / <code>amd64</code>）</td>
+</tr>
+<tr>
+<td><code>CONFIGURED_ARCH</code></td>
+<td>Makefile 内で <code>amd64</code> 直書きの代わりに使う変数</td>
+</tr>
+</tbody>
+</table>
+<p>例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-makefile highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c"># 旧</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">LINUX_IMAGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>linux-image-<span class="k">$(</span>KVERSION<span class="k">)</span>_..._amd64.deb
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c"># 新</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">LINUX_IMAGE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>linux-image-<span class="k">$(</span>KVERSION<span class="k">)</span>_..._<span class="k">$(</span>CONFIGURED_ARCH<span class="k">)</span>.deb
+</span></code></pre></div>
+<p><code>amd64</code> をハードコードしている全 <code>rules/*.mk</code> / <code>src/*/Makefile</code> を <code>$(CONFIGURED_ARCH)</code> に置換する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="docker-base-image">Docker base image<a class="headerlink" href="#docker-base-image" title="Permanent link">&para;</a></h3>
+<p>SONiC docker は <strong><code>debian</code> ベース</strong> から <strong><code>multiarch/&lt;distribution&gt;-&lt;arm_arch&gt;</code></strong> ベースに切替<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dockers/docker-base
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dockers/docker-base-stretch
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>dockers/docker-ptf
+</span></code></pre></div>
+<p>これにより各種コンパイル / packaging が ARM アーキテクチャ向けに走る。</p>
+<h3 id="sonic-slave"><code>sonic-slave</code> クロスビルド<a class="headerlink" href="#sonic-slave" title="Permanent link">&para;</a></h3>
+<p><code>sonic-slave</code> は他全 docker のビルド環境を提供する。<strong>ホスト x86_64 上で ARM バイナリを動かすため <code>binfmt-misc</code> + <code>qemu-static</code> を使う</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-slave-armhf
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-slave-arm64
+</span></code></pre></div>
+<p>セットアップ:</p>
 <ul>
-<li><strong>本 HLD は 2020 年版で TBD が多い</strong>。Option 1 / Option 2 のどちらが master に採択されたか、recycle port の作成手順、テスト計画は未記載<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>パケットが ASIC を 2 度通過する（ingress → recycle → ingress → fabric → egress）ため、<strong>スループットや遅延に影響</strong></li>
-<li>recycle port の帯域がボトルネックになり得る</li>
-<li><code>SYSTEM_PORT</code> を <code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> で受理する SAI 拡張（Option 1）は ASIC 依存</li>
+<li><code>qemu-static</code> をホストに install</li>
+<li>docker <code>multiarch/qemu-user-static:register</code> を実行して binfmt 登録</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>graph LR
+    HOST[Host x86_64]
+    QEMU[binfmt-misc&lt;br/&gt;qemu-static]
+    SLA[sonic-slave-armhf / arm64&lt;br/&gt;(ARM image)]
+    BIN[ARM bin 実行]
+    HOST --&gt; QEMU --&gt; SLA --&gt; BIN</code></pre>
+<h3 id="arm-x86">ARM 固有 / X86 固有パッケージの分岐<a class="headerlink" href="#arm-x86" title="Permanent link">&para;</a></h3>
+<p><code>ixgbe</code> / <code>grub</code> のような X86 専用パッケージは <strong>ARM ビルドから除外</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。アーキテクチャ別の package 一覧を Makefile / rules で切替。</p>
+<h3 id="platform">Platform レイアウト<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h3>
+<p>同じ board でも CPU vendor が違うことがあるため、<strong>platform を arch 別</strong> にする<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>platform/marvell-armhf/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ├ docker-syncd-mrvl-rpc.mk
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  ├ docker-syncd-mrvl-rpc/...
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ├ libsaithrift-dev.mk
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ├ linux-kernel-armhf.mk
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ├ one-image.mk
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ├ platform.conf
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ├ rules.mk
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  └ sai.mk
+</span></code></pre></div>
+<h3 id="apt-repo">apt repo<a class="headerlink" href="#apt-repo" title="Permanent link">&para;</a></h3>
+<p>Azure debian repo は ARM パッケージを提供しないため、<strong>ARM 用に sources.list を差し替え</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>files/apt/sources.list-armhf
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>files/build_templates/sonic_debian_extension.j2
+</span></code></pre></div>
+<h3 id="onie-image-installer">ONIE image / installer<a class="headerlink" href="#onie-image-installer" title="Permanent link">&para;</a></h3>
+<p>ONIE image 設定 / インストーラスクリプトを arch 別に分ける<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>設定ファイル</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onie-image.conf</code></td>
+<td>x86_64</td>
+</tr>
+<tr>
+<td><code>onie-image-armhf.conf</code></td>
+<td>ARMHF</td>
+</tr>
+<tr>
+<td><code>onie-image-arm64.conf</code></td>
+<td>ARM64</td>
+</tr>
+<tr>
+<td><code>platform/&lt;TARGET&gt;/platform.conf</code></td>
+<td>各プラットフォーム固有設定。primary storage / partition / bootloader</td>
+</tr>
+</tbody>
+</table>
+<p>ONIE installer script<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>installer/x86_64/install.sh
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>installer/arm64/install.sh
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>installer/armhf/install.sh
+</span></code></pre></div>
+<p>役割:</p>
 <ul>
-<li><strong>VoQ chassis architecture</strong>: 各 LC の FSI / SYSTEM_PORT 抽象に依存</li>
-<li><strong><code>routeorch</code> / <code>neighorch</code></strong>: remote neighbor 情報を返す経路の整備</li>
-<li><strong>既存 Everflow（<a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow HLD</a>）</strong>: 通常スイッチ向けの mirror セッション設計をベースとする</li>
-<li><strong>Recycle port</strong>: 本機能の前提となるハード資源</li>
+<li>bootloader update（boot image 詳細）</li>
+<li>primary disk のフォーマット / パーティション</li>
+<li>SONiC image を <code>/host</code> に展開</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h4 id="_4">ストレージとブートローダ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<p>ARM はストレージとブートローダのバリエーションが大きいため <code>platform.conf</code> で差を吸収<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>x86_64</th>
+<th>ARM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary storage</td>
+<td>SATA 系</td>
+<td>NAND / NOR / SD / MMC など</td>
+</tr>
+<tr>
+<td>Bootloader</td>
+<td>grub</td>
+<td>uboot or 独自</td>
+</tr>
+</tbody>
+</table>
+<p><code>platform.conf</code> で:</p>
 <ul>
-<li>ミラーパケットが宛先 LC に届かない場合、recycle port が enable されているか・L3 化されているか（Option 2）を確認</li>
-<li>mirror destination が remote のとき <code>mirrororch</code> ログで MONITOR_PORT に何（SYSTEM_PORT / recycle）が選ばれているかを確認</li>
-<li>パケットは出るが宛先で受からない場合、<code>neighorch</code> の remote neighbor 情報が正しいか確認</li>
+<li>primary storage の選択 / partition / format / mount</li>
+<li>bootloader 設定（boot image 詳細を書く方法）</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>mount path を共通 SONiC installer に渡し、image 展開等の共通処理は再利用する設計。</p>
+<h3 id="sonic-installer"><code>sonic-installer</code><a class="headerlink" href="#sonic-installer" title="Permanent link">&para;</a></h3>
+<p><code>sonic-installer/main.py</code> は image upgrade / deletion / boot order 変更のため bootloader 設定を扱う。x86 では grub、<strong>ARM では uboot 用ファームウェアユーティリティ</strong> で boot 設定を読み書き<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="kernel-arm">Kernel ARM サポート<a class="headerlink" href="#kernel-arm" title="Permanent link">&para;</a></h3>
+<p><code>src/sonic-linux-kernel</code> の Makefile / patch を ARM 向けにも make できるよう更新<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>.config</code> は debian build infrastructure 経由で生成されるため、<code>dpkg</code> 環境変数で対象アーキテクチャを正しく選択する必要。</p>
+<h4 id="custom-kernel-expert-mode">Custom Kernel (Expert Mode)<a class="headerlink" href="#custom-kernel-expert-mode" title="Permanent link">&para;</a></h4>
+<p>ARM では SONiC default kernel と異なるバージョンが必要なケースがあり、<strong>platform 固有 makefile で上書き</strong> する<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>platform/marvell-armhf/linux-kernel-armhf.mk
+</span></code></pre></div>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
+<p>本 HLD は <strong>runtime 設定を伴わない</strong>。ビルド時オプション (<code>SONIC_ARCH</code>) と Makefile / docker 構成のみ。</p>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ARMHF (32-bit ARM) image</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-armhf<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>armhf
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>make<span class="w"> </span>target/sonic-marvell-armhf.bin
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># ARM64 image</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>marvell-arm64<span class="w"> </span><span class="nv">SONIC_ARCH</span><span class="o">=</span>arm64
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>make<span class="w"> </span>target/sonic-marvell-arm64.bin
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># 既定（x86_64）</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>mellanox
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>make
+</span></code></pre></div>
+<p>ビルド前提:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># qemu-static を有効化（ホスト x86_64 上で ARM バイナリを実行）</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--privileged<span class="w"> </span>multiarch/qemu-user-static:register
+</span></code></pre></div>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ARM では <strong>debian repo を別途用意</strong> する必要がある（azure debian repo 非対応）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>カスタムカーネルは platform 固有 makefile で上書きが必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ARM ビルドはホスト x86_64 上で <strong>qemu emulation</strong> が必須。ネイティブ ARM ホストでビルドする場合は別経路</li>
+<li><code>amd64</code> ハードコード箇所が <strong>多数の Makefile に散在</strong>。新機能追加時にも <code>$(CONFIGURED_ARCH)</code> を使うことを忘れないよう注意</li>
+<li>HLD は ARM 対応初期のものであり、<strong>現在の SONiC build 構成と差分</strong> がある可能性大</li>
+<li>ONIE installer の partition / bootloader 部分は <strong>platform vendor 依存度が高い</strong></li>
+</ul>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>sonic-buildimage</code> 全体</strong>: rules / Makefile / docker 構成</li>
+<li><strong><code>sonic-slave</code></strong>: クロスビルド環境</li>
+<li><strong><code>sonic-linux-kernel</code></strong>: kernel build</li>
+<li><strong><code>sonic-installer</code></strong>: bootloader アクセス（grub / uboot）</li>
+<li><strong>ONIE installer</strong>: image インストール</li>
+<li><strong>platform vendor のリポジトリ</strong> (<code>platform/marvell-armhf</code> 等): platform 固有 mk / conf</li>
+</ul>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ARM build が x86 binary を吐く → <code>SONIC_ARCH</code> 指定漏れ、<code>PLATFORM_ARCH</code> の参照箇所を確認</li>
+<li>docker build が失敗 → <code>multiarch/qemu-user-static:register</code> 実行済みか、<code>binfmt-misc</code> が有効か (<code>update-binfmts --display</code>)</li>
+<li>apt 取得失敗 → <code>files/apt/sources.list-armhf</code> の repo 設定が正しいか</li>
+<li>onie installer が動かない → <code>platform/&lt;target&gt;/platform.conf</code> の partition / bootloader 設定を確認</li>
+<li>sonic-installer が boot order を変更できない → ARM では uboot ファームウェアユーティリティが入っているかを確認</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- Option 1 / Option 2 のどちらが master に取り込まれたか
-- mirrororch / neighorch の VoQ 向け拡張コード
-- SYSTEM_PORT を受理する SAI mirror 実装の community 提供状況
-- recycle port のセットアップ手順（SONiC 側 / ベンダー SAI 側）
-- 帯域・遅延への影響評価
-- HLD の TBD 節（テスト・future work）の現状
+- PLATFORM_ARCH / CONFIGURED_ARCH 変数の現行 Makefile 命名と amd64 ハードコード残存の確認
+- sonic-slave-armhf / sonic-slave-arm64 の現行 Dockerfile 構成と qemu-static 連携確認
+- onie-image-armhf.conf / onie-image-arm64.conf / installer/<arch>/install.sh の現行存在確認
+- sonic-installer.main の uboot 連携経路実装確認
+- src/sonic-linux-kernel の ARM 向けパッチと .config 生成 (dpkg 環境変数) の現行確認
+- platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/everflow.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-multi-architecture/sonic_arm_support.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
