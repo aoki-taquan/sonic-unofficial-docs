@@ -1,7 +1,7 @@
 ---
 title: BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 1.0, 2021-10）のみを根拠に書かれている。`BfdOrch` 実装、SAI BFD API の community 取り込み状況、`show bfd session` の sonic-utilities 実装は未確認。HLD は 2021 年時点の Phase 1 設計であり、現行 master では拡張・改名されている可能性がある。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/bfdorch.cpp`（BfdOrch 本体、`SAI_BFD_SESSION_TYPE_*` / `SAI_BFD_SESSION_STATE_*` 利用）、`sonic-swss-common/common/schema.h:120` の `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"`、line 491 の STATE_DB 同名テーブル、`sonic-utilities/show/main.py:2669` 系の `show bfd` 実装を確認済み（verified at: 2026-05-09）。 Phase 2 以降の CONFIG_DB スキーマや warm reboot 連携は本ページ範囲外として queue に残置。
 
 # BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
 
