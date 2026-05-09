@@ -1,7 +1,7 @@
 ---
 title: VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは Smart Switch HA 関連 HLD（短い拡張仕様）のみを根拠にしている。`VNET_ROUTE_TUNNEL_TABLE` の `check_directly_connected` フィールド、`VnetOrch` の ARP 検査ロジック、`VNET_LOCAL_ENDPOINT_REDIRECT` ACL テーブルタイプ、`hamgrd` の連携経路は未裏取り。Overlay ECMP enhancements HLD と smart-switch-ha-hld との依存関係も別途整理が必要。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/vnetorch.cpp:3213,3251-3253,3306,3334` で `check_directly_connected` フィールドのパースと `vnet_tunnel_route_check_directly_connected` への保存、`isPartiallyLocal` ガードを確認。`sonic-swss/orchagent/tunneltermhelper.h:12-15` で `VNET_TUNNEL_TERM_ACL_TABLE_TYPE = "VNET_LOCAL_ENDPOINT_REDIRECT"`、`VNET_TUNNEL_TERM_ACL_TABLE = "VNET_LOCAL_ENDPOINT"`、`VNET_TUNNEL_TERM_ACL_BASE_PRIORITY = 9998`、`VNET_TUNNEL_TERM_ACL_RULE_NAME_SUFFIX = "TUNN_TERM"` を確認。`sonic-dash-ha/crates/hamgrd` 側にも `check_directly_connected` 関連のフィールドが存在（verified at: 2026-05-09）。
 
 # VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
 
