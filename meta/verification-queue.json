@@ -1698,6 +1698,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/system/reset-local-users-passwords-during-init-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "reset-local-users-passwords.service の sonic-host-services 取り込み確認",
+        "sonic-platform-common の LocalUsersConfigurationResetBase 実装存在確認",
+        "config local-users-passwords-reset CLI と sonic-local-users-passwords-reset YANG の現行 master 取り込み確認",
+        "ENABLE_LOCAL_USERS_PASSWORDS_RESET / CHANGE_DEFAULT_PASSWORD ビルドフラグの現行値確認",
+        "warm/fast-reboot 検知ロジックが service 内で正しく機能するか確認",
+        "systemd 依存関係 (sshd/getty/serial-getty より before) が現行 service unit に設定されているか確認"
+      ],
+      "priority": "medium",
+      "issue": 519
+    },
+    {
       "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
       "issue": 317,
       "verification": "code-verified",

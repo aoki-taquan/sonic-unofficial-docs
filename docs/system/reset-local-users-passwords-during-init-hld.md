@@ -1,0 +1,118 @@
+---
+title: ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/password-reset/SONiC_local_users_password_reset_hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - LOCAL_USERS_PASSWORDS_RESET
+  cli:
+    - config local-users-passwords-reset
+    - show local-users-passwords-reset
+  yang:
+    - sonic-local-users-passwords-reset
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    HLD は 2024 年 1〜2 月版 (Rev 2.1)。`reset-local-users-passwords.service`、`sonic-platform-common` の `LocalUsersConfigurationResetBase`、各 vendor 実装、`/etc/sonic/default_users.json` のフォーマット、`ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグの現行 master 取り込みは未裏取り。
+
+# ローカルユーザパスワード init 時リセット（long reset button + `reset-local-users-passwords.service`）
+
+## 概要
+
+Boot 時に **long reset button (>=15 秒押下)** が検知されたら、非デフォルトユーザを削除しデフォルトユーザのパスワードを工場出荷状態に戻し expire 化する init-time セキュリティ機能[^1]。
+
+要件[^1]:
+- vendor 毎にトリガ条件を上書き可（既定は long reset button）
+- ビルドフラグ + CLI で enable/disable
+- **既定 disabled**
+- platform が long reset サポートする場合のみ起動
+- warm/fast-reboot 影響なし
+
+## 動作仕様
+
+### systemd service
+
+新 service `reset-local-users-passwords.service` を以下の依存で組み込む[^1]:
+
+- **after**: `database.service`（CONFIG_DB から feature state を読むため）
+- **before**: `sshd.service` / `getty.target` / `systemd-logind.service` / `serial-getty@ttyS0.service`（接続を許す前にリセットを完了する）
+
+### クラス階層
+
+```mermaid
+classDiagram
+  class LocalUsersConfigurationResetBase {
+    +should_trigger()
+    +start()
+  }
+  class LocalUsersConfigurationResetPlatform {
+    +should_trigger() vendor 拡張
+    +start() vendor 拡張
+  }
+  LocalUsersConfigurationResetBase <|-- LocalUsersConfigurationResetPlatform
+```
+
+ファイル[^1]:
+
+| ファイル | 役割 |
+|---------|------|
+| `src/sonic-platform-common/.../reset_local_users_passwords_base.py` | 既定実装 (long reset button + `/etc/sonic/default_users.json` の参照) |
+| `platform/<vendor>/sonic_platform/reset_local_users_passwords.py` | vendor ごとの上書き |
+| `src/sonic-host-services/scripts/reset-local-users-passwords` | service の entry point。vendor クラスを import して `start()` 呼び出し |
+
+### 状態判定 + warm/fast-reboot 共存
+
+`reset-local-users-passwords` スクリプトは:
+
+1. warm/fast boot 進行中なら待機
+2. CONFIG_DB の `LOCAL_USERS_PASSWORDS_RESET` テーブル状態を読む
+3. enabled かつ `should_trigger()` が true なら `start()` を呼ぶ
+
+ビルド時に `rules/config` の `ENABLE_LOCAL_USERS_PASSWORDS_RESET ?= y` と既存 `CHANGE_DEFAULT_PASSWORD ?= y` が必要[^1]。
+
+### CLI
+
+```bash
+config local-users-passwords-reset state {enabled|disabled}
+
+show local-users-passwords-reset
+state
+-------
+enabled
+```
+
+### YANG
+
+`sonic-local-users-passwords-reset.yang` を新設。`LOCAL_USERS_PASSWORDS_RESET / STATE / state` を `enumeration {enabled, disabled}` 既定 `disabled` で定義[^1]。
+
+## パフォーマンス
+
+`reset-local-users-passwords.service` は long reset 検出時 **150〜300 ms** で完了し init 全体を遅延させない要件[^1]。
+
+## 制限事項
+
+- platform が long reset 検知をサポートしないと service 自体起動しない
+- 起動時のみ動作。実行中の running config への影響なし
+- warm/fast-reboot では何もしない[^1]
+
+## 干渉する機能
+
+- **`CHANGE_DEFAULT_PASSWORD`** ビルドフラグ: 既存機能。本機能とともに `y` でないと組み込まれない
+- **`/etc/sonic/default_users.json`**: デフォルトユーザ群とパスワードの基準
+- **systemd 起動順**: sshd / getty / serial-getty より先に動く
+
+## トラブルシューティング
+
+- `systemctl status reset-local-users-passwords.service` で起動状態
+- `journalctl -u reset-local-users-passwords` で実行ログ
+- `redis-cli -n 4 hgetall "LOCAL_USERS_PASSWORDS_RESET|STATE"` で feature state
+- vendor 実装の `should_trigger()` の実体 (例: GPIO 経由の long reset 判定) を vendor specific docker または `sonic_platform` 配下に確認
+
+## 引用元
+
+[^1]: [sonic-net/SONiC doc/password-reset/SONiC_local_users_password_reset_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/password-reset/SONiC_local_users_password_reset_hld.md)
