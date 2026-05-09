@@ -1,0 +1,12 @@
+{
+  "page": "docs/internals/swss-schema.md",
+  "issue": 334,
+  "verification": "hld-only",
+  "concerns": [
+    "swss-schema.md は生きたドキュメントで master 更新で常に変わる。コミット SHA 4305596 のスナップショット",
+    "本ページに列挙した中心テーブル名と sonic-swss-common/common/schema.h の整合確認",
+    "CONFIG_DB ↔ APPL_DB 投影を担う *Mgr プロセスのテーブル変換マッピングの最新性確認",
+    "本ページは概観のみで完全定義は元 HLD 参照という構成。詳細 verify は実装側 schema.h と突き合わせて行う"
+  ],
+  "priority": "low"
+}
