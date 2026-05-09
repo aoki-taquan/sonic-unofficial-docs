@@ -1073,7 +1073,8 @@
         "subinterface（VLAN / IP）対応の現行ステータス確認（本 HLD 範囲外）"
       ],
       "priority": "medium",
-      "issue": 175
+      "issue": 175,
+      "pr": 176
     }
   ]
 }
