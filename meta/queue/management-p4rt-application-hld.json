@@ -1,13 +1,15 @@
 {
   "page": "docs/management/p4rt-application-hld.md",
   "issue": 244,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
+  "verified_concerns": [
+    "p4rt-app Docker コンテナは sonic-buildimage/dockers/docker-sonic-p4rt/ (Dockerfile.j2, supervisord.conf, start.sh, p4rt.sh) として存在",
+    "P4Orch 実装は sonic-swss/orchagent/p4orch/p4orch.h:46 で class P4Orch : public ZmqOrch として確認",
+    "APP_P4RT_TABLE_NAME / APP_P4RT_TABLES_DEFINITION_TABLE_NAME は sonic-swss-common/common/schema.h:59,60 に定義",
+    "APPL_STATE_DB は sonic-swss-common/common/schema.h:27 で DB ID 14 として定義済み"
+  ],
   "concerns": [
-    "p4rt-app コンテナと gRPC :9559 サービスの実装存在確認",
-    "P4Orch / HashOrch の SWITCH_TABLE ハッシュ属性プログラミング実装確認",
-    "APPL_STATE_DB によるレスポンスチャネルと失敗時 rollback の実装確認",
-    "CONFIG_DB の P4RT テーブルスキーマ取り込みと P4Info push 検証ロジックの実装確認",
-    "HLD は 2021-06 改訂のため現行 master 実装との大幅な乖離リスクあり"
+    "HashOrch は独立コンポーネントとして実装されておらず、ハッシュ属性は SwitchOrch + CFG_SWITCH_HASH_TABLE_NAME (switchorch.cpp:1507, orchdaemon.cpp:199, switch_helper.cpp:24-) が扱う"
   ],
   "priority": "high"
 }

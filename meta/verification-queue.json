@@ -154,13 +154,15 @@
     {
       "page": "docs/management/p4rt-application-hld.md",
       "issue": 244,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "p4rt-app Docker コンテナは sonic-buildimage/dockers/docker-sonic-p4rt/ (Dockerfile.j2, supervisord.conf, start.sh, p4rt.sh) として存在",
+        "P4Orch 実装は sonic-swss/orchagent/p4orch/p4orch.h:46 で class P4Orch : public ZmqOrch として確認",
+        "APP_P4RT_TABLE_NAME / APP_P4RT_TABLES_DEFINITION_TABLE_NAME は sonic-swss-common/common/schema.h:59,60 に定義",
+        "APPL_STATE_DB は sonic-swss-common/common/schema.h:27 で DB ID 14 として定義済み"
+      ],
       "concerns": [
-        "p4rt-app コンテナと gRPC :9559 サービスの実装存在確認",
-        "P4Orch / HashOrch の SWITCH_TABLE ハッシュ属性プログラミング実装確認",
-        "APPL_STATE_DB によるレスポンスチャネルと失敗時 rollback の実装確認",
-        "CONFIG_DB の P4RT テーブルスキーマ取り込みと P4Info push 検証ロジックの実装確認",
-        "HLD は 2021-06 改訂のため現行 master 実装との大幅な乖離リスクあり"
+        "HashOrch は独立コンポーネントとして実装されておらず、ハッシュ属性は SwitchOrch + CFG_SWITCH_HASH_TABLE_NAME (switchorch.cpp:1507, orchdaemon.cpp:199, switch_helper.cpp:24-) が扱う"
       ],
       "priority": "high"
     },
@@ -335,6 +337,19 @@
         "CONFIG_DB の BGP_VOQ_CHASSIS_NEIGHBOR スキーマが現行 master にあるか未確認",
         "sonic-config-engine の minigraph → BGP_VOQ_CHASSIS_NEIGHBOR 振り分け実装確認",
         "HLD は 2020-09 改訂のため現行 master 実装との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
+      "page": "docs/routing/ipv6-link-local-enhancements.md",
+      "issue": 308,
+      "verification": "hld-only",
+      "concerns": [
+        "IntfMgr / IntfOrch の ipv6_use_link_local_only ハンドラが現行 master にあるか未確認",
+        "NeighOrch の NextHopKey に alias を含める実装が現行コードで維持されているか未確認",
+        "fe80::/10 サブネットルートの IP2ME プログラム実装の存在確認",
+        "config ipv6 enable/disable link-local CLI の sonic-utilities への取り込み確認",
+        "HLD は 2021-06 改訂の v0.3 で 4 年以上経過、現行 master との乖離リスクあり"
       ],
       "priority": "high"
     },
@@ -995,6 +1010,18 @@
       "priority": "medium",
       "issue": 189,
       "pr": 190
+    },
+    {
+      "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
+      "issue": 307,
+      "verification": "hld-only",
+      "concerns": [
+        "bfdsyncd プロセスのソース・supervisord 取り込み確認（FEATURE.bgp.bfd_hw_offload 分岐）",
+        "BfdOrch の SAI_BFD_SESSION_ATTR_REMOTE_* 取得実装の存在確認",
+        "IPv6 link-local 用 inject-down モードの BfdOrch / SAI 実装確認",
+        "bfdd と BfdOrch の local discriminator マッピング実装存在確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",

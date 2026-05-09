@@ -1,7 +1,7 @@
 ---
 title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2021-06 (Rev v0.1) で 4 年以上前。`p4rt-app` Docker / P4Orch / HashOrch / APPL_STATE_DB の実装存在、CONFIG_DB `P4RT` テーブルの取り込みは要裏取り。
+!!! warning "裏取りステータス: Discrepancy-found"
+    `p4rt-app` Docker、`P4Orch`、`APP_P4RT_TABLE_NAME` / `APPL_STATE_DB` は実装済みを確認した一方、HLD で言及された **HashOrch（OrchAgent 新規追加）** は現行 master では独立コンポーネントとして存在せず、ハッシュ属性は既存の `SwitchOrch` (`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ) が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形になっている。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # P4RT アプリケーション（PINS の gRPC サービス、port 9559）
 
@@ -157,6 +157,20 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 - コントローラ接続が backup のままで書けない: election ID と role を確認。同一 role の primary が他接続にいる可能性。
 - Write が ASIC に反映されない: `APPL_STATE_DB` に成功が書かれているか確認。書かれていなければ `P4Orch` 側で失敗してロールバックされている可能性[^1]。
 - P4Info push が reject される: PacketIO メタデータと SAI フィールド型の互換性を確認。
+
+## 実装との乖離
+
+実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+
+- **HashOrch は独立コンポーネントではない**: HLD は OrchAgent に「`HashOrch` を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを `SWITCH_TABLE` の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した `HashOrch` クラスは存在しない。代わりに既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`sonic-swss/orchagent/switch/switch_helper.cpp:24-` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップを通じて SAI 属性を設定する (`orchagent/switchorch.cpp:1507`、`orchdaemon.cpp:199`)。HLD の論理（P4RT App → orchagent → SAI hash 属性）は同等だが、責務が `HashOrch` ではなく `SwitchOrch` 側にある。
+
+主要な合致点:
+
+- `sonic-buildimage/dockers/docker-sonic-p4rt/{Dockerfile.j2,supervisord.conf,start.sh,p4rt.sh}` で p4rt コンテナの起動ロジックが存在
+- `sonic-swss-common/common/schema.h:59,60` に `APP_P4RT_TABLE_NAME` / `APP_P4RT_TABLES_DEFINITION_TABLE_NAME` 定義
+- `sonic-swss-common/common/schema.h:27` に `APPL_STATE_DB = 14` の DB ID 定義
+- `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`、`p4orch_util.cpp` に `APP_P4RT_*_TABLE_NAME` の sub-table 定義群
+- `sonic-swss/orchagent/p4orch/ext_tables_manager.cpp:723` で `APP_P4RT_TABLE_NAME` 経由のレスポンス publish
 
 ## 引用元
 
