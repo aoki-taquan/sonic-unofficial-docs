@@ -1,0 +1,12 @@
+{
+  "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
+  "issue": 307,
+  "verification": "hld-only",
+  "concerns": [
+    "bfdsyncd プロセスのソース・supervisord 取り込み確認（FEATURE.bgp.bfd_hw_offload 分岐）",
+    "BfdOrch の SAI_BFD_SESSION_ATTR_REMOTE_* 取得実装の存在確認",
+    "IPv6 link-local 用 inject-down モードの BfdOrch / SAI 実装確認",
+    "bfdd と BfdOrch の local discriminator マッピング実装存在確認"
+  ],
+  "priority": "medium"
+}
