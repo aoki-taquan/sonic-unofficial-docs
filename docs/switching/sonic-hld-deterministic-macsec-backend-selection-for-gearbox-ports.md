@@ -1,7 +1,7 @@
 ---
 title: Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2025-09 ドラフト）のみを根拠に書かれている。`gearsyncd` / `GearboxUtils` / `MACsecOrch` の `macsec_supported` 取り扱い、APP_DB `_GEARBOX_TABLE` のフィールド追加、現行 master のコード反映状況は未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/gearsyncd/gearboxparser.cpp:161-164` で `macsec_supported` パース、`sonic-swss/lib/gearboxutils.h:67` で `gearbox_phy_t::macsec_supported` フィールド、`sonic-swss/lib/gearboxutils.cpp:141,199-201` で default true / `loadPhyMap` のパース。`sonic-swss/orchagent/macsecorch.cpp:363,409` で `force_npu = !phy->macsec_supported`、`macsecorch.cpp:2539-2563` で `phy->macsec_supported` 分岐ガード。HWSKU では `nexthop NH-5010-F-O32-C32` / `arista 7280R4-32QF-32DF` 等の `gearbox_config.json` に取り込み済み（verified at: 2026-05-09）。
 
 # Gearbox PHY ごとの MACsec backend 決定（`macsec_supported`）
 
