@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/dash-sonic-kvm/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-python-logger-enhancement/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sonic-optional-feature-control-enhancement/">
       
       
-        <link rel="next" href="../dscp-remapping-for-tunnel-traffic/">
+        <link rel="next" href="../static-dns-configuration/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DASH SONiC KVM（BMv2 ベース仮想 DPU） - SONiC 非公式ドキュメント</title>
+        <title>SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dash-sonic-kvmbmv2-dpu" class="md-skip">
+        <a href="#syslogger-runtime-log-level-loggerrequire_manual_refresh-sighup" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DASH SONiC KVM（BMv2 ベース仮想 DPU）
+              SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1483,8 +1483,6 @@
       
   
   
-    
-  
   
   
     
@@ -1510,23 +1508,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -1544,13 +1539,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1567,37 +1562,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DASH SONiC KVM（BMv2 ベース仮想 DPU）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -1613,236 +1581,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        モジュール構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポート種別
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpu-mode-single-device-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        モード（DPU mode / single device mode）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データプレーン経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コントロールプレーン経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kvm-testbed-single-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        KVM testbed セットアップ（single device モード）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNMI クライアント
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpu-vpp-npu-testbed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPU + VPP NPU testbed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1855,7 +1593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -1883,7 +1621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -1911,7 +1649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -1939,7 +1677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -1967,7 +1705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -2283,6 +2021,8 @@
       
   
   
+    
+  
   
   
     
@@ -2314,20 +2054,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2345,13 +2088,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2371,7 +2114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2399,7 +2142,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -2427,7 +2170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -2455,7 +2198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -2483,7 +2226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -2511,7 +2254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -2536,10 +2279,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2555,6 +2325,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syslogger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SysLogger クラスの変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動 / refresh フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope の限定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2567,7 +2545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -2595,7 +2573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -3815,10 +3793,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#syslogger" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モジュール構成
+        SysLogger クラスの変更
       
     </span>
   </a>
@@ -3826,10 +3804,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#refresh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート種別
+        起動 / refresh フロー
       
     </span>
   </a>
@@ -3837,10 +3815,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dpu-mode-single-device-mode" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        モード（DPU mode / single device mode）
+        CLI
       
     </span>
   </a>
@@ -3848,10 +3826,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データプレーン経路
+        CONFIG_DB スキーマ追加
       
     </span>
   </a>
@@ -3859,10 +3837,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コントロールプレーン経路
+        Scope の限定
       
     </span>
   </a>
@@ -3870,32 +3848,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kvm-testbed-single-device" class="md-nav__link">
+  <a href="#warmboot-fastboot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KVM testbed セットアップ（single device モード）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gNMI クライアント
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpu-vpp-npu-testbed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPU + VPP NPU testbed
+        Warmboot / Fastboot
       
     </span>
   </a>
@@ -3908,7 +3864,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3920,10 +3876,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        CLI
       
     </span>
   </a>
@@ -3931,10 +3887,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -3958,7 +3914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3969,7 +3925,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3980,7 +3936,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3991,7 +3947,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4018,7 +3974,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/dash-sonic-kvm.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-python-logger-enhancement.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4028,227 +3984,218 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD のみを根拠に書かれている。BMv2 / VPP / dashsai / saidash の現行 master 取り込み状況、<code>vms-kvm-dpu</code> トポロジの ansible playbook、<code>gnmi_cli_py</code> の Python 2 依存等は未確認。HLD は 「DPU SONiC KVM image with dataplane will be released at the next stage」と記載しており、書きかけの段階でドキュメント化された設計である。</p>
+<p>本ページは公式 HLD のみを根拠に書かれている。<code>sonic_py_common.syslogger.SysLogger</code> の singleton 化、<code>enable_runtime_config</code> 引数、<code>LOGGER.require_manual_refresh</code> フィールド、<code>config syslog level</code> CLI の取り込み状況は未確認。</p>
 </div>
-<h1 id="dash-sonic-kvmbmv2-dpu">DASH SONiC KVM（BMv2 ベース仮想 DPU）<a class="headerlink" href="#dash-sonic-kvmbmv2-dpu" title="Permanent link">&para;</a></h1>
+<h1 id="syslogger-runtime-log-level-loggerrequire_manual_refresh-sighup">SysLogger 拡張（runtime log level + <code>LOGGER.require_manual_refresh</code> + SIGHUP）<a class="headerlink" href="#syslogger-runtime-log-level-loggerrequire_manual_refresh-sighup" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DASH SONiC KVM は <strong>物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）の検証ができる仮想スイッチイメージ</strong> である。目的は 2 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>POC 兼検証用</strong>: 物理ハードウェアを用意せずに DASH のコントロールプレーン・データプレーンを開発・テストできる testbed を提供</li>
-<li><strong>CI</strong>: <code>sonic-buildimage</code> / <code>sonic-swss</code> などの SONiC 系リポジトリの Azure Pipelines CI に DASH を組み込む</li>
-</ol>
-<p>データプレーンは <strong>BMv2（P4 simple_switch）</strong> をベースに、フロー作成や resimulation など BMv2 単体では弱い部分を <strong>VPP</strong> で補強する構成。SAI 互換は <code>dashsai</code>（リモート shim サーバ + クライアント）で sairedis から見えるようにしている。</p>
+<p>SONiC の Python デーモンが使う logger には複数の選択肢があるが、いずれも <strong>動作中にログレベルを変更できない</strong> または <strong>redis 起動前に呼べない</strong> という不足があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>logger</th>
+<th>問題</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic_py_common.logger.Logger</code></td>
+<td>runtime 変更不可。さらに <strong>deprecate 予定</strong></td>
+</tr>
+<tr>
+<td><code>sonic_py_common.syslogger.SysLogger</code></td>
+<td>runtime 変更不可</td>
+</tr>
+<tr>
+<td><code>swsscommon.Logger</code>（C++ 実装の Python wrap）</td>
+<td>(1) 起動時に redis を必要とする (2) Linux syslog の制約で daemon 単一 identifier しか持てない</td>
+</tr>
+</tbody>
+</table>
+<p>本 HLD は <code>SysLogger</code> を中心に <strong>runtime ログレベル変更</strong> を可能にし、redis 未起動時のフォールバックも担保する。<code>swsscommon.Logger</code> のような <strong>常駐スレッド方式は採らず</strong>、CLI 経由で <strong>SIGHUP</strong> を送って refresh する設計を採用する（Python script は短命なものが多く、スレッド常駐がコストになるため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="syslogger"><code>SysLogger</code> クラスの変更<a class="headerlink" href="#syslogger" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Singleton 化</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>__init__</code> に <code>enable_runtime_config: bool = False</code> 引数を追加</li>
+<li><code>True</code> 指定のデーモンだけが runtime 設定を使う</li>
+<li><code>True</code> のとき初期化で CONFIG_DB から log level を読む（DB に設定があれば）</li>
+<li><code>True</code> のとき DB に設定が無ければ初期化で <strong>デフォルトを DB に書き込む</strong>（<code>save</code> フォールバック）</li>
+<li>新しいクラスメソッド <code>update_log_level</code>: load / save の制御を集約</li>
+</ul>
+<h3 id="refresh">起動 / refresh フロー<a class="headerlink" href="#refresh" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-    subgraph DPU_KVM[DPU SONiC KVM]
-      direction TB
-      ETH0[Ethernet0,1,...\nsystem port] --&gt; DAPP[Dataplane APP\n(VPP + saidash.so)]
-      LINE[eth1, eth2, ...\nline port] --&gt; BMV2
-      DAPP -- DPDK / CPU port --&gt; BMV2[BMv2 simple_switch\n(P4 dataplane)]
-      DAPP -- gRPC --&gt; BMV2
-      DAPP -- shim --&gt; SAIRED[SAIRedis\n(remote dashsai client)]
-      SAIRED --&gt; SWSS[SWSS]
-      SWSS --&gt; APPDB[(APP_DB)]
-      GNMI[GNMI] --&gt; APPDB
-      OTHER[BGP / LLDP / etc.]
-    end
-    EXT[gNMI client]&lt;--&gt;|midplane / mgmt port| GNMI</code></pre>
+    A[SysLogger 生成] --&gt; B{enable_runtime_config?}
+    B --&gt;|False| Z[default level で動作]
+    B --&gt;|True| C{redis 起動済 &amp; LOGGER エントリあり?}
+    C --&gt;|Yes| D[DB から level を load]
+    C --&gt;|No, redis OK で エントリなし| E[default を DB に save]
+    C --&gt;|No, redis 自体未起動| Z
+    D --&gt; R[runtime に level 反映]
+    E --&gt; R
+    R --&gt; RUN[ログ出力]
+    RUN -.-&gt; SIG[SIGHUP 受信]
+    SIG --&gt; R2[update_log_level\nDB から再ロード]</code></pre>
+<p>「redis が無いと壊れる」を避けるため、<strong>redis 未起動時は default level でそのまま動く</strong>。<code>swsscommon.Logger</code> のように初期化で接続を必須にしない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p><code>swssloglevel</code> は <code>swsscommon.Logger</code> のスレッドに依存し、<strong>他コンテナの daemon にはシグナルを送れない</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新しい CLI を追加:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config syslog level -c &lt;component&gt; -l &lt;log_level&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                    [--service &lt;service_name&gt;]
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                    [--program &lt;program_name&gt;]
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                    [--pid &lt;pid&gt;]
+</span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>モジュール</th>
-<th>役割</th>
+<th>オプション</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>BMv2</td>
-<td>P4 でデータプレーン処理。元々ハードウェア DPU が担う層</td>
+<td><code>-c</code></td>
+<td>component / log identifier。<code>LOGGER</code> テーブルのキー</td>
 </tr>
 <tr>
-<td>Dataplane APP</td>
-<td>VPP フレームワーク + <code>saidash</code> 共有ライブラリ。BMv2 と gRPC で会話。BMv2 が苦手なフロー処理を VPP で補う</td>
+<td><code>-l</code></td>
+<td>log level（<code>DEBUG</code> / <code>INFO</code> / <code>NOTICE</code> / <code>WARN</code> / <code>ERROR</code>）</td>
 </tr>
 <tr>
-<td><code>saidash</code> / <code>dashsai</code></td>
-<td>SAI の DASH 部分を BMv2 にマッピングする実装。<strong>dashsai client/server は shim</strong> で sairedis を BMv2 に繋ぐ</td>
+<td><code>--service</code></td>
+<td>コンテナ名。SIGHUP を送る対象コンテナ</td>
 </tr>
 <tr>
-<td>SAIRedis</td>
-<td>物理仮想 SONiC では <code>saivs</code> を読むが、本構成では <strong>remote dashsai client</strong> をロードする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>--program</code></td>
+<td>コンテナ内のプログラム名。<code>--service</code> 必須</td>
 </tr>
 <tr>
-<td>SWSS</td>
-<td>物理 DPU と <strong>ほぼ同一</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。特別変更不要</td>
-</tr>
-<tr>
-<td>GNMI / APP_DB</td>
-<td>物理 DPU と同一構造。後述の 2 モードで動作</td>
-</tr>
-<tr>
-<td>その他</td>
-<td>BGP, LLDP, etc. を物理 DPU と同じ構成で残す<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>--pid</code></td>
+<td>プロセス ID。<code>--service</code> 指定時はそのコンテナ内 PID、未指定時はホスト側 PID</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">ポート種別<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>KVM 内のインタフェースは 3 種類に分かれる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>検証ルール（HLD 例より）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>--program</code> は <code>--service</code> と併用必須</li>
+<li><code>--service</code> 単独は不可（PID か program のどちらかが必要）</li>
+</ul>
+<p>例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DB 更新のみ（refresh は別途）</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>xcvrd<span class="w"> </span>-l<span class="w"> </span>DEBUG
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># DB 更新 + PMON コンテナ内の xcvrd に SIGHUP</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>xcvrd<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>--service<span class="w"> </span>pmon<span class="w"> </span>--program<span class="w"> </span>xcvrd
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># DB 更新 + PMON コンテナ内 PID 20 に SIGHUP</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>xcvrd<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>--service<span class="w"> </span>pmon<span class="w"> </span>--pid<span class="w"> </span><span class="m">20</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># DB 更新 + ホスト側 PID 20 に SIGHUP</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>xcvrd<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>--pid<span class="w"> </span><span class="m">20</span>
+</span></code></pre></div>
+<h3 id="config_db">CONFIG_DB スキーマ追加<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>LOGGER</code> テーブルに <strong><code>require_manual_refresh</code></strong> フィールドを新設<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>用途</th>
-<th>備考</th>
+<th>フィールド</th>
+<th>型</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>Ethernet0</code>, <code>Ethernet1</code>, ...</td>
-<td>system port</td>
-<td>BGP / LLDP 等のプロトコルが send/recv に使う</td>
-</tr>
-<tr>
-<td><code>eth1</code>, <code>eth2</code>, ...</td>
-<td>line port</td>
-<td>KVM の実 IF。Ethernet と <strong>1 対 1 対応</strong></td>
-</tr>
-<tr>
-<td>CPU port (DPDK)</td>
-<td>Dataplane APP 用</td>
-<td>BMv2 から CPU パスでパケットが上がる</td>
+<td><code>require_manual_refresh</code></td>
+<td>bool</td>
+<td>Python logger は <code>true</code>、C++ logger は <strong>設定しない</strong></td>
 </tr>
 </tbody>
 </table>
-<h3 id="dpu-mode-single-device-mode">モード（DPU mode / single device mode）<a class="headerlink" href="#dpu-mode-single-device-mode" title="Permanent link">&para;</a></h3>
-<p>GNMI と APP_DB は物理デバイスと同一だが、KVM では 2 つの動かし方が想定される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong>DPU モード</strong>: 物理 SmartSwitch と同様、設定は外部 NPU の GNMI 経由で midplane（<code>eth-midplane</code>）に流れる</li>
-<li><strong>Single device モード</strong>: KVM 内に GNMI サーバを立てて、外部から直接 set すれば SWSS にローカル forward される</li>
-</ul>
-<h3 id="_5">データプレーン経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>BMv2 上の P4 logic がパケットの出口を決める。HLD 例<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart TB
-    eth1 --&gt; PD{Packet dispatcher}
-    PD --&gt;|LLDP| Eth0[Ethernet0]
-    Eth0 --&gt; LLDPP[LLDP プロセス]
-    PD --&gt;|DASH| DP{DASH Pipeline}
-    DP --&gt;|VNet| eth2
-    DP --&gt;|TCP SYN| CPU0[CPU0]
-    CPU0 --&gt; DAPP[Dataplane APP]
-    DAPP --&gt; CPU0
-    CPU0 --&gt; DP</code></pre>
-<p>ポイント:</p>
-<ul>
-<li>通常 VNet トラフィックは BMv2 内の DASH Pipeline で完結し <code>eth2</code> に出る</li>
-<li>TCP SYN など <strong>フロー作成が必要なパケット</strong> は CPU0 で Dataplane APP に上がり、VPP 側でフローを作って戻す</li>
-<li>LLDP のような制御プレーン向けは Ethernet ポートに dispatch して上位プロセスに渡す</li>
-</ul>
-<h3 id="_6">コントロールプレーン経路<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>CLI はこのフィールドを見て <strong>SIGHUP を送る必要があるか</strong> を判断する。C++ logger は <code>swsscommon.Logger</code> のスレッドが自動 reload するため、SIGHUP 不要。Python logger は能動的にシグナルを送る必要がある<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>sequenceDiagram
-    participant CL as gNMI client
-    participant MID as eth-midplane
-    participant GN as gnmi (KVM)
-    participant DB as APP_DB
-    participant SW as SWSS
-    participant SR as SAIRedis (remote dashsai)
-    participant BM as BMv2 + Dataplane APP
-    CL-&gt;&gt;MID: gNMI Set
-    MID-&gt;&gt;GN: gNMI request
-    GN-&gt;&gt;DB: APP_DB 更新
-    DB--&gt;&gt;SW: 通知
-    SW-&gt;&gt;SR: SAI 呼び出し
-    SR-&gt;&gt;BM: dashsai shim 経由</code></pre>
-<p>Single device モードでは <code>MID</code> を経由せず、KVM 内の GNMI に直接接続する経路もある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+    participant U as user
+    participant CLI as config syslog level
+    participant DB as CONFIG_DB.LOGGER
+    participant DEM as Python daemon
+    U-&gt;&gt;CLI: config syslog level -c xcvrd -l DEBUG --service pmon --program xcvrd
+    CLI-&gt;&gt;DB: SET LOGGER|xcvrd loglevel=DEBUG
+    CLI-&gt;&gt;DB: GET LOGGER|xcvrd require_manual_refresh
+    alt require_manual_refresh=true
+        CLI-&gt;&gt;DEM: docker exec pmon kill -HUP &lt;pid&gt;
+        DEM-&gt;&gt;DB: load LOGGER|xcvrd loglevel
+        DEM-&gt;&gt;DEM: 反映
+    else (C++ logger)
+        Note over DEM: swsscommon.Logger のスレッドが自動で反映
+    end</code></pre>
 <!-- evidence:
-source: sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/syslog/python-logger-enhancement.md#L36-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Due to the P4 and BMv2 limitation, such as flow creation, flow resimulation and etc, in this virtual DPU,
-  our implementation is based on the VPP framework with the CPU interface to enhance the dataplane engine ...
-  this dataplane APP loads the generated shared library, saidash, which communicates with BMv2 via GRPC.
-reasoning: 「BMv2 単体では DASH 機能が足りないので VPP + saidash で補う」「SAIRedis は remote dashsai client をロードする」という構成根拠。
+  - SysLogger class shall be changed to a singleton.
+  - SysLogger instance shall load log level configuration from DB during initialization stage if DB configuration is available.
+  - SysLogger instance shall save log level configuration to DB during initialization stage if DB configuration is not available.
+  - Logger configuration shall be refreshed by CLI which send a SIGHUP signal to the daemon.
+reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設計の核となるルールの根拠。
 -->
 
-<h3 id="kvm-testbed-single-device">KVM testbed セットアップ（single device モード）<a class="headerlink" href="#kvm-testbed-single-device" title="Permanent link">&para;</a></h3>
-<p><code>sonic-mgmt</code> を使って <code>vms-kvm-dpu</code> トポロジを立てる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic-mgmt コンテナ内</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>/data/sonic-mgmt/ansible
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>add-topo<span class="w">  </span>vms-kvm-dpu<span class="w"> </span>password.txt
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>deploy-mg<span class="w"> </span>vms-kvm-dpu<span class="w"> </span>veos_vtb<span class="w"> </span>password.txt
+<h3 id="scope">Scope の限定<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h3>
+<p><code>sonic_py_common.logger.Logger</code> は <strong>deprecate 予定</strong> のため、本機能の対象外<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <strong><code>SysLogger</code> のみ</strong> を拡張対象とする。</p>
+<h3 id="warmboot-fastboot">Warmboot / Fastboot<a class="headerlink" href="#warmboot-fastboot" title="Permanent link">&para;</a></h3>
+<p>影響なし<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="cli_1">CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config syslog level -c &lt;component&gt; -l &lt;level&gt; [...]</code></td>
+<td>当該 logger の level を CONFIG_DB に書き、必要なら SIGHUP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>LOGGER|&lt;component&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    loglevel               : DEBUG | INFO | NOTICE | WARN | ERROR
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    require_manual_refresh : &quot;true&quot; | (未設定)
 </span></code></pre></div>
-<p>DPU への SSH:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sshpass<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="w"> </span>ssh<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">TCPKeepAlive</span><span class="o">=</span>yes<span class="w"> </span>-o<span class="w"> </span><span class="nv">ServerAliveInterval</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">UserKnownHostsFile</span><span class="o">=</span>/dev/null<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>no<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>admin@10.250.0.101
-</span></code></pre></div>
-<p>デフォルト管理 IP は <code>10.250.0.101</code>、デフォルトパスワードは <code>password</code>。</p>
-<h3 id="gnmi">gNMI クライアント<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
-<p>DASH テスト実行時、<code>sonic-mgmt</code> 内の <code>/tmp/&lt;UUID&gt;/</code> に CA / クライアント証明書が生成される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。クライアントとして <code>gnmi_cli_py</code>（Python 2 依存）を使い、PTF コンテナにデフォルトでインストールされている。</p>
-<p>DUT 側では gnmi-native を停止して証明書付きで起動し直す必要がある:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>supervisorctl<span class="w"> </span>stop<span class="w"> </span>gnmi-native
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/sbin/telemetry -logtostderr --port 50052 \</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s2">  --server_crt /etc/sonic/telemetry/gnmiserver.crt \</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s2">  --server_key /etc/sonic/telemetry/gnmiserver.key \</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s2">  --ca_crt /etc/sonic/telemetry/gnmiCA.pem \</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">  -gnmi_native_write=true -v=10 &gt;/root/gnmi.log 2&gt;&amp;1 &amp;&quot;</span>
-</span></code></pre></div>
-<p>クライアント例（DASH テーブル更新）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python2<span class="w"> </span>/root/gnxi/gnmi_cli_py/py_gnmicli.py<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--timeout<span class="w"> </span><span class="m">30</span><span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.0.0.88<span class="w"> </span>-p<span class="w"> </span><span class="m">50052</span><span class="w"> </span>-xo<span class="w"> </span>sonic-db<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-rcert<span class="w"> </span>/root/gnmiCA.pem<span class="w"> </span>-pkey<span class="w"> </span>/root/gnmiclient.key<span class="w"> </span>-cchain<span class="w"> </span>/root/gnmiclient.crt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-m<span class="w"> </span>set-update<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--xpath<span class="w"> </span>/APPL_DB/localhost/DASH_APPLIANCE_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span><span class="m">123</span><span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">          </span>/APPL_DB/localhost/DASH_VNET_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span>Vnet1<span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>--value<span class="w"> </span>$/root/update1<span class="w"> </span>$/root/update2
-</span></code></pre></div>
-<p><code>update1</code>, <code>update2</code> は対応 protobuf。</p>
-<h3 id="dpu-vpp-npu-testbed">DPU + VPP NPU testbed<a class="headerlink" href="#dpu-vpp-npu-testbed" title="Permanent link">&para;</a></h3>
-<p>HLD では <code>5.2 DPU with VPP NPU testbed</code> 節は <strong>TBD</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>KVM 自体の追加 CONFIG_DB スキーマは無い。物理 DPU と同じ DASH 系テーブル（<code>DASH_VNET_TABLE</code>, <code>DASH_APPLIANCE_TABLE</code> 等）を APP_DB / CONFIG_DB に投入する。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>KVM testbed 用の CLI は <code>testbed-cli.sh</code>（sonic-mgmt 側）。SONiC 内部の DASH CLI は本 HLD のスコープ外。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当なし（KVM 環境固有のスキーマは無い）。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>データプレーン付き DPU SONiC KVM image は HLD 時点で未公開</strong>。通常の <code>sonic-vs.img.gz</code> のみ取得可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>BMv2 の限界（フロー作成・resimulation）を VPP で補う実装は <strong>dashsai に強く依存</strong>。dashsai 未対応の SAI API は <strong>mock 実装</strong>される（<code>DTEL</code> 等）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>gNMI クライアント <code>gnmi_cli_py</code> は <strong>Python 2 依存</strong>。PTF 以外の環境ではインストールが面倒<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>DPU + VPP NPU testbed は HLD 時点で <strong>TBD</strong></li>
+<li>対象は <strong><code>sonic_py_common.syslogger.SysLogger</code> のみ</strong>。<code>logger.Logger</code> は deprecate 予定で対象外<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>swssloglevel</code> は他コンテナへ届かない既知の制約あり。新 CLI を使う必要がある</li>
+<li>Python script が <strong>常駐していない場合は SIGHUP できない</strong>。短命スクリプトは次回起動時に DB から load するだけ</li>
+<li><code>require_manual_refresh</code> を C++ logger 側に誤って入れると <code>swsscommon.Logger</code> のスレッドと競合し得る。未設定が正</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>物理 SmartSwitch</strong>: SWSS / GNMI / APP_DB は物理 DPU と互換のため、両者でテスト共通化が可能</li>
-<li><strong><code>sonic-mgmt</code></strong>: <code>vms-kvm-dpu</code> トポロジが必要。EOS コンテナや veos_vtb の前提条件あり</li>
-<li><strong>CI（Azure Pipelines）</strong>: 本 KVM が CI のターゲット。BMv2 / VPP の build 時間が CI に影響する</li>
-<li><strong>DASH 系 HLD（VNet, ENI Forwarding 等）</strong>: 本 KVM はそれらの検証実装</li>
+<li><strong><code>swsscommon.Logger</code>（C++）</strong>: 同じ <code>LOGGER</code> テーブルを共有。<code>require_manual_refresh</code> で挙動を区別</li>
+<li><strong><code>hostcfgd</code></strong>: 一部 syslog 設定を扱うが、本 HLD のスコープ外</li>
+<li><strong><code>docker exec</code> / <code>kill -HUP</code></strong>: コンテナ越しのシグナル送出に依存</li>
+<li><strong>永続化</strong>: <code>LOGGER</code> テーブルの永続化（<code>config save</code>）と整合させる</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>testbed 起動が失敗する場合、<code>sonic-mgmt</code> の前提（cEOS イメージ・SSH 鍵）が揃っているか確認</li>
-<li>DPU に SSH できない場合、デフォルト IP <code>10.250.0.101</code> と <code>password</code> を確認</li>
-<li><code>gnmi_cli_py</code> がエラーになる場合、Python 2 環境で実行しているか確認</li>
-<li>DASH テーブル更新が反映されない場合、KVM 内の GNMI が証明書付きで再起動されているかを確認</li>
+<li><code>config syslog level</code> で DB は変わるが反映されない場合、SIGHUP が当該プロセスに届いているか（<code>--service</code> / <code>--program</code> / <code>--pid</code> の組合せ）を確認</li>
+<li>redis 未起動で例外になる場合、<code>enable_runtime_config=False</code> のまま使われていないか・初期化順序を確認</li>
+<li>C++ logger と混在する component で動作が不一致な場合、<code>require_manual_refresh</code> の値が想定どおりか確認</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- BMv2 / VPP / saidash / dashsai server-client の現行 master 取り込み状況
-- vms-kvm-dpu トポロジ ansible playbook の所在
-- gnmi_cli_py の Python 2 依存（移行計画）
-- DPU SONiC KVM image (with dataplane) のリリース有無
-- DPU + VPP NPU testbed (5.2) の進捗
-- saivs / dashsai client の SAIRedis ロード切替の実装
+- SysLogger の singleton 化と enable_runtime_config 引数の sonic-py-common 取り込み
+- LOGGER.require_manual_refresh フィールドの swss / sonic-buildimage 側スキーマ
+- config syslog level CLI の sonic-utilities 取り込み
+- redis 未起動時の fallback 経路の実装
+- swssloglevel の deprecation 計画
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dash/dash-sonic-kvm.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/syslog/python-logger-enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
