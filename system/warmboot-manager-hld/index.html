@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-manager-hld/">
       
       
-        <link rel="prev" href="../dhcp-dos-mitigation-in-sonic/">
+        <link rel="prev" href="../useful-sysctl-settings/">
       
       
-        <link rel="next" href="../dynamically-headroom-calculation/">
+        <link rel="next" href="../what-are-the-development-phases-and-scope-for-warm-reboot/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） - SONiC 非公式ドキュメント</title>
+        <title>Warmboot Manager（shutdown orchestration / reconciliation 統一） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#voq-fsissi-chassis-db-redis_chassis" class="md-skip">
+        <a href="#warmboot-managershutdown-orchestration-reconciliation" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+              Warmboot Manager（shutdown orchestration / reconciliation 統一）
             
           </span>
         </div>
@@ -335,13 +335,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3327,6 +3327,950 @@
       
   
   
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../acl-qos/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL & QoS
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ACL & QoS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-ingress-egress-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Ingress / Egress テストプラン（DATAINGRESS / DATAEGRESS テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-user-defined-table-type-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    flexcounter の queue/PG map 生成と watermark 有効化の整合
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/asymmetric-pfc-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/configurable-drop-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/copp-manager-redesign-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/dynamically-headroom-calculation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dynamic Headroom Calculation（buffer_model = dynamic）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/egress-outer-dscp-change-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートの動的 add / del（zero-port 起動と post-init 操作）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/everflow-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/pfc-historical-statistics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/port-access-control-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Port access control in sonic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/reclaim-reserved-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reclaim Reserved Buffer（admin-down ポートの zero_profile）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/sonic-port-mirroring-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Port Mirroring（SPAN / ERSPAN）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/sonic-qos-scheduler-and-shaping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WRED / ECN 統計（per-queue / per-port、capability ベース）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -3336,6 +4280,22 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -3412,7 +4372,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -3423,7 +4383,7 @@
   <span class="md-ellipsis">
     
   
-    ACL & QoS
+    システム
   
 
     
@@ -3434,18 +4394,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
-    ACL & QoS
+    システム
   
 
           </label>
@@ -3460,14 +4420,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-flex-counters-support/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
+    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
   
 
     
@@ -3488,14 +4448,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-ingress-egress-test-plan/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL Ingress / Egress テストプラン（DATAINGRESS / DATAEGRESS テーブル）
+    バナーメッセージ（login / motd / logout）
   
 
     
@@ -3516,14 +4476,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-support-in-sonic/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+    クリティカルリソースモニタリング (CRM) 要件
   
 
     
@@ -3544,14 +4504,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-user-defined-table-type-support/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
+    Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
   
 
     
@@ -3572,14 +4532,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    flexcounter の queue/PG map 生成と watermark 有効化の整合
+    show techsupport での SFP EEPROM ページダンプ取り込み
   
 
     
@@ -3600,14 +4560,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../asymmetric-pfc-test-plan/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+    Fast-reboot Flow Improvements（finalizer / reconciliation）
   
 
     
@@ -3628,14 +4588,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../configurable-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
+    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
   
 
     
@@ -3656,14 +4616,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-manager-redesign-test-plan/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
+    kdump リモート転送（SSH）
   
 
     
@@ -3684,14 +4644,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
+    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
   
 
     
@@ -3712,14 +4672,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-acl-tags/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
   
 
     
@@ -3740,14 +4700,686 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reboot-cause 履歴の STATE_DB / テレメトリ公開
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP 設定の snmp.yml → CONFIG_DB 移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Boot Chart（systemd-bootchart 統合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブルによるオプショナル機能の有効/無効制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC OS と Docker イメージのセマンティックバージョニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker warm restart（state restore / consistency / sync up）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../static-dns-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../twamp-light-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TWAMP Light（Session-Sender / Session-Reflector）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR 用 sysctl チューニングのデフォルト
   
 
     
@@ -3784,7 +5416,7 @@
   <span class="md-ellipsis">
     
   
-    VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+    Warmboot Manager（shutdown orchestration / reconciliation 統一）
   
 
     
@@ -3802,7 +5434,7 @@
   <span class="md-ellipsis">
     
   
-    VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+    Warmboot Manager（shutdown orchestration / reconciliation 統一）
   
 
     
@@ -3851,10 +5483,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#4-phase-shutdown-orchestration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        基本要件
+        4 phase の shutdown orchestration
       
     </span>
   </a>
@@ -3862,22 +5494,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chassis-db-redis_chassis" class="md-nav__link">
+  <a href="#component-warmboot-states" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態共有: Chassis DB と redis_chassis
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="状態共有: Chassis DB と redis_chassis">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chassisdbconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        chassisdb.conf による起動制御
+        Component Warmboot States
       
     </span>
   </a>
@@ -3885,26 +5505,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#database_configjson" class="md-nav__link">
+  <a href="#race-condition" class="md-nav__link">
     <span class="md-ellipsis">
       
-        database_config.json 抜粋
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        チップ管理
+        Race condition の扱い
       
     </span>
   </a>
@@ -3912,10 +5516,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#critical-container" class="md-nav__link">
     <span class="md-ellipsis">
       
-        命名
+        各 critical container の対応
       
     </span>
   </a>
@@ -3923,32 +5527,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#backward-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート分類
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        障害シナリオ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来課題（HLD §4）
+        Backward Compatibility
       
     </span>
   </a>
@@ -3961,7 +5543,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3969,49 +5551,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB / CLI / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（SSI 上）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fsi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（FSI 上）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4022,7 +5565,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4033,7 +5576,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4044,7 +5587,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4070,1639 +5613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dynamically-headroom-calculation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Dynamic Headroom Calculation（buffer_model = dynamic）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../egress-outer-dscp-change-table/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../enhancements-to-add-or-del-ports-dynamically/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートの動的 add / del（zero-port 起動と post-init 操作）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../everflow-test-plan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pfc-historical-statistics/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../port-access-control-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Port access control in sonic
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reclaim Reserved Buffer（admin-down ポートの zero_profile）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-port-mirroring-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Port Mirroring（SPAN / ERSPAN）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-qos-scheduler-and-shaping/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../test-plan-for-align-watermark-flow-with-port-configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WRED / ECN 統計（per-queue / per-port、capability ベース）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    システム
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    システム
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バナーメッセージ（login / motd / logout）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クリティカルリソースモニタリング (CRM) 要件
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    show techsupport での SFP EEPROM ページダンプ取り込み
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Fast-reboot Flow Improvements（finalizer / reconciliation）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    kdump リモート転送（SSH）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reboot-cause 履歴の STATE_DB / テレメトリ公開
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP 設定の snmp.yml → CONFIG_DB 移行
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Boot Chart（systemd-bootchart 統合）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Logging & System Dumps（要件レベル仕様）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブルによるオプショナル機能の有効/無効制御
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC OS と Docker イメージのセマンティックバージョニング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SWSS docker warm restart（state restore / consistency / sync up）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    System-wide Warmboot（going down / up path / SAI 期待値）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TWAMP Light（Session-Sender / Session-Reflector）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FRR 用 sysctl チューニングのデフォルト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Warmboot Manager（shutdown orchestration / reconciliation 統一）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -12457,10 +12368,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#4-phase-shutdown-orchestration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        基本要件
+        4 phase の shutdown orchestration
       
     </span>
   </a>
@@ -12468,22 +12379,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chassis-db-redis_chassis" class="md-nav__link">
+  <a href="#component-warmboot-states" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態共有: Chassis DB と redis_chassis
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="状態共有: Chassis DB と redis_chassis">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chassisdbconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        chassisdb.conf による起動制御
+        Component Warmboot States
       
     </span>
   </a>
@@ -12491,26 +12390,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#database_configjson" class="md-nav__link">
+  <a href="#race-condition" class="md-nav__link">
     <span class="md-ellipsis">
       
-        database_config.json 抜粋
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        チップ管理
+        Race condition の扱い
       
     </span>
   </a>
@@ -12518,10 +12401,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#critical-container" class="md-nav__link">
     <span class="md-ellipsis">
       
-        命名
+        各 critical container の対応
       
     </span>
   </a>
@@ -12529,32 +12412,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#backward-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート分類
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        障害シナリオ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来課題（HLD §4）
+        Backward Compatibility
       
     </span>
   </a>
@@ -12567,7 +12428,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -12575,49 +12436,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB / CLI / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（SSI 上）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fsi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（FSI 上）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12628,7 +12450,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12639,7 +12461,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12650,7 +12472,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12677,7 +12499,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/warmboot-manager-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12685,255 +12507,130 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（骨格のみ）</p>
-<p><code>sonic-swss-common/common/database_config.json</code> L8-11 で <code>redis_chassis</code> インスタンス（hostname <code>redis_chassis.server</code>、<code>/var/run/redis/redis_chassis.sock</code>）、L80-88 で <code>CHASSIS_APP_DB</code> が <code>redis_chassis</code> インスタンスに紐付くこと、<code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L85-86 で <code>database-chassis</code> 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
+<p>本 HLD は Google による 2023-09 提案（Rev 0.1）。"Warmboot Manager will be an alternative ... both these orchestration frameworks will co-exist" と記載されており、現行 master でこの daemon が採用されているかは要確認。<code>priority=high</code>。</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">area の経緯</p>
-<p>backlog 上は <code>acl-qos</code> カテゴリだが、内容は分散転送のアーキテクチャ全体（routing / platform / system にまたがる）。本ページは backlog の指定どおり <code>acl-qos</code> 配下に置く。</p>
-</div>
-<h1 id="voq-fsissi-chassis-db-redis_chassis">VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）<a class="headerlink" href="#voq-fsissi-chassis-db-redis_chassis" title="Permanent link">&para;</a></h1>
+<h1 id="warmboot-managershutdown-orchestration-reconciliation">Warmboot Manager（shutdown orchestration / reconciliation 統一）<a class="headerlink" href="#warmboot-managershutdown-orchestration-reconciliation" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が <strong>内部ファブリック</strong> で繋がれた 1 つの論理ルータとして動く。本 HLD は SONiC を「ラインカード × N」+「スーパバイザ × 1」の <strong>分散 SONiC インスタンス</strong> として動かすための骨格設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主要登場人物<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>略号</th>
-<th>名前</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>FSI</strong></td>
-<td>Forwarding SONiC Instance</td>
-<td>ラインカード上の SONiC OS。1 個以上の ASIC を制御</td>
-</tr>
-<tr>
-<td><strong>SSI</strong></td>
-<td>Supervisor SONiC Instance</td>
-<td>スーパバイザ上の SONiC OS。FSI 群と内部ファブリックを管理</td>
-</tr>
-<tr>
-<td>ASIC / NPU</td>
-<td>Forwarding ASIC</td>
-<td>実パケット転送</td>
-</tr>
-<tr>
-<td>Fabric Chip</td>
-<td>内部ファブリックチップ</td>
-<td>パケットを ASIC 間で運ぶ</td>
-</tr>
-</tbody>
-</table>
-<p>スコープは <strong>SONiC 側の骨格のみ</strong>（物理ポート表現と Chassis DB）。LAG / 内部制御プレーン / データプレーンの具体は別 HLD に譲る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。シャーシ前提だが「VoQ 構成なら他のフォームファクタにも拡張可能」と明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>既存の warm-boot 仕組み（<code>fast-reboot</code> script + <code>finalize-warmboot.sh</code>）を補完する新 daemon <strong>Warmboot Manager</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。container shutdown ordering 依存の排除と、各コンポーネント別に違う notification（freeze / pre-shutdown / SIGTERM / SIGUSR1 等）の <strong>統一</strong> が目的。</p>
+<p>スコープは <strong>warm shutdown 経路のみ</strong>。warm-bootup（起動）は対象外。fast-reboot にも適用しない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存の orchestration scripts と <strong>共存</strong> する設計（backward compatibility 章）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">基本要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<ul>
-<li>各 FSI は <strong>独立した SONiC</strong> として完結し、ルーティングプロトコル等を単独で走らせる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>システム全体は <strong>単一の SSI が中央管理</strong></li>
-<li>FSI 同士の <strong>内部制御プレーン</strong> は内部ファブリック上に張り、データパスと運命共有させる</li>
-<li><strong>内部管理プレーン</strong> は別ネットワーク（管理経路）で SSI ↔ FSI を結ぶ</li>
-<li>物理構成は起動時固定（HW SKU、ポート構成）。ホットスワップは <strong>同一 SKU 限定</strong><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="chassis-db-redis_chassis">状態共有: Chassis DB と redis_chassis<a class="headerlink" href="#chassis-db-redis_chassis" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  subgraph SSI
-    RC[redis_chassis&lt;br&gt;db=8 CHASSIS_APP_DB]
-    DCC[docker-database-chassis]
-  end
-  subgraph FSI1
-    L1[Local Redis] -.-&gt; RC
-    O1[Orchagent / etc]
-  end
-  subgraph FSI2
-    L2[Local Redis] -.-&gt; RC
-    O2[Orchagent / etc]
-  end</code></pre>
-<p>全システム共通状態は SSI 上の <strong><code>redis_chassis</code></strong> に乗る。各 FSI はローカル Redis に加えて <code>redis_chassis</code> にもつなぎ、<code>CHASSIS_APP_DB</code>（id=8）にアクセスする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="chassisdbconf"><code>chassisdb.conf</code> による起動制御<a class="headerlink" href="#chassisdbconf" title="Permanent link">&para;</a></h4>
-<p><code>/usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<p>SSI 側:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>start_chassis_db=1
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>chassis_db_address=&lt;redis_chassis IP&gt;
-</span></code></pre></div>
-<p>FSI 側:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>chassis_db_address=&lt;redis_chassis IP&gt;
-</span></code></pre></div>
-<p>新規 systemd サービス <code>config-chassisdb</code> がこのファイルを読んで動作を分岐する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>SSI: <code>docker-database-chassis</code> を起動 → <code>redis_chassis</code> 立ち上げ</li>
-<li>FSI: コンテナは起動しない。<code>/etc/hosts</code> に <code>redis_chassis.server</code> の IP を追記、<code>database_config.json</code> の <code>redis_chassis</code> エントリ経由で接続</li>
-</ul>
-<h4 id="database_configjson"><code>database_config.json</code> 抜粋<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#database_configjson" title="Permanent link">&para;</a></h4>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&quot;redis_chassis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis_chassis.server&quot;</span><span class="p">,</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6385</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis-chassis/redis_chassis.sock&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">&quot;unix_socket_perm&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">777</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">},</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="nt">&quot;CHASSIS_APP_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis_chassis&quot;</span><span class="w"> </span><span class="p">}</span>
-</span></code></pre></div>
-<p>SSI ↔ FSI 間の IP 到達性（典型的には 127.1/16 の linklocal）はプラットフォーム実装側の責務<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">チップ管理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="4-phase-shutdown-orchestration">4 phase の shutdown orchestration<a class="headerlink" href="#4-phase-shutdown-orchestration" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    R[reboot 要求] --&gt; P1[Phase 1: Sanity Checks\n+ hotplugging shutdown 修正]
+    P1 --&gt; P2[Phase 2: Freeze Components\nWait for Switch Quiescence\n（Quiescence Timer）]
+    P2 --&gt; P3[Phase 3: Trigger Checkpointing\n（state を Redis に書く）]
+    P3 --&gt; P4[Phase 4: Prepare and Perform Reboot\nコンテナ shutdown ordering 不要]
+    P2 -.-&gt;|失敗| UF[Unfreeze on Failure]
+    UF --&gt; ABORT[reboot abort]</code></pre>
+<p>詳細<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>役割</th>
-<th>管理</th>
+<th>Phase</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Forwarding ASIC (NPU)</strong></td>
-<td>パケット受信・転送・キューイング・送信</td>
-<td>既存 multi-ASIC パラダイム（<code>syncd</code> / <code>swss</code> インスタンス × N）</td>
+<td>1 Sanity Checks</td>
+<td>リソース不足・互換性・ASIC ヘルス・hotplug 状態</td>
 </tr>
 <tr>
-<td><strong>Fabric Chip</strong></td>
-<td>ASIC 間のファブリック転送</td>
-<td>パケット転送には関与せず、初期化後はモニタリングのみ</td>
+<td>2 Freeze + Quiescence</td>
+<td>Applications（teamd / BGP / P4RT 等）と Infrastructure（orchagent / syncd / xcvrd）の <strong>freeze</strong> を統一通知（Redis 経由）。失敗時は <strong>unfreeze</strong> で巻き戻す。<code>Quiescence Timer</code> で完了を保証</td>
+</tr>
+<tr>
+<td>3 Checkpointing</td>
+<td>各コンポーネントが state を save。orchagent は SAI、syncd は ASIC view 等</td>
+</tr>
+<tr>
+<td>4 Reboot 実行</td>
+<td><code>kexec</code>。container を <strong>個別に止める必要が無い</strong>ため shutdown ordering 依存が消える</td>
 </tr>
 </tbody>
 </table>
-<p>Switch ID 採番<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>各チップに <strong>グローバル一意な Switch ID</strong></li>
-<li>チップは <code>C</code> 個の連続 Switch ID を消費（<code>C</code> = switching cores 数）</li>
-<li>各コアは <code>0 〜 C</code> の Core ID</li>
-</ul>
-<p>詳細は <a href="https://github.com/opencomputeproject/SAI/blob/master/doc/VoQ/SAI-Proposal-VoQ-Switch.md">SAI VoQ 仕様</a> を参照<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">命名<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="component-warmboot-states">Component Warmboot States<a class="headerlink" href="#component-warmboot-states" title="Permanent link">&para;</a></h3>
+<p>各コンポーネントが warmboot を進める上での状態を <code>STATE_DB</code> に統一表現する（HLD では具体スキーマは別節）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより Warmboot Manager は polling で進捗を把握する。</p>
+<h3 id="race-condition">Race condition の扱い<a class="headerlink" href="#race-condition" title="Permanent link">&para;</a></h3>
+<p>freeze 中に late event（例: 直前の port flap / route flap）が来た場合の race を HLD は別節で議論<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。基本方針は「checkpointing 後の event は次回反映」。</p>
+<h3 id="critical-container">各 critical container の対応<a class="headerlink" href="#critical-container" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>単位</th>
-<th>命名規則</th>
-<th>例</th>
+<th>Container</th>
+<th>対応</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>FSI</td>
-<td><code>Linecard-N</code>（N = slot 番号）</td>
-<td><code>Linecard-3</code></td>
+<td>Orchagent</td>
+<td>freeze 通知 → m_toSync 空待ち → checkpoint</td>
 </tr>
 <tr>
-<td>ASIC</td>
-<td><code>Linecard-N.K</code>（K = カード内 ASIC 番号）</td>
-<td><code>Linecard-3.0</code></td>
+<td>Syncd</td>
+<td>pre-shutdown / shutdown 統一 (Redis 経由)、<code>SAI_KEY_WARM_BOOT_WRITE_FILE</code> で SAI dump</td>
+</tr>
+<tr>
+<td>Teamd</td>
+<td>LACP graceful shutdown のタイミングを Warmboot Manager が決定</td>
+</tr>
+<tr>
+<td>Transceiver Daemon</td>
+<td>DOM polling 停止</td>
+</tr>
+<tr>
+<td>Database (Redis)</td>
+<td>RDB ダンプは最後に取られる</td>
 </tr>
 </tbody>
 </table>
-<p>ASIC 名は <strong>グローバル DB のキー修飾子</strong> として使われ、<code>syncd</code> / <code>OrchAgent</code> 等のコンテナ識別にも使われる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_6">ポート分類<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>種別</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Local Ports</strong></td>
-<td>フロントパネル直結ポート。既存の固定 SONiC と同じ表現</td>
-</tr>
-<tr>
-<td><strong>System Ports (sysports)</strong></td>
-<td>全システムでグローバル一意な <code>system_port_id</code> を持つ。各ポートには <code>Core Port Id</code>（コア内ローカル）も与えられる</td>
-</tr>
-<tr>
-<td><strong>Inband Ports</strong></td>
-<td>内部制御プレーン用。FSI CPU と内部ファブリックを繋ぎ、<code>system_port_id</code> を持って全 FSI から到達可能<sup id="fnref26:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td><strong>Fabric Ports</strong></td>
-<td>本 HLD の対象外（別 HLD）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_7">障害シナリオ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>障害</th>
-<th>期待動作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FSI 障害</td>
-<td>Chassis DB 接続が切れる。内部制御プレーンが落ちて経路が再収束し、その FSI を経由しない<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>FSI ↔ Chassis DB 切断</td>
-<td>FSI が他 FSI の状態を取れなくなる → <strong>外部とのプロトコルセッションを停止</strong> して防御的に隔離する<sup id="fnref28:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>SSI 障害</td>
-<td>全 FSI が Chassis DB に届かなくなる → 上記と同じ防御動作で <strong>システム全体が外部から隔離</strong> される</td>
-</tr>
-</tbody>
-</table>
+<h3 id="backward-compatibility">Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Permanent link">&para;</a></h3>
+<p>既存の <code>fast-reboot</code> script + <code>finalize-warmboot.sh</code> を <strong>置き換えず併存</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Warmboot Manager 経路は opt-in で、未対応の component が居ると旧経路にフォールバック。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/voq/architecture.md#L218-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/warm-reboot/Warmboot_Manager_HLD.md#L100-L113 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Loss of connectivity to the Chassis DB can prevent forwarding state from other FSIs from being propagated.
-  To avoid traffic impact, The FSI must take defensive action to disconnect from the outside world
-  (for example by ceasing protocol sessions) with neighbors to avoid any traffic flows through the FSI.
-reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠。
+  The proposal is to introduce a new component called Warmboot Manager that will be responsible for both shutdown orchestration and reconciliation monitoring during warm reboot.
+  ... Warmboot Manager will be an alternative to the existing SONiC warm-boot orchestation scripts and thus both these orchestration frameworks will co-exist in SONiC.
+reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 -->
 
-<h3 id="hld-4">将来課題（HLD §4）<a class="headerlink" href="#hld-4" title="Permanent link">&para;</a></h3>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専用設定が入る可能性あり。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Dynamic system ports</strong>: 走行中の FSI 追加 / SKU 変更カードへの差し替え。SAI に <code>create_port</code> / <code>remove_port</code> のサポートが必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Dual supervisor</strong>:</li>
-<li>Warm standby: スタンバイ SSI は OS 起動だけ。切替時に再ブート相当の処理。OrchAgent / syncd を一旦止めて Redis アドレスを切替えて再接続<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Hot standby: スタンバイ SSI も Chassis DB を mirror で保持。Live sync + 再接続時に SAI ASIC_DB と整合をとる必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>warm-bootup は対象外</strong>（既存の上りフロー再利用）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>fast-reboot は対象外</strong></li>
+<li>既存 orchestration script との共存は実装前提だが、運用上どちらが起動するかの切替手段は HLD で具体化されていない</li>
+<li>Application（BGP / teamd 等）が freeze プロトコルに対応している必要がある</li>
 </ul>
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>このページの主要表面は <code>chassisdb.conf</code> と <code>database_config.json</code> というファイルレベル。<code>CHASSIS_APP_DB</code> 上のテーブルスキーマは別 HLD（system port 等）に分離されている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ssi">設定例（SSI 上）<a class="headerlink" href="#ssi" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>start_chassis_db=1
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>chassis_db_address=127.100.0.1
-</span></code></pre></div>
-<h3 id="fsi">設定例（FSI 上）<a class="headerlink" href="#fsi" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>chassis_db_address=127.100.0.1
-</span></code></pre></div>
-<p><code>/etc/hosts</code> に <code>127.100.0.1 redis_chassis.server</code> を <code>config-chassisdb</code> が追加する<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>物理構成は起動時固定</strong>: HW SKU と物理ポート構成は起動時に決定し、走行中の動的変更は将来課題<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>同一 SKU 限定のホットスワップ</strong>: ラインカード差し替えは同 SKU 部品でのみサポート<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Fabric ports は本 HLD 範囲外</strong>: 別 HLD で扱う<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>古い HLD</strong>: 2020-09 改訂。Single-ASIC VoQ 拡張など派生 HLD（<a href="../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VoQ</a>）が後から追加されており、最新の master では設計が分岐していることに留意。</li>
+<li><strong>system-wide warmboot / SWSS warm restart</strong>: Phase 2 freeze と Phase 3 checkpoint の両方で密に絡む</li>
+<li><strong>fast-reboot finalizer</strong>: 共存設計のため、誤動作防止の判定が必要</li>
+<li><strong>xcvrd / DOM polling</strong>: Phase 2 で止まる前提</li>
 </ul>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>syncd</code> / <code>swss</code> の Multi-ASIC 動作</strong>: 既存の multi-ASIC パターンの拡張。FSI 内の ASIC ごとに <code>syncd</code> / <code>swss</code> が立つ。</li>
-<li><strong>iBGP メッシュ（<a href="../../routing/bgp-setup-for-voq-chassis/">BGP for VoQ Chassis</a>）</strong>: 内部 FSI 間の制御プレーンとして iBGP を張る前提。本 HLD はその物理基盤を提供する。</li>
-<li><strong>Single-ASIC VoQ</strong>: chassisdb.conf の有無を <code>is_voq_chassis()</code> の判定キーに流用する派生機能<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VoQ</a> 参照）。</li>
-<li><strong>dual-tor / SmartSwitch</strong>: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。</li>
+<li>Phase 2 が timeout する → Quiescence Timer 値、freeze に応答しない component の特定</li>
+<li>Phase 4 後にデータプレーン断 → Phase 3 で checkpoint が完了したか State_DB で確認</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<ul>
-<li>FSI が起動するが他 FSI からの状態が見えない: <code>redis_chassis.server</code> への IP 到達性を確認。<code>/etc/hosts</code> と <code>chassisdb.conf</code> の整合をチェック<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>SSI 障害後、FSI が外部接続を切る: 仕様どおりの防御動作<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SSI を回復させるか、<code>chassisdb.conf</code> を修正してから FSI を再起動。</li>
-<li>Switch ID の衝突: <code>C</code> 個連続消費の規則に違反していないか、各チップに与えた Switch ID 範囲を確認。</li>
-</ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- Warmboot Manager daemon の現行 master 採用状況確認（Rev 0.1, Google 2023 提案）
+- 既存 fast-reboot / finalize-warmboot.sh との共存実装確認
+- Component Warmboot States の STATE_DB スキーマ実装確認
+- Quiescence Timer / Unfreeze on Failure ロジックの実装確認
+- 各 critical container（orchagent / syncd / teamd / xcvrd）への freeze プロトコル取り込み確認
+- 採否不明な提案 HLD のため master 取り込み有無の最終確認（priority=high）
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/architecture.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref26:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref27:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref28:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/Warmboot_Manager_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
