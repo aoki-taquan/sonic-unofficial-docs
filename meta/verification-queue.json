@@ -3,6 +3,17 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/architecture/sonic-on-gns3-vm.md",
+      "issue": 268,
+      "verification": "hld-only",
+      "concerns": [
+        "Azure Pipeline #142 の URL や sonic-vs.img.gz の artifact 配置が現行 master でも有効か確認",
+        "デフォルト認証情報 admin / YourPaSsWoRd が sonic-vs.img の現行ビルドで変わっていないか確認",
+        "推奨リソース (RAM 8GB / vCPU 4) が現行 SONiC VS で妥当か未確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/architecture/build-system-improvements.md",
       "issue": 265,
       "verification": "hld-only",
