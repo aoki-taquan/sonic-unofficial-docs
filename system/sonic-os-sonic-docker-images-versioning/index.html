@@ -4290,6 +4290,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8650,6 +8661,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8682,9 +8704,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
-<p>本ページは 2021-02 改訂の <strong>Initial Proposal</strong> ステータスの古い HLD（採用状況不確かなため <code>priority=high</code> で verification queue 登録）。SONiC Application Extension Infrastructure の現行実装、<code>package.json</code> の <code>depends</code> 表記、SDK component 単位のバージョン指定、<code>SWSS_VERSION</code> のような環境変数による複数 API 並行対応の現行サポート状況は実コードでの裏取り未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（一部例は未採用）</p>
+<p>Application Extension Infrastructure は <code>sonic-utilities/sonic_package_manager/</code> 配下に実装済み。<code>manifest.py:179-185</code> で <code>version</code> / <code>depends</code> フィールド、<code>constraint.py:80-99</code> で <code>ComponentConstraints</code> と <code>VersionConstraint.parse</code>、<code>constraint.py:120-181</code> で <code>PackageConstraint</code> の <code>components</code> フィールドのパースを確認。<code>version.py:5-26</code> で <code>semantic_version</code> ライブラリを利用。HLD 例 4 の <code>components</code> 制約は実装済み。一方、HLD 例 1 の <code>"^1.0.0,^2.0.0"</code> のような並列 OR 表記は semantic_version 標準ではカンマが AND なので採用されておらず、HLD 例 3 の <code>SWSS_VERSION</code> 環境変数注入も grep で見つからない（採用見送り）。基本枠組みは存在することを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-os-docker">SONiC OS と Docker イメージのセマンティックバージョニング<a class="headerlink" href="#sonic-os-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -8862,7 +8884,16 @@
 <li><code>sonic-package-manager show</code> で <code>depends</code> が複雑 → manifest の <code>^X.Y.Z,^A.B.C</code> 形式が想定通り解釈されているか CLI ログを確認</li>
 <li>新 swss にしたら docker が動かない → API 破壊（major bump）が起きている可能性。docker 側 manifest を更新</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の <code>sonic-utilities/sonic_package_manager</code> を裏取り。</p>
+<ul>
+<li><strong>採用済み</strong>: <code>manifest.py:179-185</code> の <code>version</code> / <code>depends</code>、<code>constraint.py:120-181</code> の <code>PackageConstraint(name, version, components)</code> 構造、<code>components</code> ごとの <code>VersionConstraint</code>、<code>semantic_version</code> (https://pypi.org/project/semantic-version/) 経由の SemVer パース。</li>
+<li><strong>採用されていない例（HLD 提案のうち）</strong>:</li>
+<li><strong>HLD 例 1 の <code>"^1.0.0,^2.0.0"</code> のような並列 OR 表記</strong>: <code>semantic_version</code> の <code>SimpleSpec</code> ではカンマは AND を意味する（例: <code>&gt;=1.0.0,&lt;2.0.0</code>）。OR を表す <code>||</code> は SimpleSpec 拡張で別途扱われる。HLD の意図する「複数 major を許容」表記は標準ライブラリでは expression パーサ次第になるため、現状の <code>sonic-package-manager</code> は OR 並列表記をそのまま受け付ける作りではない。</li>
+<li><strong>HLD 例 3 の <code>SWSS_VERSION</code> 等の環境変数注入で複数 API 並行対応</strong>: <code>sonic_package_manager</code> で <code>SWSS_VERSION</code> の grep ヒットは 0。container 起動時の version 注入は採用されていない。</li>
+</ul>
+<p>枠組み（package manifest + components + semantic_version）は HLD 通りに実装されているが、HLD で例示した一部運用パターンは別形（<code>||</code> や <code>components</code>）に置き換わっている。</p>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SONiC Application Extension Infrastructure 自体の現行採用状況確認（Proposal が採択されたか）
 - sonic-package-manager の package.json depends 形式（"^1.0.0,^2.0.0" 並列 OR）対応状況確認
