@@ -9,5 +9,6 @@
     "neighsyncd / fpmsyncd \u304c VRF \u5225 entry \u3092 APP_DB \u306e VRF \u30ad\u30fc\u3068\u3068\u3082\u306b publish \u3059\u308b\u30ed\u30b8\u30c3\u30af\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 504
+  "issue": 504,
+  "pr": 505
 }
