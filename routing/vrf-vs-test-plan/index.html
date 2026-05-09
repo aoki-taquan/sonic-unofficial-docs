@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-management-vrf-design-document-201911-release/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/vrf-vs-test-plan/">
       
       
-        <link rel="prev" href="../routing-and-next-hop-table-enhancement/">
+        <link rel="prev" href="../test-plan-for-inner-packet-hashing-in-ecmp/">
       
       
-        <link rel="next" href="../sonic-usid/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Management VRF 設計（201911 release / l3mdev + cgroups） - SONiC 非公式ドキュメント</title>
+        <title>VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#management-vrf-201911-release-l3mdev-cgroups" class="md-skip">
+        <a href="#vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Management VRF 設計（201911 release / l3mdev + cgroups）
+              VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
             
           </span>
         </div>
@@ -1783,37 +1783,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Management VRF 設計（201911 release / l3mdev + cgroups）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -1829,203 +1802,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラフィック分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        構成手順
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        アプリケーション挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tacacs-use-mgmt-vrf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tacacs+ の --use-mgmt-vrf
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2203,10 +1979,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../vrf-vs-test-plan/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2222,6 +2025,131 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スコープ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テスト 53 項目の構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注目テスト
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -11420,7 +11348,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラフィック分離
+        スコープ
       
     </span>
   </a>
@@ -11428,10 +11356,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#53" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
+        テスト 53 項目の構造
       
     </span>
   </a>
@@ -11442,92 +11370,31 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        構成手順
+        注目テスト
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        アプリケーション挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tacacs-use-mgmt-vrf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tacacs+ の --use-mgmt-vrf
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -11538,7 +11405,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11549,18 +11416,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11587,7 +11443,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-management-vrf-design-document-201911-release.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/vrf-vs-test-plan.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11596,93 +11452,131 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（201911 リリース固定）</p>
-<p>本 HLD は <strong>SONiC 201911 リリース（Debian Stretch / Linux 4.9）専用</strong> と冒頭で明示されている。202006 リリース以降（Buster カーネル）では別 HLD が書かれる予定だった。<code>MGMT_VRF_CONFIG</code> テーブル、<code>l3mdev:mgmt</code> cgroup、<code>cgexec -g l3mdev:mgmt</code> 経由のアプリ起動、<code>/etc/network/interfaces</code> 改修、tacacs+ NSS/PAM の <code>--use-mgmt-vrf</code> 拡張パッチが現行 master でまだ意味を持つかは要確認。<strong>詳細は HLD <code>doc/mgmt/sonic_stretch_management_vrf_design.md</code> を参照（29KB のため要点のみ抜粋）</strong>。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>本テストプランは Virtual Switch (VS) 上で <code>vrfmgrd</code> / <code>intfmgrd</code> / <code>Orchagent</code> が CONFIG_DB → APP_DB → ASIC_DB / Linux kernel に正しく VRF 設定を流すことを検証する設計記述。FRR / SAI 観点は別の ansible テストでカバー。</p>
 </div>
-<h1 id="management-vrf-201911-release-l3mdev-cgroups">Management VRF 設計（201911 release / l3mdev + cgroups）<a class="headerlink" href="#management-vrf-201911-release-l3mdev-cgroups" title="Permanent link">&para;</a></h1>
+<h1 id="vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel">VRF VS テストプラン（<code>vrfmgrd</code> / <code>intfmgrd</code> / <code>Orchagent</code> → APP_DB / ASIC_DB / kernel）<a class="headerlink" href="#vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の <strong>管理面トラフィック（mgmt port <code>eth0</code>）とデータ面（front panel ports）を別 VRF に分離</strong> する設計。Linux の <code>l3mdev</code> を VRF 実装として使い、cgroup <code>l3mdev:mgmt</code> を介してアプリケーションを mgmt VRF context で実行する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>namespace 方式と比較して、サービス（ssh / lldp 等）を 1 インスタンスで共有できる利点がある。HLD 末尾の比較表で l3mdev を採用する判断根拠が示されている。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">トラフィック分離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    MGMT[eth0\n mgmt traffic] --&gt; MV[mgmt VRF\n table 5000]
-    FPP[Front Panel Ports] --&gt; DV[default VRF\n main table]
-    MV -.-&gt;|never forwarded| DV</code></pre>
+<p>VRF（Virtual Routing and Forwarding）の SwSS パスを <strong>VS テストフレームワーク</strong>で機械的に検証する。観点は<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>mgmt port から入った IP は mgmt VRF テーブル (table 5000) で処理される。</li>
-<li>front panel から入った IP は default VRF (main table) で処理される。</li>
-<li><strong>transit traffic は両 VRF 間で絶対に転送されない</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>スイッチ発の通信は default VRF が暗黙のデフォルト。<code>cgexec -g l3mdev:mgmt &lt;cmd&gt;</code> で mgmt VRF コンテキスト実行。</li>
+<li><code>vrfmgrd</code> が CONFIG_DB の VRF 設定を APP_DB と Linux kernel に正しく反映するか</li>
+<li>Orchagent が APP_DB を読んで ASIC_DB に VIRTUAL_ROUTER オブジェクトを作るか</li>
+<li>L3 インタフェース（physical port / LAG / VLAN / loopback）への VRF bind および IPv4/IPv6 アドレス設定の伝播</li>
+<li>neighbor entry / route entry の VRF 別管理と隔離</li>
+<li>ACL redirect の VRF 別 nexthop 指定</li>
+<li>vrfmgrd warm-reboot 横断で kernel・ASIC_DB が保たれること</li>
 </ul>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MGMT_INTERFACE|eth0|&lt;ip&gt;/&lt;mask&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    gwaddr  = &lt;gateway&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    vrfname = mgmt
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>MGMT_VRF_CONFIG|vrf_global
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    mgmtVrfEnabled = &quot;true&quot; | &quot;false&quot;
-</span></code></pre></div>
-<h3 id="_4">構成手順<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>config vrf add mgmt</code> 実行時の挙動<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>：</p>
-<ol>
-<li>CONFIG_DB の <code>MGMT_VRF_CONFIG.mgmtVrfEnabled = true</code> をセット。</li>
-<li><code>interfaces-config</code> サービスを再起動 → <code>interfaces.j2</code> から mgmt VRF 用 <code>/etc/network/interfaces</code> を生成し、<code>networking</code> を再起動。</li>
-<li><code>mgmt</code> インタフェース（<code>type vrf table 5000</code>）と <code>lo-m</code> ダミーループバック（NTP 内部通信用）を作成。</li>
-<li><code>eth0</code> を <code>mgmt</code> VRF に enslave（<code>ip link set dev eth0 master mgmt</code>）。</li>
-<li><code>l3mdev:mgmt</code> cgroup を作成。</li>
-</ol>
-<h3 id="_5">アプリケーション挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">スコープ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>VS テスト = SwSS / orchagent 等の CONFIG_DB → APP_DB → ASIC_DB / kernel 動作のみ</strong></li>
+<li>FRR と SAI 観点（route 学習・SAI 属性詳細）は別の ansible pytest 系でカバー</li>
+</ul>
+<h3 id="53">テスト 53 項目の構造<a class="headerlink" href="#53" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>アプリ</th>
-<th>mgmt VRF 通信方法</th>
+<th>群</th>
+<th>範囲</th>
+<th>テスト#</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>sshd / TCP 受信</td>
-<td><code>tcp_l3mdev_accept=1</code> で透過対応</td>
+<td>VRF オブジェクト</td>
+<td>create / push (APP_DB / ASIC_DB) / 属性更新 / 削除 / 1K スケール</td>
+<td>1-6</td>
 </tr>
 <tr>
-<td>UDP 受信</td>
-<td>Linux 4.9 では未サポート → SONiC 用パッチを backport</td>
+<td>L3 インタフェース汎用</td>
+<td>intfmgrd の APP_DB 反映、kernel 同期、Orchagent → ASIC_DB</td>
+<td>7-9</td>
 </tr>
 <tr>
-<td>ping / traceroute</td>
-<td><code>cgexec -g l3mdev:mgmt ping ...</code></td>
+<td>Port IF + IPv4/v6 + VRF</td>
+<td>物理 port インタフェースの VRF 有無で IP 投入・削除</td>
+<td>10-16</td>
 </tr>
 <tr>
-<td>TACACS+</td>
-<td>NSS/PAM コードに <code>--use-mgmt-vrf</code> 拡張、<code>SO_BINDTODEVICE</code> で <code>mgmt</code> 縛り</td>
+<td>LAG IF + IPv4/v6 + VRF</td>
+<td>PortChannel 同上</td>
+<td>17-22</td>
 </tr>
 <tr>
-<td>NTP</td>
-<td><code>init.d/ntp</code> を改修し <code>cgexec -g l3mdev:mgmt</code> で起動</td>
+<td>VLAN IF + IPv4/v6 + VRF</td>
+<td>VLAN 同上</td>
+<td>23-28</td>
 </tr>
 <tr>
-<td>SNMP</td>
-<td>netsnmp 5.7.3 へ VRF パッチ適用</td>
+<td>Loopback + IPv4/v6 + VRF</td>
+<td>loopback 同上</td>
+<td>29-33</td>
 </tr>
 <tr>
-<td>DHCP client</td>
-<td>exit-hook の <code>vrf</code> script で eth0 を VRF に置く</td>
+<td>Neighbor</td>
+<td>neighsyncd / Orchagent 経由の v4/v6 neighbor、異 VRF 同 IP</td>
+<td>34-38</td>
 </tr>
 <tr>
-<td>DHCP relay</td>
-<td>default VRF のみ（front panel）。変更なし</td>
+<td>Route</td>
+<td>fpmsyncd → APP_DB → Orchagent → ASIC_DB の v4/v6 route、VRF 跨ぎ nexthop</td>
+<td>39-49</td>
 </tr>
 <tr>
-<td>DNS</td>
-<td>プロセスが mgmt cgroup 内なら自動で mgmt 経由</td>
+<td>ACL redirect</td>
+<td>nexthop redirect の ASIC_DB 確認</td>
+<td>50</td>
+</tr>
+<tr>
+<td>Warm-reboot</td>
+<td>vrfmgrd 跨ぎで kernel / ASIC_DB が保たれる</td>
+<td>51-53</td>
 </tr>
 </tbody>
 </table>
-<h3 id="tacacs-use-mgmt-vrf">tacacs+ の <code>--use-mgmt-vrf</code><a class="headerlink" href="#tacacs-use-mgmt-vrf" title="Permanent link">&para;</a></h3>
-<p><code>config tacacs add --use-mgmt-vrf &lt;ip&gt;</code> で <code>TACPLUS_SERVER.&lt;ip&gt;.vrf=mgmt</code> がセットされ、PAM/NSS が <code>SO_BINDTODEVICE</code> で <code>mgmt</code> インタフェースに縛った socket を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<h3 id="_4">注目テスト<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>観点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td><strong>最大 1000 VRF</strong> まで作成可能</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>異 port × 異 VRF で同一 IPv4</strong> が衝突なく入る</td>
+</tr>
+<tr>
+<td>38</td>
+<td><strong>異 IF × 異 VRF で同一 v4 neighbor</strong> が衝突なく入る</td>
+</tr>
+<tr>
+<td>49</td>
+<td><strong>route の nexthop が別 VRF にある</strong> ケース（VRF leak）</td>
+</tr>
+<tr>
+<td>51-53</td>
+<td>vrfmgrd warm-reboot 中の kernel VRF と ASIC_DB の VIRTUAL_ROUTER / ROUTE_ENTRY / NEIGH_ENTRY の不変性</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+  CDB[(CONFIG_DB&lt;br&gt;VRF / *_INTERFACE)] --&gt; VRFM[vrfmgrd]
+  CDB --&gt; INTM[intfmgrd]
+  VRFM --&gt; KER[(Linux&lt;br&gt;VRF dev)]
+  VRFM --&gt; APP[(APP_DB)]
+  INTM --&gt; APP
+  INTM --&gt; KER
+  APP --&gt; OA[Orchagent]
+  OA --&gt; ASIC[(ASIC_DB)]
+  KER --&gt; NSYNC[neighsyncd] --&gt; APP
+  KER --&gt; FPM[fpmsyncd] --&gt; APP</code></pre>
+<h2 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -11692,82 +11586,33 @@
 </thead>
 <tbody>
 <tr>
-<td><code>MGMT_INTERFACE</code></td>
-<td>mgmt port の IP / GW / VRF</td>
+<td><code>VRF</code></td>
+<td>VRF オブジェクト（属性に <code>fallback_lookup</code> 等があるが本テストの範囲では create/delete 主体）</td>
 </tr>
 <tr>
-<td><code>MGMT_VRF_CONFIG</code></td>
-<td>mgmt VRF の global 有効化</td>
-</tr>
-<tr>
-<td><code>TACPLUS_SERVER</code></td>
-<td><code>vrf=mgmt</code> フィールド対応</td>
+<td><code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code></td>
+<td><code>vrf_name</code> 属性で VRF にバインド。<code>&lt;if&gt;\|&lt;addr/prefix&gt;</code> のキーで IP アドレス</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config vrf add mgmt</code> / <code>config vrf del mgmt</code></td>
-<td>mgmt VRF 作成/削除</td>
-</tr>
-<tr>
-<td><code>config interface eth0 ip add &lt;ip&gt;/&lt;mask&gt; &lt;gw&gt;</code></td>
-<td>mgmt IP 設定</td>
-</tr>
-<tr>
-<td><code>show mgmt-vrf</code> / <code>show mgmt-vrf routes</code></td>
-<td>状態と routing table</td>
-</tr>
-<tr>
-<td><code>show management_interface address</code></td>
-<td>mgmt IP / GW</td>
-</tr>
-<tr>
-<td><code>config tacacs add --use-mgmt-vrf &lt;ip&gt;</code></td>
-<td>tacacs+ サーバを mgmt VRF 経由で</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vrf<span class="w"> </span>add<span class="w"> </span>mgmt
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>mgmt-vrf
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span>--use-mgmt-vrf<span class="w"> </span><span class="m">10</span>.11.55.40
-</span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>201911 リリース固定</strong>。Buster カーネル以降は別 HLD で更新される予定。現行 master では大幅に変わっている可能性あり。</li>
-<li>UDP 受信は SONiC 専用の Linux パッチ（<code>udp_l3mdev_accept</code>）に依存。</li>
-<li>スイッチ発のアプリは <code>cgexec -g l3mdev:mgmt</code> 接頭辞が必要（<code>ssh</code> / <code>ping</code> / <code>wget</code> / <code>apt-get</code> 等）。透過しない。</li>
-<li><code>lo-m</code> ダミーループバックは NTP の <code>ntpq</code> 用 workaround。</li>
-<li>詳細フロー / 各アプリ改修箇所は HLD <code>doc/mgmt/sonic_stretch_management_vrf_design.md</code> を参照。</li>
+<li>本テストは <strong>SAI / FRR 観点は対象外</strong>（別テストで担保）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>1000 VRF は 1 物理 port を 1000 VLAN で分けて bind する想定</li>
+<li>ACL redirect は VRF 跨ぎ nexthop のテストにのみ言及。詳細パターンは ACL 系テストで補完</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>TACACS+ / RADIUS / LDAP</strong>: <code>--use-mgmt-vrf</code> 系オプションで mgmt 経由認証が可能。</li>
-<li><strong>DHCP client / relay</strong>: client は mgmt と data 双方、relay は data 側のみ。</li>
-<li><strong>NTP</strong>: cgexec ラッパーで起動するため、SONiC 側で <code>init.d/ntp</code> をベンダーパッケージから上書き保守する必要がある。</li>
-<li><strong>新しい VRF 機構（namespace ベース）</strong>: HLD で比較されているが採用されず、l3mdev に統一。</li>
+<li><strong>FRR (zebra)</strong>: route 学習側。本テストでは fpmsyncd 経由の APP_DB エントリで間接確認</li>
+<li><strong>warm-reboot</strong>: vrfmgrd 単独 warm restart シナリオあり</li>
+<li><strong>ACL redirect</strong>: VRF 跨ぎ nexthop 指定の確認に組み込み</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>cgexec -g l3mdev:mgmt ssh ...</code> で名前解決が失敗 → DNS は mgmt cgroup から自動的に mgmt 経由になる。<code>resolv.conf</code> の DNS が mgmt から到達可能か確認。</li>
-<li>ntp 同期しない → <code>cgexec</code> で起動されているか <code>ps -ef | grep ntpd</code> を確認。</li>
-<li>tacacs+ が default VRF 経由になってしまう → <code>show tacacs</code> で <code>vrf mgmt</code> が出ているか確認。</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/sonic_stretch_management_vrf_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/vrf/vrf-vs-test-plan.md">sonic-net/SONiC doc/vrf/vrf-vs-test-plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
