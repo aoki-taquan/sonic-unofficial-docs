@@ -1,12 +1,27 @@
 ---
 title: Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
     path: doc/dualtor/active_active_hld.md
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/sonic-linkmgrd
+    path: src/link_manager/LinkManagerStateMachineActiveActive.cpp
+    ref: 65f563308c689e3225fdf3fc249a132350e9879b
+  - repo: sonic-net/sonic-linkmgrd
+    path: src/link_prober/LinkProberStateMachineActiveActive.h
+    ref: 65f563308c689e3225fdf3fc249a132350e9879b
+  - repo: sonic-net/sonic-swss
+    path: orchagent/muxorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss-common
+    path: common/schema.h
+    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-utilities
+    path: config/muxcable.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
     - MUX_CABLE
@@ -19,8 +34,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `linkmgrd` の active-active 用 state machine、`MuxOrch` の prefix-based neighbor 実装（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true` + 別 prefix route）、`HW_FORWARDING_STATE_PEER` などの新規 APP_DB / STATE_DB テーブル、`config mux mode detach` の `xcvrd` への取り込みは実コードでの裏取り未済。warm reboot 対応は HLD では TBD。
+!!! success "裏取りステータス: code-verified"
+    `sonic-linkmgrd` に active-active 専用の state machine 一式 (`src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}`、`src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}`) が存在し、`MuxOrch` は `cable_type == "active-active"`（`muxorch.cpp:2233`）で active-active 系処理を分岐する。新規 APP_DB / STATE_DB テーブル（`FORWARDING_STATE_COMMAND` / `FORWARDING_STATE_RESPONSE` / `HW_FORWARDING_STATE_PEER` / `HW_MUX_CABLE_TABLE_PEER`）は `sonic-swss-common/common/schema.h:145-149,465` に登録済み。`config mux mode detach` も `sonic-utilities/config/muxcable.py:351` の `click.Choice` に追加済み。warm reboot 対応は HLD 上 TBD のままで本ページの裏取り範囲外。
 
 # Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
 
@@ -252,6 +267,15 @@ Ethernet8   active    active           healthy   consistent  2023-Mar-27 07:59:3
 - `HWSTATUS=inconsistent` → ToR 側 admin state と NIC 側 admin state が乖離。gRPC 通信ログ / xcvrd ログ確認
 - standby 切替で traffic 断 → prefix route の next hop が tunnel に切り替わっているか `show mux tunnel-route <port>` で確認
 - 両 ToR が standby 化して通信不能 → linkmgrd の rescue ロジック / default route 状態を確認
+
+## 実装との乖離 / 補足
+
+現行 master（2026-05 時点）の実コード裏取り結果:
+
+- **linkmgrd active-active state machine**: `sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}` および `src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}` が active-standby 系と並列に存在。`PeerActiveState` / `PeerUnknownState` / `PeerWaitState` も `src/link_prober/` に追加されており、HLD のとおり self / peer 独立判定が実装されている。
+- **MuxOrch の active-active 分岐**: `sonic-swss/orchagent/muxorch.cpp:2233` で `cable_type_str == "active-active"` 判定。prefix-based neighbor の SAI 属性（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE`）と prefix route の組合せは muxorch / neighorch 内で扱う。
+- **新規 APP_DB / STATE_DB テーブル**: `sonic-swss-common/common/schema.h` に `APP_FORWARDING_STATE_COMMAND_TABLE_NAME = "FORWARDING_STATE_COMMAND"` (145行)、`APP_FORWARDING_STATE_RESPONSE_TABLE_NAME = "FORWARDING_STATE_RESPONSE"` (146行)、`APP_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_FORWARDING_STATE_PEER"` (149行)、`STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_MUX_CABLE_TABLE_PEER"` (465行) が定義されている。
+- **`config mux mode detach`**: `sonic-utilities/config/muxcable.py:351` で `click.Choice(["active","auto","manual","standby","detach"])` として `detach` を受け付ける。
 
 ## 引用元
 
