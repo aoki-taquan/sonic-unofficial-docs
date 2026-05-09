@@ -403,7 +403,8 @@
         "本ドキュメントは open issues 形式で内容が古い。実装は SONiC_Warm_Restart.md 等の正式 HLD で更新されているはず。"
       ],
       "priority": "high",
-      "issue": 521
+      "issue": 521,
+      "pr": 523
     },
     {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
