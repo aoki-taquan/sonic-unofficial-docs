@@ -29,3 +29,13 @@ merge 済みのページについて、実コードを読んで裏取りを行�
 
 - Verifier は **本文を大きく書き換えない**。あくまで裏取りステータスの昇格と注記のみ
 - 大幅な書き直しが必要なら、新しい issue を立てて Writer に戻す
+
+## 並走時の運用ルール（Writer バッチと同時に動く場合）
+
+Writer バッチが並走している場合、Bash の作業ディレクトリと branch 状態が共有される。次の規約を守ること:
+
+1. **branch 切替・編集・build・commit を 1 つの Bash 呼び出しにまとめる**。`set -e` を入れて `git branch --show-current` で現在地を都度確認する。複数 Bash 呼び出しに分けると Writer 側の `checkout` で奪われる
+2. **`git add -A` を使わない**。常に `git add <specific paths>` で対象ファイルを限定する。Writer の untracked / modified ファイルを誤って巻き込まない
+3. **commit する前に必ず `git pull --ff-only origin main`**。`meta/verification-queue.json` は Writer も更新するので衝突しやすい
+4. **PR 作成前に再度 main を pull**。PR が「親 commit がもう main にない」状態で立たないよう注意
+5. もし `gh pr merge --squash` で他人の PR と同梱されてしまったら、それは GitHub 側の挙動として受け入れる（main には反映されている）
