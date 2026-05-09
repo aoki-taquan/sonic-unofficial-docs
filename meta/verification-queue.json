@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
+      "issue": 293,
+      "verification": "hld-only",
+      "concerns": [
+        "config vlan add / member add / switchport mode CLI の sonic-utilities 取り込み確認",
+        "PORT / PORTCHANNEL の switchport_mode フィールドと sonic-port / sonic-portchannel YANG 取り込み確認",
+        "db_migrator で旧 config_db.json から switchport_mode を推論する実装存在確認",
+        "範囲指定 CLI (10-20) の truncate ポリシーと不正 VID の扱いが現行 master と整合するか確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/switching/link-event-damping-hld.md",
       "issue": 291,
       "verification": "hld-only",
