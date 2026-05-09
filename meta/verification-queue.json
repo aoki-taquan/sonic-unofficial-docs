@@ -1224,6 +1224,22 @@
       "priority": "low",
       "issue": 195,
       "pr": 196
+    },
+    {
+      "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
+      "verification": "hld-only",
+      "concerns": [
+        "/etc/sysctl.d 配下の SONiC default で net.ipv4/ipv6.neigh.default.gc_thresh* が HLD 提案値で設定されているか未確認",
+        "COPP_TABLE の ARP/ND group の cir/cbs が 600 → 8000 pps に上がっているか未確認",
+        "RouteOrch の bulk route API + 1 秒 timer flush の現行 master 実装確認 (sonic-swss/orchagent/routeorch.cpp)",
+        "fpmsyncd の rt_table=0 での master device lookup スキップ最適化の取り込み確認",
+        "sonic-sairedis 内の nlohmann/json バージョンと dump() 経路のバージョンアップ取り込み確認",
+        "show arp / show ndp の個別 FDB lookup 化最適化が sonic-utilities に取り込まれているか確認",
+        "HLD は 2019 年改訂のため現行 master との乖離リスクあり"
+      ],
+      "priority": "high",
+      "issue": 197,
+      "pr": 198
     }
   ]
 }
