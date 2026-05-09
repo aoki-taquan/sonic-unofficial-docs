@@ -1178,7 +1178,8 @@
         "202605 branch の platform common API 統合フェーズ（phase 2）の進捗確認"
       ],
       "priority": "medium",
-      "issue": 189
+      "issue": 189,
+      "pr": 190
     }
   ]
 }
