@@ -85,7 +85,7 @@ PORT|<name>
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
 
-- 関連 CONFIG_DB: [`VLAN_MEMBER`](vlan-member.md)（PORT を leafref 参照）、[`PORTCHANNEL_MEMBER`](portchannel-member.md)（PORT を leafref）、`INTERFACE`（L3 用 PORT 上の IP）、`MACSEC_PROFILE`、`BUFFER_PG` / `BUFFER_QUEUE`
+- 関連 CONFIG_DB: `VLAN_MEMBER`（PORT を leafref 参照）、`PORTCHANNEL_MEMBER`（PORT を leafref）、`INTERFACE`（L3 用 PORT 上の IP）、`MACSEC_PROFILE`、`BUFFER_PG` / `BUFFER_QUEUE`
 - 関連 CLI: [`config interface`](../cli/config-interface.md)（speed / mtu / admin / fec / autoneg を変更）
 - 関連 YANG: `sonic-port`、`sonic-types`（`switchport_mode`、`admin_status`、`interface_type`、`tpid_type`）
 
