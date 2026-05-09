@@ -4070,6 +4070,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -6505,6 +6516,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -6538,8 +6560,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い Initial Proposal</p>
-<p>HLD は 2023-02 改訂の v0.1（Initial 版）で 2 年以上経過している。現行 master の <code>sonic-gnmi</code> 実装に取り込まれているか、<code>--with-master-arbitration</code> フラグや <code>TELEMETRY|gnmi:master_arbitration_enabled</code> スキーマがそのまま採用されているかは未確認。<strong>Open / Action items は HLD 上 N/A だが、Restrictions に「default role 以外は無視」と記載がある点に注意</strong>。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p>現行 master (<code>sonic-gnmi</code> @ eb635b76) で <code>--with-master-arbitration</code> フラグおよび <code>ReqFromMasterEnabledMA</code> の主要ロジック（128-bit EID 比較・末尾 MA 採用・PermissionDenied 返却）は実装済み。ただし HLD と実装の間で <strong>(1) Role 指定時の挙動 (2) CONFIG_DB 駆動の有効化</strong> に関して 2 点の乖離があり、本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gnmi-master-arbitrationelection-id-setrequest">gNMI Master Arbitration（election ID と SetRequest 拡張）<a class="headerlink" href="#gnmi-master-arbitrationelection-id-setrequest" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -6693,7 +6715,14 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 <li>一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で <code>masterEID</code> をリセットするしかない（HLD 仕様）<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>Get</code> は通るのに <code>Set</code> だけ落ちる: 仕様通り。Master Arbitration は <code>Set</code> のみ対象<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>）:</p>
+<ul>
+<li><strong>Role.id の扱い</strong>: HLD Restrictions は「default role 以外は <strong>無視</strong> する」と記載しているが、現行 master の <code>sonic-gnmi/gnmi_server/server.go:1329-1331</code> は <code>ma.Role != nil</code> の場合 <code>codes.Unimplemented "MA: Role is not implemented"</code> を返して <strong>拒否</strong> している。HLD どおり「ヘッダに Role を付けても通る」想定でクライアントを実装すると <code>Set</code> がエラーになるため注意。</li>
+<li><strong>CONFIG_DB スキーマ</strong>: HLD は <code>TELEMETRY|gnmi:master_arbitration_enabled</code> を提案しているが、現行 master の <code>sonic-gnmi</code> には対応する CONFIG_DB 駆動の有効化パスは存在せず、<code>sonic-buildimage</code> 側にも <code>master_arbitration_enabled</code> 名のスキーマは見当たらない。実際の有効化はもっぱら <code>--with-master-arbitration</code> 起動フラグ (<code>sonic-gnmi/telemetry/telemetry.go:188,587-588</code>) であり、CONFIG_DB 経由の動的 ON/OFF はサポートされていない。</li>
+</ul>
+<p>主要な合致点として、<code>sonic-gnmi/gnmi_server/server.go:1310-1351</code> の <code>ReqFromMasterEnabledMA</code>（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の <code>masterEID</code>・<code>PermissionDenied</code> 返却）、<code>server.go:1070</code> の <code>Set</code> 内での認証前 <code>ReqFromMaster</code> 呼び出し、<code>telemetry/telemetry.go:62,188</code> の <code>--with-master-arbitration</code> フラグは HLD どおり実装されていることを確認した。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか
 - --with-master-arbitration フラグが実装に取り込まれているか
