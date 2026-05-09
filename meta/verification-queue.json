@@ -1771,6 +1771,19 @@
       "pr": 156
     },
     {
+      "page": "docs/system/sonic-telemetry-in-dial-out-mode.md",
+      "verification": "hld-only",
+      "concerns": [
+        "dialout_client_cli バイナリの sonic-gnmi (旧 sonic-telemetry) 内現行ビルド確認",
+        "TELEMETRY_CLIENT テーブルのスキーマ (Global / DestinationGroup_* / Subscription_*) の YANG / mgmt-framework 取り込み確認",
+        "gNMIDialOut.Publish の TLS 認証要件の現行運用確認",
+        "fail-over (dst_addr 複数指定時の順次接続) ロジックの現行実装確認",
+        "OpenConfig telemetry yang model との互換性現状確認"
+      ],
+      "priority": "medium",
+      "issue": 517
+    },
+    {
       "page": "docs/system/static-dns-configuration.md",
       "issue": 31,
       "verification": "code-verified",
