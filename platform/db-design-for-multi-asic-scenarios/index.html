@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/multiple-nexthop-route-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/db-design-for-multi-asic-scenarios/">
       
       
-        <link rel="prev" href="../mpls-tc-to-tc-map/">
+        <link rel="prev" href="../automatic-module-provisioning-for-chassis/">
       
       
-        <link rel="next" href="../new-frr-sonic-communication-channel/">
+        <link rel="next" href="../dump-on-sai-failure/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） - SONiC 非公式ドキュメント</title>
+        <title>multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" class="md-skip">
+        <a href="#multi-asic-golden-config-json-localhost-asic0-asic1" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
+              multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -855,8 +855,6 @@
       
   
   
-    
-  
   
   
     
@@ -896,23 +894,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -930,13 +925,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -956,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -984,7 +979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1012,7 +1007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1040,7 +1035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1068,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1096,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1124,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1149,37 +1144,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1195,220 +1163,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#updateroute" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        updateRoute() のロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ecmp-group" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ECMP group の事前削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#routeorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RouteOrch 側の補強
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#muxorchcontainsnexthop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MuxOrch::containsNextHop()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        シナリオ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="シナリオ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        経路追加時
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nexthop-neighbor-mux" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        nexthop neighbor 追加時 / mux 状態遷移時
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / CLI / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1421,7 +1175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1449,7 +1203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1477,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1505,7 +1259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1533,7 +1287,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -3675,6 +3429,8 @@
       
   
   
+    
+  
   
   
     
@@ -3706,20 +3462,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3737,13 +3496,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3763,7 +3522,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -3788,10 +3547,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3807,6 +3593,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要件 (関連 CLI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload &lt;file&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config override
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-apply-patch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config apply-patch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-runningconfiguration-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show runningconfiguration all
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config save
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3819,7 +3824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -3847,7 +3852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -3875,7 +3880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -3903,7 +3908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -3931,7 +3936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -3959,7 +3964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3987,7 +3992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -4609,66 +4614,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#updateroute" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        updateRoute() のロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ecmp-group" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ECMP group の事前削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#routeorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RouteOrch 側の補強
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#muxorchcontainsnexthop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MuxOrch::containsNextHop()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        シナリオ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="シナリオ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        経路追加時
+        スキーマ
       
     </span>
   </a>
@@ -4676,18 +4625,68 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#nexthop-neighbor-mux" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        nexthop neighbor 追加時 / mux 状態遷移時
+        要件 (関連 CLI)
       
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
+          <li class="md-nav__item">
+  <a href="#config-reload-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload &lt;file&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config override
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-apply-patch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config apply-patch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-runningconfiguration-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show runningconfiguration all
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config save
+      
+    </span>
+  </a>
   
 </li>
         
@@ -4697,7 +4696,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4709,10 +4708,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / CLI / YANG
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -4720,7 +4719,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4736,7 +4746,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4747,7 +4757,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4758,7 +4768,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4769,7 +4779,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4796,7 +4806,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/multiple-nexthop-route-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/db-design-for-multi-asic-scenarios.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4806,161 +4816,254 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>MuxOrch::updateRoute()</code>、<code>MuxOrch::containsNextHop()</code>、<code>NextHopGroupKey::is_mux_nexthop()</code>、<code>RouteOrch</code> で mux nexthop group を <code>m_nextHops</code> に展開する分岐の現行 master 実装は実コードでの裏取り未済。</p>
+<p><code>config reload</code> / <code>config override-config-table</code> / <code>config apply-patch</code> / <code>config save</code> / <code>show runningconfiguration all</code> の multi-ASIC Golden Config (<code>localhost</code> + <code>asicN</code> 階層) 形式の sonic-utilities 取り込みは実コードでの裏取り未済（参考 PR: sonic-utilities#2738）。</p>
 </div>
-<h1 id="dual-tor-mux-multi-nexthop-route-muxorchupdateroute">dual-tor mux 跨ぎの multi-nexthop route ループ回避（<code>MuxOrch::updateRoute</code>）<a class="headerlink" href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" title="Permanent link">&para;</a></h1>
+<h1 id="multi-asic-golden-config-json-localhost-asic0-asic1">multi-ASIC 用 Golden Config 単一 JSON フォーマット（<code>localhost</code> / <code>asic0</code> / <code>asic1</code> ...）<a class="headerlink" href="#multi-asic-golden-config-json-localhost-asic0-asic1" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Gemini active-standby サーバ環境では、<strong>1 経路に複数の next-hop neighbor</strong> が指定されるシナリオが存在する。それぞれの neighbor が <strong>異なる Ethernet ポート (= 異なる mux)</strong> に居る場合、片方の port が UT0 で active、もう片方が LT0 で active といった状況が起きる。すなわち <strong>同一 ToR 内で 1 つは active neighbor、もう 1 つは standby neighbor</strong> という非対称が発生する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このとき ECMP の半分のパケットが standby 側 nexthop に当たり、<strong>peer ToR への tunnel</strong> に流れ、peer ToR で再び ECMP で半分が元 ToR に戻り無限ループ（実質的にはわずかなパケロス）が起きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong>MuxOrch に <code>updateRoute()</code> を追加</strong> し、route の next-hop が複数あるとき <strong>active が 1 つでもあればその 1 つに絞る</strong> ロジックで ECMP を抑制する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Neighbor 192.168.0.100 on Ethernet0 (Active on this ToR, Standby on peer)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Neighbor 192.168.0.101 on Ethernet4 (Standby on this ToR, Active on peer)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Route   11.11.11.0/24  nexthops 192.168.0.100, 192.168.0.101
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                                ↑                ↑
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                ここで standby を含む ECMP がループ原因
-</span></code></pre></div>
+<p>SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも <strong>1 ファイルの minigraph</strong> を解釈してホスト + 各 ASIC の <code>CONFIG_DB</code> を生成していた。将来的に minigraph は廃止され、Network Device Management (NDM) チームが生成する <strong>Golden Config</strong> が新しい真実の相となる予定<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>問題: 単一 ASIC 機の Golden Config 流通 workflow は確立しているが、multi-ASIC 用の <strong>「1 ファイルでホスト + 全 ASIC を表現するフォーマット」</strong> が未定義であった。本 HLD は <strong>既存 minigraph と同じ「1 ファイル投入」運用を Golden Config でも踏襲</strong> するため、JSON スキーマと関連 CLI の挙動を定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="updateroute"><code>updateRoute()</code> のロジック<a class="headerlink" href="#updateroute" title="Permanent link">&para;</a></h3>
-<p><code>MuxOrch</code> に <code>updateRoute(Route R1)</code> を追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">UpdateRoute</span><span class="p">(</span><span class="n">Route</span><span class="w"> </span><span class="n">R1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">R1</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">more</span><span class="w"> </span><span class="n">than</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">nexthops</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ECMP</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="n">exists</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">nexthops</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">remove</span><span class="w"> </span><span class="n">stale</span><span class="w"> </span><span class="n">ECMP</span><span class="w"> </span><span class="n">group</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">NH</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">nexthops</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NH</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">active</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="n">set</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="n">nexthop</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">NH</span><span class="p">;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="k">return</span><span class="p">;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="c1">// active 不在</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="n">set</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="n">nexthop</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">tunnel</span><span class="p">;</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
+<h3 id="_3">スキーマ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>最上位に <strong><code>localhost</code>（ホスト）と <code>asic0</code>, <code>asic1</code>, ...（各 ASIC）</strong> を key として置き、その下にこれまでの <code>CONFIG_DB</code> 表現を入れる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;localhost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;FEATURE&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;asic0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;FEATURE&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">&quot;asic1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>つまり次の優先順位で 1 つだけを ASIC に置く<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="cli">要件 (関連 CLI)<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>状態</th>
+<th>CLI</th>
+<th>期待される multi-ASIC Golden Config 対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config reload &lt;file&gt;</code></td>
+<td>Golden Config 1 ファイルを host + 全 ASIC の各 <code>CONFIG_DB</code> に分配ロード</td>
+</tr>
+<tr>
+<td><code>config override-config-table</code></td>
+<td>同形式での override</td>
+</tr>
+<tr>
+<td><code>show runningconfiguration all</code></td>
+<td>host / 各 ASIC を 1 つの JSON として上記フォーマットで表示</td>
+</tr>
+<tr>
+<td><code>config apply-patch</code></td>
+<td>JSON Patch (RFC6902) を <code>/&lt;asic&gt;/&lt;table&gt;/...</code> パスで指定可能に</td>
+</tr>
+<tr>
+<td><code>config save</code></td>
+<td>全設定を 1 ファイル Golden Config 形式で保存</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config-reload-file"><code>config reload &lt;file&gt;</code><a class="headerlink" href="#config-reload-file" title="Permanent link">&para;</a></h3>
+<p>新たに <strong>単一 Golden Config ファイル</strong> での reload を追加<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>単一 ASIC</th>
+<th>multi-ASIC（既存）</th>
+<th>multi-ASIC（追加）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config reload</code></td>
+<td><code>/etc/sonic/config_db.json</code> を reload</td>
+<td><code>config_db.json + config_db{N}.json</code> を reload</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>config reload tmp_config_db.json</code></td>
+<td>指定単一ファイル</td>
+<td>カンマ区切り N 個</td>
+<td><strong><code>config reload golden_config_db.json</code> で 1 ファイルを host + 全 ASIC に展開</strong></td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    GC[golden_config_db.json] --&gt; CLI[config reload]
+    CLI --&gt; HOST_CDB[host CONFIG_DB ← golden_config.localhost]
+    CLI --&gt; A0_CDB[asic0 CONFIG_DB ← golden_config.asic0]
+    CLI --&gt; A1_CDB[asic1 CONFIG_DB ← golden_config.asic1]
+    CLI --&gt; AN[...]</code></pre>
+<h3 id="config-override"><code>config override</code><a class="headerlink" href="#config-override" title="Permanent link">&para;</a></h3>
+<p><code>config override-config-table</code> の multi-ASIC 対応<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（PR: sonic-utilities#2738）。例: <code>MACSEC_PROFILE</code> を <code>localhost</code> で空 <code>{}</code>、<code>asic0</code> / <code>asic1</code> で値ありとした Golden Config:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;localhost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;MACSEC_PROFILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;asic0&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;MACSEC_PROFILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;entry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;k&quot;</span><span class="p">:</span><span class="s2">&quot;v&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;asic1&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;MACSEC_PROFILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;entry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;k&quot;</span><span class="p">:</span><span class="s2">&quot;v&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>override 後の各 CONFIG_DB<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>ノード</th>
+<th><code>MACSEC_PROFILE</code> の状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td><strong>テーブル削除</strong>（空 JSON はテーブル除去を意味する）</td>
+</tr>
+<tr>
+<td>asic0</td>
+<td>golden config の値で <strong>完全置換</strong></td>
+</tr>
+<tr>
+<td>asic1</td>
+<td>golden config の値で <strong>完全置換</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config-apply-patch"><code>config apply-patch</code><a class="headerlink" href="#config-apply-patch" title="Permanent link">&para;</a></h3>
+<p>JSON Patch (RFC6902) のパスに <strong><code>/&lt;asic&gt;/&lt;table&gt;/...</code></strong> を含められるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">[</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;op&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;replace&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/asic1/MACSEC_PROFILE/entry/k&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;op&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;replace&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/asic0/MACSEC_PROFILE/entry/k&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">]</span>
+</span></code></pre></div>
+<p>各 op を host / ASIC ループで対応 CONFIG_DB に適用する。</p>
+<h3 id="show-runningconfiguration-all"><code>show runningconfiguration all</code><a class="headerlink" href="#show-runningconfiguration-all" title="Permanent link">&para;</a></h3>
+<p>すべての CONFIG_DB を集約して上記スキーマで表示する。</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as user
+    participant CLI as show runningconfiguration all
+    participant HCDB as host CONFIG_DB
+    participant ACDB0 as asic0 CONFIG_DB
+    participant ACDB1 as asic1 CONFIG_DB
+    U-&gt;&gt;CLI: 実行
+    CLI-&gt;&gt;HCDB: dump
+    CLI-&gt;&gt;ACDB0: dump
+    CLI-&gt;&gt;ACDB1: dump
+    CLI-&gt;&gt;U: { "localhost": {...}, "asic0": {...}, "asic1": {...} }</code></pre>
+<h3 id="config-save"><code>config save</code><a class="headerlink" href="#config-save" title="Permanent link">&para;</a></h3>
+<p>既存挙動（N 個のファイルに分散保存）も維持しつつ、<strong><code>config save all_config_db.json</code></strong> で 1 ファイル Golden Config として保存可能<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>形式</th>
 <th>動作</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>nexthop が 1 つ</td>
-<td>no-op（既存挙動を維持）</td>
+<td><code>config save</code> (multi-ASIC)</td>
+<td><code>config_db.json</code> + <code>config_db0.json</code> ...</td>
 </tr>
 <tr>
-<td>nexthop 複数 + active が 1 つ以上</td>
-<td><strong>最初に見つかった active を sole nexthop に設定</strong></td>
+<td><code>config save tmp_*.json,tmp_*0.json,...</code></td>
+<td>カンマ区切り指定</td>
 </tr>
 <tr>
-<td>nexthop 複数 + 全 standby</td>
-<td><strong>tunnel を sole nexthop に設定</strong>（peer ToR へ encap）</td>
+<td><code>config save all_config_db.json</code></td>
+<td><strong>1 ファイル Golden Config</strong> で保存</td>
 </tr>
 </tbody>
 </table>
-<h3 id="ecmp-group">ECMP group の事前削除<a class="headerlink" href="#ecmp-group" title="Permanent link">&para;</a></h3>
-<p>既存の ECMP next-hop group が ASIC に programming 済みの場合、<code>updateRoute()</code> は先に <code>RouteOrch</code> に削除を依頼する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gRouteOrch</span><span class="o">-&gt;</span><span class="n">hasNextHopGroup</span><span class="p">(</span><span class="n">nextHops</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">NextHopGroupKey</span><span class="w"> </span><span class="nf">nhg_key</span><span class="p">(</span><span class="n">nextHops</span><span class="p">);</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">gRouteOrch</span><span class="o">-&gt;</span><span class="n">removeNextHopGroup</span><span class="p">(</span><span class="n">nhg_key</span><span class="p">);</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>スキーマ自体には変更なし。各 ASIC / host の <strong>既存 CONFIG_DB を 1 階層上で集約</strong> するのは <strong>ファイル形式上の表現</strong> であり、Redis インスタンス自体は別物（host 側の DB と各 ASIC namespace 側の DB）として残る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config reload &lt;golden_config.json&gt;</code></td>
+<td>1 ファイル Golden Config を全 CONFIG_DB に展開</td>
+</tr>
+<tr>
+<td><code>config override-config-table &lt;file&gt;</code></td>
+<td>Golden Config で table 単位 override</td>
+</tr>
+<tr>
+<td><code>config apply-patch &lt;patch.json&gt;</code></td>
+<td>JSON Patch で <code>/&lt;asic&gt;/&lt;table&gt;/...</code> を指定して動的更新</td>
+</tr>
+<tr>
+<td><code>config save &lt;out.json&gt;</code></td>
+<td>1 ファイル Golden Config として保存</td>
+</tr>
+<tr>
+<td><code>show runningconfiguration all</code></td>
+<td>host + 全 ASIC を Golden Config 形式で表示</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Golden Config を一発でロード</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>reload<span class="w"> </span>/etc/sonic/golden_config_db.json
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 動的 patch</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/patch.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s">[</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s"> {&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/asic0/MACSEC_PROFILE/entry/k&quot;,&quot;value&quot;:&quot;value&quot;},</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s"> {&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/asic1/MACSEC_PROFILE/entry/k&quot;,&quot;value&quot;:&quot;value&quot;}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s">]</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s">EOF</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>/tmp/patch.json
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># 全 ASIC を統合した出力で保存</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>config<span class="w"> </span>save<span class="w"> </span>/tmp/all_config.json
 </span></code></pre></div>
-<p>これで「ECMP のエントリ」を「単一 nexthop のエントリ」へ振り替える。</p>
-<pre class="mermaid"><code>flowchart TD
-    R[update notification: Route R1] --&gt; N{nexthop 数}
-    N --&gt;|1| NOP[no-op]
-    N --&gt;|複数| EC[既存 ECMP group があれば削除]
-    EC --&gt; L[loop nexthops]
-    L --&gt; A{active?}
-    A --&gt;|yes| S1[set sole nexthop = NH]
-    S1 --&gt; X[return]
-    A --&gt;|no, 続行| L
-    L --&gt; AE{全 standby?}
-    AE --&gt;|yes| TN[set sole nexthop = tunnel]</code></pre>
-<h3 id="routeorch"><code>RouteOrch</code> 側の補強<a class="headerlink" href="#routeorch" title="Permanent link">&para;</a></h3>
-<p><code>updateRoute()</code> が機能するためには <strong><code>m_nextHops</code> (Route → NextHop 群のキャッシュ)</strong> に mux neighbor が <strong>個別に展開</strong> されている必要がある。既存実装では nexthop group は <code>m_nextHops</code> に個別 next-hop として入らず、<code>updateRoute()</code> が状態遷移時にループできない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>routeorch.cpp</code> に <strong><code>nextHops.is_mux_nexthop()</code> の判定</strong> を追加して、mux neighbor から成る group を解凍する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">nhg_index</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_overlay_nexthop</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_srv6_nexthop</span><span class="p">()</span><span class="w"> </span><span class="o">||</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">nextHops</span><span class="p">.</span><span class="n">is_mux_nexthop</span><span class="p">())</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">{</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">RouteKey</span><span class="w"> </span><span class="n">r_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">ipPrefix</span><span class="w"> </span><span class="p">};</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getNextHops</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">it</span><span class="p">.</span><span class="n">ip_address</span><span class="p">.</span><span class="n">isZero</span><span class="p">())</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">            </span><span class="n">addNextHopRoute</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="w"> </span><span class="n">r_key</span><span class="p">);</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>is_mux_nexthop()</code> は <code>NextHopGroupKey</code> のメソッドで、<strong>group 内のいずれかの NH が mux neighbor なら true</strong> を返す<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設計上の前提として <strong>「group の neighbor は ALL mux か NONE mux」</strong> とし、混在は想定しない。</p>
-<h3 id="muxorchcontainsnexthop"><code>MuxOrch::containsNextHop()</code><a class="headerlink" href="#muxorchcontainsnexthop" title="Permanent link">&para;</a></h3>
-<p>mux neighbor かを判定するため、<code>MuxOrch</code> に<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c++ highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">MuxOrch::containsNextHop</span><span class="p">(</span><span class="n">NextHopKey</span><span class="w"> </span><span class="n">nh</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">nh</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mux_nexthop_tb_</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>is_mux_nexthop()</code> から呼ばれる。</p>
-<h3 id="_3">シナリオ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<h4 id="_4">経路追加時<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<pre class="mermaid"><code>sequenceDiagram
-    participant App
-    participant CDB as CONFIG_DB
-    participant RO as RouteOrch
-    participant MO as MuxOrch
-    participant ASIC
-    App-&gt;&gt;CDB: route 11.11.11.0/24 NH=[A,B] (mux)
-    CDB-&gt;&gt;RO: notify
-    RO-&gt;&gt;RO: is_mux_nexthop() → true → 個別展開
-    RO-&gt;&gt;MO: updateRoute(R1)
-    MO-&gt;&gt;MO: A active? B active?
-    MO-&gt;&gt;ASIC: route -&gt; active NH (or tunnel)</code></pre>
-<h4 id="nexthop-neighbor-mux">nexthop neighbor 追加時 / mux 状態遷移時<a class="headerlink" href="#nexthop-neighbor-mux" title="Permanent link">&para;</a></h4>
-<p><code>MuxOrch</code> は <code>linkmgrd</code> 由来の state 変化通知を受けたとき <strong>影響を受ける route 全部に対して <code>updateRoute()</code> を再評価</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これで active/standby が動的に切り替わるたびに sole nexthop が更新される。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-cli-yang">CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>本 HLD は <strong>CONFIG_DB / CLI / YANG への変更を伴わない</strong>。dual-tor の既存設定（<code>MUX_CABLE</code> / <code>cable_type=active-standby</code> 等）と既存の routing 投入に対し、orchagent 内部の挙動を変えるだけ。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>特別な操作はない。dual-tor 構成であれば自動的に新ロジックが効く。確認は ASIC_DB:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># dst=11.11.11.0/24 に対する nexthop が単一かを確認</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24*&#39;</span>
-</span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>ECMP は実質的に無効化</strong> される。<code>updateRoute()</code> は active が複数あっても <strong>最初の 1 つだけ</strong> を選ぶため、帯域は ECMP の 1/N に縮退する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>同一 nexthop group 内に mux と非 mux の混在は不可</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。混在 group は本 HLD の対象外</li>
-<li>全 nexthop が standby になった場合は <strong>tunnel route</strong> にフォールバック。peer ToR が active であることに依存</li>
-<li><code>updateRoute()</code> は次回呼び出しまで状態が固定されるため、active fallback の選択は <strong>「最初に見つかった active」</strong> で決まる。負荷分散の意味は持たない</li>
-<li><code>m_nextHops</code> のキャッシュ整合性が崩れると古い NH に traffic が流れる risk</li>
+<li>旧来の <strong>N 個のファイル運用と Golden Config 1 ファイル運用の併存</strong> は CLI 側で受理形式を判別して処理する設計（境界条件のテストが必要）</li>
+<li><strong>YANG モデルには変更を加えない</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。1 階層上の <code>localhost</code> / <code>asicN</code> はファイル表現のみ、YANG 検証は各 ASIC / host 単位で行う</li>
+<li><code>config override</code> で <strong>空 JSON <code>{}</code> は table 削除</strong> を意味する仕様<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。誤って空にすると意図せぬ削除が起きる</li>
+<li>minigraph 廃止が前提だが、過渡期は両立する。minigraph と Golden Config が混在した場合の優先順位は別途設計</li>
+<li>各 ASIC の CONFIG_DB は <strong>namespace 内 redis インスタンス</strong>。Golden Config からの分配は CLI 側で各 namespace に対応する Redis を切り替える必要</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>MuxOrch</code></strong>: <code>updateRoute()</code> を新設。既存の neighbor / tunnel ハンドリングと密結合</li>
-<li><strong><code>RouteOrch</code></strong>: <code>is_mux_nexthop()</code> 判定で <code>m_nextHops</code> に NH を個別展開</li>
-<li><strong><code>linkmgrd</code> 状態通知</strong>: state 遷移ごとに <code>updateRoute()</code> を駆動</li>
-<li><strong><code>TunnelOrch</code></strong>: 全 standby 時の tunnel nexthop の供給元</li>
-<li><strong>既存 ECMP 経路</strong>: dual-tor mux 環境では実質無効化される副作用</li>
+<li><strong><code>sonic-utilities</code> の <code>config</code> / <code>show</code> 各サブコマンド</strong>: 上記すべてが multi-ASIC 用に拡張対象</li>
+<li><strong><code>hostcfgd</code> / <code>bgpcfgd</code> 等の per-namespace daemon</strong>: ASIC namespace ごとの設定反映を担う</li>
+<li><strong><code>HwProxy</code> / NDM の Golden Config 配信パイプライン</strong>: 入力供給側</li>
+<li><strong>既存 minigraph parser</strong>: 並列に存在し、minigraph → Golden Config 移行までは両者が動く</li>
+<li><strong><code>SONiC YANG models</code></strong>: 変更不要<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>同 prefix の経路がループする → ASIC_DB で nexthop が単一に絞られているか確認、<code>MuxOrch</code> ログで <code>updateRoute()</code> が呼ばれているか確認</li>
-<li>nexthop が <strong>常に tunnel</strong> になる → 当該 mux ports の active/standby 状態を <code>show muxcable status</code> で確認</li>
-<li>nexthop group のままになる → <code>is_mux_nexthop()</code> 判定が false を返している可能性。<code>mux_nexthop_tb_</code> への登録が完了しているか確認</li>
-<li>ECMP したい → 本 HLD は <strong>mux nexthop に対し ECMP を許容しない</strong> 設計のため、根本的に dual-tor 跨ぎ ECMP は不可</li>
+<li><code>config reload golden_config_db.json</code> で一部 ASIC の設定が空 → JSON の <code>asicN</code> キーが正しい index で並んでいるか確認</li>
+<li><code>config override</code> で table が消える → 空 JSON <code>{}</code> を入れていないか確認</li>
+<li><code>config apply-patch</code> のパスが効かない → <code>/&lt;asic&gt;/...</code> のパスフォーマットを使っているか確認</li>
+<li><code>show runningconfiguration all</code> が host のみ → multi-ASIC 拡張版 sonic-utilities が入っているか確認</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- MuxOrch::updateRoute() の現行 master 実装存在確認 (sonic-swss/orchagent/muxorch.cpp)
-- MuxOrch::containsNextHop() と mux_nexthop_tb_ の取り込み確認
-- NextHopGroupKey::is_mux_nexthop() の存在と判定ロジック確認
-- routeorch.cpp で is_mux_nexthop() ベースに m_nextHops に個別展開する分岐の取り込み確認
-- linkmgrd の state 変化が MuxOrch::updateRoute を駆動する経路の確認
+- config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認
+- config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認
+- config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認
+- show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認
+- config save <single_file> での 1 ファイル保存実装確認
+- minigraph と Golden Config の過渡期の優先順位や両立シナリオの最終決定状況確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dualtor/multiple_nexthop_route_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/multi_asic/DB_Design_for_multi_asic.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
