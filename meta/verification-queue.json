@@ -49,19 +49,6 @@
       "pr": 142
     },
     {
-      "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
-      "issue": 277,
-      "verification": "hld-only",
-      "concerns": [
-        "portsyncd / portmgrd / portsorch の zero-port 起動と post-init add/del 経路実装確認 (PR #1808 等の取り込み状況)",
-        "portsorch の per-port flex counter 動的 add/del (Queue / PG / DEBUG / PFC-WD) 拡張実装確認",
-        "buffermgrd の port 加入/削除 race 対応と orchagent 側 buffer ref counter (sonic-swss #2022) の取り込み状況",
-        "lldpmgrd の host-interface ステート確認と pending_cmds cleanup 改修確認",
-        "zero-port SKU (hwsku.json / platform.json / SAI profile) の現行サンプル存在確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
       "verification": "hld-only",
@@ -403,6 +390,23 @@
       "priority": "medium"
     },
     {
+      "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
+      "issue": 277,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "sonic-swss #2022 (port buffer cfg per-port reference counter) は CLOSED で未マージ。HLD の delete ガード防御は現行 master に存在しない",
+        "buffermgrd の加入時 race（APP_DB に port 存在チェック）の現行取り込み状況は未検証",
+        "zero-port SKU (hwsku.json / platform.json / SAI profile) の現行サンプル存在確認は未検証"
+      ],
+      "verified_concerns": [
+        "sonic-swss #1808 (portsyncd zero-port) は MERGED 確認 (2021-07)",
+        "sonic-swss #2019 (per-port flex counter 動的 add/del) は MERGED 確認 (2022-04)",
+        "sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130 で netdev_oper_status チェック",
+        "lldpmgrd:46-198 で pending_cmds 管理ロジック確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/acl-qos/pfc-historical-statistics.md",
       "issue": 324,
       "verification": "hld-only",
@@ -500,6 +504,19 @@
         "default_users.json ビルド時生成",
         "overlayfs upperdir クリア手順",
         "gNOI FactoryReset との連携"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/architecture/sonic-generic-hash.md",
+      "issue": 333,
+      "verification": "hld-only",
+      "concerns": [
+        "SwitchOrch の SWITCH_HASH ハンドリング実装の現行 master 確認",
+        "SWITCH_HASH_CAPABILITIES STATE_DB 公開の syncd 起動時 query 実装確認",
+        "config switch-hash / show switch-hash CLI の sonic-utilities 取り込み確認",
+        "sonic-switch-hash YANG モジュールの sonic-yang-models 取り込み確認",
+        "IPV6_FLOW_LABEL フィールド (v0.4 追加) の現行 master サポート確認"
       ],
       "priority": "medium"
     },
