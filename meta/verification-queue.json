@@ -310,7 +310,8 @@
         "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認"
       ],
       "priority": "high",
-      "issue": 506
+      "issue": 506,
+      "pr": 507
     },
     {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",

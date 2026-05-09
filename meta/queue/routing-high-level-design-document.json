@@ -11,5 +11,6 @@
     "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA \u5316) \u306e\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
   ],
   "priority": "high",
-  "issue": 506
+  "issue": 506,
+  "pr": 507
 }
