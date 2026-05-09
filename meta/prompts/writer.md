@@ -32,6 +32,15 @@ issue のラベルにより、以下のサブタイプに分岐する。
    - mermaid 化が冗長になる場合（テキストと表だけで十分な場合）は無理に図を作らない。**読み手の理解に貢献する場合のみ**作図する
 7. 文体はである調・敬体禁止。専門用語は原語のまま（必要なら括弧で日本語訳）
 8. **タイトル二段運用**: frontmatter の `title` は日本語で短く意味重視（例: 「BGP unnumbered ピアリング」）。一方ファイル slug は backlog 由来で英語のままで良い（例: `bgp-unnumbered.md`）。両者は無理に揃えなくて良い
+   - **slug が backlog 由来で意味不明・冗長な場合（例: `smart-switch-gnmi-feedback-design-omit-in-toc`）、`title` は Writer が自由にリネームしてよい**
+
+## PR 本文に書くこと
+
+PR 本文には次を必ず含める（Reviewer の機械チェック対象）:
+- `Closes #<issue番号>`
+- 対応する backlog ファイルパス（例: `meta/backlog/<area>/<slug>.json`）
+- 参照した一次情報のリスト（commit SHA 込み）
+- 自分で気付いた懸念点（HLD と実装の差分の可能性 等）
 
 ## 出力
 
