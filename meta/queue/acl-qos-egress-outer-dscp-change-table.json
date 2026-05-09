@@ -1,0 +1,13 @@
+{
+  "page": "docs/acl-qos/egress-outer-dscp-change-table.md",
+  "verification": "hld-only",
+  "concerns": [
+    "AclOrch 内部での UNDERLAY_SET_DSCP -> MARK_META + EGR_SET_DSCP 展開実装存在確認",
+    "SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA / FIELD_ACL_USER_META の community SAI 取り込み確認",
+    "STATE_DB.ACL_ACTIONS の metadata capability 公開実装確認",
+    "config acl add table で type=UNDERLAY_SET_DSCP* を受け入れる sonic-utilities 取り込み確認",
+    "sonic-yang-models 側の ACL_TABLE_TYPE への追加確認",
+    "提案 HLD (2024-07 初版) であり現行 master 取り込み状況の確認"
+  ],
+  "priority": "medium"
+}
