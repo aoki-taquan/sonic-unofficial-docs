@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "hamgrd binary とその actor framework の sonic-dash / sonic-swss 取り込み確認",
+    "swbus ローカルメッセージバス実装の所在確認",
+    "DASH_HA_*_STATE table の sonic-swss-common / sonic-yang-models 取り込み確認",
+    "Switch-Driven mode の HLD 拡張・実装存在確認",
+    "vDPU 抽象の運用 (1:1 vs N:1) と HA Set/Scope 連動確認",
+    "2025-02 Initial Proposal で採否未確認、現行 master との差分可能性"
+  ],
+  "priority": "high"
+}
