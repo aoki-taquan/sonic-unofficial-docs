@@ -20,16 +20,21 @@ Writer が出した PR を機械的に検査し、整合性チェックの結果
 - [ ] `<!-- evidence: ... -->` コメントの `source` が実在パス
 - [ ] HLD と一致しない記述がある場合、`verification: discrepancy-found` になっている
 
+**evidence の行範囲チェックは「該当行を含む」であれば pass**。完全一致までは要求しない（行数の前後ズレは Writer の参照ヒントとしては誤差の範囲）。
+
 ### 3. テンプレ準拠
 
 - [ ] H1 はページタイトルと一致
 - [ ] 「概要」「動作仕様」「設定」「引用元」のセクションが揃っている（reference 系を除く）
 - [ ] 関連する CONFIG_DB / CLI が `related.*` に記載されている
 
+`related.config_db` `related.cli` `related.yang` は **空配列でも pass**。HLD 自体に CONFIG_DB / CLI に関する記述が無い場合、本文側で「該当する CLI / CONFIG_DB は無い」または「未確認」と明記されていれば良い。
+
 ### 4. ビルド
 
 - [ ] `mkdocs build --strict` がエラーなく通る
 - [ ] リンク切れがない
+- [ ] `mkdocs.yml` の `nav:` セクションが編集されていない（nav は awesome-pages プラグインが自動生成する。順序を変えたい場合は該当ディレクトリの `.pages` を編集する）
 
 ### 5. 文体・スタイル
 

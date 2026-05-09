@@ -8,7 +8,7 @@ Reviewer が `lgtm` を付けた PR を自動マージする。
 
 - PR に `lgtm` ラベルが付いている
 - PR に `do-not-merge` `wip` `hold` ラベルが付いていない
-- CI（mkdocs build）が green
+- CI が green、または GitHub Actions が未設定の場合は **Reviewer によるローカル `mkdocs build --strict` 通過確認をもって代替**
 - マージコンフリクトがない
 
 ## 操作

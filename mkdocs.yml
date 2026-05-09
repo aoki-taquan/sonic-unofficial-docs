@@ -78,35 +78,13 @@ markdown_extensions:
 plugins:
   - search:
       lang: ja
+  - awesome-pages
 
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/aoki-taquan/sonic-unofficial-docs
 
-nav:
-  - ホーム: index.md
-  - アーキテクチャ:
-      - architecture/index.md
-      - ポート不正パケットドロップ設計: architecture/port-illegal-packets-drop-design.md
-  - ルーティング:
-      - routing/index.md
-  - スイッチング:
-      - switching/index.md
-  - オーバーレイ:
-      - overlay/index.md
-  - ACL & QoS:
-      - acl-qos/index.md
-  - システム:
-      - system/index.md
-  - マネジメント:
-      - management/index.md
-  - プラットフォーム:
-      - platform/index.md
-  - 内部実装:
-      - internals/index.md
-  - リファレンス:
-      - reference/index.md
-      - CLI: reference/cli/index.md
-      - CONFIG_DB: reference/config-db/index.md
-      - YANG: reference/yang/index.md
+# nav は awesome-pages プラグインが各ディレクトリの `.pages` を読んで自動生成する。
+# Writer は mkdocs.yml の nav を編集してはならない。並び順を変えたい場合は
+# 該当ディレクトリの `.pages` を編集する。

@@ -33,13 +33,16 @@ issue のラベルにより、以下のサブタイプに分岐する。
 ## 出力
 
 1. `docs/<area>/<slug>.md` を作成または更新
-2. `mkdocs build --strict` がローカルで通ることを確認
-3. ブランチ名: `page/<area>/<slug>`
-4. PR タイトル: `[<area>] <ページタイトル>`
-5. PR 本文に以下を含める:
+2. **`mkdocs.yml` を編集してはならない**。nav は awesome-pages プラグインが自動生成する。並び順を変えたい場合のみ該当ディレクトリの `.pages` を編集する
+3. `mkdocs build --strict` がローカルで通ることを確認（`/home/coder/sonic-unofficial-docs/.venv/bin/mkdocs build --strict`）
+4. ブランチ名: `page/<area>/<slug>`
+5. PR タイトル: `[<area>] <ページタイトル>`
+6. PR 本文に以下を含める:
    - 対応する issue 番号 (`Closes #N`)
    - 参照した一次情報のリスト
    - 自分で気付いた懸念点（HLD と実装の差分の可能性 等）
+
+`related.config_db` `related.cli` `related.yang` は HLD に関連記述が無ければ空配列で良い。その場合は本文に「該当する CLI / CONFIG_DB は無い」または「未確認」と明記する。
 
 ## 禁止事項
 
