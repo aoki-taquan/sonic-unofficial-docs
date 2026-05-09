@@ -1269,7 +1269,8 @@
         "SUBNET_DECAP YANG モデルの取り込み状況確認"
       ],
       "priority": "medium",
-      "issue": 532
+      "issue": 532,
+      "pr": 533
     },
     {
       "page": "docs/platform/support-bmc-flows-in-sonic.md",

@@ -10,5 +10,6 @@
     "SUBNET_DECAP YANG \u30e2\u30c7\u30eb\u306e\u53d6\u308a\u8fbc\u307f\u72b6\u6cc1\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 532
+  "issue": 532,
+  "pr": 533
 }
