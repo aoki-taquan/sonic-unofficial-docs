@@ -1047,6 +1047,19 @@
       "priority": "medium",
       "issue": 171,
       "pr": 172
+    },
+    {
+      "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
+      "verification": "hld-only",
+      "concerns": [
+        "bgpcfgd の BGPPeerMgrBase が update.conf.j2 / delete.conf.j2 を init 時にロードする実装存在確認",
+        "vtysh で現行 BGP listen-range を取得し新ranges との diff を計算する処理の取り込み確認",
+        "STATE_DB.BGP_PEER_CONFIGURED_TABLE の dynamic / static 両対応の書き込みコード確認",
+        "show ip bgp vrf <name> {summary,network,neighbors} と show ipv6 系の sonic-utilities 取り込み確認",
+        "docker-fpm-frr の bgpd template directory への update.conf.j2 / delete.conf.j2 追加状況確認"
+      ],
+      "priority": "medium",
+      "issue": 173
     }
   ]
 }
