@@ -1,7 +1,7 @@
 ---
 title: SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
     - sonic-fast-linkup
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`switchorch` の `setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`、`portsorch` の `setPortFastLinkupEnabled`、SAI 属性 (`SAI_SWITCH_ATTR_FAST_LINKUP_*` / `SAI_PORT_ATTR_FAST_LINKUP_ENABLED`) の対応状況は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/switchorch.cpp:2094-2271` (`setFastLinkupCapability` / `setSwitchFastLinkup` / `doCfgSwitchFastLinkupTableTask`)、`portsorch.h:300` (`setPortFastLinkupEnabled`)、SAI 属性 `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `..._GUARD_TIMEOUT[_RANGE]` / `..._BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` および `config/main.py:5095` の `switch-fast-linkup` CLI 群を確認済み（verified at: 2026-05-09）。
 
 # SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
 
