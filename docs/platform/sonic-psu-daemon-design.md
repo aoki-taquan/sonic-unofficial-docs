@@ -1,0 +1,153 @@
+---
+title: psud（PSU 監視デーモン / power threshold ヒステリシス）
+area: platform
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/psud/PSU_daemon_design.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - show platform psustatus
+    - psuutil
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    HLD は v0.4 (2022-08)。`PSU_INFO` の `power_overload` / `power_*_threshold` フィールド、`PsuBase` の `get_psu_power_*_threshold` 抽象 API、3 秒ループの psud 実装は未裏取り。
+
+# psud（PSU 監視デーモン / power threshold ヒステリシス）
+
+## 概要
+
+`psud` は **PSU の物理状態と電力指標を周期収集し STATE_DB に書く platform monitor 系 daemon**[^1]。supervisord が `psud` を起動。3 秒ループで platform API（fallback で plugin）を呼び、PSU の present / power_good / 電圧 / 電流 / 電力 / 温度 / 各種閾値を取得して `PSU_INFO` table を更新する。電圧範囲超過 / 温度過熱 / 電源喪失 / PSU 抜去 / **power critical threshold 超過** に対し PSU LED 色変更と syslog 発報を行う。`power threshold` チェックは v0.4 で追加され、ヒステリシス付き 2 段閾値 (`warning-suppress`, `critical`) で alarm flapping を抑止する。
+
+## 動作仕様
+
+### 主要ループ
+
+```mermaid
+flowchart LR
+  TICK[3 sec timer] --> P0[entity info 更新]
+  P0 --> P1[present / power_good]
+  P1 -->|new PSU 検出| THR[warning_suppress / critical 閾値読取]
+  P1 --> P2[voltage / current / power / temp 読取]
+  P2 --> CHK[power threshold check<br/>w/ hysteresis]
+  P2 --> EVT{abnormal event?}
+  EVT -->|yes| LED_RED[LED=red] --> SYS[syslog ALERT]
+  EVT -->|recover| LED_GR[LED=green] --> SYS2[syslog cleared]
+  CHK --> DB[(STATE_DB PSU_INFO)]
+```
+
+### Power threshold ヒステリシス
+
+```
+        critical ─────── alarm raise
+                         (power が critical を上方向に横切る)
+        ............
+        warning_supp ── alarm clear
+                         (power が warning_suppress を下方向に横切る)
+```
+
+- `power_overload=true` のとき、**warning_suppress 未満まで下がる**と false に戻して NOTICE log
+- `power_overload=false` のとき、**critical 以上**で true に上げて WARNING log
+- どちらの閾値も platform API が `NotImplemented` / `None` なら **その PSU では check 無効**[^1]
+
+非対称閾値にする理由: 単一閾値だと閾値付近で alarm flapping が起きる。クリア閾値を低く取ることで安定化[^1]。
+
+### `PSU_INFO` テーブル（STATE_DB）
+
+key: `PSU_INFO|<psu_name>`
+
+| フィールド | 内容 |
+|-----------|------|
+| `presence` / `status` / `change_event` | PSU 物理状態 |
+| `model` / `serial` / `revision` / `is_replaceable` / `fan` / `led_status` | metadata |
+| `voltage` / `voltage_min_threshold` / `voltage_max_threshold` | 出力電圧と範囲 |
+| `current` / `power` / `max_power` | 出力 |
+| `input_voltage` / `input_current` | 入力 |
+| `temp` / `temp_threshold` | 温度 |
+| `power_overload` | "true" / "false" |
+| `power_warning_suppress_threshold` / `power_critical_threshold` | 2 段閾値 |
+
+PSU 数自体は別途 `chassis_info` テーブルに格納（pmon-enhancement HLD と整合）[^1]。
+
+### イベント定義
+
+| イベント | LED | Alert メッセージ |
+|---------|-----|-----------------|
+| 電圧範囲外 | red | `PSU voltage warning: <name> voltage out of range, ...` |
+| 温度過熱 | red | `PSU temperature warning: <name> too hot, ...` |
+| Power absence | red | `Power absence warning: <name> is out of power.` |
+| PSU 抜去 | red (LED 不可な場合あり) | `PSU absence warning: <name> is not present.` |
+| Power threshold 超過 | （LED は変えず status=WARNING）| WARNING level syslog |
+
+回復時は `... cleared: ... back to normal` の Recover メッセージと LED=green。
+
+### Platform API 拡張（`PsuBase`）
+
+vendor は `sonic_platform_base/psu_base.py` の以下を実装する[^1]:
+
+```python
+get_temperature(), get_temperature_high_threshold()
+get_voltage_high_threshold(), get_voltage_low_threshold()
+get_input_voltage(), get_input_current()
+get_psu_power_warning_suppress_threshold()  # 揮発値、毎回呼ぶ
+get_psu_power_critical_threshold()           # 揮発値、毎回呼ぶ
+```
+
+Volatile 注記が重要: 閾値が温度等で動的に変化する platform があり、psud は値を cache せず毎周回取得する想定。
+
+### CLI
+
+| Command | 表示内容 |
+|---------|----------|
+| `show platform psustatus` | psud が STATE_DB に書いた状態。**`Status` に `WARNING` を含む**（threshold 超過 alarm）|
+| `psuutil` | platform API 直叩き。one-shot のため state を持たず **`WARNING` 列は出さない**（warning_suppress < power < critical の判別ができない）|
+
+`show platform psustatus` の出力（HLD 抜粋）:
+
+```
+PSU    Model          Serial        HW Rev  Voltage(V) Current(A) Power(W) Status  LED
+PSU 1  MTEF-PSF-AC-A  MT1629X14911  A3        12.08      5.19      62.62   WARNING green
+PSU 2  MTEF-PSF-AC-A  MT1629X14913  A3        12.01      4.38      52.50   OK      green
+```
+
+`psuutil` 出力には `Power Warn-supp Thres (W)` と `Power Crit Thres (W)` 列が追加される（platform 非対応なら `N/A`）。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/psud/PSU_daemon_design.md#L80-L110 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  We use asymmetric thresholds between raising and clearing the alarm for the purpose of creating a hysteresis ...
+  - an alarm will be raised when a PSU's power is rising across the critical threshold
+  - an alarm will be cleared when a PSU's power is dropping across the warning-suppress threshold
+reasoning: 2 段閾値ヒステリシスの根拠。
+-->
+
+## 制限事項
+
+- `psuutil` は state を持たないため `WARNING` を表示しない
+- `power threshold` は platform API が両方の getter を提供する必要あり（片方欠けたら無効）
+- 動的閾値 platform では値が時間変化する前提で **cache 禁止**
+- LED 制御不能な PSU 抜去状態では LED 表示は更新できない
+
+## 干渉する機能
+
+- **pmon-enhancement-design**: PSU 数を `chassis_info` に置く設計と接続
+- **thermal-control**: PSU 温度や電力が thermal policy にも影響
+- **`psuutil`** / **`show platform psustatus`** CLI: 状態露出
+- **modular switch**: 全 PSU 合計 power が **switch power budget** を超えるかも別途監視
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/psud/PSU_daemon_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- psud の 3 秒ループ実装と power_overload 判定ロジックの sonic-platform-daemons 取り込み確認
+- PSU_INFO の power_warning_suppress_threshold / power_critical_threshold / power_overload の sonic-yang-models 反映確認
+- PsuBase の get_psu_power_*_threshold / get_input_voltage / get_input_current の sonic-platform-common 取り込み確認
+- show platform psustatus の WARNING ステータス表示の sonic-utilities 取り込み確認
+- psuutil 出力での threshold 列追加の確認
+-->

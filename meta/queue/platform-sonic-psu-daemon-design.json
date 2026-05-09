@@ -1,0 +1,12 @@
+{
+  "page": "docs/platform/sonic-psu-daemon-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "psud の 3 秒ループ実装と power_overload 判定ロジックの sonic-platform-daemons 取り込み確認",
+    "PSU_INFO の power_warning_suppress_threshold / power_critical_threshold / power_overload の sonic-yang-models 反映確認",
+    "PsuBase の get_psu_power_*_threshold / get_input_voltage / get_input_current の sonic-platform-common 取り込み確認",
+    "show platform psustatus の WARNING ステータス表示の sonic-utilities 取り込み確認",
+    "psuutil 出力での threshold 列追加の確認"
+  ],
+  "priority": "medium"
+}
