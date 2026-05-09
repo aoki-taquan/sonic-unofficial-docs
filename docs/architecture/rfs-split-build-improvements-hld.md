@@ -1,0 +1,124 @@
+---
+title: RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
+area: architecture
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/sonic-build-system/rfs-split-build-improvement.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    HLD は Rev 0.1 (日付未記載)。`rules/config` の `ENABLE_RFS_SPLIT_BUILD` フラグ、`slave.mk` の RFS squashfs ターゲット、`build_debian.sh` の 2 段分岐は要裏取り。
+
+# RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
+
+## 概要
+
+SONiC の installer ビルドの最終ステップ（`SONIC_INSTALLERS` ターゲット）は **`build_debian.sh` を一気に走らせる単一ルール** で構成され、debootstrap から ONIE installer payload 生成までを直列に行う。これは依存関係上 **並列化できない** ため、ビルド全体のクリティカルパスとなる[^1]。
+
+本機能はこのフローを 2 段に分割する。前半（base image / external packages / initramfs / linux-image）は **他のターゲットと並列に走らせる** ことができ、後半（artifact installation / ONIE payload 生成）はその squashfs を読み込んで継続する。これによりビルド時間を短縮する[^1]。
+
+## 動作仕様
+
+### 既存の単一段ビルド
+
+`build_debian.sh` の構成[^1]:
+
+1. base image 準備（`build_debian_base_system.sh`、debootstrap）
+2. 外部パッケージ install（`apt-get` 等）
+3. initramfs / linux-image install
+4. ビルド成果物 install（docker image, debian packages, files; `sonic_debian_extension.sh`）
+5. `ONIE_INSTALLER_PAYLOAD` 生成
+
+これらが 1 ルールで直列実行されるため、`SONIC_INSTALLERS` は他の build ターゲット全体を待ってから動き出す[^1]。
+
+### 2 段分割の構造
+
+```mermaid
+flowchart TD
+  subgraph 並列実行可
+    S1[Stage 1<br>1) base image<br>2) 外部 packages<br>3) initramfs / kernel]
+    OTH[他のビルド成果物<br>(docker images, debs, 等)]
+  end
+  S1 --> SQ[(rootfs.squashfs)]
+  SQ --> S2[Stage 2<br>4) artifact 配置<br>5) ONIE payload 生成]
+  OTH --> S2
+  S2 --> INST[SONIC_INSTALLERS]
+```
+
+Stage 1 は build artifacts に依存しないため、他のターゲットと **同時に走らせられる**。Stage 1 完了時の rootfs を **squashfs ファイル** として保存し、Stage 2 でそれを load して継続する[^1]。
+
+### 実装
+
+ビルドフラグ追加（`rules/config`）[^1]:
+
+```bash
+# ENABLE_RFS_SPLIT - enable 2-stage installer build
+ENABLE_RFS_SPLIT_BUILD ?= n
+```
+
+既定では無効。実装は 2 部に分かれる[^1]:
+
+1. **`slave.mk`**: RFS squashfs 用の新ターゲット生成と依存関係処理
+2. **`build_debian.sh`**: 2 段実行サポート
+   - `ENABLE_RFS_SPLIT_BUILD` が有効か判定
+   - Stage 1 では完了時点で rootfs を squashfs に保存して exit
+   - Stage 2 では squashfs を load してから後半ステップを実行
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  ENABLE_RFS_SPLIT_BUILD ?= n
+  The implementation consists of 2 parts:
+  1) Generating and processing new targets for RFS squashfs files (slave.mk)
+  2) Adding support of a 2-stage run for build_debian.sh
+reasoning: フラグ名と実装ファイル分担の根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB / CLI / YANG
+
+該当なし。これは **ビルドシステム** の改善であり、ランタイム動作には影響しない。
+
+### 関連するビルドフラグ
+
+| フラグ | 既定 | 説明 |
+|--------|------|------|
+| `ENABLE_RFS_SPLIT_BUILD` | `n` | `y` で 2 段ビルドを有効化 |
+
+### 設定例
+
+```bash
+# .platform_env や make 引数で設定
+make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
+```
+
+## 制限事項
+
+- **既定無効**: 全プラットフォームで自動で速くなるわけではない。明示的に有効化する必要がある[^1]。
+- **ストレージコスト**: Stage 1 出力の squashfs を保持するため、ビルドサーバの一時領域が増える。
+- **互換性確認の責務**: 既存ビルドフローで動いていた hook（`sonic_debian_extension.sh` の前後で何かを差し込んでいる組織）は、Stage の境界をまたぐと動作が変わる可能性がある。
+- **HLD は Rev 0.1**: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定[^1]。
+
+## 干渉する機能
+
+- **既存の `slave.mk` ルール**: `SONIC_INSTALLERS` ターゲットの依存関係が変わる。並列度を上げる効果は他ターゲットの粒度にも依存。
+- **キャッシュ系（DPKG cache 等）**: Stage 1 で生成される rootfs がキャッシュ対象になり得る。同じプラットフォーム・kernel ならば再利用できる。
+- **CI ビルド時間**: 並列度を上げることで CI のリソースに依存する。利点はビルドサーバの並列度が高い場合に大きい。
+
+## トラブルシューティング
+
+- ビルドが Stage 2 で失敗: squashfs が壊れている / Stage 1 が異常終了している可能性。Stage 1 ログと squashfs の存在を確認。
+- 期待した時間短縮効果が出ない: 他のクリティカルパス（docker image build 等）に律速されている可能性。`make -j` 並列度と他ターゲットのプロファイルを見る。
+- フラグが効かない: `rules/config` での `ENABLE_RFS_SPLIT_BUILD` を確認。`y` でも `slave.mk` 側のターゲットが生成されているか `make -n` で確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/sonic-build-system/rfs-split-build-improvement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
