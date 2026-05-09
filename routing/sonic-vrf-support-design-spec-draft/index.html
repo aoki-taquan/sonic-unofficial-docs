@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/hld-for-handling-sai-failures/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-vrf-support-design-spec-draft/">
       
       
-        <link rel="prev" href="../global-platform-specific-psuutil-class-instance/">
+        <link rel="prev" href="../sonic-usid/">
       
       
-        <link rel="next" href="../icmp-hardware-offload/">
+        <link rel="next" href="../srv6-sid-l3adj/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB） - SONiC 非公式ドキュメント</title>
+        <title>VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sai-handlesaistatus-virtual-error_db" class="md-skip">
+        <a href="#vrf-vrfmgrd-vrforch-frr-vrf-aware" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
+              VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1125,6 +1125,8 @@
       
   
   
+    
+  
   
   
     
@@ -1206,20 +1208,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1237,13 +1242,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1263,7 +1268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1291,7 +1296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1319,7 +1324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1347,7 +1352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1375,7 +1380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1403,7 +1408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1431,7 +1436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1459,7 +1464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1487,7 +1492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1515,7 +1520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1543,7 +1548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -1571,7 +1576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1599,7 +1604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1627,7 +1632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1655,7 +1660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1683,7 +1688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1711,7 +1716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1739,7 +1744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -1767,7 +1772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1795,7 +1800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1823,7 +1828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1851,7 +1856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1879,7 +1884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -1907,7 +1912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -1935,7 +1940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -1963,7 +1968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -1988,10 +1993,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2007,6 +2039,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント階層
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各モジュールの責務
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APPL_DB スキーマ要点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-leak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route leak
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-per-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback per-VRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2019,7 +2237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2047,7 +2265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2075,7 +2293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2103,7 +2321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2131,7 +2349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2159,7 +2377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2187,7 +2405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -6069,8 +6287,6 @@
       
   
   
-    
-  
   
   
     
@@ -6132,23 +6348,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -6166,13 +6379,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6192,7 +6405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -6220,7 +6433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -6248,7 +6461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -6276,7 +6489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -6304,7 +6517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -6332,7 +6545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -6360,7 +6573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6388,7 +6601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -6416,7 +6629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -6441,37 +6654,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -6487,203 +6673,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        失敗ハンドリング全体像
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orch-virtual" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orch の virtual 関数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        戻り値の意味
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai-status-operation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI status × Operation の対応表
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#error_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ERROR_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        上位プロセス側の責務
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB / CLI / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -6696,7 +6685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -6724,7 +6713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -6752,7 +6741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -6780,7 +6769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -6808,7 +6797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -6836,7 +6825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6864,7 +6853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -6892,7 +6881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -6920,7 +6909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -6948,7 +6937,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -6976,7 +6965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -7004,7 +6993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -7032,7 +7021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -7060,7 +7049,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -11930,18 +11919,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        失敗ハンドリング全体像
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orch-virtual" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Orch の virtual 関数
+        コンポーネント階層
       
     </span>
   </a>
@@ -11952,7 +11930,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        戻り値の意味
+        各モジュールの責務
       
     </span>
   </a>
@@ -11960,10 +11938,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-status-operation" class="md-nav__link">
+  <a href="#config_db-appl_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI status × Operation の対応表
+        CONFIG_DB / APPL_DB スキーマ要点
       
     </span>
   </a>
@@ -11971,10 +11949,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#error_db" class="md-nav__link">
+  <a href="#route-leak" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ERROR_DB スキーマ
+        Route leak
       
     </span>
   </a>
@@ -11982,10 +11960,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#loopback-per-vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        上位プロセス側の責務
+        Loopback per-VRF
       
     </span>
   </a>
@@ -11998,7 +11976,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -12010,10 +11988,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db-cli-yang" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB / CLI / YANG
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
       
     </span>
   </a>
@@ -12062,17 +12051,6 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -12097,7 +12075,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/hld-for-handling-sai-failures.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-vrf-support-design-spec-draft.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12105,180 +12083,179 @@
   
 
 
-<div class="admonition danger">
-<p class="admonition-title">裏取りステータス: Discrepancy-found（部分実装、設計と乖離）</p>
-<p>現行 master では <code>handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus / handleSaiGetStatus</code> が <code>sonic-swss/orchagent/saihelper.h:19-22</code> に <strong>free function</strong> として実装されており、HLD が記述する「<code>Orch</code> 基底クラスの virtual 関数」ではない。<code>ERROR_DB</code> の枠組み（<code>ERROR_APPL_*</code> 形式の独立 Redis DB）は <code>sonic-swss</code> / <code>sonic-swss-common</code> の両方とも未実装で、HLD 内 TODO セクションの大半が残ったまま。本ページは設計提案の記述として位置づけ、現行実装は <code>saihelper.cpp</code> に集約されている個別関数群と読み替える必要がある（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>本 HLD は 2018-2019 年（v0.1〜v1.2）の初期設計ドラフトであり、現行 master の VRF サポート（特に Loopback per-VRF、route leak、vrfmgrd / frrmgrd 経由の FRR 連携）と差分が大きい可能性が高い。<code>priority=high</code>。</p>
 </div>
-<h1 id="sai-handlesaistatus-virtual-error_db">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）<a class="headerlink" href="#sai-handlesaistatus-virtual-error_db" title="Permanent link">&para;</a></h1>
+<h1 id="vrf-vrfmgrd-vrforch-frr-vrf-aware">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）<a class="headerlink" href="#vrf-vrfmgrd-vrforch-frr-vrf-aware" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>orchagent</code> は APPL_DB 経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。SAI が失敗を返した場合の振る舞いはこれまで Orch ごとに散発的に書かれており、<strong>統一された失敗ハンドリング枠組みが無かった</strong>。本 HLD はその枠組みとして次の 2 点を導入する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong><code>Orch</code> 基底クラスに 4 つの virtual 関数</strong> (<code>handleSaiCreate/Set/Remove/Get Status</code>) を追加し、Create/Set/Remove/Get それぞれで失敗時動作を共通化／個別化する</li>
-<li><strong><code>ERROR_DB</code></strong> を新設し、orchagent で解決できない失敗を上位（fpmsyncd 等）にエスカレーションする経路を作る</li>
-</ol>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">失敗ハンドリング全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  APPL[(APPL_DB)] --&gt; OA[orchagent]
-  OA --&gt; SAI[SAI / syncd]
-  SAI --&gt;|status| OA
-  OA --&gt; H{handleSai*Status&lt;br&gt;virtual 関数}
-  H --&gt;|task_success| OK[完了]
-  H --&gt;|task_need_retry| RT[再キューイング]
-  H --&gt;|task_failed| ERR[(ERROR_DB)]
-  H --&gt;|exit EXIT_FAILURE| RST[SwSS auto-restart]
-  ERR --&gt; UP[fpmsyncd 等の上位プロセス]</code></pre>
-<p>orchagent は同期モードで SAI status を受け取り、失敗時に <strong>第一段で</strong> virtual 関数で対応を試み、解決できなければ ERROR_DB に push して上位に処理を委ねる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="orch-virtual">Orch の virtual 関数<a class="headerlink" href="#orch-virtual" title="Permanent link">&para;</a></h3>
-<p><code>Orch</code> 基底クラスに次の 4 関数を追加する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">virtual</span><span class="w"> </span><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiCreateStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">virtual</span><span class="w"> </span><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiSetStatus</span><span class="w">   </span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">virtual</span><span class="w"> </span><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiRemoveStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">virtual</span><span class="w"> </span><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiGetStatus</span><span class="w">   </span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
-</span></code></pre></div>
+<p>SONiC の VRF（Virtual Routing and Forwarding）サポートは、Linux kernel の <strong>VRF master device</strong> を基盤に、FRR（zebra / bgpd）を vrf-aware 化し、SONiC 側に vrfmgrd / vrforch を新設して L3 interface・static route・BGP セッション・ACL redirect の VRF binding を一気通貫で扱えるようにするものである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD のスコープ:</p>
 <ul>
-<li><code>api</code> と <code>status</code> から判定する</li>
-<li>個別 Orch（<code>RouteOrch</code> 等）が override して固有ロジックを差し込める</li>
-<li><code>context</code> は失敗時に ERROR_DB へ詳細情報（オブジェクト・属性等）を持ち上げるための optional パラメータ</li>
+<li>VRF instance の add/del、L3 interface（physical / VLAN / LAG / Loopback）の bind/unbind</li>
+<li>VRF aware static route / BGP / ACL redirect</li>
+<li>VRF 間 route leak（v1.1 で追加）</li>
+<li>Loopback per-VRF（v1.2 で追加）。BGP multihop の source などに使う</li>
 </ul>
-<h3 id="_4">戻り値の意味<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>スコープ外: VRF の admin up/down、fallback lookup（RFC 4364）。スケールは「FRR バグ修正後 1000 VRF まで」と明記<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">コンポーネント階層<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    USER[(CONFIG_DB\nVRF / INTERFACE / STATIC_ROUTE /\nBGP_NEIGHBOR / ACL_RULE)] --&gt; VMGRD[vrfmgrd]
+    USER --&gt; IMGRD[intfsmgrd]
+    USER --&gt; NMGRD[nbrmgrd]
+    USER --&gt; BGPCFGD[bgpcfgd / frrcfgd]
+    VMGRD --&gt;|create vrf master device| KERN[Linux kernel\nVRF master device]
+    IMGRD --&gt;|enslave to vrf| KERN
+    BGPCFGD --&gt;|router bgp ... vrf X| FRR[FRR / zebra / bgpd]
+    FRR --&gt;|FPM| FPM[fpmsyncd]
+    FPM --&gt; APP[(APPL_DB\nROUTE_TABLE\nkey: vrf:prefix)]
+    APP --&gt; ROUTE[routeorch]
+    ROUTE --&gt; VORCH[vrforch]
+    VORCH --&gt; SAI[(SAI Virtual Router)]
+    INTORCH[intfsorch] --&gt; SAI
+    NORCH[neighorch] --&gt; SAI
+    ACL[aclorch] --&gt; SAI</code></pre>
+<h3 id="_4">各モジュールの責務<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>戻り値</th>
-<th>動作</th>
-<th>例</th>
+<th>モジュール</th>
+<th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>task_success</code></td>
-<td>crash しない、retry しない、正常終了扱い</td>
-<td>Remove で <code>SAI_STATUS_ITEM_NOT_FOUND</code></td>
+<td><code>vrfmgrd</code></td>
+<td><code>CONFIG_DB.VRF</code> を購読し Linux VRF master device 作成 / 削除</td>
 </tr>
 <tr>
-<td><code>task_failed</code></td>
-<td>crash しない、retry しない、orchagent は走り続けるが ERROR_DB に上げる</td>
-<td>不正な ACL、IP 衝突、HW permanent error</td>
+<td><code>intfsmgrd</code></td>
+<td>interface を VRF master に enslave（既存 IP は一旦取り外して再付与）。Loopback も対象</td>
 </tr>
 <tr>
-<td><code>task_need_retry</code></td>
-<td>crash しない、後で retry</td>
-<td>一時的に解決可能と見込める失敗</td>
+<td><code>nbrmgrd</code></td>
+<td>neighbor 学習を vrf-scope で APP_DB へ</td>
 </tr>
 <tr>
-<td><code>exit(EXIT_FAILURE)</code></td>
-<td>プロセス crash、SwSS auto-restart</td>
-<td>SwSS 再起動で解消可能な失敗</td>
+<td><code>fpmsyncd</code></td>
+<td>FPM 経由 route を <code>ROUTE_TABLE:&lt;vrf&gt;:&lt;prefix&gt;</code> 形式で書く</td>
+</tr>
+<tr>
+<td><code>bgpcfgd</code> (現 <code>frrcfgd</code>)</td>
+<td><code>BGP_NEIGHBOR</code> の <code>vrf</code> フィールドから FRR 設定を生成</td>
+</tr>
+<tr>
+<td><code>vrforch</code></td>
+<td><code>APP_DB.VRF_TABLE</code> を SAI Virtual Router にマッピング、OID 払い出し</td>
+</tr>
+<tr>
+<td><code>intfsorch</code> / <code>routeorch</code> / <code>neighorch</code> / <code>aclorch</code></td>
+<td>OID を引いて vrf-scope で SAI に設定</td>
 </tr>
 </tbody>
 </table>
-<p><code>task_failed</code> ケースは「再試行しても直らない」ことが分かっている場合のため、<code>task_need_retry</code> と区別される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="sai-status-operation"><code>SAI status</code> × Operation の対応表<a class="headerlink" href="#sai-status-operation" title="Permanent link">&para;</a></h3>
-<p>HLD の現状版（<code>TODO</code> 多数）で記述されている主要対応<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>SAI status</th>
-<th>Create</th>
-<th>Set</th>
-<th>Remove</th>
-<th>Get</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ITEM_ALREADY_EXISTS</code></td>
-<td>対応する attribute を Set にフォールバック</td>
-<td>should not happen / no retry</td>
-<td>should not happen / no retry</td>
-<td>should not happen / no retry</td>
-</tr>
-<tr>
-<td><code>ITEM_NOT_FOUND</code></td>
-<td>should not happen / no retry</td>
-<td>item を作って attribute を set</td>
-<td>success 返却（no retry）</td>
-<td>no retry</td>
-</tr>
-<tr>
-<td><code>OBJECT_IN_USE</code></td>
-<td>should not happen / no retry</td>
-<td>しばらく待って retry</td>
-<td>しばらく待って retry</td>
-<td>should not happen / no retry</td>
-</tr>
-<tr>
-<td><code>NOT_SUPPORTED</code></td>
-<td>crash orchagent</td>
-<td>crash orchagent</td>
-<td>crash orchagent</td>
-<td>crash orchagent</td>
-</tr>
-</tbody>
-</table>
-<p><code>NOT_SUPPORTED</code> は <strong>設計時に SAI 能力チェック済みのはず</strong> の状況なので、出たら crash させる方針<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>その他 status・SAI API 別・Orch 別ロジックは HLD 内 <code>TODO</code> セクションに残されており、設計はまだ進行中<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="error_db">ERROR_DB スキーマ<a class="headerlink" href="#error_db" title="Permanent link">&para;</a></h3>
-<p>orchagent から上位プロセスへのエスカレーション用 DB として ERROR_DB を新設する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ERROR_{{DB_TYPE}}_{{TABLE_TYPE}}_TABLE|entry
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  failed_orch  = &lt;type&gt;          ; どの Orch で発生したか
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  failed_SAI   = &lt;type&gt;          ; どの SAI で発生したか
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  opcode       = CREATE | SET | DELETE
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  status       = &lt;sai_status&gt;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  attributes   = &quot;attr_type0,attr_type1,...&quot;  (optional)
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  attr_values  = &quot;attr_value0,attr_value1,...&quot; (optional)
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  counter      = &lt;count&gt;         ; 同 entry の連続失敗回数
+<h3 id="config_db-appl_db">CONFIG_DB / APPL_DB スキーマ要点<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  VRF|&lt;vrfname&gt; = { v4: enable, v6: enable, fallback: false }
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  INTERFACE|&lt;iface&gt; = { vrf_name: &lt;vrfname&gt;, ... }
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt; = { nexthop: ..., nexthop-vrf: ... }
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  BGP_NEIGHBOR|&lt;vrf&gt;|&lt;peer&gt; = { ... }
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ACL_RULE_TABLE|&lt;table&gt;|&lt;rule&gt; = { PACKET_ACTION: REDIRECT:&lt;vrf&gt;|&lt;nh&gt;, ... }
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>APPL_DB:
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  VRF_TABLE:&lt;vrfname&gt; = { v4, v6, fallback }
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  INTF_TABLE:&lt;iface&gt;:&lt;prefix&gt;          # 1 segment key（vrf を含まない interface 行）
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  INTF_TABLE:&lt;iface&gt;                   # vrf binding 行（v4/v6/vrf_name）
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  ROUTE_TABLE:&lt;vrf&gt;|&lt;prefix&gt;           # default VRF は省略可
 </span></code></pre></div>
-<p>例: APPL_DB の <code>ROUTE_TABLE:0.0.0.0/0</code> での SAI 失敗 → ERROR_DB に <code>ERROR_APPL_ROUTE_TABLE:0.0.0.0/0</code> として記録される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>counter</code> は同一エントリでの失敗連続回数。ハンドリング戦略の入力に使える。</p>
+<p><code>INTF_TABLE</code> は <strong>2-segment key</strong> をサポートし、interface の vrf binding と IP 付与を分離する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="route-leak">Route leak<a class="headerlink" href="#route-leak" title="Permanent link">&para;</a></h3>
+<p>v1.1 で <code>STATIC_ROUTE</code> に <code>nexthop-vrf</code> フィールドを追加し、<code>vrf A</code> の prefix を <code>vrf B</code> の next-hop で解決できるようにした<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。動的（BGP 経由の）route leak は本 HLD ではスコープ外。</p>
+<h3 id="loopback-per-vrf">Loopback per-VRF<a class="headerlink" href="#loopback-per-vrf" title="Permanent link">&para;</a></h3>
+<p>v1.2 で <code>LOOPBACK_INTERFACE</code> の VRF binding をサポート。BGP multihop の source IP に使えるため、interface oper 状態に左右されずに BGP セッションが持続する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/SAI_failure_handling/SAI_failure_handling.md#L66-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/vrf/sonic-vrf-hld.md#L84-L108 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  An ERROR_DB will be introduced to escalate the failures from orchagent to upper layers such as fpmsyncd.
-  ... The table and key in ERROR_DB correspond to the DB, table, and key where SAI failures happen
-  ... The upstream processes are expected to consume the ERROR_DB entries and remove the handled failures
-reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシューム責務の根拠。
+  1. Add or Delete VRF instance
+  2. Bind L3 interface to a VRF.
+  ...
+  7. VRF Scalability: Currently VRF number can be supported up to 1000 after fixing a bug in FRR.
+  8. loopback devices with vrf.
+reasoning: スコープと制約（特に 1000 VRF・Loopback per-VRF）の根拠。
 -->
 
-<h3 id="_5">上位プロセス側の責務<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>ERROR_DB は <strong>上位プロセスが消費して削除する</strong> 前提で設計される。fpmsyncd 等が処理ロジックを実装すれば ERROR_DB は溜まり続けない。ただし HLD は <strong>「現時点で上位プロセスはこれを消費するロジックを持っていないため、別途追加が必要」</strong> と明記している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>外部設定表面は無い。すべて orchagent 内部 + ERROR_DB（Redis）に閉じる。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config vrf add &lt;name&gt;</code> / <code>config vrf del &lt;name&gt;</code></td>
+<td>VRF 作成/削除</td>
+</tr>
+<tr>
+<td><code>config interface vrf bind &lt;if&gt; &lt;vrf&gt;</code> / <code>unbind &lt;if&gt;</code></td>
+<td>interface 紐付け</td>
+</tr>
+<tr>
+<td><code>config route add prefix &lt;p&gt; nexthop vrf &lt;nh-vrf&gt; &lt;ip&gt;</code></td>
+<td>static leak route</td>
+</tr>
+<tr>
+<td><code>show vrf</code></td>
+<td>VRF 一覧と紐付き interface</td>
+</tr>
+</tbody>
+</table>
+<p>CLI 文法は HLD 記載ベース。現行 sonic-utilities では細部が違う可能性あり。</p>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>vrf<span class="w"> </span>add<span class="w"> </span>Vrf-Red
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>interface<span class="w"> </span>vrf<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Ethernet0<span class="w"> </span>Vrf-Red
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span>Vrf-Red<span class="w"> </span><span class="m">10</span>.0.0.2<span class="w"> </span><span class="m">65001</span>
+</span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD 自体が未完</strong>: 「Other SAI statuses」「SAI API 別」「Orch 別」の対応表が <code>TODO</code> で空。実装は段階的に進む見込み<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>上位プロセス側未対応</strong>: ERROR_DB を消費するロジックが fpmsyncd 等に追加されないと、ERROR_DB はメモリに溜まり続けるリスクがある<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>NOT_SUPPORTED</code> で常に crash</strong>: 健全な前提だが、SAI 実装が誤って <code>NOT_SUPPORTED</code> を返すバグがあると orchagent が無限再起動ループに陥る可能性がある。</li>
-<li><strong>Warm boot との整合</strong>: 未処理の SAI 失敗が ERROR_DB に残った状態で warm reboot を打つことを禁止する。pre-warm-reboot check に ERROR_DB チェックを追加する設計<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>VRF level の admin up/down は非対応</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>Fallback lookup（RFC 4364）は未対応</strong>（本 HLD バージョン時点）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>スケール: FRR バグ修正後 1000 VRF<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>VLAN / LAG interface の VRF 移動時は IP を一旦剥がして再付与が必要。SAI 側の oid も再生成される</li>
+<li>ACL redirect の syntax 変更を伴う</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>fpmsyncd / その他 APPL_DB writer</strong>: ERROR_DB の主要消費者として想定。失敗を見て APPL_DB の該当エントリを引き戻す等の戦略が期待される。</li>
-<li><strong>SwSS auto-restart</strong>: <code>exit(EXIT_FAILURE)</code> 経路は systemd の SwSS 再起動を前提とする。再起動で解消しない失敗を crash させると無限ループ。</li>
-<li><strong>既存 Orch のエラーパス</strong>: 個別 Orch が独自に書いていた <code>SWSS_LOG_ERROR</code> ベースのハンドリングは段階的にこの virtual 関数経由に統合される想定。</li>
+<li><strong>FRR</strong>: <code>bgpd</code> / <code>zebra</code> 双方が vrf-aware である必要。SONiC では FRR template / <code>frrcfgd</code> 経由で生成</li>
+<li><strong>fpmsyncd / orchagent</strong>: <code>ROUTE_TABLE</code> キーが <code>&lt;vrf&gt;:&lt;prefix&gt;</code> に拡張されるため、消費側全部に影響</li>
+<li><strong>EVPN / VXLAN</strong>: tenant VRF と組み合わせた使い方は別 HLD（<code>evpn-vxlan-hld.md</code> 等）参照</li>
+<li><strong>Loopback per-VRF と BGP multihop</strong>: source IP として使えるため BGP セッション安定化に効くが、interface oper との関係に注意</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ERROR_DB が増え続ける: 上位プロセス側の消費ロジック未実装または停止を疑う。fpmsyncd 等のログを確認。</li>
-<li>orchagent が頻繁に再起動する: <code>exit(EXIT_FAILURE)</code> 経路を踏んでいる。<code>NOT_SUPPORTED</code> 等の crash 条件が立っていないか SAI status を syslog で確認。</li>
-<li>同じエントリで <code>counter</code> が増え続ける: <code>task_need_retry</code> で再試行ループに入っている可能性。条件が解消しないなら <code>task_failed</code> 化を検討。</li>
+<li>VRF に bind した interface で IP が消えた → enslave 時の剥がし→再付与の race。<code>intfsmgrd</code> ログ確認</li>
+<li><code>show vrf</code> に出ない VRF → kernel に master device があるか <code>ip link show type vrf</code> で確認</li>
+<li>VRF をまたぐ static route が効かない → <code>nexthop-vrf</code> 指定確認、leak 対応 SAI 実装か確認</li>
 </ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
-<ul>
-<li><strong><code>handleSai*Status</code> は Orch base の virtual 関数ではない</strong>: <code>sonic-swss/orchagent/saihelper.h:19-22</code> に <strong>free function</strong> として宣言され、<code>saihelper.cpp</code> に共通実装がある。個別 Orch（<code>vrforch.cpp</code> / <code>copporch.cpp</code> / <code>dtelorch.cpp</code> / <code>macsecorch.cpp</code> / <code>sfloworch.cpp</code> / <code>natorch.cpp</code> / <code>dash/dashportmaporch.cpp</code> / <code>dash/dashvnetorch.cpp</code> 等 28 箇所程度）が呼び出し側で利用する形になっている。<code>Orch</code> 基底クラスの override は提供されていない。</li>
-<li><strong><code>ERROR_DB</code> は実装されていない</strong>: <code>sonic-swss</code> と <code>sonic-swss-common</code> のどちらにも <code>ERROR_APPL_*</code> テーブル / <code>ERROR_DB</code> という独立 Redis DB の定義は存在しない（<code>lagid.h</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は名前衝突するが無関係な定数）。HLD で計画されていた fpmsyncd 等への失敗エスカレーション経路は未実装。</li>
-<li><strong>HLD 内の TODO（Other SAI statuses / SAI API 別 / Orch 別の対応表）も大半が空白のまま</strong>。</li>
-</ul>
-<p>したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は <code>saihelper.cpp</code> の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。</p>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- vrfmgrd / vrforch の現行 master 実装存在確認
+- VRF テーブル / INTF_TABLE 2-segment key の YANG / sonic-buildimage 取り込み確認
+- config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認
+- SAI Virtual Router の community SAI 取り込み確認（既知）
+- 2018-2019 年 HLD のため、Loopback per-VRF / route leak の現行実装乖離リスク（priority=high）
+- FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/SAI_failure_handling/SAI_failure_handling.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vrf/sonic-vrf-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
