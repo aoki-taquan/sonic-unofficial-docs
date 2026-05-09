@@ -1,13 +1,16 @@
 {
   "page": "docs/platform/hld-for-handling-sai-failures.md",
   "issue": 259,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "Orch 基底クラスの handleSaiCreate/Set/Remove/Get Status virtual 関数追加が現行 master にあるか確認",
-    "ERROR_DB スキーマと Redis 上の DB タイプ割り当ての実装存在確認",
-    "fpmsyncd 等の上位プロセス側 ERROR_DB 消費ロジックの実装状況",
-    "warm reboot pre-check に ERROR_DB チェックが追加されているか未確認",
-    "HLD 内の TODO セクション (status 別 / API 別 / Orch 別) の進捗追跡"
+    "HLD の `Orch` 基底クラス virtual 関数案は不採用。現行 master は saihelper.h の free function (handleSaiCreateStatus/SetStatus/RemoveStatus/GetStatus) として実装",
+    "HLD の ERROR_DB（ERROR_APPL_*_TABLE）は sonic-swss / sonic-swss-common とも未実装。fpmsyncd 等への失敗エスカレーション経路は存在しない",
+    "warm reboot pre-check の ERROR_DB チェックは ERROR_DB 自体が無いため未実装",
+    "HLD の SAI API 別 / Orch 別 / その他 status 別の対応表 TODO の進捗追跡は要継続"
   ],
-  "priority": "high"
+  "verified_concerns": [
+    "saihelper.h:19-22 で 4 関数の free function 宣言を確認",
+    "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認"
+  ],
+  "priority": "medium"
 }

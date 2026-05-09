@@ -260,19 +260,6 @@
       "priority": "high"
     },
     {
-      "page": "docs/platform/hld-for-handling-sai-failures.md",
-      "issue": 259,
-      "verification": "hld-only",
-      "concerns": [
-        "Orch 基底クラスの handleSaiCreate/Set/Remove/Get Status virtual 関数追加が現行 master にあるか確認",
-        "ERROR_DB スキーマと Redis 上の DB タイプ割り当ての実装存在確認",
-        "fpmsyncd 等の上位プロセス側 ERROR_DB 消費ロジックの実装状況",
-        "warm reboot pre-check に ERROR_DB チェックが追加されているか未確認",
-        "HLD 内の TODO セクション (status 別 / API 別 / Orch 別) の進捗追跡"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/platform/icmp-hardware-offload.md",
       "issue": 43,
       "verification": "code-verified",
@@ -957,6 +944,22 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/hld-for-handling-sai-failures.md",
+      "issue": 259,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD の `Orch` 基底クラス virtual 関数案は不採用。現行 master は saihelper.h の free function (handleSaiCreateStatus/SetStatus/RemoveStatus/GetStatus) として実装",
+        "HLD の ERROR_DB（ERROR_APPL_*_TABLE）は sonic-swss / sonic-swss-common とも未実装。fpmsyncd 等への失敗エスカレーション経路は存在しない",
+        "warm reboot pre-check の ERROR_DB チェックは ERROR_DB 自体が無いため未実装",
+        "HLD の SAI API 別 / Orch 別 / その他 status 別の対応表 TODO の進捗追跡は要継続"
+      ],
+      "verified_concerns": [
+        "saihelper.h:19-22 で 4 関数の free function 宣言を確認",
+        "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
       "verification": "hld-only",
       "concerns": [
@@ -1608,6 +1611,19 @@
         "tmout-env.sh.j2 / sysrq-sysctl.conf.j2 テンプレートの配置確認",
         "init_cfg.json.j2 に既定値が入っているか確認",
         "inactivity_timeout=0 の扱い (無効化か即ログアウトか) の動作確認"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/management/sonic-application-extension-guide.md",
+      "issue": 327,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-package-manager の現行 sonic-utilities 取り込み確認",
+        "manifest 形式（_CONTAINER_PRIVILEGED 等）の rules/functions での実装確認",
+        "SONIC_PACKAGES_LOCAL ターゲットの Makefile.work での扱い確認",
+        "CLI plugin register API の現行 sonic-utilities での互換性確認",
+        "本ページは v0.1 Initial Proposal ガイドの抜粋。コア HLD (sonic-application-extention-hld.md) の現行仕様との整合確認"
       ],
       "priority": "low"
     },
