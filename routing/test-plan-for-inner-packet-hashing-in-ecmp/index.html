@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/ipv4-port-based-dhcp-server-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/test-plan-for-inner-packet-hashing-in-ecmp/">
       
       
-        <link rel="prev" href="../hld-ldap/">
+        <link rel="prev" href="../static-ip-route-configuration/">
       
       
-        <link rel="next" href="../json-patch-ordering-using-yang-models/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携） - SONiC 非公式ドキュメント</title>
+        <title>ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82" class="md-skip">
+        <a href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
+              ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -1095,6 +1095,8 @@
       
   
   
+    
+  
   
   
     
@@ -1162,20 +1164,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1193,13 +1198,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1219,7 +1224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1247,7 +1252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1275,7 +1280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1303,7 +1308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1331,7 +1336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1359,7 +1364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1387,7 +1392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1415,7 +1420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1443,7 +1448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1471,7 +1476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1499,7 +1504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1527,7 +1532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1555,7 +1560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1583,7 +1588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1611,7 +1616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1639,7 +1644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -1667,7 +1672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1695,7 +1700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1723,7 +1728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1751,7 +1756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1779,7 +1784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -1807,7 +1812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -1835,7 +1840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -1863,7 +1868,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -1891,7 +1896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -1919,7 +1924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -1944,10 +1949,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1963,6 +1995,131 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        測定方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逆検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#symmetric-warm-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        symmetric / warm-boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4525,8 +4682,6 @@
       
   
   
-    
-  
   
   
     
@@ -4608,23 +4763,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -4642,13 +4794,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4668,7 +4820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -4696,7 +4848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -4724,7 +4876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -4752,7 +4904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -4780,7 +4932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -4808,7 +4960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -4836,7 +4988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -4864,7 +5016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -4892,7 +5044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -4920,7 +5072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -4948,7 +5100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -4976,7 +5128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -5001,37 +5153,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -5047,214 +5172,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        機能境界
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンテナ / プロセス構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kea-dhcp-server-dhcpservd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        kea-dhcp-server の設定（dhcpservd が生成）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcrelay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcrelay の起動例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lease-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lease の STATE_DB 反映
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#customized-dhcp-option" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Customized DHCP option
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5267,7 +5184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -5295,7 +5212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -5323,7 +5240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -5351,7 +5268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -5379,7 +5296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -5407,7 +5324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -5435,7 +5352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -5463,7 +5380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -5491,7 +5408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5519,7 +5436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -5547,7 +5464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -5575,7 +5492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -5603,7 +5520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -5631,7 +5548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -5659,7 +5576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -5687,7 +5604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -5715,7 +5632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -5743,7 +5660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5771,7 +5688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -5799,7 +5716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -5827,7 +5744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -10948,10 +10865,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#pbh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        機能境界
+        測定方法
       
     </span>
   </a>
@@ -10962,7 +10890,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンテナ / プロセス構成
+        逆検証
       
     </span>
   </a>
@@ -10970,43 +10898,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kea-dhcp-server-dhcpservd" class="md-nav__link">
+  <a href="#symmetric-warm-boot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        kea-dhcp-server の設定（dhcpservd が生成）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcrelay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcrelay の起動例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lease-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        lease の STATE_DB 反映
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#customized-dhcp-option" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Customized DHCP option
+        symmetric / warm-boot
       
     </span>
   </a>
@@ -11022,56 +10917,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -11080,7 +10925,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11091,18 +10936,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11129,7 +10963,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/ipv4-port-based-dhcp-server-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11138,187 +10972,73 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2023 年 2 月版 (Rev 0.1, Status=Initial)。新 container <code>dhcp_server</code> (debian:bookworm)、daemon <code>dhcpservd</code>、<code>dhcprelayd</code> の dhcrelay 起動制御、kea-dhcp-server <code>client-classes</code> ベースのポート判定、lease の STATE_DB 反映は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
+<p>HLD は 2021 年版 (Rev 1.1) で 4 年経過。<code>config pbh table/hash-field/hash/rule add/delete</code> CLI、PBH (Policy Based Hashing) Orchagent / SAI 連携、<code>SET_ECMP_HASH</code> action、warm-boot 跨ぎ動作は未裏取り。</p>
 </div>
-<h1 id="ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82">ポートベース IPv4 DHCP Server（<code>kea-dhcp-server</code> + <code>dhcrelay</code> Option 82 連携）<a class="headerlink" href="#ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82" title="Permanent link">&para;</a></h1>
+<h1 id="ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）<a class="headerlink" href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC に <strong>組み込み IPv4 DHCP Server</strong> を持つ。MAC でも DHCP option でもなく <strong>入ってきた物理 / LAG ポート</strong> で IP を割り当てる "port-based" モード<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。利点は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>設定外のポートからの request には IP を払い出さないため安全</li>
-<li>外部ホスト情報を仕込まず、ポート単位で予約 IP / 範囲だけ書けば自走する小規模 NW 構築に向く</li>
-</ul>
-<p>実体は <strong>ISC kea-dhcp-server</strong> に <strong>既存の dhcrelay (<code>dhcrelay</code> の <code>-id &lt;vlan&gt;</code> で Option 82 を付ける機能)</strong> を組み合わせる構成<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ECMP nexthop の選択を <strong>outer ヘッダではなく inner パケットの 5-tuple</strong>（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">機能境界<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>per switch で enable/disable</strong>。<code>FEATURE.dhcp_server.state</code> で制御し、デフォルトは disabled<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>同一スイッチで dhcp_relay と共存しない</strong>。共存させたい (vlan 別 enable) 構想は将来課題<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>現状 <strong>relay された DHCP request への応答は未対応</strong>（option 82 を持って戻ってきたパケット処理は将来）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="_4">コンテナ / プロセス構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="pbh">PBH 構成<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#pbh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成要素</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PBH table</td>
+<td>T0 トポロジの <strong>VLAN 内 PTF ポート</strong>を bind（Up かつ非 LAG）</td>
+</tr>
+<tr>
+<td>hash field</td>
+<td><code>inner_ip_proto</code>/<code>inner_l4_dst_port</code>/<code>inner_l4_src_port</code>/<code>inner_dst_ipv4</code>/<code>inner_src_ipv4</code>/<code>inner_dst_ipv6</code>/<code>inner_src_ipv6</code>。L4 port と IP は <strong>symmetric=Yes</strong></td>
+</tr>
+<tr>
+<td>hash</td>
+<td>上記 7 フィールドをまとめた <code>inner_hash</code></td>
+</tr>
+<tr>
+<td>rule</td>
+<td>outer encap ごとに 8 ルール（NVGRE × {v4,v6}×{v4,v6} priority=2、VxLAN × {v4,v6}×{v4,v6} priority=1）。action=<code>SET_ECMP_HASH</code>、counter=ENABLED</td>
+</tr>
+</tbody>
+</table>
+<p>VxLAN は L4 dst port = <code>0x3412 (4789)</code> をマッチ条件に含める。NVGRE は IP proto/IPv6 next header = <code>0x2f</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">測定方法<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  Client --&gt;|DISCOVER| dhcrelay
-  subgraph dhcp_relay container host net
-    dhcrelay
-    dhcprelayd
-  end
-  subgraph dhcp_server container bridge net
-    kea[kea-dhcp-server]
-    dhcpservd
-  end
-  dhcrelay --&gt;|Option 82&lt;br&gt;circuit-id=&lt;vlan&gt;:&lt;port&gt;| kea
-  kea --&gt;|reply| dhcrelay
-  dhcrelay --&gt;|OFFER/ACK| Client
-  CFG[(CONFIG_DB)] --&gt; dhcpservd
-  dhcpservd --&gt;|/etc/kea/...json&lt;br&gt;SIGHUP| kea
-  kea --&gt;|lease_update.sh| dhcpservd
-  dhcpservd --&gt; STATE[(STATE_DB&lt;br&gt;DHCP_SERVER_IPV4_LEASE)]
-  CFG --&gt; dhcprelayd
-  dhcprelayd --&gt;|kill/start/restart| dhcrelay</code></pre>
-<p><code>dhcprelayd</code> は <code>VLAN</code> / <code>VLAN_MEMBER</code> / <code>DHCP_SERVER_IPV4*</code> を CONFIG_DB から subscribe し、関連変更や <code>dhcp_relay</code> container 起動時に <code>dhcrelay</code> プロセスを起動・再起動する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="kea-dhcp-server-dhcpservd">kea-dhcp-server の設定（dhcpservd が生成）<a class="headerlink" href="#kea-dhcp-server-dhcpservd" title="Permanent link">&para;</a></h3>
-<p><code>dhcrelay</code> の Option 82 に <strong>circuit-id = <code>&lt;hostname&gt;:&lt;port_alias&gt;</code> (例 <code>hostname:etp1</code>)</strong> が乗ることを使い、kea 側で <code>client-classes</code> でクライアントを分類し、対応 pool から払い出す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;Dhcp4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;interfaces-config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;interfaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;eth0&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;client-classes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hostname-etp1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;test&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;relay4[1].hex == &#39;hostname:etp1&#39;&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p">],</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;subnet4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;subnet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.168.0.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">        </span><span class="nt">&quot;pools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;pool&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.168.0.2 - 192.168.0.2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;client-class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hostname-etp1&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="p">],</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="nt">&quot;option-data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dhcp-server-identifier&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.168.0.1&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">        </span><span class="p">]</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>dhcp-server-identifier</code> (Option 54) は <strong>DHCP インタフェース（dhcrelay 下流）IP</strong> に書き換える。client が unicast RELEASE を投げる先を relay に向け、relay から server へ転送させるため<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="dhcrelay">dhcrelay の起動例<a class="headerlink" href="#dhcrelay" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>./dhcrelay<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span>discard<span class="w"> </span>-a<span class="w"> </span>%h:%p<span class="w"> </span>%P<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--name-alias-map-file<span class="w"> </span>/tmp/port-name-alias-map.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-id<span class="w"> </span>Vlan1000<span class="w"> </span>-iu<span class="w"> </span>docker0<span class="w"> </span><span class="m">240</span>.127.1.2
-</span></code></pre></div>
-<p>dhcp_server コンテナ側 IP は <code>240.127.1.2</code>（<code>DHCP_SERER_IPV4_IP</code> テーブルで管理）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="lease-state_db">lease の STATE_DB 反映<a class="headerlink" href="#lease-state_db" title="Permanent link">&para;</a></h3>
-<p>kea の <code>libdhcp_run_script.so</code> フック経由で <code>/tmp/lease_update.sh</code> が走り、<code>/tmp/kea-lease.csv</code> を読んだ <code>dhcpservd</code> が <code>STATE_DB</code> の <code>DHCP_SERVER_IPV4_LEASE</code> を更新する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>address,hwaddr,client_id,valid_lifetime,expire,subnet_id,...
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>192.168.0.2,aa:bb:cc:dd:ee:ff,,3600,1694000905,1,...
-</span></code></pre></div>
-<h3 id="customized-dhcp-option">Customized DHCP option<a class="headerlink" href="#customized-dhcp-option" title="Permanent link">&para;</a></h3>
-<p>option 60 等を per-DHCP-interface で配るテーブル <code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code> を持つ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>禁止 option</strong> は <code>1</code>（Subnet Mask）/ <code>3</code>（Router）/ <code>51</code>（Lease Time）/ <code>53</code>（Message Type）/ <code>54</code>（Server ID）。型は <code>binary</code> / <code>boolean</code> / <code>string</code> / <code>ipv4-address</code> / <code>uint8/16/32</code><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DHCP_SERVER_IPV4</code></td>
-<td><code>&lt;vlan&gt;</code></td>
-<td>mode=<code>PORT</code> / gateway / netmask / lease_time / state / customized_options 配列</td>
-</tr>
-<tr>
-<td><code>DHCP_SERVER_IPV4_RANGE</code></td>
-<td><code>&lt;range_name&gt;</code></td>
-<td><code>ranges: [start, end]</code>（要素 1〜2）</td>
-</tr>
-<tr>
-<td><code>DHCP_SERVER_IPV4_PORT</code></td>
-<td><code>&lt;vlan&gt;\|&lt;port&gt;</code></td>
-<td><code>ips: [...]</code> または <code>ranges: [&lt;range_name&gt;...]</code></td>
-</tr>
-<tr>
-<td><code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code></td>
-<td><code>&lt;name&gt;</code></td>
-<td><code>id</code> / <code>type</code> / <code>value</code></td>
-</tr>
-<tr>
-<td><code>FEATURE.dhcp_server</code></td>
-<td>-</td>
-<td><code>state: enabled\|disabled</code></td>
-</tr>
-</tbody>
-</table>
-<p>YANG <code>must</code> 制約で <strong><code>ips</code> と <code>ranges</code> を同時指定不可</strong>、<code>ranges</code> 配列は 1〜2 要素<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config dhcp_server ipv4 add/del/update --mode PORT [--dup_gw_nm] [--lease_time] [--gateway] [--netmask] &lt;if&gt;</code></td>
-<td>DHCP server 追加・削除・更新</td>
-</tr>
-<tr>
-<td><code>config dhcp_server ipv4 enable/disable &lt;if&gt;</code></td>
-<td>有効化（追加直後は disabled）</td>
-</tr>
-<tr>
-<td><code>config dhcp_server ipv4 range add/del/update &lt;name&gt; &lt;start&gt; [&lt;end&gt;]</code></td>
-<td>範囲管理</td>
-</tr>
-<tr>
-<td><code>config dhcp_server ipv4 bind/unbind &lt;vlan&gt; &lt;port&gt; (--range &lt;list&gt; \| &lt;ip_list&gt;)</code></td>
-<td>ポート → IP/範囲 紐付け</td>
-</tr>
-<tr>
-<td><code>config dhcp_server ipv4 option add/del/bind/unbind</code></td>
-<td>customized DHCP option 管理</td>
-</tr>
-<tr>
-<td><code>show dhcp_server ipv4 info\|range\|option\|lease\|port</code></td>
-<td>表示系</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>add<span class="w"> </span>--mode<span class="w"> </span>PORT<span class="w"> </span>--dup_gw_nm<span class="w"> </span>--lease_time<span class="w"> </span><span class="m">300</span><span class="w"> </span>Vlan1000
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span>range1<span class="w"> </span><span class="m">192</span>.168.0.2<span class="w"> </span><span class="m">192</span>.168.0.10
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Vlan1000<span class="w"> </span>Ethernet1<span class="w"> </span>--range<span class="w"> </span>range1
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>Vlan1000
-</span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+  PTF[PTF: 4000 packets / dst prefix] --&gt; DUT
+  DUT --&gt;|inner 5-tuple&lt;br&gt;variation| ECMP[(4 ECMP next-hop = T1)]
+  ECMP --&gt; P1[port1] &amp; P2[port2] &amp; P3[port3] &amp; P4[port4]</code></pre>
 <ul>
-<li><strong>モードは <code>PORT</code> のみ</strong>。<code>DYNAMIC</code> 等は将来予定<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>dhcp_server enable 中は dhcp_relay と同一スイッチで併用不可。CLI 側で拒否される<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ポート移動時の lease 振替は無く、<strong>lease 期限切れまで旧ポートからの新規割当が止まる</strong>ケースあり（FDB 連動の release は将来）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>ranges</code> は 1〜2 要素 (start[, end])</li>
-<li>option 1/3/51/53/54 は customized で上書き不可</li>
+<li>ECMP nexthop あたり <strong>1000 パケット</strong> 送出 → 4 nexthop で 4000 packets</li>
+<li>期待値からの <strong>±25% 偏差以内</strong> で OK</li>
+<li>inner 5-tuple のうち 1 要素ずつ変えた 7 ケース実施</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_4">逆検証<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>inner tuple を固定し outer tuple を変えた 4000 packets を流すと <strong>すべて単一 nexthop</strong> に着弾しなければならない。outer がハッシュに混ざっていない確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="symmetric-warm-boot">symmetric / warm-boot<a class="headerlink" href="#symmetric-warm-boot" title="Permanent link">&para;</a></h3>
+<p>オプションで symmetric ハッシュ確認（往復で同じ nexthop に landing）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm-boot 中に inner ハッシュテストを継続して通常時と同じ分布になることも確認<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>dhcp_relay</strong>: 同時 enable 不可。CLI 拒否</li>
-<li><strong>VLAN / PortChannel / Port</strong>: <code>DHCP_SERVER_IPV4_PORT</code> の参照先で leafref。VLAN 削除には連動チェックが必要</li>
+<li>T0 トポロジ前提。他トポロジは将来拡張<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ハッシュ偏差許容は 25%。少サンプルでは偏差が大きいので <strong>1000 packets/nexthop</strong> が下限</li>
+<li>VxLAN dst port は <code>0x3412</code> 固定（little-endian で 4789）</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show dhcp_server ipv4 info</code> で per-VLAN state/gateway 確認</li>
-<li>lease 状況: <code>show dhcp_server ipv4 lease [&lt;vlan&gt;]</code></li>
-<li>kea 直: <code>/tmp/kea-lease.csv</code> と <code>journalctl -u dhcp_server</code></li>
-<li>relay 側: <code>dhcrelay -d</code> で foreground 起動して Option 82 内容を観察</li>
+<li><strong>既存 hash_test</strong>: outer 5-tuple ECMP のテスト。本テストは inner 版</li>
+<li><strong>ECMP / Overlay ECMP</strong>: PBH で書き換えられる ECMP ハッシュキーに依存</li>
+<li><strong>warm-boot</strong>: トラフィック継続テストの対象</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_server/port_based_dhcp_server_high_level_design.md">sonic-net/SONiC doc/dhcp_server/port_based_dhcp_server_high_level_design.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/ecmp/inner_packet_hashing_test_plan.md">sonic-net/SONiC doc/ecmp/inner_packet_hashing_test_plan.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
