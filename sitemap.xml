@@ -241,6 +241,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/enhancement-of-cmis-module-management/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-master-arbitration-hld/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -574,6 +578,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-mclag/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-muxcable/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
