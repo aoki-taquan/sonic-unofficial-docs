@@ -1104,7 +1104,8 @@
         "VOQ system port object の OID と alias 表現が SYSTEM_LAG_MEMBER_TABLE と整合しているか確認"
       ],
       "priority": "medium",
-      "issue": 179
+      "issue": 179,
+      "pr": 180
     }
   ]
 }
