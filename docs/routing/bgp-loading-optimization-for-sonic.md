@@ -1,0 +1,123 @@
+---
+title: BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
+area: routing
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/bgp_loading_optimization/bgp-loading-optimization-hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    fpmsyncd の PUBLISH 削減・pipeline サイズ拡大・遅延 flush タイマ、orchagent ring buffer / assistant thread、sairedis の async 化、`PerformanceTimer` の現行 master 取り込み状況は未裏取り。
+
+# BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
+
+## 概要
+
+2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）[^1]。次の 3 ステップを最適化する。
+
+1. **fpmsyncd**: redis pipeline の flush 頻度・サイズ・PUBLISH 命令を見直す
+2. **orchagent**: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining
+3. **sairedis**: 同期 API → 非同期 API 経路と orchagent 側の `ResponseThread`
+
+ASIC / SAI 自体の最適化はスコープ外。
+
+## 動作仕様
+
+### Step 1: fpmsyncd の pipeline 改修
+
+| 項目 | 旧 | 新 |
+|------|----|----|
+| Lua スクリプト末尾の `PUBLISH` | エントリごと（O(n)）| パイプライン末尾 1 回のみ（O(1)）。`ROUTE_TABLE_KEY_SET` で modified key を保持しているため subscriber は気付ける |
+| pipeline size | 128 | **50,000** |
+| flush 契機 | event ごと proactive flush | event-trigger を skip 可。skip した場合は 500ms タイマで強制 flush |
+
+ただし「500 件未満のバッチは即時 flush」とし、小規模変動の遅延は起きないよう調整する[^1]。
+
+### Step 2: orchagent の並行化
+
+```mermaid
+flowchart LR
+    SEL[orch select loop] -->|pops| BUF[(Ring Buffer)]
+    AT[assistant thread] -->|addToSync + drain| BUF
+    BUF --> SAI[sairedis]
+```
+
+- `pops`（redis 読み）と `addToSync` + `drain`（処理＋ASIC 書き）を 2 スレッドに分ける
+- スレッド間通信は **ring buffer**（singleton）に lambda function 列を入れる方式。lock を持たず、enqueue 順序で時間順序を保証
+- lambda は「データ + そのデータに対する処理」をまとめてキャプチャするため、消費スレッドはそのまま invoke すれば良い[^1]
+
+### Step 3: sairedis の async 化
+
+`sairedis` の同期 API は、ASIC_DB 書き込み後 syncd 応答を待つため orchagent 側の processing が止まる。新たに **`ResponseThread`** を orchagent に追加し、async 経路で発行 → 応答だけ別スレッドで受ける構成[^1]。
+
+```mermaid
+sequenceDiagram
+    participant O as orchagent main
+    participant R as ResponseThread
+    participant S as sairedis
+    participant Y as syncd
+    O->>S: async create_route (no wait)
+    S->>Y: ASIC_DB write
+    O->>O: 次の処理
+    Y-->>S: response
+    S-->>R: notification
+    R->>O: 結果反映
+```
+
+### Warm Restart シナリオ
+
+warm restart 中は ring buffer / async 経路のセマンティクスが特に問題になりやすい。HLD は warm restart 中の order と response 待ちの整合性確保について別節を立てている[^1]。
+
+### 計測
+
+`PerformanceTimer` を導入し、各ステップの所要を syslog に吐く。これを集計して 2M routes での before/after を比較する[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/bgp_loading_optimization/bgp-loading-optimization-hld.md#L156-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  We can attach a lua script which only contains `PUBLISH` command at the end of the pipeline once it flushes `n` entries
+  ... we increase pipeline size from the default 125 to 50k
+  ... we activate a 500-millisecond timer after a skip to make sure that these commands are eventually flushed.
+reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
+-->
+
+## 設定
+
+HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。
+
+## 制限事項
+
+- 2M routes 級の最適化を主眼。少規模では効果が出にくい・むしろ 500ms 遅延 timer の影響あり
+- async sairedis 経路は warm restart の整合性 review が必要[^1]
+- ring buffer サイズ決定は実装側でチューニング
+
+## 干渉する機能
+
+- **`fpmsyncd` NextHop Group 拡張**: 同じ pipeline 経路を共有。NHG 経路でも PUBLISH 削減は有効
+- **warm reboot**: `ResponseThread` と warm restart の order 保証は HLD 内で別述
+- **ACL / VLAN / FDB orch**: ring buffer は orch 共通基盤に乗るため広範囲に影響
+
+## トラブルシューティング
+
+- 大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 一回化で modified key set が正しく回っているか確認
+- 500ms 体感ラグ → 500 未満バッチでは即時 flush のはずなので、skip 判定ロジック側の bug を疑う
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/bgp_loading_optimization/bgp-loading-optimization-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- fpmsyncd の pipeline size 50k / 500ms timer / PUBLISH 一回化の現行 master 取り込み確認
+- orchagent の ring buffer / assistant thread 実装存在確認
+- sairedis async API の有効化フローと ResponseThread 実装確認
+- PerformanceTimer の現行 sonic-swss-common 取り込み確認
+- warm restart 経路での async / ring buffer の order 保証実装確認
+- 2M routes ベンチの実測値 vs HLD 主張 50% 高速化の検証
+-->
