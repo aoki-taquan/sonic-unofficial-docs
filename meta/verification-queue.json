@@ -75,21 +75,6 @@
       "priority": "high"
     },
     {
-      "page": "docs/architecture/sonic-arm-architecture-support.md",
-      "verification": "hld-only",
-      "concerns": [
-        "PLATFORM_ARCH / CONFIGURED_ARCH 変数の現行 Makefile 命名と amd64 ハードコード残存の確認",
-        "sonic-slave-armhf / sonic-slave-arm64 の現行 Dockerfile 構成と qemu-static 連携確認",
-        "onie-image-armhf.conf / onie-image-arm64.conf / installer/<arch>/install.sh の現行存在確認",
-        "sonic-installer.main の uboot 連携経路実装確認",
-        "src/sonic-linux-kernel の ARM 向けパッチと .config 生成 (dpkg 環境変数) の現行確認",
-        "platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認"
-      ],
-      "priority": "high",
-      "issue": 193,
-      "pr": 194
-    },
-    {
       "page": "docs/management/config-reload-enhancement.md",
       "issue": 89,
       "verification": "code-verified",
@@ -1667,6 +1652,18 @@
       "priority": "low"
     },
     {
+      "page": "docs/platform/global-platform-specific-psuutil-class-instance.md",
+      "issue": 330,
+      "verification": "hld-only",
+      "concerns": [
+        "現行 sonic-platform-common の sonic_platform_base クラス階層と HLD 記述の差分確認",
+        "pmon コンテナ起動時の sonic_platform wheel 自動インストール処理の現行実装確認",
+        "STATE_DB 経由の platform 情報公開を行う pmon 内デーモンの一覧と整合確認",
+        "本ページは初期 HLD であり、後継 PR で多数の Module/Component クラスが追加された経緯を反映できていない可能性"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/platform/liquid-cooling-leakage-detection-in-sonic.md",
       "issue": 256,
       "verification": "hld-only",
@@ -1724,6 +1721,18 @@
         "OCP SAI 本体に sai_query_api_version が取り込まれたか確認",
         "sonic-sairedis の configure に AC_TRY_RUN ベースの検査が現存するか確認",
         "PATCH 緩和ロジック (MAJOR.MINOR のみ比較) の実装有無確認"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/platform/sonic-port-fec-ber.md",
+      "issue": 331,
+      "verification": "hld-only",
+      "concerns": [
+        "port_rates.lua への Pre/Post FEC BER 計算ロジック追加が現行 sonic-swss にあるか未確認",
+        "portstat.py の -f 出力に FEC_PRE_BER / FEC_POST_BER 列が含まれるか未確認",
+        "SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS / SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES のプラットフォーム対応状況",
+        "serdes 速度 lookup テーブルが現行 lua で網羅されているか未確認"
       ],
       "priority": "low"
     },

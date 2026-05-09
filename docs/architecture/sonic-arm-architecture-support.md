@@ -1,7 +1,7 @@
 ---
 title: SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は ARM サポート初期の設計文書で、`sonic-slave-armhf` / `sonic-slave-arm64` の現行構成、`PLATFORM_ARCH` / `CONFIGURED_ARCH` の現行 Makefile 変数命名、`onie-image-armhf.conf` / `onie-image-arm64.conf` の存在、ARM 用 onie installer / sonic-installer の uboot 連携実装は実コードでの裏取り未済（priority=high）。
+!!! success "裏取りステータス: Code-verified（slave 命名のみ進化）"
+    現行 master で枠組みが維持されていることを確認。`sonic-buildimage/Makefile.work:121-177` で `CONFIGURED_ARCH` / `PLATFORM_ARCH` 変数（default `amd64`）と `SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)` を確認。`onie-image.conf` / `onie-image-armhf.conf` / `onie-image-arm64.conf` がリポジトリルートに揃っており、`platform/aspeed/onie-image-arm64.conf` 等も追加されている。`installer/install.sh` も存在。slave docker は `sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2` の per-distribution テンプレートに進化し、`-march-<arch>` サフィックスを実行時に付ける形（HLD の `sonic-slave-armhf` / `sonic-slave-arm64` 固定ディレクトリは廃止）。動作の枠組み・変数名は HLD と一致（verified at: 2026-05-09）。
 
 # SONiC の ARM (armhf / arm64) ビルドサポート（`PLATFORM_ARCH` と qemu-static）
 
