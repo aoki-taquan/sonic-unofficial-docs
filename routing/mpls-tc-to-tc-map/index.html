@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/wred-and-ecn-statistics/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/mpls-tc-to-tc-map/">
       
       
-        <link rel="prev" href="../watermark-counters-in-sonic/">
+        <link rel="prev" href="../dhcp-relay-for-ipv6-hld/">
       
       
-        <link rel="next" href="../../system/">
+        <link rel="next" href="../router-interface-counters-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>WRED / ECN 統計（per-queue / per-port、capability ベース） - SONiC 非公式ドキュメント</title>
+        <title>MPLS TC → TC map（MPLS パケットの QoS classification） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wred-ecn-per-queue-per-portcapability" class="md-skip">
+        <a href="#mpls-tc-tc-mapmpls-qos-classification" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              WRED / ECN 統計（per-queue / per-port、capability ベース）
+              MPLS TC → TC map（MPLS パケットの QoS classification）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -335,13 +337,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -795,6 +795,8 @@
       
   
   
+    
+  
   
   
     
@@ -818,20 +820,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -849,13 +854,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -875,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -903,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -931,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -956,10 +961,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MPLS TC → TC map（MPLS パケットの QoS classification）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -975,6 +1007,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体像
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-swss-common" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-swss-common
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-utilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（CONFIG_DB JSON）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -987,7 +1238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1317,8 +1568,6 @@
       
   
   
-    
-  
   
   
     
@@ -1342,23 +1591,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -1376,13 +1622,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1402,7 +1648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-support-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -1430,7 +1676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -1458,7 +1704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1486,7 +1732,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1511,37 +1757,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WRED / ECN 統計（per-queue / per-port、capability ベース）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -1557,214 +1776,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#capability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Capability 検出
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flex Counter グループ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        COUNTERS_DB へのキー追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        表示例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2896,7 +2907,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
+        全体像
       
     </span>
   </a>
@@ -2904,10 +2915,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#capability" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Capability 検出
+        CONFIG_DB スキーマ
       
     </span>
   </a>
@@ -2915,10 +2926,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#flex-counter" class="md-nav__link">
+  <a href="#port_qos_map" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flex Counter グループ
+        PORT_QOS_MAP の拡張
       
     </span>
   </a>
@@ -2926,10 +2937,71 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
+  <a href="#orchagent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTERS_DB へのキー追加
+        orchagent の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-swss-common" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-swss-common
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-utilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -2940,7 +3012,7 @@
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI 拡張
+        関連する CLI
       
     </span>
   </a>
@@ -2948,10 +3020,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#config_db-json" class="md-nav__link">
     <span class="md-ellipsis">
       
-        表示例
+        設定例（CONFIG_DB JSON）
       
     </span>
   </a>
@@ -2967,65 +3039,15 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        制限事項
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3036,7 +3058,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3047,7 +3069,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3074,7 +3096,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/wred-and-ecn-statistics.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/mpls-tc-to-tc-map.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3084,88 +3106,102 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>orchagent</code> の WRED capability discovery、<code>syncd</code> の Flex Counter group 拡張、<code>counterpoll</code> CLI の wredqueue/wredport トークン実装は未裏取り。</p>
+<p>このページは公式 HLD のみを根拠にしている。<code>MPLS_TC_TO_TC_MAP</code> の sonic-swss-common スキーマ追加、QoS orch のハンドラ拡張、<code>PORT_QOS_MAP.mpls_tc_to_tc_map</code> フィールドの実装、SAI 経由の <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> 設定は未裏取り。</p>
 </div>
-<h1 id="wred-ecn-per-queue-per-portcapability">WRED / ECN 統計（per-queue / per-port、capability ベース）<a class="headerlink" href="#wred-ecn-per-queue-per-portcapability" title="Permanent link">&para;</a></h1>
+<h1 id="mpls-tc-tc-mapmpls-qos-classification">MPLS TC → TC map（MPLS パケットの QoS classification）<a class="headerlink" href="#mpls-tc-tc-mapmpls-qos-classification" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のキューイング設計で WRED と ECN は輻輳制御の主役だが、<code>portstat</code> 系では「<strong>WRED でドロップされた / ECN マークされたフレーム</strong> がどれだけあったか」を切り出して見ることができなかった。本機能は SAI が提供する WRED / ECN 専用カウンタを Flex Counter で拾って <code>COUNTERS_DB</code> に書き、新規 CLI <code>show queue wredcounters</code> および既存 <code>show interfaces counters detailed</code> の拡張で表示できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設計上の特徴は <strong>capability ベース</strong> であること。プラットフォームによってサポートされるカウンタが異なるため、<code>orchagent</code> が起動時に SAI capability を問い合わせて <code>STATE_DB</code> に書き、CLI はそれを見て対応カウンタだけを取得・表示する。非対応カウンタは <code>N/A</code> で返す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code>（ポート単位 ECN マークパケット数）は本 HLD の <strong>次フェーズ</strong> で扱う旨が明記されている。</p>
+<p>SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の <code>*_TO_*_MAP</code> テーブルとポート毎の <code>PORT_QOS_MAP</code> を介して SAI に降ろす設計を取っている。本 HLD は <strong>MPLS パケットの TC（Traffic Class、旧称 EXP、RFC 5462）</strong> から内部 TC へのマップを既存 QoS フローに追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これにより、<strong>MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用</strong> できるようになる。SAI 自体は既に <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> をサポートしており、本 HLD の作業は <strong>SONiC スタック側の対応（CONFIG_DB スキーマ → orchagent → CLI）</strong> が中心<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>名称について: HLD 0.2 で <strong>「MPLS EXP」を「MPLS TC」に統一</strong>（RFC 5462 準拠）されている<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+</blockquote>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI\nsai_query_stats_capability] --&gt; ORCH[orchagent\n(起動時)]
-    ORCH --&gt;|capability| SDB[(STATE_DB\nQUEUE_COUNTER_CAPABILITIES\nPORT_COUNTER_CAPABILITIES)]
-    User[counterpoll wredqueue/wredport enable] --&gt; CDB[(CONFIG_DB\nFLEX_COUNTER_TABLE\nWRED_ECN_QUEUE / WRED_ECN_PORT)]
-    CDB --&gt; ORCH
-    ORCH --&gt;|stat-id 登録| FCDB[(FLEX_COUNTER_DB)]
-    FCDB --&gt; SYNCD[syncd]
-    SYNCD --&gt;|periodic poll| CNT[(COUNTERS_DB)]
-    CLI[show queue wredcounters\nshow interfaces counters detailed] --&gt;|capability lookup| SDB
-    CLI --&gt; CNT</code></pre>
-<h3 id="capability">Capability 検出<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
-<p><code>orchagent</code> は <code>sai_query_stats_capability()</code> でプラットフォーム対応を問い合わせ、<code>STATE_DB</code> に次のように書き込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>QUEUE_COUNTER_CAPABILITIES:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER  : isSupported = true/false
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER : ...
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER: ...
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER: ...
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>PORT_COUNTER_CAPABILITIES:
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER : ...
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER: ...
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  WRED_ECN_PORT_WRED_RED_DROP_COUNTER   : ...
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER : ...
+    CFG[(CONFIG_DB\nMPLS_TC_TO_TC_MAP|name)] --&gt; ORCH[QoS orch]
+    PQM[(CONFIG_DB\nPORT_QOS_MAP\n.mpls_tc_to_tc_map=name)] --&gt; ORCH
+    ORCH --&gt; SAI[SAI qos_map\nSAI_QOS_MAP_MPLS_EXP_TO_TC]
+    SAI --&gt; ASIC[ASIC]
+    PKT[MPLS pkt] --&gt; ASIC
+    ASIC --&gt; TC[内部 TC へ classify]</code></pre>
+<p>旧 <code>DSCP_TO_TC_MAP</code> と同じパターン<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><code>MPLS_TC_TO_TC_MAP|&lt;name&gt;</code> で実マップを定義。</li>
+<li><code>PORT_QOS_MAP|&lt;port&gt;</code> の <code>mpls_tc_to_tc_map</code> フィールドにマップ名を設定して bind。</li>
+<li>orchagent が SAI の qos_map オブジェクト（<code>SAI_QOS_MAP_ATTR_TYPE == SAI_QOS_MAP_MPLS_EXP_TO_TC</code>）に変換して降ろす。</li>
+</ol>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>新テーブル <code>MPLS_TC_TO_TC_MAP</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key   = &quot;MPLS_TC_TO_TC_MAP|&quot;&lt;name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>field = mpls_tc_value (1桁以上の数値)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>value = tc_value      (1桁以上の数値)
 </span></code></pre></div>
-<p>既定値はすべて <code>false</code>。CLI はこれを引いて未対応列を <code>N/A</code> と表示する。すべての組み合わせが未対応のグループを <code>counterpoll</code> で <code>enable</code> した場合は <strong>syslog エラー</strong> を出す仕様<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スキーマ例<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>127.0.0.1:6379&gt; hgetall &quot;MPLS_TC_TO_TC_MAP|Mpls_tc_to_tc_map1&quot;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a> 1) &quot;3&quot;   ; mpls tc
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a> 2) &quot;3&quot;   ; tc
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a> 3) &quot;6&quot;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a> 4) &quot;5&quot;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a> 5) &quot;7&quot;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a> 6) &quot;5&quot;
+</span></code></pre></div>
+<p>つまり <code>(mpls_tc -&gt; tc)</code> の写像。MPLS TC は 3 bit なので値域は 0〜7。</p>
+<h3 id="port_qos_map"><code>PORT_QOS_MAP</code> の拡張<a class="headerlink" href="#port_qos_map" title="Permanent link">&para;</a></h3>
+<p>ポート bind は <code>PORT_QOS_MAP</code> の <strong>新フィールド <code>mpls_tc_to_tc_map</code></strong> で行う<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。値は <code>MPLS_TC_TO_TC_MAP|&lt;name&gt;</code> のキー名。既存の <code>dscp_to_tc_map</code> フィールドと並列に存在する形。</p>
+<h3 id="orchagent">orchagent の拡張<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss</code> の QoS orch に <strong>MPLS TC → TC 用ハンドラを追加</strong> する。基本構造は DSCP → TC 用と同じだが、追加バリデーションが入る<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>値の数値範囲チェック</strong>: <code>mpls_tc_value</code> / <code>tc_value</code> が想定範囲内か。</li>
+<li><strong>重複マッピング禁止</strong>: 同一の <code>mpls_tc_value</code> が <strong>複数の <code>tc_value</code> にマップされていない</strong> ことを保証。</li>
+<li><strong>誤設定の error log</strong>: ユーザに気付かせるためのデバッグログを出す。</li>
+</ul>
+<p><code>PORT_QOS_MAP</code> 側の新フィールドも QoS orch が扱うよう拡張される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sonic-swss-common">sonic-swss-common<a class="headerlink" href="#sonic-swss-common" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss-common</code> のスキーマに <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> の <code>#define</code>（C++ レベル）が追加される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。テーブル名 <code>MPLS_TC_TO_TC_MAP</code> を 1 か所で管理するため。</p>
+<h3 id="sonic-utilities">sonic-utilities<a class="headerlink" href="#sonic-utilities" title="Permanent link">&para;</a></h3>
+<p><code>sonic-utilities</code> の CLI で <strong>DSCP → TC マップと同等のサポート</strong> を提供する。具体的には <code>config reload</code> / <code>config clear</code> の対象に新マップが加わる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p>SAI は <strong>既に対応済み</strong>（<code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> の qos_map type、および port attribute としての設定経路）。SAI 側の追加実装は不要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/qos/ECN_and_WRED_statistics_HLD.md#L82-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/qos/mpls_tc_to_tc_map.md#L62-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Orchagent fetches the platform statistics capability for WRED and ECN Statistics from SAI
-  The stats capability will be updated to STATE_DB by orchagent
-  Based on the stats capability and CONFIG_DB status of respective statistics, Orchagent sets stat-ids to FLEX_COUNTERS_DB
-reasoning: capability ベースで Flex Counter 登録が制御される設計の根拠。
+  MPLS_TC_TO_TC_MAP
+   SAI mapping - qos_map object with SAI_QOS_MAP_ATTR_TYPE == sai_qos_map_type_t::SAI_QOS_MAP_MPLS_EXP_TO_TC
+   key        = "MPLS_TC_TO_TC_MAP|"name
+   field    value
+   mpls_tc_value = 1*DIGIT
+   tc_value      = 1*DIGIT
+  In order to allow a user to bind such a map to a port, the existing PORT_QOS_MAP table will be enhanced to allow a new field-value pair, where the field is going to be named mpls_tc_to_tc_map
+reasoning: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・SAI 対応 type の根拠。
 -->
 
-<h3 id="flex-counter">Flex Counter グループ<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h3>
-<p>新規 2 グループ。<strong>既定では disable</strong>（ポーリングしない）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>グループ</th>
-<th>既定 POLL_INTERVAL</th>
-<th>計測対象 SAI カウンタ</th>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>WRED_ECN_QUEUE</code></td>
-<td>10000 ms</td>
-<td><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS</code> / <code>_BYTES</code>, <code>SAI_QUEUE_STAT_WRED_DROPPED_PACKETS</code> / <code>_BYTES</code></td>
+<td><code>MPLS_TC_TO_TC_MAP</code></td>
+<td><code>&lt;name&gt;</code></td>
+<td><code>&lt;mpls_tc&gt;</code> → <code>&lt;tc&gt;</code> の hash</td>
+<td>MPLS TC → 内部 TC の写像定義</td>
 </tr>
 <tr>
-<td><code>WRED_ECN_PORT</code></td>
-<td>1000 ms</td>
-<td><code>SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS</code>, <code>_YELLOW_..</code>, <code>_RED_..</code>, <code>SAI_PORT_STAT_WRED_DROPPED_PACKETS</code>（合計）</td>
+<td><code>PORT_QOS_MAP</code></td>
+<td><code>&lt;port&gt;</code></td>
+<td><code>mpls_tc_to_tc_map</code></td>
+<td>bind するマップ名</td>
 </tr>
 </tbody>
 </table>
-<p>ポート側は将来 <code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code> を含める計画。</p>
-<h3 id="counters_db">COUNTERS_DB へのキー追加<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>COUNTERS:oid:port_oid
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>   SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>   SAI_PORT_STAT_WRED_DROPPED_PACKETS
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>COUNTERS:oid:queue_oid (egress queue)
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>   SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>   SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>   SAI_QUEUE_STAT_WRED_DROPPED_PACKETS
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>   SAI_QUEUE_STAT_WRED_DROPPED_BYTES
-</span></code></pre></div>
-<h3 id="cli">CLI 拡張<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>新規 / 変更される CLI。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -3175,130 +3211,69 @@ reasoning: capability ベースで Flex Counter 登録が制御される設計�
 </thead>
 <tbody>
 <tr>
-<td><code>counterpoll wredqueue {enable\|disable}</code></td>
-<td>WRED_ECN_QUEUE グループ ON/OFF</td>
+<td><code>config reload</code></td>
+<td>MPLS_TC_TO_TC_MAP を含む config 全体を流し込む</td>
 </tr>
 <tr>
-<td><code>counterpoll wredport {enable\|disable}</code></td>
-<td>WRED_ECN_PORT グループ ON/OFF</td>
-</tr>
-<tr>
-<td><code>counterpoll wredqueue interval &lt;ms&gt;</code></td>
-<td>キュー側ポーリング間隔</td>
-</tr>
-<tr>
-<td><code>counterpoll wredport interval &lt;ms&gt;</code></td>
-<td>ポート側ポーリング間隔</td>
-</tr>
-<tr>
-<td><code>counterpoll show</code></td>
-<td>既存。各 group の現状表示</td>
-</tr>
-<tr>
-<td><code>show queue wredcounters [&lt;intf&gt;]</code></td>
-<td>キュー単位 WRED/ECN 統計（<strong>新規</strong>）</td>
-</tr>
-<tr>
-<td><code>sonic-clear queue wredcounters</code></td>
-<td>キュー単位 WRED/ECN 統計クリア（<strong>新規</strong>）</td>
-</tr>
-<tr>
-<td><code>show interfaces counters detailed &lt;intf&gt;</code></td>
-<td>既存出力末尾に WRED Green/Yellow/Red/Total を追加</td>
-</tr>
-<tr>
-<td><code>sonic-clear counters</code></td>
-<td>既存。ポート側 WRED ドロップもクリア</td>
+<td><code>config clear</code></td>
+<td>クリア対象に MPLS_TC_TO_TC_MAP も含む</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">表示例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>WRED + ECN 両対応プラットフォーム<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-dut:~# show queue wredcounters Ethernet16
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>      Port    TxQ    WredDrp/pkts    WredDrp/bytes  EcnMarked/pkts EcnMarked/bytes
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet16    UC0               0                0               0               0
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet16    UC1               1              120               0               0
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>...
+<p><strong>MPLS TC マップを直接編集する <code>config qos</code> 系のコマンドは存在しない</strong>（後述の制限事項）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db-json">設定例（CONFIG_DB JSON）<a class="headerlink" href="#config_db-json" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;MPLS_TC_TO_TC_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;Mpls_tc_to_tc_map1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;0&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3&quot;</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="nt">&quot;4&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4&quot;</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">      </span><span class="nt">&quot;5&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="nt">&quot;6&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nt">&quot;7&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="nt">&quot;PORT_QOS_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">      </span><span class="nt">&quot;mpls_tc_to_tc_map&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mpls_tc_to_tc_map1&quot;</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>ECN 非対応プラットフォーム: <code>EcnMarked/*</code> 列が <code>N/A</code> で表示される。WRED 非対応プラットフォーム: <code>WredDrp/*</code> 列が <code>N/A</code>。<code>show interfaces counters detailed</code> の末尾に WRED 4 行が追加されるのも capability に従う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>WRED_ECN_QUEUE</code></td>
-<td><code>FLEX_COUNTER_STATUS</code></td>
-<td><code>enable</code> / <code>disable</code>（既定 <code>disable</code>）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>POLL_INTERVAL</code></td>
-<td>ms 単位（既定 10000）</td>
-</tr>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>WRED_ECN_PORT</code></td>
-<td><code>FLEX_COUNTER_STATUS</code></td>
-<td>同上（既定 <code>disable</code>）</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>POLL_INTERVAL</code></td>
-<td>ms 単位（既定 1000）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="state_db">関連する STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<p><code>QUEUE_COUNTER_CAPABILITIES</code> / <code>PORT_COUNTER_CAPABILITIES</code> は実コードでは状態保存テーブルだが、ユーザ設定対象ではない。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-flex_counter.yang</code> に <code>WRED_ECN_QUEUE</code> / <code>WRED_ECN_PORT</code> コンテナを追加する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">WRED_ECN_QUEUE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">FLEX_COUNTER_STATUS</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">flex_status</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">FLEX_COUNTER_DELAY_STATUS</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">flex_delay_status</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">POLL_INTERVAL</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">poll_interval</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">container</span><span class="w"> </span><span class="nv">WRED_ECN_PORT</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c">/* 同様 */</span><span class="w"> </span><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>counterpoll<span class="w"> </span>wredqueue<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll<span class="w"> </span>wredport<span class="w">  </span><span class="nb">enable</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>queue<span class="w"> </span>wredcounters<span class="w"> </span>Ethernet16
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>detailed<span class="w"> </span>Ethernet16
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-clear<span class="w"> </span>queue<span class="w"> </span>wredcounters
-</span></code></pre></div>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>設定は <code>config reload</code> で投入する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>HLD で明示されている制限<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong><code>portstat</code> / <code>queuestat</code></strong>: 共通の Flex Counter インフラ上に並んで動く。<code>POLL_INTERVAL</code> を短くしすぎると syncd 全体のポーリング負荷が増える。</li>
-<li><strong>WRED 設定 (<code>WRED_PROFILE</code>)</strong>: 統計を取るには WRED が実際にプロファイルでキューに紐付いている必要がある。設定無しでは drop / mark カウンタは増えない。</li>
-<li><strong>ECN マーキング</strong>: ECN マーキングは WRED プロファイル内の <code>ecn</code> 設定でのみ発生する。<code>ecn</code> を無効にしているキューでは <code>EcnMarked/*</code> がゼロのままになる。</li>
-<li><strong>Warm/fast boot</strong>: HLD で「影響なし」と明記。</li>
+<li><strong>CLI でマップを直接編集できない</strong>。<code>config reload</code> 経由のみ。</li>
+<li><strong>per-switch / per-inseg のマップ設定はできない</strong>。あくまで <code>PORT_QOS_MAP</code> を介した <strong>port 単位</strong> でのみ bind できる。</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>加えて HLD 上の留意点:</p>
 <ul>
-<li><code>show queue wredcounters</code> がそもそも値を出さない: <code>STATE_DB</code> の <code>QUEUE_COUNTER_CAPABILITIES</code> を確認。すべて <code>false</code> なら SAI 側が未対応。</li>
-<li>一部の列だけ <code>N/A</code>: capability の差異によるもので仕様。</li>
-<li><code>counterpoll wredqueue enable</code> 後にカウンタが 0 のまま: <code>FLEX_COUNTER_TABLE|WRED_ECN_QUEUE</code> の <code>FLEX_COUNTER_STATUS=enable</code> と <code>POLL_INTERVAL</code> の値、syncd ログで Flex Counter group が ready になっているかを確認。</li>
-<li>syslog にエラー: 「全カウンタ非対応のグループを enable」した場合の仕様。capability を直して再度 enable する。</li>
-<li>ポート側 WRED 行が <code>show interfaces counters detailed</code> に出ない: <code>WRED_ECN_PORT</code> グループが disable、または capability が false。</li>
+<li><strong>YANG model</strong>: HLD 上は CLI / YANG 双方の拡張に言及されているが、<strong>直接の YANG モジュール変更の詳細は本 HLD では未定義</strong>。</li>
+<li>warm boot / fast boot / scalability への影響は <strong>無し</strong> と HLD は明言<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>DSCP_TO_TC_MAP</code> / <code>DOT1P_TO_TC_MAP</code></strong>: 同じ <code>PORT_QOS_MAP</code> 上で並列に bind される他の TC 入力マップ。MPLS パケットでは MPLS TC → TC が、IP/L2 では DSCP/DOT1P → TC が使われるという入力経路の違い。SAI 側で <code>SAI_QOS_MAP_*_TO_TC</code> の各 type が独立して扱われる。</li>
+<li><strong><code>PORT_QOS_MAP</code></strong>: 既存フィールド（<code>dscp_to_tc_map</code>, <code>tc_to_pg_map</code> 等）と新フィールド <code>mpls_tc_to_tc_map</code> が共存する。orchagent の bind 順序は HLD 上明示なし。</li>
+<li><strong>MPLS forwarding 機能全般</strong>: 本 HLD は <strong>classification（入口で TC を決める）部分のみ</strong>。MPLS ラベル imposition 時の <strong>TC → MPLS TC のリマーク</strong> は別マップ系統で扱われる（本 HLD のスコープ外）。</li>
+<li><strong><code>config reload</code> のフロー</strong>: マップ追加 / 変更時にデバイス全体の reload が必要になりうる点が、運用上のコスト<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>マップが効かない: <code>PORT_QOS_MAP|&lt;port&gt;</code> に <code>mpls_tc_to_tc_map</code> フィールドが入っているか確認。<code>MPLS_TC_TO_TC_MAP|&lt;name&gt;</code> の存在も併せて確認。</li>
+<li>値が反映されない: <code>config reload</code> を実行したか確認。本 HLD は CLI 直接編集を禁じているため<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>、再ロード必須。</li>
+<li>orchagent ログにバリデーションエラー: 同じ <code>mpls_tc_value</code> が複数の <code>tc_value</code> にマップされている、または範囲外の数値を入れている可能性<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>SAI 側で qos_map 作成失敗: SAI / sairedis 側のサポートは前提だが、ベンダ SAI が <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> を未実装の場合は降ろせない。<code>syncd</code> のログを確認。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/qos/ECN_and_WRED_statistics_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/qos/mpls_tc_to_tc_map.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
