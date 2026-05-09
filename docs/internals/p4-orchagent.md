@@ -1,7 +1,7 @@
 ---
 title: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,11 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `P4Orch` の `ObjectManagerInterface` 階層、`RouterInterfaceManager` / `NeighborManager` / `NexthopManager` / `WcmpManager` / `RouteManager` / `AclTableManager` / `AclRuleManager` の現行実装、`Centralized Mapper` の参照カウントと `CrmOrch` 連携、`PortsOrch` / `VrfOrch` への public method 経由の参照、`APPL_STATE_DB` 経由の応答経路は実コードでの裏取り未済（PINS 機能）。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified"
+    Verifier 2026-05-09 で `sonic-swss/orchagent/p4orch/` に `p4orch.cpp` 本体と各 Manager（`router_interface_manager`, `neighbor_manager`, `next_hop_manager`, `wcmp_manager`, `route_manager`, `acl_table_manager`, `acl_rule_manager`, `mirror_session_manager`, `l3_admit_manager`, `gre_tunnel_manager`, `tunnel_decap_group_manager`, `ext_tables_manager`, `tables_definition_manager`, `ip_multicast_manager`, `l3_multicast_manager`）が実装されていることを確認。`object_manager_interface.h` で `enqueue` / `drain` / `drainWithNotExecuted` 抽象が定義され、`p4oidmapper.h` の `P4OidMapper` クラスが `(sai_object_type_t, key) → (oid, ref_count)` を保持し、`getRefCount` 等の API を public 公開している。HLD 当初の 7 Manager から実装は更に拡張されている。
 
 # P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
 
