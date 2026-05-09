@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bfd-hw-offload/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../active-active-dual-tor/">
       
       
-        <link rel="next" href="../bgp-router-id-explicitly-configured/">
+        <link rel="next" href="../dash-sonic-kvm/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） - SONiC 非公式ドキュメント</title>
+        <title>Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bfd-bfdorch-bfd_session" class="md-skip">
+        <a href="#active-standby-dual-tory-cable-linkmgrd-state-machine-ipinip-tunnel" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+              Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -315,11 +313,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../overlay/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -855,8 +855,6 @@
       
   
   
-    
-  
   
   
     
@@ -888,23 +886,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -922,13 +917,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -945,37 +940,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -991,236 +959,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネント構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#appl_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        APPL_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性のマッピング
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態遷移とライフサイクル
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#control-plane-bfd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Control plane BFD との共存
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1233,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1261,7 +999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1289,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1317,7 +1055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1345,7 +1083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1373,7 +1111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1401,7 +1139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1429,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1805,6 +1543,8 @@
       
   
   
+    
+  
   
   
     
@@ -1834,20 +1574,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../overlay/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1865,13 +1608,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1891,7 +1634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
+      <a href="../active-active-dual-tor/" class="md-nav__link">
         
   
   
@@ -1916,10 +1659,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1935,6 +1705,425 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkmgrd-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linkmgrd 4 サブモジュール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="linkmgrd 4 サブモジュール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkprober" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LinkProber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muxstate-i2c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxState (I2C 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linkmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LinkManager 状態遷移表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-muxcfgorch-muxorch-tunnelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (MuxCfgOrch / MuxOrch / TunnelOrch)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (MuxCfgOrch / MuxOrch / TunnelOrch)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#muxcfgorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxCfgOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TunnelOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muxorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        neighbor 取扱い 3 案
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback 動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor 管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neighbor 管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proxy-arp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy ARP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-ndp-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy NDP (IPv6)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#garp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GARP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor 特殊ケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neighbor 特殊ケース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-active-tor-neighbor-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1) 装填トンネル後の active ToR で neighbor miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-down-neighbor-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2) 片側リンク down での neighbor miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-directed-broadcast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3) Directed Broadcast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-standby-tor-ipv6-neighbor-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4) standby ToR で IPv6 neighbor が FAILED 化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mux-driver-ycabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MUX Driver (ycabled)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switchover-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switchover シーケンス（active 化）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1947,7 +2136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
+      <a href="../dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -1975,7 +2164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -2003,7 +2192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -2031,7 +2220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -2059,7 +2248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -2087,7 +2276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
+      <a href="../vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -4115,10 +4304,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#linkmgrd-4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント構成
+        linkmgrd 4 サブモジュール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="linkmgrd 4 サブモジュール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkprober" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LinkProber
       
     </span>
   </a>
@@ -4126,10 +4327,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#appl_db" class="md-nav__link">
+  <a href="#muxstate-i2c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        APPL_DB スキーマ
+        MuxState (I2C 経由)
       
     </span>
   </a>
@@ -4137,10 +4338,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#linkmanager" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
+        LinkManager 状態遷移表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-muxcfgorch-muxorch-tunnelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (MuxCfgOrch / MuxOrch / TunnelOrch)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (MuxCfgOrch / MuxOrch / TunnelOrch)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#muxcfgorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxCfgOrch
       
     </span>
   </a>
@@ -4148,10 +4377,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
+  <a href="#tunnelorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI 属性のマッピング
+        TunnelOrch
       
     </span>
   </a>
@@ -4159,10 +4388,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#muxorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移とライフサイクル
+        MuxOrch
       
     </span>
   </a>
@@ -4170,10 +4399,159 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#control-plane-bfd" class="md-nav__link">
+  <a href="#neighbor-3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Control plane BFD との共存
+        neighbor 取扱い 3 案
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback 動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor 管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neighbor 管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proxy-arp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy ARP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-ndp-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy NDP (IPv6)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#garp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GARP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor 特殊ケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Neighbor 特殊ケース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-active-tor-neighbor-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1) 装填トンネル後の active ToR で neighbor miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-down-neighbor-miss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2) 片側リンク down での neighbor miss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-directed-broadcast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3) Directed Broadcast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-standby-tor-ipv6-neighbor-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4) standby ToR で IPv6 neighbor が FAILED 化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mux-driver-ycabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MUX Driver (ycabled)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switchover-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switchover シーケンス（active 化）
       
     </span>
   </a>
@@ -4186,7 +4564,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4198,10 +4576,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する STATE_DB
       
     </span>
   </a>
@@ -4220,29 +4620,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4258,7 +4636,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4269,7 +4647,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4280,7 +4658,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4291,7 +4669,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4318,7 +4696,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/bfd-hw-offload.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/active-standby-dual-tor.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4328,173 +4706,390 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 1.0, 2021-10）のみを根拠に書かれている。<code>BfdOrch</code> 実装、SAI BFD API の community 取り込み状況、<code>show bfd session</code> の sonic-utilities 実装は未確認。HLD は 2021 年時点の Phase 1 設計であり、現行 master では拡張・改名されている可能性がある。</p>
+<p><code>linkmgrd</code> の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュール、<code>MuxOrch</code> の neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）の最終採用案、<code>ycabled</code> の I2C リトライ動作、proxy ARP / proxy NDP / GARP / 6.3.5 系 neighbor 特殊ケースの実装は実コードでの裏取り未済。</p>
 </div>
-<h1 id="bfd-bfdorch-bfd_session">BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）<a class="headerlink" href="#bfd-bfdorch-bfd_session" title="Permanent link">&para;</a></h1>
+<h1 id="active-standby-dual-tory-cable-linkmgrd-state-machine-ipinip-tunnel">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）<a class="headerlink" href="#active-standby-dual-tory-cable-linkmgrd-state-machine-ipinip-tunnel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。SONiC では従来 FRR（<code>bfdd</code>）でソフトウェア BFD を実装するが、本機能は <strong>BFD セッションを ASIC 側にオフロードして CPU を介在させずに検知する</strong> 経路を導入する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設計の主眼は以下のとおり。</p>
+<p>active-standby dual ToR は <strong>2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続</strong> し、片側を active、もう片側を standby として運用する構成である。<code>linkmgrd</code> が link health を監視し、不健全を検知すると <strong>standby 側が自発的に active へ昇格</strong> する。standby 側で受けたトラフィックは <strong>IPinIP tunnel</strong> で peer ToR に転送する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要件は単純で <strong>「リンク or ToR 障害時に健全な側へ切り替えられること」</strong> に尽きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ToR ↔ NIC の動作<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ASIC 側で BFD パケットの送受信・状態遷移を完結させ、最大 4000 セッションまでスケールする</li>
-<li>セッションは <code>APPL_DB.BFD_SESSION</code> 経由で外部コンポーネント（例: 上位コントローラ、orchagent）が直接書き込む。Phase 1 では <code>CONFIG_DB</code> 経由および専用 <code>config</code> CLI は実装しない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>状態は SAI 通知を <code>BfdOrch</code> が受け取り <code>STATE_DB</code> に反映、<code>show bfd session</code> で参照する</li>
+<li>ToR → NIC: 両リンクは UP 状態だが <strong>active 側のみ</strong> が NIC に転送</li>
+<li>NIC → ToR: <strong>両 ToR にブロードキャスト</strong>（standby 側でドロップまたは tunnel）</li>
+<li>mux switchover で <strong>link down は発生しない</strong></li>
+<li>ToR → NIC 方向では切替時に <strong>数パケットの破損 / drop</strong> がありうる</li>
+<li>NIC → ToR 方向は <strong>無瞬断</strong></li>
 </ul>
-<p>本 HLD は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR <code>bfdd</code>）との共存は同 HLD のスコープ外である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>routing 側<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>両 ToR は <strong>同じ VLAN 設定 + 同じ virtual MAC</strong> を保持し T1 に同じ prefix を広告</li>
+<li>同じ port が <strong>両 ToR で active / standby</strong> に分かれる</li>
+<li>standby ToR で受けた server 宛 traffic は <strong>L3 IPinIP tunnel</strong> で peer ToR に転送</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    EXT[外部 producer\n（HA / Vnet 等）] --&gt;|BFD_SESSION 書き込み| APPL[(APPL_DB\nBFD_SESSION)]
-    APPL --&gt; ORCH[BfdOrch]
-    ORCH --&gt;|SAI BFD attr 設定| SYNCD[syncd]
-    SYNCD --&gt;|create/set| ASIC[ASIC BFD engine]
-    ASIC -.-&gt;|SAI notification\nsai_bfd_session_state_t| SYNCD
-    SYNCD -.-&gt; ORCH
-    ORCH --&gt;|状態反映| STATE[(STATE_DB\nBFD_SESSION_TABLE)]
-    CLI[show bfd session] --&gt; STATE</code></pre>
-<p>要点:</p>
+<h3 id="linkmgrd-4">linkmgrd 4 サブモジュール<a class="headerlink" href="#linkmgrd-4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    subgraph linkmgrd
+      LP[LinkProber&lt;br/&gt;ICMP self/peer/none]
+      LS[LinkState&lt;br/&gt;Up/Down]
+      MS[MuxState&lt;br/&gt;Active/Standby/Unknown&lt;br/&gt;via I2C]
+      LM[LinkManager&lt;br/&gt;composite SM]
+    end
+    LP --&gt; LM
+    LS --&gt; LM
+    MS --&gt; LM
+    LM --&gt;|toggle 指示| YCABLED[ycabled]</code></pre>
+<h4 id="linkprober">LinkProber<a class="headerlink" href="#linkprober" title="Permanent link">&para;</a></h4>
+<p>ICMP payload に <strong>ToR ID (UUID) を TLV エンコード</strong> し、ICMP echo を server に送る。応答 ICMP の payload を見て<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>イベント</th>
+<th>意味</th>
+<th>遷移先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ICMP_NONE</code></td>
+<td><code>LINK_PROBE.TIMEOUT * INTERVAL</code> ms 受信なし</td>
+<td>LinkProberStateUnknown</td>
+</tr>
+<tr>
+<td><code>ICMP_SELF</code></td>
+<td>自 ToR ID が含まれる reply 受信</td>
+<td>LinkProberStateActive</td>
+</tr>
+<tr>
+<td><code>ICMP_PEER</code></td>
+<td>peer ToR ID が含まれる reply 受信</td>
+<td>LinkProberStateStandby</td>
+</tr>
+</tbody>
+</table>
+<p>ICMP プローブは <strong>IPv4 と IPv6 の双方</strong> を送るが、<strong>判定は IPv4 のみ</strong>。IPv6 はモニタ用で <strong>interval が長い</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="muxstate-i2c">MuxState (I2C 経由)<a class="headerlink" href="#muxstate-i2c" title="Permanent link">&para;</a></h4>
+<p>y-cable の I2C レジスタ (例: Credo の <code>B132 @ page 4</code>) から <strong>MUX 方向</strong>を取得する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>APPL_DB</code> の <code>BFD_SESSION</code> テーブルがオフロード対象セッションの入口。Phase 1 では BFD manager（誰が <code>APPL_DB</code> に書くか）の決定はスコープ外で「外部 producer が書く」想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>BfdOrch</code> は <code>APPL_DB</code> を購読し、SAI BFD API でセッションを登録する</li>
-<li>セッション状態は SAI 通知チャネル経由で <code>BfdOrch</code> に届き、<code>STATE_DB</code> に書き込まれる</li>
+<li><code>MuxActive</code>: MUX が自 ToR を向く</li>
+<li><code>MuxStandby</code>: MUX が peer ToR を向く</li>
+<li><code>MuxUnknown</code>: I2C 応答なし（cable 故障 / 電源 OFF）</li>
 </ul>
-<h3 id="appl_db">APPL_DB スキーマ<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
-<p>セッションキーは VRF・インタフェース・宛先 IP の 3 つで一意化する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BFD_SESSION:{vrf}:{ifname}:{ipaddr}
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    tx_interval   : interval ms (OPTIONAL)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    rx_interval   : interval ms (OPTIONAL)
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    multiplier    : detect multiplier (OPTIONAL)
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    shutdown      : false
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    multihop      : false
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    local_addr    : ipv4 / ipv6
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    type          : active / passive / ...
+<h4 id="linkmanager">LinkManager 状態遷移表<a class="headerlink" href="#linkmanager" title="Permanent link">&para;</a></h4>
+<p>LinkManager は LinkProber + LinkState + MuxState の合成状態。<strong>standby ToR が能動的に switchover を駆動</strong> する設計（両 ToR が同時に切替を試みるのを防ぐ）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>LinkUp 時:</p>
+<table>
+<thead>
+<tr>
+<th>MuxState  LinkProber</th>
+<th>Active</th>
+<th>Standby</th>
+<th>Unknown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active</td>
+<td>Noop</td>
+<td>LINKMANAGER_CHECK → MuxWait</td>
+<td>LINKMANAGER_CHECK → LinkWait（heartbeat 一時停止）</td>
+</tr>
+<tr>
+<td>Standby</td>
+<td>LINKMANAGER_CHECK → MuxWait</td>
+<td>Noop</td>
+<td><strong>LINKMANAGER_SWITCH</strong> → LinkWait</td>
+</tr>
+<tr>
+<td>MuxWait</td>
+<td>Noop</td>
+<td>Noop</td>
+<td>Noop</td>
+</tr>
+<tr>
+<td>LinkWait</td>
+<td>LINKMANAGER_CHECK → MuxWait</td>
+<td>LINKMANAGER_CHECK → MuxWait</td>
+<td>Noop</td>
+</tr>
+<tr>
+<td>MuxFailure</td>
+<td>Faulty Cable</td>
+<td>Faulty Cable</td>
+<td>Faulty Cable</td>
+</tr>
+</tbody>
+</table>
+<p>LinkDown 時:</p>
+<table>
+<thead>
+<tr>
+<th>MuxState  LinkProber</th>
+<th>Active</th>
+<th>Standby</th>
+<th>Unknown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active</td>
+<td>Noop</td>
+<td>Noop</td>
+<td>LINKMANAGER_SWITCH → LinkWait</td>
+</tr>
+<tr>
+<td>Standby</td>
+<td>Noop</td>
+<td>Noop</td>
+<td>LINKMANAGER_SWITCH → LinkWait</td>
+</tr>
+<tr>
+<td>MuxFailure</td>
+<td>Faulty Cable</td>
+<td>Faulty Cable</td>
+<td>Faulty Cable</td>
+</tr>
+</tbody>
+</table>
+<p>active → unknown 遷移時は <strong><code>linkprober_suspend_timer</code> で一時的に heartbeat を停止</strong> し、対向 standby が早期に takeover できるようにする<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="orchagent-muxcfgorch-muxorch-tunnelorch">orchagent (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)<a class="headerlink" href="#orchagent-muxcfgorch-muxorch-tunnelorch" title="Permanent link">&para;</a></h3>
+<h4 id="muxcfgorch">MuxCfgOrch<a class="headerlink" href="#muxcfgorch" title="Permanent link">&para;</a></h4>
+<p><code>CONFIG_DB.MUX_CABLE</code> を購読し <strong>port → server IP</strong> マップを <code>MuxOrch</code> に渡す<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="tunnelorch">TunnelOrch<a class="headerlink" href="#tunnelorch" title="Permanent link">&para;</a></h4>
+<p><code>CONFIG_DB.TUNNEL</code> の <code>MUX_TUNNEL</code> entry を購読し<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>IPinIP tunnel object 作成（<code>tunnel_type=IPINIP</code>、<code>dst_ip=Loopback0</code>、<code>dscp_mode=uniform</code>、<code>encap_ecn_mode=standard</code>、<code>ecn_mode=copy_from_outer</code>、<code>ttl_mode=pipe</code>）</li>
+<li>decap entry / tunnel termination 作成</li>
+<li><code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を <code>MuxOrch</code> の next hop として供給</li>
+</ul>
+<h4 id="muxorch">MuxOrch<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h4>
+<p>linkmgrd の状態変化を購読し<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>tunnel route 追加 / 削除</li>
+<li><strong>standby port での ingress drop ACL</strong> 追加 / 削除</li>
+<li>neighbor entry の取り扱い（後述）</li>
+</ol>
+<h4 id="neighbor-3">neighbor 取扱い 3 案<a class="headerlink" href="#neighbor-3" title="Permanent link">&para;</a></h4>
+<p>HLD は 3 つのアプローチを比較する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>案</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>route + neighbor 共存</td>
+<td>route が優先。IPv6 で <code>MUX_CABLE</code> の server IP が prefix なら <code>MuxOrch</code> がその subnet 内 IPv6 neighbor 全件分の route を入れる</td>
+</tr>
+<tr>
+<td>orchagent delete</td>
+<td>route 追加時に neighbor entry を削除 / 逆も。IPv6 では route を <code>/80</code> で持つ</td>
+</tr>
+<tr>
+<td>ACL redirect</td>
+<td>dst prefix match で next hop を tunnel encap にする ACL entry を ACL drop と同一 table に置く</td>
+</tr>
+</tbody>
+</table>
+<p>最終採用案は HLD 上明示されていない（実コード裏取り対象）。</p>
+<h4 id="rollback">Rollback 動作<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h4>
+<p>linkmgrd の指示で orchagent が遷移失敗した場合<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>orchagent は元の状態に rollback</li>
+<li>APP_DB に新状態を書き ycabled が読む</li>
+<li>ycabled が STATE_DB に書き戻し</li>
+<li>orchagent が STATE_DB に <code>unknown</code> を書く → linkmgrd が再判定</li>
+</ol>
+<p>orchagent は <strong>state 変化に対して idempotent</strong> であること。</p>
+<h3 id="neighbor">Neighbor 管理<a class="headerlink" href="#neighbor" title="Permanent link">&para;</a></h3>
+<h4 id="proxy-arp">Proxy ARP<a class="headerlink" href="#proxy-arp" title="Permanent link">&para;</a></h4>
+<p>server-to-server traffic を必ず L3 経路に乗せるため <strong>proxy ARP を有効化</strong> し、すべての server 発トラフィックに <code>dst_mac = ToR router MAC</code> を強制する。これで standby ToR で受けたパケットを encap して active ToR に流せる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="proxy-ndp-ipv6">Proxy NDP (IPv6)<a class="headerlink" href="#proxy-ndp-ipv6" title="Permanent link">&para;</a></h4>
+<p>IPv6 は <code>proxy_arp</code> のような subnet レベル proxy が無いため、明示的に neighbor entry を入れる<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv6.conf.Vlan1000.proxy_ndp<span class="o">=</span><span class="m">1</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ip<span class="w"> </span>-6<span class="w"> </span>neigh<span class="w"> </span>add<span class="w"> </span>proxy<span class="w"> </span>fc02:1000::3<span class="w"> </span>dev<span class="w"> </span>Vlan1000
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>キー位置</th>
-<th>必須</th>
-<th>値が無い場合</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>vrf</code></td>
-<td>✅</td>
-<td><code>default</code> を指定</td>
-</tr>
-<tr>
-<td><code>ifname</code></td>
-<td>✅</td>
-<td>multihop 等で意味がない場合は <code>default</code></td>
-</tr>
-<tr>
-<td><code>ipaddr</code></td>
-<td>✅</td>
-<td>省略不可。IPv4 / IPv6</td>
-</tr>
-</tbody>
-</table>
-<p>省略可フィールドのデフォルト値:</p>
-<table>
-<thead>
-<tr>
-<th>Attribute</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tx_interval</code></td>
-<td>1 sec</td>
-</tr>
-<tr>
-<td><code>rx_interval</code></td>
-<td>1 sec</td>
-</tr>
-<tr>
-<td><code>multiplier</code></td>
-<td>3</td>
-</tr>
-<tr>
-<td><code>multihop</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>local_addr</code></td>
-<td>Loopback0</td>
-</tr>
-</tbody>
-</table>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>Phase 1 では <strong><code>CONFIG_DB</code> スキーマは未定義</strong>。BFD manager の設計と合わせて将来追加する旨が明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>CONFIG_DB</code> 経由で BFD セッションを直接設定したいユースケース（運用者が BFD 単体を切ってみる等）は Phase 1 では非対応である。</p>
-<h3 id="sai">SAI 属性のマッピング<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p><code>BfdOrch</code> が SAI に渡す主な属性は次のとおり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>SAI Attribute</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_TYPE</code></td>
-<td><code>SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_OFFLOAD_TYPE</code></td>
-<td><code>SAI_BFD_SESSION_OFFLOAD_TYPE_FULL</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_BFD_ENCAPSULATION_TYPE</code></td>
-<td><code>SAI_BFD_ENCAPSULATION_TYPE_NONE</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_SRC_IP_ADDRESS</code></td>
-<td>Loopback0 の IPv4 / v6</td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_DST_IP_ADDRESS</code></td>
-<td>リモート IP</td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_MULTIHOP</code></td>
-<td>true</td>
-</tr>
-</tbody>
-</table>
-<p>multihop セッションでは ASIC 側で <code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code>（未指定なら <code>SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID</code>）に紐づく underlay ルーティングテーブルで宛先解決する。underlay の ECMP パス解決も HW 任せで、ASIC 詳細は HLD のスコープ外と明記される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">状態遷移とライフサイクル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>nbrmgrd</code> が <code>MUX_CABLE|&lt;PORT&gt;</code> を購読し各 server IPv6 を proxy entry として登録する案がある。entry が prefix の場合は IPv6 NDP 同期で対応する。</p>
+<h4 id="garp">GARP<a class="headerlink" href="#garp" title="Permanent link">&para;</a></h4>
+<p>standby ToR は ARP request を MUX で drop されるため、ARP 表を <strong>active 側の GARP</strong> から学習する<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/sys/net/ipv4/conf/Vlan1000/arp_accept
+</span></code></pre></div>
+<p>IPv6 は <code>accept_untracked_na=1</code> を kernel に backport して unsolicited NA を受理する。</p>
+<h4 id="neighbor_1">Neighbor 特殊ケース<a class="headerlink" href="#neighbor_1" title="Permanent link">&para;</a></h4>
+<h5 id="1-active-tor-neighbor-miss">(1) 装填トンネル後の active ToR で neighbor miss<a class="headerlink" href="#1-active-tor-neighbor-miss" title="Permanent link">&para;</a></h5>
+<p>standby から encap されてきた最初のパケットを active が decap した時、neighbor 未学習だと <strong>encap パケット全体が CPU trap</strong> される。kernel は decap して ARP 送出を行えないため、<strong>Loopback0 宛 + Portchannel uplink 入り</strong> のパケットを listen する Python サービスが内部 dst IP に <strong>ping を打って ARP/NS を kernel に発行させる</strong><sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h5 id="2-down-neighbor-miss">(2) 片側リンク down での neighbor miss<a class="headerlink" href="#2-down-neighbor-miss" title="Permanent link">&para;</a></h5>
+<p>ARP 未学習の neighbor 宛パケットは CPU trap される。<code>PEER_SWITCH</code> table が存在する dual-tor 環境では<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li>ARP 未解決 entry を <strong>zero mac + type=tunnel</strong> で APP_DB の <code>NEIGH</code> に書く</li>
+<li><code>MuxOrch</code> / <code>neighorch</code> が <strong>tunnel route を peer に install</strong></li>
+<li><code>arp_update</code> が定期的に再学習を試行</li>
+</ol>
+<h5 id="3-directed-broadcast">(3) Directed Broadcast<a class="headerlink" href="#3-directed-broadcast" title="Permanent link">&para;</a></h5>
+<p>ハードウェアフラッディングで standby port を含めた挙動が単一 ToR と異なるため別途対応が必要（HLD では TBD）<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h5 id="4-standby-tor-ipv6-neighbor-failed">(4) standby ToR で IPv6 neighbor が FAILED 化<a class="headerlink" href="#4-standby-tor-ipv6-neighbor-failed" title="Permanent link">&para;</a></h5>
+<p>active で <code>REACHABLE</code> でも standby では unsolicited NA を学習しないと <code>FAILED</code> 化する。switchover 時に traffic が止まるのを防ぐため<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>accept_untracked_na=1</code> を有効化</li>
+<li><code>arp_update</code> script が <strong><code>FAILED</code> を <code>INCOMPLETE</code> に書き換え</strong>、active 側の <code>arp_update</code> が NA を発行 → standby 側で resolve</li>
+</ul>
+<h3 id="mux-driver-ycabled">MUX Driver (<code>ycabled</code>)<a class="headerlink" href="#mux-driver-ycabled" title="Permanent link">&para;</a></h3>
+<p>旧 <code>xcvrd</code> を <code>ycabled</code> に改名<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>APP_DB.HW_MUX_CABLE</code> を購読し I2C 経由で MUX 方向を toggle する。<code>i2c_retry_count</code> 回失敗で MUX_FAIL を <code>STATE_DB.HW_MUX_CABLE_TABLE</code> に書く。報告状態は<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>MUX_XCVRD_ACTIVE</code></li>
+<li><code>MUX_XCVRD_STANDBY</code></li>
+<li><code>MUX_XCVRD_FAIL</code></li>
+</ul>
+<h3 id="switchover-active">switchover シーケンス（active 化）<a class="headerlink" href="#switchover-active" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
-    participant P as producer
-    participant A as APPL_DB
-    participant O as BfdOrch
-    participant S as syncd / SAI
-    participant H as ASIC
-    participant ST as STATE_DB
-    P-&gt;&gt;A: BFD_SESSION:{vrf}:{ifname}:{ip} 書き込み
-    A--&gt;&gt;O: SET 通知
-    O-&gt;&gt;O: SAI 属性に変換
-    O-&gt;&gt;S: bfd_session_create
-    S-&gt;&gt;H: ASIC へ BFD セッション登録
-    O-&gt;&gt;ST: BFD_SESSION_TABLE 初期状態書き込み
-    H--&gt;&gt;S: state change notification
-    S--&gt;&gt;O: sai_bfd_session_state_t
-    O-&gt;&gt;ST: STATE_DB の状態を更新</code></pre>
-<!-- evidence:
-source: sonic-net/SONiC/doc/bfd/BFD HW Offload HLD.md#L110-L140 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  A new module, BfdOrch shall be introduced to handle BFD session ...
-  BfdOrch shall offload the session initiation/sustenance to hardware via SAI APIs and gets the notifications of session state from SAI.
-  The session state shall be updated in STATE_DB and to any other observer orchestration agents.
-reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であることの根拠。
--->
-
-<h3 id="control-plane-bfd">Control plane BFD との共存<a class="headerlink" href="#control-plane-bfd" title="Permanent link">&para;</a></h3>
-<p>HLD は HW オフロードと FRR <code>bfdd</code> の <strong>共存自体は否定しない</strong> が、同一宛先 IP について両方のセッションを張ることは想定外と明記する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BFD trap を入れてコントロールプレーン BFD を有効化すると BFD パケットが CPU に上がるため、HW セッション側が独立で動くと一部パケットが silently drop され得る点に注意とある。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<p>Phase 1 ではユーザ向け CONFIG_DB スキーマは未定義。ただし <code>APPL_DB.BFD_SESSION</code> を直接書く producer（HA・vnet・peer monitor など）が必要。</p>
+    participant LM as linkmgrd (standby)
+    participant ADB as APP_DB.HW_MUX_CABLE
+    participant YC as ycabled
+    participant I2C as MUX I2C
+    participant SDB as STATE_DB
+    participant OR as orchagent (MuxOrch)
+    LM-&gt;&gt;LM: LinkProber Standby → Unknown
+    LM-&gt;&gt;LM: LINKMANAGER_SWITCH → MuxLinkWait
+    LM-&gt;&gt;ADB: HW_MUX_CABLE.state = active
+    ADB-&gt;&gt;YC: notify
+    YC-&gt;&gt;I2C: toggle MUX direction
+    I2C--&gt;&gt;YC: ack
+    YC-&gt;&gt;SDB: HW_MUX_CABLE_TABLE.state = active
+    SDB-&gt;&gt;OR: notify
+    OR-&gt;&gt;OR: tunnel route 削除 + ingress ACL 解除
+    OR-&gt;&gt;SDB: MUX_CABLE_TABLE.state = active
+    SDB-&gt;&gt;LM: confirm</code></pre>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MUX_LINKMGR</code></td>
+<td><code>LINK_PROBE</code></td>
+<td><code>interval_v4</code> / <code>interval_v6</code> / <code>timeout</code> / <code>suspend_timer</code> / <code>positive_signal_count</code> / <code>negative_signal_count</code></td>
+<td>linkmgrd のチューニング</td>
+</tr>
+<tr>
+<td><code>localhost MUX_DRIVER</code></td>
+<td>-</td>
+<td><code>i2c_retry_count</code></td>
+<td>ycabled の MUX 失敗判定回数</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>state ∈ {active, standby, auto, manual}</code>, <code>server_ipv4</code>, <code>server_ipv6</code></td>
+<td>port 単位 mux 設定</td>
+</tr>
+<tr>
+<td><code>PEER_SWITCH</code></td>
+<td><code>&lt;switchname&gt;</code></td>
+<td><code>address_ipv4</code></td>
+<td>peer ToR の loopback</td>
+</tr>
+<tr>
+<td><code>TUNNEL</code></td>
+<td><code>MUX_TUNNEL</code></td>
+<td><code>tunnel_type=IPINIP</code>, <code>dst_ip</code>, <code>dscp_mode</code>, <code>encap_ecn_mode</code>, <code>ecn_mode</code>, <code>ttl_mode</code></td>
+<td>IPinIP tunnel 定義</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>localhost</code></td>
+<td><code>type=ToRRouter</code>, <code>peer_switch</code>, <code>subtype=DualTor</code></td>
+<td>dual ToR 識別</td>
+</tr>
+</tbody>
+</table>
+<h3 id="app_db">関連する APP_DB<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MUX_CABLE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>state ∈ {active, standby, unknown}</code></td>
+<td>linkmgrd ↔ swss</td>
+</tr>
+<tr>
+<td><code>HW_MUX_CABLE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>state ∈ {active, standby}</code></td>
+<td>orchagent ↔ ycabled</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE_COMMAND</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>command ∈ {probe, link_status_peer}</code></td>
+<td>linkmgrd → ycabled</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE_RESPONSE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td><code>response</code>, <code>link_status_peer</code></td>
+<td>ycabled → linkmgrd</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">関連する STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MUX_CABLE_TABLE</code></td>
+<td><code>state ∈ {active, standby, unknown, error}</code></td>
+<td>orchagent が書く</td>
+</tr>
+<tr>
+<td><code>HW_MUX_CABLE_TABLE</code></td>
+<td><code>state ∈ {active, standby, unknown}</code></td>
+<td>ycabled が書く（<code>unknown</code> は I2C リトライ尽き）</td>
+</tr>
+<tr>
+<td><code>MUX_LINKMGR_TABLE</code></td>
+<td><code>state ∈ {healthy, unhealthy, uninitialized}</code></td>
+<td>linkmgrd が書く合成状態</td>
+</tr>
+<tr>
+<td><code>MUX_METRICS_TABLE</code></td>
+<td><code>&lt;app&gt;_switch_&lt;state&gt;_start/end</code></td>
+<td>切替計測用 timestamp</td>
+</tr>
+<tr>
+<td><code>MUX_SWITCH_CAUSE</code></td>
+<td><code>cause</code>, <code>time</code></td>
+<td>最後の switchover 原因</td>
+</tr>
+<tr>
+<td><code>LINK_PROBE_STATS</code></td>
+<td><code>link_prober_&lt;state&gt;_start/end</code>, <code>pck_loss_count</code>, <code>pck_expected_count</code></td>
+<td>プローブ統計</td>
+</tr>
+</tbody>
+</table>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4505,72 +5100,104 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </thead>
 <tbody>
 <tr>
-<td><code>show bfd session &lt;session name&gt;</code></td>
-<td>オフロードされた BFD セッションと状態を表示</td>
+<td><code>config muxcable mode {active\|auto\|manual\|standby} {&lt;port&gt;\|all} [--json]</code></td>
+<td>mux モード切替</td>
+</tr>
+<tr>
+<td><code>show muxcable config [&lt;port&gt;] [--json]</code></td>
+<td>設定状態（peer ToR / probe interval / state / server IP）</td>
+</tr>
+<tr>
+<td><code>show muxcable status [&lt;port&gt;] [--json]</code></td>
+<td>動作状態（STATUS / HEALTH）</td>
 </tr>
 </tbody>
 </table>
-<p><code>config bfd ...</code> 系の CLI は本 HLD では明示的に <strong>将来拡張</strong> とされ、Phase 1 のスコープ外<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD で YANG モジュールへの言及は無い（<code>CONFIG_DB</code> スキーマが未定義のため）。</p>
-<h3 id="_6">スケール上限<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 自動 failover</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>muxcable<span class="w"> </span>mode<span class="w"> </span>auto<span class="w"> </span>Ethernet4
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 手動で active 化（標準的な maintenance 操作）</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>config<span class="w"> </span>muxcable<span class="w"> </span>mode<span class="w"> </span>active<span class="w"> </span>Ethernet4
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 全ポートを auto に</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>config<span class="w"> </span>muxcable<span class="w"> </span>mode<span class="w"> </span>auto<span class="w"> </span>all
+</span></code></pre></div>
+<p><code>config muxcable mode active</code> の戻り値<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>項目</th>
-<th>値</th>
+<th>RC</th>
+<th>出力</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>HW オフロード BFD セッション数</td>
-<td>4000（Phase 1）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>100</td>
+<td><code>{"Ethernet4":"OK"}</code></td>
+<td>既に active</td>
+</tr>
+<tr>
+<td>100</td>
+<td><code>{"Ethernet4":"INPROGRESS"}</code></td>
+<td>標準 standby から切替中（健全性確認後 healthy 化）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>-</td>
+<td>失敗</td>
+</tr>
+<tr>
+<td>0</td>
+<td>-</td>
+<td>成功</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p><code>APPL_DB</code> 直接書き込みの例（Phase 1 想定の peer monitor 等から）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>HSET &quot;BFD_SESSION_TABLE:default:default:10.0.0.5&quot; \
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    multihop true \
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    local_addr 10.1.0.32 \
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    type active
-</span></code></pre></div>
-<p>実際のキー名（<code>BFD_SESSION_TABLE</code> か <code>BFD_SESSION</code> か）は HLD 表記揺れがあり、現行 swss 実装側で要確認。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Phase 1 は HW オフロード専用。<code>CONFIG_DB</code> 直接編集および専用 <code>config</code> CLI は <strong>Phase 1 範囲外</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Warm restart に関しては「特別な処理は不要」とされている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし HW オフロードセッションが warm reboot 中に保持されるかは ASIC 実装依存</li>
-<li>同一宛先 IP に control plane BFD（FRR）と HW オフロードを同時に張らないこと</li>
-<li>HW 実装が underlay ECMP 解決を持っていることが前提。HW 側でこれが未実装の場合 multihop が成立しない</li>
+<li>ToR → NIC 方向の switchover では <strong>数パケットの破損 / drop が発生し得る</strong><sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>standby ToR は ARP request が drop されるため、neighbor 学習を <strong>GARP / unsolicited NA</strong> に依存</li>
+<li>IPv6 neighbor が standby 側で <code>FAILED</code> 化する問題は <strong><code>accept_untracked_na</code> + <code>arp_update</code> 修正</strong> に依存</li>
+<li>HLD では neighbor 取扱い 3 案のうち最終採用案を明示していない</li>
+<li>directed broadcast は HLD 上 TBD</li>
+<li>y-cable I2C 失敗時の MUX_FAIL 復旧シナリオは HLD 上限定的</li>
+<li>LinkManager は LinkProber より低頻度で動作（hysteresis 抑制目的）し、応答に固有の遅延がある</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>FRR <code>bfdd</code>（Control plane BFD）</strong>: 同一宛先で並走させない。BFD trap を入れる場合は HW セッションとの責務分担に注意</li>
-<li><strong>VRF / virtual router</strong>: multihop セッションは <code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code> に従って underlay 解決される</li>
-<li><strong>Loopback0</strong>: デフォルトの <code>local_addr</code> ソース。Loopback0 IPv4/v6 が無いと既定では BFD セッションが組めない</li>
-<li><strong>将来の BFD manager</strong>: HW 容量を見て control plane / HW を振り分ける役割が想定されているが、本 HLD では未実装</li>
+<li><strong><code>linkmgrd</code> (sonic-linkmgrd)</strong>: state machine 主体</li>
+<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: SAI 反映 + tunnel + ACL drop</li>
+<li><strong><code>ycabled</code> (旧 <code>xcvrd</code>)</strong>: I2C 経由の MUX 制御</li>
+<li><strong><code>nbrmgrd</code> / <code>arp_update</code> / kernel sysctl</strong>: proxy ARP / GARP / NDP / proxy_ndp / accept_untracked_na</li>
+<li><strong>decap-after-tunnel CPU trap 対策の Python service</strong>: 6.3.5.1 の neighbor miss 解消用</li>
+<li><strong><code>bgpd</code></strong>: 両 ToR が同じ VLAN を広告</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>セッションが Up にならない場合、まず <code>show bfd session</code> で <code>STATE_DB.BFD_SESSION_TABLE</code> 上の状態を確認。<code>Init</code> で止まっているならピア側の状態を疑う</li>
-<li><code>APPL_DB</code> に SET したのにセッションが現れない場合、<code>BfdOrch</code> ログ・syncd ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）</li>
-<li>HW オフロード対応 SAI 属性は ASIC ベンダー依存。<code>SAI_BFD_SESSION_OFFLOAD_TYPE_FULL</code> を解釈できない実装では full offload にならない可能性あり</li>
+<li><code>show muxcable status</code> で <code>HEALTH=UNHEALTHY</code> → <code>MUX_LINKMGR_TABLE</code> の state、<code>LINK_PROBE_STATS.pck_loss_count</code> を確認</li>
+<li>standby 側で server 宛 traffic が永久 black-hole → <code>NEIGH</code> table の zero mac entry / tunnel route の有無を確認</li>
+<li>I2C ループで <code>MUX_CABLE_TABLE.state=error</code> → <code>i2c_retry_count</code> 設定とハードウェア接続 / cable 個体を確認</li>
+<li>standby → active への switchover に時間がかかる → <code>MUX_METRICS_TABLE</code> の <code>&lt;app&gt;_switch_active_*</code> で各コンポーネント所要時間を見る</li>
+<li>IPv6 のみ traffic が standby → active 切替で断 → <code>accept_untracked_na</code> 設定と <code>arp_update</code> の <code>FAILED → INCOMPLETE</code> 書き換えが動いているか確認</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- BfdOrch が現行 master の sonic-swss に存在するか
-- APPL_DB のテーブル名（BFD_SESSION vs BFD_SESSION_TABLE）の最終形
-- SAI_BFD_SESSION_* 属性が community SAI ヘッダで利用可能か
-- show bfd session の sonic-utilities 取り込み
-- 4000 セッションのスケール検証
-- 2021 年 HLD と現行実装の乖離（Phase 2 以降の CONFIG_DB / CLI 追加状況）
+- linkmgrd の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認
+- MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認
+- ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認
+- 6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認
+- 6.3.5.2 の zero mac neighbor + tunnel route 自動 install の neighsyncd / muxorch 実装確認
+- arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認
+- accept_untracked_na の kernel backport 状況確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/bfd/BFD HW Offload HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dualtor/dualtor_active_standby_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
