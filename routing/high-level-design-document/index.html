@@ -4560,6 +4560,8 @@
       
         
       
+        
+      
     
     
     
@@ -5413,6 +5415,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12383,9 +12413,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2021 年 11 月版 (Rev 0.2) で 4 年経過。<code>SwitchOrch</code> への <code>order_ecmp_group</code> フラグ取り込み、<code>RouteOrch</code> / <code>OverlayECMPOrch</code> の sequence_id 付与、SAI 属性 <code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code> / <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID</code> のサポート、capability query フォールバックは未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/switchorch.cpp</code> L488-501 で <code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code> の capability query と <code>SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE</code> (switchorch.h L18) の APP_DB 公開を確認。<code>routeorch.cpp</code> L1557 / <code>vnetorch.cpp</code> L804 で <code>checkOrderedEcmpEnable()</code> 経由の nexthop group type 切替を確認。<code>sonic-swss/tests/test_nhg.py</code> L1006 / <code>tests/vnet_lib.py</code> L1139-1187 で <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID</code> 検証 UT を確認（verified 2026-05-09）。</p>
 </div>
 <h1 id="ordered-ecmpip-nexthop-sequence_id-torappliance">Ordered ECMP（IP ソート順で nexthop に <code>sequence_id</code> を付け同一フローを同 ToR/Appliance に固定）<a class="headerlink" href="#ordered-ecmpip-nexthop-sequence_id-torappliance" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

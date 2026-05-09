@@ -4344,6 +4344,8 @@
       
         
       
+        
+      
     
     
     
@@ -5200,6 +5202,34 @@
     
   
     SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System-wide Warmboot（going down / up path / SAI 期待値）
   
 
     
@@ -12383,9 +12413,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは Warm Reboot 全体設計の <strong>open issues / 未確定事項</strong> をまとめた古い議事ノート。Phase 1-3 の実装進捗、<code>config warm_restart</code> CLI、<code>sonic-installer upgrade_docker</code> の現行サポート、idempotent libsairedis と syncd view comparison のうちどちらが master に採用されたかは未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-utilities/config/main.py</code> L3938-3969 で <code>config warm_restart</code> group / <code>enable</code> コマンドを確認。<code>sonic-utilities/sonic_installer/main.py</code> L800-814 で <code>sonic-installer upgrade-docker</code> (旧 <code>upgrade_docker</code> は deprecation warning) を確認。<code>sonic-utilities/scripts/warm-reboot</code> は <code>fast-reboot</code> への symlink として存在（verified 2026-05-09）。OID 復元戦略は <strong>syncd view comparison</strong> が master に採用されている（syncd 内 SAI redis view-comparison ロジック）。</p>
 </div>
 <h1 id="warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison">Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）<a class="headerlink" href="#warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
