@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/view-switching-in-producerstatetable/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/automatic-module-provisioning-for-chassis/">
       
       
-        <link rel="prev" href="../sonic-sai-post-support-for-macsec/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../wake-on-lan-in-sonic/">
+        <link rel="next" href="../dump-on-sai-failure/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ProducerStateTable の view switching（warm reboot 用の差分適用） - SONiC 非公式ドキュメント</title>
+        <title>Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#producerstatetable-view-switchingwarm-reboot" class="md-skip">
+        <a href="#chassis-line-card-sonic-provisiond-provision_module" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ProducerStateTable の view switching（warm reboot 用の差分適用）
+              Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
             
           </span>
         </div>
@@ -291,13 +291,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1139,8 +1139,6 @@
       
   
   
-    
-  
   
   
     
@@ -1172,23 +1170,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../switching/" class="md-nav__link ">
               
   
   
@@ -1206,13 +1201,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1232,7 +1227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -1260,7 +1255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -1288,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -1316,7 +1311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -1344,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
         
   
   
@@ -1372,7 +1367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -1400,7 +1395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -1425,37 +1420,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ProducerStateTable の view switching（warm reboot 用の差分適用）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -1471,220 +1439,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の Redis オブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 API
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-del" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set() / del() の二重挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply_temp_view" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        apply_temp_view() の差分計算
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設計上のトレードオフ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設計上のトレードオフ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#view-db-producer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一時 view を DB ではなく producer メモリ に置く理由
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        文字列同一だが意味同一でない場合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1697,7 +1451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -2775,6 +2529,8 @@
       
   
   
+    
+  
   
   
     
@@ -2802,20 +2558,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2833,13 +2592,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2856,10 +2615,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2875,6 +2661,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        想定要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oper-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新しい oper status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        状態遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-provision_module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新 API: provision_module()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-provisiond" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新デーモン: sonic-provisiond
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2887,7 +2892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -2915,7 +2920,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2943,7 +2948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2971,7 +2976,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2999,7 +3004,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3027,7 +3032,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -3619,66 +3624,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の Redis オブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加 API
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-del" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set() / del() の二重挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply_temp_view" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        apply_temp_view() の差分計算
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設計上のトレードオフ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設計上のトレードオフ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#view-db-producer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一時 view を DB ではなく producer メモリ に置く理由
+        全体フロー
       
     </span>
   </a>
@@ -3689,7 +3638,62 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        文字列同一だが意味同一でない場合
+        想定要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oper-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新しい oper status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        状態遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-provision_module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新 API: provision_module()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-provisiond" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新デーモン: sonic-provisiond
       
     </span>
   </a>
@@ -3700,14 +3704,9 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3740,13 +3739,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3757,7 +3767,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3768,7 +3778,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3779,7 +3789,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3806,7 +3816,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/view-switching-in-producerstatetable.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/automatic-module-provisioning-for-chassis.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3816,198 +3826,170 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-swss-common</code> の <code>ProducerStateTable::create_temp_view</code> / <code>apply_temp_view</code> 実装、<code>m_tempViewState</code> / <code>m_tempViewActive</code> メンバの存在、<code>fpmsyncd</code> 等の利用側コードは未裏取り。</p>
+<p>本ページは公式 HLD（Rev 1.0, 2026-03）のみを根拠に書かれている。<code>sonic_platform_base/module_base.py</code> への新規 enum / API 追加、<code>sonic-provisiond</code> デーモンの実装、<code>chassisd</code> の連携は未確認。HLD は比較的新しいが、ベンダー側の実装事例は揃っていない可能性が高い。</p>
 </div>
-<h1 id="producerstatetable-view-switchingwarm-reboot">ProducerStateTable の view switching（warm reboot 用の差分適用）<a class="headerlink" href="#producerstatetable-view-switchingwarm-reboot" title="Permanent link">&para;</a></h1>
+<h1 id="chassis-line-card-sonic-provisiond-provision_module">Chassis Line Card 自動プロビジョニング（<code>sonic-provisiond</code> / <code>provision_module</code>）<a class="headerlink" href="#chassis-line-card-sonic-provisiond-provision_module" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>warm reboot を支えるためには、各 daemon が <strong>新しい状態を一気に作って consumer に届ける</strong> 機構が必要になる。再起動直後に旧 view と新 view を比較し、<strong>差分だけ</strong> SAI に流せれば、再 program によるデータプレーン断を最小化できる。</p>
-<p>この HLD は <code>ProducerStateTable</code> に <strong>「一時 view」を在メモリで構築 → <code>apply_temp_view()</code> で旧 view との差分だけを Redis に書き出す</strong> 仕組みを追加する設計を定義している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。差分計算は producer 側で行い、<code>pop()</code> を含む <code>ConsumerStateTable</code> 側のロジックは <strong>無変更</strong> で済むのがポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設計の前提として、<strong>1 つのテーブルに対して producer は 1 つだけ</strong> という仮定を置く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。複数 producer が同時に同テーブルを書く構成では、view 切替中の二次 producer の書き込みが <code>apply_temp_view()</code> で失われる可能性がある。</p>
+<p>SONiC モジュラー chassis では、各 line card（LC）が <strong>独立した SONiC インスタンスとして動作</strong> する。新規 LC を空きスロットに挿す、または既存 LC を交換する場合、その LC が SONiC を実行できる状態になっている保証は無い。ベンダーによっては Supervisor 上でスクリプトを走らせる等、<strong>「工場状態の LC を SONiC が動くようにする手順」</strong> を踏む必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD はこのプロセスを SONiC 共通の枠組みとして取り込むため、<strong>新しいプラットフォーム API <code>provision_module()</code> と新しい pmon デーモン <code>sonic-provisiond</code></strong> を導入する。Supervisor で LC 検出 → state 監視 → API 呼び出し → ベンダー固有変換 → 再起動して LC を SONiC 化、という流れを統一する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="redis">既存の Redis オブジェクト<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
-<p>ProducerStateTable / ConsumerStateTable は既存で次のオブジェクト群を使っている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>用途</th>
-<th>例（テーブル名 <code>ROUTE_TABLE</code> の場合）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TableHash</td>
-<td><code>ROUTE_TABLE:25.78.106.0/27</code>（先頭に空白）</td>
-</tr>
-<tr>
-<td>StateHash</td>
-<td><code>_ROUTE_TABLE:25.78.106.0/27</code></td>
-</tr>
-<tr>
-<td>KeySet</td>
-<td><code>ROUTE_TABLE_KEY_SET</code></td>
-</tr>
-<tr>
-<td>DelKeySet</td>
-<td><code>ROUTE_TABLE_DEL_SET</code></td>
-</tr>
-<tr>
-<td>Channel</td>
-<td><code>ROUTE_TABLE_CHANNEL</code></td>
-</tr>
-</tbody>
-</table>
-<p>view switching では <strong>追加の Redis オブジェクトは作らない</strong>。代わりに producer プロセス内に在メモリで <code>TableDump m_tempViewState</code>（TableHash 相当の構造）と <code>bool m_tempViewActive</code> フラグを持つ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="api">追加 API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p><code>ProducerStateTable</code> に以下 2 つの API を追加し、既存の <code>set()</code> / <code>del()</code> の挙動を <code>m_tempViewActive</code> で分岐させる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>create_temp_view()</code></td>
-<td><code>m_tempViewActive=true</code>、<code>m_tempViewState.clear()</code></td>
-</tr>
-<tr>
-<td><code>apply_temp_view()</code></td>
-<td>旧 view との差分を計算し、最小の <code>set/del</code> を Redis に書き出す。最後に <code>m_tempViewActive=false</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="set-del"><code>set()</code> / <code>del()</code> の二重挙動<a class="headerlink" href="#set-del" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-    SET[set/del 呼び出し] --&gt; Q{m_tempViewActive?}
-    Q -- false --&gt; R[既存どおり Redis に直接書く]
-    Q -- true --&gt; M[m_tempViewState のみ更新\n(consumer に届かない)]</code></pre>
-<p><code>m_tempViewActive == true</code> の間は、<code>set()</code> / <code>del()</code> は <strong>DB に書かず、<code>m_tempViewState</code> のみ更新</strong>する。この間 consumer 側には何も届かない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="apply_temp_view"><code>apply_temp_view()</code> の差分計算<a class="headerlink" href="#apply_temp_view" title="Permanent link">&para;</a></h3>
-<p><code>apply_temp_view()</code> の処理ステップ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>既存の pending 操作を捨てる</strong>: <code>KeySet</code> / <code>DelKeySet</code> / <code>StateHash:*</code> を全削除。前回の view 切替の途中残骸や保留中の更新を一掃する。</li>
-<li><strong>現在 view の dump</strong>: <code>TableDump tableDump; dump(tableDump);</code> で旧 view の内容を取得。</li>
-<li><strong>差分計算</strong>: <code>tableDump</code>（旧）と <code>m_tempViewState</code>（新）を突き合わせ、必要最小の <code>set</code> / <code>del</code> キーリストを作る。</li>
-<li><strong>書き出し</strong>: 新 view の field/value を <code>StateHash:*</code> に書き、<code>KeySet</code> / <code>DelKeySet</code> に対象キーを加え、<code>Channel</code> に publish。最後に <code>m_tempViewActive=false</code>。</li>
-</ol>
-<p>差分判定の規則（HLD の擬似コードより）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>旧 view</th>
-<th>新 view</th>
-<th>動作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>key あり</td>
-<td>key なし</td>
-<td><code>del</code></td>
-</tr>
-<tr>
-<td>key あり</td>
-<td>key あり、値完全一致</td>
-<td>何もしない（StateHash も書き直さない）</td>
-</tr>
-<tr>
-<td>key あり、ある field が新にない</td>
-<td>—</td>
-<td><code>del</code> + <code>set</code>（一旦消して新規で作り直す）</td>
-</tr>
-<tr>
-<td>ある field の値が変化</td>
-<td>—</td>
-<td><code>set</code></td>
-</tr>
-<tr>
-<td>新側に追加 field がある</td>
-<td>—</td>
-<td><code>set</code></td>
-</tr>
-<tr>
-<td>key なし（旧）</td>
-<td>key あり（新）</td>
-<td><code>set</code>（このループ外で扱われる）</td>
-</tr>
-</tbody>
-</table>
-<p><code>pop()</code> を含む <code>ConsumerStateTable</code> 側は <strong>何も変更しない</strong>。<code>apply_temp_view()</code> が結局のところ <strong>通常の <code>set</code> / <code>del</code> シーケンスを Redis に出す</strong> だけなので、consumer から見ると普通の更新の連続にしか見えない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
-    participant APP as Application
-    participant PST as ProducerStateTable
-    participant DB as Redis
-    participant CST as ConsumerStateTable
-
-    APP-&gt;&gt;PST: create_temp_view()
-    Note over PST: m_tempViewActive = true&lt;br/&gt;m_tempViewState.clear()
-    APP-&gt;&gt;PST: set/del (×N)
-    Note over PST: m_tempViewState のみ更新
-    APP-&gt;&gt;PST: apply_temp_view()
-    PST-&gt;&gt;DB: DEL KeySet/DelKeySet/StateHash:*
-    PST-&gt;&gt;DB: dump current view
-    Note over PST: 差分計算
-    PST-&gt;&gt;DB: HSET StateHash:k... (新 view)
-    PST-&gt;&gt;DB: SADD KeySet ... / DelKeySet ...
-    PST-&gt;&gt;DB: PUBLISH Channel
-    DB-&gt;&gt;CST: 通知
-    CST-&gt;&gt;CST: 通常の set/del を pop で取り出す</code></pre>
+    participant LC as Line Card (factory state)
+    participant PL as Platform layer (vendor)
+    participant CD as chassisd
+    participant ST as STATE_DB.CHASSIS_MODULE_TABLE
+    participant PD as sonic-provisiond (new)
+    participant API as module.provision_module()
+    Note over LC: スロット挿入
+    PL--&gt;&gt;CD: モジュール検出
+    CD-&gt;&gt;PL: get_oper_status()
+    PL--&gt;&gt;CD: ProvisionReady
+    CD-&gt;&gt;ST: oper_status=ProvisionReady
+    ST--&gt;&gt;PD: SET 通知
+    PD-&gt;&gt;API: provision_module()
+    API-&gt;&gt;PL: ベンダー固有 conversion
+    PL-&gt;&gt;ST: oper_status=ProvisionPending
+    PL-&gt;&gt;ST: oper_status=Provisioned (要 chassis 再起動)
+    Note over LC: chassis 再起動後\nLC が完全に SONiC 化</code></pre>
+<h3 id="_4">想定要件<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>HLD は次を要件として明示する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>新規 LC の検出 <strong>メカニズムはベンダー実装に委ねる</strong>（platform layer の責務）</li>
+<li>変換中の chassis は <strong>「production traffic が無い安全な状態」を運用ルールで担保</strong>。LC 挿抜時はネットワーク上で隔離する前提</li>
+<li>ホットスワップは望ましいが <strong>必須要件にしない</strong>。「変換完了したが完全動作には chassis 再起動が必要」という中間状態を許す</li>
+<li>minigraph / <code>config_db.json</code> の自動投入は <strong>本 HLD のスコープ外</strong>。LC 投入後は chassis 全体に config を再配布する想定</li>
+<li>LC は最低限 console アクセスと midplane ネットワークが上がる状態で起動できるべき</li>
+</ul>
+<h3 id="oper-status">新しい oper status<a class="headerlink" href="#oper-status" title="Permanent link">&para;</a></h3>
+<p><code>sonic_platform_base/module_base.py</code> の <code>get_oper_status()</code> 戻り値に 3 つの状態を追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ProvisionReady</code></td>
+<td>LC を検出済み、SONiC を動かせるが、まだ SONiC 化されていない（変換待ち）</td>
+</tr>
+<tr>
+<td><code>ProvisionPending</code></td>
+<td>変換中。LC は現状到達不可と想定</td>
+</tr>
+<tr>
+<td><code>Provisioned</code></td>
+<td>変換成功。ただし chassis 再起動で初めて完全に組み込まれる</td>
+</tr>
+</tbody>
+</table>
+<p>定数定義（HLD 抜粋）:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MODULE_STATUS_PROVISION_READY</span> <span class="o">=</span> <span class="s2">&quot;ProvisionReady&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">MODULE_STATUS_PROVISION_PENDING</span> <span class="o">=</span> <span class="s2">&quot;ProvisionPending&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">MODULE_STATUS_PROVISIONED</span> <span class="o">=</span> <span class="s2">&quot;Provisioned&quot;</span>
+</span></code></pre></div>
+<p>これらは <strong><code>provision_module()</code> を実装したプラットフォームでのみ使う</strong> べきと明記される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_5">状態遷移<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>stateDiagram-v2
+    [*] --&gt; Empty
+    Empty --&gt; ProvisionReady: LC 挿入 + 検出
+    ProvisionReady --&gt; ProvisionPending: provision_module() 呼び出し開始
+    ProvisionPending --&gt; Provisioned: 変換成功
+    ProvisionPending --&gt; ProvisionReady: 変換失敗→再試行可能
+    Provisioned --&gt; Online: chassis 再起動 → 通常運用
+    Online --&gt; [*]</code></pre>
+<p><code>Online</code> などの既存状態への接続は HLD の state diagram 図に記載されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p>既存 <code>CHASSIS_MODULE_TABLE|LINE-CARD&lt;x&gt;</code> の <code>oper_status</code> フィールドに新値が乗る。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CHASSIS_MODULE_TABLE|LINE-CARD0
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    desc        : 7800R3AK-36DM2-LC
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    slot        : 3
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    oper_status : Online | ProvisionReady | ProvisionPending | Provisioned | ...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    num_asics   : 0
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    serial      : &lt;SN&gt;
+</span></code></pre></div>
+<p><code>chassisd</code> が <code>get_oper_status()</code> をポーリングして STATE_DB に同期する責務を持つ。<code>sonic-provisiond</code> は STATE_DB を購読するだけ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="api-provision_module">新 API: <code>provision_module()</code><a class="headerlink" href="#api-provision_module" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">provision_module</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="sd">    Request to provision the module.</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="sd">    Returns: bool</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</span></code></pre></div>
+<p>責務<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>ベンダー固有の変換手順（イメージ流し込み・boot 設定変更・bootloader 操作など）を実行</li>
+<li><strong>このメソッドはブロックしてよい</strong></li>
+<li>非同期実装の場合、変換中の <code>MODULE_STATUS</code> を正確に STATE_DB に反映する責務を負う</li>
+</ul>
+<h3 id="sonic-provisiond">新デーモン: <code>sonic-provisiond</code><a class="headerlink" href="#sonic-provisiond" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    ST[(STATE_DB\nCHASSIS_MODULE_TABLE|*)] --&gt;|SUBSCRIBE| PD[sonic-provisiond]
+    PD --&gt; CHK{oper_status == ProvisionReady?}
+    CHK --&gt;|Yes| API[module.provision_module()]
+    CHK --&gt;|No| WAIT[継続購読]</code></pre>
+<p>責務<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>CHASSIS_MODULE_TABLE|*</code> の <code>oper_status</code> を購読</li>
+<li>値が <code>ProvisionReady</code> に切り替わった時、対応する module オブジェクトの <code>provision_module()</code> を呼ぶ</li>
+<li>自動プロビジョニングの <strong>有効/無効はこのサービスの enable/disable で切替</strong></li>
+</ul>
+<p><code>chassisd</code> は引き続き <code>get_oper_status()</code> のポーリングと STATE_DB への反映を担当し、<code>sonic-provisiond</code> は STATE_DB の変化に reactive に動くだけのシンプルな構造になっている。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/warm-reboot/view_switch.md#L92-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md#L96-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  To apply temporary view, there are several steps:
-  1. Drop all pending operations by clearing KeySet, DelKeySet, and StateHash
-  2. Dump content of current view
-  3. Compare current view and target view, generate a minimal set of `set()` and `del()` operations
-  4. Write to KeySet, DelKeySet, and StateHash accordingly, publish the change to the channel, and unset `m_tempViewActive` flag.
-reasoning: apply_temp_view の 4 ステップが「既存削除 → dump → diff → 書き戻し」である根拠。
+  A new pmon daemon will be introduced which will be responsible for triggering provisioning / calling this new API.
+  This daemon will simply subscribe to all `CHASSIS_MODULE_TABLE|*` tables, and listen to changes to the `oper_state` field.
+  If `oper_state` switches to `'ProvisionReady'`, it will call provision_module() on the corresponding module.
+reasoning: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。
 -->
 
-<h3 id="_3">設計上のトレードオフ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<h4 id="view-db-producer">一時 view を <strong>DB ではなく producer メモリ</strong> に置く理由<a class="headerlink" href="#view-db-producer" title="Permanent link">&para;</a></h4>
-<ul>
-<li>DB に置くと producer がクラッシュしても他 producer が継続できるが、<strong>Redis 上のオブジェクトが増えて分かりにくく</strong> なる。</li>
-<li>比較ロジックを Redis Lua で書くのは設計意図に反する。</li>
-<li>そもそも「1 producer / 1 table」という前提と「producer クラッシュ時の継続が高優先要件ではない」という割り切りで、メモリ持ちにする方がシンプル<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h4 id="_4">文字列同一だが意味同一でない場合<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p>例: <code>nexthop</code> フィールドに <code>"10.0.0.1,10.0.0.3"</code> と <code>"10.0.0.3,10.0.0.1"</code> が来ると、ProducerStateTable は <strong>literal で比較</strong> するため別物扱いになり不要な <code>set</code> が生成される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これは ProducerStateTable 側で吸収せず、<strong>アプリ側で「semantic consistency = literal consistency」を担保</strong> する責務とする。例えば <code>fpmsyncd</code> は nexthop アドレスを <strong>ソートしてから <code>set</code></strong> する必要がある<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>このページの機能はライブラリレベルの API。CONFIG_DB / CLI / YANG への直接の制御点は存在しない。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い（warm reboot トリガ自体は別系統）。</p>
+<p>HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis 関連設定（モジュールスロット定義など）に依存。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は無い。warm reboot のオーケストレーション CLI （<code>warm-reboot</code> 等）から間接的に発火する想定。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>HLD 上で明示・暗黙の制限<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>専用 CLI は HLD で言及されていない。<code>sonic-provisiond</code> の有効化は systemd ベースの enable / disable で行う想定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>1 producer / 1 table</strong> の前提。複数 producer が同テーブルに書くと secondary の書き込みが <code>apply_temp_view()</code> で失われうる。</li>
-<li>producer が <code>create_temp_view()</code> 後にクラッシュすると <strong>未適用の差分はメモリと共に消える</strong>。再起動した producer は通常の手順で view を再構築する必要がある。</li>
-<li>field 値の <strong>semantic 同一性</strong> はアプリ側責任。ProducerStateTable は文字列比較しかできない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>差分計算は producer プロセス内のメモリで行う。<strong>テーブル全体の dump をメモリに保持する</strong> ため、巨大テーブル（数十万エントリ）でメモリ消費が増える可能性がある（HLD では明示の上限なし）。</li>
+<li><strong>本 HLD は LC 挿抜時の chassis 安全性を運用で担保する前提</strong>。production traffic を流したまま挿抜することは想定外<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ホットスワップは required ではない。<code>Provisioned</code> 状態は <strong>chassis 再起動でのみ完全動作</strong> という中間状態を許容</li>
+<li>minigraph / <code>config_db.json</code> の自動投入はスコープ外。LC 化後の構成投入は別途必要</li>
+<li><code>provision_module()</code> 未実装のベンダーでは新 status 値を使わない（既存の <code>Online</code>/<code>Offline</code> で運用）</li>
+<li><code>sonic-provisiond</code> 自体は <strong>失敗時のリトライ戦略を細かく規定していない</strong>（HLD 範囲外）</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>warm reboot 全般</strong>: 各 daemon（<code>bgpd</code> / <code>fpmsyncd</code> / <code>swssconfig</code> 等）が <code>create_temp_view()</code> で新状態を組み立て、<code>apply_temp_view()</code> で原子的に SAI に降ろす流れの一部となる。</li>
-<li><strong><code>fpmsyncd</code>（FRR → APP_DB の橋）</strong>: nexthop ソートのようなアプリ側の正規化が必須。これを怠ると warm reboot 時に大量の不要 <code>set</code> が走り、データプレーン断のリスクが上がる<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>ConsumerStateTable</code></strong>: 変更不要。<code>apply_temp_view()</code> から見える挙動は通常の <code>set/del</code> のシーケンスのみ<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Redis のメモリ</strong>: pending 操作の cleanup（<code>DEL KeySet/DelKeySet/StateHash:*</code>）が走るため、view 切替の瞬間に Redis 上の残骸を一掃するセマンティクスがある。これに依存している経路があると影響が出る可能性がある。</li>
+<li><strong><code>chassisd</code></strong>: <code>CHASSIS_MODULE_TABLE</code> の更新者。引き続き <code>get_oper_status()</code> をポーリングする。<code>sonic-provisiond</code> の追加で責務分離が明確になる</li>
+<li><strong><code>pmon</code> 系デーモン群</strong>: <code>sonic-provisiond</code> は pmon の枠で動く新規デーモン。systemd ユニットの追加と pmon コンテナ Dockerfile への組み込みが必要</li>
+<li><strong><code>sonic-platform-common.module_base</code></strong>: 新 enum と新 API の追加。後方互換は <code>NotImplementedError</code> で確保</li>
+<li><strong>chassis HLD 全般</strong>: モジュール挿入検出・slot 番号管理など既存仕組みを再利用</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>view 切替後にデータプレーンに古い状態が残る: <code>apply_temp_view()</code> の最初の DEL が想定どおり走っているか、producer が他の view（別 ProducerStateTable インスタンス）と取り違えていないか確認。</li>
-<li>不要な <code>set</code> が大量発生: アプリ側で field 値の正規化（ソート、表記揺れ吸収）が抜けている可能性。<code>fpmsyncd</code> の nexthop ソートが代表例<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>view 切替の途中で producer クラッシュ: <code>m_tempViewState</code> はメモリ上のため失われる。Redis 上の <code>KeySet</code> / <code>DelKeySet</code> / <code>StateHash:*</code> が部分的に残っている可能性は無い（apply 開始時に DEL するため、apply 前なら旧 view のまま）。再起動して view 構築をやり直す。</li>
-<li>二次 producer の更新が消える: 「1 producer / 1 table」前提が崩れている構成。HLD 範囲外なので、構成を見直すか別機構を検討する<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>ProvisionReady</code> のまま遷移しない場合、<code>sonic-provisiond</code> が pmon コンテナで動いているか・<code>CHASSIS_MODULE_TABLE</code> を購読できているかを確認</li>
+<li><code>ProvisionPending</code> で固まる場合、ベンダー provisioning スクリプトのログを確認</li>
+<li><code>Provisioned</code> から <code>Online</code> に戻らない場合、chassis 再起動が必要なケース</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- module_base.py への 3 つの新 status 定数追加状況
+- provision_module() API の sonic-platform-common 取り込み
+- sonic-provisiond デーモンのコード（pmon docker への追加）
+- chassisd と sonic-provisiond の責務分離が実装上正しく切れているか
+- ベンダー側 provision_module() リファレンス実装の有無
+- 状態遷移失敗時のリトライ戦略
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/view_switch.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
