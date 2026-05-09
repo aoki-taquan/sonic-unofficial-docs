@@ -6523,9 +6523,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
-<p>このページは公式 HLD のみを根拠に書かれている。HLD は 2020-11 の Rev 0.1 (Initial) のままで、現行 master に取り込まれているか未確認。<code>orchagent</code> 側の <code>NhgOrch</code> 実装存在およびスキーマ取り込みは要裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/nhgorch.h:117</code> で <code>NhgOrch</code> クラス（<code>NhgOrchCommon&lt;NextHopGroup&gt;</code> 派生）、<code>sonic-swss-common/common/schema.h:56</code> で <code>APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME</code>（CBF 拡張）、<code>sonic-swss/orchagent/routeorch.cpp:771</code> で <code>ROUTE_TABLE.nexthop_group</code> フィールドのパース、<code>routeorch.cpp:807-815</code> での <code>nexthop_group</code> と <code>ips/aliases</code> 排他検証を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="next_hop_group_table-app_db">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離<a class="headerlink" href="#next_hop_group_table-app_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
