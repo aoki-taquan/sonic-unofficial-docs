@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnoi-hld-for-file-and-factory-reset-apis/">
       
       
-        <link rel="prev" href="../sonic-port-configuration-refactor-design/">
+        <link rel="prev" href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">
       
       
-        <link rel="next" href="../../routing/">
+        <link rel="next" href="../save-on-set-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） - SONiC 非公式ドキュメント</title>
+        <title>gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ssd-show-platform-ssdhealth-ssdutil" class="md-skip">
+        <a href="#gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+              gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -568,23 +566,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -602,13 +597,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -628,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -656,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -684,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -712,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -740,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -765,37 +760,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -811,281 +779,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンドのチェーン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ssdhealth ユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2522,6 +2215,8 @@
       
   
   
+    
+  
   
   
     
@@ -2551,20 +2246,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2582,13 +2280,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2608,7 +2306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -2636,7 +2334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -2661,10 +2359,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2680,6 +2405,220 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnoi-fileremove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNOI File.Remove
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnoi-factoryresetstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNOI FactoryReset.Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gNOI FactoryReset.Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI / Warmboot / Fastboot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（呼び出しイメージ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2692,7 +2631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -2720,7 +2659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -2748,7 +2687,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -2776,7 +2715,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -2804,7 +2743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -3620,60 +3559,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brief" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Brief（既定）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verbose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verbose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vendor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vendor
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンドのチェーン
+        全体構成
       
     </span>
   </a>
@@ -3681,44 +3570,33 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ssdhealth" class="md-nav__link">
+  <a href="#gnoi-fileremove" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ssdhealth ユーティリティ
+        gNOI File.Remove
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#gnoi-factoryresetstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNOI FactoryReset.Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gNOI FactoryReset.Start">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラグイン構造
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラグイン構造">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        抽象クラス SsdBase
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ssdutilssdbase" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ベンダ実装 SsdUtil（SsdBase を継承）
+        実装フロー
       
     </span>
   </a>
@@ -3731,32 +3609,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
+  <a href="#sai-warmboot-fastboot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API 仕様
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用するユーティリティ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-pmon-ssdmond" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: pmon ssdmond
+        SAI / Warmboot / Fastboot
       
     </span>
   </a>
@@ -3769,7 +3625,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3792,10 +3648,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（呼び出しイメージ）
       
     </span>
   </a>
@@ -3868,7 +3746,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/ssdhealth-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnoi-hld-for-file-and-factory-reset-apis.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3878,170 +3756,126 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-utilities/scripts/ssdhealth</code>、<code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code>、ベンダ別 <code>ssdutil.py</code>、Pmon <code>ssdmond</code> のいずれも実装裏取り未済。</p>
+<p>本ページは公式 HLD（Rev 0.1, 2025-01）のみを根拠に書かれている。<code>infra_host</code> / <code>gnoi_reset</code> ホストサービスモジュールの実装、<code>gnoi_client</code> CLI、<code>config_db.json</code> のみを許す string match の取り扱いは未確認。</p>
 </div>
-<h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
+<h1 id="gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service">gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）<a class="headerlink" href="#gnoi-fileremove-factoryresetstartgnmiumf-dbus-host-service" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
-<p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>gNOI（gRPC Network Operations Interface）は CLI の代替として <strong>gRPC マイクロサービスで運用コマンドを実行</strong> するための仕様で、protobuf 定義は <a href="https://github.com/openconfig/gnoi">openconfig/gnoi</a> にある。SONiC では gNMI/telemetry サーバ（UMF: Unified Management Framework）が gNOI も同じ TCP ポート（標準 9339）で受け、認証認可後にバックエンドへ振り分ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD はそのうち以下 2 つの RPC を SONiC に追加する設計を定める<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>gnoi.file.File.Remove</code>: target のファイルを削除（<strong>現状は <code>config_db.json</code> 限定</strong>）</li>
+<li><code>gnoi.factory_reset.FactoryReset.Start</code>: 工場出荷状態に戻す</li>
+</ul>
+<p>バックエンドは host service（python ベース、プラグイン構成）に対し DBUS で要求を投げる形を取る。詳細は <a href="https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md">SONiC GNMI Server Interface Design</a> と <a href="https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/Docker%20to%20Host%20communication.md">Docker to Host communication</a> を参照<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
-</span></code></pre></div>
-<p>3 つの表示モード<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="brief">Brief（既定）<a class="headerlink" href="#brief" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic-switch: ~$ show platform ssdhealth
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Device Model : InnoDisk Corp. - mSATA 3ME
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Health: 72.9%
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Temperature: N/A
-</span></code></pre></div>
-<h4 id="verbose">Verbose<a class="headerlink" href="#verbose" title="Permanent link">&para;</a></h4>
-<p><code>FW Version</code> / <code>Serial Number</code> / <code>Capacity</code> / <code>Power On Hours</code> / <code>Power Cycle count</code> 等を追加表示。</p>
-<h4 id="vendor">Vendor<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h4>
-<p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_3">コマンドのチェーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    USER[user] --&gt; SHOW[show platform ssdhealth\n(show/main.py)]
-    SHOW --&gt;|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
-    UTIL --&gt; BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
-    BASE --&gt; VENDOR[SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)]
-    BASE -.fallback.-&gt; SCTL[smartctl]
-    VENDOR --&gt; ISMART[iSmart / SmartCmd 等\nベンダ純正]
-    UTIL --&gt; OUT[stdout]</code></pre>
-<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ。コア処理は <code>ssdhealth</code> スクリプト側にある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ssdhealth"><code>ssdhealth</code> ユーティリティ<a class="headerlink" href="#ssdhealth" title="Permanent link">&para;</a></h3>
-<p>新規スクリプト。配置は <code>sonic-utilities/scripts/</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>usage: ssdhealth -d DEVICE [-h] [-v] [-e]
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -d, --device          disk device to get information for
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  -v, --verbose         show verbose output (more parameters)
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -e, --vEndor          show vendor specific disk information
+    CL[gNOI client] --&gt;|gRPC :9339\nauthn/authz| UMF[gNMI/UMF サーバ\n(telemetry container)]
+    UMF --&gt;|FE: protobuf 受領| FE[GNOI*Server]
+    FE --&gt;|JSON / 文字列| TR[transformer\nFileRemove / FactoryReset]
+    TR --&gt;|HostQuery| DBUS[(DBUS)]
+    DBUS --&gt; HS[SONiC Host Service\n(host process, plugin: infra_host / gnoi_reset)]
+    HS --&gt;|exec_cmd / issue_reset| OS[Linux host]</code></pre>
+<p>要点:</p>
+<ul>
+<li>gNOI と gNMI は <strong>同じ TCP ポート 9339</strong> で受ける<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>container（telemetry）から host への到達手段として DBUS + host service を使う</li>
+<li>危険な操作（factory reset / ファイル削除）はホスト側で実行する</li>
+</ul>
+<h3 id="gnoi-fileremove">gNOI File.Remove<a class="headerlink" href="#gnoi-fileremove" title="Permanent link">&para;</a></h3>
+<p>protobuf（<a href="https://github.com/openconfig/gnoi/blob/main/file/file.proto">openconfig/gnoi/file</a>）:</p>
+<div class="language-proto highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">service</span><span class="w"> </span><span class="n">File</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="k">rpc</span><span class="w"> </span><span class="n">Remove</span><span class="p">(</span><span class="n">RemoveRequest</span><span class="p">)</span><span class="w"> </span><span class="k">returns</span><span class="w"> </span><span class="p">(</span><span class="n">RemoveResponse</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kd">message</span><span class="w"> </span><span class="nc">RemoveRequest</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="na">remote_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">message</span><span class="w"> </span><span class="nc">RemoveResponse</span><span class="w"> </span><span class="p">{}</span>
 </span></code></pre></div>
-<p>中で <code>SsdUtil</code> プラグインを import し、後述の API を呼んで結果を整形する設計。<code>-d</code> で device path を取るので <code>show</code> 側で <code>/dev/sda</code> 等を渡す<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">プラグイン構造<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>二段で抽象化する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<h4 id="ssdbase">抽象クラス <code>SsdBase</code><a class="headerlink" href="#ssdbase" title="Permanent link">&para;</a></h4>
+<p>SONiC 実装の特徴<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>配置: <code>sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code></li>
-<li>役割: 汎用 API のジェネリック実装。既知の disk なら専用ユーティリティ、それ以外は <code>smartctl</code> 系へフォールバック。<strong>smartctl の DB に無いモデル</strong> は情報の一部が取得不能 or 不完全になりうる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>config_db.json</code> のみ削除可</strong>。host service backend で <code>rm ..../etc/sonic/config_db.json</code> の文字列マッチで検証し、それ以外は失敗させる</li>
+<li>フロントエンド（gNMI UMF サーバの <code>GNOIFileServer.Remove</code>）は <code>transformer.FileRemove(req.GetRemoteFile())</code> を呼ぶ</li>
+<li><code>transformer.FileRemove</code> 内では <code>HostQuery("infra_host.exec_cmd", "rm "+remoteFile)</code> で host service に DBUS でコマンドを投げる</li>
+<li><code>fileMu</code> ロックで同時実行を抑制</li>
 </ul>
-<h4 id="ssdutilssdbase">ベンダ実装 <code>SsdUtil</code>（<code>SsdBase</code> を継承）<a class="headerlink" href="#ssdutilssdbase" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CL as Client
+    participant SV as GNOIFileServer
+    participant TR as transformer.FileRemove
+    participant HS as host service\n(infra_host)
+    CL-&gt;&gt;SV: Remove(remote_file=/etc/sonic/config_db.json)
+    SV-&gt;&gt;TR: FileRemove(remote_file)
+    TR-&gt;&gt;HS: HostQuery("infra_host.exec_cmd", "rm /etc/sonic/config_db.json")
+    HS-&gt;&gt;HS: string match\n("rm ..../etc/sonic/config_db.json")
+    alt match OK
+        HS-&gt;&gt;HS: rm を実行
+        HS--&gt;&gt;TR: ok
+        TR--&gt;&gt;SV: ok
+        SV--&gt;&gt;CL: RemoveResponse{}
+    else 不一致
+        HS--&gt;&gt;TR: error
+        SV--&gt;&gt;CL: codes.Internal
+    end</code></pre>
+<blockquote>
+<p>注: 「<code>config_db.json</code> 以外を削除させない」を <strong>string match</strong> で守るのは脆弱な実装に見える。実コード上で正規表現や allow list がどうなっているか要検証。</p>
+</blockquote>
+<h3 id="gnoi-factoryresetstart">gNOI FactoryReset.Start<a class="headerlink" href="#gnoi-factoryresetstart" title="Permanent link">&para;</a></h3>
+<p>protobuf（<a href="https://github.com/openconfig/gnoi/blob/main/factory_reset/factory_reset.proto">openconfig/gnoi/factory_reset</a>）抜粋:</p>
+<div class="language-proto highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">message</span><span class="w"> </span><span class="nc">StartRequest</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">factory_os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">   </span><span class="c1">// OS を出荷時イメージにロールバック</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">zero_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">    </span><span class="c1">// 永続ストレージをゼロ埋め</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="na">retain_certs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="c1">// 証明書を保持</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kd">message</span><span class="w"> </span><span class="nc">StartResponse</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="k">oneof</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">ResetSuccess</span><span class="w"> </span><span class="na">reset_success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">ResetError</span><span class="w">   </span><span class="na">reset_error</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>Start</code> の意味は強烈で、<strong>storage / configuration / logs / certificates / licenses を全消去</strong> し、出荷状態で再起動する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>retain_certs</code> だけ証明書を残すなど例外を許す。</p>
+<h4 id="_4">実装フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CL as Client
+    participant SV as GNOIFactoryResetServer
+    participant TR as transformer.FactoryReset
+    participant HS as host service\n(gnoi_reset)
+    CL-&gt;&gt;SV: Start(StartRequest)
+    SV-&gt;&gt;SV: protojson.Marshal(req)
+    SV-&gt;&gt;TR: factoryReset(jsonReq)
+    TR-&gt;&gt;HS: HostQuery("gnoi_reset.issue_reset", jsonReq)
+    HS-&gt;&gt;HS: storage / config / logs / certs / licenses クリーン
+    HS--&gt;&gt;TR: jsonResp (ResetSuccess or ResetError)
+    SV--&gt;&gt;CL: StartResponse</code></pre>
+<p>ポイント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>配置: <code>sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py</code></li>
-<li>役割: ベンダ提供ツールの出力をパースして API を実装。InnoDisk なら <code>iSmart</code>、StorFly / Virtium なら <code>SmartCmd</code> を呼ぶ前提<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<pre class="mermaid"><code>classDiagram
-    class SsdBase {
-        +get_disk_health(diskdev) float
-        +get_temperature(diskdev) string
-        +get_model(diskdev) string
-        +get_firmware(diskdev) string
-        +get_serial(diskdev) string
-        +get_vendor_output(diskdev) string
-    }
-    class SsdUtil
-    SsdBase &lt;|-- SsdUtil</code></pre>
-<h3 id="api">API 仕様<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p><code>SsdBase</code> / <code>SsdUtil</code> が公開する API<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>メソッド</th>
-<th>戻り値</th>
-<th>取得不可時</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>get_disk_health(diskdev)</code></td>
-<td>float（0〜100、% 表現）</td>
-<td><code>-1</code></td>
-</tr>
-<tr>
-<td><code>get_temperature(diskdev)</code></td>
-<td>string（摂氏）</td>
-<td><code>0</code></td>
-</tr>
-<tr>
-<td><code>get_model(diskdev)</code></td>
-<td>string（人読 model）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_firmware(diskdev)</code></td>
-<td>string（FW バージョン）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_serial(diskdev)</code></td>
-<td>string（シリアル）</td>
-<td>空文字</td>
-</tr>
-<tr>
-<td><code>get_vendor_output(diskdev)</code></td>
-<td>string（ベンダツール出力そのまま）</td>
-<td>空文字</td>
-</tr>
-</tbody>
-</table>
-<p>引数はいずれも <code>diskdev:string</code>（例: <code>/dev/sda</code>）。</p>
-<h3 id="_5">利用するユーティリティ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>HLD で挙げられているもの<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>ツール</th>
-<th>用途</th>
-<th>サイズ感</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>smartctl</code> (smartmontools)</td>
-<td>汎用 SMART 取得</td>
-<td>約 1.9M</td>
-<td><code>SsdBase</code> の fallback</td>
-</tr>
-<tr>
-<td><code>iSmart</code></td>
-<td>InnoDisk 製 SSD</td>
-<td>&lt;120K</td>
-<td>InnoDisk 公式配布のバイナリ</td>
-</tr>
-<tr>
-<td><code>SmartCmd</code></td>
-<td>StorFly / Virtium</td>
-<td>約 2.2M</td>
-<td>ベンダ専用</td>
-</tr>
-</tbody>
-</table>
-<p><code>smartctl</code> 同梱は <code>sonic-net/sonic-buildimage</code> PR 2703 で提案されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="optional-pmon-ssdmond">Optional: pmon <code>ssdmond</code><a class="headerlink" href="#optional-pmon-ssdmond" title="Permanent link">&para;</a></h3>
-<p>HLD は <strong>オプション</strong> として、pmon に常駐するデーモン <code>ssdmond</code> を提案している<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>周期的に <code>get_health()</code> を呼び出す。</li>
-<li>値が <strong>クリティカルしきい値を割った時にアラート</strong> を上げる。</li>
-<li>HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>フロントエンドはリクエストを <strong>JSON シリアライズ</strong> してホスト側へ渡す</li>
+<li>バックエンドも JSON で応答を返す</li>
+<li><code>resetMu</code> ロックで同時実行を抑制</li>
+<li>フラグが指定されたが未対応の場合、<code>INVALID_ARGUMENT</code> + <code>ResetError</code> で返す（gNOI 仕様準拠）</li>
 </ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md#L154-L176 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Class SsdBase
-  Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
-  Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
-  Class SsdUtil
-  Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
-  Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
-reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
+  The front end implementation marshals the request, and sends it to the sonic-host-service via the host module `gnoi_reset`.
+  The back end is expected to return the response in JSON format.
+  ...
+  func FactoryReset(reqStr string) (string, error) {
+      resetMu.Lock()
+      defer resetMu.Unlock()
+      return checkQueryOutput(HostQuery("gnoi_reset.issue_reset", reqStr))
+  }
+reasoning: 「FE が JSON 化して DBUS 経由 gnoi_reset.issue_reset に渡す + ロック」という実装ルールの根拠。
 -->
 
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="sai-warmboot-fastboot">SAI / Warmboot / Fastboot<a class="headerlink" href="#sai-warmboot-fastboot" title="Permanent link">&para;</a></h3>
+<ul>
+<li>SAI API の変更なし<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Warmboot / Fastboot への影響なし<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<p>専用 CONFIG_DB スキーマは無い。gNMI 認証認可・証明書配置などの既存の telemetry 経路を再利用する。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -4051,50 +3885,58 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 </thead>
 <tbody>
 <tr>
-<td><code>show platform ssdhealth</code></td>
-<td>簡易表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth verbose</code></td>
-<td>詳細表示</td>
-</tr>
-<tr>
-<td><code>show platform ssdhealth vendor</code></td>
-<td>ベンダツール生出力</td>
-</tr>
-<tr>
-<td><code>ssdhealth -d /dev/sdX [-v|-e]</code></td>
-<td>内部ラッパが呼ぶスクリプトを直接実行</td>
+<td><code>gnoi_client ...</code></td>
+<td>UMF が提供する gNOI 呼び出し用クライアント。JSON / proto いずれの形式もサポート予定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
+<p>UMF 同梱の <code>gnoi_client</code> はテスト・運用検証向け。<code>go-grpc</code> ベースの汎用 gNOI クライアントでも当然呼べる。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="_6">設定例（呼び出しイメージ）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># config_db.json 削除（target が許可した場合）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>file<span class="w"> </span>remove<span class="w"> </span>--remote_file<span class="w"> </span>/etc/sonic/config_db.json
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># factory reset（証明書だけ残す）</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gnoi_client<span class="w"> </span>factory_reset<span class="w"> </span>start<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--factory_os<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--zero_fill<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--retain_certs<span class="o">=</span><span class="nb">true</span>
+</span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>smartctl のデータベースに無い disk</strong> は health / 温度の取得が <strong>N/A</strong> になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダプラグインが用意されていないプラットフォームは <code>SsdBase</code> の fallback（smartctl）に依存。<code>vendor</code> モードの出力は基本的に空。</li>
-<li>pmon デーモン (<code>ssdmond</code>) は <strong>オプション</strong> であり、HLD では Open Question として残っている。常時監視・アラート発火が必要なら別途実装の確認が必要<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>値が取れない場合の表現が API ごとに異なる（health=<code>-1</code>、temp=<code>0</code>、文字列系=空）。<code>0 ℃</code> と「取得不可」が同義になり得る点に注意<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>File.Remove</code> は <strong><code>/etc/sonic/config_db.json</code> 限定</strong>。それ以外のパスは host service が拒否する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>File.Remove</code> の path 検証が <strong>string match</strong> ベースなのは表現として脆い。<code>../</code> 系の path traversal で抜けないか実装で要確認</li>
+<li><code>FactoryReset.Start</code> は <strong>デバイス上の状態を破壊する重操作</strong>。誤実行防止のために認可ロールを最小限に絞る運用が必須</li>
+<li>各種フラグ（<code>factory_os</code>, <code>zero_fill</code>, <code>retain_certs</code>）の <strong>対応状況はベンダ依存</strong>。未対応の場合 <code>INVALID_ARGUMENT</code> で返す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>同時実行は <code>fileMu</code> / <code>resetMu</code> で防がれる</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>pmon (Platform Monitor)</strong>: <code>ssdmond</code> を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。</li>
-<li><strong>smartmontools / smartctl パッケージ</strong>: ビルドイメージに 1.9M 程度の追加。<code>sonic-buildimage</code> 側のパッケージ取り込みに依存<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>plugin 配置規約</strong>: <code>device/{{vendor}}/platform/plugins/ssdutil.py</code> は <strong>プラットフォームプラグインの一般則</strong> に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。</li>
-<li><strong>SNMP</strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>gNMI / telemetry</strong>: 同じ 9339 ポート・同じ認証経路。証明書設定や RBAC が共通</li>
+<li><strong>SONiC Host Service / DBUS</strong>: docker → host 通信の汎用機構を共有<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>config save</code> / <code>config reload</code></strong>: <code>config_db.json</code> 削除直後の挙動（再生成・初期化）と整合させる必要</li>
+<li><strong>証明書管理（gNMI 用）</strong>: <code>retain_certs=true</code> のとき残るのは何か（gNMI 用の <code>/etc/sonic/telemetry/...</code> を含むか）が運用上の要点</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Health: N/A</code>: smartctl が当該 disk を識別できていない可能性。<code>smartctl -i /dev/sdX</code> で raw に確認。ベンダプラグインが装備されているか <code>device/&lt;vendor&gt;/platform/plugins/ssdutil.py</code> の存在を確認。</li>
-<li><code>vendor</code> モードが空: <code>SsdUtil</code> の <code>get_vendor_output()</code> が未実装、もしくはベンダツールバイナリが image に含まれていない。</li>
-<li><code>Temperature: 0</code> と <code>N/A</code> の区別: API の戻り値仕様上、温度の取得不可は <code>0</code> となる。<code>0℃</code> と取得不可が見分けにくい点は HLD の制約<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>show platform ssdhealth</code> が <code>command not found</code>: <code>show/main.py</code> の <code>platform</code> メニューに項目が登録されているか、<code>ssdhealth</code> スクリプトが PATH にあるかを確認。</li>
+<li><code>Remove</code> が <code>INTERNAL</code> で失敗する場合、host service ログで <code>infra_host.exec_cmd</code> の string match 結果を確認</li>
+<li><code>FactoryReset</code> が <code>INVALID_ARGUMENT</code> で返る場合、未対応フラグ（<code>zero_fill</code> 等）が指定されていないか確認</li>
+<li>DBUS 経由の host service が応答しない場合、<code>SONiC Host Service</code> が host で動いているかと、container ↔ host の DBUS proxy 設定を確認</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- File.Remove の path 検証実装 (string match か allow list か)
+- gnoi_reset.issue_reset の host service 実装
+- gnoi_client CLI の sonic-mgmt-common / sonic-utilities への取り込み
+- factory_os / zero_fill / retain_certs フラグのベンダ実装状況
+- 認証認可 (RBAC) と factory reset 権限の分離
+- HLD 後の他 gNOI RPC (System / OS) 拡張との関係
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/ssdhealth/ssdhealth_design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
