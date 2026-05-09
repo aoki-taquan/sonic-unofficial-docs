@@ -1,0 +1,14 @@
+{
+  "page": "docs/switching/macsec-sonic-high-level-design-document.md",
+  "issue": 312,
+  "verification": "hld-only",
+  "concerns": [
+    "wpa_supplicant への SONiC 拡張パッチ（XPN / proactive SAK refresh / 可変 max-SA）が現行 sonic-buildimage にあるか未確認",
+    "MACsec Mgr / MACsec Orch の現行 sonic-swss 実装確認",
+    "MACSEC_PROFILE CONFIG_DB / MACSEC_*_TABLE APPL_DB スキーマと sonic-yang-models 整合確認",
+    "SAI MACsec オブジェクトの community SAI 取り込み確認",
+    "PFC バイパス ACL (0x8808) 実装の現行確認",
+    "60KB の大型 HLD のため要点抜粋。詳細フローは元 HLD 参照"
+  ],
+  "priority": "medium"
+}
