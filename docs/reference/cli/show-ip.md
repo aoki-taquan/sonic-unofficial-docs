@@ -1,0 +1,150 @@
+---
+title: show ip サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: show/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: show/bgp_frr_v4.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: show/bgp_common.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - INTERFACE
+    - VLAN_INTERFACE
+    - PORTCHANNEL_INTERFACE
+    - VLAN_SUB_INTERFACE
+  cli:
+    - show ip
+    - show ip route
+    - show ip bgp
+  yang: []
+---
+
+# show ip サブコマンド
+
+## 概要
+
+`show ip` は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP 関連表示を集約する[^1]。BGP 系は **routing-stack の選択結果に応じて動的にロード**される（FRR / Quagga / supervisor 環境）。
+
+```python
+# show/main.py L1567-L1581
+if routing_stack == "frr":
+    from .bgp_frr_v4 import bgp
+    ip.add_command(bgp)
+    ...
+```
+
+このため `meta/index/cli.json` の機械抽出には `show ip bgp` 系が現れない。本ページは `show/bgp_frr_v4.py` も sources に含めて整理する。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `show ip interfaces` | インタフェイスの IPv4 状態（`ipintutil -a ipv4`） |
+| `show ip interfaces loopback-action` | INTERFACE 系テーブルの `loopback_action` 値表示 |
+| `show ip route [<args>]` | IPv4 RIB（FRR vtysh `show ip route`） |
+| `show ip prefix-list [<name>]` | FRR の prefix-list 表示 |
+| `show ip protocol` | FRR の routing protocol summary |
+| `show ip fib [<ipaddress>]` | FIB テーブル（`fibshow -4`） |
+| `show ip bgp summary` | BGP セッション summary (FRR) |
+| `show ip bgp neighbors [<ip>] [<info_type>]` | BGP 隣接詳細 |
+| `show ip bgp network [<prefix>] [<info_type>]` | RIB の特定 prefix |
+| `show ip bgp aggregate-address` | `BGP_AGGREGATE_ADDRESS` テーブル表示 |
+| `show ip bgp vrf <vrf> summary/neighbors/network` | VRF スコープの BGP 表示 |
+
+## 各コマンドの詳細
+
+### `show ip interfaces`
+
+**動作**:
+`sudo ipintutil -a ipv4 [-n <namespace>] [-d <display>]` を起動する。各 IF の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` テーブルを横断して、admin/oper/IPv4 アドレス/BGP neighbor 名/peer ip を 1 行ずつ表示する。
+
+### `show ip interfaces loopback-action`
+
+**動作**:
+`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` を全件マージし、各エントリの `loopback_action` フィールドを `Interface` / `Action` の 2 列で表示する。設定が無いインタフェイスは行に出ない。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/main.py#L1416-L1441 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def loopback_action():
+      ...
+      for tbl in [if_tbl, vlan_if_tbl, po_if_tbl, sub_if_tbl]:
+          all_tables.update(tbl)
+      ...
+      if 'loopback_action' in all_tables[iface]:
+          ifs_action.append([iface, all_tables[iface]['loopback_action']])
+-->
+
+### `show ip route [<args>]`
+
+**用法**:
+
+```
+show ip route [<IPADDRESS>] [vrf <vrf_name>] [...] [-d|--display all|frontend] [-n|--namespace <ns>]
+```
+
+**動作**:
+`bgp_common.show_routes` が `vtysh -c 'show ip route ...'` を組み立てて実行する。`<args>` は **そのまま vtysh コマンドラインに連結**されるため、`show ip route 10.0.0.0/24 longer-prefixes` のような FRR ネイティブ書式を直接渡せる。multi-ASIC 時は対象 namespace のコンテナ内で vtysh を起動する。
+
+### `show ip prefix-list [<name>]`
+
+`vtysh -c 'show ip prefix-list [<name>]'` を起動するだけのラッパ。
+
+### `show ip protocol`
+
+`vtysh -c 'show ip protocol'`。FRR の各プロトコル（zebra / bgp / static 等）有効状態 summary。
+
+### `show ip fib [<ipaddress>]`
+
+`fibshow -4 [-ip <ipaddress>]` を起動。実 FIB（kernel + ASIC sync 済みエントリ）を表示する。
+
+### `show ip bgp summary`
+
+**動作**:
+FRR `vtysh -c 'show bgp ipv4 summary'` 風のコマンドを `summary_helper` 経由で実行。multi-ASIC 時は frontend (front_ns) のみ集約。
+
+### `show ip bgp neighbors [<ipaddress>] [<info_type>]`
+
+**動作**:
+`<info_type>` は `routes` / `advertised-routes` / `received-routes`（FRR の vtysh サブ動詞）。引数省略時は隣接一覧。
+
+### `show ip bgp network [<ipaddress>] [<info_type>]`
+
+**動作**:
+`<ipaddress>` プレフィックスについて RIB に存在する経路と属性を表示。`<info_type>` は `bestpath` / `multipath` / `longer-prefixes` 等の vtysh 直系オプション。
+
+### `show ip bgp aggregate-address`
+
+**動作**:
+CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エントリの prefix・bbr-required・summary-only・as-set・prefix-list を表示する。
+
+### `show ip bgp vrf <vrf> summary/neighbors/network ...`
+
+**動作**:
+`<vrf>` を vtysh の `bgp vrf <name>` ファミリに変換して上記 helper を呼ぶ。`default` / `Vrf*` を指定可能。
+
+## オプション・共通仕様
+
+- `-n|--namespace` ... multi-ASIC 限定
+- `-d|--display all|frontend` ... `frontend` で internal port を除外
+- `--verbose` ... 実行コマンドを stdout に echo してから実行（debug 用）
+
+## 関連する CONFIG_DB / 一次情報
+
+| テーブル | 表示するコマンド |
+|----------|------------------|
+| `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` | `interfaces` / `interfaces loopback-action` |
+| `BGP_AGGREGATE_ADDRESS` | `bgp aggregate-address` |
+| FRR runtime (vtysh) | `route` / `prefix-list` / `protocol` / `bgp ...` |
+| Linux FIB + APPL_DB sync (`fibshow`) | `fib` |
+
+## 引用元
+
+[^1]: `ip` グループ定義は `show/main.py` L1386-L1389。BGP の動的アタッチは L1567-L1581。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1387>
