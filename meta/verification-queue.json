@@ -79,6 +79,18 @@
         "ドロップ監視デーモンの存在と命名は未確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/acl-qos/watermark-counters-in-sonic.md",
+      "issue": 25,
+      "verification": "hld-only",
+      "concerns": [
+        "watermarkorch の存在と現行実装が HLD どおりか未確認",
+        "Lua plugin (PERIODIC/USER/PERSISTENT) の配置と発火経路は未確認",
+        "WATERMARK_TABLE のキー名 (TELEMETRY_PERIOD vs TELEMETRY_INTERVAL) の正確な仕様要確認",
+        "STATS_MODE_READ_AND_CLEAR が syncd / SAI で実装済みか未確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
