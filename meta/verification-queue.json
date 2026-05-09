@@ -298,6 +298,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/high-level-design-document.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SAI 属性 SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP / SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID の community SAI 取り込み確認",
+        "SwitchOrch の order_ecmp_group フラグ取り込みおよび APP_DB SWITCH_TABLE 拡張確認",
+        "RouteOrch / OverlayECMPOrch の sequence_id 付与ロジック実装確認",
+        "ECMP HW Acceleration (link up/down) シナリオで member add 時に sequence_id を保持する map 維持実装確認",
+        "SAI capability query で DYNAMIC_ORDERED_ECMP 非対応時のフォールバック動作確認",
+        "switch.json.j2 で device role / asic_type に応じた order_ecmp_group デフォルト値設定確認",
+        "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認"
+      ],
+      "priority": "high",
+      "issue": 506
+    },
+    {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
       "issue": 309,
       "verification": "hld-only",
