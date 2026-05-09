@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
+  "issue": 317,
+  "verification": "hld-only",
+  "concerns": [
+    "config snmp / show run snmp CLI の sonic-utilities への取り込み確認",
+    "docker-snmp の snmpd.conf.j2 が CONFIG_DB のみ参照に更新されているか未確認",
+    "snmp.yml → CONFIG_DB Python コンバータスクリプトの存在確認",
+    "SNMP / SNMP_COMMUNITY / SNMP_USER テーブルの sonic-yang-models 取り込み確認"
+  ],
+  "priority": "medium"
+}
