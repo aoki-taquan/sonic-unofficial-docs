@@ -1336,6 +1336,18 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/media-based-port-settings-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "xcvrd の media_settings_parser 実装（CUSTOM: prefix 処理含む）の sonic-platform-daemons 取り込み確認",
+        "SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION の opencomputeproject/SAI 取り込みと vendor 対応確認",
+        "PortsOrch の custom_serdes_attrs pass-through 実装確認",
+        "preemphasis / idriver の APPL_DB → SAI 属性マッピング一覧の現行実装確認",
+        "2019 初版から custom 拡張が後付けされた経緯と歴史的差分の正確性"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
       "verification": "code-verified",
       "concerns": [],
