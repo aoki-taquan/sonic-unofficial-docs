@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/reliable-tsa/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/sonic-counter-initialization-optimization/">
       
       
-        <link rel="prev" href="../mpls-tc-to-tc-map/">
+        <link rel="prev" href="../byte-packet-rates-port-utilization-in-sonic/">
       
       
-        <link rel="next" href="../router-interface-counters-in-sonic/">
+        <link rel="next" href="../sonic-flexcounter-refactor/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期） - SONiC 非公式ドキュメント</title>
+        <title>flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#reliable-tsavoq-chassis-tsa-chassis_app_db" class="md-skip">
+        <a href="#flex-counter-pending_sai_objects-bulk_get_stats" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
+              flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -425,11 +423,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../internals/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -855,8 +855,6 @@
       
   
   
-    
-  
   
   
     
@@ -888,23 +886,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -922,13 +917,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -948,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -976,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1004,7 +999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1032,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1060,7 +1055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1088,7 +1083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1113,37 +1108,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1159,203 +1127,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧方式と新方式の比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tsa" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TSA 状態の決定ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動・再起動時の挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#supervisor-lc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Supervisor → LC への伝搬シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chassis_app_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CHASSIS_APP_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1368,7 +1139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1396,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -3282,6 +3053,8 @@
       
   
   
+    
+  
   
   
     
@@ -3307,20 +3080,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../internals/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3338,13 +3114,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3364,7 +3140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3392,7 +3168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -3417,10 +3193,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3436,6 +3239,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        旧フロー（current）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新フロー（optimized）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計上の課題
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flex_counter_manager の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsorch の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sairedis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sairedis の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する SAI API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3448,7 +3470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -3476,7 +3498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/why-need-health-check/" class="md-nav__link">
+      <a href="../why-need-health-check/" class="md-nav__link">
         
   
   
@@ -3504,7 +3526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -3875,7 +3897,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        旧方式と新方式の比較
+        用語
       
     </span>
   </a>
@@ -3883,10 +3905,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tsa" class="md-nav__link">
+  <a href="#current" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TSA 状態の決定ロジック
+        旧フロー（current）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新フロー（optimized）
       
     </span>
   </a>
@@ -3897,7 +3930,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動・再起動時の挙動
+        設計上の課題
       
     </span>
   </a>
@@ -3905,10 +3938,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#supervisor-lc" class="md-nav__link">
+  <a href="#flex_counter_manager" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supervisor → LC への伝搬シーケンス
+        flex_counter_manager の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsorch の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sairedis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sairedis の変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark
       
     </span>
   </a>
@@ -3933,10 +3999,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chassis_app_db" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CHASSIS_APP_DB
+        関連する CLI / CONFIG_DB / YANG
       
     </span>
   </a>
@@ -3944,32 +4010,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#sai-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        関連する SAI API
       
     </span>
   </a>
@@ -3982,7 +4026,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3993,7 +4037,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4004,7 +4048,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4015,7 +4059,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4042,7 +4086,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/reliable-tsa.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/sonic-counter-initialization-optimization.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4052,220 +4096,225 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 1.0, 2024-04）のみを根拠に書かれている。<code>bgpcfgd</code> の <code>CHASSIS_APP_DB</code> 購読、<code>startup_tsa_tsb</code> サービスの実装、TSA/TSB スクリプトの supervisor 側変更状況は未確認。</p>
+<p>本ページは公式 HLD（Rev 0.2, 2024-12）のみを根拠に書かれている。<code>flex_counter_manager</code> の batch mode 引数、<code>pending_sai_objects</code> キャッシュ、<code>flush</code> メソッド、<code>portsorch</code> の queue/PG 用 manager 分割の現行 master 取り込みは未確認。</p>
 </div>
-<h1 id="reliable-tsavoq-chassis-tsa-chassis_app_db">Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）<a class="headerlink" href="#reliable-tsavoq-chassis-tsa-chassis_app_db" title="Permanent link">&para;</a></h1>
+<h1 id="flex-counter-pending_sai_objects-bulk_get_stats">flex counter 初期化最適化（<code>pending_sai_objects</code> + バッチ <code>bulk_get_stats</code>）<a class="headerlink" href="#flex-counter-pending_sai_objects-bulk_get_stats" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して <strong>「ネイバへ経路を広告しない」Route Policy</strong> を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>VoQ Chassis（Supervisor + 複数 Line Card で 1 つの論理ルータを構成）では、従来の TSA 実装が次のように動いていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>LC 上で <code>TSA</code> / <code>TSB</code> を打つと LC の <code>CONFIG_DB</code> を更新 → <code>bgpcfgd</code> が反映</li>
-<li>Supervisor 上で <code>TSA</code> / <code>TSB</code> を打つと Supervisor が <strong>各 LC へ SSH</strong> で同コマンドを順次発行</li>
-</ol>
-<p>この方式は「LC への SSH 直列発行」という前提のため、(a) 末尾 LC への遅延、(b) ハング LC は永久に TSA がかからない、(c) Supervisor 側コマンドが LC 側の TSA 設定を書き換えてしまうので <strong>LC ごとに異なる TSA 状態を維持できない</strong>、という問題があった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong><code>CHASSIS_APP_DB</code> に Supervisor の TSA 状態を 1 つ持たせ、各 LC asic の <code>bgpcfgd</code> がそれを subscribe する</strong> 設計に切り替える。SSH 配布をやめ、Supervisor / LC それぞれで独立に <code>tsa_enabled</code> を持ち、運用上の TSA 状態は両者の OR で決まる。</p>
+<p>SONiC の counter は <strong>counter group</strong> 単位で <strong>flex counter</strong> が管理する（port / port-drop / PG-drop / queue / watermark / RIF など）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各 group は初期化時に「この SAI object でその counter を bulk polling できるか？」を <strong><code>sai_bulk_object_get_stats</code></strong> を呼んで確認していた。</p>
+<p>問題は <strong>port 数が多い系（例: 257 ports）でこの確認に膨大な時間がかかる</strong> 点。port あたり 3 PG + 8 queue + 1 port = 12 object、各 object に複数 counter group が紐づくため、object 数が爆発する。さらにこの確認が完了するまで orchagent は port up 通知を捌けない（ブロックする）。ベンチマークでは初期化中の <strong>98% の時間がベンダ SAI 実装内</strong> で消費されていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は <strong>「object を 1 つずつ確認」を「同型 object をまとめて 1 回確認」</strong> に変える。SAIRedis 側は bulk API を <strong>オブジェクト集合</strong> に対して一発呼び、失敗時のみ個別フォールバックする。これで <strong>257 port 系で初期化を 6:10 → 2:23 と約 60% 短縮</strong> した PoC 結果が示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">旧方式と新方式の比較<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph 旧[旧方式: SSH 直列]
-      SUP1[Supervisor] --&gt;|SSH 順次| LC1A[LC1 bgpcfgd]
-      SUP1 --&gt;|SSH 順次| LC2A[LC2 bgpcfgd]
-      SUP1 --&gt;|SSH 順次| LC3A[LC3 bgpcfgd]
-    end
-    subgraph 新[新方式: CHASSIS_APP_DB pub/sub]
-      SUP2[Supervisor TSA cmd] --&gt; CDB[(CHASSIS_APP_DB\nBGP_DEVICE_GLOBAL|STATE\ntsa_enabled)]
-      CDB --&gt; LCB1[LC1 asic bgpcfgd]
-      CDB --&gt; LCB2[LC2 asic bgpcfgd]
-      CDB --&gt; LCB3[LC3 asic bgpcfgd]
-    end</code></pre>
-<p>旧方式は SSH のため遅延・ハング・LC の TSA 状態上書きが発生。新方式は pub/sub なので LC が後から復帰しても整合する。</p>
-<h3 id="tsa">TSA 状態の決定ロジック<a class="headerlink" href="#tsa" title="Permanent link">&para;</a></h3>
-<p>LC asic ごとの <strong>operational TSA 状態</strong> は次の真理値表で決まる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">用語<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Supervisor <code>tsa_enabled</code></th>
-<th>LC <code>tsa_enabled</code></th>
-<th>Operational TSA</th>
+<th>用語</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TSA</td>
+<td>PG</td>
+<td>priority group。port の ingress queue 表現</td>
 </tr>
 <tr>
-<td>TRUE</td>
-<td>FALSE</td>
-<td><strong>TSA</strong>（Supervisor 優先）</td>
+<td>単一 polling API</td>
+<td><code>get_&lt;obj&gt;_stats(_ext)</code> 系。1 object 単位</td>
 </tr>
 <tr>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TSA</td>
+<td>bulk polling API</td>
+<td><code>sai_bulk_object_get_stats</code>。複数 object の同種 counter を一発取得</td>
 </tr>
 <tr>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>TSB（通常運用）</td>
+<td>counter group</td>
+<td>counter の論理分類（port, queue, watermark 等）</td>
+</tr>
+<tr>
+<td>flex counter</td>
+<td>SONiC で counter polling を管理するコンポーネント</td>
+</tr>
+<tr>
+<td>sub orchagent</td>
+<td><code>sonic-swss/orchagent/</code> 配下の portsorch / bufferorch 等</td>
 </tr>
 </tbody>
 </table>
-<p>要するに「OR 演算」で TSA が掛かる。<strong>Supervisor の TSA は強制的で、LC が個別に TSB に戻すことはできない</strong>。</p>
-<h3 id="_4">起動・再起動時の挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>状況</th>
-<th>Supervisor <code>tsa_enabled</code></th>
-<th>振る舞い</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>LC 再起動</td>
-<td>TRUE</td>
-<td>LC 起動後すぐ TSA。<code>startup_tsa_tsb</code> は走るがタイマ切れ後も Supervisor が TRUE なので TSA 継続</td>
-</tr>
-<tr>
-<td><code>config reload</code></td>
-<td>TRUE</td>
-<td>TSA を維持</td>
-</tr>
-<tr>
-<td>docker 再起動 / クラッシュ</td>
-<td>TRUE</td>
-<td>復帰後 TSA を維持</td>
-</tr>
-<tr>
-<td>LC 再起動</td>
-<td>FALSE</td>
-<td>通常どおり LC 設定 + <code>startup_tsa_tsb</code> のみで決定</td>
-</tr>
-<tr>
-<td>Supervisor 再起動 / <code>config reload</code></td>
-<td>(ファイルに保存)</td>
-<td>Supervisor の <code>config_db.json</code> から復元</td>
-</tr>
-</tbody>
-</table>
-<p>ポイント:</p>
-<ul>
-<li>LC ごとの <code>startup_tsa_tsb</code> サービスは廃止しない。LC のローカル CONFIG_DB を従来どおり更新するが、最終的な TSA 状態は OR で決まる</li>
-<li>Supervisor の <code>tsa_enabled</code> も <code>config_db.json</code> に保存され、Supervisor 再起動を跨いで永続化する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="supervisor-lc">Supervisor → LC への伝搬シーケンス<a class="headerlink" href="#supervisor-lc" title="Permanent link">&para;</a></h3>
+<h3 id="current">旧フロー（current）<a class="headerlink" href="#current" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
-    participant OP as Operator
-    participant SUP as Supervisor
-    participant CFG_S as Supervisor CONFIG_DB
-    participant CHASSIS as CHASSIS_APP_DB
-    participant LC as LC bgpcfgd
-    participant LCFG as LC CONFIG_DB
-    OP-&gt;&gt;SUP: TSA
-    SUP-&gt;&gt;CFG_S: tsa_enabled=true 書き込み
-    SUP-&gt;&gt;CHASSIS: BGP_DEVICE_GLOBAL|STATE.tsa_enabled=true
-    CHASSIS--&gt;&gt;LC: 通知
-    LC-&gt;&gt;LCFG: 自身の tsa_enabled 参照
-    LC-&gt;&gt;LC: OR で operational TSA 算出
-    alt operational TSA = true
-        LC-&gt;&gt;LC: BGP に Route Policy 適用
+    participant SO as sub orchagent
+    participant FCM as flex counter manager
+    participant SAIR as SAIRedis
+    participant SAI as ベンダー SAI
+    loop object ごとに
+        SO-&gt;&gt;FCM: 「この object で counter を取って」
+        FCM-&gt;&gt;SAIR: start poll on object
+        SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;1 object&gt;)
+        alt 成功
+            SAIR--&gt;&gt;SAIR: bulk-supporting set へ
+        else 失敗
+            SAIR--&gt;&gt;SAIR: bulk-unsupporting set へ
+        end
+    end
+    Note over SAIR,SAI: object 数 × counter group 分の API 呼び出しが発生</code></pre>
+<p>問題:</p>
+<ul>
+<li>N 個の object に対し N 回の <code>sai_bulk_object_get_stats</code> 呼び出し</li>
+<li>ベンダ SAI の bulk API が「N 個まとめて」を意識して書かれているのに、<strong>1 個ずつ叩いて bulk_supporting 判定だけに使う</strong> のは無駄</li>
+<li>初期化が orchagent の port up 処理をブロックする</li>
+</ul>
+<h3 id="optimized">新フロー（optimized）<a class="headerlink" href="#optimized" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant SO as sub orchagent
+    participant FCM as flex counter manager (batch)
+    participant SAIR as SAIRedis
+    participant SAI as ベンダー SAI
+    SO-&gt;&gt;FCM: add(object1)
+    SO-&gt;&gt;FCM: add(object2)
+    SO-&gt;&gt;FCM: ... (pending_sai_objects に蓄積)
+    SO-&gt;&gt;FCM: flush()
+    FCM-&gt;&gt;SAIR: start poll on {obj1, obj2, ...}
+    SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;set&gt;)
+    alt 集合まるごと成功
+        SAIR--&gt;&gt;SAIR: 全 object を bulk-supporting set へ
+    else 集合呼び出しが失敗
+        loop 集合内 object ごと
+            SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;1 object&gt;)
+            alt 成功
+                SAIR--&gt;&gt;SAIR: bulk-supporting set へ
+            else 失敗
+                SAIR--&gt;&gt;SAIR: bulk-unsupporting set へ
+            end
+        end
     end</code></pre>
+<p>ポイント<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>まず <strong>集合まとめ</strong> で叩いて成功すれば 1 回で済む</li>
+<li>集合呼び出しが失敗（ある object が unsupported）なら <strong>個別 fallback</strong></li>
+<li>期待値として「ほとんどの object が同じ bulk サポート状態」になる ASIC では大幅短縮</li>
+</ul>
+<h3 id="_4">設計上の課題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>「sub orchagent が object を 1 つずつ追加するタイミング」と「SAIRedis に bulk で投げるタイミング」が分離するため、<strong>いつ flush するか</strong> を sub orchagent が能動的に決める必要がある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="flex_counter_manager"><code>flex_counter_manager</code> の変更<a class="headerlink" href="#flex_counter_manager" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp</code> のクラスに次を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>追加要素</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンストラクタ引数 <code>batch_mode</code></td>
+<td>batch モード有効化フラグ</td>
+</tr>
+<tr>
+<td>メンバ <code>pending_sai_objects</code></td>
+<td>sub orchagent から add されたが、まだ SAIRedis に通知していない object 群</td>
+</tr>
+<tr>
+<td>メソッド <code>flush()</code></td>
+<td><code>pending_sai_objects</code> を SAIRedis に一括通知</td>
+</tr>
+<tr>
+<td>既存 add/remove API</td>
+<td>batch_mode の場合 pending に積むだけ</td>
+</tr>
+</tbody>
+</table>
+<p>sub orchagent が <code>flush()</code> を <strong>明示的に呼ぶ</strong> 必要がある。</p>
+<h3 id="portsorch"><code>portsorch</code> の変更<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h3>
+<p>port / PG / queue の counter group は <code>portsorch</code> が管理する。<code>doTask</code> が orchagent の main loop である<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>doTask</code> の中で <code>flex_counter_manager.flush()</code> を直接呼ぶ</li>
+<li>queue 系 flex counter manager を <strong>unicast / multicast で 2 個に分割</strong>。bulk API は uc には効くが mc では効かない ASIC があるため<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>PG flex counter group も <code>flex_counter_manager</code> 管轄に切替（コード簡素化）</li>
+</ul>
+<h3 id="sairedis"><code>sairedis</code> の変更<a class="headerlink" href="#sairedis" title="Permanent link">&para;</a></h3>
+<p>オブジェクト集合に対して counter polling を開始する API を新設し、上記 flow の <code>sai_bulk_object_get_stats(&lt;set&gt;)</code> 呼び出しに対応する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/voq/Reliable_TSA.md#L62-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/flex_counter/optimize-counter-initialization.md#L107-L124 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  1. Add a new tsa_enabled attribute to CHASSIS_APP_DB
-  ...
-  4. Modify bgpcfgd to subscribe to updates to the tsa_enabled attribute of CHASSIS_APP_DB
-  5. Modify bgpcfgd to take into account the values of tsa_enabled attributes of both the CHASSIS_APP_DB and the local CONFIG_DB when determining whether BGP should be in TSA or TSB state.
-reasoning: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計の中核根拠。
+  2. The flex counter manager caches and groups objects of the same type together and notifies SAIRedis to initialize the counters for a set of objects.
+  3. SAIRedis calls `sai_bulk_object_get_stats` with the set of objects, and counter IDs as the arguments.
+     1. SAIRedis adds the object to `bulk-supporting object set` if the call succeeds.
+     2. SAIRedis calls `sai_bulk_object_get_stats` for each object in the set if step 3 fails, and ...
+reasoning: 「集合一発 → 失敗時のみ個別 fallback」という新フローの根拠。
 -->
 
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="chassis_app_db">関連する CHASSIS_APP_DB<a class="headerlink" href="#chassis_app_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_DEVICE_GLOBAL|STATE
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
-</span></code></pre></div>
-<p>これは Supervisor の TSA 状態だけを保持する。LC ごとの TSA は LC の CONFIG_DB に従来どおり持つ。</p>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>LC asic 側の CONFIG_DB（既存）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>BGP_DEVICE_GLOBAL|STATE
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
-</span></code></pre></div>
-<p>Supervisor の host CONFIG_DB にも同じ key を追加し、<code>config_db.json</code> 永続化に組み込まれる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h3 id="benchmark">Benchmark<a class="headerlink" href="#benchmark" title="Permanent link">&para;</a></h3>
+<p>HLD 末尾に PoC 結果あり<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>スコープ</th>
-<th>効果</th>
+<th>項目</th>
+<th>数値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>TSA</code> (Supervisor)</td>
-<td>Supervisor のみ</td>
-<td>Supervisor host CONFIG_DB と CHASSIS_APP_DB の <code>tsa_enabled</code> を TRUE 化</td>
+<td>対象システム</td>
+<td>257 ports</td>
 </tr>
 <tr>
-<td><code>TSB</code> (Supervisor)</td>
-<td>Supervisor のみ</td>
-<td>同 FALSE 化</td>
+<td>旧フロー</td>
+<td>counters ready + all ports up まで <strong>6 分 10 秒</strong></td>
 </tr>
 <tr>
-<td><code>TSA</code> (LC)</td>
-<td>当該 LC の各 asic</td>
-<td>LC の CONFIG_DB だけを TRUE 化</td>
+<td>新フロー</td>
+<td>同 <strong>2 分 23 秒</strong></td>
 </tr>
 <tr>
-<td><code>TSB</code> (LC)</td>
-<td>当該 LC の各 asic</td>
-<td>LC の CONFIG_DB だけを FALSE 化</td>
+<td>SAI API 呼び出し時間の割合（旧フロー）</td>
+<td>全体時間の 98% がベンダ SAI 内</td>
+</tr>
+<tr>
+<td>サンプル: 84 回 SAI 呼び出し</td>
+<td>累積 5.67s に対し E2E 5.78s</td>
 </tr>
 </tbody>
 </table>
-<p>新方式では <strong>Supervisor 側コマンドが LC の CONFIG_DB を上書きしない</strong>。これにより LC ごとに異なる TSA 設定を維持しつつ、Supervisor で全体を強制 TSA にできる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>Supervisor で全体 TSA、LC2 だけ独立に TSB:</p>
+<p>「ベンダ SAI が時間を支配しているので、API 呼び出し回数を減らすのが効く」という HLD の前提を裏付ける。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config_db-yang">関連する CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
+<p>ユーザインタフェース変更は <strong>無し</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。"The change shall not introduce any user interface change."</p>
+<h3 id="sai-api">関連する SAI API<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
+<p>新 SAI API は無し<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 <code>sai_bulk_object_get_stats</code> をそのまま使う。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Supervisor: <code>TSA</code> を実行 → CHASSIS_APP_DB に <code>tsa_enabled=true</code></li>
-<li>結果: LC1, LC2, LC3 すべて operational TSA（Supervisor 優先）</li>
-<li>後で Supervisor で <code>TSB</code> → LC2 の CONFIG_DB が FALSE なら LC2 は通常運用に戻る</li>
+<li><strong>runtime polling の最適化はスコープ外</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は初期化のみ</li>
+<li>集合呼び出し失敗時は object 数だけ個別フォールバックが発生するため、<strong>unsupported object が混じると効果が薄れる</strong></li>
+<li>queue 系で uc / mc の manager を分けるため、関連テストが分割対応必要</li>
+<li>Warm boot / Fast boot への影響は無し（HLD 明記）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>適用範囲は <strong>VoQ Chassis のみ</strong>。T0/T1 等の非 chassis 構成は影響を受けない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Supervisor の TSA は強制的。LC 側で部分的に「Supervisor の TSA だけ無視する」ことはできない</li>
-<li><code>startup_tsa_tsb</code> サービスは廃止されない。LC 復帰直後は LC ローカル設定で起動し、Supervisor の状態に追随する形になる</li>
+<li><strong><code>flex_counter_manager</code></strong>: 主要変更箇所。batch_mode 引数と <code>flush()</code> の追加で API 形が変わる</li>
+<li><strong><code>portsorch</code> / <code>bufferorch</code> などの sub orchagent</strong>: <code>flush()</code> を呼ぶ位置を意識する必要</li>
+<li><strong><code>sonic-sairedis</code></strong>: 集合 polling API の追加</li>
+<li><strong>port up イベント処理</strong>: 初期化が高速化することで port up 通知の遅延が短縮</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>bgpcfgd</code></strong>: CHASSIS_APP_DB の <code>BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を subscribe するロジックが追加される。LC CONFIG_DB の同名キーと OR を取る</li>
-<li><strong><code>startup_tsa_tsb</code></strong>: LC 再起動時のみ動作。Supervisor が TRUE の限り、タイマ切れ後も TSA は維持される</li>
-<li><strong>CHASSIS_APP_DB</strong>: Supervisor が書き手、LC asic が読み手。Pub/sub の整合性が前提</li>
-<li><strong><code>config reload</code> / <code>config save</code></strong>: Supervisor 側の <code>config_db.json</code> に <code>tsa_enabled</code> が含まれるため、永続化フローと干渉する</li>
+<li>counter 初期化に時間がかかる場合、<code>flush()</code> 呼び出し位置と <code>pending_sai_objects</code> のサイズを確認</li>
+<li>bulk-unsupporting set が予想以上に多い場合、ベンダ SAI が集合 polling を返さない理由（mc queue, port-drop 等）を切り分ける</li>
+<li>queue 関連 counter のうち unicast だけ動く / multicast が動かない、というケースは新規分割の manager 単位で確認</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li>LC が TSA から抜けない場合、まず Supervisor の <code>redis-cli</code> で <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を確認</li>
-<li>LC ローカルが FALSE なのに TSA のままなら Supervisor 側 TRUE が原因</li>
-<li>Supervisor 再起動で TSA が解除される場合、Supervisor の <code>config_db.json</code> に <code>tsa_enabled</code> が保存されているか確認</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- bgpcfgd が CHASSIS_APP_DB の BGP_DEVICE_GLOBAL|STATE を subscribe する実装が現行 master に取り込まれているか
-- TSA/TSB スクリプト（sonic-utilities? sonic-buildimage?）の Supervisor 側分岐実装
-- startup_tsa_tsb サービスの定義
-- Supervisor host config_db.json への tsa_enabled 永続化フロー
+- flex_counter_manager の batch_mode 引数と pending_sai_objects 実装
+- portsorch doTask での flush() 呼び出し位置
+- queue 系 flex counter manager の uc / mc 分割
+- PG flex counter manager 化の現行コード
+- sonic-sairedis 側の集合 polling API 追加
+- 集合一発成功 → 失敗時 fallback の判定ロジック
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/Reliable_TSA.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/optimize-counter-initialization.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
