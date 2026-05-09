@@ -219,6 +219,20 @@
       "priority": "medium"
     },
     {
+      "page": "docs/management/config-reload-enhancement.md",
+      "issue": 89,
+      "verification": "hld-only",
+      "concerns": [
+        "hostcfgd の FEATURE.delayed 対応 / PORT_TABLE 購読 / フォールバックタイムアウト実装確認",
+        "portsyncd が APPL_DB PORT_TABLE:PortInitDone を publish する経路確認",
+        "db_migrator の has_timer→delayed 移行実装確認",
+        "sonic-feature YANG モデルへの delayed leaf 追加確認",
+        "既存 systemd *.timer の撤去状況",
+        "warm/fast reboot の waitAdvancedBootDone 連携実装"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/system/generic-sai-extension-critical-resource-monitoring-crm.md",
       "issue": 87,
       "verification": "hld-only",
