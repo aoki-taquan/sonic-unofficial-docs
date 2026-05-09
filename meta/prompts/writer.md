@@ -53,6 +53,11 @@ issue のラベルにより、以下のサブタイプに分岐する。
 - 自信のない記述には `verification: hld-only` 以下に留める
 - HLD の翻訳調をそのまま貼り付けない
 - 機能の存在自体を推測で書かない（実体が確認できたものだけ）
+
+## 古い HLD / upstream 由来 HLD の取扱い
+
+- HLD ファイルの **改訂履歴 (Revision Table) や最終更新日が 3 年以上前** の場合、本文冒頭に「本ドキュメントは古い HLD（YYYY 年）に基づくため、現行 master 実装と大きく乖離している可能性がある」旨の注記を入れる。`verification-queue` の `priority` は `high` を選ぶ
+- HLD が SONiC 独自仕様ではなく **upstream の文書**（例: `sonic-frr/doc/` 配下の FRR 上流文書、SAI 仕様書 等）の場合、本文冒頭で「これは SONiC 独自の仕様ではなく upstream 由来である」旨を明記する。SONiC 内での扱いと upstream 仕様との差分が分かるなら併記する
 - `related.config_db` `related.cli` `related.yang` に **HLD で言及されていない実装由来の項目を推測で書かない**。確実なもののみ列挙し、不明なら空配列にして本文側に注記する
 
 ## 裏取りキューへの登録

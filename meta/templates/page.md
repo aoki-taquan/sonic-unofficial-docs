@@ -73,3 +73,15 @@ config xxx ...
 
 [^1]: <repo>/<path> @ <commit-sha>
 [^2]: <issue or PR URL>
+
+<!-- concerns hint:
+verification: hld-only / issue-confirmed の場合、以下の観点で 3-6 件の concerns を
+meta/verification-queue.json に登録すること（重複削除可）:
+  - 該当 Orch / daemon / handler の実装存在確認
+  - CONFIG_DB / STATE_DB のスキーマ追加が現行 master に取り込まれているか
+  - CLI コマンドの sonic-utilities への取り込み状況
+  - SAI 属性 / API が community SAI / syncd で利用可能か
+  - HLD 改訂日付が古い場合の現行 master 実装との乖離リスク
+  - upstream 仕様（FRR / SAI / Linux 等）との差分の有無
+-->
+
