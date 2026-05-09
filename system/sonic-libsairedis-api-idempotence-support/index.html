@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/sonic-counter-initialization-optimization/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-libsairedis-api-idempotence-support/">
       
       
-        <link rel="prev" href="../p4-orchagent/">
+        <link rel="prev" href="../sonic-fips-deployment/">
       
       
-        <link rel="next" href="../sonic-flexcounter-refactor/">
+        <link rel="next" href="../sonic-logging-system-dumps-arch-spec/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） - SONiC 非公式ドキュメント</title>
+        <title>libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#flex-counter-pending_sai_objects-bulk_get_stats" class="md-skip">
+        <a href="#libsairedis-api-idempotencewarm-restart-oid-duplicate" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
+              libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
             
           </span>
         </div>
@@ -357,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -3851,6 +3851,8 @@
       
   
   
+    
+  
   
   
     
@@ -3924,20 +3926,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3955,13 +3960,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3981,7 +3986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4009,7 +4014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4037,7 +4042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -4065,7 +4070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -4093,7 +4098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -4121,7 +4126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -4149,7 +4154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -4177,7 +4182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -4205,7 +4210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -4233,7 +4238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4261,7 +4266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4289,7 +4294,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -4317,7 +4322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -4345,7 +4350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -4373,7 +4378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -4401,7 +4406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -4429,7 +4434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -4457,7 +4462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -4482,10 +4487,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4501,6 +4533,153 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 種のキャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default attributes 保持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / REMOVE の重複抑止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default object 上書き保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance チューニング案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4513,7 +4692,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -4541,7 +4720,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -4569,7 +4748,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -4597,7 +4776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -4625,7 +4804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -4653,7 +4832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -4681,7 +4860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -4709,7 +4888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -4737,7 +4916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -4765,7 +4944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -4793,7 +4972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -6623,8 +6802,6 @@
       
   
   
-    
-  
   
   
     
@@ -6662,23 +6839,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -6696,13 +6870,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6722,7 +6896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -6750,7 +6924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -6778,7 +6952,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-utility-for-easy-debugging/" class="md-nav__link">
+      <a href="../../internals/dump-utility-for-easy-debugging/" class="md-nav__link">
         
   
   
@@ -6806,7 +6980,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../l3-scaling-and-performance-enhancements/" class="md-nav__link">
+      <a href="../../internals/l3-scaling-and-performance-enhancements/" class="md-nav__link">
         
   
   
@@ -6834,7 +7008,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4-orchagent/" class="md-nav__link">
+      <a href="../../internals/p4-orchagent/" class="md-nav__link">
         
   
   
@@ -6859,37 +7033,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
@@ -6905,225 +7052,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        用語
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#current" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧フロー（current）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optimized" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新フロー（optimized）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設計上の課題
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex_counter_manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        flex_counter_manager の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#portsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portsorch の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sairedis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sairedis の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#benchmark" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmark
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する SAI API
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7136,7 +7064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -7164,7 +7092,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-multiple-user-defined-redis-database-instances/" class="md-nav__link">
+      <a href="../../internals/support-multiple-user-defined-redis-database-instances/" class="md-nav__link">
         
   
   
@@ -7192,7 +7120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
+      <a href="../../internals/support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
         
   
   
@@ -7220,7 +7148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../swss-schema/" class="md-nav__link">
+      <a href="../../internals/swss-schema/" class="md-nav__link">
         
   
   
@@ -7248,7 +7176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -7276,7 +7204,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -11709,139 +11637,78 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 種のキャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default attributes 保持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-remove" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / REMOVE の重複抑止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default object 上書き保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance チューニング案
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        用語
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#current" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧フロー（current）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optimized" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新フロー（optimized）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設計上の課題
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#flex_counter_manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        flex_counter_manager の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#portsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portsorch の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sairedis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sairedis の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#benchmark" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmark
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli-config_db-yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI / CONFIG_DB / YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する SAI API
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -11852,7 +11719,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -11863,18 +11730,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11901,7 +11757,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/sonic-counter-initialization-optimization.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-libsairedis-api-idempotence-support.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11909,227 +11765,105 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（命名は FlexCounterCachedManager）</p>
-<p><code>sonic-swss/orchagent/flex_counter/flex_counter_manager.h</code> で <code>FlexCounterCachedManager</code> テンプレートと <code>flush(group_name, cached_objects)</code> (L228, L233-235), <code>pending_sai_objects</code> 参照 (L190), 派生クラス <code>FlexCounterTaggedCachedManager</code> の <code>flush()</code> (L304, L345) を確認。<code>portsorch.h</code> L336 で <code>port_buffer_drop_stat_manager</code> が <code>FlexCounterTaggedCachedManager&lt;void&gt;</code> 型として実装。<strong>HLD で言及される <code>batch_mode</code> 引数は実装上は専用クラス <code>FlexCounterCachedManager</code> で表現</strong> されており、構造設計は HLD どおり。queue UC/MC 分割や PG 系の cached 化も同ヘッダで対応 (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は warm-reboot 議事系。<code>ATTR2OID_*</code> / <code>OID2ATTR_*</code> / <code>DEFAULT_*</code> 各キープレフィックスを RESTORE_DB (DB 7) に置く設計が現行 sairedis の master ブランチに採用されているかは未裏取り（<code>syncd view comparison</code> 案との競合あり）。</p>
 </div>
-<h1 id="flex-counter-pending_sai_objects-bulk_get_stats">flex counter 初期化最適化（<code>pending_sai_objects</code> + バッチ <code>bulk_get_stats</code>）<a class="headerlink" href="#flex-counter-pending_sai_objects-bulk_get_stats" title="Permanent link">&para;</a></h1>
+<h1 id="libsairedis-api-idempotencewarm-restart-oid-duplicate">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）<a class="headerlink" href="#libsairedis-api-idempotencewarm-restart-oid-duplicate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の counter は <strong>counter group</strong> 単位で <strong>flex counter</strong> が管理する（port / port-drop / PG-drop / queue / watermark / RIF など）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各 group は初期化時に「この SAI object でその counter を bulk polling できるか？」を <strong><code>sai_bulk_object_get_stats</code></strong> を呼んで確認していた。</p>
-<p>問題は <strong>port 数が多い系（例: 257 ports）でこの確認に膨大な時間がかかる</strong> 点。port あたり 3 PG + 8 queue + 1 port = 12 object、各 object に複数 counter group が紐づくため、object 数が爆発する。さらにこの確認が完了するまで orchagent は port up 通知を捌けない（ブロックする）。ベンチマークでは初期化中の <strong>98% の時間がベンダ SAI 実装内</strong> で消費されていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong>「object を 1 つずつ確認」を「同型 object をまとめて 1 回確認」</strong> に変える。SAIRedis 側は bulk API を <strong>オブジェクト集合</strong> に対して一発呼び、失敗時のみ個別フォールバックする。これで <strong>257 port 系で初期化を 6:10 → 2:23 と約 60% 短縮</strong> した PoC 結果が示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>orchagent と syncd の間にある <strong>libsairedis API</strong> の <code>create</code> / <code>set</code> / <code>remove</code> / <code>get</code> を <strong>idempotent</strong> にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>get</code> は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">用語<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="5">5 種のキャッシュ<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<p>すべて redis の <code>RESTORE_DB</code>（DB 7）に置く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>用語</th>
-<th>説明</th>
+<th>プレフィックス</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>PG</td>
-<td>priority group。port の ingress queue 表現</td>
+<td><code>ATTR2OID_&lt;owner&gt;_...</code></td>
+<td>同一 attributes セット → 同 OID を返すための逆引き</td>
 </tr>
 <tr>
-<td>単一 polling API</td>
-<td><code>get_&lt;obj&gt;_stats(_ext)</code> 系。1 object 単位</td>
+<td><code>DEFAULT_ATTR2OID_&lt;owner&gt;_...</code></td>
+<td>作成時の <strong>元の attributes</strong> から OID への逆引き（後の SET 変更後でも復元できる）</td>
 </tr>
 <tr>
-<td>bulk polling API</td>
-<td><code>sai_bulk_object_get_stats</code>。複数 object の同種 counter を一発取得</td>
+<td><code>DEFAULT_OID2ATTR_&lt;oid&gt;</code></td>
+<td>OID → 元 attributes（<code>DEFAULT_ATTR2OID_*</code> の存在チェック用）</td>
 </tr>
 <tr>
-<td>counter group</td>
-<td>counter の論理分類（port, queue, watermark 等）</td>
+<td><code>OID2ATTR_&lt;oid&gt;</code></td>
+<td>現在の OID → attributes（SET / REMOVE の duplicate 検出）</td>
 </tr>
 <tr>
-<td>flex counter</td>
-<td>SONiC で counter polling を管理するコンポーネント</td>
-</tr>
-<tr>
-<td>sub orchagent</td>
-<td><code>sonic-swss/orchagent/</code> 配下の portsorch / bufferorch 等</td>
+<td><code>DEFAULT_OBJ_&lt;owner&gt;_&lt;obj_key&gt;</code></td>
+<td>libsai/SDK が作る default object に orchagent が後で attribute SET した場合の最新 attributes</td>
 </tr>
 </tbody>
 </table>
-<h3 id="current">旧フロー（current）<a class="headerlink" href="#current" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant SO as sub orchagent
-    participant FCM as flex counter manager
-    participant SAIR as SAIRedis
-    participant SAI as ベンダー SAI
-    loop object ごとに
-        SO-&gt;&gt;FCM: 「この object で counter を取って」
-        FCM-&gt;&gt;SAIR: start poll on object
-        SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;1 object&gt;)
-        alt 成功
-            SAIR--&gt;&gt;SAIR: bulk-supporting set へ
-        else 失敗
-            SAIR--&gt;&gt;SAIR: bulk-unsupporting set へ
-        end
-    end
-    Note over SAIR,SAI: object 数 × counter group 分の API 呼び出しが発生</code></pre>
-<p>問題:</p>
+<p><code>g_objectOwner</code> はアプリ識別子。同一 attributes だが意味が異なるケース（例: underlay loopback RIF と overlay loopback RIF が同 VR を参照）を別 OID にする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="create">create フロー<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+  CR[orchagent create] --&gt; LS[libsairedis]
+  LS --&gt; K1{ATTR2OID_&lt;owner&gt;&lt;br&gt;attrs ハッシュキーで lookup}
+  K1 --&gt;|hit| RET[既存 OID を返す]
+  K1 --&gt;|miss| K2{DEFAULT_ATTR2OID_&lt;owner&gt;&lt;br&gt;同 attrs で lookup&lt;br&gt;warm restart 用}
+  K2 --&gt;|hit| RET
+  K2 --&gt;|miss| FW[syncd へ create を流す]
+  FW --&gt; NEW[新 OID 取得]
+  NEW --&gt; WT[ATTR2OID / OID2ATTR / DEFAULT_* に書く]</code></pre>
+<p>例（loopback RIF が underlay/overlay で同 attributes だが owner で別 OID）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ATTR2OID_OVERLAY_INTERFACE_SAI_ROUTER_INTERFACE_ATTR_TYPE=...|...VIRTUAL_ROUTER_ID=oid:0x300000000003a
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  -&gt; SAI_OBJECT_TYPE_ROUTER_INTERFACE:oid:0x6000000000996
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ATTR2OID_UNDERLAY_INTERFACE_SAI_ROUTER_INTERFACE_ATTR_TYPE=...|...VIRTUAL_ROUTER_ID=oid:0x300000000003a
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  -&gt; SAI_OBJECT_TYPE_ROUTER_INTERFACE:oid:0x6000000000939
+</span></code></pre></div>
+<h3 id="default-attributes">default attributes 保持<a class="headerlink" href="#default-attributes" title="Permanent link">&para;</a></h3>
+<p>object 作成後に attributes が変わると <code>ATTR2OID_*</code> も更新されるが、warm restart 直後 orchagent は <strong>元の attributes</strong> で create を再発行することがある。これを救うため、初回の SET 直前に <strong><code>DEFAULT_ATTR2OID_*</code> と <code>DEFAULT_OID2ATTR_*</code> を 1 度だけ作成</strong>して保存し続ける<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DEFAULT_ATTR2OID_SAI_HOSTIF_ATTR_NAME=Ethernet18|...|SAI_HOSTIF_ATTR_TYPE=SAI_HOSTIF_TYPE_NETDEV
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  -&gt; SAI_OBJECT_TYPE_HOSTIF:oid:0xd000000000952
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DEFAULT_OID2ATTR_SAI_OBJECT_TYPE_HOSTIF:oid:0xd000000000952
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  -&gt; {SAI_HOSTIF_ATTR_NAME: Ethernet18, SAI_HOSTIF_ATTR_OBJ_ID: ..., SAI_HOSTIF_ATTR_TYPE: ...}
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ATTR2OID_SAI_HOSTIF_ATTR_NAME=Ethernet18|...|SAI_HOSTIF_ATTR_TYPE=...|SAI_HOSTIF_ATTR_VLAN_TAG=KEEP
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  -&gt; SAI_OBJECT_TYPE_HOSTIF:oid:0xd000000000952
+</span></code></pre></div>
+<p><code>DEFAULT_OID2ATTR_*</code> の存在チェックで「default 既保存？」を判定する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="set-remove">SET / REMOVE の重複抑止<a class="headerlink" href="#set-remove" title="Permanent link">&para;</a></h3>
+<p><code>OID2ATTR_&lt;oid&gt;</code> を引き、現在値と差分が無ければ何もせず success を返す。route entry / neighbor / fdb など <code>sai_object_id_t</code> でない objects は <code>OID2ATTR_*</code> のみ持つ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="default-object">Default object 上書き保存<a class="headerlink" href="#default-object" title="Permanent link">&para;</a></h3>
+<p>libsai / SDK 起動時に作る default object（例: default switch）に orchagent が attribute set した場合、<code>DEFAULT_OBJ_&lt;owner&gt;_&lt;obj_key&gt;</code> に最新 attributes を保存。warm restart 後に同じ SET が再発行されても直接 return できる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="performance">Performance チューニング案<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#performance" title="Permanent link">&para;</a></h3>
 <ul>
-<li>N 個の object に対し N 回の <code>sai_bulk_object_get_stats</code> 呼び出し</li>
-<li>ベンダ SAI の bulk API が「N 個まとめて」を意識して書かれているのに、<strong>1 個ずつ叩いて bulk_supporting 判定だけに使う</strong> のは無駄</li>
-<li>初期化が orchagent の port up 処理をブロックする</li>
+<li><strong>In memory cache</strong>: redis hget を都度叩かないよう libsairedis 内でメモリキャッシュ</li>
+<li><strong>Producer/Consumer 圧縮</strong>: 現在 key/op/value の 3 LPUSH/LRANGE/LTRIM を 1 つに統合可能。redis bench では <code>LPUSH ~9.4K req/s</code>、<code>LRANGE 100 ~4.5K req/s</code> 程度のオーバーヘッド<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>Multiple redis instances</strong>: route flapping 等の極端ケースには 1 インスタンスでは厳しい。<code>COUNTERS_DB</code> 等を別 instance に分け、idempotence 用 <code>RESTORE_DB</code>（7）も分離して書き込み async 化を検討</li>
+<li><strong>Serialization 最適化</strong>: serialize/deserialize に CPU を食う</li>
 </ul>
-<h3 id="optimized">新フロー（optimized）<a class="headerlink" href="#optimized" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant SO as sub orchagent
-    participant FCM as flex counter manager (batch)
-    participant SAIR as SAIRedis
-    participant SAI as ベンダー SAI
-    SO-&gt;&gt;FCM: add(object1)
-    SO-&gt;&gt;FCM: add(object2)
-    SO-&gt;&gt;FCM: ... (pending_sai_objects に蓄積)
-    SO-&gt;&gt;FCM: flush()
-    FCM-&gt;&gt;SAIR: start poll on {obj1, obj2, ...}
-    SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;set&gt;)
-    alt 集合まるごと成功
-        SAIR--&gt;&gt;SAIR: 全 object を bulk-supporting set へ
-    else 集合呼び出しが失敗
-        loop 集合内 object ごと
-            SAIR-&gt;&gt;SAI: sai_bulk_object_get_stats(&lt;1 object&gt;)
-            alt 成功
-                SAIR--&gt;&gt;SAIR: bulk-supporting set へ
-            else 失敗
-                SAIR--&gt;&gt;SAIR: bulk-unsupporting set へ
-            end
-        end
-    end</code></pre>
-<p>ポイント<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>参考の redis benchmark は Atom C2558 4core / 2.4GHz 上の実測<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>まず <strong>集合まとめ</strong> で叩いて成功すれば 1 回で済む</li>
-<li>集合呼び出しが失敗（ある object が unsupported）なら <strong>個別 fallback</strong></li>
-<li>期待値として「ほとんどの object が同じ bulk サポート状態」になる ASIC では大幅短縮</li>
+<li>設計は <strong>draft レベル</strong>。同じ目的の別実装案（syncd view comparison）と競合</li>
+<li><code>ATTR2OID_*</code> のキー長が長くなる（attributes 全列挙）</li>
+<li>Redis 単一インスタンスでは route flapping 等で律速の可能性</li>
 </ul>
-<h3 id="_4">設計上の課題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>「sub orchagent が object を 1 つずつ追加するタイミング」と「SAIRedis に bulk で投げるタイミング」が分離するため、<strong>いつ flush するか</strong> を sub orchagent が能動的に決める必要がある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="flex_counter_manager"><code>flex_counter_manager</code> の変更<a class="headerlink" href="#flex_counter_manager" title="Permanent link">&para;</a></h3>
-<p><code>sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp</code> のクラスに次を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>追加要素</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>コンストラクタ引数 <code>batch_mode</code></td>
-<td>batch モード有効化フラグ</td>
-</tr>
-<tr>
-<td>メンバ <code>pending_sai_objects</code></td>
-<td>sub orchagent から add されたが、まだ SAIRedis に通知していない object 群</td>
-</tr>
-<tr>
-<td>メソッド <code>flush()</code></td>
-<td><code>pending_sai_objects</code> を SAIRedis に一括通知</td>
-</tr>
-<tr>
-<td>既存 add/remove API</td>
-<td>batch_mode の場合 pending に積むだけ</td>
-</tr>
-</tbody>
-</table>
-<p>sub orchagent が <code>flush()</code> を <strong>明示的に呼ぶ</strong> 必要がある。</p>
-<h3 id="portsorch"><code>portsorch</code> の変更<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h3>
-<p>port / PG / queue の counter group は <code>portsorch</code> が管理する。<code>doTask</code> が orchagent の main loop である<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>doTask</code> の中で <code>flex_counter_manager.flush()</code> を直接呼ぶ</li>
-<li>queue 系 flex counter manager を <strong>unicast / multicast で 2 個に分割</strong>。bulk API は uc には効くが mc では効かない ASIC があるため<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>PG flex counter group も <code>flex_counter_manager</code> 管轄に切替（コード簡素化）</li>
+<li><strong>syncd view comparison</strong>: 同じ問題を syncd 側で解く別案。どちらかを採用する設計選択</li>
+<li><strong>warm reboot</strong>: 本機能の主目的</li>
+<li><strong>counter 系</strong>: 別 redis instance 化の議論で COUNTERS_DB が引合に出る</li>
 </ul>
-<h3 id="sairedis"><code>sairedis</code> の変更<a class="headerlink" href="#sairedis" title="Permanent link">&para;</a></h3>
-<p>オブジェクト集合に対して counter polling を開始する API を新設し、上記 flow の <code>sai_bulk_object_get_stats(&lt;set&gt;)</code> 呼び出しに対応する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/flex_counter/optimize-counter-initialization.md#L107-L124 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  2. The flex counter manager caches and groups objects of the same type together and notifies SAIRedis to initialize the counters for a set of objects.
-  3. SAIRedis calls `sai_bulk_object_get_stats` with the set of objects, and counter IDs as the arguments.
-     1. SAIRedis adds the object to `bulk-supporting object set` if the call succeeds.
-     2. SAIRedis calls `sai_bulk_object_get_stats` for each object in the set if step 3 fails, and ...
-reasoning: 「集合一発 → 失敗時のみ個別 fallback」という新フローの根拠。
--->
-
-<h3 id="benchmark">Benchmark<a class="headerlink" href="#benchmark" title="Permanent link">&para;</a></h3>
-<p>HLD 末尾に PoC 結果あり<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>数値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>対象システム</td>
-<td>257 ports</td>
-</tr>
-<tr>
-<td>旧フロー</td>
-<td>counters ready + all ports up まで <strong>6 分 10 秒</strong></td>
-</tr>
-<tr>
-<td>新フロー</td>
-<td>同 <strong>2 分 23 秒</strong></td>
-</tr>
-<tr>
-<td>SAI API 呼び出し時間の割合（旧フロー）</td>
-<td>全体時間の 98% がベンダ SAI 内</td>
-</tr>
-<tr>
-<td>サンプル: 84 回 SAI 呼び出し</td>
-<td>累積 5.67s に対し E2E 5.78s</td>
-</tr>
-</tbody>
-</table>
-<p>「ベンダ SAI が時間を支配しているので、API 呼び出し回数を減らすのが効く」という HLD の前提を裏付ける。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="cli-config_db-yang">関連する CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
-<p>ユーザインタフェース変更は <strong>無し</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。"The change shall not introduce any user interface change."</p>
-<h3 id="sai-api">関連する SAI API<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
-<p>新 SAI API は無し<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 <code>sai_bulk_object_get_stats</code> をそのまま使う。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>runtime polling の最適化はスコープ外</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は初期化のみ</li>
-<li>集合呼び出し失敗時は object 数だけ個別フォールバックが発生するため、<strong>unsupported object が混じると効果が薄れる</strong></li>
-<li>queue 系で uc / mc の manager を分けるため、関連テストが分割対応必要</li>
-<li>Warm boot / Fast boot への影響は無し（HLD 明記）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>flex_counter_manager</code></strong>: 主要変更箇所。batch_mode 引数と <code>flush()</code> の追加で API 形が変わる</li>
-<li><strong><code>portsorch</code> / <code>bufferorch</code> などの sub orchagent</strong>: <code>flush()</code> を呼ぶ位置を意識する必要</li>
-<li><strong><code>sonic-sairedis</code></strong>: 集合 polling API の追加</li>
-<li><strong>port up イベント処理</strong>: 初期化が高速化することで port up 通知の遅延が短縮</li>
-</ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li>counter 初期化に時間がかかる場合、<code>flush()</code> 呼び出し位置と <code>pending_sai_objects</code> のサイズを確認</li>
-<li>bulk-unsupporting set が予想以上に多い場合、ベンダ SAI が集合 polling を返さない理由（mc queue, port-drop 等）を切り分ける</li>
-<li>queue 関連 counter のうち unicast だけ動く / multicast が動かない、というケースは新規分割の manager 単位で確認</li>
-</ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- flex_counter_manager の batch_mode 引数と pending_sai_objects 実装
-- portsorch doTask での flush() 呼び出し位置
-- queue 系 flex counter manager の uc / mc 分割
-- PG flex counter manager 化の現行コード
-- sonic-sairedis 側の集合 polling API 追加
-- 集合一発成功 → 失敗時 fallback の判定ロジック
--->
-
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/optimize-counter-initialization.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/sai_redis_api_idempotence.md">sonic-net/SONiC doc/warm-reboot/sai_redis_api_idempotence.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
