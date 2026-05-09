@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/save-on-set-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/new-frr-sonic-communication-channel/">
       
       
-        <link rel="prev" href="../gnoi-hld-for-file-and-factory-reset-apis/">
+        <link rel="prev" href="../mpls-tc-to-tc-map/">
       
       
-        <link rel="next" href="../send-to-ingress-hld/">
+        <link rel="next" href="../reliable-tsa/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>gNMI Save-On-Set（Set ごとの ConfigDB 永続化） - SONiC 非公式ドキュメント</title>
+        <title>新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gnmi-save-on-setset-configdb" class="md-skip">
+        <a href="#frr-sonic-dplane_fpm_sonic" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
+              新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -855,6 +855,8 @@
       
   
   
+    
+  
   
   
     
@@ -888,20 +890,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -919,13 +924,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -945,7 +950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -973,7 +978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1001,7 +1006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1029,7 +1034,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1057,7 +1062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1085,7 +1090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1110,10 +1115,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1129,6 +1161,248 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存設計の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既存設計の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例: SRv6 SID
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dplane_fpm_sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決策: dplane_fpm_sonic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード配置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルド統合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zebra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        zebra 起動オプション切替
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6-sid_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRv6 SID プログラム拡張例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SRv6 SID プログラム拡張例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#netlink-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Netlink message 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考 PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1141,7 +1415,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1169,7 +1443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1197,7 +1471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -2845,8 +3119,6 @@
       
   
   
-    
-  
   
   
     
@@ -2876,23 +3148,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -2910,13 +3179,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2936,7 +3205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../config-reload-enhancement/" class="md-nav__link">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -2964,7 +3233,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -2992,7 +3261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3017,37 +3286,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3063,203 +3305,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スコープと前提
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        処理フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装スケッチ（HLD 抜粋）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        リビジョン履歴に見える設計の進化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        性能・スケール影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        サポート範囲外
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3272,7 +3317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3300,7 +3345,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3328,7 +3373,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3356,7 +3401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -4295,7 +4340,35 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スコープと前提
+        既存設計の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既存設計の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例: SRv6 SID
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dplane_fpm_sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決策: dplane_fpm_sonic
       
     </span>
   </a>
@@ -4306,18 +4379,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        処理フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装スケッチ（HLD 抜粋）
+        コード配置
       
     </span>
   </a>
@@ -4328,7 +4390,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        リビジョン履歴に見える設計の進化
+        ビルド統合
       
     </span>
   </a>
@@ -4336,10 +4398,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#zebra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        性能・スケール影響
+        zebra 起動オプション切替
       
     </span>
   </a>
@@ -4347,10 +4409,49 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#srv6-sid_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポート範囲外
+        SRv6 SID プログラム拡張例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SRv6 SID プログラム拡張例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#netlink-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Netlink message 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd の拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考 PR
       
     </span>
   </a>
@@ -4363,7 +4464,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4375,29 +4476,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4413,7 +4492,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4424,7 +4514,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4435,7 +4525,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4462,7 +4552,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/save-on-set-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/new-frr-sonic-communication-channel.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -4472,189 +4562,166 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-gnmi</code> の Set ハンドラ、<code>sonic-host-services</code> 側の DBUS エンドポイント、<code>telemetry.sh</code> 起動スクリプトの実コード裏取りは未済。</p>
+<p><code>dplane_fpm_sonic.c</code> モジュールの sonic-buildimage/sonic-frr 配下への取り込み、<code>build-dplane-fpm-sonic-module.patch</code> の適用、zebra <code>supervisor.conf.j2</code> の <code>-M dplane_fpm_sonic</code> 切替、<code>RTM_NEWSRV6LOCALSID</code> / <code>RTM_DELSRV6LOCALSID</code> Netlink message type と <code>onSrv6LocalSidMsg()</code> callback の現行 master 実装は実コードでの裏取り未済（参考 PR: sonic-buildimage#18715, sonic-swss#3123）。</p>
 </div>
-<h1 id="gnmi-save-on-setset-configdb">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）<a class="headerlink" href="#gnmi-save-on-setset-configdb" title="Permanent link">&para;</a></h1>
+<h1 id="frr-sonic-dplane_fpm_sonic">新 FRR-SONiC 通信チャネル（<code>dplane_fpm_sonic</code> モジュール）<a class="headerlink" href="#frr-sonic-dplane_fpm_sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の gNMI 実装は、<code>gNMI.Set()</code> で受け取った設定変更を <strong>メモリ上の <code>CONFIG_DB</code></strong> にしか反映しない。リブートを跨いで設定を残すには別途 <code>config save</code> 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。</p>
-<p>Save-On-Set は <strong><code>gNMI.Set()</code> の各呼び出しの末尾で ConfigDB をファイルに保存する</strong> 機能を <code>sonic-gnmi</code> に追加するもの。後方互換のため <strong>既定では無効</strong> で、<code>telemetry</code> バイナリのコマンドラインフラグ <code>--with-save-on-set</code> で有効化する。永続化操作自体は telemetry コンテナ内では完結できないため、<strong>ホスト側 (<code>sonic-host-services</code>) の DBUS 経由</strong> で実行される設計になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の routing は <strong>FRR</strong> に依存し、FRR の <code>zebra</code> daemon が経路を計算し、<code>zebra</code> 内蔵の <strong>FPM (Forwarding Plane Manager)</strong> モジュール <code>dplane_fpm_nl</code> が <strong>Netlink メッセージで SONiC に push</strong> する。SONiC 側は <code>fpmsyncd</code> がそれを受け取り Redis (<code>APPL_DB</code>) に書く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD は <strong>既存 <code>dplane_fpm_nl</code> を SONiC が拡張できないジレンマ</strong> を解消するため、<strong>SONiC 専用の FPM モジュール <code>dplane_fpm_sonic</code></strong> を SONiC 側のリポで保守する設計を導入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スコープと前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">既存設計の問題<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>dplane_fpm_nl</code> は kernel への Netlink を <strong>そのままコピー</strong> して SONiC に流す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel data model に合わせた messages なので、SONiC data model にしか存在しない属性は表現できない。</p>
+<h4 id="srv6-sid">例: SRv6 SID<a class="headerlink" href="#srv6-sid" title="Permanent link">&para;</a></h4>
+<p>FRR は SRv6 SID を kernel に programming する Netlink を生成するが、kernel 側に必要な <code>sid_value</code> / <code>action</code> / <code>vrf_table</code> だけが含まれる。SONiC 側は <strong><code>block_len</code> / <code>node_len</code> / <code>func_len</code> / <code>arg_len</code></strong> といった追加属性を必要とするが、これは Netlink にも kernel にも存在しないため <code>dplane_fpm_nl</code> の Netlink では表現できない<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<pre class="mermaid"><code>graph LR
+    FRR[FRR zebra]
+    KE[Kernel data model&lt;br/&gt;sid_value / action / vrf_table]
+    SE[SONiC data model&lt;br/&gt;+ block_len / node_len / func_len / arg_len]
+    FRR --&gt;|kernel 用 Netlink| KE
+    FRR -.-&gt;|同じ Netlink を流用&lt;br/&gt;属性不足| SE</code></pre>
+<h3 id="dplane_fpm_sonic">解決策: <code>dplane_fpm_sonic</code><a class="headerlink" href="#dplane_fpm_sonic" title="Permanent link">&para;</a></h3>
+<p>新モジュール <code>dplane_fpm_sonic</code> を SONiC のリポで保持・保守する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>対象は <code>sonic-gnmi</code> のみ。SAI / SWSS / Syncd / アーキテクチャ全体には変更を入れない。</li>
-<li>既存の運用フィールド機器を壊さないよう、本機能は <strong>デフォルト OFF</strong>。</li>
-<li>起動時の <code>TELEMETRY|gnmi|save_on_set</code> を <code>telemetry.sh</code> が読んで <code>telemetry</code> バイナリへ引数として渡す。<strong>値の変更は telemetry の再起動でのみ反映</strong> される。</li>
+<li>当初は <code>dplane_fpm_nl</code> の <strong>完全コピー</strong>。後方互換と機能維持を保証</li>
+<li>SONiC コミュニティが必要に応じ <strong>SONiC 固有 Netlink TLV を追加</strong></li>
+<li>FRR 側の改造を必要とせず、SONiC 側で機能拡張可</li>
 </ul>
-<h3 id="_4">処理フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant C as Client (gNMI)
-    participant T as telemetry (sonic-gnmi)
-    participant H as sonic-host-services (DBUS)
-    participant F as ConfigDB backup file
-
-    C-&gt;&gt;T: gNMI.Set(req)
-    T-&gt;&gt;T: Apply to in-memory ConfigDB
-    alt --with-save-on-set 有効&lt;br/&gt;かつ Set 成功
-        T-&gt;&gt;H: SaveStartupConfig() via DBUS
-        H-&gt;&gt;F: write ConfigDB to file
+<pre class="mermaid"><code>graph LR
+    subgraph FRR
+      Z[zebra]
     end
-    T--&gt;&gt;C: SetResponse</code></pre>
-<p>設計の鍵は次の 3 点である。</p>
-<ol>
-<li><strong>DBUS 越しに host service を呼ぶ</strong>: telemetry は Docker コンテナ内で動いており、ホストのファイルシステムへ直接書けない。<code>sonic-host-services</code> が DBUS で公開している API（<code>SaveStartupConfig</code> 系）を経由する必要がある。</li>
-<li><strong>エラーチェック</strong>: Set が成功した場合（<code>err == nil</code>）にのみ保存処理を呼ぶ。失敗時に保存すると不整合な部分適用が永続化されるため。</li>
-<li><strong>関数ポインタによる切り替え</strong>: フラグの読み取りはプロセス起動時のみ。実行時は <code>gnmi.SaveOnSet</code> という関数ポインタが呼ばれるだけで、有効/無効はこのポインタの差し替えで表現する。</li>
-</ol>
-<h3 id="hld">実装スケッチ（HLD 抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<p>HLD は Go の擬似コードで実装方針を示している。要点は <strong>フラグで関数ポインタを差し替える</strong> という単純な構造である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-go highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// 起動時のフラグ読み取り</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">var</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">withSaveOnSet</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">flag</span><span class="p">.</span><span class="nx">Bool</span><span class="p">(</span><span class="s">&quot;with-save-on-set&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enables save-on-set.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">if</span><span class="w"> </span><span class="o">*</span><span class="nx">withSaveOnSet</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">SaveOnSet</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">SaveOnSetEnabled</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+    subgraph SONiC repo
+      SF[sonic-buildimage/sonic-frr/&lt;br/&gt;dplane_fpm_sonic/&lt;br/&gt;dplane_fpm_sonic.c]
+    end
+    Z --&gt;|"-M dplane_fpm_sonic"| SF
+    SF --&gt;|SONiC 固有 Netlink TLV| FPS[fpmsyncd]
+    FPS --&gt; APPL[APPL_DB]</code></pre>
+<h3 id="_4">コード配置<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>sonic-buildimage</code> リポ内<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-buildimage/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>└── sonic-frr/
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ├── Makefile
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ├── frr
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ├── patch
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    └── dplane_fpm_sonic/
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        └── dplane_fpm_sonic.c
 </span></code></pre></div>
-<div class="language-go highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// 保存処理本体</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">func</span><span class="w"> </span><span class="nx">SaveOnSetEnabled</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nx">transformer</span><span class="p">.</span><span class="nx">SaveStartupConfig</span><span class="p">()</span><span class="w">  </span><span class="c1">// → DBUS 経由で host service 呼び出し</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">func</span><span class="w"> </span><span class="nx">SaveOnSetDisabled</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w">        </span><span class="c1">// 何もしない（既定）</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="kd">var</span><span class="w"> </span><span class="nx">SaveOnSet</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">SaveOnSetDisabled</span><span class="w">  </span><span class="c1">// 関数ポインタ</span>
+<h3 id="_5">ビルド統合<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>sonic-buildimage/sonic-frr/patch/</code> に <strong><code>build-dplane-fpm-sonic-module.patch</code></strong> を追加。このパッチの目的は<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>FRR zebra の Makefile を修正し <code>dplane_fpm_sonic.c</code> を <code>dplane_fpm_sonic.so</code> としてビルド</li>
+<li><code>dplane_fpm_sonic.so</code> を FRR modules ディレクトリに install</li>
+</ul>
+<h3 id="zebra">zebra 起動オプション切替<a class="headerlink" href="#zebra" title="Permanent link">&para;</a></h3>
+<p><code>supervisor.conf.j2</code> で zebra の <code>-M</code> を切替<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[program:zebra]
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>command=/usr/lib/frr/zebra -A 127.0.0.1 -s 90000000 -M dplane_fpm_sonic -M snmp --asic-offload=notify_on_offload
 </span></code></pre></div>
-<div class="language-go highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Set ハンドラ末尾</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="o">*</span><span class="nx">Server</span><span class="p">)</span><span class="w"> </span><span class="nx">Set</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="o">*</span><span class="nx">gnmipb</span><span class="p">.</span><span class="nx">SetRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">gnmipb</span><span class="p">.</span><span class="nx">SetResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="c1">// ... 通常の Set 処理 ...</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nx">SaveOnSet</span><span class="p">()</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">resp</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+<p><code>-M dplane_fpm_nl</code> → <code>-M dplane_fpm_sonic</code> への置換が本 HLD の起動側変更。</p>
+<h3 id="srv6-sid_1">SRv6 SID プログラム拡張例<a class="headerlink" href="#srv6-sid_1" title="Permanent link">&para;</a></h3>
+<p>新モジュール初の利用例として SRv6 SID をサポートする<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="netlink-message">Netlink message 拡張<a class="headerlink" href="#netlink-message" title="Permanent link">&para;</a></h4>
+<p><code>dplane_fpm_sonic</code> に <strong>新規 Netlink message type</strong> を追加:</p>
+<table>
+<thead>
+<tr>
+<th>メッセージ</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RTM_NEWSRV6LOCALSID</code></td>
+<td>SRv6 SID を SONiC に push</td>
+</tr>
+<tr>
+<td><code>RTM_DELSRV6LOCALSID</code></td>
+<td>SRv6 SID を SONiC から削除</td>
+</tr>
+</tbody>
+</table>
+<p>これらのメッセージは <code>block_len</code> / <code>node_len</code> / <code>func_len</code> / <code>arg_len</code> 等 SONiC 固有属性を <strong>TLV として運ぶ</strong>。</p>
+<h4 id="fpmsyncd"><code>fpmsyncd</code> の拡張<a class="headerlink" href="#fpmsyncd" title="Permanent link">&para;</a></h4>
+<p><code>fpmsyncd</code> に新メッセージ受理コードを追加<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>RTM_NEWSRV6LOCALSID</code> / <code>RTM_DELSRV6LOCALSID</code> を判定</li>
+<li>該当時 <strong><code>onSrv6LocalSidMsg()</code> callback</strong> に渡す</li>
+<li>callback は SID 属性を抽出し <strong><code>APPL_DB.SRV6_MY_SID_TABLE</code></strong> に書く</li>
+</ul>
+<pre class="mermaid"><code>sequenceDiagram
+    participant ZB as zebra
+    participant DFS as dplane_fpm_sonic
+    participant FS as fpmsyncd
+    participant APP as APPL_DB.SRV6_MY_SID_TABLE
+    ZB-&gt;&gt;DFS: SRv6 SID 経路情報
+    DFS-&gt;&gt;DFS: SONiC 固有 TLV 付加 (block/node/func/arg len)
+    DFS-&gt;&gt;FS: RTM_NEWSRV6LOCALSID Netlink
+    FS-&gt;&gt;FS: type 判定 → onSrv6LocalSidMsg()
+    FS-&gt;&gt;APP: SID entry 書き込み</code></pre>
+<h3 id="pr">参考 PR<a class="headerlink" href="#pr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-buildimage#18715</code></td>
+<td><code>dplane_fpm_sonic</code> モジュールと patch / supervisor.conf.j2</td>
+</tr>
+<tr>
+<td><code>sonic-swss#3123</code></td>
+<td><code>fpmsyncd</code> への SRv6 SID メッセージ受理拡張</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>本 HLD は <strong>CONFIG_DB / CLI / YANG 変更を伴わない</strong>。zebra の起動 option と <code>fpmsyncd</code> の挙動が透過的に切り替わるだけのインフラ刷新である。</p>
+<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>特別なユーザ操作はない。ビルド時に <code>dplane_fpm_sonic.so</code> が含まれ、<code>supervisor.conf.j2</code> で起動オプションが <code>-M dplane_fpm_sonic</code> になっていれば自動有効。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 動作確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>zebra<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;dplane_fpm_[a-z_]*&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># → dplane_fpm_sonic</span>
 </span></code></pre></div>
-<!-- evidence:
-source: sonic-net/SONiC/doc/mgmt/gnmi/save_on_set.md#L106-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  A new command-line parameter will be added to control the behavior ... --with-save-on-set
-  if *withSaveOnSet { gnmi.SaveOnSet = gnmi.SaveOnSetEnabled }
-  func SaveOnSetEnabled() { transformer.SaveStartupConfig() }
-  if err == nil { SaveOnSet() }
-reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出しというフロー全体の根拠。
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>当初の <code>dplane_fpm_sonic</code> は <code>dplane_fpm_nl</code> のコピーのため、<strong>機能拡張がない場合は実質的なメリットなし</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>SONiC コミュニティが追加 TLV を <strong>継続的にメンテ</strong> する責務を負う</li>
+<li>FRR upstream の <code>dplane_fpm_nl</code> 側で根本的な変更（fix / 機能追加）があった場合、SONiC 側に <strong>手動で取り込む必要</strong></li>
+<li><code>RTM_NEWSRV6LOCALSID</code> 等の番号付け / TLV フォーマットは SONiC 内で取り決める。<strong>他 NOS との互換性を期待してはならない</strong></li>
+<li><code>fpmsyncd</code> 側で対応するハンドラを書かないと新メッセージは drop される（後方互換は default で <code>dplane_fpm_nl</code> 同等のメッセージ群が動くため致命的にはならない）</li>
+</ul>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>zebra</code> 起動 (<code>supervisor.conf.j2</code>)</strong>: <code>-M</code> オプションで <code>dplane_fpm_sonic</code> 選択</li>
+<li><strong><code>fpmsyncd</code></strong>: 受理側で新 message type を扱う必要</li>
+<li><strong><code>SRV6_MY_SID_TABLE</code> (APPL_DB)</strong>: SRv6 SID の書き込み先</li>
+<li><strong><code>fpmsyncd</code> の orchagent 側 consumer</strong>: SRv6 経路の SAI への反映（別レイヤ）</li>
+<li><strong>FRR upstream の差分</strong>: モジュール本体は SONiC 側でメンテだが、<code>dplane_fpm_nl</code> の互換は維持する必要</li>
+</ul>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li>経路が SONiC に届かない → <code>ps aux | grep zebra</code> で <code>-M dplane_fpm_sonic</code> がついているか確認</li>
+<li>SRv6 SID が <code>APPL_DB</code> に出ない → <code>fpmsyncd</code> ログで <code>RTM_NEWSRV6LOCALSID</code> の受理ログを確認</li>
+<li>既存機能の経路 push が壊れた → <code>dplane_fpm_sonic</code> のベース実装が <code>dplane_fpm_nl</code> から乖離していないか sonic-buildimage の patch 状況を確認</li>
+<li>ビルド失敗 → <code>build-dplane-fpm-sonic-module.patch</code> が現行 FRR バージョンに適合するか確認</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- sonic-buildimage の sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c 取り込み確認 (PR #18715)
+- build-dplane-fpm-sonic-module.patch の現行 patch directory 存在確認
+- zebra supervisor.conf.j2 の -M dplane_fpm_sonic 切替確認
+- sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID メッセージ受理実装確認 (PR #3123)
+- APPL_DB.SRV6_MY_SID_TABLE スキーマ取り込み確認
 -->
 
-<h3 id="_5">リビジョン履歴に見える設計の進化<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>HLD のリビジョン表は本機能が <strong>DBUS 直叩きから「Sonic Service Client」経由に変更された</strong> ことを示している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>Rev</th>
-<th>日付</th>
-<th>変更内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>v0.1</td>
-<td>2021-02-22</td>
-<td>初版（Tomek Madejski / Ryan Lucus, Google）</td>
-</tr>
-<tr>
-<td>v0.2</td>
-<td>2024-03-26</td>
-<td>Sonic Service Client を使う方式に更新</td>
-</tr>
-<tr>
-<td>v0.3</td>
-<td>2024-06-13</td>
-<td>呼び出しに <strong>エラーチェックを追加</strong></td>
-</tr>
-</tbody>
-</table>
-<p>v0.3 の追加（呼び出し失敗時にどう振る舞うか）は実装上重要で、host service が落ちている / DBUS 接続が切れている等のケースで gNMI.Set 全体を巻き込まないようにするためのもの。</p>
-<h3 id="_6">性能・スケール影響<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<ul>
-<li>機能を <strong>有効化した場合</strong>、ConfigDB のサイズに比例した保存コストが Set 1 回ごとに発生する。HLD は明示的に「ConfigDB のサイズに対してスケールする性能ヒットがある」と認めている。</li>
-<li>メモリ消費は無視できる（関数ポインタ数本程度）。</li>
-<li>ウォームブート / ファストブートには影響しない。</li>
-</ul>
-<h3 id="_7">サポート範囲外<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>状態</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SAI API</td>
-<td>変更なし</td>
-</tr>
-<tr>
-<td>CLI / YANG</td>
-<td>変更なし</td>
-</tr>
-<tr>
-<td>アプリ拡張</td>
-<td>該当しない（ビルトイン機能）</td>
-</tr>
-<tr>
-<td>プラットフォーム</td>
-<td>任意のプラットフォームで動作（プラットフォーム固有の対応不要）</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>Field</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>TELEMETRY</code></td>
-<td><code>gnmi</code></td>
-<td><code>save_on_set</code></td>
-<td><code>telemetry.sh</code> がこの値を読み、<code>--with-save-on-set</code> の付与可否を決める</td>
-</tr>
-</tbody>
-</table>
-<p><code>TELEMETRY|gnmi|save_on_set</code> のフィールド名・取り得る値の正確な仕様は HLD 内では <code>save_on_set</code> という参照のみで詳細未記載。実装裏取りで補完する。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD は CLI / YANG の変更を <strong>明示的に拒否</strong> している（"No changes to CLI or YANG"）。設定は CONFIG_DB を直接書き換えるか、既存の telemetry 設定経路で行う前提。</p>
-<h3 id="_9">設定例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 有効化（CONFIG_DB を書き換えてから telemetry 再起動）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;true&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 無効化に戻す</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;false&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
-</span></code></pre></div>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>sonic-host-services</code> (DBUS)</strong>: 保存処理の実体は host service 側にある。host service が落ちている、または DBUS パーミッションが壊れている場合、Save-On-Set は失敗する。v0.3 のエラーチェック追加でこのケースで Set 全体が巻き込まれないようにはなっている。</li>
-<li><strong><code>config save</code> / <code>config replace</code></strong>: 既存の手動保存と同じファイルに上書きする想定であるため、運用が混在すると「最後に書いた者勝ち」になる。</li>
-<li><strong>大規模 ConfigDB</strong>: Set がバースト的に来る運用（一括 push 等）では、Set ごとに保存処理が走るためスループットが大きく落ちる可能性がある。</li>
-</ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<ul>
-<li>リブート後に設定が消える場合、まず <code>--with-save-on-set</code> が telemetry プロセスに渡っているか（<code>ps -ef | grep telemetry</code>）を確認する。</li>
-<li>フラグは渡っているのに保存されない場合、<code>sonic-host-services</code> の DBUS エンドポイント (<code>SaveStartupConfig</code> 相当) のログを確認する。v0.3 以降はエラーが返ってくれば gNMI クライアントへ伝播する設計になっているはずなので、Set のレスポンスを見ること。</li>
-<li>性能劣化が見られる場合、<code>save_on_set</code> を一時的に無効化（telemetry 再起動が必要）して切り分ける。</li>
-</ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/save_on_set.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-fpm-module/frr_sonic_communication_channel.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
