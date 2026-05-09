@@ -1093,6 +1093,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bgpcfgd-dynamic-peer-modification-support/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
