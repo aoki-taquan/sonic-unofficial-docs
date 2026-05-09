@@ -1,7 +1,7 @@
 ---
 title: SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
     - sonic-srv6
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD（v0.4 / 2025-11 改訂）のみを根拠に書かれている。`bgpcfgd` の SRv6 Manager 実装、`SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` テーブルの現行 master 取り込み状況、FRR 側 `static-sids` CLI の存在 ([FRR PR#16894](https://github.com/FRRouting/frr/pull/16894)) は未確認。
+!!! success "裏取りステータス: Code-verified"
+    sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py` L12 `SRV6_MY_SIDS_TABLE_NAME`、L14 `class SRv6Mgr(Manager)`、L37 `locators_set_handler` / L56 `sids_set_handler`（locator 不在時に `SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を含む）を確認。`src/sonic-bgpcfgd/bgpcfgd/main.py` L30 で `from .managers_srv6 import SRv6Mgr` を確認。`src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L121 で `'SRV6_MY_LOCATORS': ['zebra']` / L123 で `'SRV6_MY_SIDS': ['mgmtd']` のターゲット daemon 設定、L2732 SRV6_MY_LOCATORS handler、L2751-2768 SRV6_MY_SIDS handler で `vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"` の vtysh コマンドラインを生成する経路を確認。YANG は sonic-yang-models `yang-models/sonic-srv6.yang` の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` リスト定義を確認、`Configuration.md` L3281-3285 で SRv6 テーブルが正式に文書化されていることを確認（verified at: 2026-05-09）。
 
 # SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
 

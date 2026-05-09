@@ -1,7 +1,7 @@
 ---
 title: Switchport モード（access / trunk / routed）と VLAN CLI 拡張
 area: switching
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -22,8 +22,10 @@ related:
     - sonic-portchannel
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 0.5 (2023-05) で複数回の改訂を経ているが、`switchport_mode` フィールドや CLI multi-VLAN parser、`db_migrator` 拡張が現行 master に取り込まれているか要裏取り。**詳細な状態遷移と全例は原文 HLD を参照**。
+!!! warning "裏取りステータス: Discrepancy-found"
+    sonic-utilities `config/switchport.py` L17 で `mode_type` enum `["access", "trunk", "routed"]` を、L57-78 で `port_data["mode"]` への書き込みを確認、`config/main.py` L119 で `PORT_MODE = "switchport_mode"` 定数定義、L1787 `config.add_command(switchport.switchport)` 登録、L5777 で `interface_mode == "trunk" or interface_mode == "access"` 判定を確認。YANG 側は sonic-yang-models `yang-models/sonic-port.yang` L86-89 / `sonic-portchannel.yang` L71 で `leaf mode { type stypes:switchport_mode; }`、`sonic-types.yang.j2` L244 で `typedef switchport_mode` を確認。
+    
+    **discrepancy**: HLD と本文は CONFIG_DB のフィールド名を `switchport_mode` と表記しているが、実装上は `PORT.<name>.mode` (YANG: `leaf mode`) で `switchport_mode` は YANG **typedef 名**。`db_migrator` への明示的な switchport モード推論ロジックも現行 master に未追加（既存 entry に `mode` フィールドが無ければ `routed` 相当として振る舞う実装）。
 
 # Switchport モード（access / trunk / routed）と VLAN CLI 拡張
 

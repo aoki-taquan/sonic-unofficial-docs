@@ -1,7 +1,7 @@
 ---
 title: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2025-08 (Rev 1.3) と新しいが、`sonic-py-common.device_info.is_voq_chassis()` の改修、`Orchagent` の chassis-DB 接続スキップ、`Bgpconfd` の `ChassisDbMgr` 起動条件は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    sonic-buildimage `src/sonic-py-common/sonic_py_common/device_info.py` L43 `CHASSIS_DB_CONF_FILENAME = "chassisdb.conf"`、L261/L265 で chassis_db_conf_path 候補列挙、L622 `is_chassis_config_absent()`、L630-635 `is_voq_chassis()` で `switch_type ∈ {voq, fabric} かつ not is_chassis_config_absent()` の判定（chassisdb.conf 存在チェックで single-ASIC VoQ を区別）を確認。L668 `is_chassis()` で voq+disagg 除外 / packet / virtual を OR 結合。bgpcfgd 側は `src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py` L241 と `bgpcfgd/main.py` L112 で `device_info.is_chassis()` 分岐、テストデータ `tests/data/sonic-cfggen/bgpd.main.conf.j2/voq_chassis.json` L7 で `chassisdb_conf_present` フラグを確認（verified at: 2026-05-09）。
 
 # 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
 

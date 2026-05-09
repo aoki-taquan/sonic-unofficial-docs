@@ -1,7 +1,7 @@
 ---
 title: Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / プラットフォーム固有"
-    本機能は **Cisco 8000 限定** とスクリプト側で強制される設計。`syncd_request_shutdown -pxe` / `SAI_START_TYPE_EXPRESS_BOOT` / `SYNCD_RESTART_TYPE_EXPRESS` 列挙値、`SONIC_BOOT_TYPE=express` フラグの扱いが現行 master の sonic-utilities / sonic-sairedis / sonic-host-services に取り込まれているかは未確認。
+!!! success "裏取りステータス: Code-verified"
+    sonic-sairedis `syncd/CommandLineOptions.h` L13 `STRING_SAI_START_TYPE_EXPRESS_BOOT="express"` / L36 `SAI_START_TYPE_EXPRESS_BOOT=4`、`CommandLineOptions.cpp` L105-106 で文字列 "express" → enum マッピング、`RequestShutdownCommandLineOptions.cpp` L59/L88 で `SYNCD_RESTART_TYPE_EXPRESS`、`RequestShutdownCommandLineOptionsParser.cpp` L65 で setRestartType(SYNCD_RESTART_TYPE_EXPRESS) を確認。`Syncd.h` L111 `setPreShutdownOnAllSwitches()`、`Syncd.cpp` L282 / L4566-L4570 で start_type==EXPRESS_BOOT 分岐、L4772/L5665 で `SAI_SWITCH_ATTR_FAST_API_ENABLE` 操作、L5690 `setPreShutdownOnAllSwitches` 実装、L5946 で fail 時 cold restart fallback、L5956 で setPreShutdownOnAllSwitches 呼び出し、L6058-L6072 で SYNCD_RESTART_TYPE_EXPRESS の shutdown 分岐を確認。sonic-utilities `scripts/express-reboot` symlink、`scripts/fast-reboot` L375 / L402-403 / L454 / L749 / L795 / L883-884 / L931 / L965-967 (BOOT_TYPE_ARG="express") / L1167 / L1182 で express-reboot 経路を確認。sonic-host-services `scripts/determine-reboot-cause` L43 `REBOOT_TYPE_KEXEC_PATTERN_EXPRESS` / L68 `'express-reboot'` 認識を確認（verified at: 2026-05-09）。
 
 # Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
 

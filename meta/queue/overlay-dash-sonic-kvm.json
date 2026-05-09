@@ -1,14 +1,19 @@
 {
   "page": "docs/overlay/dash-sonic-kvm.md",
   "issue": 111,
-  "verification": "hld-only",
-  "concerns": [
-    "BMv2 / VPP / saidash / dashsai client-server の現行 master 取り込み",
-    "vms-kvm-dpu トポロジ ansible playbook の所在",
-    "gnmi_cli_py の Python 2 依存と移行計画",
-    "DPU SONiC KVM image with dataplane のリリース有無",
-    "SAIRedis の saivs / dashsai client 切替実装",
-    "5.2 DPU+VPP NPU testbed (TBD) の進捗"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "BMv2 / VPP / saidash / dashsai client-server の現行 master 取り込み -> sonic-sairedis/configure.ac L49-50 --with-dashsai、debian/rules L40-41 dashsai build profile を確認、sonic-buildimage 各 docker-*-vs / docker-ptf の versions-deb で p4lang-bmv2==1.15.0-9 を確認 (verified 2026-05-09)",
+    "vms-kvm-dpu トポロジ ansible playbook の所在 -> sonic-net/SONiC doc/dash/dash-sonic-kvm.md L117-118 / L132 で testbed-cli.sh add-topo vms-kvm-dpu / deploy-mg vms-kvm-dpu のコマンドラインを確認 (verified 2026-05-09)",
+    "SAIRedis の saivs / dashsai client 切替実装 -> sonic-sairedis/configure.ac L49 AC_ARG_WITH(dashsai) / debian/rules L40-41 で dashsai プロファイルの分岐を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "open_concerns": [
+    "DPU SONiC KVM image with dataplane のリリース有無 -> HLD で TBD と明記、現行 master では未取り込み",
+    "5.2 DPU+VPP NPU testbed (TBD) の進捗 -> HLD で TBD と明記、現行 master では未取り込み",
+    "gnmi_cli_py の Python 2 依存と移行計画 -> 該当ファイルが現行 cache に存在せず、本 HLD の前提となる Python 2 依存自体が古い情報の可能性"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "DASH SAI build profile / BMv2 / vms-kvm-dpu testbed トポロジは現行 master に取り込み済み。HLD で明示的に TBD とされる「DPU image with dataplane」「DPU+VPP NPU testbed」は仕様通り未着手。"
 }

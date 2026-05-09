@@ -1,7 +1,7 @@
 ---
 title: flexcounter の queue/PG map 生成と watermark 有効化の整合
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `PortsOrch::generateQueueMap` / `generatePriorityGroupMap` 分離、`addQueueFlexCounters` / `addQueueWatermarkFlexCounters` 等の細分化された関数群、`m_isPriorityGroupMapGenerated` 等のキャッシュフラグ、port 追加時の watermark stats 自動追加は実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified"
+    sonic-swss `orchagent/portsorch.h` L213 `generateQueueMap` / L223 `generatePriorityGroupMap` 分離、L518 `m_isQueueMapGenerated` / L532 `m_isPriorityGroupMapGenerated` キャッシュフラグ、L519 / L533 の Per-Port ヘルパを確認。`portsorch.cpp` L8391 `generateQueueMap` 本体（L8393 でキャッシュフラグ判定）、L8533 `addQueueFlexCounters` / L8574 `addQueueFlexCountersPerPort` / L8618 `addQueueWatermarkFlexCounters` / L8658 `addQueueWatermarkFlexCountersPerPort` の細分化を確認（verified at: 2026-05-09）。
 
 # flexcounter の queue/PG map 生成と watermark 有効化の整合
 

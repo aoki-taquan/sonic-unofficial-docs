@@ -1,15 +1,17 @@
 {
   "page": "docs/platform/db-design-for-multi-asic-scenarios.md",
-  "verification": "hld-only",
-  "concerns": [
-    "config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認",
-    "config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認",
-    "config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認",
-    "show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認",
-    "config save <single_file> での Golden Config 形式 1 ファイル保存実装確認",
-    "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "config reload が単一 Golden Config ファイル (localhost + asicN 階層) を host / 各 ASIC namespace の CONFIG_DB に分配する実装の取り込み確認 -> sonic-utilities/config/main.py L99 DEFAULT_GOLDEN_CONFIG_DB_FILE、L2520 reload→override-config-table 経路、L2341-2352 load_minigraph --override_config -p を確認 (verified 2026-05-09)",
+    "config override-config-table の multi-ASIC 対応 (PR sonic-utilities#2738) 取り込み確認 -> config/main.py L2580-2620 override_config_table 実装で multi_asic.is_multi_asic() 分岐、HOST_NAMESPACE='localhost' / 各 ASIC namespace の CONFIG_DB を分けて write を確認 (verified 2026-05-09)",
+    "config apply-patch のパスに /<asic>/... を許容する変更の取り込み確認 -> config/main.py L1917-1965 apply_patch 実装で --parallel オプションと _gcu_apply_patch_from_file による各 ASIC 並列適用ロジックを確認 (verified 2026-05-09)",
+    "show runningconfiguration all の集約出力 (Golden Config フォーマット) 実装確認 -> sonic-utilities/show/main.py L1827 'all' subcommand と config/main.py L1548-1549 の localhost/asicN serialize ロジックを確認 (verified 2026-05-09)",
+    "config save <single_file> での Golden Config 形式 1 ファイル保存実装確認 -> config/main.py L1573-1639 で multi-ASIC config を localhost / asicN キーで dump する serialize ロジックを確認 (verified 2026-05-09)",
+    "minigraph と Golden Config 過渡期の優先順位や両立シナリオの最終決定状況確認 -> load_minigraph に --override_config / --golden_config_path オプションが用意されており minigraph 起点で golden を後段で重ねる併用が現行 master の方式 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 187,
-  "pr": 188
+  "pr": 188,
+  "last_verified": "2026-05-09"
 }

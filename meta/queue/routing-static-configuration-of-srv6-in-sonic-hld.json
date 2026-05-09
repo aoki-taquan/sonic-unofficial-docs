@@ -1,12 +1,14 @@
 {
   "page": "docs/routing/static-configuration-of-srv6-in-sonic-hld.md",
   "issue": 304,
-  "verification": "hld-only",
-  "concerns": [
-    "bgpcfgd の SRv6 Manager モジュール実装が現行 master にあるか未確認",
-    "CONFIG_DB の SRV6_MY_LOCATORS / SRV6_MY_SIDS スキーマが現行 master に取り込まれているか未確認",
-    "sonic-yang-models の sonic-srv6 モジュール存在確認",
-    "FRR の static-sids CLI (PR#16894) が SONiC 採用 FRR に取り込まれているか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "bgpcfgd の SRv6 Manager モジュール実装が現行 master にあるか確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py L14 class SRv6Mgr(Manager) / L37 locators_set_handler / L56 sids_set_handler を確認、bgpcfgd/main.py L30 で from .managers_srv6 import SRv6Mgr を確認 (verified 2026-05-09)",
+    "CONFIG_DB の SRV6_MY_LOCATORS / SRV6_MY_SIDS スキーマが現行 master に取り込まれているか確認 -> sonic-bgpcfgd/bgpcfgd/managers_srv6.py L12 SRV6_MY_SIDS_TABLE_NAME 定義、frrcfgd/frrcfgd.py L121-123 / L2335-2337 / L2732 SRV6_MY_LOCATORS handler / L2751-2768 SRV6_MY_SIDS handler を確認、sonic-yang-models/doc/Configuration.md L3281-3285 で正式な仕様文書化を確認 (verified 2026-05-09)",
+    "sonic-yang-models の sonic-srv6 モジュール存在確認 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-srv6.yang の存在と SRV6_MY_LOCATORS_LIST 定義を確認 (verified 2026-05-09)",
+    "FRR の static-sids CLI (PR#16894) が SONiC 採用 FRR に取り込まれているか確認 -> frrcfgd.py L2756 で 'segment-routing srv6 static-sids' / 'sid {} locator {} behavior {} vrf {}' の vtysh CLI を組み立てており、SONiC 採用 FRR が当該 CLI をサポートしている前提で取り込まれていることを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

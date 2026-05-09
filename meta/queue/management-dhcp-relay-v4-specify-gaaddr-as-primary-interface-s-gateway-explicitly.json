@@ -1,11 +1,13 @@
 {
   "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
   "issue": 39,
-  "verification": "hld-only",
-  "concerns": [
-    "isc-dhcp の dhcrelay -pg 拡張が community master に取り込まれているか未確認",
-    "docker-dhcp-relay supervisord テンプレートが secondary を考慮するか未確認",
-    "config interface ip add --secondary CLI の sonic-utilities 実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "isc-dhcp の dhcrelay -pg 拡張が community master に取り込まれているか確認 -> sonic-buildimage/src/isc-dhcp/patch/0015-option-to-set-primary-address-in-interface.patch を確認 (verified 2026-05-09)",
+    "docker-dhcp-relay supervisord テンプレートが secondary を考慮するか確認 -> sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2 L27-28 で VLAN_INTERFACE|get_primary_addr → -pg <gateway> 引数生成を確認、フィルタは sonic-config-engine/sonic-cfggen L168 (secondary 除外) / L302 (env.filters 登録) で定義 (verified 2026-05-09)",
+    "config interface ip add --secondary CLI の sonic-utilities 実装確認 -> sonic-utilities/config/main.py L5680 --secondary/-s オプション、L5794-L5806 で VLAN_INTERFACE への secondary: 'true' 書き込みを確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }
