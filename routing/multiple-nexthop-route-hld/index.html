@@ -1162,6 +1162,8 @@
       
         
       
+        
+      
     
     
     
@@ -1486,6 +1488,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11629,9 +11659,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>MuxOrch::updateRoute()</code>、<code>MuxOrch::containsNextHop()</code>、<code>NextHopGroupKey::is_mux_nexthop()</code>、<code>RouteOrch</code> で mux nexthop group を <code>m_nextHops</code> に展開する分岐の現行 master 実装は実コードでの裏取り未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/muxorch.cpp</code> L1585 <code>MuxOrch::updateRoute(const IpPrefix &amp;pfx)</code>、L2058 <code>MuxOrch::containsNextHop()</code>、L1824/1926/2019/2045/2050 の <code>mux_nexthop_tb_</code> 出入り、L700 <code>MuxCable::updateRoutes()</code> / L724 <code>MuxCable::updateRoutesForNextHop()</code> から <code>mux_orch_-&gt;updateRoute(rt-&gt;prefix)</code> が駆動される経路を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="dual-tor-mux-multi-nexthop-route-muxorchupdateroute">dual-tor mux 跨ぎの multi-nexthop route ループ回避（<code>MuxOrch::updateRoute</code>）<a class="headerlink" href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

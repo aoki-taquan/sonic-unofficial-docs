@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11829,9 +11859,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>CoppOrch</code> の user-defined trap + genetlink hostif 生成、<code>SEND_TO_INGRESS_PORT</code> の <code>PortsOrch</code> での処理、SAI <code>SAI_HOSTIF_TYPE_GENETLINK</code> / <code>SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME</code> の community SAI 取り込み、ベンダ kernel ドライバ側の <code>genl_packet</code> フィルタ実装は実コードでの裏取り未済（PINS 関連）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（SONiC 共通基盤）</p>
+<p><code>sonic-swss/orchagent/copporch.h</code> L44-46 で <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> フィールドを確認、<code>copporch.cpp</code> L446 (<code>SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK</code>)、L657-669 <code>CoppOrch::createGenetlinkHostIf()</code>、L833-844 で trap_group ごとに genetlink hostif 作成する経路を確認。<code>sonic-swss/orchagent/portsorch.cpp</code> L771 (<code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> の Table 登録)、L7106-7120 <code>PortsOrch::addSendToIngressHostIf()</code>、<code>orchdaemon.cpp</code> L219 でテーブル登録優先度も確認。<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> L76-83 で <code>queue2_group1</code> に <code>genetlink_mcgrp_name: "packets"</code> / <code>genetlink_name: "psample"</code> の trap group 定義を確認。ベンダ依存の kernel <code>genl_packet</code> filter 実装は SONiC リポジトリ範囲外で本ページのスコープ外 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="p4runtime-packetiogeneric-netlink-send_to_ingress">P4Runtime PacketIO（generic netlink + send_to_ingress）<a class="headerlink" href="#p4runtime-packetiogeneric-netlink-send_to_ingress" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

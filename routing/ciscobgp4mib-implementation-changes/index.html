@@ -1162,6 +1162,8 @@
       
         
       
+        
+      
     
     
     
@@ -1710,6 +1712,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11595,9 +11625,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD のみを根拠に書かれている。<code>bgpmon</code> 実装、<code>STATE_DB.NEIGH_STATE_TABLE</code> のスキーマ確定、<code>snmp_ax_impl</code> 側の取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py</code> L15-17 で 15 秒ポーリングと <code>/var/log/frr/frr.log</code> mtime 監視、L51/131-179/203 で <code>STATE_DB.NEIGH_STATE_TABLE|&lt;peer_ip&gt;</code> への <code>state</code> フィールド書き込みを確認。supervisord 登録は <code>sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L198-199 (<code>/usr/local/bin/bgpmon</code>) を確認。読み手側は <code>sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py</code> L22/L30 で <code>Namespace.init_namespace_dbs()</code> + <code>STATE_DB.NEIGH_STATE_TABLE|*</code> を全 namespace から束ねる実装 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="ciscobgp4mib-state_db-bgpmon-neigh_state_table">CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）<a class="headerlink" href="#ciscobgp4mib-state_db-bgpmon-neigh_state_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

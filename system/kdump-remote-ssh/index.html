@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11629,9 +11659,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>KDUMP</code> table への <code>remote / ssh_string / ssh_path</code> 追加、<code>hostcfgd</code> での <code>kdump-tools</code> (kdump.conf) 生成、<code>build_debian.sh</code> への <code>network_setup.sh</code> フック追加、<code>config kdump remote</code> CLI の <code>sonic-utilities</code> への取り込みは実コードでの裏取り未済。kernel crash 中の DHCP / SSH 認証フローは Linux 側 <code>kdump-tools</code> 実装に依存。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-kdump.yang</code> L57-71 で <code>remote / ssh_string / ssh_path</code> の YANG leaf を確認。<code>sonic-utilities/scripts/sonic-kdump-config</code> L261/283-294/346-357/429-444 で同 3 フィールドの読み書きと kdump-tools 設定反映、<code>sonic-utilities/show/kdump.py</code> L88-95 で <code>show kdump config</code> 拡張を確認。<code>sonic-host-services/scripts/hostcfgd</code> L1166-1270 で <code>kdump_defaults</code> に新 3 フィールドが入り <code>sonic-kdump-config --remote / --ssh_string / --ssh_path</code> を呼ぶハンドラを確認。<code>sonic-buildimage/build_debian.sh</code> L426-433 で <code>network_setup.sh</code> / <code>network_setup</code> フックを <code>/etc/initramfs-tools/scripts/init-premount/</code> および <code>/etc/initramfs-tools/hooks/</code> に配置することを確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="kdump-ssh">kdump リモート転送（SSH）<a class="headerlink" href="#kdump-ssh" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

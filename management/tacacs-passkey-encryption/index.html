@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -5821,6 +5851,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11563,6 +11604,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -11595,9 +11647,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 0.1, 2023-11）のみを根拠に書かれている。<code>hostcfgd</code> の暗号化 passkey 復号処理、<code>sonic-utilities</code> の <code>--encrypt</code> フラグ、<code>/etc/cipher_pass</code> の取り扱い、共通暗号化インフラ（RADIUS / LDAP 共通化）は未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（YANG / cipher 基盤のみ取り込み済み、CLI / hostcfgd 取り込みは未完了）</p>
+<p>取り込み済み: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang</code> L47/L100-101/L148-149 で <code>key_encrypt_type</code> typedef と <code>TACPLUS_SERVER</code> / <code>TACPLUS|global</code> への <code>key_encrypt</code> leaf を確認。<code>sonic-buildimage/src/sonic-py-common/sonic_py_common/security_cipher.py</code> L18 で <code>CIPHER_PASS_FILE = "/etc/cipher_pass.json"</code> 定数、L41/L67 で読み書き API、L222/L237 で「<code>cipher_pass</code> registry からのパスワード取得」基盤を確認。<code>/etc/cipher_pass.json</code> の保全は <code>sonic-buildimage/files/image_config/config-setup/01-pre-security-cipher</code> / <code>01-post-security-cipher</code> で確認（HLD では <code>/etc/cipher_pass</code> と表記、現行実装では <strong><code>.json</code> 拡張子付きの <code>/etc/cipher_pass.json</code></strong>）。未取り込み: <code>sonic-utilities/config/aaa.py</code> L248-256 の <code>tacacs passkey</code> サブコマンドに <code>--encrypt</code> フラグは無い（現状は平文 secret をそのまま <code>add_table_kv(db, 'TACPLUS', 'global', 'passkey', secret)</code> する）。<code>sonic-host-services</code> 配下の <code>hostcfgd</code> にも <code>cipher_pass</code> / <code>key_encrypt</code> / 復号処理を行う実装は確認できない（grep でヒットなし、<code>PASSWORD_HARDENING</code> 関連のみ）。設計の中核である「CLI で <code>--encrypt</code> を付けて暗号化保存し hostcfgd で復号して PAM に渡す」フローは現行 master では <strong>未取り込み</strong>。<code>show tacacs</code> の passkey マスキング・RADIUS / LDAP の共通化も未確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="tacacs-passkey-key_encrypt-master-key-etccipher_pass">TACACS+ passkey 暗号化（<code>key_encrypt</code> + master key <code>/etc/cipher_pass</code>）<a class="headerlink" href="#tacacs-passkey-key_encrypt-master-key-etccipher_pass" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -11789,7 +11841,56 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li><code>common-auth-sonic</code> に書かれた passkey が暗号化のままになっていないか確認（書き込み直前の復号で失敗している可能性）</li>
 <li><code>key_encrypt=true</code> のまま平文 <code>passkey</code> が混在しているケースは復号失敗で PAM が動かなくなる。一旦 <code>key_encrypt=false</code> で平文に揃えてから再暗号化する</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD</th>
+<th>現行 master</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG <code>key_encrypt</code> leaf</td>
+<td>必須</td>
+<td>✅ 取り込み済み (<code>sonic-system-tacacs.yang</code> L47/L100-101/L148-149)</td>
+</tr>
+<tr>
+<td>master key ファイルパス</td>
+<td><code>/etc/cipher_pass</code></td>
+<td>⚠️ 実体は <strong><code>/etc/cipher_pass.json</code></strong>（<code>sonic_py_common/security_cipher.py</code> L18）</td>
+</tr>
+<tr>
+<td>共通暗号化 API</td>
+<td>必須</td>
+<td>✅ <code>security_cipher.py</code> で encrypt/decrypt API を実装</td>
+</tr>
+<tr>
+<td><code>config tacacs passkey ... --encrypt</code> CLI</td>
+<td>必須</td>
+<td>❌ <strong>未実装</strong>。<code>sonic-utilities/config/aaa.py</code> L248-256 は単に平文 secret をそのまま CONFIG_DB に書く</td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> で <code>key_encrypt=true</code> を見て復号 → PAM へ</td>
+<td>必須</td>
+<td>❌ <strong>未実装</strong>（hostcfgd 配下に該当する復号処理が無い）</td>
+</tr>
+<tr>
+<td><code>show tacacs</code> から passkey 削除</td>
+<td>必須</td>
+<td>❌ 未確認（CLI 取り込みが無いため意味なし）</td>
+</tr>
+<tr>
+<td>RADIUS / LDAP との共通化</td>
+<td>future</td>
+<td>未取り込み</td>
+</tr>
+</tbody>
+</table>
+<p>YANG と共通暗号インフラ（<code>security_cipher.py</code> + <code>/etc/cipher_pass.json</code> 永続化スクリプト）は揃っているが、<strong>運用フローの中核である CLI と hostcfgd 取り込みが未完了</strong>であり、現状ユーザは <code>--encrypt</code> 経路で TACACS+ passkey を保護できない。HLD は <code>/etc/cipher_pass</code> と表記しているが実装上の正は <code>/etc/cipher_pass.json</code>。</p>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装
 - /etc/cipher_pass のパーミッション・パッケージング (sonic-buildimage)

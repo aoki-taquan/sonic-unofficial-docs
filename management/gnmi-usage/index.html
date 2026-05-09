@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11617,9 +11647,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは <code>sonic-gnmi</code> リポジトリの使い方ドキュメントを根拠にしており、現行 master の telemetry コンテナで配布される実バイナリの引数仕様や、<code>-xpath_target</code> の有効値（<code>OC-YANG</code> / <code>CONFIG_DB</code> / <code>COUNTERS_DB</code> 等）の最新リストは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-gnmi/patches/gnmi_get.patch</code> L25 で <code>pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")</code> を確認（<code>gnmi_set.patch</code> / <code>gnmi_cli.all.patch</code> も同等）。サーバ側 <code>sonic-gnmi/gnmi_server/server.go</code> L975-988 で <code>target == "OPERATIONAL" / "OTHERS" / "SHOW"</code> の特殊分岐と <code>sdc.IsTargetDb(target)</code> による <code>CONFIG_DB / COUNTERS_DB</code> 等 SONiC DB 名分岐を確認。<code>sonic-gnmi/sonic_data_client/db_client.go</code> L647 で <code>COUNTERS_DB</code> 専用処理を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="gnmi-gnmi_get-gnmi_set-gnmi_cli">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）<a class="headerlink" href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

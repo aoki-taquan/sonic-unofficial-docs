@@ -1162,6 +1162,8 @@
       
         
       
+        
+      
     
     
     
@@ -1727,6 +1729,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11629,9 +11659,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>bgpcfgd</code> および bgpd 設定テンプレート（<code>sonic-buildimage</code> 配下）の実コードでの裏取りは未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> L185-189 で「<code>Loopback*</code> の IPv4 が無く、かつ <code>DEVICE_METADATA.localhost.bgp_router_id</code> も設定されていない場合のみ peer 追加を中断」する分岐を確認。<code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> L142-149 で <code>'bgp_router_id' in DEVICE_METADATA['localhost']</code> のとき <code>bgp router-id &lt;addr&gt;</code> をテンプレート出力することを確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="bgp-router-id-device_metadatabgp_router_id">BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）<a class="headerlink" href="#bgp-router-id-device_metadatabgp_router_id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

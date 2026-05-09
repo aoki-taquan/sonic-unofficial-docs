@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -4626,6 +4656,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11585,6 +11626,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -11617,9 +11669,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD のみを根拠に書かれている。<code>sonic_py_common.syslogger.SysLogger</code> の singleton 化、<code>enable_runtime_config</code> 引数、<code>LOGGER.require_manual_refresh</code> フィールド、<code>config syslog level</code> CLI の取り込み状況は未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: Discrepancy-found（singleton 化は未実装）</p>
+<p><code>sonic-buildimage/src/sonic-py-common/sonic_py_common/syslogger.py</code> L18 <code>class SysLogger:</code> には <code>__new__</code> も <code>_instance</code> も無く、<strong>普通のクラスとして毎回新規インスタンスを返す（singleton 化されていない）</strong>。<code>__init__</code> は L26 で <code>enable_runtime_config=False</code> 引数を受け、L43-45 で <code>True</code> のとき <code>self.update_log_level()</code> を呼んで CONFIG_DB.LOGGER を読む実装は確認 (L48-69)。<code>require_manual_refresh</code> フィールドは L9 <code>FIELD_REQUIRE_REFRESH = 'require_manual_refresh'</code> と L62-66 で初期登録時に <code>'true'</code> を書く処理として確認。<code>sonic-utilities/config/syslog.py</code> L647-686 で <code>config syslog level</code> CLI と <code>require_manual_refresh</code> 判定分岐を確認。HLD は singleton 採用を明記しているが、現行 master 実装はクラスの <strong>共有 logger オブジェクトを <code>logging.getLogger(name)</code></strong> に委ねる方式に置き換わっており、HLD 文面は古い (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="syslogger-runtime-log-level-loggerrequire_manual_refresh-sighup">SysLogger 拡張（runtime log level + <code>LOGGER.require_manual_refresh</code> + SIGHUP）<a class="headerlink" href="#syslogger-runtime-log-level-loggerrequire_manual_refresh-sighup" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -11817,7 +11869,14 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 <li>redis 未起動で例外になる場合、<code>enable_runtime_config=False</code> のまま使われていないか・初期化順序を確認</li>
 <li>C++ logger と混在する component で動作が不一致な場合、<code>require_manual_refresh</code> の値が想定どおりか確認</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。</p>
+<ul>
+<li><strong>取り込み済み</strong>: <code>sonic-py-common/syslogger.py</code> の <code>enable_runtime_config</code> 引数 (L26)、<code>update_log_level()</code> の CONFIG_DB.LOGGER 読み取り＋初回登録時の <code>require_manual_refresh = 'true'</code> 書き込み (L48-69)、<code>config syslog level</code> CLI と <code>require_manual_refresh</code> 判定 (<code>sonic-utilities/config/syslog.py</code> L647-686)。</li>
+<li><strong>HLD と差分あり</strong>: HLD が要求する <code>SysLogger</code> の singleton 化（<code>__new__</code> / <code>_instance</code> 共有）は <strong>未実装</strong>。現行クラスは普通の <code>class SysLogger:</code> で、識別子が同じ場合は <code>logging.getLogger(name)</code> 経由でハンドラ重複登録の対策（L34-36 で既存 handler を removeHandler）に留まる。複数のコード箇所で <code>SysLogger("foo")</code> を呼ぶと別インスタンスが返るが、内部 logger 自体は同じ name を共有するため <strong>実害は限定的</strong>。設計意図（singleton による状態統一）と実装手段が異なる点に留意。</li>
+<li>残未確認: redis 未起動時の <code>update_log_level()</code> の例外処理は L67-69 で <code>(False, msg)</code> を返すのみ。フォールバックの上位ハンドリングは呼び出し側依存（HLD 記述と同等）。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SysLogger の singleton 化と enable_runtime_config 引数の sonic-py-common 取り込み
 - LOGGER.require_manual_refresh フィールドの swss / sonic-buildimage 側スキーマ

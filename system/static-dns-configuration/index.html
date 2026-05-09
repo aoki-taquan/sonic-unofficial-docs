@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11617,9 +11647,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>resolv-config.service</code> / <code>resolv-config.sh</code> / <code>resolv.conf.j2</code> の配置、<code>update-containers</code> resolvconf プラグイン、<code>sonic-cfggen</code> の minigraph 変換実装は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-buildimage/files/image_config/resolv-config/</code> 配下に <code>resolv-config.service</code> / <code>resolv-config.sh</code> / <code>resolv.conf.j2</code> / <code>resolv.conf.head</code> / <code>update-containers</code> がすべて存在することを確認。<code>sonic-buildimage/src/sonic-config-engine/minigraph.py</code> L2648-2667 で <code>DnsNameserverResources</code> を <code>dns.j2</code> テンプレートで展開し <code>results['DNS_NAMESERVER']</code> に格納する実装を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="dns-dns_nameserver-resolvconf">静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）<a class="headerlink" href="#dns-dns_nameserver-resolvconf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -1162,6 +1162,8 @@
       
         
       
+        
+      
     
     
     
@@ -1486,6 +1488,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11551,9 +11581,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（2022-07）のみを根拠に書かれている。<code>srv6orch</code> 実装、SAI の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> 等の現行 master での利用可能性は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p><code>sonic-swss/orchagent/srv6orch.cpp</code> L41-62 の <code>end_behavior_map</code> に <code>un / ua / udt4 / udt6 / udt46 / udx4 / udx6</code> 等が登録され、<code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code>・<code>UA</code>・<code>UDT*</code>・<code>UDX*</code> を参照していることを確認。L1369-1410 で behavior 別の VRF / nexthop バリデーションも分岐済み（verified at: 2026-05-09）。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。</p>
 </div>
 <h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

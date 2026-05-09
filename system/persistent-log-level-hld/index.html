@@ -1160,6 +1160,8 @@
       
         
       
+        
+      
     
     
     
@@ -1481,6 +1483,34 @@
     
   
     DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
   
 
     
@@ -11639,9 +11669,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss-common</code> の <code>logger.cpp</code> / <code>loglevel.cpp</code> 変更、各 <code>*mgrd</code> / <code>*syncd</code> の listener thread 変更、<code>db_migrator</code> の LOGLEVEL DB → CONFIG DB 変換、Phase 2 の LOGLEVEL_DB / <code>JINJA2_CACHE</code> 完全削除の進捗は未裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（Phase 1 / 2 移行完了）</p>
+<p><code>sonic-swss-common/common/logger.cpp</code> L126-127 / L195-198 で <code>DBConnector("CONFIG_DB", 0)</code> + <code>Table(&amp;db, CFG_LOGGER_TABLE_NAME)</code> および <code>SubscriberStateTable(CFG_LOGGER_TABLE_NAME)</code> 経由の購読を確認（LOGLEVEL_DB から完全に CONFIG_DB.LOGGER に移行済み）。<code>sonic-swss-common/common/loglevel.cpp</code> L31/L37/L99 で <code>swssloglevel -d</code>（全コンポーネントを default に戻す）オプションの実装を確認。<code>sonic-utilities/scripts/db_migrator.py</code> L94/L1207-1226 で旧 <code>LOGLEVEL_DB</code> → <code>CONFIG_DB.LOGGER</code> 変換と旧キー削除を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
