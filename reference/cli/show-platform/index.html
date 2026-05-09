@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-vlan/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-platform/">
       
       
-        <link rel="prev" href="../config-portchannel/">
+        <link rel="prev" href="../show-ip/">
       
       
-        <link rel="next" href="../config-vxlan/">
+        <link rel="next" href="../show-vlan/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config vlan サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>show platform サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-vlan" class="md-skip">
+        <a href="#show-platform" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config vlan サブコマンド
+              show platform サブコマンド
             
           </span>
         </div>
@@ -5389,37 +5389,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config vlan サブコマンド
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../config-vlan/" class="md-nav__link">
         
   
   
@@ -5435,142 +5408,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド一覧
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        各コマンドの詳細
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config-vlan-add-vid-m-multiple" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config vlan add &lt;vid&gt; [-m|--multiple]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-vlan-del-vid-m-multiple-no_restart_dhcp_relay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-vlan-proxy_arp-vid-enableddisabled" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config vlan proxy_arp &lt;vid&gt; &lt;enabled|disabled&gt;
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-vlan-member-add-vid-port-u-m-e" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config vlan member add &lt;vid&gt; &lt;port&gt; [-u] [-m] [-e]
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config-vlan-member-del-vid-port-m-e" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config vlan member del &lt;vid&gt; &lt;port&gt; [-m] [-e]
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5664,10 +5501,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../show-platform/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show platform サブコマンド
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -5683,6 +5547,186 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各コマンドの詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各コマンドの詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-summary-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform summary [--json]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-syseeprom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform syseeprom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-psustatus-i-index-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform psustatus [-i &lt;index&gt;] [--json]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-ssdhealth-device-verbose-vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform ssdhealth [&lt;device&gt;] [--verbose] [--vendor]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-pcieinfo-c-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform pcieinfo [-c|--check]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-fan-temperature-voltage-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform fan / temperature / voltage / current
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-firmware-args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform firmware [&lt;args&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-bmc-summary-bmc-eeprom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform bmc summary / bmc eeprom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-leakage-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform leakage status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する STATE_DB / 一次情報
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5938,10 +5982,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config-vlan-add-vid-m-multiple" class="md-nav__link">
+  <a href="#show-platform-summary-json" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config vlan add &lt;vid&gt; [-m|--multiple]
+        show platform summary [--json]
       
     </span>
   </a>
@@ -5949,10 +5993,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-vlan-del-vid-m-multiple-no_restart_dhcp_relay" class="md-nav__link">
+  <a href="#show-platform-syseeprom" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]
+        show platform syseeprom
       
     </span>
   </a>
@@ -5960,10 +6004,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-vlan-proxy_arp-vid-enableddisabled" class="md-nav__link">
+  <a href="#show-platform-psustatus-i-index-json" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config vlan proxy_arp &lt;vid&gt; &lt;enabled|disabled&gt;
+        show platform psustatus [-i &lt;index&gt;] [--json]
       
     </span>
   </a>
@@ -5971,10 +6015,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-vlan-member-add-vid-port-u-m-e" class="md-nav__link">
+  <a href="#show-platform-ssdhealth-device-verbose-vendor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config vlan member add &lt;vid&gt; &lt;port&gt; [-u] [-m] [-e]
+        show platform ssdhealth [&lt;device&gt;] [--verbose] [--vendor]
       
     </span>
   </a>
@@ -5982,10 +6026,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config-vlan-member-del-vid-port-m-e" class="md-nav__link">
+  <a href="#show-platform-pcieinfo-c-check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config vlan member del &lt;vid&gt; &lt;port&gt; [-m] [-e]
+        show platform pcieinfo [-c|--check]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-fan-temperature-voltage-current" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform fan / temperature / voltage / current
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-firmware-args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform firmware [&lt;args&gt;]
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-bmc-summary-bmc-eeprom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform bmc summary / bmc eeprom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-platform-leakage-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show platform leakage status
       
     </span>
   </a>
@@ -5998,10 +6086,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する STATE_DB / 一次情報
       
     </span>
   </a>
@@ -6036,7 +6124,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-vlan.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/show-platform.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6044,10 +6132,9 @@
   
 
 
-<h1 id="config-vlan">config vlan サブコマンド<a class="headerlink" href="#config-vlan" title="Permanent link">&para;</a></h1>
+<h1 id="show-platform">show platform サブコマンド<a class="headerlink" href="#show-platform" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config vlan</code> は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。<code>config/vlan.py</code> に実装が分離されており、<code>config/main.py</code> 末尾の <code>config.add_command(vlan.vlan)</code> で登録される構造<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新規 VLAN 作成時は <code>VLAN</code> テーブルだけでなく <strong><code>DHCP_RELAY</code> テーブルにも空エントリを書き込む</strong>仕様。これは <code>dhcp_relay</code> の対象 VLAN が <code>VLAN</code> テーブルではなく <code>DHCP_RELAY</code> テーブルから引かれるための互換的な設計。</p>
+<p><code>show platform</code> はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>ほとんどのコマンドが <code>psushow</code> / <code>fanshow</code> / <code>tempershow</code> / <code>sensorshow</code> / <code>pcieutil</code> / <code>decode-syseeprom</code> / <code>ssdutil</code> / <code>fwutil</code> / <code>leakageshow</code> などの外部コマンドラッパ</strong>で、CONFIG_DB は読まない。<code>sonic-platform</code> API から取得するのは <code>summary</code> と <code>bmc</code> 系のみ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -6058,115 +6145,145 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config vlan add &lt;vid&gt;</code></td>
-<td>VLAN を作成</td>
+<td><code>show platform summary [--json]</code></td>
+<td>Platform / HwSKU / ASIC / Serial / Model 等を表示</td>
 </tr>
 <tr>
-<td><code>config vlan del &lt;vid&gt;</code></td>
-<td>VLAN を削除</td>
+<td><code>show platform syseeprom [--verbose]</code></td>
+<td>TLVinfo 系 syseeprom を <code>decode-syseeprom -d</code> で表示</td>
 </tr>
 <tr>
-<td><code>config vlan proxy_arp &lt;vid&gt; &lt;enabled\|disabled&gt;</code></td>
-<td>VLAN_INTERFACE の proxy ARP を切替</td>
+<td><code>show platform psustatus [-i N] [--json]</code></td>
+<td>PSU の状態（<code>psushow -s</code>）</td>
 </tr>
 <tr>
-<td><code>config vlan member add &lt;vid&gt; &lt;port&gt;</code></td>
-<td>VLAN にポートをメンバ追加</td>
+<td><code>show platform ssdhealth [&lt;device&gt;] [--verbose] [--vendor]</code></td>
+<td>SSD ヘルス（<code>ssdutil</code>）</td>
 </tr>
 <tr>
-<td><code>config vlan member del &lt;vid&gt; &lt;port&gt;</code></td>
-<td>VLAN メンバを削除</td>
+<td><code>show platform pcieinfo [-c|--check] [--verbose]</code></td>
+<td>PCIe デバイス検査（<code>pcieutil show/check</code>）</td>
+</tr>
+<tr>
+<td><code>show platform fan</code></td>
+<td>ファン速度（<code>fanshow</code>）</td>
+</tr>
+<tr>
+<td><code>show platform temperature [-j|--json]</code></td>
+<td>センサ温度（<code>tempershow [-j]</code>）</td>
+</tr>
+<tr>
+<td><code>show platform voltage</code></td>
+<td>電圧センサ（<code>sensorshow -t voltage</code>）</td>
+</tr>
+<tr>
+<td><code>show platform current</code></td>
+<td>電流センサ（<code>sensorshow -t current</code>）</td>
+</tr>
+<tr>
+<td><code>show platform firmware [&lt;args...&gt;]</code></td>
+<td><code>fwutil show</code> ラッパ（任意引数を pass-through）</td>
+</tr>
+<tr>
+<td><code>show platform bmc summary [--json]</code></td>
+<td>sonic_platform API 経由の BMC サマリ</td>
+</tr>
+<tr>
+<td><code>show platform bmc eeprom [--json]</code></td>
+<td>BMC EEPROM ダンプ</td>
+</tr>
+<tr>
+<td><code>show platform leakage status</code></td>
+<td>液冷漏洩検出（<code>leakageshow</code>）</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-vlan-add-vid-m-multiple"><code>config vlan add &lt;vid&gt; [-m|--multiple]</code><a class="headerlink" href="#config-vlan-add-vid-m-multiple" title="Permanent link">&para;</a></h3>
-<p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config vlan add &lt;vid&gt; [-m|--multiple]
-</span></code></pre></div>
-<p><strong>引数</strong>:</p>
-<ul>
-<li><code>&lt;vid&gt;</code> ... 単一 VLAN ID（2-4094 の整数）。<code>-m</code> 指定時は <code>100,200,300</code> や <code>100-110</code> のような複数指定が可能</li>
-</ul>
+<h3 id="show-platform-summary-json"><code>show platform summary [--json]</code><a class="headerlink" href="#show-platform-summary-json" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:</p>
-<ol>
-<li><code>is_vlanid_in_range</code> で VLAN ID が <code>2-4094</code> であることを検証（<code>1</code> は default として弾く）</li>
-<li>既存 <code>VLAN</code> エントリ・<code>DHCP_RELAY</code> エントリと衝突しないか確認</li>
-<li>PVST がグローバルに有効なら <code>stp.vlan_enable_stp</code> で <code>STP_VLAN</code> を埋める</li>
-<li><code>set_dhcp_relay_table('VLAN', ...)</code> で <strong><code>VLAN</code> テーブルと <code>DHCP_RELAY</code> テーブル両方</strong>に <code>Vlan&lt;vid&gt;</code> のエントリを作成</li>
-</ol>
-<!-- evidence:
-source: sonic-net/sonic-utilities/config/vlan.py#L95-L141 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
-excerpt: |
-  @vlan.command('add')
-  def add_vlan(ctx, vid, multiple):
-      ...
-      stp.vlan_enable_stp(config_db, vlan)
-      set_dhcp_relay_table('VLAN', config_db, vlan, {'vlanid': str(vid)})
--->
-
-<h3 id="config-vlan-del-vid-m-multiple-no_restart_dhcp_relay"><code>config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]</code><a class="headerlink" href="#config-vlan-del-vid-m-multiple-no_restart_dhcp_relay" title="Permanent link">&para;</a></h3>
-<p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]
-</span></code></pre></div>
-<p><strong>動作</strong>:
-<code>VLAN_MEMBER</code> 配下の関連エントリ、<code>VLAN_INTERFACE</code>、<code>STP_VLAN</code> / <code>STP_VLAN_PORT</code>、最後に <code>VLAN</code> 本体を順に削除する。<code>--no_restart_dhcp_relay</code> 指定時は <code>dhcp_relay</code> サービスの再起動を抑制（DHCPv6 Relay 設定が空であることが前提）。</p>
-<h3 id="config-vlan-proxy_arp-vid-enableddisabled"><code>config vlan proxy_arp &lt;vid&gt; &lt;enabled|disabled&gt;</code><a class="headerlink" href="#config-vlan-proxy_arp-vid-enableddisabled" title="Permanent link">&para;</a></h3>
-<p><strong>動作</strong>:
-<code>VLAN_INTERFACE|Vlan&lt;vid&gt;</code> の <code>proxy_arp</code> フィールドを <code>enabled</code> / <code>disabled</code> で書き換え、その後 <code>restart_ndppd()</code> で <code>ndppd</code> を再起動する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="config-vlan-member-add-vid-port-u-m-e"><code>config vlan member add &lt;vid&gt; &lt;port&gt; [-u] [-m] [-e]</code><a class="headerlink" href="#config-vlan-member-add-vid-port-u-m-e" title="Permanent link">&para;</a></h3>
-<p><strong>オプション</strong>:</p>
 <ul>
-<li><code>-u, --untagged</code> ... untagged メンバとして登録</li>
-<li><code>-m, --multiple</code> ... <code>&lt;vid&gt;</code> をカンマ区切り or 範囲で複数指定</li>
-<li><code>-e, --except_flag</code> ... 指定 vlan 以外の全 VLAN にメンバ追加</li>
+<li><code>device_info.get_platform_info()</code> で Platform / HwSKU / ASIC / ASIC Count / Switch Type を取得</li>
+<li><code>get_chassis_info()</code> で Serial / Model / Hardware Revision を取得</li>
+<li><code>--json</code> 指定時は両者をマージして JSON 出力</li>
 </ul>
+<p>CONFIG_DB は触らず、<code>/host/machine.conf</code> 由来の environment variables や <code>device_info</code> で参照される <code>platform.json</code> / <code>hwsku.json</code> を経由する。</p>
+<h3 id="show-platform-syseeprom"><code>show platform syseeprom</code><a class="headerlink" href="#show-platform-syseeprom" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>VLAN_MEMBER|&lt;vlan&gt;|&lt;port&gt;</code> を <code>tagging_mode: untagged|tagged</code> で作成。多数の事前チェックを行う:</p>
-<ul>
-<li>VLAN が存在するか</li>
-<li>ポート (<code>PORT</code> または <code>PORTCHANNEL</code>) が存在し、PORTCHANNEL_MEMBER に既に組み込まれていないか</li>
-<li>ポートが mirror destination ではないか</li>
-<li>ポートの <code>mode</code> が <code>routed</code> でないか（<code>access</code> / <code>trunk</code> の整合性も確認）</li>
-<li>グローバル STP 有効時は <code>enable_stp_on_port</code> で <code>STP_PORT</code> を埋める</li>
-</ul>
-<h3 id="config-vlan-member-del-vid-port-m-e"><code>config vlan member del &lt;vid&gt; &lt;port&gt; [-m] [-e]</code><a class="headerlink" href="#config-vlan-member-del-vid-port-m-e" title="Permanent link">&para;</a></h3>
+<code>sudo decode-syseeprom -d</code> を実行して、ONIE の TLV フォーマット syseeprom を表示する。</p>
+<h3 id="show-platform-psustatus-i-index-json"><code>show platform psustatus [-i &lt;index&gt;] [--json]</code><a class="headerlink" href="#show-platform-psustatus-i-index-json" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>VLAN_MEMBER|&lt;vlan&gt;|&lt;port&gt;</code> を削除し、グローバル STP が有効なら <code>disable_stp_on_vlan_port</code> で <code>STP_VLAN_PORT</code> / <code>STP_PORT</code> を整理。さらに <code>STATE_DB</code> の <code>DHCPv6_COUNTER_TABLE|&lt;port&gt;</code> / <code>DHCP_COUNTER_TABLE|&lt;port&gt;</code> も掃除する。</p>
-<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<code>psushow -s [-i &lt;index&gt;] [-j]</code> を実行。pmon コンテナの psud daemon が STATE_DB に書き込んだ <code>PSU_INFO|PSU&lt;N&gt;</code> を整形表示する（実際のクエリは psushow 側）。</p>
+<h3 id="show-platform-ssdhealth-device-verbose-vendor"><code>show platform ssdhealth [&lt;device&gt;] [--verbose] [--vendor]</code><a class="headerlink" href="#show-platform-ssdhealth-device-verbose-vendor" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+<code>&lt;device&gt;</code> 省略時は <code>platform.json</code> の <code>chassis.disk.device</code> を使う。さらに省略されていれば <code>ssdutil</code> をデフォルトで起動（<code>/host</code> パーティション含むデバイスを対象）。<code>--vendor</code> は ssdutil の <code>-e</code> オプションを付ける。</p>
+<h3 id="show-platform-pcieinfo-c-check"><code>show platform pcieinfo [-c|--check]</code><a class="headerlink" href="#show-platform-pcieinfo-c-check" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+<code>-c</code> 無しは <code>sudo pcieutil show</code>（プラットフォームの <code>pcie.yaml</code> をそのまま表示）、<code>-c</code> 付きは <code>sudo pcieutil check</code>（実機 <code>lspci</code> と <code>pcie.yaml</code> を突き合わせ、差分を Status 列に出す）。</p>
+<h3 id="show-platform-fan-temperature-voltage-current"><code>show platform fan</code> / <code>temperature</code> / <code>voltage</code> / <code>current</code><a class="headerlink" href="#show-platform-fan-temperature-voltage-current" title="Permanent link">&para;</a></h3>
+<p>それぞれ <code>fanshow</code> / <code>tempershow [-j]</code> / <code>sensorshow -t voltage|current</code> のラッパ。<code>temperature -j</code> 時は内部で JSON をパースし直して <code>clicommon.json_dump</code> で再整形する。</p>
+<h3 id="show-platform-firmware-args"><code>show platform firmware [&lt;args&gt;]</code><a class="headerlink" href="#show-platform-firmware-args" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+<code>sudo fwutil show &lt;args&gt;</code> を <strong>追加引数そのまま pass-through</strong> で実行する click context (<code>ignore_unknown_options=True, allow_extra_args=True, add_help_option=False</code>)。fwutil 側の <code>--image</code> 等のオプションをそのまま使える。</p>
+<h3 id="show-platform-bmc-summary-bmc-eeprom"><code>show platform bmc summary</code> / <code>bmc eeprom</code><a class="headerlink" href="#show-platform-bmc-summary-bmc-eeprom" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+<code>sonic_platform.platform.Platform().get_chassis().get_bmc()</code> を取得し、<code>bmc.get_eeprom()</code> 結果と <code>bmc.get_version()</code> を表示。プラットフォーム実装が BMC をサポートしていなければ "BMC is not available on this platform" を出す。</p>
+<h3 id="show-platform-leakage-status"><code>show platform leakage status</code><a class="headerlink" href="#show-platform-leakage-status" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+<code>leakageshow</code> コマンドを起動。<code>leakageshow</code> は STATE_DB の <code>LIQUID_COOLING_LEAKAGE</code> 系テーブルを読み出して整形表示するユーティリティ。液冷モデル限定。</p>
+<h2 id="state_db">関連する STATE_DB / 一次情報<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>テーブル</th>
-<th>書き換え内容</th>
-<th>操作するコマンド</th>
+<th>項目</th>
+<th>経路</th>
+<th>表示するコマンド</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>VLAN</code></td>
-<td>エントリ作成・削除</td>
-<td><code>add</code> / <code>del</code></td>
+<td>HwSKU / ASIC</td>
+<td><code>platform.json</code>, <code>hwsku.json</code></td>
+<td><code>summary</code></td>
 </tr>
 <tr>
-<td><code>DHCP_RELAY</code></td>
-<td><code>vlanid</code> 付きエントリ作成・削除</td>
-<td><code>add</code> / <code>del</code></td>
+<td>Chassis Serial / Model</td>
+<td><code>decode-syseeprom</code> 出力</td>
+<td><code>summary</code>, <code>syseeprom</code></td>
 </tr>
 <tr>
-<td><code>VLAN_INTERFACE</code></td>
-<td><code>proxy_arp</code> フィールド</td>
-<td><code>proxy_arp</code></td>
+<td>PSU 状態</td>
+<td>STATE_DB <code>PSU_INFO</code> (psud)</td>
+<td><code>psustatus</code></td>
 </tr>
 <tr>
-<td><code>VLAN_MEMBER</code></td>
-<td><code>&lt;vlan&gt;|&lt;port&gt;</code> の <code>tagging_mode</code></td>
-<td><code>member add</code> / <code>del</code></td>
+<td>Fan / Temp / Voltage / Current</td>
+<td>STATE_DB <code>FAN_INFO</code>/<code>TEMPERATURE_INFO</code>/<code>*_INFO</code> (thermalctld + psud)</td>
+<td><code>fan</code> / <code>temperature</code> / <code>voltage</code> / <code>current</code></td>
 </tr>
 <tr>
-<td><code>STP_VLAN</code> / <code>STP_VLAN_PORT</code> / <code>STP_PORT</code></td>
-<td>PVST 有効時の追従</td>
-<td><code>add</code> / <code>del</code> / <code>member ...</code></td>
+<td>SSD</td>
+<td><code>ssdutil</code> (smart-tools 直接実行)</td>
+<td><code>ssdhealth</code></td>
+</tr>
+<tr>
+<td>PCIe</td>
+<td><code>pcie.yaml</code> + <code>lspci</code></td>
+<td><code>pcieinfo</code></td>
+</tr>
+<tr>
+<td>Firmware</td>
+<td><code>fwutil</code> (DAEMON / BIOS / CPLD)</td>
+<td><code>firmware</code></td>
+</tr>
+<tr>
+<td>BMC</td>
+<td><code>sonic_platform</code> API</td>
+<td><code>bmc summary</code> / <code>bmc eeprom</code></td>
+</tr>
+<tr>
+<td>Leakage</td>
+<td><code>leakageshow</code> (<code>LIQUID_COOLING_LEAKAGE</code> STATE_DB)</td>
+<td><code>leakage status</code></td>
 </tr>
 </tbody>
 </table>
@@ -6175,10 +6292,7 @@ excerpt: |
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>vlan</code> グループは <code>config/vlan.py</code> で定義され、<code>config/main.py</code> 末尾で <code>config.add_command(vlan.vlan)</code> 相当の登録が行われる。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p><code>proxy_arp</code> は VLAN そのものではなく <code>VLAN_INTERFACE</code> テーブルに書き込まれる（L3 SVI 機能のため）。<code>config/vlan.py</code> L302-L320。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py#L302">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py#L302</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>platform</code> グループ全体は <code>show/platform.py</code> で定義。<code>show/main.py</code> L321 で <code>cli.add_command(platform.platform)</code> 登録。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
