@@ -277,6 +277,21 @@
       "priority": "medium"
     },
     {
+      "page": "docs/acl-qos/copp-manager-redesign-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "coppmgrd の install/uninstall 判定ロジックが本テストプラン記載の 4 ルールと一致するか実装確認",
+        "COPP_TRAP の always_enabled フラグを参照する箇所の現行 master 取り込み確認",
+        "FEATURE entry が hdel で削除された際に CoppMgr が即座に trap を uninstall するイベントハンドリング実装確認",
+        "fast-reboot / warm-reboot 横断で COPP_TRAP / always_enabled の状態保持が config save を経由して保持されるか確認",
+        "PTF テストスクリプト (sonic-mgmt) における本テストプランの実装存在確認",
+        "vendor invisible default trap のテスト前除去手順が現行テストフレームワークに組み込まれているか未確認"
+      ],
+      "priority": "medium",
+      "issue": 438,
+      "pr": 439
+    },
+    {
       "page": "docs/acl-qos/dash-acl-tags.md",
       "verification": "hld-only",
       "concerns": [
