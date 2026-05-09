@@ -1,7 +1,7 @@
 ---
 title: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - openconfig-gnsi-credentialz
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い Initial Proposal"
-    HLD は 2023-11 改訂 v0.1 で 2 年超経過、Initial Proposal のまま。Certz の `gnxi` デフォルトプロファイル、`console_mgmt` / `ssh_mgmt` という host service モジュール、gNMI server に追加するフラグ群（`EnableAuthzPolicy` 等）の **現行 master 実装は要確認**。
+!!! warning "裏取りステータス: Discrepancy-found"
+    主要 gNSI サービス（Authz / Certz / Pathz）の handler 実装と host service モジュール（`gnsi_console.py` / `ssh_mgmt.py`）は確認済み。一方で **Credentialz の gNMI server 側 handler は未実装**（dbus client 経由の補助のみ）であり、gNMI server フラグ名も HLD 提案と若干異なる。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
 
@@ -216,6 +216,16 @@ gnsi_client credentialz rotate-account \
 - `Rotate` 後に証明書が古いまま: `Finalize` を送らずに stream を閉じた可能性。サーバ側のチェックポイント有無を確認
 - sshd が再起動ループ: `ssh_mgmt.set` で投入した `authorized_keys` / `sshd_config` が壊れている。`restore_checkpoint` で巻き戻す
 - `Pathz` の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測
+
+## 実装との乖離
+
+実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）:
+
+- **Credentialz handler の gNMI server 実装は未取り込み**: HLD は Authz / Certz / Pathz / Credentialz の 4 サービスを並べて記述するが、現行 master の `sonic-gnmi/gnmi_server/` には `gnsi_authz.go` / `gnsi_certz.go` / `gnsi_pathz.go` のみが存在し、`gnsi_credentialz.go` 相当のサーバ側ハンドラは無い。Credentialz 関連は `sonic-gnmi/sonic_service_client/dbus_client.go:53-` の **dbus client 補助コード**として準備されているのみ（`TestCredentialzDbusMethods` 等のテストが存在）。
+- **gNMI server フラグ名の差異**: HLD で言及された `EnableAuthzPolicy` / `EnablePathzPolicy` という flag 名ではなく、`sonic-gnmi/gnmi_server/server.go:240,243` では `AuthzPolicy bool` / `PathzPolicy bool` という config 構造体フィールドとして実装されている。ポリシーファイルパスは `AuthzPolicyFile` / `PathzPolicyFile`、CRL は `CertCRLConfig`（HLD の表記と差異あり）。
+- **STATE_DB gNSI profile state テーブルは未確認**: `sonic-swss-common/common/schema.h` 内に `GNSI` 関連テーブル定義は見当たらなかった（profile 状態は gNMI サーバプロセス内のメモリ／ファイルで保持される実装と推測される）。
+
+主要な合致点として、`sonic-gnmi/gnmi_server/gnsi_authz.go` (GNSIAuthzServer / Probe / Get / Rotate)、`gnsi_certz.go` (GNSICertzServer)、`gnsi_pathz.go` (GNSIPathzServer)、および `sonic-host-services/host_modules/gnsi_console.py` (`MOD_NAME = 'gnsi_console'`)、`ssh_mgmt.py` (`MOD_NAME = 'ssh_mgmt'`) は HLD どおり実装されている。
 
 ## 引用元
 

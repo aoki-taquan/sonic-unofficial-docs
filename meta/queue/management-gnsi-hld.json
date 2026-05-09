@@ -2,14 +2,19 @@
   "page": "docs/management/gnsi-hld.md",
   "issue": 211,
   "pr": 212,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
+  "verified_concerns": [
+    "Authz handler は sonic-gnmi/gnmi_server/gnsi_authz.go:36 GNSIAuthzServer + Probe/Get/Rotate (43,46,66) で実装",
+    "Certz handler は sonic-gnmi/gnmi_server/gnsi_certz.go の GNSICertzServer で実装",
+    "Pathz handler は sonic-gnmi/gnmi_server/gnsi_pathz.go の GNSIPathzServer で実装",
+    "console_mgmt host service モジュールは sonic-host-services/host_modules/gnsi_console.py (MOD_NAME='gnsi_console') として実装",
+    "ssh_mgmt host service モジュールは sonic-host-services/host_modules/ssh_mgmt.py (MOD_NAME='ssh_mgmt') として実装",
+    "Authz/Pathz/Certz 関連 config は sonic-gnmi/gnmi_server/server.go:236-245 に AuthzPolicy / AuthzPolicyFile / PathzPolicy / PathzPolicyFile / CertCRLConfig / CertzMetaFile として実装"
+  ],
   "concerns": [
-    "sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否",
-    "console_mgmt / ssh_mgmt host service モジュール実装存否",
-    "EnableAuthzPolicy / EnablePathzPolicy / CertCRLConfig 等 gNMI server フラグの現行 master 実装確認",
-    "STATE_DB に gNSI profile state を書き込む実装確認",
-    "openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況",
-    "HLD は 2023-11 v0.1 Initial で 2 年超経過、現行 master との大幅乖離リスク"
+    "Credentialz の gNMI server 側 handler (gnsi_credentialz.go 相当) は存在せず、dbus client (sonic_service_client/dbus_client.go:53-) のみ実装",
+    "gNMI server flag 名は HLD の EnableAuthzPolicy / EnablePathzPolicy ではなく AuthzPolicy / PathzPolicy として実装 (server.go:240,243)",
+    "STATE_DB gNSI profile state テーブルは sonic-swss-common/common/schema.h に見当たらず、profile 状態はファイル/メモリで保持されている可能性"
   ],
   "priority": "high"
 }
