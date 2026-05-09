@@ -144,6 +144,23 @@
       "priority": "high"
     },
     {
+      "page": "docs/management/ipv4-port-based-dhcp-server-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "dhcp_server container (debian:bookworm) と dhcpservd / kea-dhcp-server の現行 master 取り込み確認",
+        "dhcprelayd が VLAN/VLAN_MEMBER/DHCP_SERVER_IPV4* を subscribe して dhcrelay を制御するロジックの実装存在確認",
+        "kea-dhcp-server の client-classes (relay4[1].hex == 'hostname:<port>') によるポート判定の実装と動作確認",
+        "Option 54 (server identifier) を DHCP インタフェース IP に書き換えるロジックの確認 (unicast RELEASE 経路維持のため)",
+        "STATE_DB の DHCP_SERVER_IPV4_LEASE への lease 反映が lease_update.sh + dhcpservd 経由で動作するか確認",
+        "CLI (config dhcp_server ipv4 *) の sonic-utilities への取り込み状況確認",
+        "sonic-dhcp-server-ipv4 YANG (sonic-buildimage PR #15955) のマージ状況確認",
+        "本 HLD は 2023 年版 (Rev 0.1)。本機能は活発開発中の可能性あり、現行仕様との乖離を要点検"
+      ],
+      "priority": "high",
+      "issue": 481,
+      "pr": 483
+    },
+    {
       "page": "docs/management/p4rt-application-hld.md",
       "issue": 244,
       "verification": "discrepancy-found",
