@@ -1,0 +1,12 @@
+{
+  "page": "docs/management/portable-console-device-design.md",
+  "issue": 328,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-platform-common の sonic_console/ パッケージ階層実装の現行確認",
+    "PortableConsoleDeviceBase / factory.py の実装存在確認",
+    "CONSOLE_SWITCH テーブルへの autodetect / vendor_name / model_name フィールド追加の YANG 反映確認",
+    "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例確認"
+  ],
+  "priority": "low"
+}
