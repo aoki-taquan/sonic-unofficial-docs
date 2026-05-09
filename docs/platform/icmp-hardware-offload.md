@@ -1,7 +1,7 @@
 ---
 title: ICMP Hardware Offload（DualToR link prober の NPU 化）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-linkmgrd` の hardware prober 実装、`IcmpOrch`、SAI 1.12 の `saiicmpecho.h`、`docker-mux` の構成は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/icmporch.cpp`（`IcmpOrch::create_icmp_session` 等、`sai_icmp_echo_api` 利用）、`sonic-linkmgrd/src/link_prober/LinkProberBase.cpp:702-729` の GUID 生成、`SAI_ICMP_ECHO_SESSION_ATTR_GUID`（icmporch.cpp:457）の使用を確認済み（verified at: 2026-05-09）。
 
 # ICMP Hardware Offload（DualToR link prober の NPU 化）
 
