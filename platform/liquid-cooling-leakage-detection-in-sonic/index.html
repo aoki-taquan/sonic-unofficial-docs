@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fec-flr-support-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/liquid-cooling-leakage-detection-in-sonic/">
       
       
-        <link rel="prev" href="../everflow-support-on-voq-chassis/">
+        <link rel="prev" href="../icmp-hardware-offload/">
       
       
-        <link rel="next" href="../icmp-hardware-offload/">
+        <link rel="next" href="../pcieinfo-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor） - SONiC 非公式ドキュメント</title>
+        <title>液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#fec-flrframe-loss-ratioport_flrlua-counterpoll-port-flr-interval-factor" class="md-skip">
+        <a href="#liquidcoolingbase-thermalctld-system-health-gnmi" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+              液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
             
           </span>
         </div>
@@ -4275,6 +4275,62 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICMP Hardware Offload（DualToR link prober の NPU 化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -4294,7 +4350,7 @@
   <span class="md-ellipsis">
     
   
-    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
   
 
     
@@ -4312,7 +4368,7 @@
   <span class="md-ellipsis">
     
   
-    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
   
 
     
@@ -4364,7 +4420,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント関係
+        全体フロー
       
     </span>
   </a>
@@ -4372,10 +4428,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-counter" class="md-nav__link">
+  <a href="#platform-api-liquidcoolingbase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        使う SAI counter
+        Platform API: LiquidCoolingBase
       
     </span>
   </a>
@@ -4383,10 +4439,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counter_db-entry" class="md-nav__link">
+  <a href="#thermalctld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTER_DB の追加 entry
+        thermalctld の別スレッド
       
     </span>
   </a>
@@ -4394,10 +4450,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#observed-fec-flr" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Observed FEC FLR
+        STATE_DB スキーマ
       
     </span>
   </a>
@@ -4405,21 +4461,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#predicted-fec-flr" class="md-nav__link">
+  <a href="#system-health-monitor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Predicted FEC FLR
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counter-poll" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Counter poll の周期
+        system-health monitor
       
     </span>
   </a>
@@ -4444,10 +4489,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / YANG
       
     </span>
   </a>
@@ -4469,7 +4514,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        設定例（液冷対応プラットフォーム）
       
     </span>
   </a>
@@ -4529,62 +4574,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICMP Hardware Offload（DualToR link prober の NPU 化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -5541,7 +5530,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント関係
+        全体フロー
       
     </span>
   </a>
@@ -5549,10 +5538,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-counter" class="md-nav__link">
+  <a href="#platform-api-liquidcoolingbase" class="md-nav__link">
     <span class="md-ellipsis">
       
-        使う SAI counter
+        Platform API: LiquidCoolingBase
       
     </span>
   </a>
@@ -5560,10 +5549,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counter_db-entry" class="md-nav__link">
+  <a href="#thermalctld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTER_DB の追加 entry
+        thermalctld の別スレッド
       
     </span>
   </a>
@@ -5571,10 +5560,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#observed-fec-flr" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Observed FEC FLR
+        STATE_DB スキーマ
       
     </span>
   </a>
@@ -5582,21 +5571,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#predicted-fec-flr" class="md-nav__link">
+  <a href="#system-health-monitor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Predicted FEC FLR
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counter-poll" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Counter poll の周期
+        system-health monitor
       
     </span>
   </a>
@@ -5621,10 +5599,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / YANG
       
     </span>
   </a>
@@ -5646,7 +5624,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        設定例（液冷対応プラットフォーム）
       
     </span>
   </a>
@@ -5719,7 +5697,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/fec-flr-support-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/liquid-cooling-leakage-detection-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5729,269 +5707,152 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (2025-07) で <code>port_flr.lua</code> 追加と FlexCounterOrch 拡張、speed → interleaving factor table、predicted FLR の線形回帰アルゴリズム。<strong>SAI 属性 <code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si</code> の community SAI / vendor SAI 提供状況</strong>は要確認。</p>
+<p>HLD は改訂日付が記載されていない。<code>sonic-platform-common</code> の <code>LiquidCoolingBase</code> クラス、<code>thermalctld</code> の <code>LiquidCoolingUpdater</code> 別スレッド、system-health の <code>_check_liquid_cooling_status</code>、CLI 取り込みは要裏取り。</p>
 </div>
-<h1 id="fec-flrframe-loss-ratioport_flrlua-counterpoll-port-flr-interval-factor">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）<a class="headerlink" href="#fec-flrframe-loss-ratioport_flrlua-counterpoll-port-flr-interval-factor" title="Permanent link">&para;</a></h1>
+<h1 id="liquidcoolingbase-thermalctld-system-health-gnmi">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）<a class="headerlink" href="#liquidcoolingbase-thermalctld-system-health-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>Frame Loss Ratio (FLR)</code> は <strong>送信フレームに対する欠落フレームの割合</strong> で、リンク品質の代表指標<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
-</span></code></pre></div>
-<p>物理層側では Codeword Error Ratio（CER）が分かれば、interleaving 係数を掛けて FLR を見積もれる。SONiC はこれを <strong>counter poll プラグイン (<code>port_flr.lua</code>)</strong> として ASIC の FEC counter から計算し、COUNTER_DB に保管 → telemetry 配信する設計を導入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>機能<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が <strong>即時</strong> アラート（syslog + STATE_DB + gNMI event）を出すパイプラインを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>Observed FEC FLR</strong> の周期算出（直近 interval の CER × interleaving）</li>
-<li><strong>Predicted FEC FLR</strong> の予測（codeword error 分布の対数線形回帰で 16–20 symbol errors の領域を外挿）</li>
-<li><code>show interfaces counters fec-stats</code> に <strong><code>FLR(O)</code> と <code>FLR(P)</code></strong> カラム追加</li>
-<li><code>counterpoll port flr-interval-factor &lt;factor&gt;</code> で計算間隔を調整（既定 <code>120</code>）</li>
+<li>漏洩検出センサを監視し、検知時にアラートを出す</li>
+<li>液冷未対応プラットフォームでは <strong>追加のオーバーヘッドを発生させない</strong></li>
 </ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI counters\nIF_IN_FEC_*] --&gt; COUNTERS[COUNTER_DB:COUNTERS]
-    COUNTERS --&gt; LUA[port_flr.lua\n(plugin under PORT_STAT)]
-    CFG[CONFIG_DB\nFLEX_COUNTER_TABLE\nflr-interval-factor] --&gt; FCO[FlexCounterOrch]
-    FCO --&gt; FCDB[FLEX_COUNTER_DB\nFLR_INTERVAL_FACTOR]
-    FCDB --&gt; LUA
-    LUA --&gt; RATES[COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last]
-    RATES --&gt; CLI[portstat -f / show fec-stats]
-    RATES --&gt; TEL[telemetry]</code></pre>
-<h3 id="sai-counter">使う SAI counter<a class="headerlink" href="#sai-counter" title="Permanent link">&para;</a></h3>
-<p>すべて既存の SAI port counter<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code></li>
-<li><code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES</code></li>
-<li><code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15</code>（RS-544 では 16 bin）</li>
-</ul>
-<p>サポートしないインタフェースは個別 counter が <strong><code>not support</code></strong> を返し、<code>portstat -f</code> 上では <code>N/A</code> を表示<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="counter_db-entry">COUNTER_DB の追加 entry<a class="headerlink" href="#counter_db-entry" title="Permanent link">&para;</a></h3>
-<p><code>COUNTER_DB:RATES</code> に以下が <strong>新規追加</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+  HW[Leak Sensor] --&gt; API[LiquidCoolingBase Platform API]
+  API --&gt; TC[thermalctld&lt;br&gt;LiquidCoolingUpdater 別スレッド]
+  TC --&gt; SDB[(STATE_DB:&lt;br&gt;LIQUID_COOLING_DEVICE)]
+  SDB --&gt; SH[system-health&lt;br&gt;hardware_checker.py]
+  SH --&gt;|gNMI event| EXT[外部監視]
+  TC --&gt; SYSLOG[syslog ERROR]</code></pre>
+<h3 id="platform-api-liquidcoolingbase">Platform API: <code>LiquidCoolingBase</code><a class="headerlink" href="#platform-api-liquidcoolingbase" title="Permanent link">&para;</a></h3>
+<p><code>sonic-platform-common</code> に新規追加されるベースクラス<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LiquidCoolingBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">leakge_sensors_num</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">leakage_sensors</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_leak_sensor_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="c1"># int</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_leak_sensor_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="c1"># list of names</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_leak_sensor_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># 漏洩中のセンサ名リスト</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">LeakageSensor</span><span class="p">(</span><span class="n">SensorBase</span><span class="p">):</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">leaking</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>    <span class="c1"># str</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_leak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>     <span class="c1"># bool</span>
+</span></code></pre></div>
+<p>各プラットフォームはこれを継承して BMC / I2C 等経由でセンサを読む<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="thermalctld">thermalctld の別スレッド<a class="headerlink" href="#thermalctld" title="Permanent link">&para;</a></h3>
+<p>新規 <code>LiquidCoolingUpdater</code> を <code>thermalctld</code> に追加する。<strong>メインスレッドの 1 分周期は液漏れには遅すぎる</strong> ため、専用スレッドで <strong>0.5 秒間隔</strong>（既定）で polling する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LiquidCoolingUpdater</span><span class="p">():</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_leak_status_update</span><span class="p">()</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_refresh_leak_status_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="n">obj</span> <span class="o">=</span> <span class="n">chassis</span><span class="o">.</span><span class="n">get_liquid_cooling_device</span><span class="p">()</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="c1"># obj.get_leak_sensor_status() を呼んで結果を STATE_DB に書く</span>
+</span></code></pre></div>
+<p><code>pmon_daemon_control.json</code> に下記設定を追加し、<strong>液冷未対応プラットフォームでは Updater 自体を作らない</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;enable_liquid_cooling&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;liquid_cooling_update_interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>漏洩検出時は STATE_DB 更新と syslog <code>ERROR</code> を出す<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Liquid cooling leakge has been detected on sensor{}
+</span></code></pre></div>
+<h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>LIQUID_COOLING_DEVICE|leakage_sensors{X}
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  name    = &lt;センサ名&gt;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  leaking = &quot;Yes&quot; | &quot;No&quot;
+</span></code></pre></div>
+<p>各センサ 1 行で表現し、漏洩状態（"Yes"/"No"）を持つ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="system-health-monitor">system-health monitor<a class="headerlink" href="#system-health-monitor" title="Permanent link">&para;</a></h3>
+<p><code>hardware_checker.py</code> に <code>_check_liquid_cooling_status(self, config)</code> を追加。STATE_DB を監視し、状態遷移時に <strong>gNMI イベントを発行</strong> する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">publish_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">leakge_sensor_list</span><span class="p">):</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">swsscommon</span><span class="o">.</span><span class="n">FieldValueMap</span><span class="p">()</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="n">leakge_sensor_list</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        <span class="n">swsscommon</span><span class="o">.</span><span class="n">event_publish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events_handle</span><span class="p">,</span> <span class="n">EVENTS_PUBLISHER_TAG</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></code></pre></div>
+<p>イベント識別子<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>Entry</th>
-<th>説明</th>
+<th>キー</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>FEC_FLR</code></td>
-<td>observed FEC FLR（float）</td>
+<td><code>EVENTS_PUBLISHER_SOURCE</code></td>
+<td><code>sonic-events-host</code></td>
 </tr>
 <tr>
-<td><code>FEC_FLR_PREDICTED</code></td>
-<td>predicted FEC FLR（float）</td>
-</tr>
-<tr>
-<td><code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES_last</code></td>
-<td>直前値</td>
-</tr>
-<tr>
-<td><code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES_last</code></td>
-<td>直前値</td>
-</tr>
-<tr>
-<td><code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si_last</code></td>
-<td>直前値（i=0..15）</td>
+<td><code>EVENTS_PUBLISHER_TAG</code></td>
+<td><code>liquid-cooling-leak</code></td>
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB / SAI API / sonic-platform-common には変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="observed-fec-flr">Observed FEC FLR<a class="headerlink" href="#observed-fec-flr" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-    A[Δ uncorrectable_cw\n= NOT_CORR - NOT_CORR_last] --&gt; C
-    B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --&gt; C
-    C[CER = Δ uncorrectable / Δ total]
-    C --&gt; D{interleaving X}
-    D --&gt;|X=1| E1[FLR = 1.125 * CER]
-    D --&gt;|X=2| E2[FLR = 2.125 * CER]
-    D --&gt;|X=4| E4[FLR = 4.125 * CER]</code></pre>
-<p>公式（IEEE 802.3df Logic Ad Hoc 由来）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FEC_FLR = CER * (1 + X * MFC) / MFC
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>RS-544: MFC = 8
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  X=1 → FLR = 1.125 * CER
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  X=2 → FLR = 2.125 * CER
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  X=4 → FLR = 4.125 * CER
-</span></code></pre></div>
-<p>X（interleaving factor）は理想的には <strong>新 SAI 属性</strong> で取得したいが、未対応のため <strong>port speed × lane 数の表</strong> で当面代替する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>Speed</th>
-<th>Lanes</th>
-<th>X</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1600G</td>
-<td>8</td>
-<td>4</td>
-</tr>
-<tr>
-<td>800G</td>
-<td>8</td>
-<td>4</td>
-</tr>
-<tr>
-<td>400G</td>
-<td>8</td>
-<td>2</td>
-</tr>
-<tr>
-<td>400G</td>
-<td>4</td>
-<td>2</td>
-</tr>
-<tr>
-<td>200G</td>
-<td>4</td>
-<td>2</td>
-</tr>
-<tr>
-<td>200G</td>
-<td>2</td>
-<td>2</td>
-</tr>
-<tr>
-<td>100G</td>
-<td>2</td>
-<td>2</td>
-</tr>
-<tr>
-<td>100G</td>
-<td>1</td>
-<td>1 or 2 (autoneg)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="predicted-fec-flr">Predicted FEC FLR<a class="headerlink" href="#predicted-fec-flr" title="Permanent link">&para;</a></h3>
-<p>エラーが小さく Observed が 0 になりがちな現役リンクで、<strong>外挿</strong> で先読みするのが目的<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ステップ<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><code>x = [1, 2, ..., 15]</code>、<code>codeword_errors[i] = ΔSi</code></li>
-<li><code>y[i] = log10( codeword_errors[i] / total_cw )</code></li>
-<li>線形回帰で <code>slope</code>, <code>intercept</code> を求める（<code>y = slope*x + intercept</code>）</li>
-<li>16–20 symbol errors の窓で外挿: <code>predicted_cer = Σ_{j=16..20} 10^(j*slope + intercept)</code></li>
-<li><code>FEC_FLR_PREDICTED = (1.125 / 2.125 / 4.125) * predicted_cer</code>（X 別）</li>
-<li><code>COUNTER_DB:RATES</code> に <code>FEC_FLR_PREDICTED</code> と <code>*_last</code> を保存</li>
-</ol>
-<p>20 を超える symbol error は <code>predicted_cer</code> への寄与が無視できる量になるので 16–20 に窓を切る<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>非ゼロ bin が <strong>2 個未満</strong> だと回帰できないので、その場合 <code>FLR(P)</code> は <code>0</code> を表示する（<code>N/A</code> ではなく <code>0</code> にして CLI 表示の readability を優先）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="counter-poll">Counter poll の周期<a class="headerlink" href="#counter-poll" title="Permanent link">&para;</a></h3>
-<p><code>port_flr.lua</code> は <strong>既存 <code>PORT_STAT_COUNTER_FLEX_COUNTER_GROUP</code></strong> にプラグインとして登録する<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>port_rates.lua</code> と並ぶ位置づけ。</p>
-<p>実行間隔<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
-</span></code></pre></div>
-<p><code>FLR_INTERVAL_FACTOR</code> は <strong><code>FLEX_COUNTER_DB</code></strong> から読む。<code>FlexCounterOrch</code> が CONFIG_DB の <code>counterpoll port flr-interval-factor</code> を伝搬する。デフォルト <code>120</code><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>つまり port_stat poll が <code>1000ms</code> であれば FLR 計算は <code>120</code> 秒に 1 回。</p>
+<p><strong>「No → Yes」「Yes → No」の両遷移でイベントを出す</strong>（リーク発生／復旧両方）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/port_fec_flr/port_fec_flr.md#L74-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/bmc/leakage_detection_hld.md#L108-L122 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  port_flr.lua
-    - Access the COUNTER_DB for already available counters for SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES, SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES,
-      and SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si...
-    - Perform the FEC FLR computation on each port once every `port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR` seconds
-  portsorch.cpp
-    - Link the new "port_flr.lua" script as a plugin to the existing PORT_STAT_COUNTER_FLEX_COUNTER_GROUP
-  flexcounterorch.cpp
-    - Enhance "FlexCounterOrch" to propagate FLR_INTERVAL_FACTOR from CONFIG_DB to FLEX_COUNTER_DB.
-reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR の伝搬経路の根拠。
+  A new function named `_check_liquid_cooling_status(self, config)` will be added to the system health monitor hardware_chekcer.py
+  ... It worth to note that both change from NOTleak to leak and leak to NOTleak will trigger an event.
+  EVENTS_PUBLISHER_SOURCE = "sonic-events-host"
+  EVENTS_PUBLISHER_TAG = "liquid-cooling-leak"
+reasoning: gNMI イベント仕様と双方向通知の根拠。
 -->
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>PORT</code></td>
-<td><code>FLR_INTERVAL_FACTOR</code>（FlexCounterOrch が CONFIG_DB → FLEX_COUNTER_DB に伝搬）</td>
-</tr>
-</tbody>
-</table>
+<h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の追加は無い。<code>pmon_daemon_control.json</code> の起動設定で機能を gate する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>counterpoll port flr-interval-factor &lt;factor&gt;</code></td>
-<td>計算周期（デフォルト 120）の設定<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td><code>show interfaces counters fec-stats</code></td>
-<td><code>FLR(O)</code> / <code>FLR(P)</code> カラム追加<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td><code>portstat -f</code></td>
-<td>上記の内部呼び出し（CLI が叩く形）<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-</tbody>
-</table>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 60 秒に 1 回計算（port_stat poll 1s 前提なら 60 倍）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>counterpoll<span class="w"> </span>port<span class="w"> </span>flr-interval-factor<span class="w"> </span><span class="m">60</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 表示</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>fec-stats
+<p>新規 <code>show platform leakage status</code><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Name              Leak
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>------------------------
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>leak_sensors1     NO
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>leak_sensors2     NO
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>...
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>leak_sensorsX     Yes
 </span></code></pre></div>
-<p>期待表示<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>IFACE         STATE FEC_CORR FEC_UNCORR FEC_SYMBOL_ERR ... FLR(O)  FLR(P) (Accuracy)
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Ethernet72    U     28,531   0          31                 0       2.68e-09 (79%)
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Ethernet80    U     25,890   0          25                 0       6.03e-09 (79%)
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%)
+<p><code>show system-health detail</code> の出力に Liquid Cooling 行が追加される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Name              Status    Type
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>leak_sensors1     OK        LiquidCooling
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>leak_sensors2     OK        LiquidCooling
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>leak_sensors3     Not OK    LiquidCooling
 </span></code></pre></div>
+<h3 id="_5">設定例（液冷対応プラットフォーム）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>/usr/share/sonic/device/&lt;platform&gt;/pmon_daemon_control.json</code> に追加:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;enable_liquid_cooling&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;liquid_cooling_update_interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>液冷非対応プラットフォームでは <strong>このフィールド自体を入れない</strong>（または <code>enable_liquid_cooling: false</code>）。<code>thermalctld</code> 起動時に Updater スレッドを生成しないため、追加オーバーヘッドはゼロ<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>必要な SAI counter（<code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si</code> 等）が <strong>未サポートの interface は <code>N/A</code></strong> 表示<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>非ゼロ bin が 2 個未満で回帰できない場合は <code>FLR(P) = 0</code><sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>interleaving factor X は <strong>port speed × lane 数の固定テーブル</strong> で代替している。新 SAI 属性が追加されればそちらに置換予定<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>100G × 1 lane の場合 X は <strong>autonegotiated</strong>（1 or 2）。誤った X を使うと FLR が 2 倍ずれる<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>計算は <code>port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR</code> 周期。ASIC counter の更新粒度に依存</li>
-<li>predicted は <strong>線形回帰の外挿</strong> に過ぎず、低 BER 領域での実測 FLR と乖離する可能性</li>
+<li><strong>0.5 秒 polling</strong>: メインスレッドの 1 分とは別系統。0.5 秒は HLD のデフォルトだが、CPU/IPC 負荷の問題があれば調整可。</li>
+<li><strong>Per-sensor name 管理がプラットフォーム責任</strong>: 漏洩位置特定のため複数センサ前提。<code>name</code> の命名規則は HLD で規定なし。</li>
+<li><strong>STATE_DB と gNMI イベントの二重経路</strong>: STATE_DB を監視する system-health からのイベント発行であり、<code>thermalctld</code> 直接の gNMI 発行ではない。state-db 更新が遅延するとイベントも遅延する。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 <code>port_rates.lua</code></strong>: 同じ <code>PORT_STAT_COUNTER_FLEX_COUNTER_GROUP</code> プラグイン。両方が同じ COUNTER_DB を参照</li>
-<li><strong>FlexCounterOrch / counterpoll</strong>: poll 周期を共有。<code>counterpoll port disable</code> するとこの計算も止まる</li>
-<li><strong>show interfaces counters fec-stats</strong>: FEC pre/post BER 計算と並行して FLR を載せる</li>
-<li><strong>telemetry</strong>: <code>COUNTER_DB:RATES</code> の <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> を gNMI で配信できる</li>
-<li><strong>port speed 変更（DPB / breakout）</strong>: interleaving factor X が再評価される</li>
+<li><strong><code>thermalctld</code> メインスレッド</strong>: 既存周期と分離。漏洩検知の頻度を上げるためにメイン周期を上げる必要は無い設計選択<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>system-health monitor</strong>: 既存の hardware_checker パターンを踏襲。他センサの check 関数群と並列に動く。</li>
+<li><strong><code>pmon_daemon_control.json</code></strong>: 他デーモン制御フラグと共存。液冷フラグの命名 <code>enable_liquid_cooling</code> に注意。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>FLR(O)</code> がずっと 0: 直近 interval で uncorrectable codeword が 0。健全だが、predicted も併せて見ると劣化傾向が出やすい</li>
-<li><code>FLR(P)</code> が <code>0</code> 表示: 非ゼロの symbol error bin が 2 個未満。回帰不能</li>
-<li><code>N/A</code> 表示: SAI counter が当該 platform で未対応</li>
-<li>値が想定の半分/倍: interleaving factor X の取り違え。port speed と lane 数を再確認</li>
+<li>漏洩イベントが出ない: <code>LIQUID_COOLING_DEVICE</code> STATE_DB を直接確認。<code>thermalctld</code> の LiquidCoolingUpdater スレッドが起動しているか、<code>pmon_daemon_control.json</code> の <code>enable_liquid_cooling</code> が true かを確認。</li>
+<li>gNMI イベント未着: STATE_DB は更新されているのに event が来ない場合、<code>system-health</code> の <code>_check_liquid_cooling_status</code> が登録されているか、<code>EVENTS_PUBLISHER_TAG</code> の購読側設定を確認。</li>
+<li>液冷非対応機で Updater が走っている: <code>enable_liquid_cooling</code> が誤って true になっていないか確認。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- port_flr.lua の swss 取り込み確認
-- FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認
-- COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ追加確認
-- portstat -f / show fec-stats への FLR(O) / FLR(P) カラム追加確認
-- counterpoll port flr-interval-factor サブコマンド sonic-utilities 取り込み確認
-- SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況
-- interleaving factor X 取得用の新 SAI 属性提案 / 進捗
--->
-
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port_fec_flr/port_fec_flr.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/bmc/leakage_detection_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
