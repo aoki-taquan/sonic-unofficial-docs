@@ -1,0 +1,144 @@
+---
+title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
+area: architecture
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/pbh/pbh-design.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - PBH_TABLE
+    - PBH_RULE
+    - PBH_HASH
+    - PBH_HASH_FIELD
+  cli:
+    - config pbh
+    - show pbh
+  yang:
+    - sonic-pbh
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    `PbhOrch` の現行 master 取り込み、SAI fine-grained hash 関連属性の community SAI 取り込み、`PBH_*` テーブル / CLI / YANG の取り込み、CRM 連携は未確認。
+
+# Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
+
+## 概要
+
+NVGRE / VxLAN のような encapsulated トラフィックでは、ECMP / LAG ハッシュが outer ヘッダだけを見ると **flow が偏る**。PBH は **ACL でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる** 機能[^1]。Nazarii Hnydyn（2021）作。
+
+スコープ:
+
+- In: NVGRE / VxLAN inner 5-tuple ベースの PBH
+- Out: PBH FG hash リソースの CRM 監視[^1]
+
+## 動作仕様
+
+### Components
+
+```mermaid
+flowchart LR
+    USER[(CONFIG_DB\nPBH_TABLE / PBH_RULE /\nPBH_HASH / PBH_HASH_FIELD)] --> PBHO[PbhOrch]
+    PBHO -->|hash field 編成| SAI_HF[(SAI fine-grained hash field)]
+    PBHO -->|hash 編成| SAI_H[(SAI hash)]
+    PBHO -->|ACL rule に hash を関連付け| ACLO[AclOrch]
+    ACLO --> SAI_ACL[(SAI ACL entry)]
+    PBHO --> STATE[(STATE_DB\nPBH_*)]
+    STATE --> CLI[show pbh]
+```
+
+PBH は **ACL の上に乗る**。ACL rule が match した packet にだけ、PBH が組み立てた hash function を適用する形[^1]。
+
+### CONFIG_DB
+
+```
+PBH_TABLE|<name>:
+  interface_list   = <ports>
+  description
+
+PBH_RULE|<table>|<rule>:
+  priority
+  ether_type, ip_protocol, gre_key, inner_ether_type
+  hash             = <hash-name>
+  packet_action    = SET_ECMP_HASH | SET_LAG_HASH
+  flow_counter     = enabled/disabled
+
+PBH_HASH|<hash-name>:
+  hash_field_list  = <PBH_HASH_FIELD names>
+
+PBH_HASH_FIELD|<field-name>:
+  hash_field       = INNER_DST_IPV4 | INNER_SRC_IPV4 | ... | INNER_L4_DST_PORT | ...
+  ip_mask          = <mask>
+  sequence_id      = <int>          # 同 sequence_id の field は対称（src/dst を同等視）
+```
+
+### Hash field とシンメトリ
+
+`sequence_id` を共有する field は「対称」と扱われ、双方向トラフィックで同じ hash 値になる[^1]。これにより flow の往復が同じ ECMP NH に乗る。
+
+### Modification flow
+
+```mermaid
+flowchart LR
+    A[既存 PBH rule] -- key 変更（hash 構成変更）--> DEL[一旦 remove → 新規 add]
+    A -- field 値のみ更新 --> SET[SAI set / del]
+```
+
+key（hash 構成）の変更は in-place できず、PBH rule を削除→再作成する[^1]。field の値だけなら in-place（v0.3 で追加された PBH update flow）。
+
+### Warm / Fast boot
+
+PBH は CONFIG_DB に persist。warm/fast boot 越しに継続。SAI 側 hash オブジェクト OID は再生成される。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In scope: PBH for NVGRE/VxLAN packets based on inner 5-tuple
+  ... PBH | PBH update flow ... introduce field set/del
+reasoning: スコープと field-only 更新（v0.3）の根拠。
+-->
+
+## 設定
+
+### CLI
+
+```
+config pbh table add <name> --interface-list "Ethernet0,Ethernet4"
+config pbh hash-field add <field> --hash-field INNER_SRC_IPV4 --ip-mask /32 --sequence-id 1
+config pbh hash-field add <field2> --hash-field INNER_DST_IPV4 --ip-mask /32 --sequence-id 1   # 対称
+config pbh hash add <hash> --hash-field-list <field1>,<field2>,...
+config pbh rule add <table> <rule> --priority 100 --ether-type 0x0800 --ip-protocol 47 --gre-key 0x2500/0xffffff00 --hash <hash> --packet-action SET_ECMP_HASH
+show pbh table / rule / hash / hash-field
+```
+
+## 制限事項
+
+- inner 5-tuple は IPv4 / IPv6 限定。NVGRE / VxLAN 以外の encap には未対応 schema
+- CRM の hash field リソース監視は **out of scope**[^1]
+- key 変更は in-place 不可（rule 削除→再作成）
+
+## 干渉する機能
+
+- **ACL Orch / AclOrch**: PBH rule は ACL rule に紐付くため AclOrch との連携が必須
+- **Dynamic Port Breakout (DPB)**: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要
+- **CRM**: 現状監視外（追加検討）
+
+## トラブルシューティング
+
+- PBH 効かない → ACL rule が hit しているか aclshow で確認、`SET_ECMP_HASH`/`SET_LAG_HASH` 設定確認
+- 双方向で別パスに行く → `sequence_id` の対称性確認（src/dst が同じ id か）
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/pbh/pbh-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- PbhOrch の sonic-swss 取り込み確認
+- PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の sonic-yang-models 取り込み確認
+- SAI fine-grained hash 関連属性（SAI_HASH_ATTR_*, SAI_FINE_GRAINED_HASH_FIELD_*）の community SAI 取り込み確認
+- config pbh / show pbh CLI の sonic-utilities 取り込み確認
+- v0.3 (2021-11) で追加された field set/del modification flow の取り込み確認
+- CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
+-->
