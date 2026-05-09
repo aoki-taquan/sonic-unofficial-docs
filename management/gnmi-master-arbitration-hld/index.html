@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/acl-support-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-master-arbitration-hld/">
       
       
-        <link rel="prev" href="../acl-flex-counters-support/">
+        <link rel="prev" href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">
       
       
-        <link rel="next" href="../align-watermark-flow-with-port-configuration-hld/">
+        <link rel="next" href="../gnoi-hld-for-file-and-factory-reset-apis/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ） - SONiC 非公式ドキュメント</title>
+        <title>gNMI Master Arbitration（election ID と SetRequest 拡張） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#acl-acl_table-acl_rule" class="md-skip">
+        <a href="#gnmi-master-arbitrationelection-id-setrequest" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+              gNMI Master Arbitration（election ID と SetRequest 拡張）
             
           </span>
         </div>
@@ -335,13 +335,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../acl-qos/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -2127,8 +2127,6 @@
       
   
   
-    
-  
   
   
     
@@ -2166,23 +2164,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../acl-qos/" class="md-nav__link ">
               
   
   
@@ -2200,13 +2195,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2226,7 +2221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../acl-flex-counters-support/" class="md-nav__link">
+      <a href="../../acl-qos/acl-flex-counters-support/" class="md-nav__link">
         
   
   
@@ -2251,37 +2246,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../acl-qos/acl-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -2297,225 +2265,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_TABLE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_RULE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        サポートされる操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポート連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（HLD ベース）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2528,7 +2277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
+      <a href="../../acl-qos/align-watermark-flow-with-port-configuration-hld/" class="md-nav__link">
         
   
   
@@ -2556,7 +2305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
+      <a href="../../acl-qos/copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
         
   
   
@@ -2584,7 +2333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-acl-tags/" class="md-nav__link">
+      <a href="../../acl-qos/dash-acl-tags/" class="md-nav__link">
         
   
   
@@ -2612,7 +2361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -2640,7 +2389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
+      <a href="../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/" class="md-nav__link">
         
   
   
@@ -2668,7 +2417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancements-on-show-acl-commands/" class="md-nav__link">
+      <a href="../../acl-qos/enhancements-on-show-acl-commands/" class="md-nav__link">
         
   
   
@@ -2696,7 +2445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2724,7 +2473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
+      <a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/" class="md-nav__link">
         
   
   
@@ -2752,7 +2501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2780,7 +2529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -3336,6 +3085,8 @@
       
   
   
+    
+  
   
   
     
@@ -3373,20 +3124,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3404,13 +3158,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3430,7 +3184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -3458,7 +3212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -3486,7 +3240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -3511,10 +3265,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3530,6 +3311,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体像
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protobuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        protobuf 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サーバ側ロジック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role（ほぼ未使用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ロギング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（HLD 記述ベース）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3542,7 +3531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3570,7 +3559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+      <a href="../packetio/" class="md-nav__link">
         
   
   
@@ -3598,7 +3587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3626,7 +3615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3654,7 +3643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3682,7 +3671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -3710,7 +3699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3738,7 +3727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -4824,32 +4813,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_TABLE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_RULE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされる操作
+        全体像
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protobuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        protobuf 拡張
       
     </span>
   </a>
@@ -4860,7 +4838,18 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート連携
+        サーバ側ロジック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#role" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role（ほぼ未使用）
       
     </span>
   </a>
@@ -4871,29 +4860,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カウンタ
+        ロギング
       
     </span>
   </a>
@@ -4906,7 +4873,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4940,10 +4907,21 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例（HLD ベース）
+        設定例（HLD 記述ベース）
       
     </span>
   </a>
@@ -4956,7 +4934,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4967,7 +4945,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4978,7 +4956,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4989,7 +4967,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5016,7 +4994,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/acl-support-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnmi-master-arbitration-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5025,228 +5003,176 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは初期版の HLD（要件文書）に基づく。<code>l3</code> / <code>mirror</code> 以外の table type、<code>config acl</code> CLI、aclorch の SAI 属性マッピング、<code>l2_prot_type</code> の IPv6 拡張等、実装は HLD よりも先行している箇所が多いため、このページは <strong>後続 HLD・実コード裏取りで上書きされる前提</strong> で読むこと。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い Initial Proposal</p>
+<p>HLD は 2023-02 改訂の v0.1（Initial 版）で 2 年以上経過している。現行 master の <code>sonic-gnmi</code> 実装に取り込まれているか、<code>--with-master-arbitration</code> フラグや <code>TELEMETRY|gnmi:master_arbitration_enabled</code> スキーマがそのまま採用されているかは未確認。<strong>Open / Action items は HLD 上 N/A だが、Restrictions に「default role 以外は無視」と記載がある点に注意</strong>。</p>
 </div>
-<h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
+<h1 id="gnmi-master-arbitrationelection-id-setrequest">gNMI Master Arbitration（election ID と SetRequest 拡張）<a class="headerlink" href="#gnmi-master-arbitrationelection-id-setrequest" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の data plane ACL の <strong>初期設計</strong> を定義する文書。ハードウェア（SAI）に降ろすための ACL テーブル / ルールの <strong>APP_DB スキーマ</strong> と、それを操作する <code>swssconfig</code> ベースの設定フローを規定している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>要件は <strong>Must Have (M)</strong> と <strong>Should Have (S)</strong> に分かれており、リリース必須機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>gNMI Master Arbitration は <strong>複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、<code>Set</code> RPC を出せるのは唯一のマスタだけにする</strong> ための調停機構である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>仕様は openconfig 側の <a href="https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-master-arbitration.md">gnmi-master-arbitration</a> に準じ、SONiC では <code>sonic-gnmi</code> の telemetry サーバ側に組み込む形で実装する。コアは以下のシンプルなルールである<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>データプレーン ACL のサポート</li>
-<li>ACL テーブルが <strong>predefined type</strong>（<code>l3</code> / <code>mirror</code> 等）を持ち、type ごとに使える match と action が決まる</li>
-<li>フロントパネル物理ポートへの bind</li>
-<li>同一ポートに <strong>複数の ACL テーブルを bind 可能</strong>（permit/deny の <code>l3</code> テーブルと mirror テーブルの併用が想定例）</li>
-<li>match: src/dst IP, IP protocol, TCP/UDP port, <strong>port range</strong></li>
-<li>action: permit/deny, <strong>erspan mirror</strong></li>
-<li>ルール毎の <strong>packet counter</strong>（byte counter は Should Have）</li>
+<li>各クライアントは <strong>128-bit の単調増加 election ID (EID)</strong> を保持する</li>
+<li>クライアントは <code>SetRequest</code> の extension 領域に <code>MasterArbitration{role, election_id}</code> を載せて送る</li>
+<li>ターゲット（gNMI server）は <strong>過去に見た中で最大の EID</strong> を保存し、それ未満／未指定の <code>Set</code> を <code>PermissionDenied</code> で拒否する</li>
+<li><code>Get</code> などの read RPC には影響しない<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<p>スケール目標は <strong><code>l3</code> テーブルで 1K rule、<code>mirror</code> テーブルで 256 rule</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC では既定で <strong>オフ</strong>。コマンドラインフラグ <code>--with-master-arbitration</code> が指定された時のみ有効で、SWSS / syncd / SAI には変更を加えない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="acl_table"><code>ACL_TABLE</code> スキーマ<a class="headerlink" href="#acl_table" title="Permanent link">&para;</a></h3>
-<p>ACL テーブル定義<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key            = ACL_TABLE:name              ; name は unique
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>policy_desc    = 1*255VCHAR                  ; 説明文
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>type           = &quot;mirror&quot; | &quot;l3&quot;             ; テーブル種別
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ports          = port_name のリスト          ; bind 先ポート（空も可）
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mirror_session_name = name                   ; mirror 用にのみ意味を持つ
+<h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant C1 as Controller 1 (EID=N)
+    participant C2 as Controller 2 (EID=N+M)
+    participant SV as gNMI server
+    C1-&gt;&gt;SV: SetRequest(ext=MA{EID=N})
+    Note right of SV: masterEID = N
+    SV--&gt;&gt;C1: OK
+    C2-&gt;&gt;SV: SetRequest(ext=MA{EID=N+M})
+    Note right of SV: N+M &gt; N → masterEID = N+M
+    SV--&gt;&gt;C2: OK
+    C1-&gt;&gt;SV: SetRequest(ext=MA{EID=N})
+    Note right of SV: N &lt; masterEID → 拒否
+    SV--&gt;&gt;C1: PermissionDenied
+    C1-&gt;&gt;SV: GetRequest(...)
+    Note right of SV: Master Arbitration は Set のみ対象
+    SV--&gt;&gt;C1: OK</code></pre>
+<h3 id="protobuf">protobuf 拡張<a class="headerlink" href="#protobuf" title="Permanent link">&para;</a></h3>
+<p><code>MasterArbitration</code> は gNMI の汎用拡張領域に乗る。HLD は <code>gnmi_ext.proto</code> の <code>Extension</code> の <code>oneof ext</code> の 1 つとして定義する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-proto highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">message</span><span class="w"> </span><span class="nc">MasterArbitration</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">Role</span><span class="w"> </span><span class="na">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">Uint128</span><span class="w"> </span><span class="na">election_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">message</span><span class="w"> </span><span class="nc">Uint128</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">uint64</span><span class="w"> </span><span class="na">high</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="kt">uint64</span><span class="w"> </span><span class="na">low</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kd">message</span><span class="w"> </span><span class="nc">Role</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="na">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p><code>type</code> がそのテーブルで使える match field と action のセットを規定する。例えば <code>mirror</code> テーブルでは action は <strong>mirror のみ</strong> 利用可能<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="acl_rule"><code>ACL_RULE</code> スキーマ<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>key: ACL_RULE_TABLE:table_name:seq
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>action       = &quot;permit&quot; | &quot;deny&quot;            ; mirror table type なら mirror も
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>l2_prot_type = &quot;ipv4&quot;                       ; HLD 当初は v4 のみ
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>l3_prot_type = &quot;icmp&quot; | &quot;tcp&quot; | &quot;udp&quot; | &quot;any&quot;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ipv4_src     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ipv4_dst     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>l4_src_port  = port_num | [port_num_L - port_num_H]
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>l4_dst_port  = port_num | [port_num_L - port_num_H]
+<p><code>SetRequest.extension</code>（repeated）に複数並ぶことがあり、その場合 <strong>末尾の <code>MasterArbitration</code> を採用</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">サーバ側ロジック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>サーバ起動時の分岐は以下の通り<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">var</span><span class="w"> </span><span class="nx">withMasterArbitration</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">flag</span><span class="p">.</span><span class="nx">Bool</span><span class="p">(</span><span class="s">&quot;with-master-arbitration&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;...&quot;</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">// ...</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">if</span><span class="w"> </span><span class="o">*</span><span class="nx">withMasterArbitration</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">ReqFromMaster</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">ReqFromMasterEnabledMA</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>注意点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>Set</code> RPC は以下のように <strong>認証より前</strong> にマスタ判定を入れる。HLD いわく、マスタでないなら認証する意味すらないため<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="o">*</span><span class="nx">Server</span><span class="p">)</span><span class="w"> </span><span class="nx">Set</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="o">*</span><span class="nx">gnmipb</span><span class="p">.</span><span class="nx">SetRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">gnmipb</span><span class="p">.</span><span class="nx">SetResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">ReqFromMaster</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="nx">status</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">PermissionDenied</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Not a master&quot;</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="c1">// 以降、authenticate と通常の Set 処理</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>ReqFromMasterEnabledMA</code> は受信した <code>SetRequest</code> の extension を全部走査し、最後に見つけた <code>MasterArbitration</code> の EID と内部の <code>masterEID</code> を 128-bit 比較する。新しい EID が大きければ更新、小さければ拒否する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<pre class="mermaid"><code>flowchart TD
+    A[SetRequest 受信] --&gt; B[extension 全走査]
+    B --&gt; C{MasterArbitration あり?}
+    C --&gt;|なし| D[reqEID = 0,0]
+    C --&gt;|あり| E[reqEID = 末尾 MA の EID]
+    D --&gt; F{masterEID vs reqEID}
+    E --&gt; F
+    F --&gt;|masterEID &gt; reqEID| G[reject: PermissionDenied]
+    F --&gt;|masterEID &lt; reqEID| H[masterEID = reqEID, accept]
+    F --&gt;|等しい| I[accept]</code></pre>
+<p>注意点<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>seq</code> は <strong>同一 ACL ポリシ内でユニーク</strong> な数値。<strong>適用順序を決定する</strong> キーとなる。</li>
-<li><code>l2_prot_type</code> で IPv4/IPv6 を切り替える設計だが、初期版は <strong>v4 only</strong>。</li>
-<li>L4 ポートは <strong>単一値または範囲指定</strong>。範囲は <code>port_num_L &lt; port_num_H</code> の制約。</li>
+<li>等しい EID は <strong>accept</strong>（マスタが再送した場合を許容）</li>
+<li>スイッチ再起動で <code>masterEID</code> は揮発し、初期値 <code>(0,0)</code> に戻る</li>
+<li>拡張が 1 つも無いケースでは <code>reqEID = (0,0)</code> が比較対象。Master Arbitration が enable で誰も EID を載せないと、最初の 1 回だけ <code>(0,0) == (0,0)</code> で通り、以降の EID &gt; 0 が来ると非マスタ扱いになる</li>
 </ul>
-<pre class="mermaid"><code>classDiagram
-    class ACL_TABLE {
-      +name (key)
-      +policy_desc
-      +type: "mirror"|"l3"
-      +ports: list
-      +mirror_session_name
-    }
-    class ACL_RULE {
-      +table_name (key)
-      +seq (key)
-      +action: permit|deny|mirror
-      +l3_prot_type
-      +ipv4_src
-      +ipv4_dst
-      +l4_src_port
-      +l4_dst_port
-    }
-    ACL_TABLE "1" --&gt; "*" ACL_RULE : owns</code></pre>
-<h3 id="_3">サポートされる操作<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD の Supported operations<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ACL テーブルを <strong>type 指定</strong> で作成</li>
-<li>ACL ルールを作成し ACL テーブルに紐付け</li>
-<li>ACL テーブルをポートに <strong>attach / detach</strong></li>
-<li>ACL ルールの削除</li>
-</ul>
-<p>これだけが初期スコープ。LAG への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">ポート連携<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port の oper status up/down は ACL bind に影響しない</strong>。port が down でも binding は維持される<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port を削除した場合は unbind が必要</strong>だが、初期リリースでは未実装<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<pre class="mermaid"><code>flowchart LR
-    PKT[Packet] --&gt; P[Front panel port]
-    P --&gt; ACL_L3[l3 ACL table\nbind 済]
-    P --&gt; ACL_M[mirror ACL table\nbind 済]
-    ACL_L3 --&gt;|permit/deny| FWD[forwarding]
-    ACL_M --&gt;|mirror| ESPAN[ERSPAN]</code></pre>
-<p>同じポートに <strong><code>l3</code> と <code>mirror</code> の 2 つのテーブルを同時に bind</strong> できる。両者の action は競合しない（一方は permit/deny、他方は mirror）前提で運用する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">スケール<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>仕様目標<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>テーブル種別</th>
-<th>スケール</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>l3</code> ACL</td>
-<td>1K rules</td>
-</tr>
-<tr>
-<td>mirror ACL</td>
-<td>256 rules</td>
-</tr>
-</tbody>
-</table>
-<p>これはハードウェア依存の上限ではなく、<strong>機能として担保される下限</strong> という位置付け。</p>
-<h3 id="_6">設定の流れ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>swssconfig</code> で APP_DB に流し込む方式<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart LR
-    USER[ユーザ] --&gt; JSON[JSON 設定ファイル]
-    JSON --&gt; SC[swssconfig]
-    SC --&gt; APPDB[(APP_DB\nACL_TABLE / ACL_RULE_TABLE)]
-    APPDB --&gt; ORCH[aclorch]
-    ORCH --&gt; SAI[SAI ACL]</code></pre>
-<p><strong><code>swssconfig</code> には 2 つのモード</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>モード</th>
-<th>振る舞い</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>full</code></td>
-<td>既存の ACL ルールとテーブルを <strong>すべて削除</strong> し、新規構成で完全置換</td>
-</tr>
-<tr>
-<td><code>partial</code></td>
-<td>既存に対する <strong>差分</strong> として新構成を適用</td>
-</tr>
-</tbody>
-</table>
-<p>ステージングと本番反映の使い分けや、incremental update の運用に対応する設計。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/acl/acl.md#L103-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  User generate json based configuration file based on the schema defined above, and then use the swssconfig to configure the ACl table and rules.
-  swssconfig should have two configuration mode, full and partial. In full configuration mode, all existing acl rules and table are removed and replaced by the new configuration. In partial configuration mode, new configuration are delta to current configuration.
-reasoning: 設定フローと full / partial モードの根拠。
+  func (s *Server) Set(ctx context.Context, req *gnmipb.SetRequest) (*gnmipb.SetResponse, error) {
+    if !reqFromMaster(req) {
+      return nil, status.Error(codes.PermissionDenied, "Not a master")
+    }
+  ...
+  // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+  ...
+  // Use the election ID that is in the last extension, so, no 'break' here.
+reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。
 -->
 
-<h3 id="_7">カウンタ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="role">Role（ほぼ未使用）<a class="headerlink" href="#role" title="Permanent link">&para;</a></h3>
+<p>仕様としては Role 単位でマスタを別々に持てる（control plane の役割分担を想定）。SONiC 実装は <strong>default role のみ対応</strong> で、<code>Role.id</code> フィールドは無視する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_5">ロギング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>HLD はサービサビリティのため次のログを要求する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ルール毎の <strong>packet counter は Must Have</strong>（必須機能）。</li>
-<li>ルール毎の <strong>byte counter は Should Have</strong>（できれば実装）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>DEBUG: 新しいマスタが選ばれた時、非マスタが選ばれた時（<code>election_id</code> を含める）</li>
+<li>ERROR: 非マスタが <code>Set</code> を試みた時の <code>Permission Deny</code></li>
 </ul>
-<p>具体的なカウンタの保存テーブル名や CLI は本 HLD には記述がない（後続の watermark / flex counter 系 HLD と組み合わせて実装される）。</p>
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
 <th>Key</th>
-<th>主要フィールド</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ACL_TABLE</code></td>
-<td><code>&lt;name&gt;</code></td>
-<td><code>policy_desc</code>, <code>type</code>, <code>ports</code>, <code>mirror_session_name</code></td>
-</tr>
-<tr>
-<td><code>ACL_RULE</code></td>
-<td><code>&lt;table_name&gt;:&lt;seq&gt;</code></td>
-<td><code>action</code>, <code>l2_prot_type</code>, <code>l3_prot_type</code>, <code>ipv4_src</code>, <code>ipv4_dst</code>, <code>l4_src_port</code>, <code>l4_dst_port</code></td>
+<td><code>TELEMETRY</code></td>
+<td><code>gnmi:master_arbitration_enabled</code></td>
+<td><code>"true"</code> で機能を ON にすることが提案されている<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
-<p>注: HLD では実際のキー名として <code>ACL_RULE_TABLE</code> も登場する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、ここは APP_DB 側の表記揺れ（<code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code>）として整理されているため、最終実装では <code>aclorch</code> のソースを参照する必要がある（裏取り課題）。</p>
+<p>ただし HLD 本文側では起動方法として <strong><code>--with-master-arbitration</code> コマンドラインフラグ</strong> を採用している。CONFIG_DB スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の sonic-utilities では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
-<h3 id="hld">設定例（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE:DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Data plane ACL&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;l3&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0,Ethernet4&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE_TABLE:DATAACL:10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;permit&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;l3_prot_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">&quot;ipv4_src&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">&quot;ipv4_dst&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.1.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;l4_dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[8000-8999]&quot;</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
+<p>該当する CLI コマンドは HLD では未定義。telemetry コンテナ起動時のフラグでの制御を想定している<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="hld">設定例（HLD 記述ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># telemetry / gnmi コンテナ起動時にフラグを足す形（実装依存）</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># 例: telemetry コンテナの supervisord/argv に --with-master-arbitration を追加</span>
 </span></code></pre></div>
-<p>実際の CLI 構文は <code>config acl</code> 系コマンドや <code>aclshow</code> などの後続実装のドキュメントを参照する必要がある。</p>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>HLD 段階で明示されている制限<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>クライアント側 (Go gNMI client 例):</p>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ext</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nx">Ext</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension_MasterArbitration</span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nx">MasterArbitration</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">MasterArbitration</span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">            </span><span class="nx">ElectionId</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Uint128</span><span class="p">{</span><span class="nx">High</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nx">Low</span><span class="p">:</span><span class="w"> </span><span class="nb">uint64</span><span class="p">(</span><span class="nx">myEID</span><span class="p">)},</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nx">req</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">SetRequest</span><span class="p">{</span><span class="w"> </span><span class="nx">Extension</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="o">*</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span><span class="nx">ext</span><span class="p">},</span><span class="w"> </span><span class="o">...</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>type は <code>l3</code> と <code>mirror</code> のみ</strong>（初期版）。</li>
-<li><strong><code>l2_prot_type</code> は <code>ipv4</code> のみ</strong>（IPv6 は当時未対応）。</li>
-<li>bind 対象は <strong>フロントパネル物理ポートのみ</strong>。<strong>LAG bind は初期版では未対応</strong>。</li>
-<li><strong>同一ポートに bind した複数テーブル間で action が競合しない</strong> ことが前提（<code>l3</code>+<code>mirror</code> の組み合わせを想定）。競合する組み合わせの挙動は HLD では定義されていない。</li>
-<li>ポート削除時の <strong>自動 unbind は初期版では未実装</strong>。</li>
-<li>byte counter は <strong>Should Have</strong> 扱いで、必須ではない。</li>
+<li><strong>default role のみ</strong>。<code>Role.id</code> を指定しても無視されるため、複数マスタ（役割分割）には未対応<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>EID の永続化なし</strong>。スイッチ再起動で <code>masterEID</code> は 0 に戻る。これは仕様上の選択であり、起動直後はどのコントローラもマスタになれる。HLD は EID の発行・採番方法を <strong>out of scope</strong> としている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>既定で <strong>disable</strong>。enable のフラグは telemetry / gNMI server の起動オプションで決まり、ランタイムでの ON/OFF 切替は想定していない<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>Get</code> / <code>Subscribe</code> 等の read 系 RPC には何の効果も無い<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>認証（<code>authenticate()</code>）よりマスタ判定が <strong>先</strong>。マスタでない接続は認証ログにも残らない可能性がある<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<p>これらの多くは後続の HLD / 実装で拡張されている可能性が高く、本ページは <strong>基盤要件と APP_DB スキーマの起点</strong> として読むのが妥当。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>mirror_session</strong>: <code>mirror</code> ACL テーブルは <code>mirror_session_name</code> を介して mirror セッション設定と連動する。<code>MIRROR_SESSION</code> テーブルが先に存在する必要がある。</li>
-<li><strong>port 設定（PORT, PORTCHANNEL）</strong>: <code>ports</code> フィールドは物理ポート名で参照する。port 削除時に自動 unbind しないため、stale な binding が残る可能性がある<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>swssconfig</code> の full/partial モード</strong>: 運用上、本番系で <code>full</code> を打つと一瞬全 ACL が無効化される時間窓ができる。partial モードや stage 環境での試験を推奨。</li>
-<li><strong>後続機能</strong>: ACL flex counter、egress mirroring、egress ACL bug fix、ACL action capability check など、本 HLD 以降の HLD 群がこのスキーマを拡張している。</li>
+<li><strong>gNMI Set の挙動全般</strong>: enable した瞬間、EID を載せない既存クライアントの <code>Set</code> は通らなくなる可能性。導入時はクライアント側を先に対応させる</li>
+<li><strong>gNMI 認証 / RBAC</strong>: マスタ判定が認証より前に走るため、RBAC で <code>Set</code> 権限を絞っていてもマスタ未取得の段階で拒否される</li>
+<li><strong>Warm reboot / Fast reboot</strong>: HLD は影響なしと明記<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。一方で <code>masterEID</code> は揮発するため、warm reboot でも EID は 0 に戻り、コントローラ側は再度 <code>Set</code> で EID を主張し直す必要がある（HLD 明記）<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>複数 telemetry プロセス / マルチ ASIC</strong>: HLD では言及無し。マルチ ASIC 環境で telemetry が複数立ち上がる場合の <code>masterEID</code> 共有有無は未定義</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ルールが反映されない: <code>seq</code> 値が同一テーブル内で重複していないか、<code>type</code> で許される action のみ使っているかを確認。</li>
-<li>mirror が動かない: <code>mirror_session_name</code> で参照する <code>MIRROR_SESSION</code> の存在と、対象テーブルの <code>type</code> が <code>mirror</code> であることを確認<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>全クライアントの <code>Set</code> が <code>PermissionDenied "Not a master"</code> で落ちる: 起動フラグが ON のまま EID を載せていないクライアントが古い <code>masterEID</code> に負けている。各クライアントの <code>MasterArbitration</code> 拡張の EID 値とサーバの DEBUG ログを突き合わせる</li>
+<li>一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で <code>masterEID</code> をリセットするしかない（HLD 仕様）<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>Get</code> は通るのに <code>Set</code> だけ落ちる: 仕様通り。Master Arbitration は <code>Set</code> のみ対象<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか
+- --with-master-arbitration フラグが実装に取り込まれているか
+- TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマ存否
+- Role.id を無視する実装かどうか（HLD 上は default role のみ）
+- HLD は 2023 年 v0.1 Initial で 2 年超経過、現行 master との乖離可能性
+- openconfig 上流仕様 (gnmi-master-arbitration.md) との差分有無
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/acl/acl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/master_arbitration.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
