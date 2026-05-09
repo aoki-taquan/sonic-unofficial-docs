@@ -1,0 +1,123 @@
+---
+title: AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/aaa/AAA Improvements/AAA Improvements.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - AAA
+    - RADIUS
+    - RADIUS_SERVER
+    - TACPLUS
+    - TACPLUS_SERVER
+  cli:
+    - config aaa
+    - config radius
+    - config tacacs
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
+    本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の **設計討議文書**。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。`priority=high`。
+
+# AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
+
+## 概要
+
+SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案[^1]:
+
+1. **多重ロール（RBAC）非対応**: RADIUS / TACACS+ から学習した role を Primary GID 1 つに突っ込んでいる
+2. **RADIUS user は 2 回ログインしないと role が反映されない**: 1 回目で `getpwnam()` 失敗 → PAM 認証中に local account を生成 → 2 回目で動く、という workaround
+3. **console / non-console の判別が `login` プログラム名頼り**: telnet daemon も `login` を使うため誤判定
+4. **`sudo` / `su` は local 認証のみ**: PAM 設定が sshd / login にしか入っていない
+5. **`/etc/nsswitch.conf` のランタイム変更が反映されにくい**: NSS は process 起動時に 1 回読むだけ
+6. **`remote_user` / `remote_user_su` 共有アカウントの副作用**: 全 AAA user が同じ uid に見える、私有資源を持てない、`who` / auditd が機能しない
+7. **container 内認証なし**: container 側から host PAM/NSS が見えない
+
+## 動作仕様（提案）
+
+### Linux 認証経路の理解
+
+```mermaid
+sequenceDiagram
+    participant U as remote user
+    participant SD as sshd monitor
+    participant NSS as NSS (getpwnam)
+    participant PAM as pam_authenticate / acct_mgmt / setcred / open_session
+    participant SH as shell (UID/GID 切替)
+    U->>SD: SSH connect
+    SD->>NSS: getpwnam(user)
+    NSS-->>SD: UID, GID, shell（または失敗）
+    SD->>PAM: 認証 / 認可 / cred / session
+    PAM-->>SD: result (RADIUS/TACACS+/LDAP/local)
+    SD->>SH: fork → drop privs → initgroups → exec shell
+```
+
+`getpwnam()` が **PAM 認証より先**に走るため、RADIUS から role を取って Primary GID にしようとすると鶏卵問題が起きる。これが本 HLD の出発点[^1]。
+
+### 提案の核
+
+| 項目 | 提案 |
+|------|------|
+| 多重 role | Primary GID + **supplementary groups** で表現する。supplementary は `pam_setcred()` で後付けできる |
+| 1 ログインで反映 | `getpwnam()` 段階で **D-Bus 経由 separate process が NSS を担い**、ランタイムでプロファイル変更を反映 |
+| nsswitch.conf 変更 | NSS は process 起動時に 1 回しか読まない → **D-Bus 経由 NSS module** に逃がす |
+| console 判別 | `login` プログラム名ではなく **TTY 種別 / pam_securetty 系**で判別 |
+| `sudo` / `su` | `/etc/pam.d/sudo` / `/etc/pam.d/su` にも RADIUS / TACACS+ を入れる。`/etc/sudoers` の `NOPASSWD` を撤去（security risk） |
+| container 認証 | host の D-Bus 認証 broker を共有 |
+
+### Aruba ClearPass 制約
+
+ClearPass は Authorize リクエストを Authenticate なしで受けない、と HLD 内で v0.4 注記[^1]。設計上 Authenticate と Authorize を順序立てて流す必要がある。
+
+### Linux group 命名
+
+PAM が supplementary group 名に Linux 命名規則違反の文字（記号など）を渡すと弾かれる、という注意書きあり[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/aaa/AAA Improvements/AAA Improvements.md#L52-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Lack of support for Multiple Roles ... a single GID cannot represent multiple roles.
+  ... retrieving the roles from a RADIUS server is only possible during authentication (`pam_authenticate`),
+  which takes place after the sshd monitor invokes `getpwnam()`
+reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
+-->
+
+## 設定
+
+HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されていない。`AAA` / `RADIUS` / `RADIUS_SERVER` / `TACPLUS` / `TACPLUS_SERVER` 既存テーブルは前提として継続利用する想定。
+
+## 制限事項
+
+- **設計討議文書**であり、SONiC が全面採用したか不明
+- D-Bus 経由 NSS は実装コストが高い（host / container 共通基盤改修を伴う）
+- `sudoers` の NOPASSWD 撤去は運用変更を伴うため互換性に注意
+
+## 干渉する機能
+
+- **RADIUS 管理 user 認証**: 同 area で RADIUS 単独の HLD あり（`radius-management-user-authentication.md`）
+- **TACACS+ 認証**: TACACS 用 HLD は別ドキュメント（`doc/aaa/TACACS+ Authentication.md` 等）
+- **Port Access Control（PAC）**: AAA 設定の RADIUS_SERVER は PAC とも共有
+- **Container Hardening**: container 内認証の解決と関連
+
+## トラブルシューティング
+
+- RADIUS で role が変わったのに反映されない → 2 回目ログインで反映される workaround を踏んでいる可能性。`/etc/passwd` の local account を確認
+- `sudo` で RADIUS 認証されない → `/etc/pam.d/sudo` の RADIUS module を確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/aaa/AAA Improvements/AAA Improvements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- D-Bus 経由 NSS module の現行 sonic-buildimage 取り込み確認
+- supplementary groups による多重 role の現行 PAM module 実装確認
+- /etc/pam.d/sudo / su への RADIUS / TACACS+ module 追加確認
+- /etc/sudoers の NOPASSWD 設定の現行値確認
+- Aruba ClearPass などの実 RADIUS server との互換性検証状況
+- container 内認証の現行解決策確認
+-->
