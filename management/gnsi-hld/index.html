@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/brief-introduction-of-iccp-code/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../gnoi-hld-for-system-apis/">
       
       
-        <link rel="next" href="../control-sonic-behaviors-with-system-defaults-table/">
+        <link rel="next" href="../packetio/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） - SONiC 非公式ドキュメント</title>
+        <title>gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#iccpd-mc-lag-mlacp-fsm" class="md-skip">
+        <a href="#gnsicertz-authz-pathz-credentialz-rotate" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+              gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
             
           </span>
         </div>
@@ -291,13 +291,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../switching/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1379,8 +1379,6 @@
       
   
   
-    
-  
   
   
     
@@ -1418,23 +1416,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../switching/" class="md-nav__link ">
               
   
   
@@ -1452,13 +1447,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1475,37 +1470,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -1521,247 +1489,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態機械
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定ロード経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / 表示経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MC-LAG リンクイベント処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ピア整合性検査（iccp_consistency_check.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1774,7 +1501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -1802,7 +1529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -1830,7 +1557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lag-on-distributed-voq-system/" class="md-nav__link">
+      <a href="../../switching/lag-on-distributed-voq-system/" class="md-nav__link">
         
   
   
@@ -1858,7 +1585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../layer-2-forwarding-enhancements/" class="md-nav__link">
+      <a href="../../switching/layer-2-forwarding-enhancements/" class="md-nav__link">
         
   
   
@@ -1886,7 +1613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
+      <a href="../../switching/openconfig-support-for-portchannel-aggregate-interface/" class="md-nav__link">
         
   
   
@@ -1914,7 +1641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -1942,7 +1669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
         
   
   
@@ -1970,7 +1697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -1998,7 +1725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -2026,7 +1753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -2054,7 +1781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -3358,6 +3085,8 @@
       
   
   
+    
+  
   
   
     
@@ -3405,20 +3134,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3436,13 +3168,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3462,7 +3194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -3490,7 +3222,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -3518,7 +3250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -3546,7 +3278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -3574,7 +3306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
+      <a href="../gnmi-usage/" class="md-nav__link">
         
   
   
@@ -3602,7 +3334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -3630,7 +3362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -3658,7 +3390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -3686,7 +3418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -3711,10 +3443,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3730,6 +3489,281 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rotate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotate の共通フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certz
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Certz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authz
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pathz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pathz
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credentialz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credentialz
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credentialz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#console-console_mgmt-host-service-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Console (console_mgmt host service module)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh-ssh_mgmt-host-service-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH (ssh_mgmt host service module)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-sonic-gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI / sonic-gnmi 側のフラグ追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（運用イメージ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3742,7 +3776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+      <a href="../packetio/" class="md-nav__link">
         
   
   
@@ -3770,7 +3804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -3798,7 +3832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -3826,7 +3860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3854,7 +3888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -3882,7 +3916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -3910,7 +3944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -4996,10 +5030,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#rotate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体構造
+        Rotate の共通フロー
       
     </span>
   </a>
@@ -5007,10 +5041,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#certz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態機械
+        Certz
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Certz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Profile
       
     </span>
   </a>
@@ -5018,10 +5064,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#csr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定ロード経路
+        CSR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authz
       
     </span>
   </a>
@@ -5029,10 +5091,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#pathz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI / 表示経路
+        Pathz
       
     </span>
   </a>
@@ -5040,10 +5102,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mc-lag" class="md-nav__link">
+  <a href="#credentialz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MC-LAG リンクイベント処理
+        Credentialz
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credentialz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#console-console_mgmt-host-service-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Console (console_mgmt host service module)
       
     </span>
   </a>
@@ -5051,43 +5125,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iccp_consistency_checkc" class="md-nav__link">
+  <a href="#ssh-ssh_mgmt-host-service-module" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ピア整合性検査（iccp_consistency_check.c）
+        SSH (ssh_mgmt host service module)
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#mlacp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MLACP 同期コンテンツ
-      
-    </span>
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#warm-reboot" class="md-nav__link">
+  <a href="#gnmi-sonic-gnmi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Warm reboot 経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netlink-arp-iccp_ifmc-iccp_netlinkc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        netlink / ARP の扱い（iccp_ifm.c / iccp_netlink.c）
+        gNMI / sonic-gnmi 側のフラグ追加
       
     </span>
   </a>
@@ -5100,7 +5157,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5123,7 +5180,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -5144,13 +5201,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例（運用イメージ）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5161,7 +5229,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5172,7 +5240,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5183,7 +5251,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5210,7 +5278,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/brief-introduction-of-iccp-code.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/gnsi-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5219,281 +5287,263 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（コードイントロドキュメント）のみを根拠に書かれている。各ファイルの関数名・状態遷移名は記載時点のもので、現行 master の <code>sonic-buildimage/dockers/docker-iccp/</code> 以下の実コードとは差異がある可能性がある。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い Initial Proposal</p>
+<p>HLD は 2023-11 改訂 v0.1 で 2 年超経過、Initial Proposal のまま。Certz の <code>gnxi</code> デフォルトプロファイル、<code>console_mgmt</code> / <code>ssh_mgmt</code> という host service モジュール、gNMI server に追加するフラグ群（<code>EnableAuthzPolicy</code> 等）の <strong>現行 master 実装は要確認</strong>。</p>
 </div>
-<h1 id="iccpd-mc-lag-mlacp-fsm">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）<a class="headerlink" href="#iccpd-mc-lag-mlacp-fsm" title="Permanent link">&para;</a></h1>
+<h1 id="gnsicertz-authz-pathz-credentialz-rotate">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル<a class="headerlink" href="#gnsicertz-authz-pathz-credentialz-rotate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン <strong>ICCPd</strong>（ICCP daemon、<code>docker-iccp</code> コンテナ内）で実装されている。ICCPd は IETF <a href="https://www.rfc-editor.org/rfc/rfc7275">RFC 7275</a> の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは ICCPd ソースコードのファイル別役割を、HLD のコード解説ドキュメントから再構成した <strong>読み手のためのコードマップ</strong> である。実装を追う際の入口に使う。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TB
-    subgraph 入口
-      MAIN[iccp_main.c\nmain()]
-      SCHED[scheduler.c\nscheduler_loop()]
-    end
-    subgraph 設定/CLI
-      CONF[iccp_cmd.c\n/etc/iccpd/iccpd.conf 読み込み]
-      CLI[iccp_cli.c\nパラメータ設定]
-      SHOW[iccp_cmd_show.c\nmclagdctl 表示応答]
-    end
-    subgraph 状態機械
-      ICCP_CSM[iccp_csm.c\nICCP CSM (RFC7275 4.2.1)]
-      APP_CSM[app_csm.c\nApp State Machine]
-      MLACP[mlacp_fsm.c\nMLACP FSM]
-    end
-    subgraph 同期
-      PREP[mlacp_sync_prepare.c\n送信ペイロード組立]
-      UPD[mlacp_sync_update.c\n受信処理]
-    end
-    subgraph 反映
-      LINK[mlacp_link_handler.c\nlink up/down/iso]
-      NET[iccp_netlink.c\nnetlink 経由カーネル操作]
-      PORT[port.c\nlocal/peer port 事象]
-      IFM[iccp_ifm.c\nIF / ARP 取得]
-      CHECK[iccp_consistency_check.c\nピア整合性検査]
-    end
-    MAIN --&gt; SCHED
-    CONF --&gt; MAIN
-    CLI --&gt; CONF
-    SCHED --&gt; ICCP_CSM
-    ICCP_CSM --&gt; APP_CSM
-    APP_CSM --&gt; MLACP
-    MLACP --&gt; PREP
-    MLACP --&gt; UPD
-    MLACP --&gt; LINK
-    LINK --&gt; NET
-    LINK --&gt; PORT
-    IFM --&gt; NET
-    SHOW -.-&gt; APP_CSM
-    CHECK -.-&gt; ICCP_CSM</code></pre>
-<h3 id="_4">状態機械<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ICCPd は <strong>3 階層の状態機械</strong> で構成される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>gNSI（gRPC Network Security Interface）は、ネットワーク機器の <strong>セキュリティクレデンシャルを gRPC 経由で安全にローテーションする</strong> ためのマイクロサービス群である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では gNMI/UMF サーバ（<code>sonic-gnmi</code>）と <code>sonic-mgmt-common</code> に組み込み、対応する OpenConfig YANG モデルを公開する設計<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主要 4 サービス<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>階層</th>
-<th>ファイル</th>
-<th>状態数</th>
-<th>概要</th>
+<th>サービス</th>
+<th>対象</th>
+<th>主要 RPC</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ICCP Connection SM</td>
-<td><code>iccp_csm.c</code></td>
-<td>6 状態（RFC 7275 §4.2.1）</td>
-<td>TCP コネクションと ICCP セッションのライフサイクル</td>
+<td><strong>Certz</strong></td>
+<td>PKI（証明書 / Trust Bundle / CRL / Auth Policy）</td>
+<td><code>Rotate</code> / <code>GetProfileList</code> / <code>AddProfile</code> / <code>DeleteProfile</code> / <code>CanGenerateCSR</code></td>
 </tr>
 <tr>
-<td>Application SM</td>
-<td><code>app_csm.c</code></td>
-<td>OPERATIONAL に追随</td>
-<td>ICCP CSM が OPERATIONAL になると即 OPERATIONAL<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><strong>Authz</strong></td>
+<td>gRPC アクセス制御ポリシー（<a href="https://github.com/grpc/proposal/blob/master/A43-grpc-authorization-api.md">gRPC A43</a>）</td>
+<td><code>Rotate</code> / <code>Probe</code></td>
 </tr>
 <tr>
-<td>MLACP FSM</td>
-<td><code>mlacp_fsm.c</code></td>
-<td>4 状態</td>
-<td>MC-LAG 同期のメイン</td>
+<td><strong>Pathz</strong></td>
+<td>gNMI パス単位の read/write 認可</td>
+<td><code>Rotate</code> / <code>Probe</code></td>
+</tr>
+<tr>
+<td><strong>Credentialz</strong></td>
+<td>コンソール / SSH のユーザ・鍵管理</td>
+<td><code>RotateAccountCredentials</code> / <code>RotateHostParameters</code></td>
 </tr>
 </tbody>
 </table>
-<p>MLACP FSM の 4 状態:</p>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; INIT
-    INIT --&gt; STAGE1: peer connection 確立
-    STAGE1 --&gt; STAGE2: ARP/MAC 同期完了\n(active が要求)
-    STAGE2 --&gt; EXCHANGE: 同期完了
-    EXCHANGE --&gt; EXCHANGE: 通常運用
-    EXCHANGE --&gt; INIT: peer 切断</code></pre>
+<p>全サービスに共通する <strong>「Rotate モデル」</strong>: 新ペイロードを送る → 旧状態のバックアップを取る → クライアントが <code>Finalize</code> を出さなければ自動ロールバック<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="rotate">Rotate の共通フロー<a class="headerlink" href="#rotate" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CL as Client
+    participant SV as gNSI server
+    CL-&gt;&gt;SV: Rotate stream open
+    CL-&gt;&gt;SV: UploadRequest (新 cert / policy / credential)
+    SV-&gt;&gt;SV: バックアップ作成 (旧状態)
+    SV--&gt;&gt;CL: UploadResponse (OK)
+    Note over CL,SV: クライアントが新状態で機能を検証
+    alt 検証 OK
+        CL-&gt;&gt;SV: FinalizeRequest
+        SV-&gt;&gt;SV: バックアップ破棄
+    else stream 切断 / 検証失敗
+        SV-&gt;&gt;SV: バックアップから復元 (rollback)
+    end</code></pre>
+<p><strong>Finalize を送らずに stream を閉じれば必ずロールバック</strong> されるのが gNSI の安全機構の核<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="certz">Certz<a class="headerlink" href="#certz" title="Permanent link">&para;</a></h3>
+<p><code>Certz.Rotate</code> は <strong>bidirectional streaming RPC</strong> で以下を入れ替える<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>INIT</strong>: ピア未接続</li>
-<li><strong>STAGE1</strong>: ピア接続確立直後。最初に ARP / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期</li>
-<li><strong>STAGE2</strong>: active 側が standby へ sync request を投げ、standby が応答すると active へ全同期</li>
-<li><strong>EXCHANGE</strong>: 定常状態。<code>mlacp_exchange_handler()</code> が動く</li>
+<li>Server Certificate</li>
+<li>Root Certificate Bundle (Trust Bundle)</li>
+<li>Certificate Revocation List (CRL)</li>
+<li>Authentication Policy</li>
 </ul>
-<h3 id="_5">設定ロード経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    CFG[(CONFIG_DB)] --&gt; CFGGEN[sonic-cfggen -d -t iccpd.j2]
-    CFGGEN --&gt; ICCPCONF[/etc/iccpd/iccpd.conf]
-    ICCPCONF --&gt; CMD[iccp_cmd.c]
-    CMD --&gt; SYS[ICCPd 内部構造]
-    CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --&gt; SYS</code></pre>
-<p>ICCPd 起動時、CONFIG_DB から <code>iccpd.j2</code> テンプレートを通じて <code>/etc/iccpd/iccpd.conf</code> を生成し、<code>iccp_cmd.c</code> がそれを読む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>system-id</code> は <code>localhost.mac</code>（DEVICE_METADATA 配下）を使う <strong>グローバル設定</strong> であり、CLI で変えるものではない。</p>
-<h3 id="cli">CLI / 表示経路<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mclagdctl -i &lt;MC-LAG-id&gt; dump arp
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   │
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   ▼ TCP 接続
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
-</span></code></pre></div>
-<p><code>mclagdctl</code> プロセスが ICCPd へ TCP で接続し、コマンドを送って結果を受け取る。表示系の応答は <code>iccp_cmd_show.c</code> がまとめて担当<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="mc-lag">MC-LAG リンクイベント処理<a class="headerlink" href="#mc-lag" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_link_handler.c</code> がリンク状態変化時の主要動作を担う。代表的な分岐は次のとおり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="profile">Profile<a class="headerlink" href="#profile" title="Permanent link">&para;</a></h4>
+<p>PKI 群を <strong>SSL profile</strong> 単位で束ねる。デフォルトは <code>gnxi</code> プロファイル（gNMI / gNOI / gNSI 自身が使う）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>イベント</th>
+<th>RPC</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GetProfileList</code></td>
+<td>プロファイル列挙</td>
+</tr>
+<tr>
+<td><code>AddProfile</code></td>
+<td>新規追加</td>
+</tr>
+<tr>
+<td><code>DeleteProfile</code></td>
+<td>削除（<strong><code>gnxi</code> は削除不可</strong>）<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h4 id="csr">CSR<a class="headerlink" href="#csr" title="Permanent link">&para;</a></h4>
+<p>server がオプションで対応すれば、<code>Rotate</code> ストリーム内で CSR を生成し、外部 CA に署名させて取り込める<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>CanGenerateCSR()</code> で能力照会</li>
+<li><code>Rotate(GenerateCSRRequest)</code> で CSR 取得 → 外部署名 → <code>Rotate</code> で証明書取り込み</li>
+</ul>
+<h3 id="authz">Authz<a class="headerlink" href="#authz" title="Permanent link">&para;</a></h3>
+<p>gRPC アクセスのポリシーベース認可。policy は <strong>JSON 文字列</strong>（<a href="https://github.com/grpc/proposal/blob/master/A43-grpc-authorization-api.md">gRPC A43</a> スキーマ）で記述し、gRPC server に file watcher + Interceptor で適用する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<ul>
+<li><code>Authz.Rotate()</code>: ポリシー差し替え（Certz と同じ Finalize/rollback 動作）</li>
+<li><code>Authz.Probe()</code>: 現行ポリシーで指定リクエストが通るかテスト</li>
+</ul>
+<h3 id="pathz">Pathz<a class="headerlink" href="#pathz" title="Permanent link">&para;</a></h3>
+<p><strong>gNMI パス単位</strong> で read/write を絞り込む認可。ポリシープロセッサが gNMI request の冒頭で評価する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<ul>
+<li><code>Pathz.Rotate()</code> / <code>Pathz.Probe()</code></li>
+</ul>
+<h3 id="credentialz">Credentialz<a class="headerlink" href="#credentialz" title="Permanent link">&para;</a></h3>
+<p>コンソールユーザと SSH の鍵・パスワード管理。host service モジュール経由で <code>/etc/passwd</code> / <code>/etc/shadow</code> / <code>/etc/sshd/...</code> 等を直接書き換える<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="console-console_mgmt-host-service-module">Console (<code>console_mgmt</code> host service module)<a class="headerlink" href="#console-console_mgmt-host-service-module" title="Permanent link">&para;</a></h4>
+<pre class="mermaid"><code>sequenceDiagram
+    participant FE as gNSI Credentialz FE
+    participant HS as console_mgmt
+    FE-&gt;&gt;HS: create_checkpoint
+    HS-&gt;&gt;HS: cp /etc/passwd /etc/shadow → backup
+    FE-&gt;&gt;HS: set (JSON: ConsolePasswords[])
+    HS-&gt;&gt;HS: replace /etc/passwd /etc/shadow
+    alt Finalize 受領
+        FE-&gt;&gt;HS: delete_checkpoint
+        HS-&gt;&gt;HS: backup を破棄
+    else 未 Finalize で stream 終了
+        FE-&gt;&gt;HS: restore_checkpoint
+        HS-&gt;&gt;HS: backup を上書き復元
+        HS-&gt;&gt;HS: backup を破棄
+    end</code></pre>
+<p><code>set</code> の payload<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">&quot;ConsolePasswords&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="ssh-ssh_mgmt-host-service-module">SSH (<code>ssh_mgmt</code> host service module)<a class="headerlink" href="#ssh-ssh_mgmt-host-service-module" title="Permanent link">&para;</a></h4>
+<p><code>console_mgmt</code> と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（<code>sshd_config</code>、host key、各 home の <code>authorized_keys</code> / <code>authorized_users</code>、CA 公開鍵）に拡大される<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>set</code> のリクエスト種別<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>キー</th>
 <th>動作</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>MC-LAG link add</td>
-<td>peer-link との <strong>isolation を必ず付ける</strong>（自リンクと peer-link で二重経路にならないように）</td>
+<td>認可鍵</td>
+<td><code>SshAccountKeys</code></td>
+<td><code>/home/&lt;account&gt;/.ssh/authorized_keys</code> を置換 + sshd 再起動</td>
 </tr>
 <tr>
-<td>MC-LAG link delete</td>
-<td>peer-link からの isolation を解除</td>
+<td>認可ユーザ</td>
+<td><code>SshAccountUsers</code></td>
+<td><code>/home/&lt;account&gt;/.ssh/authorized_users</code> を置換 + sshd 再起動</td>
 </tr>
 <tr>
-<td>自 MC-LAG link up</td>
-<td>ピア側で同名 portchannel が up なら自リンクを peer-link から isolate（down なら isolation 解除）。同名ポート学習 MAC を ASIC へ、同名 IF 学習 ARP を Linux kernel へ追加</td>
-</tr>
-<tr>
-<td>自 MC-LAG link down</td>
-<td>peer-link と peer 側同名 LAG が共に up なら、同名ポート学習 MAC を peer-link 経由にリダイレクト。同名 IF 学習 ARP を kernel から削除</td>
-</tr>
-<tr>
-<td>Peer link up</td>
-<td>peer-link を経路とする MAC エントリを ASIC に登録</td>
-</tr>
-<tr>
-<td>Peer link down</td>
-<td>同 MAC エントリを ASIC から削除</td>
+<td>CA 公開鍵</td>
+<td><code>SshCaPublicKey</code></td>
+<td><code>/etc/sshd/ssh_ca_pub_key</code> を置換 + sshd 再起動</td>
 </tr>
 </tbody>
 </table>
-<p>「peer-link を経由する MAC を ASIC で操作する」のが peer-link のキーアクションである。</p>
-<h3 id="iccp_consistency_checkc">ピア整合性検査（<code>iccp_consistency_check.c</code>）<a class="headerlink" href="#iccp_consistency_checkc" title="Permanent link">&para;</a></h3>
-<p>接続受理時に <code>scheduler_server_accept()</code> 経路で次を検査する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ピアの local-IP / peer-IP がローカル設定と一致するか（不一致なら接続拒否）</li>
-<li>MC-LAG portchannel のモード（L2 / L3）が両ピアで揃っているか</li>
-<li>L3 構成なら IP アドレスが一致するか</li>
-<li>VLAN メンバなら同じ VLAN に属しているか</li>
-</ul>
-<h3 id="mlacp">MLACP 同期コンテンツ<a class="headerlink" href="#mlacp" title="Permanent link">&para;</a></h3>
-<p><code>mlacp_sync_prepare.c</code>（送信側）/ <code>mlacp_sync_update.c</code>（受信側）が以下を交換する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>System ID</td>
-<td>standby 側を active の system ID に揃える</td>
-</tr>
-<tr>
-<td>MC-LAG portchannel state</td>
-<td>port isolation / MAC redirect 判定</td>
-</tr>
-<tr>
-<td>portchannel 名と MAC</td>
-<td>peer interface 作成に使用</td>
-</tr>
-<tr>
-<td>MAC エントリ</td>
-<td>MC-LAG / orphan を問わず全 MAC を同期</td>
-</tr>
-<tr>
-<td>ARP エントリ</td>
-<td>MC-LAG IF または MC-LAG メンバ VLAN IF 由来のみ同期</td>
-</tr>
-<tr>
-<td>portchannel 設定</td>
-<td>mode / IPv4 / 参加 VLAN（整合性検査用）</td>
-</tr>
-<tr>
-<td>peer-link 情報</td>
-<td>種別（VLAN / VXLAN）と VXLAN 名</td>
-</tr>
-<tr>
-<td>Warm reboot 情報</td>
-<td>local 側の warm-reboot 開始通知</td>
-</tr>
-</tbody>
-</table>
-<h3 id="warm-reboot">Warm reboot 経路<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<p><code>iccp_main.c</code> の <code>iccpd_signal_init()</code> / <code>iccpd_signal_handler()</code> が <code>SIGUSR1</code> を warm-reboot トリガとして扱う<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant SUP as supervisor
-    participant ICCP as iccpd
-    participant PEER as peer iccpd
-    SUP-&gt;&gt;ICCP: SIGUSR1
-    ICCP-&gt;&gt;PEER: warm-reboot 通知メッセージ
-    ICCP-&gt;&gt;ICCP: system_finalize() でクリーンアップ</code></pre>
-<h3 id="netlink-arp-iccp_ifmc-iccp_netlinkc">netlink / ARP の扱い（<code>iccp_ifm.c</code> / <code>iccp_netlink.c</code>）<a class="headerlink" href="#netlink-arp-iccp_ifmc-iccp_netlinkc" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ICCPd は <strong>MC-LAG enabled IF または MC-LAG メンバが入っている VLAN IF 由来の ARP のみ</strong> を保持する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ポートチャネルメンバの取得、リンク MAC の付け替え（standby 側の IP/MAC を active と整合させる <code>update_if_ipmac_on_standby()</code> / <code>recover_if_ipmac_on_standby()</code>）、リンク作成・削除イベント処理を netlink 経由で実装</li>
-</ul>
+<p><code>options</code> には OpenSSH の <code>from=...</code> 等の鍵オプションをそのまま渡せる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  There are four states in MCLAG finite state machine:
-  - MLACP_STATE_INIT: Peer connection is not established.
-  - MLACP_STATE_STAGE1: ... first sync up ARP and MAC info with peer ...
-  - MLACP_STATE_STAGE2: ...
-  - MLACP_STATE_EXCHANGE: This is the steady state. Function mlacp_exchange_handler() handle some events in this switch.
-reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
+  Credentialz is for managing SSH and Console access. Changes are made through dbus calls to appropiate host service modules.
+  ...
+  When this type of message is received the back-end will replace the content of /home/<account>/.ssh/authorized_keys file and restart the sshd daemon.
+reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。
 -->
 
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MC_LAG_DOMAIN</code>, <code>MC_LAG_INTERFACE</code> 等）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<h3 id="gnmi-sonic-gnmi">gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#gnmi-sonic-gnmi" title="Permanent link">&para;</a></h3>
+<p>HLD は gNMI server に以下のフラグを追加する想定<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>Command</th>
+<th>フラグ</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>mclagdctl -i &lt;id&gt; dump arp</code> 等</td>
-<td>ICCPd 内部の ARP / MAC / state を表示（ICCPd へ TCP 接続して取得）</td>
+<td><code>EnableAuthzPolicy</code> / <code>AuthzPolicyFile</code></td>
+<td>Authz ポリシー有効化と JSON ファイルパス</td>
+</tr>
+<tr>
+<td><code>EnablePathzPolicy</code> / <code>PathzPolicyFile</code></td>
+<td>Pathz 同上</td>
+</tr>
+<tr>
+<td><code>CertCRLConfig</code></td>
+<td>CRL ディレクトリ。空で無効化</td>
+</tr>
+<tr>
+<td><code>SshCredMetaFile</code> / <code>ConsoleCredMetaFile</code></td>
+<td>Credentialz メタデータ JSON</td>
+</tr>
+<tr>
+<td><code>CredEntitiesMetaFile</code></td>
+<td>gRPC クレデンシャルメタ</td>
+</tr>
+<tr>
+<td><code>AuthzMetaFile</code> / <code>PathzMetaFile</code></td>
+<td>各サービスのメタデータ JSON</td>
 </tr>
 </tbody>
 </table>
-<p><code>config mclag ...</code> 等のユーザ向け CLI は本ドキュメントの守備範囲外（MC-LAG HLD 側）。</p>
+<p>state の保管先として <strong><code>STATE_DB</code></strong> にプロファイルの freshness / state を入れる（OpenConfig gNSI モデル準拠）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB スキーマの追加は HLD 上「None」<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は STATE_DB のみ。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>該当する CLI は HLD で言及無し。<code>gnoi_client</code> 系のような専用 CLI は HLD 内で未定義。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>本ドキュメントでは YANG モジュールに言及していない。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>OpenConfig 公開モデル（<code>openconfig-gnsi-certz</code> / <code>-authz</code> / <code>-pathz</code> / <code>-credentialz</code>）のパスを通す<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">設定例（運用イメージ）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Certz: gnxi profile に新証明書を流し込む</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>rotate<span class="w"> </span>--profile<span class="w"> </span>gnxi<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--cert<span class="w"> </span>./new.pem<span class="w"> </span>--bundle<span class="w"> </span>./root.pem<span class="w"> </span>--crl-dir<span class="w"> </span>./crls/
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># 検証 OK で finalize</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>finalize
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Credentialz: SSH 認可鍵更新</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>gnsi_client<span class="w"> </span>credentialz<span class="w"> </span>rotate-account<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span>--account<span class="w"> </span>root<span class="w"> </span>--keys<span class="w"> </span>./new_authorized_keys.json
+</span></code></pre></div>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本ドキュメントは ICCPd の <strong>コード概略を解説</strong> したもので、CLI / CONFIG_DB / 運用手順を完全に網羅するものではない</li>
-<li>関数名・ファイル名は HLD 記載時点のもの。リファクタやリネームが入っている可能性</li>
+<li><strong>CRL の蓄積</strong>: Go 版 gRPC は起動以降の <strong>CRL 全履歴</strong> を必要とする<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CRL ローテーション回数に応じてメモリ・I/O が線形に増える</li>
+<li><strong><code>gnxi</code> profile は削除不可</strong><sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>同時 Rotate 拒否</strong>: 各サービスで Concurrent Rotate を reject する想定（Unit Test cases 明記）<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>HLD 自体に <code>Pathz</code> の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Credentialz の <code>set</code> で sshd は再起動される。short-window で SSH 接続が拒否される可能性<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>peer-link</strong>: peer-link の up/down が ASIC 側 MAC エントリのテーブル化に直接影響する</li>
-<li><strong>VXLAN tunnel</strong>: peer-link が VXLAN tunnel の場合、両ピアで同じ VXLAN tunnel 名が必要<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Warm reboot</strong>: <code>SIGUSR1</code> で <code>system_finalize()</code> が走り、peer に warm-reboot 状態を通知</li>
+<li><strong>gNMI Master Arbitration</strong>: gNSI の <code>Rotate</code> は <code>Set</code> ではないので Master Arbitration の対象外</li>
+<li><strong>gNOI FactoryReset</strong>: <code>retain_certs=true</code> で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い</li>
+<li><strong>TACACS / Linux PAM</strong>: Credentialz が <code>/etc/passwd</code> / <code>/etc/shadow</code> を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる</li>
+<li><strong>既存 sshd 設定</strong>: <code>ssh_mgmt.set</code> は既存 <code>authorized_keys</code> を <strong>置換</strong> する（追記ではない）。warm boot 時の rollback ファイル管理に注意</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ICCP セッションが上がらない場合、まず <code>iccp_consistency_check.c</code> 的な観点（local/peer IP 設定、MC-LAG IF mode 一致、L3 IP 一致、VLAN 一致）を確認</li>
-<li>MLACP FSM が STAGE1/STAGE2 で止まる場合、ARP/MAC 同期メッセージの欠落・サイズ過大を疑う</li>
-<li>standby 側の system-id が active と異なる場合、MLACP の system-id 同期段が完了していない可能性</li>
+<li><code>Rotate</code> 後に証明書が古いまま: <code>Finalize</code> を送らずに stream を閉じた可能性。サーバ側のチェックポイント有無を確認</li>
+<li>sshd が再起動ループ: <code>ssh_mgmt.set</code> で投入した <code>authorized_keys</code> / <code>sshd_config</code> が壊れている。<code>restore_checkpoint</code> で巻き戻す</li>
+<li><code>Pathz</code> の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- 各ファイル名・関数名が現行 master の sonic-buildimage/src/iccpd 配下と一致するか
-- iccpd.j2 テンプレートと CONFIG_DB スキーマの最新形
-- mclagdctl CLI の sonic-utilities 取り込み状況
-- Warm-reboot シグナル経路 (SIGUSR1) の現行実装
+- sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否
+- console_mgmt / ssh_mgmt host service モジュール実装存否
+- EnableAuthzPolicy / EnablePathzPolicy フラグの現行 master 実装確認
+- STATE_DB に gNSI profile state を書き込む実装確認
+- HLD は 2023-11 v0.1 で 2 年超 Initial、現行 master との大幅乖離リスク
+- openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/mclag/iccpd-code-introduction.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/mgmt/gnmi/gnsi.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
