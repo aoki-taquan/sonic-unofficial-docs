@@ -1,0 +1,76 @@
+---
+title: NTP_SERVER テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-ntp.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - NTP_SERVER
+    - NTP_KEY
+    - NTP
+    - VRF
+    - MGMT_VRF_CONFIG
+  cli:
+    - config ntp
+  yang:
+    - sonic-ntp
+---
+
+# NTP_SERVER テーブル
+
+## 概要
+
+上流 NTP サーバまたは pool を保持する[^1]。`hostcfgd` の `NtpHandler` が `/etc/chrony/chrony.conf`（または `ntp.conf`）を再生成し、サービスを再起動する。`max-elements 10` でサーバ数上限がある。`NTP_KEY` で対称鍵を、`NTP|global` で client 全体設定を保持する。
+
+## key 構造
+
+```
+NTP_SERVER|<server_address>
+```
+
+`<server_address>` は IP address または DNS hostname。
+
+## フィールド一覧
+
+| フィールド | 型 | 必須 | デフォルト | 説明 |
+|-----------|----|------|-----------|------|
+| `server_address` (key) | `inet:host` | ✅ | - | サーバアドレス |
+| `association_type` | enum `server`/`pool` | - | `server` | server 単体 / pool 群 |
+| `iburst` | `on-off` | - | `on` | iburst aggressive polling |
+| `key` | leafref `NTP_KEY.id` | - | - | 認証鍵 ID |
+| `resolve_as` | `inet:host` | - | - | 名前解決された IP |
+| `admin_state` | `admin_mode` | - | `enabled` | サーバの有効化 |
+| `trusted` | `yes-no` | - | `no` | 認証時にこのサーバのみで時刻同期する |
+| `version` | uint8 (3..4) | - | `4` | NTP プロトコルバージョン |
+
+## 関連サブテーブル
+
+- `NTP|global` (container, single-instance):
+    - `src_intf` (leaf-list): 送信元 IF（PORT / PORTCHANNEL / LOOPBACK / MGMT_PORT / `eth0` の union）
+    - `vrf` (`mgmt`/`default`): NTP を有効化する VRF。`mgmt` 指定には `MGMT_VRF_CONFIG.mgmtVrfEnabled = true` 必須 (`must`)
+    - `authentication` (`admin_mode`、default `disabled`)
+    - `dhcp` (`admin_mode`、default `enabled`)
+    - `server_role` (`admin_mode`、default `enabled`)
+    - `admin_state` (`admin_mode`、default `enabled`)
+- `NTP_KEY|<id>` (key: id, 1..65535):
+    - `trusted` (yes-no, default `no`)
+    - `value` (string 1..64, encrypted)
+    - `type` (enum md5/sha1/sha256/sha384/sha512, default md5)
+
+## 購読者
+
+- `hostcfgd` `NtpHandler`: chrony / ntp 設定の更新
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: `NTP`、`NTP_KEY`、`VRF`、`MGMT_VRF_CONFIG`、`PORT`、`LOOPBACK_INTERFACE`、`MGMT_PORT`
+- 関連 CLI: `config ntp add/del`
+- 関連 YANG: `sonic-ntp`
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-ntp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ntp.yang>
