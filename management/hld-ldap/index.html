@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/generic-sai-extension-critical-resource-monitoring-crm/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/hld-ldap/">
       
       
-        <link rel="prev" href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/">
+        <link rel="prev" href="../gnsi-hld/">
       
       
-        <link rel="next" href="../kdump-remote-ssh/">
+        <link rel="next" href="../openconfig-support-for-ethernet-interfaces/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE） - SONiC 非公式ドキュメント</title>
+        <title>LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#generic-sai-extension-crmcrm_ext_table" class="md-skip">
+        <a href="#ldap-hostcfgd-nslcd-nss-pam" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+              LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
             
           </span>
         </div>
@@ -357,13 +357,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -381,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3401,6 +3401,830 @@
       
   
   
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    システム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    システム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    バナーメッセージ（login / motd / logout）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クリティカルリソースモニタリング (CRM) 要件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    show techsupport での SFP EEPROM ページダンプ取り込み
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    kdump リモート転送（SSH）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reboot-cause 履歴の STATE_DB / テレメトリ公開
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reboot コマンドの blocking mode（reboot.conf / -b / -v）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP 設定の snmp.yml → CONFIG_DB 移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Boot Chart（systemd-bootchart 統合）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Logging & System Dumps（要件レベル仕様）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブルによるオプショナル機能の有効/無効制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC OS と Docker イメージのセマンティックバージョニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FRR 用 sysctl チューニングのデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -3478,7 +4302,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -3489,7 +4313,7 @@
   <span class="md-ellipsis">
     
   
-    システム
+    マネジメント
   
 
     
@@ -3500,18 +4324,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
-    システム
+    マネジメント
   
 
           </label>
@@ -3526,14 +4350,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
   
 
     
@@ -3554,14 +4378,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    バナーメッセージ（login / motd / logout）
+    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
   
 
     
@@ -3582,14 +4406,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    クリティカルリソースモニタリング (CRM) 要件
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
   
 
     
@@ -3610,14 +4434,182 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    show techsupport での SFP EEPROM ページダンプ取り込み
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnmi-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnsi-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
   
 
     
@@ -3654,7 +4646,7 @@
   <span class="md-ellipsis">
     
   
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
   
 
     
@@ -3672,7 +4664,7 @@
   <span class="md-ellipsis">
     
   
-    Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
   
 
     
@@ -3721,10 +4713,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#resource-type" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新しい resource type
+        構成
       
     </span>
   </a>
@@ -3732,10 +4724,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#crm" class="md-nav__link">
+  <a href="#config_db-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既存 CRM 設定の継承
+        CONFIG_DB スキーマ（HLD より）
       
     </span>
   </a>
@@ -3743,10 +4735,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#available" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     <span class="md-ellipsis">
       
-        available の取得
+        Init / 設定変更フロー
       
     </span>
   </a>
@@ -3754,10 +4746,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#used-book-keeping" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        used の book-keeping
+        パッケージ
       
     </span>
   </a>
@@ -3765,10 +4757,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTERS_DB の出力例
+        認証フロー
       
     </span>
   </a>
@@ -3781,7 +4773,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3815,10 +4807,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認方法
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
       
     </span>
   </a>
@@ -3831,7 +4834,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3842,7 +4845,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3853,7 +4856,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3864,7 +4867,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3890,999 +4893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    kdump リモート転送（SSH）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reboot-cause 履歴の STATE_DB / テレメトリ公開
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reboot コマンドの blocking mode（reboot.conf / -b / -v）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP 設定の snmp.yml → CONFIG_DB 移行
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Boot Chart（systemd-bootchart 統合）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Logging & System Dumps（要件レベル仕様）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブルによるオプショナル機能の有効/無効制御
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC OS と Docker イメージのセマンティックバージョニング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FRR 用 sysctl チューニングのデフォルト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    マネジメント
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    マネジメント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Master Arbitration（election ID と SetRequest 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/hld-ldap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -4910,7 +4921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
+      <a href="../p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -4938,7 +4949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -4966,7 +4977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
+      <a href="../packetio/" class="md-nav__link">
         
   
   
@@ -4994,7 +5005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
+      <a href="../save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -5022,7 +5033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -5050,7 +5061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5078,7 +5089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -5106,7 +5117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -5134,7 +5145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -5162,7 +5173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -5190,7 +5201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -5218,7 +5229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-authentication/" class="md-nav__link">
+      <a href="../tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -5246,7 +5257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -8442,10 +8453,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#resource-type" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新しい resource type
+        構成
       
     </span>
   </a>
@@ -8453,10 +8464,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#crm" class="md-nav__link">
+  <a href="#config_db-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既存 CRM 設定の継承
+        CONFIG_DB スキーマ（HLD より）
       
     </span>
   </a>
@@ -8464,10 +8475,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#available" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     <span class="md-ellipsis">
       
-        available の取得
+        Init / 設定変更フロー
       
     </span>
   </a>
@@ -8475,10 +8486,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#used-book-keeping" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        used の book-keeping
+        パッケージ
       
     </span>
   </a>
@@ -8486,10 +8497,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters_db" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        COUNTERS_DB の出力例
+        認証フロー
       
     </span>
   </a>
@@ -8502,7 +8513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -8536,10 +8547,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認方法
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
       
     </span>
   </a>
@@ -8552,7 +8574,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -8563,7 +8585,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -8574,7 +8596,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -8585,7 +8607,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8612,7 +8634,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/generic-sai-extension-critical-resource-monitoring-crm.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/hld-ldap.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -8621,146 +8643,132 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>CrmResourceType::CRM_EXT_TABLE</code> 列挙、<code>CrmOrch::incCrmExtTableUsedCounter</code> / <code>decCrmExtTableUsedCounter</code>、P4Orch extension table manager との連携、<code>sai_object_type_get_availability</code> 経由の available 取得、<code>CRM:EXT_TABLE_STATS:&lt;table&gt;</code> 命名は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / Phase 1</p>
+<p>HLD は v0.1 / 2023-09 改訂の Phase 1 設計。<code>LDAP_TABLE</code> / <code>LDAP_SERVER</code> / <code>AAA</code> テーブル、<code>hostcfgd</code> 内 AAA クラスでの PAM/NSS テンプレート再生成、<code>config aaa authentication</code> 系 CLI 拡張、<code>sonic-system-ldap</code> YANG が現行 master でこの仕様どおりかは未確認。</p>
 </div>
-<h1 id="generic-sai-extension-crmcrm_ext_table">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）<a class="headerlink" href="#generic-sai-extension-crmcrm_ext_table" title="Permanent link">&para;</a></h1>
+<h1 id="ldap-hostcfgd-nslcd-nss-pam">LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）<a class="headerlink" href="#ldap-hostcfgd-nslcd-nss-pam" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CRM（Critical Resource Monitoring）は SONiC で <strong>ASIC リソースの利用状況</strong> を COUNTERS_DB に publish する仕組みで、ACL / FDB / IP route / nexthop など主要リソースに対しては既に実装されている。</p>
-<p>本 HLD は <strong>Generic SAI Extension（汎用拡張）テーブル</strong> に対しても CRM をサポートするための設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Generic SAI Extension は <strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong> という抽象を介して、P4 由来の追加テーブル（例: <code>EXT_VIPV4_TABLE</code> など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>スコープは「<strong>used / available の COUNTERS_DB への publish と既存 CRM の watermark チェックの活用</strong>」のみ。新たなユーザ向け設定パラメータは追加しない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC スイッチの SSH / シリアルログインを <strong>外部 LDAP サーバで認証</strong> できるようにする Phase 1 設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Debian の <code>libnss-ldapd</code> / <code>libpam-ldapd</code> / <code>ldap-utils</code> パッケージを取り込み、<code>nslcd</code> デーモンで LDAP との通信を担当する。<code>hostcfgd</code> が CONFIG_DB の LDAP 関連テーブルを監視し、<code>/etc/ldap/ldap.conf</code> / <code>/etc/nslcd.conf</code> / <code>/etc/nsswitch.conf</code> / <code>/etc/pam.d/common-auth-sonic</code> を再生成する。</p>
+<p>ローカル認証フォールバックと、LDAP サーバの優先度に基づく順序的フォールバックをサポート。<strong>REST API（nginx）への適用は TODO</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="resource-type">新しい resource type<a class="headerlink" href="#resource-type" title="Permanent link">&para;</a></h3>
-<p>CRM の内部に新規 enum <code>CrmResourceType::CRM_EXT_TABLE</code> を追加し、各 extension table の統計を <strong>テーブル名キーで分けて</strong> 持つ<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>m_resourcesMap.at(CrmResourceType::CRM_EXT_TABLE)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>              .countersMap[EXT_TABLE_STATS:&quot;&lt;table-name&gt;&quot;]
-</span></code></pre></div>
-<p>これにより <code>EXT_VIPV4_TABLE</code> / <code>EXT_VIPV6_TABLE</code> / その他 P4 追加テーブルそれぞれが、独立した used / available 統計を持つ。</p>
-<h3 id="crm">既存 CRM 設定の継承<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h3>
-<p>ポーリング間隔など既存 CRM の <strong>設定パラメータはそのまま流用</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。つまり既存の <code>crm config polling interval &lt;sec&gt;</code> 等は本 resource type にも効く。</p>
-<p>watermark チェック（high / low の閾値超過アラート）も <strong>他リソースで既に提供されている既定挙動</strong> がそのまま適用される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="available">available の取得<a class="headerlink" href="#available" title="Permanent link">&para;</a></h3>
-<p>available（残り使用可能数）は <strong>既存 SAI API <code>sai_object_type_get_availability()</code></strong> を再利用する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>パラメータ</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>object-type</td>
-<td><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></td>
-</tr>
-<tr>
-<td>attribute-id</td>
-<td><code>SAI_GENERIC_PROGRAMMABLE_ATTR_OBJECT_NAME</code></td>
-</tr>
-</tbody>
-</table>
-<p>データプレーンの SAI 実装側は、この API 呼び出しに対して <strong>対応する extension テーブル名にマッチするリソースの利用可能数</strong> を返す責務を負う<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    APP[CrmOrch poll] --&gt; GA[sai_object_type_get_availability\nobject_type=GENERIC_PROGRAMMABLE\nattr_id=OBJECT_NAME]
-    GA --&gt; SAI[SAI 実装]
-    SAI --&gt; AVAIL[available count]
-    AVAIL --&gt; CDB[(COUNTERS_DB\nCRM:EXT_TABLE_STATS:&lt;name&gt;\ncrm_stats_extension_table_available)]</code></pre>
-<h3 id="used-book-keeping">used の book-keeping<a class="headerlink" href="#used-book-keeping" title="Permanent link">&para;</a></h3>
-<p>used（使用中の数）は <strong>CrmOrch の API を P4Orch から呼んで増減</strong> させる<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    CFG[CONFIG_DB\n LDAP_TABLE / LDAP_SERVER / AAA] --&gt; HC[hostcfgd]
+    HC --&gt; CONF[/etc/ldap/ldap.conf\n /etc/nslcd.conf\n /etc/nsswitch.conf\n /etc/pam.d/common-auth-sonic/]
+    CONF --&gt; NSLCD[nslcd]
+    NSLCD --&gt; LDAPSRV[(LDAP server)]
+    SSHD[sshd / login] --&gt; PAM[libpam-ldapd]
+    PAM --&gt; NSLCD
+    NSS[libnss-ldapd] --&gt; NSLCD</code></pre>
+<h3 id="config_db-hld">CONFIG_DB スキーマ（HLD より）<a class="headerlink" href="#config_db-hld" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LDAP_TABLE|global
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    bind_dn       = &quot;&quot;             ; default empty (anonymous bind)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    bind_password = &quot;****&quot;         ; encrypted
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    bind_timeout  = 5              ; seconds
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    version       = 3              ; LDAPv3
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    base_dn       = &quot;ou=users,dc=example,dc=com&quot;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    port          = 389
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    timeout       = 5
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>LDAP_SERVER|&lt;server_ip&gt;
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    priority = &lt;int&gt;               ; lower = preferred
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>AAA
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    ; 既存テーブル。authentication フィールドで ldap を有効化
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    authentication.login = &quot;ldap,local&quot;
+</span></code></pre></div>
+<h3 id="init">Init / 設定変更フロー<a class="headerlink" href="#init" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> の AAA クラスは <code>LDAP_TABLE</code> / <code>LDAP_SERVER</code> / <code>AAA</code> 変更を購読し、jinja2 テンプレートから設定ファイルを再生成して <code>nslcd</code> を再起動する。LDAP 無効時は <code>nslcd</code> を停止し、PAM/NSS から LDAP モジュールを外す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">パッケージ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>ビルド時に追加：</p>
+<ul>
+<li><code>libnss-ldapd</code>: NSS モジュール（getent passwd 等が LDAP を引く）</li>
+<li><code>libpam-ldapd</code>: PAM モジュール（ssh login 認証）</li>
+<li><code>ldap-utils</code>: <code>ldapsearch</code> / <code>ldapwhoami</code> 等のユーティリティ</li>
+<li><code>nslcd</code>: NSS/PAM の lookup を LDAP にプロキシするデーモン（libnss-ldapd の依存）</li>
+</ul>
+<h3 id="_5">認証フロー<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ol>
+<li>ユーザが SSH ログイン → <code>sshd</code> が PAM 経由で認証要求</li>
+<li><code>pam_ldap</code> (libpam-ldapd) が <code>nslcd</code> 経由で LDAP サーバに <code>simple bind</code> を試行</li>
+<li>成功すれば認証 OK、失敗または接続失敗なら <code>AAA.authentication.login</code> の次のメソッド（<code>local</code> 等）にフォールバック</li>
+<li>NSS 側 (<code>libnss-ldapd</code>) は <code>getpwnam</code> 等で LDAP の user/group エントリを返す</li>
+</ol>
+<p><code>LDAP_SERVER</code> の priority に基づいて nslcd は複数サーバを試す。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>API</th>
-<th>呼び出すタイミング</th>
+<th>Table</th>
+<th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>CrmOrch::incCrmExtTableUsedCounter()</code></td>
-<td>extension テーブルにエントリが正常に追加された</td>
+<td><code>LDAP_TABLE</code></td>
+<td>グローバル LDAP 設定（base_dn / port / version / bind 認証 等）</td>
 </tr>
 <tr>
-<td><code>CrmOrch::decCrmExtTableUsedCounter()</code></td>
-<td>エントリが削除された</td>
+<td><code>LDAP_SERVER</code></td>
+<td>サーバごとの優先度</td>
+</tr>
+<tr>
+<td><code>AAA</code></td>
+<td>既存。<code>authentication.login</code> でメソッド順を指定</td>
 </tr>
 </tbody>
 </table>
-<p>呼び出し責任は <strong>P4Orch の extension table manager</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI 失敗時は呼ばれない（add/del が成功した場合のみ反映する）。</p>
-<h3 id="counters_db">COUNTERS_DB の出力例<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
-<p><code>EXT_VIPV4_TABLE</code>（max 1024）に 1 エントリ入っている状態の例<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>127.0.0.1:6379[2]&gt; KEYS *EXT_TABLE_STATS*
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a> 1) &quot;CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE&quot;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>127.0.0.1:6379[2]&gt; HGETALL &quot;CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE&quot;
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>1) &quot;crm_stats_extension_table_used&quot;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>2) &quot;1&quot;
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>3) &quot;crm_stats_extension_table_available&quot;
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>4) &quot;1023&quot;
-</span></code></pre></div>
-<p>キー名は <strong><code>CRM:EXT_TABLE_STATS:&lt;extension-table-name&gt;</code></strong> が固定パターン。<code>used</code> + <code>available</code> の和が当該テーブルの max 容量<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant P4O as P4Orch ext table manager
-    participant CRM as CrmOrch
-    participant DB as COUNTERS_DB
-    participant SAI as SAI
-
-    Note over P4O: extension table エントリ追加成功
-    P4O-&gt;&gt;CRM: incCrmExtTableUsedCounter()
-    Note over CRM: poll 周期で
-    CRM-&gt;&gt;SAI: sai_object_type_get_availability\n(GENERIC_PROGRAMMABLE, OBJECT_NAME=...)
-    SAI--&gt;&gt;CRM: available count
-    CRM-&gt;&gt;DB: HSET CRM:EXT_TABLE_STATS:&lt;name&gt;\nused=N, available=M</code></pre>
-<!-- evidence:
-source: sonic-net/SONiC/doc/crm/Generic_SAI_Extensions_CRM.md#L36-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  sai_object_type_get_availability() ...
-  - object-type    : SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE
-  - attribute-id   : SAI_GENERIC_PROGRAMMABLE_ATTR_OBJECT_NAME
-  CrmOrch::incCrmExtTableUsedCounter()
-  CrmOrch::decCrmExtTableUsedCounter()
-  P4Orch extension table manager is responsible to call APIs ...
-reasoning: available 取得経路と used 反映の責務分担の根拠。
--->
-
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当する CONFIG_DB エントリは無い。CRM 側の既存設定（<code>CRM</code> テーブルの polling interval や watermark threshold）が新 resource type にも効く前提<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>既存 CRM CLI（<code>crm config polling interval</code>, <code>crm config thresholds *</code>, <code>crm show resources</code> 等）が再利用される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新規 CLI は追加されない。</p>
-<h3 id="_4">確認方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 該当 extension table の CRM 値を redis 直叩きで見る</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;*EXT_TABLE_STATS*&#39;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>HGETALL<span class="w"> </span>CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
+<p>HLD には CLI コマンド名の正式な体系は明記されていないが、既存の <code>config aaa authentication ...</code> を拡張する形で <code>ldap</code> メソッドを追加すると示唆されている。LDAP 固有設定用の <code>config ldap</code> 系コマンドが追加される想定。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-system-ldap.yang</code>（HLD ディレクトリに同梱）。</p>
+<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># LDAP サーバ追加</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>ldap<span class="w"> </span>server<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span>--priority<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># グローバル設定</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="s1">  &quot;LDAP_TABLE&quot;: {</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="s1">    &quot;global&quot;: {</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="s1">      &quot;base_dn&quot;: &quot;ou=users,dc=example,dc=com&quot;,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="s1">      &quot;version&quot;: &quot;3&quot;,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="s1">      &quot;port&quot;: &quot;389&quot;,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="s1">      &quot;timeout&quot;: &quot;5&quot;</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="s1">    }</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="s1">  }</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="s1">}&#39;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="c1"># 認証メソッド設定</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>ldap<span class="w"> </span><span class="nb">local</span>
 </span></code></pre></div>
-<p><code>crm show resources</code> 系のサブコマンドが extension table を扱えるかどうかは sonic-utilities の実装に依存する（裏取り課題）。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>スコープが <strong>used / available の publish</strong> に限定される。<strong>extension table 専用の追加設定（個別の閾値など）は提供しない</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>sai_object_type_get_availability</code> を <strong>データプレーン SAI が <code>GENERIC_PROGRAMMABLE</code> + <code>OBJECT_NAME</code> の組で実装している</strong> ことが前提。実装が無いベンダ SAI では available が取れない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>used カウンタの増減は <strong>P4Orch の extension table manager に依存</strong>。他の経路で extension テーブルを操作する実装が出てきた場合、used が実体とずれる可能性がある<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>本 HLD は <strong>CRM スレッド側のロジック</strong>。SAI レイヤから直接通知される訳ではないので、reset / warm boot 等の特殊状態での used 値の整合性は HLD 内では言及されていない。</li>
+<li>Phase 1 設計のため、TLS/StartTLS や SASL は HLD では言及が少ない（後続 phase で扱う想定）。</li>
+<li>REST API (nginx) への LDAP 認証適用は TODO<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>bind_password</code> は CONFIG_DB に格納される（暗号化方式は HLD で詳細規定なし）。</li>
+<li><code>nslcd</code> 再起動中は短時間ログイン認証が落ちる可能性がある。</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CrmOrch（既存）</strong>: 新 resource type の登録だけが追加の変更。polling / watermark check の枠組みはそのまま使える<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>P4Orch (extension table manager)</strong>: used カウンタの増減を呼ぶ責任を負う。新規 extension table を追加した際にも本機構に追従する必要がある<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong>: SAI 拡張の根幹オブジェクト。available 取得経路として <code>OBJECT_NAME</code> 属性が利用される<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>テレメトリ / dial-out</strong>: COUNTERS_DB の <code>CRM:EXT_TABLE_STATS:*</code> がそのままテレメトリ系の購読対象になりうる。命名規則 <code>EXT_TABLE_STATS</code> を前提にした gNMI path 等の設計とリンクしうる。</li>
-<li><strong>ACL / FDB 等の既存 CRM</strong>: 同じ enum 機構の延長線上にある。新規追加が他リソースに副作用を与えない構造（<code>m_resourcesMap</code> の独立エントリ）<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>TACACS+ / RADIUS（既存 AAA）</strong>: 同じ AAA テーブルの authentication.login で並列指定可。順序フォールバックで連動する。</li>
+<li><strong><code>hostcfgd</code> AAA クラス</strong>: tacacs / radius / ldap いずれの設定変更も同クラスで処理される。</li>
+<li><strong>NSS</strong>: <code>getent passwd</code> 等のシステムコールも LDAP を見るようになる（<code>/etc/nsswitch.conf</code> 経由）。</li>
+<li><strong>REST / gNMI</strong>: REST API 認証は本機能のスコープ外（TODO）。</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>CRM:EXT_TABLE_STATS:*</code> キーが redis に出ない: P4Orch 側で extension table エントリが 1 件も登録されていない、または CrmOrch のポーリングがまだ走っていない可能性。<code>crm config polling interval</code> の値を確認<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>available</code> が 0 のまま: SAI 実装が <code>sai_object_type_get_availability(GENERIC_PROGRAMMABLE, OBJECT_NAME)</code> を実装していない可能性<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> のログに該当エラーが出ているか確認。</li>
-<li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。orchagent ログで該当 entry の操作結果を追う<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>watermark アラートが上がらない: 既存 CRM の閾値設定（<code>crm config thresholds</code>）を本テーブル用にも適用しているか確認。HLD は <strong>既存設定の継承</strong> を前提にしている<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ログイン失敗 → <code>journalctl -u nslcd</code> で LDAP サーバ通信ログを確認。</li>
+<li><code>getent passwd &lt;user&gt;</code> で LDAP ユーザが見えない → <code>/etc/nsswitch.conf</code> の <code>passwd:</code> 行に <code>ldap</code> が含まれているか確認。</li>
+<li>認証は通るが <code>sudo</code> で失敗 → group 解決失敗の可能性。<code>getent group &lt;gid&gt;</code> で確認。</li>
+<li>bind 失敗 → <code>LDAP_TABLE.bind_dn</code> / <code>bind_password</code> と <code>base_dn</code> の対応、サーバ FQDN 解決を確認。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/crm/Generic_SAI_Extensions_CRM.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/aaa/ldap/hld_ldap.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
