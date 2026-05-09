@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/internals/support-multiple-user-defined-redis-database-instances.md",
+      "issue": 301,
+      "verification": "hld-only",
+      "concerns": [
+        "docker-database-init.sh entrypoint と supervisord.conf.j2 テンプレ展開実装の存在確認",
+        "database_config.json が /etc/sonic/ → /var/run/redis/sonic-db/ にコピーされる起動順実装確認",
+        "ping_pong_db_insts スクリプトの存在確認と redis 健全性チェック動作確認",
+        "SonicV2Connector / ConfigDBConnector / C++ DBConnector の database_config.json (INSTANCES + DATABASES) 解釈実装確認",
+        "ユーザ提供のマルチインスタンス構成での upgrade / downgrade 経路実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/internals/support-redis-databases-in-multiple-namespaces.md",
       "issue": 299,
       "verification": "hld-only",
