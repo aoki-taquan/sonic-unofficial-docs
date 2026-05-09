@@ -219,6 +219,17 @@
       "priority": "medium"
     },
     {
+      "page": "docs/system/useful-sysctl-settings.md",
+      "issue": 85,
+      "verification": "hld-only",
+      "concerns": [
+        "SONiC ビルド時に sonic-buildimage 内 /etc/sysctl.d/ もしくは起動スクリプトで設定される実 sysctl 値の確認",
+        "FRR 上流推奨と SONiC 採用値の差分整理",
+        "rp_filter / keep_addr_on_down / tcp_l3mdev_accept の SONiC イメージでの実値"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/platform/dump-on-sai-failure.md",
       "issue": 83,
       "verification": "hld-only",
