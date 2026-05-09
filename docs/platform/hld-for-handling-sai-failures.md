@@ -1,7 +1,7 @@
 ---
 title: SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
 area: platform
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
-    HLD は改訂日付未記載で、本文中に複数の `TODO` が残る Proposal 段階の文書。`Orch` の `handleSai*Status` virtual 関数群と `ERROR_DB` の実装存在は要裏取り。
+!!! danger "裏取りステータス: Discrepancy-found（部分実装、設計と乖離）"
+    現行 master では `handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus / handleSaiGetStatus` が `sonic-swss/orchagent/saihelper.h:19-22` に **free function** として実装されており、HLD が記述する「`Orch` 基底クラスの virtual 関数」ではない。`ERROR_DB` の枠組み（`ERROR_APPL_*` 形式の独立 Redis DB）は `sonic-swss` / `sonic-swss-common` の両方とも未実装で、HLD 内 TODO セクションの大半が残ったまま。本ページは設計提案の記述として位置づけ、現行実装は `saihelper.cpp` に集約されている個別関数群と読み替える必要がある（verified at: 2026-05-09）。
 
 # SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
 
@@ -141,6 +141,16 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
 - ERROR_DB が増え続ける: 上位プロセス側の消費ロジック未実装または停止を疑う。fpmsyncd 等のログを確認。
 - orchagent が頻繁に再起動する: `exit(EXIT_FAILURE)` 経路を踏んでいる。`NOT_SUPPORTED` 等の crash 条件が立っていないか SAI status を syslog で確認。
 - 同じエントリで `counter` が増え続ける: `task_need_retry` で再試行ループに入っている可能性。条件が解消しないなら `task_failed` 化を検討。
+
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+
+- **`handleSai*Status` は Orch base の virtual 関数ではない**: `sonic-swss/orchagent/saihelper.h:19-22` に **free function** として宣言され、`saihelper.cpp` に共通実装がある。個別 Orch（`vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等 28 箇所程度）が呼び出し側で利用する形になっている。`Orch` 基底クラスの override は提供されていない。
+- **`ERROR_DB` は実装されていない**: `sonic-swss` と `sonic-swss-common` のどちらにも `ERROR_APPL_*` テーブル / `ERROR_DB` という独立 Redis DB の定義は存在しない（`lagid.h` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は名前衝突するが無関係な定数）。HLD で計画されていた fpmsyncd 等への失敗エスカレーション経路は未実装。
+- **HLD 内の TODO（Other SAI statuses / SAI API 別 / Orch 別の対応表）も大半が空白のまま**。
+
+したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は `saihelper.cpp` の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。
 
 ## 引用元
 
