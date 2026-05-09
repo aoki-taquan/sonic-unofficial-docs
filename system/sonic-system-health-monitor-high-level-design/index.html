@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bfd-hw-offload-for-bgp-session/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-system-health-monitor-high-level-design/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sonic-swss-docker-warm-restart/">
       
       
-        <link rel="next" href="../bfd-hw-offload/">
+        <link rel="next" href="../sonic-telemetry-in-dial-out-mode/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） - SONiC 非公式ドキュメント</title>
+        <title>System Health Monitor（critical service / Monit / peripheral） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bgp-bfd-bfdsyncd" class="md-skip">
+        <a href="#system-health-monitorcritical-service-monit-peripheral" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
+              System Health Monitor（critical service / Monit / peripheral）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1125,8 +1125,6 @@
       
   
   
-    
-  
   
   
     
@@ -1218,23 +1216,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -1252,13 +1247,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1275,37 +1270,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1321,214 +1289,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#bfdsyncd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        bfdsyncd の責務
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#local-discriminator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Local Discriminator のマッピング
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-bfd-peers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show bfd peers のためのリモート情報
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipv6-link-local" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv6 link-local 対応
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        デフォルト値とスケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1541,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1569,7 +1329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -1597,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1625,7 +1385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
         
   
   
@@ -1653,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1681,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1709,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -1737,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1765,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1793,7 +1553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1821,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1849,7 +1609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1877,7 +1637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -1905,7 +1665,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1933,7 +1693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../high-level-design-document/" class="md-nav__link">
+      <a href="../../routing/high-level-design-document/" class="md-nav__link">
         
   
   
@@ -1961,7 +1721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1989,7 +1749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -2017,7 +1777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -2045,7 +1805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -2073,7 +1833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -2101,7 +1861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -2129,7 +1889,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -2157,7 +1917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -2185,7 +1945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2213,7 +1973,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -2241,7 +2001,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2269,7 +2029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
         
   
   
@@ -2297,7 +2057,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -2325,7 +2085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2353,7 +2113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -2381,7 +2141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -2409,7 +2169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2437,7 +2197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-vpn-hld/" class="md-nav__link">
+      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -2465,7 +2225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -2493,7 +2253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-ip-route-configuration/" class="md-nav__link">
+      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -2521,7 +2281,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -2549,7 +2309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -2577,7 +2337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -4511,6 +4271,8 @@
       
   
   
+    
+  
   
   
     
@@ -4600,20 +4362,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4631,13 +4396,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4657,7 +4422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4685,7 +4450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4713,7 +4478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -4741,7 +4506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -4769,7 +4534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -4797,7 +4562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -4825,7 +4590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -4853,7 +4618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -4881,7 +4646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -4909,7 +4674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -4937,7 +4702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -4965,7 +4730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4993,7 +4758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5021,7 +4786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -5049,7 +4814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -5077,7 +4842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -5105,7 +4870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -5133,7 +4898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5161,7 +4926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5189,7 +4954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5217,7 +4982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5245,7 +5010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5273,7 +5038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5301,7 +5066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5329,7 +5094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5357,7 +5122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5385,7 +5150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -5413,7 +5178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -5438,10 +5203,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Health Monitor（critical service / Monit / peripheral）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -5457,6 +5249,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service / Process チェック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peripheral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peripheral
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-checker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External checker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monit を使わない経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5469,7 +5436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -5497,7 +5464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -5525,7 +5492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -5553,7 +5520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -5581,7 +5548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -5609,7 +5576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -5637,7 +5604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -5665,7 +5632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -5693,7 +5660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -12448,10 +12415,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#bfdsyncd" class="md-nav__link">
+  <a href="#service-process" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bfdsyncd の責務
+        Service / Process チェック
       
     </span>
   </a>
@@ -12459,32 +12426,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#local-discriminator" class="md-nav__link">
+  <a href="#peripheral" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Local Discriminator のマッピング
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-bfd-peers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show bfd peers のためのリモート情報
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipv6-link-local" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv6 link-local 対応
+        Peripheral
       
     </span>
   </a>
@@ -12495,7 +12440,29 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        デフォルト値とスケール
+        設定ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-checker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External checker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monit を使わない経路
       
     </span>
   </a>
@@ -12520,43 +12487,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        CLI
       
     </span>
   </a>
@@ -12569,7 +12503,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -12580,7 +12514,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12591,7 +12525,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12602,7 +12536,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12629,7 +12563,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/bfd-hw-offload-for-bgp-session.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-system-health-monitor-high-level-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12637,149 +12571,127 @@
   
 
 
-<div class="admonition danger">
-<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
-<p>HLD で導入予定の <code>bfdsyncd</code> プロセスは現行 master の <code>sonic-buildimage/dockers/docker-fpm-frr/</code> に未取り込み（grep ヒット 0）。<code>FEATURE.bgp.bfd_hw_offload</code> フラグも supervisord テンプレートに見当たらない。<code>sonic-swss/orchagent/bfdorch.cpp</code> L420-466 では <code>SAI_BFD_SESSION_ATTR_LOCAL_DISCRIMINATOR</code> / <code>REMOTE_DISCRIMINATOR</code> / <code>MIN_TX</code> / <code>MIN_RX</code> / <code>MULTIPLIER</code> の <strong>設定 (set)</strong> は実装済みだが、HLD が要求する <code>SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX</code> / <code>REMOTE_MIN_RX</code> / <code>REMOTE_MULTIPLIER</code> の <strong>取得 (get) → STATE_DB 反映</strong> ロジックは未取り込み（grep ヒット 0）。本ページは HLD 仕様としての参考情報に留まる（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>healthd</code>（system health monitor 本体）の現行 master 取り込み、<code>system_health_monitoring_config.json</code> のスキーマ、external_checkers の出力フォーマット、<code>/etc/supervisor/critical_processes</code> の運用実態は未裏取り。</p>
 </div>
-<h1 id="bgp-bfd-bfdsyncd">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）<a class="headerlink" href="#bgp-bfd-bfdsyncd" title="Permanent link">&para;</a></h1>
+<h1 id="system-health-monitorcritical-service-monit-peripheral">System Health Monitor（critical service / Monit / peripheral）<a class="headerlink" href="#system-health-monitorcritical-service-monit-peripheral" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>FRR/bfdd の <strong>BFD dataplane (DP) インターフェース</strong> を経由して、BGP が要求した BFD セッションを SONiC の <code>BfdOrch</code> 経由でハードウェアオフロードする仕組み。SW BFD と比較して高速な障害検出と多数セッション収容を狙う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新規コンポーネント <code>bfdsyncd</code> が bgp コンテナ内で動作し、<code>bfdd</code> の DP socket と Redis (<code>APPL_DB</code> / <code>STATE_DB</code>) の両側を仲介する。</p>
-<pre class="mermaid"><code>flowchart LR
-    BGP[bgpd] --&gt; BFDD[bfdd]
-    BFDD &lt;--&gt;|BFD DP socket| BFDSYNC[bfdsyncd]
-    BFDSYNC --&gt;|BFD_SESSION_TABLE| APPL[(APPL_DB)]
-    APPL --&gt; BFDORCH[BfdOrch]
-    BFDORCH --&gt;|SAI_BFD_SESSION| ASIC[(ASIC)]
-    BFDORCH -.-&gt;|state| STATE[(STATE_DB BFD_SESSION_TABLE)]
-    STATE --&gt; BFDSYNC
-    BFDSYNC -.-&gt;|BFD_STATE_CHANGE| BFDD</code></pre>
+<p>SONiC の <strong>「system は健全か」</strong> を一元判定する monitor<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。critical service / process の生存、Monit が見るファイルシステム / 周辺 script、PMON の周辺デバイス（fan / PSU / ASIC temp）を統合し、結果を syslog / system status LED / <code>show system-health</code> CLI に出す。</p>
+<p>判定ソース:</p>
+<ol>
+<li><code>CONFIG_DB.FEATURE</code> で <code>state</code> が <code>enabled</code> / <code>always_enabled</code> の service が docker として走っているか</li>
+<li>各 container の <code>/etc/supervisor/critical_processes</code> に列挙されたプロセスが <code>RUNNING</code>（<code>supervisorctl status</code>）</li>
+<li>Monit summary の OK 状態（rsyslog, root-overlay, var-log, routeCheck, diskCheck, container_checker, vnetRouteCheck, container_memory_telemetry 等）</li>
+<li>PMON の psud / thermalctld 等が拾う peripheral 状態</li>
+</ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="bfdsyncd">bfdsyncd の責務<a class="headerlink" href="#bfdsyncd" title="Permanent link">&para;</a></h3>
-<p><code>bfdsyncd</code> は次の 3 種類の DP メッセージを処理する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>：</p>
+<h3 id="service-process">Service / Process チェック<a class="headerlink" href="#service-process" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    FEAT[(CONFIG_DB.FEATURE)] --&gt; H[system health]
+    DOCKER[docker ps] --&gt; H
+    SUPERV[supervisorctl status] --&gt; H
+    MONIT[monit summary -B] --&gt; H
+    PMON[psud / thermalctld\nsysfs / vendor API] --&gt; H
+    H --&gt;|集約| STAT[(STATE_DB\nSYSTEM_HEALTH_INFO)]
+    STAT --&gt; CLI[show system-health]
+    H --&gt; LED[system status LED]
+    H --&gt; LOG[syslog]</code></pre>
+<p>判定ロジック<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>DP_ADD_SESSION</code>: bfdd からのセッション生成要求 → APPL_DB の <code>BFD_SESSION_TABLE</code> に書き込み、BfdOrch にトリガ。</li>
-<li><code>DP_DELETE_SESSION</code>: 削除要求 → APPL_DB から削除。</li>
-<li><code>BFD_STATE_CHANGE</code>: BfdOrch からの状態変化（STATE_DB 経由）を bfdd に返送。bfdd は BGP に通知し、Down で BGP を IDLE に戻す。</li>
+<li>FEATURE で expected な service と docker ps の差分が 0 でないと <strong>fault</strong></li>
+<li>container ごと critical_processes が <code>RUNNING</code> でないと <strong>fault</strong></li>
+<li>Monit summary に <code>Status ok</code> / <code>Running</code> / <code>Accessible</code> 以外があると <strong>fault</strong></li>
 </ul>
-<p><code>ECHO_REQUEST</code> / <code>ECHO_REPLY</code> / <code>DP_REQUEST_SESSION_COUNTERS</code> / <code>BFD_SESSION_COUNTERS</code> は <strong>未サポート</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="local-discriminator">Local Discriminator のマッピング<a class="headerlink" href="#local-discriminator" title="Permanent link">&para;</a></h3>
-<p><code>bfdd</code> と <code>BfdOrch</code> は独立に local discriminator を採番する。<code>bfdd</code> は乱数（≥ <code>0x10000</code>）、<code>BfdOrch</code> は 1 から連番。<code>bfdsyncd</code> は両者のキー対応表を保持し、状態通知時に正しい bfdd 側 ID へ翻訳する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="show-bfd-peers"><code>show bfd peers</code> のためのリモート情報<a class="headerlink" href="#show-bfd-peers" title="Permanent link">&para;</a></h3>
-<p>FRR の <code>show bfd peers</code> は remote discriminator / multiplier / RX/TX 間隔を表示する。これらは bfdd 側にしか無いが、HW offload では SAI 側に取りに行く必要がある。HLD は次の SAI 属性が将来追加されることを期待している（現状 SDK サポート任意）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>：</p>
+<h3 id="peripheral">Peripheral<a class="headerlink" href="#peripheral" title="Permanent link">&para;</a></h3>
+<p>fault と扱う条件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>SAI_BFD_SESSION_ATTR_REMOTE_DISCRIMINATOR</code></li>
-<li><code>SAI_BFD_SESSION_ATTR_REMOTE_MULTIPLIER</code></li>
-<li><code>SAI_BFD_SESSION_ATTR_REMOTE_MIN_RX</code></li>
-<li><code>SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX</code></li>
+<li>fan missing / broken</li>
+<li>fan speed が minimum 未満</li>
+<li>fan direction が他と不一致（"N/A" や none は無視）</li>
+<li>PSU 電圧範囲外、温度閾値超え、bad status</li>
+<li>ASIC 温度閾値超え</li>
 </ul>
-<p>未対応 SDK でも BfdOrch がクラッシュしないこと、未取得時は <code>bfdsyncd</code> が <code>0</code> を bfdd に返すことが要件として明記されている。</p>
-<h3 id="ipv6-link-local">IPv6 link-local 対応<a class="headerlink" href="#ipv6-link-local" title="Permanent link">&para;</a></h3>
-<p>BGP unnumbered 経由の BFD では link-local アドレスを使うが、link-local はルーティング不能なので <code>bfdorch</code> は <strong>inject-down モード（L2 直書き）</strong> で BFD パケットを送る必要がある。これには送信元 MAC（<code>/sys/class/net/&lt;ifname&gt;/address</code>）と宛先 MAC（neighbor table から取得）が必要だが、<code>bfddp_session</code> 構造体には MAC を載せるフィールドが無い。<strong>MAC 取得方法は HLD のスコープ外</strong> で、実装側で工夫する必要があると明記されている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">設定ファイル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>/usr/share/sonic/device/&lt;platform&gt;/system_health_monitoring_config.json</code> で <strong>plugin と除外対象</strong> を platform 別に注入<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;services_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;snmpd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;snmp_subagent&quot;</span><span class="p">],</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;devices_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;psu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan.speed&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan2.speed&quot;</span><span class="p">],</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;external_checkers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my_external_checker.py -opt v&quot;</span><span class="p">]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>filter 文字列の認識ルール（<code>fan.speed</code>, <code>&lt;fan_name&gt;.direction</code> などドット区切り）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未知 filter は silently ignore。</p>
+<h3 id="external-checker">External checker<a class="headerlink" href="#external-checker" title="Permanent link">&para;</a></h3>
+<p>ユーザ提供スクリプトを Monit に登録、決まった出力フォーマットで結果を返すと system health がそのまま吸い上げる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;category_name&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&lt;item_name&gt;:&lt;item_status&gt;
+</span></code></pre></div>
+<h3 id="monit">Monit を使わない経路<a class="headerlink" href="#monit" title="Permanent link">&para;</a></h3>
+<p>v0.2 で <code>Junchao Chen</code> が "Check service status without monit" を追加<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Monit が使えない / load 重い環境向けに、純粋に supervisor + docker ps だけで判定する道筋を確保する想定。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/bfd/BFD HW Offload for BGP session HLD.md#L419-L439 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  When bgp use link local address to peer with remote system, it needs to specify interface index (and interface name) when create the bfd session. 
-  ...
-  How to get source mac address and destination mac address for IPv6 link local address is outside of the scope of this HLD, the implementation need to find a way to get these information.
-reasoning: link-local シナリオでの inject-down モード要件と、MAC 取得が HLD スコープ外であることの根拠。
+  Read FEATURE table in CONFIG_DB, any service whose "STATE" field was configured with "enabled" or "always_enabled" is expected to run in the system
+  ... For each container, use "supervisorctl status" to get its critical process status, any critical process is not in "RUNNING" status will be considered as fault condition.
+reasoning: critical service / process 判定の根拠。
 -->
 
-<h3 id="_3">デフォルト値とスケール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Attribute</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Default Tx interval</td>
-<td>300 ms</td>
-</tr>
-<tr>
-<td>Default Rx interval</td>
-<td>300 ms</td>
-</tr>
-<tr>
-<td>Default detect multiplier</td>
-<td>3</td>
-</tr>
-<tr>
-<td>Total HW BFD sessions（他機能と共有）</td>
-<td>4000</td>
-</tr>
-</tbody>
-</table>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
+<th>Command</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>FEATURE</code></td>
-<td><code>bgp</code></td>
-<td><code>bfd_hw_offload</code></td>
-<td><code>"true"</code> で <code>bfdsyncd</code> と <code>bfdd --dplaneaddr</code> を起動する supervisord テンプレートが選ばれる</td>
+<td><code>show system-health summary</code></td>
+<td>全体 PASS / FAIL</td>
+</tr>
+<tr>
+<td><code>show system-health detail</code></td>
+<td>個別チェックの結果</td>
+</tr>
+<tr>
+<td><code>show system-health monitor-list</code></td>
+<td>現在監視中の項目</td>
 </tr>
 </tbody>
 </table>
-<p><code>BFD_SESSION_TABLE</code> (APPL_DB) と <code>BFD_SESSION_TABLE</code> (STATE_DB) は本機能用に bfdsyncd / BfdOrch が使うが、ユーザは直接編集しない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>新規 SONiC CLI は <strong>無い</strong>。既存の <code>show bfd summary</code> および FRR の <code>vtysh -c 'show bfd peer'</code> で確認する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG 追加の記述なし。</p>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Feature 有効化</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|bgp&#39;</span><span class="w"> </span>bfd_hw_offload<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>bgp
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># FRR 側で BGP neighbor に bfd を有効化</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s2">configure terminal</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">router bgp 65001</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s2"> neighbor 10.200.200.201 remote-as external</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s2"> neighbor 10.200.200.201 bfd</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="s2">&quot;</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># 確認</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>show<span class="w"> </span>bfd<span class="w"> </span>summary
-</span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show bfd peers counters</code> は HW カウンタ取得不可のため 0 が返る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ECHO モードは未サポート。</li>
-<li>Warm restart は本フェーズで非対応（<code>1.4 Warm Restart requirements</code> で明記）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>bfdd と BfdOrch の二重採番のため、bfdsyncd の翻訳テーブルが壊れると状態通知がミスマッチする可能性がある。</li>
-<li>IPv6 link-local 用の MAC 取得実装が HLD スコープ外。</li>
+<li>judgment は heuristic（FEATURE と docker ps の照合等）であり、起動 grace period を加味しないと起動直後に false fault が出る</li>
+<li><code>system_health_monitoring_config.json</code> は platform 同梱。実機で動的編集は想定外</li>
+<li>LED マッピングは platform 依存</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>BfdOrch (sonic-swss)</strong>: 既存の BfdOrch（<code>sonic-swss/orchagent/bfdorch.cpp</code>）をそのまま使う。HW offload 全般の HLD は別途 <code>BFD HW Offload HLD.md</code> を参照。</li>
-<li><strong>BGP unnumbered / IPv6 link-local</strong>: 上記の inject-down モード対応が必要。</li>
-<li><strong>frr/bfdd の SW BFD</strong>: <code>FEATURE.bgp.bfd_hw_offload</code> を未設定にすると bfdd が単独で起動して SW BFD として動く。両モード共存は HLD では想定外。</li>
-<li><strong>Control plane BFD</strong>: 全 BFD を HW にするか SW にするかは bfdd 起動時のフラグで決まる（部分オフロードは想定されていない）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Monit</strong>: 主要な情報源。Monit 設定（<code>monitrc</code> 等）と本機能設定の整合が必要</li>
+<li><strong>PMON / thermalctld / psud</strong>: peripheral 状態の供給元</li>
+<li><strong>Container Hardening</strong>: critical_processes の定義変更を伴う</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BFD が UP にならない場合：<code>docker exec bgp ps -ef</code> で <code>bfdsyncd</code> と <code>bfdd --dplaneaddr</code> の両方が起動しているかを確認する。</li>
-<li>セッションは UP だが <code>show bfd peer</code> の remote 値がすべて 0 → SDK が remote 系 SAI 属性を未対応の可能性。BfdOrch のログに get_attribute エラーが出ていないか確認。</li>
-<li>IPv6 link-local 経由で BGP/BFD が上がらない → 実装が neighbor table から宛先 MAC を取れているかを <code>ip -6 neigh</code> で確認する。</li>
+<li>起動直後に fault → 起動 grace を疑う、<code>services_to_ignore</code> で一時除外</li>
+<li>LED が変わらない → platform driver / vendor API 側の LED 制御を確認</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- healthd / system health monitor の現行 master 取り込み確認（sonic-host-services?）
+- system_health_monitoring_config.json の filter 文法と現行実装の対応確認
+- external_checkers 出力フォーマットの実装確認
+- /etc/supervisor/critical_processes の各 docker での更新状況確認
+- Monit を使わない経路（v0.2）の現行実装確認
+- LED 制御 API（platform_chassis.set_status_led）との結線確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/bfd/BFD HW Offload for BGP session HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/system_health_monitoring/system-health-HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
