@@ -340,15 +340,17 @@
     },
     {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "FdbOrch の per-port / per-VLAN / per-(port,VLAN) flush API は flushFDBEntries(bridge_port_oid, vlan_oid) として fdborch.cpp:985,1006,1038,1090,1217 に実装",
+        "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）は saved_fdb_entries map として fdborch.cpp:459,1254-1316,1754 に実装",
+        "MAC move event は SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE と mac_move フラグで fdborch.cpp:91-138 に実装",
+        "SWITCH_TABLE.fdb_aging_time → SAI_SWITCH_ATTR_FDB_AGING_TIME 反映は switchorch.cpp:49,664,1674-1686 に実装"
+      ],
       "concerns": [
-        "FdbOrch の per-port / per-(port,VLAN) flush API と m_entries map 化（fdb_type 保持）の現行実装確認",
-        "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）の実装存在確認",
-        "MAC move event の SAI 通知ハンドラと FdbOrch 反映ロジックの実装確認",
-        "config mac aging_time / config mac add/del CLI の sonic-utilities 取り込み確認",
-        "config vlan range / config vlan member range CLI の redis pipeline 実装確認",
-        "SWITCH_TABLE の fdb_aging_time フィールド命名と SwitchOrch / SAI 反映経路の現行確認",
-        "HLD は 2019 年改訂のため現行 master との乖離リスクが大きい"
+        "config mac (aging_time / add / del) CLI は sonic-utilities/config/main.py に存在せず、HLD どおりの取り込みは未完了",
+        "config vlan range / config vlan member range CLI も sonic-utilities に存在しない",
+        "show mac aging-time のみ sonic-utilities/show/main.py:1244 に実装あり"
       ],
       "priority": "high",
       "issue": 177,
@@ -1083,6 +1085,19 @@
       "priority": "medium",
       "issue": 167,
       "pr": 168
+    },
+    {
+      "page": "docs/routing/overlay-ecmp-enhancements.md",
+      "issue": 305,
+      "verification": "hld-only",
+      "concerns": [
+        "VnetOrch の primary/secondary 切替ロジック実装存在確認",
+        "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか未確認",
+        "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認",
+        "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認",
+        "pinned_state による BFD 状態オーバーライド実装存在確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/routing/prefix-based-mux-neighbors.md",
