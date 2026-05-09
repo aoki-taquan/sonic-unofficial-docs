@@ -1787,6 +1787,19 @@
       "pr": 186
     },
     {
+      "page": "docs/management/sonic-yang-model-guidelines.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-yang-models 配下の現行 yang ファイル群が本ガイドライン (1 ファイル 1 機能, sonic-{feature} 命名, namespace, revision) に従っているかサンプリング確認",
+        "sonic-ext 拡張 (map-list / db-name / key-delim) が CVL / mgmt-framework の現行コードで実装されているか確認",
+        "ガイドライン #18 のリスト分割衝突ルール (Rev 1.1) が pyang ベースのバリデータに組み込まれているか確認",
+        "must / when 条件の error-app-tag が NB 側 (gNMI/REST) でエラー応答に反映されるか確認",
+        "ABNF.json と sonic-yang-models のドリフト検出ツールの存在確認"
+      ],
+      "priority": "low",
+      "issue": 479
+    },
+    {
       "page": "docs/overlay/nvgre-tunnel-in-sonic.md",
       "issue": 21,
       "verification": "hld-only",
