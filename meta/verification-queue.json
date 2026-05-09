@@ -1709,7 +1709,8 @@
         "systemd 依存関係 (sshd/getty/serial-getty より before) が現行 service unit に設定されているか確認"
       ],
       "priority": "medium",
-      "issue": 519
+      "issue": 519,
+      "pr": 520
     },
     {
       "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
