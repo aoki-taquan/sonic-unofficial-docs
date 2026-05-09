@@ -801,6 +801,20 @@
       "priority": "medium"
     },
     {
+      "page": "docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md",
+      "issue": 677,
+      "verification": "hld-only",
+      "concerns": [
+        "hamgrd の DPU-driven モード分岐 (state machine を駆動しない経路) の実装存在確認",
+        "HA scope に対する SAI notification (role activation request) のサポート確認",
+        "HA_SET / HA_SCOPE の DASH config 上のテーブル/フィールド定義が現行 master にあるか未確認",
+        "VIP range route ベースの NPU forwarding 実装が swss/orchagent にあるか確認",
+        "DPU-to-DPU liveness probe failure を契機とした DPU 内 failover 駆動ロジックの実装確認",
+        "split-brain 検出 (両 DPU の Standalone 状態) と SDN 側 reconciliation 手順の telemetry path 確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/sonic-generic-hash.md",
       "issue": 333,
       "verification": "code-verified",
