@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/sag-high-level-design-for-sonic.md",
+  "issue": 332,
+  "verification": "hld-only",
+  "concerns": [
+    "IntfMgr / IntfsOrch の SAG ハンドラ実装の現行 master 取り込み確認",
+    "SAG / SAG_TABLE スキーマと VLAN_INTERFACE.static_anycast_gateway フィールドの sonic-yang-models 反映確認",
+    "config static-anycast-gateway / config vlan static-anycast-gateway CLI の sonic-utilities 取り込み確認",
+    "RouteOrch の MAC 変更時 IPv6 link-local me-route 再追加実装確認",
+    "HLD は 2021-10 改訂で 4 年経過、現行 master との乖離リスクあり"
+  ],
+  "priority": "high"
+}
