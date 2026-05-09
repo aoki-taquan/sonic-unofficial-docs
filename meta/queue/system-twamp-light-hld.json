@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/twamp-light-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "twamp orch の sonic-swss 取り込み確認",
+    "SAI_TWAMP_SESSION_* 属性の community SAI 取り込み確認",
+    "CFG_TWAMP_SESSION_TABLE / STATE_TWAMP_SESSION_TABLE / STATE_SWITCH_CAPABILITY_TABLE の YANG 取り込み確認",
+    "config twamp-light / show twamp-light CLI の sonic-utilities 取り込み確認",
+    "COUNTERS_DB TWAMP counter polling の現行 flex counter 取り込み確認",
+    "ASIC vendor 別 TWAMP offload 対応状況（capability 判定の網羅性）確認"
+  ],
+  "priority": "medium"
+}
