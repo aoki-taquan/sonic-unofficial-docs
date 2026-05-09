@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
+      "issue": null,
+      "verification": "hld-only",
+      "concerns": [
+        "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認",
+        "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか未確認",
+        "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認",
+        "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/prefix-based-mux-neighbors.md",
       "issue": 227,
       "verification": "hld-only",
@@ -265,16 +277,18 @@
     {
       "page": "docs/management/config-reload-enhancement.md",
       "issue": 89,
-      "verification": "hld-only",
-      "concerns": [
-        "hostcfgd の FEATURE.delayed 対応 / PORT_TABLE 購読 / フォールバックタイムアウト実装確認",
-        "portsyncd が APPL_DB PORT_TABLE:PortInitDone を publish する経路確認",
-        "db_migrator の has_timer→delayed 移行実装確認",
-        "sonic-feature YANG モデルへの delayed leaf 追加確認",
-        "既存 systemd *.timer の撤去状況",
-        "warm/fast reboot の waitAdvancedBootDone 連携実装"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "hostcfgd の FEATURE.delayed 対応 / PORT_TABLE 購読 / フォールバックタイムアウト実装確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+        "portsyncd が APPL_DB PORT_TABLE:PortInitDone を publish する経路確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+        "db_migrator の has_timer→delayed 移行実装確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+        "sonic-feature YANG モデルへの delayed leaf 追加確認 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+        "既存 systemd *.timer の撤去状況 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)",
+        "warm/fast reboot の waitAdvancedBootDone 連携実装 (verified 2026-05-09 at featured / db_migrator.py:719 / sonic-feature.yang:67 / portsyncd.cpp:134)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/generic-sai-extension-critical-resource-monitoring-crm.md",
