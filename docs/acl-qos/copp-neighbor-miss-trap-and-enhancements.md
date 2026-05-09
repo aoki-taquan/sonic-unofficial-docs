@@ -1,7 +1,7 @@
 ---
 title: CoPP Neighbor Miss trap と enum capability query（show copp configuration）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-copp
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.1, 2025-02）のみを根拠に書かれている。`Copporch` の SAI enum capability query 実装、`STATE_DB.COPP_TRAP_CAPABILITY_TABLE` のスキーマ、`show copp configuration` CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master の `sonic-swss/orchagent/copporch.cpp:99` で `neighbor_miss → SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS` マップ、line 106 の `default_supported_trap_ids`、line 199 の `STATE_COPP_TRAP_CAPABILITY_TABLE_NAME`、line 222-235 の `updateTrapOperStatus` (`hw_status` 公開)、line 239-287 の `query_objecttype_implementation`/`enum_values_capability` クエリ、`sonic-buildimage/files/image_config/copp/copp_cfg.j2:66,135` の `queue1_group3` / `neighbor_miss` 追加、`sonic-utilities/show/copp.py:189-206` の `show copp configuration` CLI を確認済み（verified at: 2026-05-09）。
 
 # CoPP Neighbor Miss trap と enum capability query（`show copp configuration`）
 

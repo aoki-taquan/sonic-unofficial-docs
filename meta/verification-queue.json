@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/management/sonic-config-update-validation-via-yang.md",
+      "issue": null,
+      "verification": "hld-only",
+      "concerns": [
+        "ConfigDBConnector の YANG 検証デコレータが各 sonic-utilities config CLI に取り込まれているか未確認",
+        "buffermgrd 側の D-Bus GCU API 連携実装存在確認",
+        "DEVICE_METADATA.yang_config_validation の取り込みと config yang_config_validation CLI 実装確認",
+        "HLD は 2022-08 (Phase 1) のため Phase 2 以降の変更や YANG カバレッジ拡張状況は要追跡"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/management/p4rt-read-cache-hld.md",
       "issue": 236,
       "verification": "hld-only",
@@ -819,16 +831,18 @@
     {
       "page": "docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md",
       "issue": 127,
-      "verification": "hld-only",
-      "concerns": [
-        "Copporch の SAI enum capability query 実装",
-        "supported_trap_ids / default_supported_trap_ids の管理コード",
-        "STATE_DB COPP_TRAP_CAPABILITY_TABLE と hw_status の最終スキーマ",
-        "copp_cfg.j2 の queue1_group3 / neighbor_miss 追加の master 反映",
-        "show copp configuration CLI の sonic-utilities 取り込み",
-        "SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS のベンダー実装状況"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "Copporch の SAI enum capability query → copporch.cpp:239- query_objecttype_implementation/enum_values_capability (verified 2026-05-09)",
+        "supported_trap_ids / default_supported_trap_ids → copporch.cpp:106,219,246,287 (verified 2026-05-09)",
+        "STATE_DB COPP_TRAP_CAPABILITY_TABLE と hw_status → copporch.cpp:199,222-235 (verified 2026-05-09)",
+        "copp_cfg.j2 の queue1_group3 / neighbor_miss → copp_cfg.j2:66,135 (verified 2026-05-09)",
+        "show copp configuration CLI → sonic-utilities/show/copp.py:189-206 (verified 2026-05-09)",
+        "SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS → copporch.cpp:99 でマップ確認 (verified 2026-05-09)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/sonic-optional-feature-control-enhancement.md",
