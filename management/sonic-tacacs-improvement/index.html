@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/global-platform-specific-psuutil-class-instance/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/sonic-tacacs-improvement/">
       
       
-        <link rel="prev" href="../fec-flr-support-in-sonic/">
+        <link rel="prev" href="../sonic-nos-configuration-methods/">
       
       
-        <link rel="next" href="../hld-for-handling-sai-failures/">
+        <link rel="next" href="../sonic-yang-model-guidelines/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層） - SONiC 非公式ドキュメント</title>
+        <title>TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#platform-apisonic_platform-chassis-psufansfp-python" class="md-skip">
+        <a href="#tacacs-authorization-accountingpatched-bash-audisp-tacplus" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+              TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
             
           </span>
         </div>
@@ -379,11 +379,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../management/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -4495,6 +4495,8 @@
       
   
   
+    
+  
   
   
     
@@ -4524,1020 +4526,6 @@
       
         
       
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../management/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    マネジメント
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    マネジメント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Master Arbitration（election ID と SetRequest 拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnmi-usage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/gnsi-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/hld-ldap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/packetio/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    P4Runtime PacketIO（generic netlink + send_to_ingress）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/portable-console-device-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/save-on-set-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC Application Extension 開発・移植ガイド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSH サーバ全体設定（SSH_SERVER.POLICIES）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/tacacs-authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACACS+ 認証テストプラン（pam_tacplus + ssh login）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
         
       
         
@@ -5598,7 +4586,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -5609,7 +4597,7 @@
   <span class="md-ellipsis">
     
   
-    プラットフォーム
+    マネジメント
   
 
     
@@ -5620,18 +4608,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
-    プラットフォーム
+    マネジメント
   
 
           </label>
@@ -5646,14 +4634,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../config-reload-enhancement/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
   
 
     
@@ -5674,14 +4662,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+    既定パスワードの初回ログイン強制変更（California SB-327 準拠）
   
 
     
@@ -5702,14 +4690,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
+    DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
   
 
     
@@ -5730,14 +4718,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+    CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
   
 
     
@@ -5758,14 +4746,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+    gNMI Master Arbitration（election ID と SetRequest 拡張）
   
 
     
@@ -5786,14 +4774,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../gnmi-usage/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+    gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
   
 
     
@@ -5814,14 +4802,546 @@
   
   
     <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+    gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gnsi-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hld-ldap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../p4rt-application-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packetio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4Runtime PacketIO（generic netlink + send_to_ingress）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portable-console-device-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../save-on-set-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../send-to-ingress-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Application Extension 開発・移植ガイド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
   
 
     
@@ -5858,7 +5378,7 @@
   <span class="md-ellipsis">
     
   
-    新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+    TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
   
 
     
@@ -5876,7 +5396,7 @@
   <span class="md-ellipsis">
     
   
-    新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+    TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
   
 
     
@@ -5925,71 +5445,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#authorization" class="md-nav__link">
     <span class="md-ellipsis">
       
-        クラス階層
+        Authorization（コマンドごとの実行許可）
       
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        パッケージ構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        配置とロード
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧 → 新 API のサンプル比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
+    <nav class="md-nav" aria-label="Authorization（コマンドごとの実行許可）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#failover" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        Failover 設計
       
     </span>
   </a>
@@ -5997,10 +5468,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#tacplus-auth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        代替案として却下された tacplus-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accounting（コマンドの監査ログ）
       
     </span>
   </a>
@@ -6008,21 +5495,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#hostcfg-enforcer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        hostcfg enforcer
       
     </span>
   </a>
@@ -6035,7 +5511,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -6046,7 +5533,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -6057,7 +5544,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -6068,7 +5555,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6094,7 +5581,487 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH サーバ全体設定（SSH_SERVER.POLICIES）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tacacs-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tacacs-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACACS+ 認証テストプラン（pam_tacplus + ssh login）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../platform/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プラットフォーム
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プラットフォーム
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -6122,7 +6089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -6150,7 +6117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -6178,7 +6145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -6206,7 +6173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -6234,7 +6201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -6262,7 +6229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -6290,7 +6257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -6318,7 +6285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -6346,7 +6313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -6374,7 +6341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -6402,7 +6369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -6430,7 +6397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -10847,71 +10814,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#authorization" class="md-nav__link">
     <span class="md-ellipsis">
       
-        クラス階層
+        Authorization（コマンドごとの実行許可）
       
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        パッケージ構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        配置とロード
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧 → 新 API のサンプル比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
+    <nav class="md-nav" aria-label="Authorization（コマンドごとの実行許可）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#failover" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        Failover 設計
       
     </span>
   </a>
@@ -10919,10 +10837,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#tacplus-auth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        代替案として却下された tacplus-auth
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accounting（コマンドの監査ログ）
       
     </span>
   </a>
@@ -10930,21 +10864,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
+  <a href="#hostcfg-enforcer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        hostcfg enforcer
       
     </span>
   </a>
@@ -10957,7 +10880,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -10968,7 +10902,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -10979,7 +10913,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -10990,7 +10924,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11017,7 +10951,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/global-platform-specific-psuutil-class-instance.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/sonic-tacacs-improvement.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -11026,108 +10960,162 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 旧設計から現行への移行記述</p>
-<p>本ドキュメントは「旧 plugin 形式（<code>psuutil.py</code> 等の独立 plugin）」から「新 <code>sonic_platform</code> パッケージ階層」への移行を述べる、初期段階の HLD。現行 master では新 API がほぼ完全に普及済みだが、HLD の文面（特に "Current Solution" 節）は移行前の状態を述べている点に注意。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>bash パッチによる plugin フック、libtac 経由の authorization、auditd + audisp-tacplus による accounting、hostcfgd の AAA config モジュールの現行 master 実装は未裏取り。</p>
 </div>
-<h1 id="platform-apisonic_platform-chassis-psufansfp-python">新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）<a class="headerlink" href="#platform-apisonic_platform-chassis-psufansfp-python" title="Permanent link">&para;</a></h1>
+<h1 id="tacacs-authorization-accountingpatched-bash-audisp-tacplus">TACACS+ コマンド authorization / accounting（patched bash + <code>audisp-tacplus</code>）<a class="headerlink" href="#tacacs-authorization-accountingpatched-bash-audisp-tacplus" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>旧設計では <code>psuutil.py</code> / <code>sfputil.py</code> / <code>eeprom.py</code> 等を <strong>独立した Python plugin</strong> としてベンダーが個別に実装していたが、新設計では <strong>すべてを 1 つの object-oriented パッケージ <code>sonic_platform</code> に統一</strong> する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。共通属性は <code>DeviceBase</code> 系の基底クラスにまとめ、ベンダーは具象クラス階層を一括で実装する。</p>
-<p>これにより：</p>
+<p>TACACS+ Authentication（既存）の上に <strong>コマンド単位の authorization と accounting</strong> を追加する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>新規 device 追加時の plugin 増設が不要</li>
-<li>共通属性（Presence / Model # / Serial #）はベース継承で済む</li>
-<li>抽象メソッドはデフォルトで <code>NotImplementedError</code> を投げる「未実装 OK」設計で、ベース拡張で既存実装を壊さない</li>
+<li>既存: authentication / session authz / session accounting / コマンド authz（ローカル permission のみ）</li>
+<li>追加: <strong>コマンド authorization（TACACS+）</strong> と <strong>コマンド accounting（TACACS+）</strong></li>
 </ul>
+<p>実装の柱は <strong>bash patch + plugin</strong> と <strong>auditd + audisp-tacplus</strong> の二段<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">クラス階層<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Platform
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>└── Chassis
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ├── base MAC / serial / EEPROM info / reboot cause / hw watchdog
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ├── env sensors / front-panel LEDs / status LEDs
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ├── PSU[0..p-1]
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ├── Fan[0..f-1]
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    ├── SFP cage[0..s-1]
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    └── Module[0..m-1]   (line card / supervisor card)
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        ├── env sensors / LEDs
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        ├── PSU[...] / Fan[...] / SFP cage[...]
-</span></code></pre></div>
-<h3 id="_4">パッケージ構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>共通定義: <code>sonic-platform-common/sonic_platform_base/</code> （<code>Platform</code>, <code>Chassis</code>, <code>PsuBase</code>, <code>FanBase</code>, <code>SfpBase</code>, <code>ModuleBase</code> 等）</li>
-<li>ベンダー実装: 各 platform リポジトリの <code>platform/&lt;vendor&gt;/.../sonic_platform/</code> 配下に Python wheel として収まる</li>
-</ul>
-<h3 id="_5">配置とロード<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="authorization">Authorization（コマンドごとの実行許可）<a class="headerlink" href="#authorization" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    BUILD[Build time] --&gt;|wheel| HOST[/usr/share/sonic/device/&lt;PLATFORM&gt;/sonic_platform-*.whl/]
-    INSTALL[First boot] --&gt;|pip install| HSYS[Host system]
-    HOST --&gt;|mount| PMON[pmon container]
-    PMON --&gt;|check installed?| INSTALL2[install if missing]
-    PMON --&gt;|update| SDB[(STATE_DB)]
-    CLI[show CLI] --&gt; SDB</code></pre>
+  U[SSH/Console] --&gt; B[patched bash]
+  B --&gt; P[bash plugin&lt;br&gt;libtac]
+  P --&gt;|Authorization Request| TS[(TACACS+ server)]
+  TS --&gt;|permit/deny| P
+  P --&gt; B
+  B --&gt;|exec or reject| U</code></pre>
 <ul>
-<li>ベンダーは build 時に <code>sonic_platform</code> パッケージを wheel にコンパイル。</li>
-<li>初回ブート時、対応プラットフォーム用 wheel を <code>/usr/share/sonic/device/&lt;PLATFORM&gt;/</code> にコピー。</li>
-<li>pmon コンテナ起動時、<code>sonic_platform</code> が未インストールなら wheel をインストール。</li>
-<li><code>pmon</code> 内の各デーモンが Platform API 経由でハードを読み、結果を STATE_DB に書く。</li>
-<li>ホスト側 CLI は STATE_DB を引いて表示。</li>
-<li>リアルタイム値（光モジュール光信号など）は CLI が DB に「読め」と書いて pmon デーモンが読み直す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>bash を patch して <strong>disk command 実行直前に plugin を呼ぶ</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>plugin は TACACS+ Authentication と同じ設定を共有し、<code>libtac</code>（pam_tacplus 由来）でプロトコル処理<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>再帰コマンドは <strong>トップレベルのみ</strong>認可。bash built-in / function は認可対象外（ただし内部から実行ファイルを呼べばその実行ファイルは認可される）</li>
+<li>スクリプト経由（<code>python ./x.py</code>、<code>sh ./x.sh</code>）の認可は <strong>インタープリタコマンドのみ</strong>となるため、RO ユーザにスクリプト実行を許可する場合は <strong>TACACS+ サーバ側で python/sh 等を block</strong> する運用を推奨<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h3 id="api">旧 → 新 API のサンプル比較<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p>旧（<code>psuutil.py</code> plugin の動的ロード）：</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">imp</span><span class="o">,</span><span class="w"> </span><span class="nn">subprocess</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># get platform/hwsku via sonic-cfggen</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">module</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="s1">&#39;psuutil&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/share/sonic/device/.../plugins/psuutil.py&#39;</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">platform_psuutil</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">PsuUtil</span><span class="p">()</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">platform_psuutil</span><span class="o">.</span><span class="n">get_psu_presence</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<h4 id="failover">Failover 設計<a class="headerlink" href="#failover" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>プライマリ TACACS+ 不達</td>
+<td>次のサーバへ</td>
+</tr>
+<tr>
+<td>全サーバ不達</td>
+<td>TACACS+ 認可は失敗</td>
+</tr>
+<tr>
+<td>認可失敗時 fallback</td>
+<td>設定可能。<code>local</code> を fallover にすれば Linux ローカル permission に従う</td>
+</tr>
+<tr>
+<td>ローカルアカウントログイン</td>
+<td>当該セッションでは TACACS+ authn/authz を無効化（不達時の救済路）<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h4 id="tacplus-auth">代替案として却下された tacplus-auth<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#tacplus-auth" title="Permanent link">&para;</a></h4>
+<p><code>tacplus-auth</code> は コマンドへの <strong>シンボリックリンク + rbash</strong> で制限する方式。新コマンド毎にリンク作成が必要、bash 機能の一部が失われるため不採用。</p>
+<h3 id="accounting">Accounting（コマンドの監査ログ）<a class="headerlink" href="#accounting" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Sys[syscall execve] --&gt; AD[auditd]
+  AD --&gt; AT[audisp-tacplus plugin]
+  AT --&gt; TS2[(TACACS+ server)]
+  AT --&gt; SL[(syslog&lt;br&gt;local accounting)]</code></pre>
+<ul>
+<li><strong>syscall event</strong> を <code>auditd</code> で拾い、<code>audisp-tacplus</code> plugin が TACACS+ サーバに送る<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>記録イベント: コマンド開始 / 終了</li>
+<li><strong>docker container 内のコマンドは accounting 対象外</strong>（docker daemon 由来の実行と区別不能）。<code>docker exec &lt;ct&gt; &lt;cmd&gt;</code> は対象<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>pam_tacplus</code> がセッション accounting（login/logout）を担当</li>
+<li><code>/etc/sudoers</code> の <code>PASSWD_CMDS</code> 正規表現で <strong>secret を <code>***</code> にマスク</strong>してから送信<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="hostcfg-enforcer">hostcfg enforcer<a class="headerlink" href="#hostcfg-enforcer" title="Permanent link">&para;</a></h3>
+<p><code>AAA Config</code> モジュールが CONFIG_DB から bash config / auditd config / TACACS+ config を生成する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<pre class="mermaid"><code>flowchart LR
+  CLI --&gt; CDB[(CONFIG_DB&lt;br&gt;TACPLUS / TACPLUS_SERVER / AAA)]
+  CDB --&gt; HE[hostcfg enforcer]
+  HE --&gt; BC[bash config file]
+  HE --&gt; AC[auditd config file]
+  HE --&gt; TC[TACACS+ config file]</code></pre>
+<p><code>AAA</code> テーブルは <code>authentication</code> / <code>authorization</code> / <code>accounting</code> の 3 種をキーとして持ち、各キーで <code>login</code>（実体は protocol リスト, e.g. <code>local,tacacs+</code>）、<code>fallback</code>、<code>failthrough</code> を管理<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>注: 過去 HLD 上は <code>protocol</code> 属性として記載されたが、現行 <code>sonic-system-aaa</code> YANG では <code>login</code> 属性として実装されており、互換性のため <code>login</code> のままとする<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+</blockquote>
+<h2 id="cli">関連 CLI<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Authorization</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span>tacacs+
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span>tacacs+<span class="w"> </span><span class="nb">local</span><span class="w">        </span><span class="c1"># TACACS+ → local fallover</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Accounting</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w"> </span>tacacs+
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w"> </span>tacacs+<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w"> </span>disable
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># Counter</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>show<span class="w"> </span>tacacs+<span class="w"> </span>counter
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>sonic-clear<span class="w"> </span>tacacscounters
 </span></code></pre></div>
-<p>新：</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sonic_platform</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">chassis</span> <span class="o">=</span> <span class="n">sonic_platform</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">Platform</span><span class="p">()</span><span class="o">.</span><span class="n">get_chassis</span><span class="p">()</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">psu1</span> <span class="o">=</span> <span class="n">chassis</span><span class="o">.</span><span class="n">get_psu</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">psu1</span><span class="o">.</span><span class="n">get_presence</span><span class="p">())</span>
+<p>カウンタ表示例<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>server1: 10.1.1.45
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Messages sent: 24
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Messages received: 20
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Requests accepted: 14
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Requests rejected: 8
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Requests timeout: 2
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Requests retransmitted: 1
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>Bad responses: 1
 </span></code></pre></div>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述は無い。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>新 API は CLI を直接定義しない。<code>pmon</code> 内のデーモンが書き込んだ STATE_DB を、既存の <code>show platform</code>、<code>show interfaces transceiver</code> 等の CLI が読み出す。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p>ベンダー実装側の最小例（<code>sonic_platform/chassis.py</code>）：</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sonic_platform_base.chassis_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChassisBase</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sonic_platform.psu</span><span class="w"> </span><span class="kn">import</span> <span class="n">Psu</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">Chassis</span><span class="p">(</span><span class="n">ChassisBase</span><span class="p">):</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">ChassisBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PSU_NUM</span><span class="p">):</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_psu_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Psu</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-</span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>コマンド + パラメータが <strong>240 byte 超</strong> の部分は drop（TACACS+ プロトコル制約。Cisco/Arista/Cumulus 等共通）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>2</td>
+<td>最大 TACACS+ サーバ数 = <strong>8</strong>（hardcode）<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>3</td>
+<td>TACACS+ と local 併用時、Linux file permission の都合で <strong>local は常に TACACS+ の後</strong>に評価される</td>
+</tr>
+<tr>
+<td>4</td>
+<td>docker 内 shell からの実行は authz/accounting を回避可能 → 管理者は TACACS+ 側で <code>docker exec</code> を制限すべき</td>
+</tr>
+<tr>
+<td>5</td>
+<td>再帰コマンド回避策として、TACACS+ 側で <code>python</code> / <code>sh</code> / <code>find -exec</code> / <code>ld-linux.so</code> 等を block する運用が必要</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD 自体は移行設計の初期段階で、現行 master の <code>sonic-platform-common</code> のクラス階層と完全に一致するわけではない（後継 PR で多数のクラスが追加されている）。</li>
-<li>旧 <code>psuutil.py</code> 等の plugin はしばらく後方互換のために残ったが、現行 master ではほぼ移行済み。</li>
-<li><code>pmon</code> の wheel 自動インストール挙動はプラットフォームの初回ブートに依存する。</li>
+<li><strong>TACACS+ Authentication</strong>: 本拡張は同じ TACACS+ 設定を再利用</li>
+<li><strong>bash</strong>: bash 自体に patch を当てるため bash バージョン更新時に再 patch 必要</li>
+<li><strong>auditd</strong>: auditd 動作に依存。auditd 停止時は TACACS+ accounting も止まる</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>xcvrd / pmon-d / fancontrold</strong>: pmon コンテナ内の各デーモンが <code>sonic_platform</code> を import して使う。</li>
-<li><strong><code>show platform</code> 系 CLI</strong>: STATE_DB 経由で値を読むため、新 API 対応 platform でないと一部値が空になる。</li>
-<li><strong>fastboot / warm reboot</strong>: pmon の再起動シーケンスで <code>sonic_platform</code> の再ロードが走る。</li>
+<li>bash plugin / audisp-tacplus は <code>AAA|authentication.debug</code> を立てるとデバッグログ出力<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>TACACS+ counter で reject / timeout / bad responses を観察</li>
+<li>syslog で authz/accounting イベントを確認</li>
+<li>240 byte 超の長いコマンドは TACACS+ 側で truncate されるため、長尺ワンライナーをスクリプト化する運用が必要</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>show platform psu</code> で値が出ない → pmon コンテナ内で <code>sonic_platform</code> が import できるか確認 (<code>docker exec pmon python3 -c 'import sonic_platform'</code>)。</li>
-<li><code>NotImplementedError</code> が出る → ベンダー実装が当該メソッドを提供していない。<code>sonic-platform-common</code> の対応メソッドに対する placeholder 実装が必要。</li>
-<li>新 plugin が読まれない → <code>/usr/share/sonic/device/&lt;PLATFORM&gt;/sonic_platform-*.whl</code> の存在と pmon の起動ログを確認。</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/platform_api/new_platform_api.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Design.md">sonic-net/SONiC doc/aaa/TACACS+ Design.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
