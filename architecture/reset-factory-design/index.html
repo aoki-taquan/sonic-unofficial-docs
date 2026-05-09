@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/why-need-health-check/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/reset-factory-design/">
       
       
-        <link rel="prev" href="../sonic-flexcounter-refactor/">
+        <link rel="prev" href="../port-illegal-packets-drop-design/">
       
       
-        <link rel="next" href="../zmq-producer-consumer-state-table-design/">
+        <link rel="next" href="../sonic-ip-interface-loopback-action/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>コンテナ health-check（k8s readiness probe） - SONiC 非公式ドキュメント</title>
+        <title>reset-factory（keep-basic / keep-all-config / only-config） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#health-checkk8s-readiness-probe" class="md-skip">
+        <a href="#reset-factorykeep-basic-keep-all-config-only-config" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              コンテナ health-check（k8s readiness probe）
+              reset-factory（keep-basic / keep-all-config / only-config）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -570,20 +572,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -601,13 +606,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -627,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -655,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -683,7 +688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -711,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -736,10 +741,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reset-factory（keep-basic / keep-all-config / only-config）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -755,6 +787,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 つのモード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実行フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default users
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-setup-factory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config-setup factory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エラーリカバリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -767,7 +1018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -795,7 +1046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -823,7 +1074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -3053,8 +3304,6 @@
       
   
   
-    
-  
   
   
     
@@ -3078,23 +3327,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -3112,13 +3358,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3138,7 +3384,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -3166,7 +3412,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -3194,7 +3440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -3219,37 +3465,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    コンテナ health-check（k8s readiness probe）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -3265,181 +3484,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#probe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        probe の選択
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#readiness_probesh" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        readiness_probe.sh の責務
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#controller" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        controller 側の動作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#startsh" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        start.sh を確認する理由
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3452,7 +3496,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -3820,10 +3864,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#probe" class="md-nav__link">
+  <a href="#4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        probe の選択
+        4 つのモード
       
     </span>
   </a>
@@ -3831,10 +3875,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#readiness_probesh" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        readiness_probe.sh の責務
+        実行フロー
       
     </span>
   </a>
@@ -3842,10 +3886,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#controller" class="md-nav__link">
+  <a href="#default-users" class="md-nav__link">
     <span class="md-ellipsis">
       
-        controller 側の動作
+        Default users
       
     </span>
   </a>
@@ -3853,10 +3897,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#startsh" class="md-nav__link">
+  <a href="#config-setup-factory" class="md-nav__link">
     <span class="md-ellipsis">
       
-        start.sh を確認する理由
+        config-setup factory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エラーリカバリ
       
     </span>
   </a>
@@ -3869,7 +3935,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3879,6 +3945,17 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
@@ -3892,10 +3969,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
       
     </span>
   </a>
@@ -3908,7 +3996,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3919,7 +4007,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3930,7 +4018,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3941,7 +4029,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3968,7 +4056,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/why-need-health-check.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/reset-factory-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3978,114 +4066,207 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>/usr/bin/readiness_probe.sh</code> の実体、各コンテナの <code>readiness_probe_hook</code> の有無、k8s controller 側の post-check ロジックは未裏取り。</p>
+<p>本ページは公式 HLD（Phase 1, Rev 0.1, 2023-01）のみを根拠に書かれている。<code>/usr/bin/reset-factory</code> および <code>config-setup factory</code> の実装、<code>/etc/sonic/default_users.json</code>、overlayfs upperdir のクリア手順、<code>KEEP_BASIC_TABLES</code> の最新値は未確認。</p>
 </div>
-<h1 id="health-checkk8s-readiness-probe">コンテナ health-check（k8s readiness probe）<a class="headerlink" href="#health-checkk8s-readiness-probe" title="Permanent link">&para;</a></h1>
+<h1 id="reset-factorykeep-basic-keep-all-config-only-config"><code>reset-factory</code>（keep-basic / keep-all-config / only-config）<a class="headerlink" href="#reset-factorykeep-basic-keep-all-config-only-config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは <code>kubelet</code> が把握しているが、<strong>コンテナ内の supervisor 配下サービスが本当に正常か</strong> は外から見えない。<code>docker ps</code> で running でも、内部の <code>swss</code> が落ちっぱなしという状況がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>この HLD は <strong>k8s の readiness probe を使ってコンテナ内サービスの健全性を外部に見せる</strong> ための仕組みを定義している。アップグレード時の post-check で readiness probe の終了コードを参照し、healthy なら次に進み、unhealthy ならタイムアウトまで再試行→fallback、という運用に乗せる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="probe">probe の選択<a class="headerlink" href="#probe" title="Permanent link">&para;</a></h3>
-<p>k8s が提供する 3 種類のプローブ（liveness / readiness / startup）の中で、<strong>readiness probe</strong> を採用する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC スイッチの <strong>工場出荷状態への復元</strong> を 1 コマンド <code>reset-factory</code> で行えるようにする HLD。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主要な設計方針:</p>
 <ul>
-<li><strong>startup probe を使わない理由</strong>: startup probe が一定回数失敗すると k8s がコンテナを再起動してしまう。SONiC 側はその挙動を望まず、独自の fallback で扱いたいため<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>liveness probe を使わない理由</strong>: 既に supervisor の <code>exit-listener</code> サービスが critical service の異常終了を検知してコンテナごと kill する責務を持っており、そこと役割が重複するため<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>readiness probe</strong> は「準備完了か」を表す。アップグレードの post-check ロジックがここを見るのに都合が良い<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ロジックは <code>/usr/bin/reset-factory</code> シェルスクリプトに集約</li>
+<li>設定生成は <code>config-setup factory</code> をフックポイントとして再利用</li>
+<li>ユーザ独自の factory default を作りたいケースのため、<code>config-setup</code> 配下に <strong>hook ディレクトリ</strong> を持つ</li>
+<li>「設定」「ログ・ファイル」「ユーザ」「<code>/etc/sonic</code>」を独立に制御できる <strong>4 モード</strong>（default / keep-basic / keep-all-config / only-config）</li>
 </ul>
-<p>probe の type は <strong>command</strong> を使う。コンテナ内のスクリプトを k8s が呼び、終了コードを記録する。<strong>非ゼロ終了コードを問題種別ごとに使い分けることで原因特定に使える</strong> という設計意図<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<pre class="mermaid"><code>flowchart LR
-    K8S[kubelet] --&gt;|exec| RP[/usr/bin/readiness_probe.sh]
-    RP --&gt; COMMON[common check]
-    RP --&gt; HOOK[/usr/bin/readiness_probe_hook]
-    COMMON --&gt; EXIT[exit code]
-    HOOK --&gt; EXIT
-    EXIT --&gt; CTRL[k8s controller post-check]
-    CTRL --&gt;|0| OK[upgrade proceed]
-    CTRL --&gt;|non-zero| RETRY[retry until timeout]
-    RETRY --&gt;|timeout| FB[fallback]</code></pre>
-<h3 id="readiness_probesh">readiness_probe.sh の責務<a class="headerlink" href="#readiness_probesh" title="Permanent link">&para;</a></h3>
-<p>スクリプトのパスは <strong><code>/usr/bin/readiness_probe.sh</code></strong> に固定する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。中身は二段構成:</p>
-<ol>
-<li><strong>common check</strong> — 全コンテナで共通の確認。現状は <code>supervisor start.sh</code> が exit code 0 で終了していることのみ。critical service の状態は <strong>見ない</strong>（<code>exit-listener</code> の領分）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>container-specific check</strong> — <code>/usr/bin/readiness_probe_hook</code> というスクリプトが存在すれば呼ぶ。各機能オーナーが必要に応じて Python 等で実装する。終了コードは healthy=0、それ以外は <strong>意味を明確に定義した非ゼロ</strong> を返す約束<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ol>
-<p><code>readiness_probe_hook</code> が無いコンテナは common check のみで判定する。</p>
-<h3 id="controller">controller 側の動作<a class="headerlink" href="#controller" title="Permanent link">&para;</a></h3>
-<p>k8s controller はアップグレードの post-check 段階で readiness probe の終了コードを参照する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="4">4 つのモード<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>終了コード</th>
-<th>controller の判断</th>
+<th>モード</th>
+<th>config</th>
+<th>logs/files</th>
+<th>ユーザ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>0</code></td>
-<td>healthy。post-check 続行</td>
+<td><code>default</code></td>
+<td>工場 default にリセット</td>
+<td>クリア</td>
+<td>非 default ユーザ削除、default ユーザはパスワード初期化</td>
 </tr>
 <tr>
-<td>非ゼロ</td>
-<td>unhealthy。タイムアウトまで再チェック</td>
+<td><code>keep-basic</code></td>
+<td>default + basic 設定をマージ</td>
+<td>クリア（ホームディレクトリと history は保持）</td>
+<td>同上</td>
 </tr>
 <tr>
-<td>タイムアウト到達</td>
-<td>fallback 起動</td>
+<td><code>keep-all-config</code></td>
+<td>維持</td>
+<td>クリア</td>
+<td>（非 default ユーザ削除はしない: HLD のステップ 3 を skip）</td>
+</tr>
+<tr>
+<td><code>only-config</code></td>
+<td>工場 default にリセット</td>
+<td>保持</td>
+<td>（ステップ 3 / 4 共に skip）</td>
 </tr>
 </tbody>
 </table>
-<p>非ゼロコードを <strong>問題種別ごとに割り振る</strong> のは、fallback 発動時の原因切り分けを容易にするため<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="startsh"><code>start.sh</code> を確認する理由<a class="headerlink" href="#startsh" title="Permanent link">&para;</a></h3>
-<p>common check が <code>start.sh</code> の終了状態を確認するのは、<code>start.sh</code> が <strong>サービス初期化と k8s 起動スクリプト呼び出しの両方</strong> を担うため<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>「basic 設定」とは <code>MGMT_PORT</code>, <code>MGMT_INTERFACE</code>, <code>PASSW_HARDENING</code> 等。<code>config-setup.conf</code> の <code>KEEP_BASIC_TABLES</code> で定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>KEEP_BASIC_TABLES=MGMT_PORT,MGMT_INTERFACE,PASSW_HARDENING
+</span></code></pre></div>
+<p>機能 PR がマージされ次第 <code>SSH_SERVER, USER_TABLE, ROLE_TABLE</code> を追加する計画<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_3">実行フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    A[reset-factory &lt;mode&gt;] --&gt; ST[sonic.target を停止]
+    ST --&gt; CFG{not keep-all-config?}
+    CFG --&gt;|Yes| GEN[config-setup factory &lt;mode 引数&gt;]
+    CFG --&gt;|No| SKIPC[config はそのまま]
+    GEN --&gt; USR{not only-config / keep-basic?}
+    USR --&gt;|Yes| U[非 default ユーザ削除\nhistory / dotfile 削除]
+    USR --&gt;|No| SKIPU[ユーザ操作スキップ]
+    U --&gt; FILES{not only-config?}
+    SKIPU --&gt; FILES
+    SKIPC --&gt; FILES
+    FILES --&gt;|Yes| F[docker 全削除\n/etc/sonic を factory に戻す\n/host/warmboot, /var/dump,\n /var/log, /host/reboot-cause クリア]
+    FILES --&gt;|No| SKIPF[ファイル保持]
+    F --&gt; LOG[/var/log/systemlog に\n操作ログを記録]
+    SKIPF --&gt; LOG
+    LOG --&gt; RB[reboot]</code></pre>
+<p>ステップごとの処理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong><code>sonic.target</code> 停止</strong>: <code>monit unmonitor container_checker</code> のあと <code>systemctl stop sonic.target</code>。daemon が走ったままファイルを消すことを避ける</li>
+<li><code>keep-all-config</code> 以外: <code>config-setup factory &lt;None / keep-basic / only-config&gt;</code> で <code>config_db.json</code> を再生成</li>
+<li><code>only-config</code> でも <code>keep-basic</code> でもない場合（= <code>default</code> / <code>keep-all-config</code>）: 非 default ユーザ削除、<code>/home</code> 配下の bash/vim/python history・非 dotfile を削除</li>
+<li><code>only-config</code> でない場合（= ファイル系を消すモード）: docker 全削除、<code>/etc/sonic</code> を factory フォルダに戻す（<strong>overlayfs upperdir をクリア</strong>。ただし <strong><code>sonic-environment</code> は immutable</strong> のため対象外）、<code>/host/warmboot</code>、<code>/var/dump/</code> の tech-support、<code>/var/log</code> 全削除、<code>/host/reboot-cause/</code> クリア</li>
+<li><strong><code>/var/log/systemlog</code></strong> に操作を記録（このログは reset-factory 自身が消さない新規ファイル）</li>
+<li>reboot</li>
+</ol>
+<h3 id="default-users">Default users<a class="headerlink" href="#default-users" title="Permanent link">&para;</a></h3>
+<p>ビルド時に <strong><code>/etc/sonic/default_users.json</code></strong> を生成する。<code>/etc/shadow</code> と同じ 600 パーミッション<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$y$j9T$qGjjyhXSHtuHwowV3DE44.$wrDK6/vecdYIE8ujXyVPkGHvlDHP.ySCsBTLvOdg.31&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>reset-factory</code> 実行時:</p>
 <ul>
-<li>初期化が終わっていないと当然サービスは応答しない。</li>
-<li>k8s 起動スクリプトはアップグレード手順に組み込まれており、これが完了するまで「次工程に進む」と判断してはいけない。</li>
+<li>非 default ユーザ削除（おおよそ UID 1000 &lt; x ≤ 6000 の範囲を対象）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>default ユーザのパスワードを <strong><code>default_users.json</code> の hash</strong> に戻す</li>
 </ul>
-<p>つまり <code>start.sh</code> の正常終了 = 「アップグレードを進めて良い前提条件が揃った」という意味付けになっている<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+<h3 id="config-setup-factory"><code>config-setup factory</code><a class="headerlink" href="#config-setup-factory" title="Permanent link">&para;</a></h3>
+<p>設定生成のロジックは <code>config-setup factory</code> に集約。HLD 時点で次のように動く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-cfggen<span class="w"> </span>-H<span class="w"> </span>-k<span class="w"> </span><span class="si">${</span><span class="nv">HW_KEY</span><span class="si">}</span><span class="w"> </span>--preset<span class="w"> </span><span class="si">${</span><span class="nv">DEFAULT_PRESET</span><span class="si">}</span>
+</span></code></pre></div>
+<p>これに <strong>factory タイプパラメータ（<code>keep-basic</code>）</strong> を追加する。<code>config-setup</code> 配下の hook ディレクトリにスクリプトを置けばユーザが拡張・差し替え可能。</p>
+<p>新規 conf ファイル <code>/etc/config-setup/config-setup.conf</code> を導入し、変数（<code>KEEP_BASIC_TABLES</code>、<code>DEFAULT_PRESET</code> など）を集約する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>reset-factory                       # default mode
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>reset-factory keep-all-config       # config 維持、logs/files 消去
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>reset-factory only-config           # config リセット、logs/files 維持
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>reset-factory keep-basic            # default + basic 設定保持、logs/files 消去（ホーム保持）
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>config-setup factory                # 工場 default の config_db.json を生成
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config-setup factory keep-basic     # 同 + basic 設定保持
+</span></code></pre></div>
+<p><code>reset-factory --help</code> の usage 文は HLD に転載されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/kubernetes/health-check.md#L21-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/reset_factory/ResetFactoryHLD.md#L88-L116 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Script path and name
-      /usr/bin/readiness_probe.sh
-  Health-Check logic in the script(two steps for now)
-      Do common checks which are same for all containers
-          Currently, one common check is that if the supervisor start.sh exists, we need to ensure that it exits with code 0.
-      Call container self-related specific executable script if exists
-          /usr/bin/readiness_probe_hook
-reasoning: スクリプトのパスと二段階チェック構成の根拠。
+  Steps:
+  1. Stops sonic.target: ... systemctl stop sonic.target
+  2. If not "keep-all-config": config-setup factory ...
+  3. If not ("only-config" or "keep-basic"): Delete all non-default users ...
+  4. If not "only-config": Remove all docker containers / Restore "/etc/sonic" ... / Delete all files under "/var/log" ...
+  5. Print to /var/log/systemlog ...
+  6. Reboot
+reasoning: 4 モードの分岐が「ステップごとに skip 条件を変える」形になっていることの根拠。
 -->
 
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。CONFIG_DB / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。</p>
+<h3 id="_4">エラーリカバリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>reset-factory</code> は <strong><code>config_db.json</code> の一時コピー</strong> を保持する。スクリプトが中断・終了した場合<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>config_db.json</code> を復元</li>
+<li><code>sonic.target</code> が既に停止していれば reboot</li>
+</ul>
+<p>これにより「途中で死んでブート不能」になるリスクを抑える。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reset-factory [keep-all-config\|only-config\|keep-basic]</code></td>
+<td>工場リセット 4 モード</td>
+</tr>
+<tr>
+<td><code>config-setup factory [keep-basic]</code></td>
+<td>factory default の <code>config_db.json</code> 生成のみ</td>
+</tr>
+</tbody>
+</table>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は HLD で定義されていない。状態確認は <code>kubectl describe pod</code> 等の k8s 標準コマンドや <code>docker exec &lt;container&gt; /usr/bin/readiness_probe.sh; echo $?</code> での直接実行で行う想定。</p>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB スキーマには変更なし。<code>KEEP_BASIC_TABLES</code> で保持対象の <strong>テーブル群</strong> を <code>/etc/config-setup/config-setup.conf</code> に定義する。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 完全リセット</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>reset-factory
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 設定だけリセットしてログを残してデバッグしたい</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sudo<span class="w"> </span>reset-factory<span class="w"> </span>only-config
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Mgmt 系設定だけ残して再構築</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>sudo<span class="w"> </span>reset-factory<span class="w"> </span>keep-basic
+</span></code></pre></div>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>この仕組みは <strong>k8s 管理下のコンテナにのみ意味がある</strong>。スタンドアロン SONiC で k8s を使わない構成では readiness probe は呼ばれない。</li>
-<li>common check は <code>start.sh</code> の終了確認のみ。<strong>critical service の生死までは判定しない</strong> ため、<code>exit-listener</code> 機構と組み合わせて初めてコンテナの健全性監視が完結する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>readiness_probe_hook</code> の終了コード設計は機能オーナー任せ。コード値の競合や意味の重複を防ぐ仕組みは HLD では定義されていない。</li>
+<li>必ず <strong>reboot を伴う</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。在線運用中の機器でカジュアルに使うものではない</li>
+<li><code>/etc/sonic</code> は overlayfs の upperdir をクリアする方式に依存。<code>sonic-environment</code> のみ immutable で残す<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>非 default ユーザの判定は UID レンジに依存。LDAP / TACACS で動的にユーザが居る環境では動作確認要</li>
+<li>ホスト側 <code>/host/warmboot</code> 等のクリアにより、進行中の warm reboot プロセスとは互換性が無い</li>
+<li>「ファイル系をクリアするか否か」と「ユーザを消すか否か」が独立軸ではないため、ユーザだけ残してファイル消す等のモードは無い</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>exit-listener</code> (supervisor)</strong>: critical service の落下時にコンテナを self-kill する。readiness probe はここを置き換えない。役割分担は「致死的な異常 = exit-listener、準備完了の判定 = readiness probe」<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>アップグレード制御</strong>: controller の post-check が readiness probe を見ることで、コンテナ単位のロールアウト制御が成立する。fallback の挙動は controller 側設定に依存する。</li>
-<li><strong><code>start.sh</code></strong>: SONiC の各 docker で初期化と k8s startup を実行する起点。ここが exit code 0 で抜けないと readiness probe は通らない。</li>
+<li><strong><code>sonic.target</code> / monit <code>container_checker</code></strong>: 操作前に確実に止める</li>
+<li><strong>overlayfs</strong>: <code>/etc/sonic</code> のクリアは upperdir 削除で実現</li>
+<li><strong><code>config-setup</code> hook</strong>: ユーザカスタマイズ ポイント</li>
+<li><strong><code>/etc/shadow</code> / <code>/etc/sonic/default_users.json</code></strong>: パスワード初期化に依存</li>
+<li><strong>AAA / TACACS / LDAP</strong>: 非 default ユーザ削除と整合させる必要</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>readiness probe が常に non-zero: コンテナに入って <code>/usr/bin/readiness_probe.sh</code> を直接実行し、<code>echo $?</code> で終了コードを確認。コードに対応する原因を機能オーナーの hook 実装にあわせて切り分ける。</li>
-<li><code>readiness_probe_hook</code> 未配備のコンテナ: common check のみで判定される。意図したカバレッジになっているか hook の実装有無を確認する。</li>
-<li>アップグレードが post-check でループする: controller のタイムアウト前に readiness probe が安定しないケース。<code>start.sh</code> がまだ走っている場合は単に時間が足りていない。サービス初期化が遅いコンテナで起こりやすい。</li>
-<li><code>start.sh</code> が exit していない: supervisor の他サービスが起動失敗している可能性。<code>supervisorctl status</code> と <code>/var/log/supervisor/</code> を確認。</li>
+<li>実行途中で電源断などが起きた場合、<code>/var/log/systemlog</code>（reset-factory が消さないログ）を確認</li>
+<li><code>keep-basic</code> で MGMT 接続が切れる場合、<code>KEEP_BASIC_TABLES</code> に必要なテーブルが含まれているか確認</li>
+<li>パスワードがロックされた場合、<code>/etc/sonic/default_users.json</code> のハッシュとの整合を確認</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- /usr/bin/reset-factory スクリプトの sonic-buildimage 取り込み
+- config-setup factory への keep-basic パラメータ追加
+- /etc/config-setup/config-setup.conf と KEEP_BASIC_TABLES 最新値
+- /etc/sonic/default_users.json のビルド時生成
+- overlayfs upperdir クリア手順の実装
+- sonic-environment immutable 取り扱い
+- gNOI FactoryReset との関係
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/kubernetes/health-check.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/reset_factory/ResetFactoryHLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
