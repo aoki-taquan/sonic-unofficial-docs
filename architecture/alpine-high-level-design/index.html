@@ -7379,6 +7379,8 @@
       
         
       
+        
+      
     
     
     
@@ -7784,6 +7786,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13129,9 +13159,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>ALPINE は v0.1（2025-05、Google 提案）の比較的新しい設計。<code>PLATFORM=alpinevs</code> ターゲット、<code>alpinevs-init</code> サービス、Lucius dataplane の <code>libsai-grpc</code> 連携が現行 master に取り込まれているかは未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（部分）</p>
+<p><code>sonic-buildimage</code> master に <code>platform/alpinevs</code> サブモジュール（<code>url=https://github.com/sonic-net/sonic-alpine/</code>、<code>.gitmodules</code>）と <code>.azure-pipelines/azure-pipelines-build-alpinevs.yml</code> が登録され、<code>build_image.sh</code> で <code>TARGET_MACHINE=alpinevs</code> が分岐される。一方、<code>libsai-grpc</code> 等の syncd 連携実体は <code>sonic-alpine</code> 配下に集約されており本リポジトリ単体では追跡できない（submodule のため）。<code>alpinevs-init</code> サービスや <code>hwsku=alpine_vs</code> の記述は HLD 由来であり、buildimage 単体では確認できない。</p>
 </div>
 <h1 id="alpine-sonicalvis-kne">Alpine 仮想 SONiC（ALViS / KNE デプロイ）<a class="headerlink" href="#alpine-sonicalvis-kne" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13232,12 +13262,19 @@ reasoning: 2-container 構成と各 container の役割の根拠。
 <li><strong>KNE / ondatra</strong>: トポロジ・テスト用 control framework として直接連携</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-18):
+- sonic-buildimage `.gitmodules` に `[submodule "platform/alpinevs"] url = https://github.com/sonic-net/sonic-alpine/` が登録済（HEAD 確認）
+- `sonic-buildimage/.azure-pipelines/azure-pipelines-build-alpinevs.yml` 存在
+- `sonic-buildimage/build_image.sh` に `if [ "$TARGET_MACHINE" = "alpinevs" ]` 分岐あり
+- libsai-grpc / Lucius / alpinevs-init の実体は `sonic-alpine` サブモジュール（本リポでは展開していない）
+-->
+
 <!-- concerns hint:
-- alpinevs platform の sonic-buildimage 取り込み確認
-- libsai-grpc / UPM の syncd 連携の現行実装確認
-- Lucius (lemming) との互換 commit pin の確認
-- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認
-- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認
+- alpinevs platform の sonic-buildimage 取り込み確認 → 取り込み済（submodule + pipeline + build_image.sh 分岐）
+- libsai-grpc / UPM の syncd 連携の現行実装確認 → sonic-alpine submodule に集約、本リポでは確認不能
+- Lucius (lemming) との互換 commit pin の確認 → submodule 側で確認のこと
+- KNE alpine node type 取り込みの upstream openconfig/kne 状況確認 → 別 repo
+- v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認 → buildimage 側は採用済
 -->
 
 <div class="footnote">

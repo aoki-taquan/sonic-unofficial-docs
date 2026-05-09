@@ -7180,6 +7180,8 @@
       
         
       
+        
+      
     
     
     
@@ -7588,6 +7590,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13185,9 +13215,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い提案</p>
-<p>本ページは公式 HLD（短いプロポーザル形式、改訂日不明）のみを根拠に書かれている。本提案は「<code>Ethernet0</code> 系から Linux 流の <code>et[sX]pY[abcd]</code> 系への移行」を提案しているが、SONiC コミュニティ master では現状も <code>EthernetN</code> の内部名が広く使われており、提案は <strong>未採用または部分採用</strong> の状態である可能性が高い。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（提案は不採用）</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-buildimage/device/</code> 配下の <code>port_config.ini</code>（複数ベンダの代表例：<code>arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini</code>）は依然として <code>Ethernet0</code>/<code>Ethernet4</code>/... の <code>EthernetN</code> 命名を使い、<code>alias</code> 列で <code>Ethernet1/1</code> 系の前面パネル名を提供する形式</li>
+<li><code>etsXpY[abcd]</code> 命名や <code>ets&lt;X&gt;p&lt;Y&gt;</code> の chassis 表記は <code>device/</code> ツリー内に出現せず、<strong>HLD 提案は master に取り込まれていない</strong></li>
+<li>本ページは <strong>採用されなかった HLD プロポーザル</strong> の参考資料として残す。実運用は <code>EthernetN</code>（CONFIG_DB.PORT key）+ <code>alias</code>（前面パネル名）+ breakout の <code>&lt;panel&gt;/&lt;sub&gt;</code> 表記で安定している</li>
+</ul>
 </div>
 <h1 id="sonic-etsxpyabcd">SONiC ポート命名規則の変更案（<code>et[sX]pY[abcd]</code>）<a class="headerlink" href="#sonic-etsxpyabcd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

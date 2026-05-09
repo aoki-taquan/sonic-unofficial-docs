@@ -7390,6 +7390,8 @@
       
         
       
+        
+      
     
     
     
@@ -7795,6 +7797,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13151,9 +13181,15 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>SONiC 独自の DHCPv6 relay agent (ISC dhcrelay 置換) について、Option 79 / dual ToR loopback / RADV M/O bit 連携の現行実装と CONFIG_DB 名 (<code>DHCP|&lt;intf&gt;</code> / <code>dhcpv6_servers</code> / <code>rfc6939_support</code>) は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp</code> で <code>DHCP_RELAY|&lt;intf&gt;</code> の <code>dhcpv6_servers</code>、<code>dhcpv6_option|rfc6939_support</code> フィールドを解釈</li>
+<li><code>sonic-buildimage/dockers/docker-dhcp-relay/cli/clear/plugins/clear_dhcp_relay.py</code> に <code>DHCPV6_COUNTER_TABLE_PREFIX = "DHCPV6_COUNTER_TABLE"</code> と <code>sonic-clear dhcp6relay_counters</code> サブコマンドを実装</li>
+<li><code>sonic-dhcp-relay</code> リポジトリに <code>dhcp6relay/src/{main.cpp, config_interface.cpp, sender.h}</code> 等が存在</li>
+<li>dual ToR loopback / linkmgrd 連動 / CoPP 動的切替の細部は本リポでは追跡できず、HLD 記述に依存（要 follow-up）</li>
+</ul>
 </div>
 <h1 id="dhcpv6-relay-agentoption-79-dual-tor-loopback">DHCPv6 Relay Agent（Option 79 / dual ToR loopback）<a class="headerlink" href="#dhcpv6-relay-agentoption-79-dual-tor-loopback" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13273,6 +13309,12 @@ reasoning: ISC dhcrelay 置換動機と Option 79 採用の根拠。
 <li><strong>RADV (radvd)</strong>: M/O bit 設定の整合が必要</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-18):
+- sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp: `dhcpv6_servers` / `dhcpv6_option|rfc6939_support` のキー解釈
+- sonic-buildimage/dockers/docker-dhcp-relay/cli/clear/plugins/clear_dhcp_relay.py: `DHCPV6_COUNTER_TABLE_PREFIX="DHCPV6_COUNTER_TABLE"`, `sonic-clear dhcp6relay_counters` 定義
+- dual ToR loopback / linkmgrd 連動 / CoPP は別 repo（sonic-linkmgrd, sonic-host-services）で別途裏取り要
+-->
+
 <!-- concerns hint:
 - dhcp6relay バイナリの sonic-dhcpv6relay リポジトリでの実装存在確認
 - DHCP|<intf-i> の dhcpv6_servers / rfc6939_support フィールドの sonic-yang-models 反映確認

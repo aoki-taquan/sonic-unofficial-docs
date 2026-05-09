@@ -7429,6 +7429,8 @@
       
         
       
+        
+      
     
     
     
@@ -7834,6 +7836,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13229,9 +13259,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>MPLS_TC_TO_TC_MAP</code> の sonic-swss-common スキーマ追加、QoS orch のハンドラ拡張、<code>PORT_QOS_MAP.mpls_tc_to_tc_map</code> フィールドの実装、SAI 経由の <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> 設定は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-swss/orchagent/qosorch.cpp:82, 101, 1330</code> で <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> を <code>m_qos_handler_map</code> に登録し、<code>mpls_tc_to_tc_field_name</code> を PORT_QOS_MAP のフィールド名として参照、<code>QosOrch::handleMplsTcToTcTable</code> をハンドラとして紐付け</li>
+<li>テストは <code>sonic-swss/tests/test_qos_map.py:45,483</code> および <code>tests/mock_tests/qosorch_ut.cpp:439</code> で <code>MPLS_TC_TO_TC_MAP</code> table を直接操作</li>
+<li>YANG モデル（sonic-port-qos-map）追加状況は sonic-yang-models 側で別途確認のこと</li>
+</ul>
 </div>
 <h1 id="mpls-tc-tc-mapmpls-qos-classification">MPLS TC → TC map（MPLS パケットの QoS classification）<a class="headerlink" href="#mpls-tc-tc-mapmpls-qos-classification" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

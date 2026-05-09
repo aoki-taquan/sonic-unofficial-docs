@@ -7390,6 +7390,8 @@
       
         
       
+        
+      
     
     
     
@@ -7795,6 +7797,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13151,9 +13181,15 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は v0.3 (2019-07) で改訂が 6 年以上前。<code>Debugframework</code> クラス (libswsscommon) と <code>linkWithFramework</code> API、APP_DB の Dump table、<code>show debug</code> CLI が現行 master に存在するか・命名どおりかは未裏取り。priority=high で queue 登録。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD v0.3 (2019-07) は <strong>master へ取り込まれていない</strong>。verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-swss-common</code> に <code>Debugframework</code> クラス・<code>linkWithFramework</code> API・<code>SWSS_DEBUG_PRINT*</code> マクロ いずれも存在しない（<code>grep -r</code> で 0 件）</li>
+<li><code>sonic-swss/orchagent/natorch.cpp</code> の <code>gDebugDumpOrch-&gt;addDbgCompMap(...)</code> は <code>#ifdef DEBUG_FRAMEWORK</code> 内（41 行目および 138-142 行目）でガードされ、<code>DEBUG_FRAMEWORK</code> マクロは master ビルド構成で定義されていない（残骸コード）</li>
+<li><code>sonic-utilities/show/</code> 配下に <code>pktdrop</code>/<code>debug</code> 系の CLI ハンドラなし（<code>dropcounters.py</code> は別仕様）</li>
+</ul>
+<p>本ページは HLD 仕様の参考資料として残すが、現行 master の挙動とは一致しない。実装は <code>DebugDumpOrch</code>/<code>DebugDumpHandler</code> 個別クラスではなく、<code>debugcounterorch</code> (counter 専用) や <code>show techsupport</code> 等に分散している。</p>
 </div>
 <h1 id="debug-framework-dump-assert">Debug Framework（コンポーネント dump 登録 / assert 拡張）<a class="headerlink" href="#debug-framework-dump-assert" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13353,6 +13389,12 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 <li><strong>OrchAgent 全般</strong>: RouteOrch / NeighborOrch / 他 Orch が個別に dump を登録する想定</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-18, discrepancy):
+- sonic-swss-common: `Debugframework` / `linkWithFramework` / `SWSS_DEBUG_PRINT` 検索 0 件
+- sonic-swss/orchagent/natorch.cpp:40-42, 138-142: `#ifdef DEBUG_FRAMEWORK` 内の dead code のみ（マクロは未定義）
+- sonic-utilities/show/: `pktdrop` / `debug` 系 CLI ハンドラなし
+-->
+
 <!-- concerns hint:
 - libswsscommon に Debugframework クラス / linkWithFramework が現行で存在するか確認
 - DebugDumpOrch / addDbgCompMap の orchagent 取り込み確認

@@ -7451,6 +7451,8 @@
       
         
       
+        
+      
     
     
     
@@ -7856,6 +7858,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13273,9 +13303,15 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは sonic-frr の上流 FRR ドキュメントを再構成している。SONiC 側のイメージで実際に投入されている sysctl（<code>sonic-buildimage</code> の <code>etc/sysctl.d/</code> または起動スクリプトでの set）は未裏取り。SONiC が同等の値を採用しているとは限らないため、本ページは「FRR が推奨する出発点」として読むこと。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（SONiC 側実値の所在）</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf</code>（58 行）に SONiC イメージで投入される sysctl 値が集約されている</li>
+<li>抜粋: <code>net.ipv4.conf.all.forwarding=1</code>, <code>net.ipv6.conf.all.forwarding=1</code>, <code>net.ipv4.conf.all.arp_announce=1</code>, <code>net.ipv4.conf.all.arp_ignore=2</code>, <code>net.ipv4.neigh.default.gc_thresh3=4096</code>, <code>net.ipv4.ip_local_port_range=32768 50001</code> 等</li>
+<li>FRR 上流推奨と完全一致ではないが forwarding 有効化 / neighbor GC tuning / 大きめの port range の方針は SONiC 側でも採用済</li>
+<li>rp_filter / keep_addr_on_down / tcp_l3mdev_accept など個別フィールドの SONiC 採用値は <code>90-sonic.conf</code> を直接参照して差分整理のこと（本ページは FRR 推奨値の参考として残す）</li>
+</ul>
 </div>
 <h1 id="frr-sysctl">FRR 用 sysctl チューニングのデフォルト<a class="headerlink" href="#frr-sysctl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

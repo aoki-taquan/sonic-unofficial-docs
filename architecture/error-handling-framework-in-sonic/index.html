@@ -7379,6 +7379,8 @@
       
         
       
+        
+      
     
     
     
@@ -7784,6 +7786,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13129,9 +13159,16 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は v0.1 (2019-05) で 6 年以上前。<strong>Initial Proposal のまま</strong>で現行 master に取り込まれているか不確か。priority=high で queue 登録。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>HLD v0.1 (2019-05) <strong>Initial Proposal の大部分は master に取り込まれていない</strong>。verifier-batch-18 で確認:</p>
+<ul>
+<li><code>SWSS_RC_*</code> enum は <code>sonic-swss-common/common/status_code_util.h</code> に存在（<code>SWSS_RC_SUCCESS</code>, <code>SWSS_RC_INVALID_PARAM</code>, <code>SWSS_RC_DEADLINE_EXCEEDED</code>, <code>SWSS_RC_UNAVAIL</code>, <code>SWSS_RC_NOT_FOUND</code>, <code>SWSS_RC_NO_MEMORY</code>, <code>SWSS_RC_EXISTS</code>, <code>SWSS_RC_PERMISSION_DENIED</code> 他）→ <strong>error code 体系のみ採用済</strong></li>
+<li><code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code> の table 名は swss-common にも sonic-swss にも存在しない（<code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> 等の無関係 token のみ）</li>
+<li><code>ErrorListener</code> / <code>ErrorReporter</code> クラスは sonic-swss / sonic-swss-common にいずれも未定義</li>
+<li><code>show error-database</code> / <code>sonic-clear error-database</code> CLI も sonic-utilities に存在しない</li>
+</ul>
+<p>本ページは HLD 仕様の参考資料として残すが、現行 master では SAI 失敗の app 通知は実装されていない（依然として fail-fast / orchagent crash 系）。</p>
 </div>
 <h1 id="error-handling-frameworkerror_db-sai-app">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）<a class="headerlink" href="#error-handling-frameworkerror_db-sai-app" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -13306,6 +13343,13 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li><strong>debug-framework</strong>: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence (verifier-batch-18, discrepancy):
+- sonic-swss-common/common/status_code_util.h: `SWSS_RC_SUCCESS|INVALID_PARAM|DEADLINE_EXCEEDED|UNAVAIL|NOT_FOUND|NO_MEMORY|EXISTS|PERMISSION_DENIED` 等の enum 確認済
+- sonic-swss-common, sonic-swss: `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は未登録
+- sonic-swss: `ErrorListener` / `ErrorReporter` クラス未定義
+- sonic-utilities: `show error-database` / `sonic-clear error-database` CLI 未実装
+-->
+
 <!-- concerns hint:
 - ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE が現行 swss-common で定義されているか確認",
 - SWSS_RC_* error code 体系の libswsscommon 取り込み確認",

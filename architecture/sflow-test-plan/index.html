@@ -7368,6 +7368,8 @@
       
         
       
+        
+      
     
     
     
@@ -7773,6 +7775,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13107,9 +13137,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本テストプランは sonic-mgmt 上の sFlow テスト設計記述。<code>hsflowd</code> の <code>SFLOW_*</code> テーブル subscribe、<code>config sflow</code> CLI、collector 上限 2、polling/sampling rate の動的変更、warm/fast-reboot 跨ぎでの永続化は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified（CLI / docker layout）</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-utilities/config/main.py:9040-9070</code> 付近に <code>config sflow</code> group / <code>enable</code> / <code>disable</code> 等のコマンド定義（<code>SFLOW</code> table の <code>global</code> エントリを <code>admin_state</code> で更新）</li>
+<li><code>sonic-buildimage/dockers/docker-sflow/</code> に Dockerfile.j2、<code>port_index_mapper.py</code>、<code>supervisord.conf</code> を確認</li>
+<li>collector 数上限 2 の強制ロジック / agent-id del 挙動 / config save→reboot 永続化 / sonic-mgmt 配下の test ケース実体については本リポでは追跡していない（必要なら sonic-mgmt 側で別途裏取り）</li>
+</ul>
 </div>
 <h1 id="sflow-hsflowd-2-collector-sampling-rate-agent-id-counter-polling">sFlow テストプラン（<code>hsflowd</code> + 2 collector / sampling rate / agent-id / counter polling）<a class="headerlink" href="#sflow-hsflowd-2-collector-sampling-rate-agent-id-counter-polling" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -7429,6 +7429,8 @@
       
         
       
+        
+      
     
     
     
@@ -7834,6 +7836,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13229,9 +13259,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss</code> の <code>nvgreorch</code> 実装、<code>sonic-swss-common</code> のスキーマ追加、<code>sonic-utilities</code> の CLI 追加は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-swss/orchagent/orchdaemon.cpp:361-</code> で <code>NvgreTunnelOrch(m_configDb, CFG_NVGRE_TUNNEL_TABLE_NAME)</code> および <code>NvgreTunnelMapOrch(m_configDb, CFG_NVGRE_TUNNEL_MAP_TABLE_NAME)</code> を生成</li>
+<li><code>sonic-swss/orchagent/nvgreorch.{cpp,h}</code> 実体が存在</li>
+<li><code>sonic-utilities/config/plugins/nvgre_tunnel.py</code> に <code>config nvgre-tunnel add/del</code> 等の自動生成 CLI</li>
+</ul>
 </div>
 <h1 id="nvgre-nvgreorch-decap-mapper">NVGRE トンネル（nvgreorch / decap mapper）<a class="headerlink" href="#nvgre-nvgreorch-decap-mapper" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

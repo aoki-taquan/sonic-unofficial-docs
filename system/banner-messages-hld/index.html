@@ -7407,6 +7407,8 @@
       
         
       
+        
+      
     
     
     
@@ -7812,6 +7814,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13185,9 +13215,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>hostcfgd</code> の BANNER_MESSAGE ハンドラ、<code>banner-config</code> systemd サービスの実装、CLI 実装、YANG レビジョンは未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-host-services/scripts/hostcfgd</code> に <code>BANNER_MESSAGE</code> テーブル変更ハンドラがあり、変更時に <code>systemctl restart banner-config</code> を実行</li>
+<li><code>sonic-utilities/config/main.py:10004-</code> に <code>config banner</code> group と <code>state</code> / <code>login</code> / <code>motd</code> / <code>logout</code> サブコマンド定義</li>
+<li>起動順序 / sshd before constraint の systemd unit 配置詳細は sonic-buildimage build_templates 側で個別確認のこと</li>
+</ul>
 </div>
 <h1 id="login-motd-logout">バナーメッセージ（login / motd / logout）<a class="headerlink" href="#login-motd-logout" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

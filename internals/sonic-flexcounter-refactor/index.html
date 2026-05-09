@@ -7178,6 +7178,8 @@
       
         
       
+        
+      
     
     
     
@@ -7583,6 +7585,34 @@
     
   
     Media-based Port Settings（media_settings.json による SerDes プロファイル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
   
 
     
@@ -13273,9 +13303,14 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-sairedis</code> 内 <code>syncd/FlexCounter.{h,cpp}</code> の現行コード構造（CounterContext / AttrContext テンプレートの導入状況、<code>if constexpr</code> の使用、<code>m_counterContext</code> マップの存在）は未裏取り。</p>
+<div class="admonition note">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>verifier-batch-18 で確認:</p>
+<ul>
+<li><code>sonic-sairedis/syncd/FlexCounter.h:43-</code> に <code>class BaseCounterContext</code> を定義、<code>std::map&lt;std::string, std::shared_ptr&lt;BaseCounterContext&gt;&gt; m_counterContext;</code>（223 行目）も実装済</li>
+<li><code>sonic-sairedis/syncd/FlexCounter.cpp:1664-</code> に <code>template ... class AttrContext : public CounterContext&lt;AttrType&gt;</code> を定義、派生として <code>PortPhyAttrContext</code>（1769）・<code>PortPhySerdesAttrContext</code>（2204）等を実装</li>
+<li><code>getCounterContext</code> / <code>createCounterContext</code> / <code>removeCounterContext</code> / <code>hasCounterContext</code> の API も <code>FlexCounter.h:162-172</code> に存在し、HLD POC が master に取り込まれていることを確認</li>
+</ul>
 </div>
 <h1 id="flexcounter-countercontext">FlexCounter リファクタ（CounterContext テンプレート化）<a class="headerlink" href="#flexcounter-countercontext" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
