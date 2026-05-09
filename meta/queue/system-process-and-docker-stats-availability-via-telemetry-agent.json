@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/process-and-docker-stats-availability-via-telemetry-agent.md",
+  "issue": 315,
+  "verification": "hld-only",
+  "concerns": [
+    "PROCESS_STATS / DOCKER_STATS デーモンの実装存在確認（sonic-buildimage/files/image_config 配下）",
+    "STATE_DB スキーマ（PROCESS_STATS / DOCKER_STATS / LastUpdateTime キー）の現行 master 取り込み確認",
+    "2 分周期と top-1024 プロセスのしきい値が現行実装で維持されているか未確認",
+    "HLD は 2019-09 改訂で 6 年以上経過、現行 master との大幅な乖離リスクあり"
+  ],
+  "priority": "high"
+}
