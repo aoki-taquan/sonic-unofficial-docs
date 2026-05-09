@@ -597,6 +597,21 @@
         "Phase 2 の BFD 連携進捗"
       ],
       "priority": "high"
+    },
+    {
+      "page": "docs/overlay/vxlan-sonic.md",
+      "issue": 109,
+      "verification": "hld-only",
+      "concerns": [
+        "HLD 初版が古く、現行 master の VxlanOrch / VnetOrch 実装との乖離",
+        "BGP EVPN 統合 (Phase 2) の現状",
+        "Warm restart 対応進捗",
+        "VXLAN_TUNNEL_MAP の最終スキーマ (VNI↔VLAN / VNI↔VRF)",
+        "FdbOrch + VxlanOrch の remote VTEP 学習実装",
+        "HER (head-end replication) 実装",
+        "config vxlan / show vxlan CLI の sonic-utilities 取り込み"
+      ],
+      "priority": "high"
     }
   ]
 }
