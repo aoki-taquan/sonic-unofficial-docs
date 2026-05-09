@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/bfd-hw-offload/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-on-gns3-vm/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sonic-ip-interface-loopback-action/">
       
       
-        <link rel="next" href="../bgp-route-aggregation-with-bbr-awareness/">
+        <link rel="next" href="../sonic-port-configuration-refactor-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） - SONiC 非公式ドキュメント</title>
+        <title>GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bfd-bfdorch-bfd_session" class="md-skip">
+        <a href="#gns3-vm-sonic-sonic-vsimg-qemu" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+              GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -269,13 +271,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -541,470 +541,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    アーキテクチャ
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    アーキテクチャ
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルドプロファイル（rules/profiles/*.mk）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DIP=SIP PTF 検証テスト
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    reset-factory（keep-basic / keep-all-config / only-config）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    port_config.ini パーサ統合（portconfig.py 一元化）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -1014,16 +550,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -1068,7 +594,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1079,7 +605,7 @@
   <span class="md-ellipsis">
     
   
-    ルーティング
+    アーキテクチャ
   
 
     
@@ -1090,23 +616,303 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    ルーティング
+    アーキテクチャ
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ビルドプロファイル（rules/profiles/*.mk）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-system-improvements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clock-managment-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証テスト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reset-factory-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    reset-factory（keep-basic / keep-all-config / only-config）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -1132,7 +938,7 @@
   <span class="md-ellipsis">
     
   
-    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+    GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
   
 
     
@@ -1150,7 +956,7 @@
   <span class="md-ellipsis">
     
   
-    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+    GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
   
 
     
@@ -1202,7 +1008,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント構成
+        構成
       
     </span>
   </a>
@@ -1210,10 +1016,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#appl_db" class="md-nav__link">
+  <a href="#sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        APPL_DB スキーマ
+        SONiC イメージ取得
       
     </span>
   </a>
@@ -1221,21 +1027,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#gns3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性のマッピング
+        GNS3 への登録
       
     </span>
   </a>
@@ -1246,7 +1041,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移とライフサイクル
+        トポロジ構築とログイン
       
     </span>
   </a>
@@ -1254,10 +1049,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#control-plane-bfd" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Control plane BFD との共存
+        ホスト要件
       
     </span>
   </a>
@@ -1270,7 +1065,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -1282,10 +1077,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#config_db-cli-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / CLI / YANG
       
     </span>
   </a>
@@ -1293,43 +1088,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#gns3_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（GNS3 への登録の最小コマンド相当）
       
     </span>
   </a>
@@ -1342,7 +1104,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -1353,7 +1115,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -1364,7 +1126,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -1375,7 +1137,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -1401,7 +1163,201 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    port_config.ini パーサ統合（portconfig.py 一元化）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../routing/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルーティング
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ルーティング
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1429,7 +1385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1457,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1485,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1513,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1541,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1569,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1597,7 +1553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1625,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1653,7 +1609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1681,7 +1637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1709,7 +1665,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1737,7 +1693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1765,7 +1721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1793,7 +1749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1821,7 +1777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-usid/" class="md-nav__link">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1849,7 +1805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -5803,7 +5759,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネント構成
+        構成
       
     </span>
   </a>
@@ -5811,10 +5767,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#appl_db" class="md-nav__link">
+  <a href="#sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        APPL_DB スキーマ
+        SONiC イメージ取得
       
     </span>
   </a>
@@ -5822,21 +5778,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#gns3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性のマッピング
+        GNS3 への登録
       
     </span>
   </a>
@@ -5847,7 +5792,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移とライフサイクル
+        トポロジ構築とログイン
       
     </span>
   </a>
@@ -5855,10 +5800,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#control-plane-bfd" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Control plane BFD との共存
+        ホスト要件
       
     </span>
   </a>
@@ -5871,7 +5816,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5883,10 +5828,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#config_db-cli-yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / CLI / YANG
       
     </span>
   </a>
@@ -5894,43 +5839,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#gns3_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スケール上限
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
+        設定例（GNS3 への登録の最小コマンド相当）
       
     </span>
   </a>
@@ -5943,7 +5855,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -5954,7 +5866,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5965,7 +5877,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5976,7 +5888,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6003,7 +5915,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/bfd-hw-offload.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-on-gns3-vm.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6011,194 +5923,47 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>現行 master の <code>sonic-swss/orchagent/bfdorch.cpp</code>（BfdOrch 本体、<code>SAI_BFD_SESSION_TYPE_*</code> / <code>SAI_BFD_SESSION_STATE_*</code> 利用）、<code>sonic-swss-common/common/schema.h:120</code> の <code>APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"</code>、line 491 の STATE_DB 同名テーブル、<code>sonic-utilities/show/main.py:2669</code> 系の <code>show bfd</code> 実装を確認済み（verified at: 2026-05-09）。 Phase 2 以降の CONFIG_DB スキーマや warm reboot 連携は本ページ範囲外として queue に残置。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 手順書ベース</p>
+<p>このページは利用者向け手順書をベースにしている。Azure pipeline (#142) の URL や <code>sonic-vs.img.gz</code> のパスは時期により変わりうる。<code>sonic-buildimage</code> の VS ターゲットビルド成果物を確認すること。</p>
 </div>
-<h1 id="bfd-bfdorch-bfd_session">BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）<a class="headerlink" href="#bfd-bfdorch-bfd_session" title="Permanent link">&para;</a></h1>
+<h1 id="gns3-vm-sonic-sonic-vsimg-qemu">GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）<a class="headerlink" href="#gns3-vm-sonic-sonic-vsimg-qemu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。SONiC では従来 FRR（<code>bfdd</code>）でソフトウェア BFD を実装するが、本機能は <strong>BFD セッションを ASIC 側にオフロードして CPU を介在させずに検知する</strong> 経路を導入する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設計の主眼は以下のとおり。</p>
-<ul>
-<li>ASIC 側で BFD パケットの送受信・状態遷移を完結させ、最大 4000 セッションまでスケールする</li>
-<li>セッションは <code>APPL_DB.BFD_SESSION</code> 経由で外部コンポーネント（例: 上位コントローラ、orchagent）が直接書き込む。Phase 1 では <code>CONFIG_DB</code> 経由および専用 <code>config</code> CLI は実装しない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>状態は SAI 通知を <code>BfdOrch</code> が受け取り <code>STATE_DB</code> に反映、<code>show bfd session</code> で参照する</li>
-</ul>
-<p>本 HLD は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR <code>bfdd</code>）との共存は同 HLD のスコープ外である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="https://docs.gns3.com/">GNS3</a> はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。SONiC は <strong><code>sonic-vs.img</code></strong>（Virtual Switch ビルド）として Qemu 上で動かせるため、GNS3 上に SONiC ノードを並べてトポロジ実験を行える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本ドキュメントは公式 HLD 文書 <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> のうち、操作のキー手順だけを抜き出したガイドである。スクリーンショット原本（GNS3 GUI 画像）は本ページでは省略する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    EXT[外部 producer\n（HA / Vnet 等）] --&gt;|BFD_SESSION 書き込み| APPL[(APPL_DB\nBFD_SESSION)]
-    APPL --&gt; ORCH[BfdOrch]
-    ORCH --&gt;|SAI BFD attr 設定| SYNCD[syncd]
-    SYNCD --&gt;|create/set| ASIC[ASIC BFD engine]
-    ASIC -.-&gt;|SAI notification\nsai_bfd_session_state_t| SYNCD
-    SYNCD -.-&gt; ORCH
-    ORCH --&gt;|状態反映| STATE[(STATE_DB\nBFD_SESSION_TABLE)]
-    CLI[show bfd session] --&gt; STATE</code></pre>
-<p>要点:</p>
-<ul>
-<li><code>APPL_DB</code> の <code>BFD_SESSION</code> テーブルがオフロード対象セッションの入口。Phase 1 では BFD manager（誰が <code>APPL_DB</code> に書くか）の決定はスコープ外で「外部 producer が書く」想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>BfdOrch</code> は <code>APPL_DB</code> を購読し、SAI BFD API でセッションを登録する</li>
-<li>セッション状態は SAI 通知チャネル経由で <code>BfdOrch</code> に届き、<code>STATE_DB</code> に書き込まれる</li>
-</ul>
-<h3 id="appl_db">APPL_DB スキーマ<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
-<p>セッションキーは VRF・インタフェース・宛先 IP の 3 つで一意化する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BFD_SESSION:{vrf}:{ifname}:{ipaddr}
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    tx_interval   : interval ms (OPTIONAL)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    rx_interval   : interval ms (OPTIONAL)
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    multiplier    : detect multiplier (OPTIONAL)
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    shutdown      : false
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    multihop      : false
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    local_addr    : ipv4 / ipv6
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    type          : active / passive / ...
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>キー位置</th>
-<th>必須</th>
-<th>値が無い場合</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>vrf</code></td>
-<td>✅</td>
-<td><code>default</code> を指定</td>
-</tr>
-<tr>
-<td><code>ifname</code></td>
-<td>✅</td>
-<td>multihop 等で意味がない場合は <code>default</code></td>
-</tr>
-<tr>
-<td><code>ipaddr</code></td>
-<td>✅</td>
-<td>省略不可。IPv4 / IPv6</td>
-</tr>
-</tbody>
-</table>
-<p>省略可フィールドのデフォルト値:</p>
-<table>
-<thead>
-<tr>
-<th>Attribute</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tx_interval</code></td>
-<td>1 sec</td>
-</tr>
-<tr>
-<td><code>rx_interval</code></td>
-<td>1 sec</td>
-</tr>
-<tr>
-<td><code>multiplier</code></td>
-<td>3</td>
-</tr>
-<tr>
-<td><code>multihop</code></td>
-<td>false</td>
-</tr>
-<tr>
-<td><code>local_addr</code></td>
-<td>Loopback0</td>
-</tr>
-</tbody>
-</table>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>Phase 1 では <strong><code>CONFIG_DB</code> スキーマは未定義</strong>。BFD manager の設計と合わせて将来追加する旨が明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>CONFIG_DB</code> 経由で BFD セッションを直接設定したいユースケース（運用者が BFD 単体を切ってみる等）は Phase 1 では非対応である。</p>
-<h3 id="sai">SAI 属性のマッピング<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p><code>BfdOrch</code> が SAI に渡す主な属性は次のとおり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>SAI Attribute</th>
-<th>値</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_TYPE</code></td>
-<td><code>SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_OFFLOAD_TYPE</code></td>
-<td><code>SAI_BFD_SESSION_OFFLOAD_TYPE_FULL</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_BFD_ENCAPSULATION_TYPE</code></td>
-<td><code>SAI_BFD_ENCAPSULATION_TYPE_NONE</code></td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_SRC_IP_ADDRESS</code></td>
-<td>Loopback0 の IPv4 / v6</td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_DST_IP_ADDRESS</code></td>
-<td>リモート IP</td>
-</tr>
-<tr>
-<td><code>SAI_BFD_SESSION_ATTR_MULTIHOP</code></td>
-<td>true</td>
-</tr>
-</tbody>
-</table>
-<p>multihop セッションでは ASIC 側で <code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code>（未指定なら <code>SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID</code>）に紐づく underlay ルーティングテーブルで宛先解決する。underlay の ECMP パス解決も HW 任せで、ASIC 詳細は HLD のスコープ外と明記される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">状態遷移とライフサイクル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant P as producer
-    participant A as APPL_DB
-    participant O as BfdOrch
-    participant S as syncd / SAI
-    participant H as ASIC
-    participant ST as STATE_DB
-    P-&gt;&gt;A: BFD_SESSION:{vrf}:{ifname}:{ip} 書き込み
-    A--&gt;&gt;O: SET 通知
-    O-&gt;&gt;O: SAI 属性に変換
-    O-&gt;&gt;S: bfd_session_create
-    S-&gt;&gt;H: ASIC へ BFD セッション登録
-    O-&gt;&gt;ST: BFD_SESSION_TABLE 初期状態書き込み
-    H--&gt;&gt;S: state change notification
-    S--&gt;&gt;O: sai_bfd_session_state_t
-    O-&gt;&gt;ST: STATE_DB の状態を更新</code></pre>
-<!-- evidence:
-source: sonic-net/SONiC/doc/bfd/BFD HW Offload HLD.md#L110-L140 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  A new module, BfdOrch shall be introduced to handle BFD session ...
-  BfdOrch shall offload the session initiation/sustenance to hardware via SAI APIs and gets the notifications of session state from SAI.
-  The session state shall be updated in STATE_DB and to any other observer orchestration agents.
-reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であることの根拠。
--->
-
-<h3 id="control-plane-bfd">Control plane BFD との共存<a class="headerlink" href="#control-plane-bfd" title="Permanent link">&para;</a></h3>
-<p>HLD は HW オフロードと FRR <code>bfdd</code> の <strong>共存自体は否定しない</strong> が、同一宛先 IP について両方のセッションを張ることは想定外と明記する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BFD trap を入れてコントロールプレーン BFD を有効化すると BFD パケットが CPU に上がるため、HW セッション側が独立で動くと一部パケットが silently drop され得る点に注意とある。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<p>Phase 1 ではユーザ向け CONFIG_DB スキーマは未定義。ただし <code>APPL_DB.BFD_SESSION</code> を直接書く producer（HA・vnet・peer monitor など）が必要。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show bfd session &lt;session name&gt;</code></td>
-<td>オフロードされた BFD セッションと状態を表示</td>
-</tr>
-</tbody>
-</table>
-<p><code>config bfd ...</code> 系の CLI は本 HLD では明示的に <strong>将来拡張</strong> とされ、Phase 1 のスコープ外<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD で YANG モジュールへの言及は無い（<code>CONFIG_DB</code> スキーマが未定義のため）。</p>
-<h3 id="_6">スケール上限<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+  HOST[Windows / Ubuntu host] --&gt; GNS3[GNS3 VM]
+  GNS3 --&gt; Q1[Qemu VM&lt;br&gt;SONiC #1&lt;br&gt;sonic-vs.img]
+  GNS3 --&gt; Q2[Qemu VM&lt;br&gt;SONiC #2]
+  Q1 --- Q2
+  Q2 --- Q3[Qemu VM&lt;br&gt;SONiC #3]</code></pre>
+<p>GNS3 は Qemu/KVM を介して SONiC VS イメージを起動する。各ノードは GNS3 GUI 上でリンクを引いて接続する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="sonic">SONiC イメージ取得<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
+<p>公式 Azure Pipeline <code>#142</code> (<code>master</code>) の最新成功 build から <code>sonic-buildimage.vs</code> artifact を辿り、<code>target/sonic-vs.img.gz</code> をダウンロードする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<blockquote>
+<p>https://sonic-build.azurewebsites.net/ui/sonic/pipelines/142/builds?branchName=master</p>
+</blockquote>
+<p>ダウンロード後 gunzip して <code>sonic-vs.img</code> を得る。</p>
+<h3 id="gns3">GNS3 への登録<a class="headerlink" href="#gns3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>GNS3 プロジェクトを新規作成</li>
+<li><code>New template</code> → <code>Manually create a new template</code> → <code>Qemu VM</code></li>
+<li>テンプレートの設定:</li>
+<li><strong>RAM</strong>: 8192 MB (8 GB)</li>
+<li><strong>vCPU</strong>: 4</li>
+<li><strong>Auto Start Console</strong>: ON</li>
+<li>ディスク image として展開済みの <code>sonic-vs.img</code> を指定</li>
+</ol>
+<p>これらの値は HLD で「推奨」として明示されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">トポロジ構築とログイン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li>テンプレートをドラッグ＆ドロップしてノードを並べる</li>
+<li><code>Add a link</code> でノード間を接続</li>
+<li>ノードを起動。リンクが赤 → 緑になればコンソールが開く</li>
+<li>デフォルト認証情報でログイン<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</li>
+</ol>
 <table>
 <thead>
 <tr>
@@ -6208,54 +5973,57 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </thead>
 <tbody>
 <tr>
-<td>HW オフロード BFD セッション数</td>
-<td>4000（Phase 1）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>ユーザ</td>
+<td><code>admin</code></td>
+</tr>
+<tr>
+<td>パスワード</td>
+<td><code>YourPaSsWoRd</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p><code>APPL_DB</code> 直接書き込みの例（Phase 1 想定の peer monitor 等から）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>HSET &quot;BFD_SESSION_TABLE:default:default:10.0.0.5&quot; \
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    multihop true \
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    local_addr 10.1.0.32 \
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    type active
-</span></code></pre></div>
-<p>実際のキー名（<code>BFD_SESSION_TABLE</code> か <code>BFD_SESSION</code> か）は HLD 表記揺れがあり、現行 swss 実装側で要確認。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Phase 1 は HW オフロード専用。<code>CONFIG_DB</code> 直接編集および専用 <code>config</code> CLI は <strong>Phase 1 範囲外</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Warm restart に関しては「特別な処理は不要」とされている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし HW オフロードセッションが warm reboot 中に保持されるかは ASIC 実装依存</li>
-<li>同一宛先 IP に control plane BFD（FRR）と HW オフロードを同時に張らないこと</li>
-<li>HW 実装が underlay ECMP 解決を持っていることが前提。HW 側でこれが未実装の場合 multihop が成立しない</li>
-</ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>FRR <code>bfdd</code>（Control plane BFD）</strong>: 同一宛先で並走させない。BFD trap を入れる場合は HW セッションとの責務分担に注意</li>
-<li><strong>VRF / virtual router</strong>: multihop セッションは <code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code> に従って underlay 解決される</li>
-<li><strong>Loopback0</strong>: デフォルトの <code>local_addr</code> ソース。Loopback0 IPv4/v6 が無いと既定では BFD セッションが組めない</li>
-<li><strong>将来の BFD manager</strong>: HW 容量を見て control plane / HW を振り分ける役割が想定されているが、本 HLD では未実装</li>
-</ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li>セッションが Up にならない場合、まず <code>show bfd session</code> で <code>STATE_DB.BFD_SESSION_TABLE</code> 上の状態を確認。<code>Init</code> で止まっているならピア側の状態を疑う</li>
-<li><code>APPL_DB</code> に SET したのにセッションが現れない場合、<code>BfdOrch</code> ログ・syncd ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）</li>
-<li>HW オフロード対応 SAI 属性は ASIC ベンダー依存。<code>SAI_BFD_SESSION_OFFLOAD_TYPE_FULL</code> を解釈できない実装では full offload にならない可能性あり</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- BfdOrch が現行 master の sonic-swss に存在するか
-- APPL_DB のテーブル名（BFD_SESSION vs BFD_SESSION_TABLE）の最終形
-- SAI_BFD_SESSION_* 属性が community SAI ヘッダで利用可能か
-- show bfd session の sonic-utilities 取り込み
-- 4000 セッションのスケール検証
-- 2021 年 HLD と現行実装の乖離（Phase 2 以降の CONFIG_DB / CLI 追加状況）
+<p>ログイン後の構成は標準の SONiC User Manual に従う。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/sonic-gns3/GNS3 VM for SONiC.md#L75-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In the QEMU VM template configuration window, under the General Settings tab,
+  change the RAM size to 8192 MB (8GB) and the vCPU number to 4.
+  ... default username admin and the default password YourPaSsWoRd.
+reasoning: 推奨リソースとデフォルト認証情報の根拠。
 -->
 
+<h3 id="_5">ホスト要件<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>GNS3 公式の Windows インストールガイドの推奨条件（VT-x / EPT または AMD-V/RVI 対応 CPU）を満たすこと。物理ホスト 1 台で SONiC ノードを多数立てる場合は RAM が律速<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
+<p>該当なし。本ページは <strong>動作環境のセットアップ手順</strong> であり、SONiC 内部の設定スキーマは扱わない。</p>
+<h3 id="gns3_1">設定例（GNS3 への登録の最小コマンド相当）<a class="headerlink" href="#gns3_1" title="Permanent link">&para;</a></h3>
+<p>GNS3 GUI 操作の代替として CLI で扱う場合、<code>gns3server</code> の REST API でテンプレートを作る方法もあるが、HLD では明示されていない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Azure Pipeline URL の有効性</strong>: 番号 142 や URL は将来変わる可能性がある。HLD 中の URL を盲信せず、最新の sonic-build 配置を確認する。</li>
+<li><strong>VS ビルドの位置づけ</strong>: <code>sonic-vs.img</code> は機能テスト・トポロジ実験用。実 ASIC を持たないため、SAI コールはソフト VS で受ける。性能ベンチマーク用途には不向き。</li>
+<li><strong>GNS3 自体の制約</strong>: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（<a href="https://github.com/sonic-net/sonic-mgmt"><code>sonic-mgmt</code> のテストベッド</a>）が一般的。</li>
+<li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SONiC VS（Virtual Switch）ビルド</strong>: 本機能は VS イメージ前提。SAI バックエンドは <code>libsai_vs.so</code> 系。</li>
+<li><strong><code>sonic-mgmt</code> テストベッド</strong>: 同じく VS イメージを使うが、GNS3 ではなく KVM を直接叩く。GNS3 と sonic-mgmt はトポロジ管理レイヤが別。</li>
+<li><strong>Qemu リソース</strong>: vCPU 4 / RAM 8 GB を複数ノード分用意する必要がある。物理ホストの容量で並列度が決まる。</li>
+</ul>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ノードが起動しない / リンクが赤のまま: Qemu のリソース不足を疑う。GNS3 ログで OOM や起動失敗を確認。</li>
+<li>コンソール接続できない: <code>Auto Start Console</code> の設定、Qemu telnet ポートの占有衝突を確認。</li>
+<li>ログインで弾かれる: デフォルト <code>admin / YourPaSsWoRd</code>。<code>sonic-vs.img</code> のバージョンによっては変更されている可能性。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/bfd/BFD HW Offload HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

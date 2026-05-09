@@ -101,6 +101,10 @@
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-on-gns3-vm/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-port-configuration-refactor-design/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
@@ -362,6 +366,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/</loc>
+         <lastmod>2026-05-09</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-acl/</loc>
          <lastmod>2026-05-09</lastmod>
     </url>
     <url>
