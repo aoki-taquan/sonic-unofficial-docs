@@ -5414,9 +5414,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは初期版の HLD（要件文書）に基づく。<code>l3</code> / <code>mirror</code> 以外の table type、<code>config acl</code> CLI、aclorch の SAI 属性マッピング、<code>l2_prot_type</code> の IPv6 拡張等、実装は HLD よりも先行している箇所が多いため、このページは <strong>後続 HLD・実コード裏取りで上書きされる前提</strong> で読むこと。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p>現行 master の <code>sonic-swss/orchagent/aclorch.cpp</code> で <strong>byte counter</strong> (<code>SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT</code> 周辺、aclorch.cpp:517)、<strong>IPv6 ルックアップ拡張</strong> (<code>SAI_ACL_IP_TYPE_IPV6ANY</code> / <code>..._NON_IPV6</code> / <code>MATCH_INNER_ETHER_TYPE</code> 等、aclorch.cpp:84,508-509)、<strong>LAG bind</strong> (<code>SAI_ACL_BIND_POINT_TYPE_LAG</code>、aclorch.cpp:106,3733)、<strong>MCLAG/portchannel リダイレクト</strong> が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
