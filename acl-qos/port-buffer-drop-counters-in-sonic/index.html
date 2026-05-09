@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/build-profiles/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/port-buffer-drop-counters-in-sonic/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../dhcp-dos-mitigation-in-sonic/">
       
       
-        <link rel="next" href="../dip-sip-ptf-validation-high-level-design/">
+        <link rel="next" href="../watermark-counters-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ビルドプロファイル（rules/profiles/*.mk） - SONiC 非公式ドキュメント</title>
+        <title>ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rulesprofilesmk" class="md-skip">
+        <a href="#port_buffer_drop-fc-group" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ビルドプロファイル（rules/profiles/*.mk）
+              ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -337,11 +335,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../acl-qos/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -568,23 +566,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -602,13 +597,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -625,37 +620,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ビルドプロファイル（rules/profiles/*.mk）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -671,203 +639,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#before-after" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before / After
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        取り込みの優先順位
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuser" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config.user との違い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        後方互換
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cicd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CI/CD 不要・自己完結
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルド時の使い方
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -880,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -908,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -936,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -964,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -992,7 +763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1486,6 +1257,8 @@
       
   
   
+    
+  
   
   
     
@@ -1507,20 +1280,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../acl-qos/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1538,13 +1314,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1564,7 +1340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
+      <a href="../dhcp-dos-mitigation-in-sonic/" class="md-nav__link">
         
   
   
@@ -1589,10 +1365,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../acl-qos/port-buffer-drop-counters-in-sonic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1608,6 +1411,203 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要件サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対象カウンタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex Counter group の位置付け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI: 表示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-enabledisable-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI: enable/disable と interval 変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1620,7 +1620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/watermark-counters-in-sonic/" class="md-nav__link">
+      <a href="../watermark-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1648,7 +1648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../acl-qos/wred-and-ecn-statistics/" class="md-nav__link">
+      <a href="../wred-and-ecn-statistics/" class="md-nav__link">
         
   
   
@@ -2792,32 +2792,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#before-after" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before / After
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        取り込みの優先順位
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuser" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config.user との違い
+        要件サマリ
       
     </span>
   </a>
@@ -2828,7 +2806,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        後方互換
+        対象カウンタ
       
     </span>
   </a>
@@ -2836,10 +2814,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cicd" class="md-nav__link">
+  <a href="#flex-counter-group" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CI/CD 不要・自己完結
+        Flex Counter group の位置付け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI: 表示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-enabledisable-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI: enable/disable と interval 変更
       
     </span>
   </a>
@@ -2875,7 +2875,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
@@ -2889,7 +2889,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ビルド時の使い方
+        設定例
       
     </span>
   </a>
@@ -2962,7 +2962,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/build-profiles.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/port-buffer-drop-counters-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2972,145 +2972,189 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>sonic-buildimage</code> の <code>rules/profiles/</code> 配下と Makefile の <code>PROFILE</code> 変数取り込みは未裏取り。</p>
+<p>このページは公式 HLD のみを根拠にしている。<code>PORT_BUFFER_DROP</code> Flex Counter group の sonic-swss / sonic-utilities への取り込み状況、<code>counterpoll port-buffer-drop</code> CLI 実装、interval バリデーション（30s–5m）の実装は未裏取り。</p>
 </div>
-<h1 id="rulesprofilesmk">ビルドプロファイル（rules/profiles/*.mk）<a class="headerlink" href="#rulesprofilesmk" title="Permanent link">&para;</a></h1>
+<h1 id="port_buffer_drop-fc-group">ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）<a class="headerlink" href="#port_buffer_drop-fc-group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のビルドは多数のビルドフラグ（<code>ENABLE_ZTP</code>, <code>SECURE_UPGRADE_*</code>, <code>USERNAME</code>, <code>PASSWORD</code>, <code>CHANGE_DEFAULT_PASSWORD</code> 等）の組み合わせで挙動が変わる。これらを <strong><code>make</code> のコマンドラインで毎回手で羅列する</strong> のは煩雑で、CI 外の手元ビルドや顧客への配布で再現性を取りづらい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ビルドプロファイル機能は <code>rules/profiles/&lt;name&gt;.mk</code> というインクルード可能な Makefile 片を用意しておき、<code>make PROFILE=&lt;name&gt;</code> 一発で <strong>そのフラグセット一式</strong> を取り込むためのもの。プロファイルは <strong>リポジトリにコミットして共有</strong> することを前提にしており、<code>rules/config.user</code> のような個人ローカル設定とは住み分ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新フラグを使わなければ動作は <strong>完全に従来どおり</strong>（既存ビルドフローへの後方互換あり）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC のポート単位 SAI ドロップカウンタ（ingress/egress バッファドロップ）は、過去に普通の port counter と同じ Flex Counter グループに混ぜて 1 秒間隔でポーリングしようとしたところ、<strong>性能上の問題と衝突を引き起こすことが判明</strong> し、いったん master から外された経緯がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<blockquote>
+<p>"These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308 <sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+</blockquote>
+<p>本機能は <strong>専用の Flex Counter グループ <code>PORT_BUFFER_DROP</code> を新設</strong> し、デフォルト 60 秒というゆったりした間隔で安全にポーリングする設計である。CLI 側でも「短すぎる interval を設定できないようバリデーション」を入れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="before-after">Before / After<a class="headerlink" href="#before-after" title="Permanent link">&para;</a></h3>
-<p>長い <code>make</code> コマンド<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>make<span class="w"> </span><span class="nv">ENABLE_ZTP</span><span class="o">=</span>y<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_SIGNING_CERT</span><span class="o">=</span>/some/cert<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_PROD_SIGNING_TOOL</span><span class="o">=</span>/some/script.sh<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_MODE</span><span class="o">=</span>prod<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span><span class="nv">USERNAME</span><span class="o">=</span>ztp<span class="w"> </span><span class="nv">PASSWORD</span><span class="o">=</span>ztp<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">     </span><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span>y<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">     </span>all
-</span></code></pre></div>
-<p>を、プロファイル定義 <code>rules/profiles/ztp.signed.mk</code> を作っておくと:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span><span class="nv">PROFILE</span><span class="o">=</span>ztp.signed<span class="w"> </span>all
-</span></code></pre></div>
-<p>の一行に縮められる。<code>ztp.signed.mk</code> の中身<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-make highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">ENABLE_ZTP</span><span class="o">=</span>y
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">SECURE_UPGRADE_SIGNING_CERT</span><span class="o">=</span>/some/cert
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nv">SECURE_UPGRADE_PROD_SIGNING_TOOL</span><span class="o">=</span>/some/script.sh
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nv">SECURE_UPGRADE_MODE</span><span class="o">=</span>prod
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nv">USERNAME</span><span class="o">=</span>ztp
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="nv">PASSWORD</span><span class="o">=</span>ztp
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="nv">CHANGE_DEFAULT_PASSWORD</span><span class="o">=</span>y
-</span></code></pre></div>
-<h3 id="_3">取り込みの優先順位<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>ビルドフラグを決める Makefile 片の <strong>読み込み順</strong> は次のとおり<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後勝ちなのでプロファイルが最後に読まれる:</p>
-<ol>
-<li><code>rules/config</code> … リポジトリ管理の共通デフォルト</li>
-<li><code>rules/config.user</code> … <strong>存在すれば</strong> 取り込む。個人の手元設定（git ignore 想定）</li>
-<li><code>rules/profiles/$(PROFILE).mk</code> … <strong><code>PROFILE</code> が定義されていれば</strong> 取り込む</li>
-</ol>
-<pre class="mermaid"><code>flowchart LR
-    A[rules/config\n共通デフォルト] --&gt; M[Make 変数空間]
-    B[rules/config.user\n手元のみ・任意] --&gt;|存在すれば| M
-    C[rules/profiles/$PROFILE.mk\nコミット済プロファイル] --&gt;|PROFILE 指定時| M
-    M --&gt; BUILD[make all]</code></pre>
-<h3 id="configuser"><code>config.user</code> との違い<a class="headerlink" href="#configuser" title="Permanent link">&para;</a></h3>
-<p>HLD は <code>rules/config.user</code> との明確な使い分けを示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_3">要件サマリ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>HLD の Functional Requirements<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li>ポートレベル buffer drop 用の <strong>新しい Flex Counter グループ</strong> を導入する。</li>
+<li>このグループは <strong>既定で enable</strong>。</li>
+<li>ポーリング間隔の <strong>既定は 60s</strong>。</li>
+<li>CLI で以下を提供:<ul>
+<li>enable / disable</li>
+<li>30s〜5m の範囲で interval 設定</li>
+<li>設定の表示</li>
+</ul>
+</li>
+</ul>
+<h3 id="_4">対象カウンタ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>ポーリング対象は以下の SAI port stat 2 種<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>観点</th>
-<th><code>rules/config.user</code></th>
-<th><code>rules/profiles/*.mk</code></th>
+<th>SAI counter</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>バージョン管理</td>
-<td>コミットしない（個人ローカル）</td>
-<td><strong>コミットして共有</strong></td>
+<td><code>SAI_PORT_STAT_IN_DROPPED_PKTS</code></td>
+<td>ポート ingress バッファドロップ数</td>
 </tr>
 <tr>
-<td>共存</td>
-<td>1 つのみ</td>
-<td>複数を切替可（<code>PROFILE=</code> で選択）</td>
-</tr>
-<tr>
-<td>用途</td>
-<td>開発者の一時的な書き換え</td>
-<td>チーム / 顧客向けの再現性ある定義</td>
+<td><code>SAI_PORT_STAT_OUT_DROPPED_PKTS</code></td>
+<td>ポート egress バッファドロップ数</td>
 </tr>
 </tbody>
 </table>
-<p>両者は同居でき、優先順位は <code>config &lt; config.user &lt; profiles/&lt;PROFILE&gt;.mk</code> の順で適用される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">後方互換<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>PROFILE</code> を渡さない <code>make</code> の挙動は <strong>従来と完全に同一</strong>。プロファイル機構は opt-in<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<blockquote>
-<p>"if the new <code>PROFILE</code> build flag is not provided, build behavior is identical to baseline." <sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-</blockquote>
-<p>そのため既存の CI / 開発者ワークフローを壊さずに導入できる。</p>
+<p>これらは port のバッファ起因のドロップを示す。<strong>通常の <code>PORT_STAT</code>（既定 1s）と分離</strong> して、長い間隔で取りに行く構造になる。</p>
+<h3 id="flex-counter-group">Flex Counter group の位置付け<a class="headerlink" href="#flex-counter-group" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    SAI[SAI port stats] --&gt; FC1[PORT_STAT FC group\n(default 1000ms)]
+    FC1 --&gt; CDB1[(COUNTERS_DB)]
+    SAI --&gt; FC2[PORT_BUFFER_DROP FC group\n(default 60000ms)]
+    FC2 --&gt; CDB2[(COUNTERS_DB)]</code></pre>
+<p>既存 <code>PORT_STAT</code> から本機能対象の 2 カウンタを切り出して <strong>別 FC グループにする</strong> だけで、データの保管先（COUNTERS_DB）は同じ。</p>
+<h3 id="cli">CLI: 表示<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p><code>counterpoll show</code> の出力に <code>PORT_BUFFER_DROP</code> 行が <strong>新たに追加</strong> される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Before:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$ counterpoll show
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Type                        Interval (in ms)    Status
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>--------------------------  ------------------  --------
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>QUEUE_STAT                  default (10000)     enable
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>PORT_STAT                   default (1000)      enable
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>RIF_STAT                    default (1000)      enable
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>QUEUE_WATERMARK_STAT        default (10000)     enable
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>PG_WATERMARK_STAT           default (10000)     enable
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>After:
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>admin@sonic:~$ counterpoll show
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>Type                        Interval (in ms)    Status
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>--------------------------  ------------------  --------
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>QUEUE_STAT                  default (10000)     enable
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>PORT_STAT                   default (1000)      enable
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>PORT_BUFFER_DROP            default (60000)     enable
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>RIF_STAT                    default (1000)      enable
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>QUEUE_WATERMARK_STAT        default (10000)     enable
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>PG_WATERMARK_STAT           default (10000)     enable
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
+</span></code></pre></div>
+<p>既定値は <strong>60000ms = 60s</strong>。</p>
+<h3 id="cli-enabledisable-interval">CLI: enable/disable と interval 変更<a class="headerlink" href="#cli-enabledisable-interval" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># enable / disable</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>disable
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># interval を変更（ms 単位、30000〜300000 の範囲）</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
+</span></code></pre></div>
+<p>interval は <strong>30000ms（30s）以上、300000ms（5min）以下</strong> にバリデーションされる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それ未満の値は CLI で拒否する。これは旧来の問題（短い interval だと性能影響）を CLI 段階で防ぐためのガード<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/sonic-build-system/Build-Profiles.md#L44-L50 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md#L52-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Order of precedence will be:
-  1. `rules/config`
-  2. `rules/config.user` - only if it exists
-  3. `rules/profiles/$(PROFILE).mk` - only if `$(PROFILE)` is defined
-  The changes required to implement this are very simple and completely backwards compatible: if the new `PROFILE` build flag is not provided, build behavior is identical to baseline.
-reasoning: 取り込み順位と後方互換性の根拠。
+  1. New flex counter group is introduced for the port-level buffer drop counters
+  2. The FC group is enabled by default
+  3. The polling interval is 60s by default
+  3. Users can configure FC group via a CLI tool
+      1. Users can enable/disable polling
+      2. Users can set the polling interval in range from 30s to 5m
+      3. Users can view the FC configuration
+reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠。
 -->
 
-<h3 id="cicd">CI/CD 不要・自己完結<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h3>
-<p>HLD は「CI/CD でやれば良いのでは」という問いに対して、<strong>手元ビルドや顧客配布のシナリオで CI を使えない</strong> ケースを挙げる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>CI で前段加工する方式は CI 経由のビルドにしか効かない。</li>
-<li>一方プロファイルを <strong>Makefile のインクルード片としてコミット</strong> しておけば、ソースを受け取った相手がローカルで <code>make PROFILE=...</code> するだけで同じバイナリが作れる。</li>
-<li>ビルド指示の README が要らなくなる。</li>
-</ul>
-<p>つまり「ビルドの portable / self-contained 化」が動機。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。本機能は <strong>ビルド時の Makefile 機構</strong> であり、ランタイムの CONFIG_DB は触らない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。</p>
-<h3 id="_6">ビルド時の使い方<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># プロファイルなし（従来どおり）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>make<span class="w"> </span>all
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># プロファイル指定</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>make<span class="w"> </span><span class="nv">PROFILE</span><span class="o">=</span>ztp.signed<span class="w"> </span>all
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># プロファイルと個別フラグの併用も可能</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># （後勝ちで、コマンドラインの個別指定は通常 profile より優先される。</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1">#  実装は make の変数代入順序に依存。）</span>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_TABLE</code></td>
+<td><code>PORT_BUFFER_DROP</code></td>
+<td><code>FLEX_COUNTER_STATUS</code>, <code>POLL_INTERVAL</code></td>
+<td>本グループの enable / interval を保持</td>
+</tr>
+</tbody>
+</table>
+<p>具体的なフィールド名は他 FC グループと同じスキーマに従う想定。HLD では FC グループ名 <code>PORT_BUFFER_DROP</code> 自体のみが明示されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>counterpoll show</code></td>
+<td>全 FC グループ状態の一覧（PORT_BUFFER_DROP 行が追加される）</td>
+</tr>
+<tr>
+<td><code>counterpoll port-buffer-drop enable</code></td>
+<td>当該グループ有効化</td>
+</tr>
+<tr>
+<td><code>counterpoll port-buffer-drop disable</code></td>
+<td>同 無効化</td>
+</tr>
+<tr>
+<td><code>counterpoll port-buffer-drop interval &lt;ms&gt;</code></td>
+<td>30000〜300000 の範囲で interval 変更</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 通常運用（60s）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 短時間に切り詰め（最短 30s）</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 一時的に止める</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>disable
 </span></code></pre></div>
-<p>新しいプロファイルを追加するには <code>rules/profiles/&lt;name&gt;.mk</code> を作成し、必要な <code>KEY=VALUE</code> を並べてコミットするだけ。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>HLD で明示の制限事項は無い。実運用上の留意点としては:</p>
 <ul>
-<li>プロファイル名のネームスペースが平坦（<code>rules/profiles/&lt;name&gt;.mk</code>）。多数のチームが大量にプロファイルを置くと衝突しうるが、HLD では命名規約に触れていない。</li>
-<li>値の型チェックは無い。誤った値が混入してもビルドエラーで気付く以上の保護は無い。</li>
-<li><code>rules/config.user</code> がコミットされないため、CI とローカルでの組み合わせを誤ると挙動が分岐する可能性がある。プロファイルを使えばこの問題自体を回避できる、という設計意図<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>interval は 30s〜5min の範囲外を受け付けない</strong>。これは過去の master 問題（drop counters を 1s 間隔で回したら問題が出た）を再発させないための設計上の制限<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>対象カウンタは <strong>port 単位の <code>IN_DROPPED_PKTS</code> / <code>OUT_DROPPED_PKTS</code> のみ</strong>。Queue / PG / Buffer Pool 単位の drop は別 FC グループ系統が担当する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>既定間隔 60s のため、<strong>短時間のマイクロドロップを瞬時に観測する用途には向かない</strong>。観測解像度は 1 分単位が前提。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存の <code>make ENABLE_*=y all</code> 形</strong> : そのまま動く。<code>PROFILE</code> を併用しても、make の変数解決ルールに従う。</li>
-<li><strong>secure upgrade 系（<code>SECURE_UPGRADE_*</code>）</strong>: HLD の例で挙げられる典型ユースケース。署名証明書とビルドフラグを 1 ファイルにまとめておけるのが直接の旨味<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ZTP（<code>ENABLE_ZTP</code>, <code>USERNAME</code>, <code>PASSWORD</code> 等）</strong> : 同様にプロファイル化しやすい代表例<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>CI/CD パイプライン</strong>: CI 側で個別フラグを並べていた箇所をプロファイル指定に置き換えられる。手元ビルドとの <strong>再現性</strong> が揃うのが効果。</li>
+<li><strong><code>PORT_STAT</code> FC group</strong>: 元々 1 つにまとめられていた drop 系カウンタが分離した。<code>PORT_STAT</code> の interval を 1s に保ったままでも drop 系は 60s 側で安全に取れる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>既存の <code>show interfaces counters</code></strong>: 表示する drop 系列の値は <code>COUNTERS_DB</code> 経由で読み取る前提。FC グループの polling が disable だと最新値が更新されないため、disable 時は値が固まる挙動になる。</li>
+<li><strong>マイクロバースト解析</strong>: drop 系を 30s〜60s 単位でしか取らないので、サブ秒のバーストドロップを捉える要求があるなら、別途 watermark 系・テレメトリ機構を併用する必要がある（本 HLD のスコープ外）。</li>
+<li><strong>WRED / ECN 統計</strong>: 別 HLD 系統。<code>PORT_BUFFER_DROP</code> は SAI のバッファドロップ全般を見るが、WRED 由来の早期ドロップを区別するには WRED 統計側の機能を使う。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>PROFILE=foo</code> を指定したのにフラグが効かない: <code>rules/profiles/foo.mk</code> が存在するか確認。HLD の優先順位どおりだと、ファイルが無ければ単に何も足されない。</li>
-<li>値が <code>rules/config</code> で上書きされる: 優先順位は <code>config &lt; config.user &lt; profiles/$PROFILE.mk</code>。プロファイルで指定したのに効いていない場合は、コマンドラインの個別指定や make の override 挙動を疑う。</li>
-<li>ビルド再現性が取れない: <code>rules/config.user</code> がコミット外で残っていないか確認。プロファイル運用に統一する場合は <code>config.user</code> を空にしてプロファイルだけで賄う。</li>
+<li><code>PORT_BUFFER_DROP</code> 行が <code>counterpoll show</code> に出ない: sonic-utilities が当該機能未取り込みの可能性。<code>counterpoll show</code> の実装と <code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code> のエントリ存在を確認。</li>
+<li><code>interval 1000</code> 等の短い値で error: 仕様どおり。30000〜300000 の範囲を指定する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>drop count が 0 のまま増えない: enable 状態か <code>counterpoll show</code> で確認。disable のままだと当然 0 のまま。</li>
+<li>値が想定と桁違いに少ない: interval が長いため <strong>定常的な drop もまばらにしか積み上がらないように見える</strong> ことがある。値は累積カウンタなので、観測時の <code>dt</code> を考慮して評価する。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/Build-Profiles.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
