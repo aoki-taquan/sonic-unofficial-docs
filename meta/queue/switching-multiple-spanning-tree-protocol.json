@@ -1,0 +1,13 @@
+{
+  "page": "docs/switching/multiple-spanning-tree-protocol.md",
+  "issue": 313,
+  "verification": "hld-only",
+  "concerns": [
+    "stp コンテナ / stpd / stpmgrd の現行 sonic-buildimage / sonic-swss 取り込み確認",
+    "STP_MST / STP_MST_INST / STP_MST_PORT CONFIG_DB スキーマと sonic-yang-models 反映確認",
+    "config spanning-tree mst 系 CLI の sonic-utilities 取り込み確認",
+    "SAI_STP_OBJECT_ID の MSTI 複数インスタンス対応の community SAI 確認",
+    "50KB の大型 HLD のため要点抜粋。完全な MSTI 状態機械とシーケンスは元 HLD 参照"
+  ],
+  "priority": "medium"
+}
