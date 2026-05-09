@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/sonic-vrf-support-design-spec-draft.md",
+  "verification": "hld-only",
+  "concerns": [
+    "vrfmgrd / vrforch の現行 master 実装存在確認",
+    "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認",
+    "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認",
+    "SAI Virtual Router 関連属性の community SAI 取り込み確認",
+    "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク",
+    "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認"
+  ],
+  "priority": "high"
+}
