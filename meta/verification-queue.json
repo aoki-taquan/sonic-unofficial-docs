@@ -1003,7 +1003,8 @@
         "enforce mode の kernel cmdline 連動と warm/fast-reboot 必須化の実装確認"
       ],
       "priority": "medium",
-      "issue": 165
+      "issue": 165,
+      "pr": 166
     }
   ]
 }
