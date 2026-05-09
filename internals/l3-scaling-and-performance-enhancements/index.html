@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/asic-thermal-monitoring-high-level-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../byte-packet-rates-port-utilization-in-sonic/">
       
       
-        <link rel="next" href="../banner-messages-hld/">
+        <link rel="next" href="../sonic-counter-initialization-optimization/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO） - SONiC 非公式ドキュメント</title>
+        <title>L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#asic-asic_sensors-asic_temperature_info" class="md-skip">
+        <a href="#l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+              L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
             
           </span>
         </div>
@@ -357,13 +357,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -425,11 +423,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../internals/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -2561,8 +2561,6 @@
       
   
   
-    
-  
   
   
     
@@ -2606,23 +2604,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -2640,13 +2635,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2663,37 +2658,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -2709,242 +2677,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#switchorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SwitchOrch の拡張
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SwitchOrch の拡張">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポーラ設定変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポーラ動作
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform 層
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        結果のデータパス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2957,7 +2689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2985,7 +2717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -3013,7 +2745,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -3041,7 +2773,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -3069,7 +2801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -3097,7 +2829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -3125,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -3153,7 +2885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -3181,7 +2913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -3209,7 +2941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -3237,7 +2969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -3265,7 +2997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -3293,7 +3025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -3321,7 +3053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -4161,6 +3893,8 @@
       
   
   
+    
+  
   
   
     
@@ -4188,20 +3922,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../internals/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4219,13 +3956,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4245,7 +3982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
+      <a href="../aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -4273,7 +4010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -4298,10 +4035,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../internals/l3-scaling-and-performance-enhancements/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4317,6 +4081,248 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-arpnd-kernel-gc-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ARP/ND の枚数増（kernel gc tuning）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. ARP/ND の枚数増（kernel gc tuning）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#copp-arpnd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP の ARP/ND 上限引き上げ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-route-programming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Route programming 時間短縮
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Route programming 時間短縮">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-sairedis-bulk-route-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 sairedis bulk route API の利用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-fpmsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 fpmsyncd の最適化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-sairedis-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 sairedis 内 JSON ライブラリ更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        期待効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-show-arp-show-ndp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. show arp / show ndp の高速化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4329,7 +4335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
+      <a href="../sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
@@ -4357,7 +4363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -4385,7 +4391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/why-need-health-check/" class="md-nav__link">
+      <a href="../why-need-health-check/" class="md-nav__link">
         
   
   
@@ -4413,7 +4419,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -4781,55 +4787,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#1-arpnd-kernel-gc-tuning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ
+        1. ARP/ND の枚数増（kernel gc tuning）
       
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#switchorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SwitchOrch の拡張
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SwitchOrch の拡張">
+    <nav class="md-nav" aria-label="1. ARP/ND の枚数増（kernel gc tuning）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#copp-arpnd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポーラ設定変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポーラ動作
+        CoPP の ARP/ND 上限引き上げ
       
     </span>
   </a>
@@ -4842,10 +4815,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#platform" class="md-nav__link">
+  <a href="#2-route-programming" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform 層
+        2. Route programming 時間短縮
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Route programming 時間短縮">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-sairedis-bulk-route-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 sairedis bulk route API の利用
       
     </span>
   </a>
@@ -4853,10 +4838,48 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#22-fpmsyncd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        結果のデータパス
+        2.2 fpmsyncd の最適化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-sairedis-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 sairedis 内 JSON ライブラリ更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        期待効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-show-arp-show-ndp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. show arp / show ndp の高速化
       
     </span>
   </a>
@@ -4869,7 +4892,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -4881,7 +4904,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#cli-config_db-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI / CONFIG_DB / YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -4892,29 +4926,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#state_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -4930,7 +4942,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -4941,7 +4953,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -4952,7 +4964,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -4963,7 +4975,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -4990,7 +5002,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/asic-thermal-monitoring-high-level-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/l3-scaling-and-performance-enhancements.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5000,222 +5012,241 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>本 HLD は 2019-01 初版（2020-10 改訂）であり、<code>SwitchOrch</code> の <code>sensorsPollerTimer</code> 実装、<code>ASIC_SENSORS</code> テーブルでの enable/disable 制御、<code>ASIC_TEMPERATURE_INFO</code> の <code>temperature_N</code> 列拡張、platform 側 <code>_thermal_list[]</code> への ASIC 内部センサ追加は実コードでの裏取り未済。CLI 制御は本 HLD では未定義。</p>
+<p>本 HLD は 2019-06 改訂で <strong>5 年以上前</strong>。kernel <code>gc_thresh1/2/3</code> 値、CoPP の ARP/ND 上限 8000pps、sairedis bulk route API 経由の RouteOrch、<code>fpmsyncd</code> の <code>rt_table=0</code> での master device lookup スキップ、JSON ライブラリ v3.6 への upgrade、<code>show arp</code> / <code>show ndp</code> の per-ARP FDB lookup 最適化は実コードでの裏取り未済（priority=high）。</p>
 </div>
-<h1 id="asic-asic_sensors-asic_temperature_info">ASIC 内部温度センサのポーリング（<code>ASIC_SENSORS</code> / <code>ASIC_TEMPERATURE_INFO</code>）<a class="headerlink" href="#asic-asic_sensors-asic_temperature_info" title="Permanent link">&para;</a></h1>
+<h1 id="l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / <code>show arp</code>）<a class="headerlink" href="#l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチ上の温度センサには <strong>外部（オンボード）</strong> と <strong>内部（CPU / ASIC / DIMM / 光学トランシーバ等）</strong> がある。前者は既存ドライバで読めるが、<strong>ASIC 内部センサは ASIC SDK 経由でしか読めない</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI には ASIC 内部温度を取り出す属性が用意されている:</p>
+<p>SONiC 201908 リリース時に行われた <strong>L3 のスケール拡大と性能改善</strong> をまとめた HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。スケールでは <strong>ARP/ND エントリ数</strong> と <strong>route 数 / ECMP 構成</strong> を引き上げ、性能では <strong>route programming 時間</strong> と <strong>show コマンド応答時間</strong> を短縮する。CLI / CONFIG_DB / YANG への新規追加は <strong>無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スケール目標<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>SAI 属性</th>
-<th>内容</th>
+<th>項目</th>
+<th>目標</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>SAI_SWITCH_ATTR_MAX_NUMBER_OF_TEMP_SENSORS</code></td>
-<td>ASIC 内部の温度センサ最大個数</td>
+<td>IPv4 ARP entry</td>
+<td>32k</td>
 </tr>
 <tr>
-<td><code>SAI_SWITCH_ATTR_TEMP_LIST</code></td>
-<td>全センサの読み値リスト</td>
+<td>IPv6 ND entry</td>
+<td>16k</td>
 </tr>
 <tr>
-<td><code>SAI_SWITCH_ATTR_AVERAGE_TEMP</code></td>
-<td>全センサ平均</td>
+<td>IPv4 route</td>
+<td>200k</td>
 </tr>
 <tr>
-<td><code>SAI_SWITCH_ATTR_MAX_TEMP</code></td>
-<td>全センサ最大</td>
+<td>IPv6 route</td>
+<td>65k</td>
+</tr>
+<tr>
+<td>ECMP</td>
+<td>512×32, 256×64, 128×128</td>
 </tr>
 </tbody>
 </table>
-<p>本 HLD は <strong><code>SwitchOrch</code> 内に設定可能なポーラ</strong> を入れ、定期的にこれらを取得して <code>STATE_DB.ASIC_TEMPERATURE_INFO</code> に書き込む。<code>thermalctld</code> / <code>show platform temperature</code> / SNMP / Telemetry がこの値を参照する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>性能目標<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ポーラは <strong>CONFIG_DB で enable / disable 可能</strong>（multi-ASIC では ASIC ごと）</li>
-<li>polling interval を <strong>5〜300 秒</strong> で設定可能</li>
-<li>値は <strong>STATE_DB に書き出し</strong>、Thermal Control infrastructure から利用可</li>
-<li><code>show platform temperature</code> に <strong>ASIC 内部センサも含めて表示</strong></li>
-<li>Platform API <code>ThermalBase()</code> 経由でも取得可能</li>
+<li>IPv4 / IPv6 route programming 時間を短縮</li>
+<li>未知 ARP / ND 学習時間を短縮</li>
+<li><code>show arp</code> / <code>show ndp</code> の応答短縮</li>
+<li><strong>route programming 時間 30% 短縮</strong> を狙う</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>各 ASIC の DB instance に追加<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ASIC_SENSORS|ASIC_SENSORS_POLLER_STATUS
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    admin_status: &quot;enable&quot; | &quot;disable&quot;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ASIC_SENSORS|ASIC_SENSORS_POLLER_INTERVAL
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    interval: &lt;秒, 5〜300&gt;
+<h3 id="1-arpnd-kernel-gc-tuning">1. ARP/ND の枚数増（kernel gc tuning）<a class="headerlink" href="#1-arpnd-kernel-gc-tuning" title="Permanent link">&para;</a></h3>
+<p>旧 SONiC は ~2400 entry が上限だった。kernel ARP cache の <strong>garbage collector 閾値</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>既定</th>
+<th>提案 (IPv4)</th>
+<th>提案 (IPv6)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gc_thresh1</code></td>
+<td>128</td>
+<td>16000</td>
+<td>8000</td>
+</tr>
+<tr>
+<td><code>gc_thresh2</code></td>
+<td>512</td>
+<td>32000</td>
+<td>16000</td>
+</tr>
+<tr>
+<td><code>gc_thresh3</code></td>
+<td>1024</td>
+<td>48000</td>
+<td>32000</td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>net.ipv4.neigh.default.gc_thresh1=16000
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>net.ipv4.neigh.default.gc_thresh2=32000
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>net.ipv4.neigh.default.gc_thresh3=48000
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>net.ipv6.neigh.default.gc_thresh1=8000
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>net.ipv6.neigh.default.gc_thresh2=16000
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>net.ipv6.neigh.default.gc_thresh3=32000
 </span></code></pre></div>
-<h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<p>各 ASIC の DB instance に追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ASIC_TEMPERATURE_INFO
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    average_temperature: FLOAT
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    maximum_temperature: FLOAT
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    temperature_0: FLOAT
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    ...
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    temperature_N: FLOAT
-</span></code></pre></div>
-<h3 id="switchorch"><code>SwitchOrch</code> の拡張<a class="headerlink" href="#switchorch" title="Permanent link">&para;</a></h3>
-<p><code>SwitchOrch</code> を <code>CFG_ASIC_SENSORS_TABLE_NAME</code> (<code>ASIC_SENSORS</code>) の consumer に追加し、新しい <strong><code>SelectableTimer sensorsPollerTimer</code></strong> （default 10 秒）を持つ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_3">ポーラ設定変更<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>burst 時の add/remove ループで entry が満杯にならない問題を解消する。</p>
+<h4 id="copp-arpnd">CoPP の ARP/ND 上限引き上げ<a class="headerlink" href="#copp-arpnd" title="Permanent link">&para;</a></h4>
+<p>旧: ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。学習時間の短縮を狙う。<code>COPP_TABLE</code> の ARP/ND group の <code>cir</code>/<code>cbs</code> を変更する想定。</p>
+<h3 id="2-route-programming">2. Route programming 時間短縮<a class="headerlink" href="#2-route-programming" title="Permanent link">&para;</a></h3>
+<p>旧時計値（AS7712 / Tomahawk 上）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>経路数</th>
+<th>IPv4 所要時間</th>
+<th>IPv6 所要時間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10k</td>
+<td>11s</td>
+<td>11s</td>
+</tr>
+<tr>
+<td>30k</td>
+<td>30s</td>
+<td>30s</td>
+</tr>
+<tr>
+<td>60k</td>
+<td>48s</td>
+<td>-</td>
+</tr>
+<tr>
+<td>90k</td>
+<td>68s</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h4 id="21-sairedis-bulk-route-api">2.1 sairedis bulk route API の利用<a class="headerlink" href="#21-sairedis-bulk-route-api" title="Permanent link">&para;</a></h4>
+<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>新: <strong>sairedis の bulk API</strong> を使う:</p>
 <ul>
-<li><code>admin_status=enable</code> → <code>sensorsPollerTimer</code> 開始</li>
-<li><code>admin_status=disable</code> → 次回 callback で timer 停止フラグを立てる</li>
-<li><code>interval</code> 変更 → 次回 callback で新 interval を反映</li>
+<li><code>RouteOrch</code> は 64 件まとめて bulk API に渡す</li>
+<li>meta_sai layer は内部で個別オブジェクトを作るが、<strong>Redis に流れる message は 1 件</strong> に集約</li>
+<li>ASIC 側は <strong>bulk route create を実装していない</strong> ため <code>syncd</code> は 1 件ずつ処理する → 純粋な節約は <strong>Redis message 数の削減</strong></li>
 </ul>
-<h4 id="_4">ポーラ動作<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p><code>sensorsPollerTimer</code> の callback で<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>disable フラグが立っていれば timer 停止</li>
-<li>interval 変更があれば timer リセット</li>
-<li><code>SAI_SWITCH_ATTR_TEMP_LIST</code> を取得し、<code>ASIC_TEMPERATURE_INFO.temperature_N</code> を更新</li>
-<li>SAI が <code>SAI_SWITCH_ATTR_AVERAGE_TEMP</code> をサポートしていれば取得し <code>average_temperature</code> を更新</li>
-<li>SAI が <code>SAI_SWITCH_ATTR_MAX_TEMP</code> をサポートしていれば取得し <code>maximum_temperature</code> を更新</li>
-</ol>
+<p><code>RouteOrch</code> に <strong>新 timer</strong> を追加し、未送信のバッチを <strong>1 秒ごとに flush</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>sequenceDiagram
-    participant CFG as CONFIG_DB.ASIC_SENSORS
-    participant SO as SwitchOrch
-    participant T as sensorsPollerTimer
+    participant RO as RouteOrch
+    participant SA as sairedis (meta_sai)
+    participant ADB as ASIC_DB
+    participant SY as syncd
     participant SAI
-    participant SDB as STATE_DB.ASIC_TEMPERATURE_INFO
-    CFG-&gt;&gt;SO: admin_status / interval 更新
-    SO-&gt;&gt;T: start / stop / reset
-    loop interval 毎
-        T-&gt;&gt;SO: callback
-        SO-&gt;&gt;SAI: get(SAI_SWITCH_ATTR_TEMP_LIST)
-        SO-&gt;&gt;SAI: get(AVERAGE_TEMP) [option]
-        SO-&gt;&gt;SAI: get(MAX_TEMP) [option]
-        SO-&gt;&gt;SDB: ASIC_TEMPERATURE_INFO 更新
+    Note over RO: 64 経路を内部キューに溜める / 1秒 timer
+    RO-&gt;&gt;SA: bulk_create_routes([r1..r64])
+    SA-&gt;&gt;SA: meta object を 64 件作る
+    SA-&gt;&gt;ADB: 1 Redis message
+    ADB-&gt;&gt;SY: 通知
+    loop 各経路
+        SY-&gt;&gt;SAI: create_route_entry()
     end</code></pre>
-<h3 id="platform">Platform 層<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h3>
-<p>ASIC 内部センサも platform の <strong><code>Thermal</code> リスト (<code>_thermal_list[]</code>)</strong> に追加する。Platform API 自体に変更は無く、<code>get_temperature()</code> の実装で <strong><code>ASIC_TEMPERATURE_INFO</code> から値を引く</strong> ことで対応する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>センサ命名（multi-ASIC 例）: <code>ASIC0 Internal 0</code>, ..., <code>ASIC0 Internal N0</code>, <code>ASIC1 Internal 0</code>, ..., <code>ASIC2 Internal N2</code></li>
-<li>既存の <code>get_high_threshold()</code> / <code>get_low_threshold()</code> / <code>get_high_critical_threshold()</code> / <code>get_name()</code> / <code>get_presence()</code> は <strong>platform 側で実装</strong>（ASIC 個別の閾値）</li>
-<li><code>get_temperature()</code> だけが対応 ASIC の DB instance から値を引く</li>
-</ul>
-<p><code>thermalctld</code> の <code>TemperatureUpdater::_refresh_temperature_status()</code> は既存通り <code>get_temperature()</code> を呼び出し、global DB の <code>TEMPERATURE_INFO</code> table に集約する。<strong><code>thermalctld</code> 自体に変更は無い</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">結果のデータパス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="22-fpmsyncd">2.2 <code>fpmsyncd</code> の最適化<a class="headerlink" href="#22-fpmsyncd" title="Permanent link">&para;</a></h4>
+<p>旧: 各経路の処理で <strong><code>rt_table</code> 属性から master device 名を kernel から取得</strong> する。これは VNET_ROUTE_TABLE 判定のため<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>問題: VNET が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
+<p>修正: <strong><code>route.rt_table == 0</code>（global routing table）</strong> なら lookup を <strong>skip</strong>。10k 経路の APP_DB 投入が <strong>7-8s → 4-5s</strong> に短縮<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="23-sairedis-json">2.3 sairedis 内 JSON ライブラリ更新<a class="headerlink" href="#23-sairedis-json" title="Permanent link">&para;</a></h4>
+<p><code>nlohmann/json</code> ライブラリの <strong>v2.0 → v3.6</strong> への更新で <code>dump()</code> 系最適化を取り込む<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="_3">期待効果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>上記合算で <strong>route programming 時間 30% 削減</strong> を目標<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="3-show-arp-show-ndp">3. <code>show arp</code> / <code>show ndp</code> の高速化<a class="headerlink" href="#3-show-arp-show-ndp" title="Permanent link">&para;</a></h3>
+<p>旧: VLAN L3 interface 上の ARP の <strong>outgoing interface を求めるため FDB 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>修正: 該当 ARP/ND <strong>特定エントリだけの FDB lookup</strong> に変更。CLI スクリプト側の改修。</p>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI ASIC sensors] --&gt; SO[SwitchOrch poller]
-    SO --&gt; ASTAT[STATE_DB.ASIC_TEMPERATURE_INFO&lt;br/&gt;per-ASIC instance]
-    ASTAT --&gt; PT[Platform Thermal.get_temperature]
-    PT --&gt; TC[thermalctld]
-    TC --&gt; GTI[STATE_DB.TEMPERATURE_INFO&lt;br/&gt;global]
-    GTI --&gt; CLI[show platform temperature]
-    GTI --&gt; SNMP[SNMP / Telemetry]</code></pre>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ASIC_SENSORS</code></td>
-<td><code>ASIC_SENSORS_POLLER_STATUS</code></td>
-<td><code>admin_status: enable/disable</code></td>
-<td>ポーラ on/off</td>
-</tr>
-<tr>
-<td><code>ASIC_SENSORS</code></td>
-<td><code>ASIC_SENSORS_POLLER_INTERVAL</code></td>
-<td><code>interval: 5..300</code></td>
-<td>polling 間隔（秒）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="state_db_1">関連する STATE_DB<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+    OLD[show arp 旧] --&gt;|FDB 全件取得| F1[1 entry 解決]
+    NEW[show arp 新] --&gt;|"FDB 個別 GET (mac, vlan)"| F2[1 entry 解決]</code></pre>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h3>
+<p><strong>新規 CLI / CONFIG_DB / YANG なし</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値、内部実装の改善のみ。</p>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
 <th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ASIC_TEMPERATURE_INFO</code></td>
-<td><code>average_temperature</code>, <code>maximum_temperature</code>, <code>temperature_0..N</code></td>
-<td>per-ASIC のセンサ値</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>show platform temperature</code></td>
-<td>ASIC 内部センサも含む全温度の表示</td>
+<td><code>COPP_TABLE</code></td>
+<td>ARP/ND group の <code>cir</code> / <code>cbs</code></td>
+<td>600 → 8000 pps</td>
+</tr>
+<tr>
+<td>(<code>/etc/sysctl.d/...</code>)</td>
+<td><code>net.ipv4.neigh.default.gc_thresh1/2/3</code> 等</td>
+<td>kernel ARP cache</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>HLD 当時 ポーラ制御専用 CLI は未定義</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>redis-cli</code> で直接 <code>ASIC_SENSORS</code> を書く運用が前提となる。</p>
-</blockquote>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 単一 ASIC 機での enable + 30 秒間隔</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;ASIC_SENSORS|ASIC_SENSORS_POLLER_STATUS&#39;</span><span class="w"> </span>admin_status<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;ASIC_SENSORS|ASIC_SENSORS_POLLER_INTERVAL&#39;</span><span class="w"> </span>interval<span class="w"> </span><span class="m">30</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># 確認</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ASIC_TEMPERATURE_INFO&#39;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>show<span class="w"> </span>platform<span class="w"> </span>temperature
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># kernel ARP/ND threshold は image 側 sysctl で適用される想定</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># 必要に応じユーザが上書き</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv4.neigh.default.gc_thresh3<span class="o">=</span><span class="m">48000</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv6.neigh.default.gc_thresh3<span class="o">=</span><span class="m">32000</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># show 高速化はバージョンに含まれる</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>show<span class="w"> </span>arp<span class="w">     </span><span class="c1"># 短縮された応答時間</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>show<span class="w"> </span>ndp
 </span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ASIC 内部センサ値は <strong>SDK / SAI 経由でしか取得できない</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>HLD 当時 <strong>ポーラ制御専用 CLI 未定義</strong>。<code>config asic-sensors ...</code> のような CLI が無いため、ユーザは redis に直接書く必要がある<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>SAI_SWITCH_ATTR_AVERAGE_TEMP</code> / <code>MAX_TEMP</code> は <strong>SAI 実装側のサポートに依存</strong>。サポートしない ASIC では <code>average_temperature</code> / <code>maximum_temperature</code> が更新されない可能性</li>
-<li><code>thermalctld.UPDATE_INTERVAL</code> のデフォルトは 60 秒。<code>ASIC_SENSORS_POLLER_INTERVAL</code> を <strong>それより短く設定</strong> しないと convergence が悪化<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>multi-ASIC 機では各 ASIC instance に対し <strong>個別に enable / interval 設定</strong> が必要</li>
-<li>thermal control の閾値（high / low / critical）は platform 実装側に委ねられ、SAI からは取得しない</li>
+<li><strong>HLD は 2019 年改訂</strong>。kernel sysctl 値や CoPP 値は <strong>その後の SONiC で更に調整</strong> されている可能性<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>gc_thresh3</code> を上げると <strong>kernel メモリ使用量</strong> が増える。低スペック CPU 機では注意</li>
+<li>CoPP の ARP/ND 上限を 8000 pps に上げると <strong>CPU 負荷増</strong>。他の trap との合算で CPU 飽和に注意</li>
+<li>sairedis bulk API は <strong>ASIC 側 bulk 未対応の場合 syncd 内で逐次処理</strong> されるため、改善幅は Redis message 削減分に留まる</li>
+<li><code>RouteOrch</code> の 1 秒 timer flush は <strong>大量経路投入時のみ効果</strong>。少量更新では遅延がむしろ増える可能性</li>
+<li><code>fpmsyncd</code> の VNET 判定スキップは <strong>VNET 利用時の挙動変更ではない</strong>（<code>rt_table != 0</code> の経路には従来通り lookup）</li>
+<li>HLD は AS7712 (Tomahawk) で測定。他 ASIC では <strong>異なる timing</strong> になる</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>SwitchOrch</code></strong>: 主体。<code>ASIC_SENSORS</code> consumer + <code>sensorsPollerTimer</code></li>
-<li><strong><code>thermalctld</code></strong>: 既存通り <code>get_temperature()</code> を呼び全センサ値を集約</li>
-<li><strong>Platform <code>Thermal</code> 実装</strong>: <code>_thermal_list[]</code> に ASIC 内部センサを追加し、<code>get_temperature()</code> で <code>ASIC_TEMPERATURE_INFO</code> から引く</li>
-<li><strong><code>pmon</code></strong>: 本 HLD では SAI 呼び出しを担わない（pmon に SAI 依存を入れないのが目的の一つ）</li>
-<li><strong>SNMP / Telemetry</strong>: <code>STATE_DB.TEMPERATURE_INFO</code> 経由で値を読める</li>
+<li><strong><code>RouteOrch</code></strong>: bulk API + timer 化</li>
+<li><strong><code>fpmsyncd</code></strong>: master device lookup 最適化</li>
+<li><strong><code>sairedis</code> (meta_sai + JSON)</strong>: bulk API + JSON 更新</li>
+<li><strong><code>syncd</code></strong>: bulk 受け取り側（ASIC SDK 個別 call）</li>
+<li><strong>kernel ARP/ND</strong>: gc_thresh による cache サイズ</li>
+<li><strong><code>COPP_TABLE</code></strong>: ARP/ND の到達 pps</li>
+<li><strong><code>show arp</code> / <code>show ndp</code> CLI</strong>: 個別 FDB lookup 化</li>
+<li><strong><code>warm boot</code></strong>: 本機能では明示変更なしだが速度向上の影響評価が必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show platform temperature</code> に ASIC センサが出ない → <code>ASIC_SENSORS_POLLER_STATUS.admin_status=enable</code> か確認、<code>ASIC_TEMPERATURE_INFO</code> の値が更新されているか確認</li>
-<li>値が古いまま → <code>interval</code> の設定値、<code>SwitchOrch</code> ログ、<code>sensorsPollerTimer</code> の起動有無を確認</li>
-<li>一部センサ列のみ NULL → SAI 側で <code>SAI_SWITCH_ATTR_AVERAGE_TEMP</code> / <code>MAX_TEMP</code> 未サポートの可能性</li>
-<li>multi-ASIC で一部 ASIC のみ表示されない → 該当 ASIC の DB instance に <code>ASIC_SENSORS</code> が入っているか確認</li>
+<li>大量経路の programming が遅い → <code>RouteOrch</code> の bulk timer ログ、Redis message 数を確認</li>
+<li>ARP entry が 32k に達しない → <code>sysctl net.ipv4.neigh.default.gc_thresh*</code> の現在値、CoPP の ARP rate limiter</li>
+<li><code>show arp</code> が遅い → <code>show arp</code> 実装が <strong>個別 FDB lookup 版</strong> か、古い版で全件取得していないかを確認</li>
+<li>VNET ありで route 反映が遅い → 本最適化の対象外（<code>rt_table != 0</code> の lookup は従来通り）</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- SwitchOrch の sensorsPollerTimer 実装存在確認（sonic-swss/orchagent）
-- ASIC_SENSORS テーブルの CONFIG_DB スキーマ取り込み確認
-- ASIC_TEMPERATURE_INFO の STATE_DB 書き込みコード（temperature_N 列）確認
-- Platform vendor の _thermal_list[] への ASIC 内部センサ追加状況確認
-- HLD 当時未定義の poller 制御 CLI が現行 sonic-utilities に追加されたか未確認
-- HLD は 2019/2020 改訂のため現行 master 実装との乖離リスクあり
+- /etc/sysctl.d 配下の SONiC default で net.ipv4/ipv6.neigh.default.gc_thresh* が設定されているか未確認
+- COPP_TABLE の ARP/ND group の cir/cbs が 600 → 8000 pps に上がっているか未確認
+- RouteOrch の bulk route API + 1 秒 timer flush の現行 master 実装確認
+- fpmsyncd の rt_table=0 での master device lookup スキップ実装確認
+- sonic-sairedis の nlohmann/json バージョン現行確認
+- show arp / show ndp の個別 FDB lookup 化が sonic-utilities に取り込まれているか確認
+- HLD は 2019 年改訂のため現行 master との乖離リスクあり
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
