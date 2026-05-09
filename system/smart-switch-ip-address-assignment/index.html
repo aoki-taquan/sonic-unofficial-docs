@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/aggregate-voq-counters-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/smart-switch-ip-address-assignment/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../secure-upgrade/">
       
       
-        <link rel="next" href="../byte-packet-rates-port-utilization-in-sonic/">
+        <link rel="next" href="../snmp-migration-from-snmp-yml-to-configdb/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>VOQ カウンタ集約（chassis supervisor からの aggregate 表示） - SONiC 非公式ドキュメント</title>
+        <title>Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#voq-chassis-supervisor-aggregate" class="md-skip">
+        <a href="#smart-switch-dpu-ip-midplane-bridge-dhcp-server" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
+              Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
             
           </span>
         </div>
@@ -357,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -423,13 +425,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../internals/" class="md-tabs__link">
           
   
   
@@ -4751,6 +4751,8 @@
       
   
   
+    
+  
   
   
     
@@ -4856,20 +4858,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -4887,13 +4892,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4913,7 +4918,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -4941,7 +4946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4969,7 +4974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4997,7 +5002,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5025,7 +5030,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5053,7 +5058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -5081,7 +5086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -5109,7 +5114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -5137,7 +5142,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -5165,7 +5170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
+      <a href="../independent-dpu-upgrade/" class="md-nav__link">
         
   
   
@@ -5193,7 +5198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -5221,7 +5226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump/" class="md-nav__link">
+      <a href="../kdump/" class="md-nav__link">
         
   
   
@@ -5249,7 +5254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -5277,7 +5282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -5305,7 +5310,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-enhancement-design/" class="md-nav__link">
+      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -5333,7 +5338,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -5361,7 +5366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5389,7 +5394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5417,7 +5422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -5445,7 +5450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -5473,7 +5478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/secure-upgrade/" class="md-nav__link">
+      <a href="../secure-upgrade/" class="md-nav__link">
         
   
   
@@ -5498,10 +5503,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/smart-switch-ip-address-assignment/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -5517,6 +5549,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Topology
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        割当ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform.json 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbsonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB（sonic-cfggen 生成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NPU 側の起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU 側の起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成生成タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5529,7 +5719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -5557,7 +5747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -5585,7 +5775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5613,7 +5803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5641,7 +5831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5669,7 +5859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5697,7 +5887,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5725,7 +5915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5753,7 +5943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5781,7 +5971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5809,7 +5999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5837,7 +6027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -5865,7 +6055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -5893,7 +6083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -5921,7 +6111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -5949,7 +6139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -5977,7 +6167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -6005,7 +6195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -6033,7 +6223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -6061,7 +6251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -6089,7 +6279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -6117,7 +6307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -6145,7 +6335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -6173,7 +6363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -8483,8 +8673,6 @@
       
   
   
-    
-  
   
   
     
@@ -8522,23 +8710,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../internals/" class="md-nav__link ">
               
   
   
@@ -8556,13 +8741,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -8579,37 +8764,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../internals/aggregate-voq-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -8625,181 +8783,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の制約
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        仕組み
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        必要となる変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI の出力
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -8812,7 +8795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
+      <a href="../../internals/byte-packet-rates-port-utilization-in-sonic/" class="md-nav__link">
         
   
   
@@ -8840,7 +8823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-utility-for-easy-debugging/" class="md-nav__link">
+      <a href="../../internals/dump-utility-for-easy-debugging/" class="md-nav__link">
         
   
   
@@ -8868,7 +8851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../l3-scaling-and-performance-enhancements/" class="md-nav__link">
+      <a href="../../internals/l3-scaling-and-performance-enhancements/" class="md-nav__link">
         
   
   
@@ -8896,7 +8879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4-orchagent/" class="md-nav__link">
+      <a href="../../internals/p4-orchagent/" class="md-nav__link">
         
   
   
@@ -8924,7 +8907,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-counter-initialization-optimization/" class="md-nav__link">
+      <a href="../../internals/sonic-counter-initialization-optimization/" class="md-nav__link">
         
   
   
@@ -8952,7 +8935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-flexcounter-refactor/" class="md-nav__link">
+      <a href="../../internals/sonic-flexcounter-refactor/" class="md-nav__link">
         
   
   
@@ -8980,7 +8963,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-multiple-user-defined-redis-database-instances/" class="md-nav__link">
+      <a href="../../internals/support-multiple-user-defined-redis-database-instances/" class="md-nav__link">
         
   
   
@@ -9008,7 +8991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
+      <a href="../../internals/support-redis-databases-in-multiple-namespaces/" class="md-nav__link">
         
   
   
@@ -9036,7 +9019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../swss-schema/" class="md-nav__link">
+      <a href="../../internals/swss-schema/" class="md-nav__link">
         
   
   
@@ -9064,7 +9047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../why-need-health-check/" class="md-nav__link">
+      <a href="../../internals/why-need-health-check/" class="md-nav__link">
         
   
   
@@ -9092,7 +9075,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../zmq-producer-consumer-state-table-design/" class="md-nav__link">
+      <a href="../../internals/zmq-producer-consumer-state-table-design/" class="md-nav__link">
         
   
   
@@ -13525,10 +13508,65 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Topology
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既存の制約
+        割当ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform.json 拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbsonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB（sonic-cfggen 生成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NPU 側の起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU 側の起動
       
     </span>
   </a>
@@ -13539,81 +13577,20 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        仕組み
+        構成生成タイミング
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        必要となる変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI の出力
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13624,7 +13601,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13635,18 +13612,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13673,7 +13639,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/internals/aggregate-voq-counters-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/smart-switch-ip-address-assignment.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -13681,157 +13647,134 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> で <code>midplane_ip</code> 取得（chassis 系）と <code>redis-cli ... config set bind "$bound_ips $midplane_ip"</code> (l.370-373) を確認。<code>sonic-utilities/scripts/queuestat</code> に <code>voq</code> モード（<code>QUEUE_TYPE_VOQ</code>, <code>voq_header</code>, <code>voq_counter_bucket_dict</code>）あり。<code>sonic-swss-common/common/dbconnector.h</code> に <code>DBConnector(int dbId, const std::string &amp;hostname, int port, ...)</code> の hostname/port 引数コンストラクタが存在し、midplane IP 経由接続に使える。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>HLD は v0.2。<code>bridge-midplane</code> の systemd-networkd 設定、<code>midplane-network-npu/dpu.service</code> oneshot、<code>DHCP_SERVER_IPV4</code> 系の port-mode IP 払い出し、sonic-cfggen の <code>t1-smartswitch</code> テンプレートは未裏取り。</p>
 </div>
-<h1 id="voq-chassis-supervisor-aggregate">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）<a class="headerlink" href="#voq-chassis-supervisor-aggregate" title="Permanent link">&para;</a></h1>
+<h1 id="smart-switch-dpu-ip-midplane-bridge-dhcp-server">Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）<a class="headerlink" href="#smart-switch-dpu-ip-midplane-bridge-dhcp-server" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>distributed VOQ アーキテクチャでは、ある <strong>出力 VOQ</strong> に対応する VOQ が <strong>システム内のすべての ASIC</strong> に存在する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各 ASIC の VOQ stats は独立した FSI に乗っており、ユーザは見たい 1 ポートのキュー深度や drop を把握するために <strong>ASIC 単位の出力を手で足し合わせる</strong> 必要があった。</p>
-<p>この HLD は chassis 系のシステムにおいて <strong>supervisor から各 linecard / ASIC の Redis に直接接続</strong> し、<code>show queue counters --voq</code> で <strong>VOQ 単位に sum を取った aggregate ビュー</strong> を返せるようにする変更を定義している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。アーキテクチャ自体は変えず、Redis を midplane IP 経由でも待ち受けさせる「アクセス経路の追加」と、それを使う CLI 改修だけで構成される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>DASH SmartSwitch では NPU と各 DPU が <strong>PCIe ベースの control plane interface (netdev)</strong> で繋がる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は DPU 側の IP アドレス割当を <strong>NPU 側の DHCP server + midplane bridge</strong> で行い、DPU は<strong>ステートレスに DHCP client として起動するだけ</strong>にする設計を提案する。割当 deterministic（DPU id ベース）、port-based（同 DPU はいつも同 IP）、PXE boot 互換、を満たす。<code>169.254.0.0/16</code> 系 link-local subnet を使うことで他ネットワークとの衝突を回避する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">既存の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>multi-ASIC system（fixed もしくは linecard）では、各 namespace に対応する Redis インスタンスは <strong>docker network 上の non-loopback IP に bind</strong> されており、loopback IP でないため Redis は <strong>unprotected mode</strong> で起動している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより同一機内の他コンテナから接続できる構造になっているが、<strong>chassis supervisor からは届かない</strong>。</p>
-<h3 id="_4">仕組み<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>docker_image_ctl.j2</code> を改修し、chassis 系の linecard 上では <strong>midplane IP も Redis の bind 対象に追加</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="nv">$ip</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$port</span><span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nb">bind</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$bound_ips</span><span class="s2"> </span><span class="nv">$midplane_ip</span><span class="s2">&quot;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="nv">$ip</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$port</span><span class="w"> </span>config<span class="w"> </span>rewrite
-</span></code></pre></div>
-<p>これで supervisor から midplane IP 経由で各 ASIC の Redis インスタンスに到達できる。あとは supervisor 上の <code>queuestat</code> / <code>show queue counters --voq</code> が全 ASIC の Redis を読み、ASIC 単位の VOQ カウンタを <strong>system port 単位で sum</strong> すれば aggregate 表示になる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="topology">Topology<a class="headerlink" href="#topology" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    subgraph LC1[Linecard 1]
-        R1A[(Redis asic0)]
-        R1B[(Redis asic1)]
-    end
-    subgraph LC2[Linecard 2]
-        R2A[(Redis asic0)]
-    end
-    SUP[Supervisor\nshow queue counters --voq] --&gt;|midplane IP| R1A
-    SUP --&gt;|midplane IP| R1B
-    SUP --&gt;|midplane IP| R2A
-    SUP --&gt; AGG[VOQ ごとに合算]
-    AGG --&gt; OUT[aggregate 表示]</code></pre>
-<h3 id="_5">必要となる変更<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>HLD は以下のリポジトリ変更を列挙している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>repo</th>
-<th>変更内容</th>
-<th>関連 PR</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>sonic-buildimage</code></td>
-<td><code>docker_image_ctl.j2</code> を改修し linecard 上で namespace Redis を midplane IP に公開</td>
-<td><a href="https://github.com/sonic-net/sonic-buildimage/pull/20803">PR 20803</a></td>
-</tr>
-<tr>
-<td><code>sonic-swss-common</code></td>
-<td><code>sonicv2connector.cpp</code> に「db 名と host IP を引数に取る」新 API を追加</td>
-<td><a href="https://github.com/sonic-net/sonic-swss-common/pull/1003">PR 1003</a></td>
-</tr>
-<tr>
-<td><code>sonic-py-swsssdk</code></td>
-<td>同等の API を Python 側 <code>dbconnector.py</code> に追加</td>
-<td><a href="https://github.com/sonic-net/sonic-py-swsssdk/pull/147">PR 147</a></td>
-</tr>
-<tr>
-<td><code>sonic-utilities</code></td>
-<td>supervisor 上で <code>show queue counters --voq</code> を全 ASIC fanout・合算</td>
-<td><a href="https://github.com/sonic-net/sonic-utilities/pull/3617">PR 3617</a></td>
-</tr>
-</tbody>
-</table>
-<p>新 API が必要な理由は、既存 <code>sonicv2connector</code> API が <strong>db_name から <code>database_config.json</code> を見て host IP / port を解決する</strong> 設計で、<strong>同一機内の namespace Redis 接続専用</strong> になっているため<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。midplane IP 経由で外部の Redis に接続するには「IP を引数で受ける」インターフェースが必要になる。</p>
-<h3 id="cli">CLI の出力<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>既存 CLI は ASIC 単位の表示だけを返す。例えば linecard <code>cmp217-5</code> 上で<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ show queue counters -n asic0 &quot;cmp217-5|asic1|Ethernet256&quot; --voq
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>For namespace asic0:
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>   Port                       Voq    Counter/pkts    ...
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   cmp217-5|asic1|Ethernet256 VOQ0   123             ...
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>$ show queue counters -n asic1 &quot;cmp217-5|asic1|Ethernet256&quot; --voq
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>For namespace asic1:
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>   ...
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>   cmp217-5|asic1|Ethernet256 VOQ0   1111            ...
+  subgraph NPU
+    BR[bridge-midplane&lt;br/&gt;169.254.200.254/24]
+    DHCP[DHCP server container&lt;br/&gt;port-based]
+    BR --- DPU0NPU[dpu0 netdev]
+    BR --- DPU1NPU[dpu1 netdev]
+  end
+  subgraph DPU0
+    DPU0DPU[PCIe netdev&lt;br/&gt;DHCP client] -- request --&gt; BR
+  end
+  subgraph DPU1
+    DPU1DPU[PCIe netdev&lt;br/&gt;DHCP client] -- request --&gt; BR
+  end</code></pre>
+<p>NPU 側に <strong><code>bridge-midplane</code></strong> を作って各 DPU の PCIe netdev を bridge member にする。bridge には <strong>固定 IP</strong> を持たせる（<code>169.254.200.254/24</code>）。各 DPU は bridge 経由で DHCP request を送り、port-based の lease で IP を受ける。</p>
+<h3 id="_3">割当ルール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>DPU id N の IP = <code>&lt;bridge_network&gt;</code> + (N + 1)</li>
+<li>例: bridge <code>169.254.200.254/24</code> で DPU0 → <code>169.254.200.1</code>、DPU1 → <code>169.254.200.2</code><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>リース期間は <code>infinite</code>（state を持たない）</li>
+</ul>
+<h3 id="platformjson"><code>platform.json</code> 拡張<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
+<p>NPU 側:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;DPUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;dpu0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;midplane_interface&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dpu0&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;dpu1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;midplane_interface&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dpu1&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;midplane_network&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;bridge_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bridge-midplane&quot;</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;bridge_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;169.254.200.254/24&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>supervisor では <code>-n</code> を取り除いた <strong>同じコマンド形</strong> で aggregate を出す<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@cmp217:~$ show queue counters &quot;cmp217-5|asic1|Ethernet256&quot; --voq
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   Port                       Voq    Counter/pkts   ...
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   cmp217-5|asic1|Ethernet256 VOQ0   1234           ...   # = 123 + 1111
+<p>DPU 側:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;DPU&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;midplane_network&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;bridge_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;169.254.200.254/24&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>つまり <strong>VOQ0 単位で全 ASIC の値を sum したもの</strong> が表示される。コマンド形が既存と一致するため、ユーザは supervisor で打ったか linecard で打ったかを意識せずに済む<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>DPU の PCIe netdev 名は <strong><code>dpu0</code>, <code>dpu1</code>, ...</strong> prefix で始める命名規約<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Vendor は init 時にこの名前で expose する。</p>
+<h3 id="config_dbsonic-cfggen">CONFIG_DB（sonic-cfggen 生成）<a class="headerlink" href="#config_dbsonic-cfggen" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEVICE_METADATA|localhost:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  switch_type = switch
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  type        = LeafRouter
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  subtype     = SmartSwitch
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>MID_PLANE_BRIDGE|GLOBAL:
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  bridge = bridge-midplane
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>DHCP_SERVER_IPV4|bridge-midplane:
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  gateway    = 169.254.200.254
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  lease_time = infinite
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>  mode       = PORT
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  netmask    = 255.255.255.0
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>  state      = enabled
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu0:
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>  ips = [&quot;169.254.200.1&quot;]
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu1:
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>  ips = [&quot;169.254.200.2&quot;]
+</span></code></pre></div>
+<h3 id="npu">NPU 側の起動<a class="headerlink" href="#npu" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>systemd-sonic-generator</code> が <code>platform.json</code> から:</li>
+<li><code>bridge-midplane.netdev</code> (Kind=bridge)</li>
+<li><code>bridge-midplane.network</code> (Address=169.254.200.254/24)</li>
+<li><code>midplane-network-npu.network</code> (Match Name=dpu*, Bridge=bridge-midplane)</li>
+</ol>
+<p>を生成
+2. <code>systemd-networkd</code> が bridge を作成し、PCIe <code>dpu*</code> netdev が出現するたび bridge に加える
+3. <code>midplane-network-npu.service</code>（oneshot）が <code>systemd-networkd-wait-online -i bridge-midplane</code> で UP 待ち、<code>database.service</code> の <code>Before=</code> で先行完了を保証<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
+4. DHCP server container がデフォルト enable で起動し、<code>DHCP_SERVER_IPV4*</code> を読んで lease 払出</p>
+<h3 id="dpu">DPU 側の起動<a class="headerlink" href="#dpu" title="Permanent link">&para;</a></h3>
+<p>DPU では DHCP client (<code>midplane-network-dpu.service</code> 経由) を <strong>PCIe netdev で起動</strong>するだけ。state を持たないので reboot 後も同じ IP が再払出される（NPU 側の port-based 設定で deterministic）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="_4">構成生成タイミング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>初回起動で CONFIG_DB が空の場合</li>
+<li><code>config-setup.service</code> 再起動による recovery</li>
+<li>いずれも sonic-cfggen が <code>t1-smartswitch</code> テンプレートと <code>platform.json</code> から生成</li>
+</ul>
 <!-- evidence:
-source: sonic-net/SONiC/doc/voq/aggregate_voq_counters.md#L34-L44 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md#L80-L104 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  We can leverage this property to expose redis instances that correspond to each ASIC over midplane IP addresses
-  redis-cli -h $ip -p $port config set bind "$bound_ips $midplane_ip"
-  redis-cli -h $ip -p $port config rewrite
-  Then queuestat script can access the counters data and provide the user an aggregated view of the VOQ counters.
-reasoning: midplane IP に Redis を公開してから supervisor の queuestat が aggregate するという中核手順の根拠。
+  DHCP server on the switch side shall be used. ... port-based which guarantees the deterministic behavior,
+  the same DPU shall always receive the same IP address on request.
+  ... bridge interface ("midplane bridge") shall be used. ... IPv4 link-local subnetwork is chosen.
+reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠。
 -->
 
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>このページの機能はビルド時のテンプレ変更と CLI 拡張で完結する。エンドユーザ向け設定インターフェースは HLD では定義されていない。</p>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは HLD 内で定義されていない。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show queue counters &lt;port&gt; --voq</code></td>
-<td>ASIC 単位（linecard）/ aggregate（supervisor）の VOQ 統計表示</td>
-</tr>
-<tr>
-<td><code>show queue counters -n &lt;namespace&gt; &lt;port&gt; --voq</code></td>
-<td>既存の ASIC 単位表示（namespace 指定）</td>
-</tr>
-</tbody>
-</table>
-<p>clear 系は <strong>未対応</strong>（後述の制限事項）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>HLD が明示している制限<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>single ASIC linecard では Redis を midplane IP に公開しない</strong>。single ASIC の場合 Redis は protected mode で動作しており、外部公開の改修対象外となっているため。</li>
-<li><strong>aggregate VOQ カウンタの clear は未サポート</strong>。supervisor 上での <code>sonic-clear queue counters</code> 相当の集約クリア機能はこの HLD のスコープ外。</li>
-</ol>
-<p>加えて HLD には未明示だが運用上気にする点:</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>midplane IP に Redis を unprotected で晒す形になるため、<strong>midplane network のセキュリティ前提に依存</strong> する。chassis 内クローズドネットワークでないと攻撃面になる。</li>
+<li>DPU PCIe netdev 命名 <code>dpu&lt;N&gt;</code> を vendor が遵守する必要</li>
+<li>IP は <code>169.254.0.0/16</code> 内推奨だが platform で上書き可（衝突注意）</li>
+<li>DHCP server コンテナ取込み（<a href="https://github.com/sonic-net/SONiC/pull/1282">SONiC PR #1282</a>）が前提</li>
+<li>DPU 側でも <code>midplane_network.bridge_address</code> を持つが、これは情報共有用で systemd-networkd 起動には不要</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 <code>show queue counters</code> (linecard 上)</strong>: 影響なし。<code>-n &lt;ns&gt;</code> 指定の ASIC 単位表示はそのまま残る。</li>
-<li><strong><code>sonicv2connector</code> を使う他のスクリプト</strong>: 既存 API は維持される。新 API（db 名 + host IP 引数）は midplane 接続用途専用。</li>
-<li><strong>chassis startup 順序</strong>: midplane IP の bind は <code>docker_image_ctl.j2</code> のテンプレ展開時に行われるため、linecard 上の database docker 起動完了 → supervisor の CLI が叩ける、という依存関係が発生する。supervisor 側で繋がらなかった場合のフォールバック挙動は HLD には記述されていない。</li>
-<li><strong>distributed VOQ architecture</strong>: 前提として <code>doc/voq/architecture.md</code> の VOQ アーキテクチャに従う chassis を対象とする。fixed multi-ASIC でも midplane IP の概念がない場合は本機能の対象外。</li>
+<li><strong>DPU graceful shutdown / DPU upgrade</strong>: midplane network が落ちると gNOI 経路も使えない</li>
+<li><strong>DHCP server container</strong>: 既存実装をそのまま再利用</li>
+<li><strong>systemd-networkd</strong>: bridge / network 設定の生成基盤</li>
+<li><strong><code>config-setup</code> / sonic-cfggen</strong>: <code>t1-smartswitch</code> テンプレ</li>
+<li><strong>DASH HA / hamgrd</strong>: midplane が NPU↔DPU の lifeline</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li>supervisor で <code>show queue counters --voq</code> が空: midplane IP に Redis が bind されていない可能性。linecard 側で <code>redis-cli config get bind</code> を確認。</li>
-<li>数値が ASIC 単位の合計と合わない: 集計対象の ASIC のうち一部の Redis に到達できていない可能性。supervisor から <code>redis-cli -h &lt;midplane_ip&gt;</code> で疎通確認。</li>
-<li>単一 ASIC linecard で aggregate が出ない: HLD の制限事項に該当。supervisor からの aggregate 表示は対象外。</li>
-<li>aggregate 値を clear したい: 現状 unsupported。各 linecard / namespace で個別に <code>sonic-clear</code> する必要がある。</li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- evidence (verifier-batch-19):
-- sonic-buildimage `files/build_templates/docker_image_ctl.j2` で `midplane_ip` 変数（l.196〜265）と `redis-cli -h $ip -p $port config set bind "$bound_ips $midplane_ip"` + `config rewrite` (l.370-373) を確認
-- sonic-utilities `scripts/queuestat` に `QUEUE_TYPE_VOQ='VOQ'`, `SAI_QUEUE_TYPE_UNICAST_VOQ`, `COUNTERS_VOQ_NAME_MAP`, `voq_header` テーブル、`Queuestat(... voq=...)` 引数 (l.71-206)
-- sonic-swss-common `common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, unsigned int timeout_ms);` (l.217) の hostname/port 直指定コンストラクタあり
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- bridge-midplane の systemd-networkd 設定 (.netdev / .network) と systemd-sonic-generator 取り込み確認
+- midplane-network-npu.service / dpu.service の oneshot 起動と database.service Before= 連携確認
+- DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT の sonic-yang-models 反映確認
+- t1-smartswitch topology テンプレートの sonic-cfggen 取り込み確認
+- DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認
+- DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/aggregate_voq_counters.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
