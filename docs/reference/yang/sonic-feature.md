@@ -1,0 +1,80 @@
+---
+title: sonic-feature YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-feature.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [FEATURE]
+  cli: ["config feature"]
+  yang: []
+---
+
+# sonic-feature YANG
+
+## 概要
+
+- module: `sonic-feature`
+- namespace: `http://github.com/sonic-net/sonic-feature`
+- revision: ``
+- import: `sonic-types`
+- top container: `sonic-feature`
+
+SONiC service/feature enable, disable, and auto-restart control YANG module.[^1]
+
+## ツリー
+
+```
+module: sonic-feature
+  +--rw sonic-feature
+     +--rw FEATURE
+        +--rw FEATURE_LIST* [name]
+           +--rw name                         string
+           +--rw state?                       feature-state
+           +--rw auto_restart?                feature-state
+           +--rw delayed?                     feature-delay-status
+           +--rw has_global_scope?            feature-scope-status
+           +--rw has_per_asic_scope?          feature-scope-status
+           +--rw has_per_dpu_scope?           feature-scope-status
+           +--rw high_mem_alert?              feature-state
+           +--rw set_owner?                   feature-owner
+           +--rw check_up_status?             stypes:boolean_type
+           +--rw support_syslog_rate_limit?   stypes:boolean_type
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `name` | `sonic-feature/FEATURE/FEATURE_LIST/name` | `string` | yes |  | length 1..32 | Name of the SONiC feature or service. |
+| `state` | `sonic-feature/FEATURE/FEATURE_LIST/state` | `feature-state` |  | enabled |  | Administrative state of the feature (enabled, disabled, or always_enabled). |
+| `auto_restart` | `sonic-feature/FEATURE/FEATURE_LIST/auto_restart` | `feature-state` |  | enabled |  | Enable or disable automatic restart of the feature on failure. |
+| `delayed` | `sonic-feature/FEATURE/FEATURE_LIST/delayed` | `feature-delay-status` |  | false |  | Delay starting this feature until system initialization completes. |
+| `has_global_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_global_scope` | `feature-scope-status` |  | false |  | When true, only one instance of this service runs on the device. |
+| `has_per_asic_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_per_asic_scope` | `feature-scope-status` |  | false |  | When true, one instance of this service runs per ASIC. |
+| `has_per_dpu_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_per_dpu_scope` | `feature-scope-status` |  | false |  | When true, one instance of this service runs per DPU. |
+| `high_mem_alert` | `sonic-feature/FEATURE/FEATURE_LIST/high_mem_alert` | `feature-state` |  | disabled |  | Enable or disable alerting on high memory utilization by this feature. |
+| `set_owner` | `sonic-feature/FEATURE/FEATURE_LIST/set_owner` | `feature-owner` |  | local |  | Whether the feature container is managed by Kubernetes or locally. |
+| `check_up_status` | `sonic-feature/FEATURE/FEATURE_LIST/check_up_status` | `stypes:boolean_type` |  | false |  | When true, the system-ready tool monitors this feature's readiness. |
+| `support_syslog_rate_limit` | `sonic-feature/FEATURE/FEATURE_LIST/support_syslog_rate_limit` | `stypes:boolean_type` |  | false |  | When true, this feature supports per-service syslog rate limiting. |
+
+## leafref / 依存
+
+- なし（このモジュール内で直接 leafref を持つ leaf はない）
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `FEATURE`
+- CLI: `config feature`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
