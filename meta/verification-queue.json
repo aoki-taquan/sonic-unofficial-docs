@@ -219,6 +219,19 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/platform-capability-file-enhancement.md",
+      "issue": 81,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-platform-common の Platform API 側で capabilities セクションを読む経路の実装確認",
+        "ベンダ提供 platform.json で capabilities が埋まっている事例の確認",
+        "fan speed の単位 (% or RPM) の明文化",
+        "controllable=false を尊重しない上位アプリ経路がないか",
+        "thermalctld / fan control 系の minimum/maximum 反映実装"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/overlay/vnet-local-endpoint-forwarding.md",
       "issue": 79,
       "verification": "hld-only",
