@@ -1,0 +1,12 @@
+{
+  "page": "docs/platform/s3ip-sysfs-specification.md",
+  "verification": "hld-only",
+  "concerns": [
+    "/sys_switch/ tree の現行 vendor 採用状況（platform/<vendor>/sonic_platform/）確認",
+    "s3ip_sysfs_framework HLD と本仕様の対応 / SONiC 側 plugin 取り込み確認",
+    "temp/vol/curr の max/min の R/W がどの consumer から書かれるか整合確認",
+    "modular / Smart Switch slot への namespace 拡張の整合確認",
+    "仕様文書の数値型 (millidegree / mV / mA / RPM) と SONiC platform API の単位整合確認"
+  ],
+  "priority": "low"
+}
