@@ -1208,7 +1208,8 @@
         "platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認"
       ],
       "priority": "high",
-      "issue": 193
+      "issue": 193,
+      "pr": 194
     }
   ]
 }
