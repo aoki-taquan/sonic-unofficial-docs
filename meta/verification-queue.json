@@ -1697,6 +1697,20 @@
       "priority": "medium"
     },
     {
+      "page": "docs/system/dataplane-telemetry-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SAI_OBJECT_TYPE_DTEL_REPORT_SESSION / SAI_OBJECT_TYPE_DTEL_INT_SESSION / SAI_OBJECT_TYPE_DTEL_QUEUE_REPORT 等の DTel SAI 属性の community SAI 取り込み確認",
+        "DTEL_*_TABLE (DTEL_E_EVENT_TABLE 等) の CONFIG_DB スキーマと現行 swss orchagent サポート確認",
+        "sonic-mgmt の dtel.yml と dtel/sonic 二層モジュール構造の実装存在確認",
+        "INT instruction mask の DUT 側ハンドリングが Phase 別に対応されているか確認 (switch id / ports / latency / queue)",
+        "Postcard / Drop report / Queue report が対応 ASIC で実機検証済か確認",
+        "Barefoot 以外の ASIC (Broadcom 等) での DTel サポート状況確認"
+      ],
+      "priority": "medium",
+      "issue": 526
+    },
+    {
       "page": "docs/system/kdump-remote-ssh.md",
       "verification": "code-verified",
       "concerns": [],
