@@ -723,6 +723,20 @@
         "sonic-mgmt の test_acl.py の更新状況"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md",
+      "issue": 127,
+      "verification": "hld-only",
+      "concerns": [
+        "Copporch の SAI enum capability query 実装",
+        "supported_trap_ids / default_supported_trap_ids の管理コード",
+        "STATE_DB COPP_TRAP_CAPABILITY_TABLE と hw_status の最終スキーマ",
+        "copp_cfg.j2 の queue1_group3 / neighbor_miss 追加の master 反映",
+        "show copp configuration CLI の sonic-utilities 取り込み",
+        "SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS のベンダー実装状況"
+      ],
+      "priority": "high"
     }
   ]
 }
