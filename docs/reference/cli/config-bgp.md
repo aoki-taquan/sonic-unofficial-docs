@@ -1,0 +1,208 @@
+---
+title: config bgp サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: config/bgp_cli.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-utilities
+    path: utilities_common/bgp.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - BGP_NEIGHBOR
+    - BGP_DEVICE_GLOBAL
+    - BGP_AGGREGATE_ADDRESS
+  cli:
+    - config bgp
+  yang: []
+---
+
+# config bgp サブコマンド
+
+## 概要
+
+`config bgp` は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は FRR が握っているが、SONiC はその設定状態を **CONFIG_DB** に保存し、`bgpcfgd` が CONFIG_DB → FRR (vtysh) に反映する。`config bgp` は CONFIG_DB を直接書き換える役割を担う[^1]。
+
+`config/main.py` 末尾で `config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)` `add_command(bgp_cli.AGGREGATE_ADDRESS)` の形で `config/bgp_cli.py` のサブグループが追加される構造のため、cli.json (機械抽出) には `device-global` / `aggregate-address` 配下が現れない。本ページでは両方を統合して扱う。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `config bgp shutdown all` | すべての BGP セッションをダウン |
+| `config bgp shutdown neighbor <ipaddr_or_hostname>` | 指定隣接の BGP セッションをダウン |
+| `config bgp startup all` | すべての BGP セッションをアップ |
+| `config bgp startup neighbor <ipaddr_or_hostname>` | 指定隣接の BGP セッションをアップ |
+| `config bgp remove neighbor <neighbor_ip_or_hostname>` | 隣接設定そのものを削除 |
+| `config bgp device-global tsa enabled` | TSA (Traffic-Shift-Away) を有効化 |
+| `config bgp device-global tsa disabled` | TSA を無効化 |
+| `config bgp device-global w-ecmp enabled` | W-ECMP (Weighted-Cost Multi-Path) を有効化 |
+| `config bgp device-global w-ecmp disabled` | W-ECMP を無効化 |
+| `config bgp aggregate-address add <address> [options]` | 集約 prefix を追加 |
+| `config bgp aggregate-address remove <address>` | 集約 prefix を削除 |
+
+## 各コマンドの詳細
+
+### `config bgp shutdown all`
+
+**用法**:
+
+```
+config bgp shutdown all [-v|--verbose]
+```
+
+**動作**:
+全隣接 IP を CONFIG_DB の `BGP_NEIGHBOR` テーブルから列挙し、各エントリの `admin_status` を `down` に書き換える[^2]。multi-ASIC では各 namespace の **front_ns**（外部 EBGP 隣接側）のみが対象。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @shutdown.command()
+  def all(verbose):
+      ...
+      for namespace in namespaces:
+          config_db = ConfigDBConnector(...)
+          ...
+          for ipaddress in bgp_neighbor_ip_list:
+              _change_bgp_session_status_by_addr(config_db, ipaddress, 'down', verbose)
+-->
+
+### `config bgp shutdown neighbor <ipaddr_or_hostname>`
+
+**用法**:
+
+```
+config bgp shutdown neighbor <ipaddr_or_hostname> [-v|--verbose]
+```
+
+**引数**:
+
+- `<ipaddr_or_hostname>` ... 隣接 IP アドレス、または DEVICE_NEIGHBOR テーブルで定義された hostname
+
+**動作**:
+`_change_bgp_session_status` が CONFIG_DB の `BGP_NEIGHBOR|<ip>` の `admin_status` を `down` に更新する。multi-ASIC では `front_ns` + `back_ns` の両方を走査し、見つからなければエラー終了。
+
+### `config bgp startup all` / `config bgp startup neighbor`
+
+`shutdown` と対称。書き換え値が `up` になるだけで、引数・オプション・スコープは同一。
+
+### `config bgp remove neighbor <neighbor_ip_or_hostname>`
+
+**用法**:
+
+```
+config bgp remove neighbor <neighbor_ip_or_hostname>
+```
+
+**動作**:
+`_remove_bgp_neighbor_config` が `BGP_NEIGHBOR` テーブルから当該エントリを完全削除する。`admin_status` を変えるだけの shutdown と異なり、隣接定義そのものが消える。multi-ASIC では `front_ns` + `back_ns` を走査。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @remove.command('neighbor')
+  def remove_neighbor(neighbor_ip_or_hostname):
+      ...
+      if _remove_bgp_neighbor_config(config_db, neighbor_ip_or_hostname):
+          removed_neighbor = True
+-->
+
+### `config bgp device-global tsa enabled` / `disabled`
+
+**用法**:
+
+```
+config bgp device-global tsa enabled
+config bgp device-global tsa disabled
+```
+
+**動作**:
+`tsa_handler` が `BGP_DEVICE_GLOBAL` テーブルの key `STATE` の `tsa_enabled` フィールドを `true` / `false` に更新する。隣接単位ではなくスイッチ全体の状態変更で、外部向けトラフィックを能動的に他デバイスに振り替えるための機能[^3]。
+
+### `config bgp device-global w-ecmp enabled` / `disabled`
+
+**動作**:
+`wcmp_handler` が `BGP_DEVICE_GLOBAL|STATE` の `wcmp_enabled` を更新する。Weighted-Cost Multi-Path 機能のスイッチ全体スコープのオン／オフ。
+
+### `config bgp aggregate-address add <address> [options]`
+
+**用法**:
+
+```
+config bgp aggregate-address add <address>
+    [--bbr-required]
+    [--summary-only]
+    [--as-set]
+    [--aggregate-address-prefix-list <name>]
+    [--contributing-address-prefix-list <name>]
+```
+
+**引数**:
+
+- `<address>` ... 集約 prefix（IPv4/IPv6 両対応、`ipaddress.ip_network(strict=False)` で検証）
+
+**オプション**:
+
+- `--bbr-required` ... BBR (Best-path-Backup-Route) 経路がある場合のみ集約を生成
+- `--summary-only` ... 集約のみ広告（contributing route は抑止）
+- `--as-set` ... AS_SET 属性を付与
+- `--aggregate-address-prefix-list <name>` ... 集約 prefix を追加する prefix list 名
+- `--contributing-address-prefix-list <name>` ... contributing prefix の選別に使う prefix list 名
+
+prefix-list 名は YANG 由来の制約 `[0-9a-zA-Z_-]*`、最大 128 文字でバリデートされる[^4]。
+
+**動作**:
+CONFIG_DB の `BGP_AGGREGATE_ADDRESS|<address>` を `set_entry` で作成。同じ key が既存ならエラーで終了する（idempotent ではない）。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/bgp_cli.py#L255-L286 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def AGGREGATE_ADDRESS_ADD(ctx, db, address, bbr_required, summary_only, as_set, ...):
+      table = CFG_BGP_AGGREGATE_ADDRESS  # = "BGP_AGGREGATE_ADDRESS"
+      key = address
+      ...
+      if table in cfg and key in cfg[table]:
+          ctx.fail("Aggregate address '{}' already exists".format(key))
+      data = {
+          "bbr-required": ..., "summary-only": ..., "as-set": ...,
+          "aggregate-address-prefix-list": ...,
+          "contributing-address-prefix-list": ...,
+      }
+      db.cfgdb.set_entry(table, key, data)
+-->
+
+### `config bgp aggregate-address remove <address>`
+
+**動作**:
+`BGP_AGGREGATE_ADDRESS|<address>` を `set_entry(..., None)` で削除。存在しない key を渡すとエラー終了。
+
+## 関連する CONFIG_DB
+
+| テーブル | 書き換える key/フィールド | 操作するコマンド |
+|----------|--------------------------|------------------|
+| `BGP_NEIGHBOR` | `<ip>` の `admin_status` | `config bgp shutdown ...` / `config bgp startup ...` |
+| `BGP_NEIGHBOR` | エントリ全削除 | `config bgp remove neighbor` |
+| `BGP_DEVICE_GLOBAL` | `STATE` の `tsa_enabled` | `config bgp device-global tsa ...` |
+| `BGP_DEVICE_GLOBAL` | `STATE` の `wcmp_enabled` | `config bgp device-global w-ecmp ...` |
+| `BGP_AGGREGATE_ADDRESS` | `<prefix>` の `bbr-required` / `summary-only` / `as-set` / `aggregate-address-prefix-list` / `contributing-address-prefix-list` | `config bgp aggregate-address add/remove` |
+
+## multi-ASIC スコープ
+
+- `shutdown all` / `startup all`: **`front_ns` のみ**（外部 EBGP 隣接側）
+- `shutdown neighbor` / `startup neighbor` / `remove neighbor`: `front_ns` + `back_ns` 両方を走査
+
+## 引用元
+
+[^1]: `config bgp` グループ定義は `config/main.py` の L4918-L4921。`@config.group(cls=clicommon.AbbreviationGroup)` で `bgp` が宣言される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4918>
+
+[^2]: `_change_bgp_session_status_by_addr` の実装は CONFIG_DB の `BGP_NEIGHBOR|<ip>` を直接 mod する。同 `config/main.py` 上部のヘルパ参照。
+
+[^3]: TSA / W-ECMP の CONFIG_DB key は `swsscommon.CFG_BGP_DEVICE_GLOBAL_TABLE_NAME = "BGP_DEVICE_GLOBAL"`、key は `STATE`。`utilities_common/bgp.py` L1-L13 を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/utilities_common/bgp.py>
+
+[^4]: prefix-list 名のバリデータは `validate_prefix_list_name` (`config/bgp_cli.py` L215-L226)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/bgp_cli.py#L215>
