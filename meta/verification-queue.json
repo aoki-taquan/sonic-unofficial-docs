@@ -1445,6 +1445,22 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-mgmt の test_vrf.py 実装存在確認",
+        "frr.conf.j2 の VRF テンプレート拡張 (router bgp <as> vrf <name> ブロック生成) の現行 master 確認",
+        "BGP_NEIGHBOR / BGP_PEER_RANGE の vrf_name 属性の Schema 取り込み確認",
+        "acl-loader の redirect:<ip>@<intf> action 構文の現行サポート確認",
+        "warm-reboot 中の VRF 連続トラフィック保証の現行挙動確認",
+        "1000 VRF 実機到達性の確認",
+        "TODO 項目 (fallback_lookup / route leak / everflow) の現行実装ステータス確認"
+      ],
+      "priority": "medium",
+      "issue": 509,
+      "pr": 510
+    },
+    {
       "page": "docs/routing/vrf-vs-test-plan.md",
       "verification": "hld-only",
       "concerns": [
