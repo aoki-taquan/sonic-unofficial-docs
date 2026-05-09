@@ -1384,6 +1384,22 @@
         "3 回リトライ後 init 中止フローの実装確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/platform/fec-flr-support-in-sonic.md",
+      "issue": 219,
+      "pr": 220,
+      "verification": "hld-only",
+      "concerns": [
+        "port_flr.lua の sonic-swss 取り込み確認",
+        "FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認",
+        "COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ追加確認",
+        "portstat -f / show fec-stats への FLR(O) / FLR(P) カラム追加確認",
+        "counterpoll port flr-interval-factor の sonic-utilities 取り込み確認",
+        "SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況",
+        "interleaving factor 取得用の新 SAI 属性提案進捗"
+      ],
+      "priority": "medium"
     }
   ]
 }

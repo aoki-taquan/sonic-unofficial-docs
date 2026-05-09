@@ -1,0 +1,234 @@
+---
+title: FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+area: platform
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/port_fec_flr/port_fec_flr.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - FLEX_COUNTER_TABLE
+  cli:
+    - show interfaces counters fec-stats
+    - counterpoll port flr-interval-factor
+    - portstat -f
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    HLD は v0.2 (2025-07) で `port_flr.lua` 追加と FlexCounterOrch 拡張、speed → interleaving factor table、predicted FLR の線形回帰アルゴリズム。**SAI 属性 `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si` の community SAI / vendor SAI 提供状況**は要確認。
+
+# FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+
+## 概要
+
+`Frame Loss Ratio (FLR)` は **送信フレームに対する欠落フレームの割合** で、リンク品質の代表指標[^1]:
+
+```
+FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
+```
+
+物理層側では Codeword Error Ratio（CER）が分かれば、interleaving 係数を掛けて FLR を見積もれる。SONiC はこれを **counter poll プラグイン (`port_flr.lua`)** として ASIC の FEC counter から計算し、COUNTER_DB に保管 → telemetry 配信する設計を導入する[^1]。
+
+機能[^1]:
+
+1. **Observed FEC FLR** の周期算出（直近 interval の CER × interleaving）
+2. **Predicted FEC FLR** の予測（codeword error 分布の対数線形回帰で 16–20 symbol errors の領域を外挿）
+3. `show interfaces counters fec-stats` に **`FLR(O)` と `FLR(P)`** カラム追加
+4. `counterpoll port flr-interval-factor <factor>` で計算間隔を調整（既定 `120`）
+
+## 動作仕様
+
+### コンポーネント関係
+
+```mermaid
+flowchart LR
+    SAI[SAI counters\nIF_IN_FEC_*] --> COUNTERS[COUNTER_DB:COUNTERS]
+    COUNTERS --> LUA[port_flr.lua\n(plugin under PORT_STAT)]
+    CFG[CONFIG_DB\nFLEX_COUNTER_TABLE\nflr-interval-factor] --> FCO[FlexCounterOrch]
+    FCO --> FCDB[FLEX_COUNTER_DB\nFLR_INTERVAL_FACTOR]
+    FCDB --> LUA
+    LUA --> RATES[COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last]
+    RATES --> CLI[portstat -f / show fec-stats]
+    RATES --> TEL[telemetry]
+```
+
+### 使う SAI counter
+
+すべて既存の SAI port counter[^1]:
+
+- `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES`
+- `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES`
+- `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15`（RS-544 では 16 bin）
+
+サポートしないインタフェースは個別 counter が **`not support`** を返し、`portstat -f` 上では `N/A` を表示[^1]。
+
+### COUNTER_DB の追加 entry
+
+`COUNTER_DB:RATES` に以下が **新規追加**[^1]:
+
+| Entry | 説明 |
+|-------|------|
+| `FEC_FLR` | observed FEC FLR（float） |
+| `FEC_FLR_PREDICTED` | predicted FEC FLR（float） |
+| `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES_last` | 直前値 |
+| `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES_last` | 直前値 |
+| `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si_last` | 直前値（i=0..15） |
+
+CONFIG_DB / SAI API / sonic-platform-common には変更なし[^1]。
+
+### Observed FEC FLR
+
+```mermaid
+flowchart TD
+    A[Δ uncorrectable_cw\n= NOT_CORR - NOT_CORR_last] --> C
+    B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --> C
+    C[CER = Δ uncorrectable / Δ total]
+    C --> D{interleaving X}
+    D -->|X=1| E1[FLR = 1.125 * CER]
+    D -->|X=2| E2[FLR = 2.125 * CER]
+    D -->|X=4| E4[FLR = 4.125 * CER]
+```
+
+公式（IEEE 802.3df Logic Ad Hoc 由来）[^1]:
+
+```
+FEC_FLR = CER * (1 + X * MFC) / MFC
+RS-544: MFC = 8
+  X=1 → FLR = 1.125 * CER
+  X=2 → FLR = 2.125 * CER
+  X=4 → FLR = 4.125 * CER
+```
+
+X（interleaving factor）は理想的には **新 SAI 属性** で取得したいが、未対応のため **port speed × lane 数の表** で当面代替する[^1]:
+
+| Speed | Lanes | X |
+|-------|-------|---|
+| 1600G | 8 | 4 |
+| 800G  | 8 | 4 |
+| 400G  | 8 | 2 |
+| 400G  | 4 | 2 |
+| 200G  | 4 | 2 |
+| 200G  | 2 | 2 |
+| 100G  | 2 | 2 |
+| 100G  | 1 | 1 or 2 (autoneg) |
+
+### Predicted FEC FLR
+
+エラーが小さく Observed が 0 になりがちな現役リンクで、**外挿** で先読みするのが目的[^1]。
+
+ステップ[^1]:
+
+1. `x = [1, 2, ..., 15]`、`codeword_errors[i] = ΔSi`
+2. `y[i] = log10( codeword_errors[i] / total_cw )`
+3. 線形回帰で `slope`, `intercept` を求める（`y = slope*x + intercept`）
+4. 16–20 symbol errors の窓で外挿: `predicted_cer = Σ_{j=16..20} 10^(j*slope + intercept)`
+5. `FEC_FLR_PREDICTED = (1.125 / 2.125 / 4.125) * predicted_cer`（X 別）
+6. `COUNTER_DB:RATES` に `FEC_FLR_PREDICTED` と `*_last` を保存
+
+20 を超える symbol error は `predicted_cer` への寄与が無視できる量になるので 16–20 に窓を切る[^1]。
+
+非ゼロ bin が **2 個未満** だと回帰できないので、その場合 `FLR(P)` は `0` を表示する（`N/A` ではなく `0` にして CLI 表示の readability を優先）[^1]。
+
+### Counter poll の周期
+
+`port_flr.lua` は **既存 `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP`** にプラグインとして登録する[^1]。`port_rates.lua` と並ぶ位置づけ。
+
+実行間隔[^1]:
+
+```
+interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
+```
+
+`FLR_INTERVAL_FACTOR` は **`FLEX_COUNTER_DB`** から読む。`FlexCounterOrch` が CONFIG_DB の `counterpoll port flr-interval-factor` を伝搬する。デフォルト `120`[^1]。
+
+つまり port_stat poll が `1000ms` であれば FLR 計算は `120` 秒に 1 回。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/port_fec_flr/port_fec_flr.md#L74-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  port_flr.lua
+    - Access the COUNTER_DB for already available counters for SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES, SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES,
+      and SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si...
+    - Perform the FEC FLR computation on each port once every `port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR` seconds
+  portsorch.cpp
+    - Link the new "port_flr.lua" script as a plugin to the existing PORT_STAT_COUNTER_FLEX_COUNTER_GROUP
+  flexcounterorch.cpp
+    - Enhance "FlexCounterOrch" to propagate FLR_INTERVAL_FACTOR from CONFIG_DB to FLEX_COUNTER_DB.
+reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR の伝搬経路の根拠。
+-->
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | Key | フィールド |
+|-------|-----|-----------|
+| `FLEX_COUNTER_TABLE` | `PORT` | `FLR_INTERVAL_FACTOR`（FlexCounterOrch が CONFIG_DB → FLEX_COUNTER_DB に伝搬） |
+
+### 関連する CLI
+
+| Command | 用途 |
+|---------|------|
+| `counterpoll port flr-interval-factor <factor>` | 計算周期（デフォルト 120）の設定[^1] |
+| `show interfaces counters fec-stats` | `FLR(O)` / `FLR(P)` カラム追加[^1] |
+| `portstat -f` | 上記の内部呼び出し（CLI が叩く形）[^1] |
+
+### 設定例
+
+```bash
+# 60 秒に 1 回計算（port_stat poll 1s 前提なら 60 倍）
+counterpoll port flr-interval-factor 60
+
+# 表示
+show interfaces counters fec-stats
+```
+
+期待表示[^1]:
+
+```
+IFACE         STATE FEC_CORR FEC_UNCORR FEC_SYMBOL_ERR ... FLR(O)  FLR(P) (Accuracy)
+Ethernet72    U     28,531   0          31                 0       2.68e-09 (79%)
+Ethernet80    U     25,890   0          25                 0       6.03e-09 (79%)
+Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%)
+```
+
+## 制限事項
+
+- 必要な SAI counter（`SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si` 等）が **未サポートの interface は `N/A`** 表示[^1]
+- 非ゼロ bin が 2 個未満で回帰できない場合は `FLR(P) = 0`[^1]
+- interleaving factor X は **port speed × lane 数の固定テーブル** で代替している。新 SAI 属性が追加されればそちらに置換予定[^1]
+- 100G × 1 lane の場合 X は **autonegotiated**（1 or 2）。誤った X を使うと FLR が 2 倍ずれる[^1]
+- 計算は `port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR` 周期。ASIC counter の更新粒度に依存
+- predicted は **線形回帰の外挿** に過ぎず、低 BER 領域での実測 FLR と乖離する可能性
+
+## 干渉する機能
+
+- **既存 `port_rates.lua`**: 同じ `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` プラグイン。両方が同じ COUNTER_DB を参照
+- **FlexCounterOrch / counterpoll**: poll 周期を共有。`counterpoll port disable` するとこの計算も止まる
+- **show interfaces counters fec-stats**: FEC pre/post BER 計算と並行して FLR を載せる
+- **telemetry**: `COUNTER_DB:RATES` の `FEC_FLR` / `FEC_FLR_PREDICTED` を gNMI で配信できる
+- **port speed 変更（DPB / breakout）**: interleaving factor X が再評価される
+
+## トラブルシューティング
+
+- `FLR(O)` がずっと 0: 直近 interval で uncorrectable codeword が 0。健全だが、predicted も併せて見ると劣化傾向が出やすい
+- `FLR(P)` が `0` 表示: 非ゼロの symbol error bin が 2 個未満。回帰不能
+- `N/A` 表示: SAI counter が当該 platform で未対応
+- 値が想定の半分/倍: interleaving factor X の取り違え。port speed と lane 数を再確認
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- port_flr.lua の swss 取り込み確認
+- FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認
+- COUNTER_DB:RATES の FEC_FLR / FEC_FLR_PREDICTED スキーマ追加確認
+- portstat -f / show fec-stats への FLR(O) / FLR(P) カラム追加確認
+- counterpoll port flr-interval-factor サブコマンド sonic-utilities 取り込み確認
+- SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況
+- interleaving factor X 取得用の新 SAI 属性提案 / 進捗
+-->
