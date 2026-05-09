@@ -5496,9 +5496,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（Rev 0.1, 2025-02）のみを根拠に書かれている。<code>Copporch</code> の SAI enum capability query 実装、<code>STATE_DB.COPP_TRAP_CAPABILITY_TABLE</code> のスキーマ、<code>show copp configuration</code> CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p>現行 master の <code>sonic-swss/orchagent/copporch.cpp:99</code> で <code>neighbor_miss → SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code> マップ、line 106 の <code>default_supported_trap_ids</code>、line 199 の <code>STATE_COPP_TRAP_CAPABILITY_TABLE_NAME</code>、line 222-235 の <code>updateTrapOperStatus</code> (<code>hw_status</code> 公開)、line 239-287 の <code>query_objecttype_implementation</code>/<code>enum_values_capability</code> クエリ、<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2:66,135</code> の <code>queue1_group3</code> / <code>neighbor_miss</code> 追加、<code>sonic-utilities/show/copp.py:189-206</code> の <code>show copp configuration</code> CLI を確認済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration">CoPP Neighbor Miss trap と enum capability query（<code>show copp configuration</code>）<a class="headerlink" href="#copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
