@@ -88,6 +88,7 @@ nav:
   - ホーム: index.md
   - アーキテクチャ:
       - architecture/index.md
+      - ポート不正パケットドロップ設計: architecture/port-illegal-packets-drop-design.md
   - ルーティング:
       - routing/index.md
   - スイッチング:
