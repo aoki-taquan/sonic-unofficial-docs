@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/banner-messages-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-requirement-for-chassis-subsystem/">
       
       
-        <link rel="prev" href="../asic-thermal-monitoring-high-level-design/">
+        <link rel="prev" href="../persistent-log-level-hld/">
       
       
-        <link rel="next" href="../critical-resource-monitoring/">
+        <link rel="next" href="../reboot-support-blockingmode-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>バナーメッセージ（login / motd / logout） - SONiC 非公式ドキュメント</title>
+        <title>シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#login-motd-logout" class="md-skip">
+        <a href="#platform-monitor-mandatory-future" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              バナーメッセージ（login / motd / logout）
+              シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
             
           </span>
         </div>
@@ -3175,37 +3175,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    バナーメッセージ（login / motd / logout）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -3221,203 +3194,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体経路
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        状態遷移
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        マルチライン文字列
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3539,10 +3315,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3558,6 +3361,220 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mandatory-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mandatory 要件（21 項目）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mandatory 要件（21 項目）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        再起動とリンク状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント監視・ログ・アラート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-chassis-state-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd と Chassis State DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#psu-fan-thermalctld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PSU / FAN / 温度（thermalctld 系）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reboot-cause-mid-plane-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reboot-cause / mid-plane / show 系
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future / Enhancement 要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB / STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -6277,10 +6294,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#mandatory-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mandatory 要件（21 項目）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mandatory 要件（21 項目）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体経路
+        再起動とリンク状態
       
     </span>
   </a>
@@ -6291,7 +6320,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        状態遷移
+        イベント監視・ログ・アラート
       
     </span>
   </a>
@@ -6299,10 +6328,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#chassisd-chassis-state-db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        マルチライン文字列
+        chassisd と Chassis State DB
       
     </span>
   </a>
@@ -6310,10 +6339,37 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#psu-fan-thermalctld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動時シーケンス
+        PSU / FAN / 温度（thermalctld 系）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reboot-cause-mid-plane-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reboot-cause / mid-plane / show 系
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future / Enhancement 要件
       
     </span>
   </a>
@@ -6326,7 +6382,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -6338,10 +6394,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db-state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        関連する CONFIG_DB / STATE_DB
       
     </span>
   </a>
@@ -6359,46 +6415,24 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -6409,7 +6443,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -6420,7 +6454,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -6447,7 +6481,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/banner-messages-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/platform-monitor-requirement-for-chassis-subsystem.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -6456,131 +6490,224 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>hostcfgd</code> の BANNER_MESSAGE ハンドラ、<code>banner-config</code> systemd サービスの実装、CLI 実装、YANG レビジョンは未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 要件チェックリスト</p>
+<p>HLD は SONiC Chassis Workgroup が起こした Rev 0.1 の <strong>要件リスト</strong>。具体実装の参照先は他 HLD（chassisd / psud / thermalctld 等）。各項目の現状実装は要裏取り。</p>
 </div>
-<h1 id="login-motd-logout">バナーメッセージ（login / motd / logout）<a class="headerlink" href="#login-motd-logout" title="Permanent link">&para;</a></h1>
+<h1 id="platform-monitor-mandatory-future">シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）<a class="headerlink" href="#platform-monitor-mandatory-future" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>業務スイッチには、ログイン前後やログアウト時に <strong>法的注意文・運用情報・MOTD</strong> を表示する要件が頻繁にある。SONiC 既定の Debian バナー（<code>Debian GNU/Linux 11</code>）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は <strong>CONFIG_DB → hostcfgd → banner-config systemd サービス → Linux ファイル</strong> という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における <strong>PMON 関連の必須要件と将来要件</strong> を箇条書きで挙げたチェックリスト形式の HLD である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="mandatory-21">Mandatory 要件（21 項目）<a class="headerlink" href="#mandatory-21" title="Permanent link">&para;</a></h3>
+<p>カテゴリ別に整理すると<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h4 id="_3">再起動とリンク状態<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>タイミング</th>
-<th>反映先ファイル</th>
+<th>#</th>
+<th>要件</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>login</code></td>
-<td>ログインプロンプト前（ローカル / SSH 共通）</td>
-<td><code>/etc/issue.net</code> と <code>/etc/issue</code></td>
+<td>1</td>
+<td>LC の <code>reboot</code> は LC 全体を <strong>power-cycle</strong>。Peer ノードはリンクダウンを即検知できること</td>
 </tr>
 <tr>
-<td><code>motd</code></td>
-<td>ログイン後</td>
-<td><code>/etc/motd</code></td>
+<td>2</td>
+<td>RP の <code>reboot</code> は <strong>システム全体（RP + LC）</strong>を再起動。Peer はリンクダウンを検知</td>
 </tr>
 <tr>
-<td><code>logout</code></td>
-<td>ログアウト時</td>
-<td><code>/etc/logout_message</code></td>
+<td>3</td>
+<td>Supervisor の <strong>ungraceful reboot</strong> で全 LC が再起動。LC は <strong>headless で動かない</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>LC の <code>config shut/unshut</code> を Chassis-d 設計に従ってサポート</td>
 </tr>
 </tbody>
 </table>
-<p>機能既定値は <strong>disabled</strong>。<code>disabled</code> の間は CONFIG_DB を編集しても Linux 側のファイルは書き換わらず、SONiC OS の標準バナーが表示され続ける<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    CLI[config banner ...] --&gt; CDB[(CONFIG_DB\nBANNER_MESSAGE|MESSAGE)]
-    CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|systemctl restart| BC[banner-config service]
-    BC --&gt;|read CONFIG_DB| CDB
-    BC --&gt;|/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message| FS[Linux fs]
-    Login[SSH/local login] --&gt; FS</code></pre>
-<p><code>banner-config</code> は <strong>SSH を受け付ける前段階で起動する単発サービス</strong> として設計されており、CONFIG_DB から現在の値を読んで対応するファイルに書き出す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> は CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読しており、変更があれば <code>banner-config</code> を再実行する。</p>
-<h3 id="_4">状態遷移<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; disabled: 既定
-    disabled --&gt; enabled: config banner state enabled
-    enabled --&gt; disabled: config banner state disabled
-    note right of disabled
-        CONFIG_DB の値は保存されるが
-        Linux 側のファイルは触らない
-        既定 SONiC バナーのまま
-    end note
-    note right of enabled
-        banner-config が CONFIG_DB の値を
-        Linux ファイルに書き出す
-    end note</code></pre>
-<p><code>disabled</code> の状態でも CLI で個別の <code>login</code> / <code>motd</code> / <code>logout</code> メッセージを設定できる。これは CONFIG_DB のみに保存され、<code>enabled</code> に遷移した時点で Linux に適用される設計である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">マルチライン文字列<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>config banner login "Hello!\nWelcome to SONiC CLI!"</code> のように <code>\n</code> を含めることで複数行バナーを設定できる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Hello!
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Welcome to SONiC CLI!
-</span></code></pre></div>
-<h3 id="_6">起動時シーケンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant Sys as systemd
-    participant BC as banner-config
-    participant CDB as CONFIG_DB
-    participant FS as /etc/...
-    Sys-&gt;&gt;BC: start banner-config (before sshd)
-    BC-&gt;&gt;CDB: read BANNER_MESSAGE|MESSAGE
-    alt state == enabled
-        BC-&gt;&gt;FS: write /etc/issue.net, /etc/issue, /etc/motd, /etc/logout_message
-    else state == disabled
-        BC-&gt;&gt;BC: no-op (default SONiC banner remains)
-    end
-    Sys-&gt;&gt;Sys: start sshd</code></pre>
-<p>設定変更時のシーケンスは <code>hostcfgd</code> が変更を検知して <code>banner-config</code> を再起動する点が異なる。</p>
+<h4 id="_4">イベント監視・ログ・アラート<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>クリティカルイベント全部に syslog。閾値はドキュメント化して Alert Orchestration に流す</td>
+</tr>
+<tr>
+<td>6</td>
+<td>FC ASIC / LC ASIC の PCIe 検出失敗を検知して syslog（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/pcie-mon/pcie-monitoring-services-hld.md">pcie-monitoring-services-hld.md</a> 連動）</td>
+</tr>
+<tr>
+<td>7</td>
+<td>HW Watchdog: 既存 SONiC 挙動踏襲（reboot 前に起動、reboot 後に SONiC が明示 disable）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="chassisd-chassis-state-db">chassisd と Chassis State DB<a class="headerlink" href="#chassisd-chassis-state-db" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>LC / RP 両方で <code>chassisd</code> 動作。<code>CHASSIS_MODULE_TABLE|&lt;key&gt;</code> の全フィールドを正しく埋める</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>CHASSIS_ASIC_TABLE|&lt;key&gt;</code> も埋める。SUP 上で FABRIC ASIC ready を待って swss/syncd 起動を制御</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Supervisor と LC の両方が <code>TEMPERATURE_INFO</code> を <strong>Chassis State DB</strong> に反映。LC STATE_DB にもローカル分が残る</td>
+</tr>
+</tbody>
+</table>
+<h4 id="psu-fan-thermalctld">PSU / FAN / 温度（thermalctld 系）<a class="headerlink" href="#psu-fan-thermalctld" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>Supervisor 上で <strong>psud のパワーアルゴリズム</strong> を実装（chassis 設計文書に従う）</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Supervisor の show コマンドに <strong>PSU LED ステータス</strong></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Supervisor 上で <strong>fan speed アルゴリズム</strong> 実装</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Supervisor の show コマンドに <strong>FAN LED ステータス</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="reboot-cause-mid-plane-show">reboot-cause / mid-plane / show 系<a class="headerlink" href="#reboot-cause-mid-plane-show" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>Supervisor / LC 両方で <strong><code>reboot-cause</code> reason と履歴</strong> をサポート</td>
+</tr>
+<tr>
+<td>16</td>
+<td>mid-plane switch の show コマンド（chassis 設計文書準拠）</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Fabric / LC カードの <strong>RMA 手順</strong> をドキュメント化</td>
+</tr>
+<tr>
+<td>18</td>
+<td>LC ↔ FC fabric link down のハンドリング</td>
+</tr>
+<tr>
+<td>19</td>
+<td><code>show system-health detail</code> / <code>monitor-list</code> / <code>summary</code> を Supervisor / LC で実装</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Supervisor 上で LC reachability の <strong>plat 固有チェック</strong>、syslog 化</td>
+</tr>
+<tr>
+<td>21</td>
+<td><code>show chassis module status</code> で LINECARD1 のような generic name ではなく <strong>linecard hostname</strong> を表示</td>
+</tr>
+</tbody>
+</table>
+<h3 id="future-enhancement">Future / Enhancement 要件<a class="headerlink" href="#future-enhancement" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>LC の <strong>Generic console</strong>（<a href="https://github.com/Azure/SONiC/blob/master/doc/console/SONiC-Console-Switch-High-Level-Design.md">Console Switch HLD</a>）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Critical fault 検知時の HW コンポーネント自動 reboot/shutdown</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Module / Chassis / Board LED 統一インフラ（led daemon と show 拡張）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>温度測定の <strong>粒度向上</strong> + ポーリング間隔の調整、show での location フィルタ</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Voltage / Current センサを sensorsd/libsensors から <strong>PMON / thermalctld 経由</strong> に移行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Midplane switch の counter 監視と QoS 調整（HW midplane 機種向け）</td>
+</tr>
+</tbody>
+</table>
 <!-- evidence:
-source: sonic-net/SONiC/doc/banner/banner_hld.md#L84-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Hostcfgd will listen for the configuration changes in corresponding tables and restart banner-config service.
-  Banner config service - it is simple SystemD service which runs before we get SSH connection.
-  ...
-  /etc/issue.net and /etc/issue - Login message
-  /etc/motd - Message of the day
-  /etc/logout_message - Logout message
-reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前段で動くという挙動の根拠。
+  1. On LC the reboot command should power-cycle the entire LC ...
+  3. Ungraceful Reboot of Supervisor should bring all LC's. LC's should not run headless.
+  8. chassisd daemon support on both LC and RP with all fields of table CHASSIS_MODULE_TABLE|xxxx correctly populated.
+reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィールド充足) の根拠。
 -->
 
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-state_db">関連する CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h3>
+<p>本 HLD は要件のみで CONFIG_DB スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
 <th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
+<th>場所</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>BANNER_MESSAGE</code></td>
-<td><code>MESSAGE</code></td>
-<td><code>state</code></td>
-<td><code>enabled</code> / <code>disabled</code>（既定 <code>disabled</code>）</td>
+<td><code>CHASSIS_MODULE_TABLE</code></td>
+<td>Chassis State DB</td>
+<td>モジュール（LC/RP）の状態</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>login</code></td>
-<td>ログインプロンプト前メッセージ</td>
+<td><code>CHASSIS_ASIC_TABLE</code></td>
+<td>Chassis State DB</td>
+<td>ASIC ready 状態（FABRIC ASIC 起動同期に使用）</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td><code>motd</code></td>
-<td>ログイン後 MOTD</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>logout</code></td>
-<td>ログアウト時メッセージ</td>
+<td><code>TEMPERATURE_INFO</code></td>
+<td>Chassis State DB / LC STATE_DB</td>
+<td>温度センサ情報</td>
 </tr>
 </tbody>
 </table>
@@ -6588,74 +6715,55 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <table>
 <thead>
 <tr>
-<th>Command</th>
-<th>用途</th>
+<th>CLI</th>
+<th>関連要件</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>config banner state {enabled\|disabled}</code></td>
-<td>機能オン / オフ</td>
+<td><code>show chassis module status</code></td>
+<td>#21（hostname 表示）</td>
 </tr>
 <tr>
-<td><code>config banner login &lt;message&gt;</code></td>
-<td>login バナー設定</td>
+<td><code>show system-health detail</code> / <code>monitor-list</code> / <code>summary</code></td>
+<td>#19</td>
 </tr>
 <tr>
-<td><code>config banner logout &lt;message&gt;</code></td>
-<td>logout バナー設定</td>
+<td><code>show reboot-cause</code></td>
+<td>#15</td>
 </tr>
 <tr>
-<td><code>config banner motd &lt;message&gt;</code></td>
-<td>MOTD 設定</td>
-</tr>
-<tr>
-<td><code>show banner</code></td>
-<td>現在の設定を一覧表示（state / login / motd / logout の表）</td>
+<td>PSU / FAN LED 表示</td>
+<td>#11, #14</td>
 </tr>
 </tbody>
 </table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-banner.yang</code> モジュールに <code>BANNER_MESSAGE.MESSAGE</code> コンテナを定義<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">BANNER_MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">MESSAGE</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">state</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;enabled|disabled&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">disabled</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">login</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;Debian GNU/Linux 11&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">motd</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;You are on ____   ___  _   _ _  ____ ...&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">logout</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="p">;</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>YANG 既定値: <code>state=disabled</code>, <code>login=Debian GNU/Linux 11</code>, <code>motd=</code> SONiC ASCII art (HLD 中の長文), <code>logout=""</code>.</p>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>banner<span class="w"> </span>state<span class="w"> </span>enabled
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s2">&quot;Authorized access only. All activity is monitored.&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>banner<span class="w"> </span>motd<span class="w"> </span><span class="s2">&quot;Welcome to ToR-A1 (SONiC).&quot;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>config<span class="w"> </span>banner<span class="w"> </span><span class="nb">logout</span><span class="w"> </span><span class="s2">&quot;Bye!&quot;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show<span class="w"> </span>banner
-</span></code></pre></div>
-<h3 id="_9">永続化<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。HLD の Test Plan は <code>do not save → reboot → 既定</code> / <code>save → reboot → 設定維持</code> を明示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。永続化したい場合は <code>config save</code> を別途実行する。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>/etc/issue</code> / <code>/etc/motd</code></strong>: 他の systemd サービスや Debian メンテナンスでこれらのファイルを再生成すると、<code>banner-config</code> の出力と競合する。基本的には <code>banner-config</code> が後勝ちで上書きする想定。</li>
-<li><strong><code>hostcfgd</code></strong>: 既存の他テーブル監視（NTP / SNMP / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。</li>
-<li><strong>SSH (<code>sshd</code>)</strong>: <code>/etc/issue.net</code> の変更は次回接続から反映される。既存セッションには影響しない。</li>
+<li><strong>要件チェックリストに過ぎない</strong>: 各項目の具体実装は別 HLD / 別文書を当たる必要がある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Mandatory / Future の境界</strong>: Future 側に「移行・改修系」が多く、現状 SONiC は Mandatory レベル止まりで実装されているケースが多い可能性がある。</li>
+<li><strong>Sensors の扱いが Future</strong>: Voltage / Current の sensors → PMON 移行は未完了で、当面は Linux <code>sensorsd</code> 系が併用されると考えられる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定したバナーが表示されない: 機能 <code>state</code> が <code>enabled</code> か確認。<code>disabled</code> のままだと CONFIG_DB の値は反映されない。</li>
-<li>一部だけ反映される: <code>/etc/issue</code> と <code>/etc/issue.net</code> は同じ login メッセージで両方更新される設計。片方だけ反映されている場合は <code>banner-config</code> のサービスログ (<code>journalctl -u banner-config</code>) を確認。</li>
-<li>リブート後に消えた: <code>config save</code> 未実行。CONFIG_DB スナップショットを永続化する必要がある。</li>
-<li>マルチライン: <code>\n</code> をシェル経由で渡す際にクォートを正しくしないと改行が消える。<code>config banner login "line1\nline2"</code> のようにダブルクォート + <code>\n</code> で渡す。</li>
-<li><code>show banner</code> でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。</li>
+<li><strong>chassisd</strong>: 多くの Mandatory 要件の中核。<code>CHASSIS_MODULE_TABLE</code> / <code>CHASSIS_ASIC_TABLE</code> の生成元。</li>
+<li><strong>psud / thermalctld</strong>: PSU / FAN / 温度のアルゴリズム実装場所。</li>
+<li><strong>pcie-monitoring（<a href="../../platform/pcieinfo-design/">pcie-monitoring-services-hld</a> 関連）</strong>: #6 の PCIe 検出失敗 syslog の根拠。</li>
+<li><strong>Console Switch HLD</strong>: Future #1 の前提となる別 HLD。</li>
+<li><strong>led daemon</strong>: Future #3 の中心。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>LC の reboot で peer がリンクダウンを検知しない: 要件 #1（power-cycle）が実機で守られているか。chassisd の reboot ハンドラ実装を確認。</li>
+<li>Supervisor 障害時に LC が headless で残る: 要件 #3 違反。SUP→LC 連動再起動経路（chassisd / heartbeat）を確認。</li>
+<li><code>show chassis module status</code> で LINECARD1 等のままになる: 要件 #21 の hostname 反映が未実装の可能性<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/banner/banner_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/pmon/pmon-chassis-requirements.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
