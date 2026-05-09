@@ -1,7 +1,7 @@
 ---
 title: TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。HLD は改訂日付が記載されておらず実装からの差分は要裏取り。`hostcfgd` の AAA module、`pam_tacplus` の `source_ip` パッチ、`nss_tacplus` の `tacplus_nss.conf` 生成ロジックは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-host-services/scripts/hostcfgd` L354 `class AaaCfg`、L2185 で `self.aaacfg = AaaCfg(self.config_db)`、L2224-2225 で `init_data['TACPLUS']` / `init_data['TACPLUS_SERVER']` 初期化、L748-752 で `/etc/pam.d/sshd` と `/etc/pam.d/login` を `common-auth` ↔ `common-auth-sonic` で切替、L28-35 で `PAM_AUTH_CONF_TEMPLATE = "common-auth-sonic.j2"` / `NSS_TACPLUS_CONF_TEMPLATE = "tacplus_nss.conf.j2"` を確認。`pam_tacplus` の `source_ip` パッチは `sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch` で当たっている。CLI は `sonic-utilities/config/aaa.py` L200-318 に `config tacacs` / `add` / `delete` 全部取り込み済み（verified at: 2026-05-09）。
 
 # TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
 

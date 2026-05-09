@@ -1,7 +1,7 @@
 ---
 title: DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
 area: acl-qos
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`portmgrd` の TC 投入ロジック、`db_migrator.py` の `dhcp_rate_limit` 既定値挿入、ドロップ監視デーモンの実装、CoPP デフォルト値削除との整合は未裏取り。
+!!! danger "裏取りステータス: Discrepancy-found"
+    `dhcp_rate_limit` の **データ層** （`sonic-yang-models/yang-models/sonic-port.yang` L106、`sonic-utilities/scripts/db_migrator.py` L514-524 で既存ポートに既定値 300 を挿入、`sonic-utilities/config/main.py` L5948-6002 と `utilities_common/cli.py` L846 の CLI）は取り込み済み。一方、HLD が要求する **portmgrd / portmgr の `tc qdisc` / `tc filter` 投入ロジック** は `sonic-swss/cfgmgr/` で未取り込み（grep ヒット 0）。`sonic-buildimage/files/image_config/copp/copp_cfg.j2` には依然 `dhcp_relay: trap_ids="dhcp,dhcpv6"` が `queue4_group3` に残っており、HLD が前提とする「CoPP のシステム全体 DHCP 制限削除」は実施されていない。本ページは仕様参考扱い（verified at: 2026-05-09）。
 
 # DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
 

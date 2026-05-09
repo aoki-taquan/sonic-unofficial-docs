@@ -1,7 +1,7 @@
 ---
 title: Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 1.0, 2024-04）のみを根拠に書かれている。`bgpcfgd` の `CHASSIS_APP_DB` 購読、`startup_tsa_tsb` サービスの実装、TSA/TSB スクリプトの supervisor 側変更状況は未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py` L8 `ChassisAppDbMgr` が L20 で `CONFIG_DB BGP_DEVICE_GLOBAL.tsa_enabled` を subscribe し、L44 で `dev_cfg_mgr.isolate_unisolate_device` を呼ぶ経路を確認。`main.py` L113 で `ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL")` 登録、`managers_device_global.py` L91-104 / L246-247 で `CHASSIS_APP_DB` への `tsa_enabled` 書き込みと `BGP_DEVICE_GLOBAL|STATE` 読み出しを確認。`sonic-buildimage/dockers/docker-fpm-frr/base_image_files/TSA` / `TSB` / `TS` で `CHASSIS_APP_DB HMSET "BGP_DEVICE_GLOBAL|STATE" tsa_enabled` を行うこと、`files/build_templates/startup_tsa_tsb.service` と `files/scripts/startup_tsa_tsb.py` 存在を確認（verified at: 2026-05-09）。
 
 # Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
 

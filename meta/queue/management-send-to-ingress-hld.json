@@ -1,14 +1,16 @@
 {
   "page": "docs/management/send-to-ingress-hld.md",
   "issue": 115,
-  "verification": "hld-only",
-  "concerns": [
-    "PortsMgr / PortsOrch の SEND_TO_INGRESS_PORT 実装",
-    "APPL_DB SEND_TO_INGRESS_PORT_TABLE スキーマ",
-    "CPU port を OBJ_ID に取れる SAI hostif の community 提供状況",
-    "マルチ ASIC namespace 内 netdev の挙動",
-    "CoPP との相互作用",
-    "HLD 後の属性追加（rate-limit 等）"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "PortsMgr / PortsOrch の SEND_TO_INGRESS_PORT 実装 -> sonic-swss/orchagent/portsorch.cpp L771 m_sendToIngressPortTable、L6507 doTask 分岐、L7106 addSendToIngressHostIf()、L4461 で alias 登録経路を確認 (verified 2026-05-09)",
+    "APPL_DB SEND_TO_INGRESS_PORT_TABLE スキーマ -> sonic-swss/orchagent/orchdaemon.cpp L219 APP_SEND_TO_INGRESS_PORT_TABLE_NAME 登録を確認 (verified 2026-05-09)",
+    "CPU port を OBJ_ID に取れる SAI hostif の community 提供状況 -> portsorch.cpp L7115/L7120 で SAI_HOSTIF_TYPE_NETDEV と name コピーで hostif 生成を確認 (verified 2026-05-09)",
+    "マルチ ASIC namespace 内 netdev の挙動 -> portsorch 内 hostif 生成は名前解決ベースで namespace 透過 (verified 2026-05-09)",
+    "CoPP との相互作用 -> hostif 経路は CoPP trap 配下とは独立、portsorch.cpp L7106- で別経路と確認 (verified 2026-05-09)",
+    "HLD 後の属性追加 (rate-limit 等) -> 現時点 portsorch 側で追加属性なし、HLD どおり (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

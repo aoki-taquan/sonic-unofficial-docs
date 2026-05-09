@@ -1,12 +1,14 @@
 {
   "page": "docs/management/ssh-server-global-config-hld.md",
   "issue": 37,
-  "verification": "hld-only",
-  "concerns": [
-    "hostcfgd の SSH_SERVER ハンドラ実装と sshd_config 書き換えロジックの確認",
-    "limits.conf.j2 の配置と max_syslogins 反映方式確認",
-    "init_cfg.json.j2 に既定値が含まれるか未確認",
-    "ports に複数値を指定したときの sshd_config 行展開の実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "hostcfgd の SSH_SERVER ハンドラ実装と sshd_config 書き換えロジックの確認 -> sonic-host-services/scripts/hostcfgd L1045 class SshServer、L2478 self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))、L32 SSH_CONFG = '/etc/ssh/sshd_config' を確認 (verified 2026-05-09)",
+    "limits.conf.j2 の配置と max_syslogins 反映方式確認 -> sonic-host-services/data/templates/limits.conf.j2 と hostcfgd L82-83/L1412-1478 で render する PamLimitsCfg を確認 (verified 2026-05-09)",
+    "init_cfg.json.j2 に既定値が含まれるか -> hostcfgd L2245 init_data['SSH_SERVER'] による初期化経路を確認 (verified 2026-05-09)",
+    "ports に複数値を指定したときの sshd_config 行展開の実装確認 -> SshServer (L1045) の sshd_config テンプレート展開経路を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

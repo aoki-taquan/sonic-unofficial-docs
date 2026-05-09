@@ -1,13 +1,15 @@
 {
   "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
   "issue": 125,
-  "verification": "hld-only",
-  "concerns": [
-    "aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装",
-    "STATE_DB ルール側キーの最終形 (ACL_RULE_TABLE|... vs ACL_RULE|...)",
-    "show acl table / show acl rule の sonic-utilities 取り込み",
-    "PFC / Mux 内部生成 ACL の扱いの将来計画",
-    "sonic-mgmt の test_acl.py の更新状況"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装 -> sonic-swss/orchagent/aclorch.cpp L4201-4202 で m_aclTableStateTable / m_aclRuleStateTable を確認 (verified 2026-05-09)",
+    "STATE_DB ルール側キーの最終形 -> sonic-swss-common/common/schema.h L514-515 で STATE_ACL_TABLE_TABLE_NAME = 'ACL_TABLE_TABLE' / STATE_ACL_RULE_TABLE_NAME = 'ACL_RULE_TABLE' を確認 (verified 2026-05-09)",
+    "show acl table / show acl rule の sonic-utilities 取り込み -> sonic-utilities/show/acl.py で acl-loader show table/rule を起動、acl_loader/main.py L76-80 APPL_/STATE_ACL_TABLE / RULE 定数、L324-340 で STATE_DB から status 取得を確認 (verified 2026-05-09)",
+    "PFC / Mux 内部生成 ACL の扱い -> aclorch.cpp L4283-4287 で CFG/APP の table/rule 経路を確認、内部生成 ACL は対象外との HLD 表現と整合 (verified 2026-05-09)",
+    "sonic-mgmt の test_acl.py の更新状況 -> 本リポジトリのスコープ外 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

@@ -1,13 +1,15 @@
 {
   "page": "docs/routing/overlay-ecmp-enhancements.md",
   "issue": 305,
-  "verification": "hld-only",
-  "concerns": [
-    "VnetOrch の primary/secondary 切替ロジック実装存在確認",
-    "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか未確認",
-    "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認",
-    "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認",
-    "pinned_state による BFD 状態オーバーライド実装存在確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "VnetOrch の primary/secondary 切替ロジック実装存在確認 -> sonic-swss/orchagent/vnetorch.cpp L1029-1067 で nexthops_primary / nexthops_secondary を引数に取る setup と切替を確認 (verified 2026-05-09)",
+    "APPL_DB / STATE_DB の VNET_MONITOR_TABLE スキーマが現行 master にあるか -> sonic-swss-common/common/schema.h L133 APP_VNET_MONITOR_TABLE_NAME / L500 STATE_VNET_MONITOR_TABLE_NAME を確認 (verified 2026-05-09)",
+    "VNET テーブルの overlay_dmac フィールド sonic-yang-models 取り込み確認 -> vnetorch.cpp L445/L477 と sonic-yang-models/yang-models/sonic-vnet.yang を確認 (verified 2026-05-09)",
+    "tx_monitor_timer / rx_monitor_timer の BfdOrch への伝搬実装確認 -> vnetorch.cpp L1033/L1054/L1062 で setEndpointMonitor 呼び出しに timer を伝搬 (verified 2026-05-09)",
+    "pinned_state による BFD 状態オーバーライド実装存在確認 -> vnetorch.cpp L1013-1015 で PINNED_STATE_UP / PINNED_STATE_DOWN による分岐を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

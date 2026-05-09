@@ -1,12 +1,14 @@
 {
   "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
   "issue": 230,
-  "verification": "hld-only",
-  "concerns": [
-    "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認",
-    "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか未確認",
-    "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認",
-    "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "bgpcfgd の BGP_AGGREGATE_ADDRESS / BGP_BBR 購読ハンドラ実装存在確認 -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py L23 AggregateAddressMgr、L41 で BGP_BBR を subscribe、main.py L106 で登録 (verified 2026-05-09)",
+    "CONFIG_DB の BGP_AGGREGATE_ADDRESS スキーマと sonic-bgp-aggregate-address YANG モジュールが現行 master にあるか -> sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang を確認 (verified 2026-05-09)",
+    "config bgp aggregate-address / show ip(v6) bgp aggregate-address の sonic-utilities 取り込み確認 -> sonic-utilities/config/bgp_cli.py、show/bgp_cli.py、tests/bgp_aggregate_address_test.py を確認 (verified 2026-05-09)",
+    "STATE_DB BGP_AGGREGATE_ADDRESS 反映と再起動時クリアロジックの実装確認 -> managers_aggregate_address.py L43 self.address_table = swsscommon.Table(state_db_conn, BGP_AGGREGATE_ADDRESS_TABLE_NAME)、L47-81 で BBR 状態に応じた set/del を確認 (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

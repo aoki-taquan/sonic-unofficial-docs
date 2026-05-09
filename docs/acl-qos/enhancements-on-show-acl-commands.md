@@ -1,7 +1,7 @@
 ---
 title: show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.2, 2023-03）のみを根拠に書かれている。`aclorch` の STATE_DB 書き込み、`show acl table` / `show acl rule` の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss/orchagent/aclorch.cpp` L4201-4202 で `m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)` / `m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)` を確認、`sonic-swss-common/common/schema.h` L514-515 で `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` / `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` を確認。`sonic-utilities/show/acl.py` の `show acl table` / `show acl rule` が `acl-loader show table/rule` を呼び、`sonic-utilities/acl_loader/main.py` L76-80/L324-340 で STATE_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータスを参照することを確認（verified at: 2026-05-09）。
 
 # show acl 強化（`STATE_DB.ACL_TABLE_TABLE` / `ACL_RULE_TABLE` の status）
 

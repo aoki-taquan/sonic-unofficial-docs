@@ -1,14 +1,16 @@
 {
   "page": "docs/routing/srv6-sid-l3adj.md",
-  "verification": "hld-only",
-  "concerns": [
-    "SRv6Orch の L3Adj 取り扱い拡張の現行 master 実装存在確認 (sonic-swss/orchagent/srv6orch.cpp、PR #2902)",
-    "m_pendingSRv6MySIDEntries データ構造とハンドリングの取り込み確認",
-    "NeighOrch から SRv6Orch への Neighbor ADD/DEL 通知購読経路の実装確認",
-    "SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID の libsairedis / community SAI 取り込み状況確認",
-    "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "SRv6Orch の L3Adj 取り扱い拡張の現行 master 実装存在確認 -> sonic-swss/orchagent/srv6orch.h L189 createUpdateMysidEntry(my_sid_string, vrf, adj, end_action) で確認 (verified 2026-05-09)",
+    "m_pendingSRv6MySIDEntries データ構造とハンドリングの取り込み確認 -> srv6orch.h L277 で map<NextHopKey, set<tuple<string,string,string,string>>>、cpp L1227/L1259/L1341/L1533/L1541 で挿入と解決処理を確認 (verified 2026-05-09)",
+    "NeighOrch から SRv6Orch への Neighbor ADD/DEL 通知購読経路の実装確認 -> srv6orch.cpp L1227-1259 で update.entry を NextHopKey に変換し pending を resolve する経路を確認 (verified 2026-05-09)",
+    "SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID の libsairedis / community SAI 取り込み状況確認 -> srv6orch.cpp L1544 で nh_attr.id に設定、sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp L150 でも参照 (verified 2026-05-09)",
+    "SRV6_MY_SID_TABLE の adj パラメータが dplane_fpm_sonic 経由で書き込まれる経路の整合確認 -> srv6orch.cpp で adj パラメータ受け口 (createUpdateMysidEntry 第3引数) は実装済み。dplane_fpm_sonic 側書き込みは frr 側スコープで HLD どおり (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 171,
-  "pr": 172
+  "pr": 172,
+  "last_verified": "2026-05-09"
 }

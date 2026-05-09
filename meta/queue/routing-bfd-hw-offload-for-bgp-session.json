@@ -1,12 +1,17 @@
 {
   "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
   "issue": 307,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "bfdsyncd プロセスのソース・supervisord 取り込み確認（FEATURE.bgp.bfd_hw_offload 分岐）",
-    "BfdOrch の SAI_BFD_SESSION_ATTR_REMOTE_* 取得実装の存在確認",
-    "IPv6 link-local 用 inject-down モードの BfdOrch / SAI 実装確認",
-    "bfdd と BfdOrch の local discriminator マッピング実装存在確認"
+    "bfdsyncd プロセスが sonic-buildimage / sonic-frr / sonic-swss の現行 master に未取り込み (grep ヒット 0)",
+    "FEATURE.bgp.bfd_hw_offload フラグの supervisord テンプレート分岐が未取り込み",
+    "BfdOrch 側で SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX / REMOTE_MIN_RX / REMOTE_MULTIPLIER の get → STATE_DB 反映が未実装",
+    "IPv6 link-local 用 inject-down モードのハンドラも未実装"
   ],
-  "priority": "medium"
+  "verified_concerns": [
+    "bfdd と BfdOrch の local discriminator マッピング実装存在確認 -> sonic-swss/orchagent/bfdorch.cpp L420-424 で bfd_gen_id() による LOCAL_DISCRIMINATOR 採番と STATE_DB fvVector 出力を確認 (verified 2026-05-09)"
+  ],
+  "priority": "medium",
+  "last_verified": "2026-05-09",
+  "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
 }

@@ -1,7 +1,7 @@
 ---
 title: SSH サーバ全体設定（SSH_SERVER.POLICIES）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
     - sonic-ssh-server
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`hostcfgd` の SSH_SERVER ハンドラ、`/etc/ssh/sshd_config` への書き込みフロー、`limits.conf.j2` テンプレートの存在は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-host-services/scripts/hostcfgd` L1045 `class SshServer`、L2245-2478 で `init_data['SSH_SERVER']` を読み `self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))` する経路を確認。`SSH_CONFG = "/etc/ssh/sshd_config"` (L32) に書き込み、`LIMITS_CONF_TEMPLATE = "/usr/share/sonic/templates/limits.conf.j2"` (L82) と `PAM_LIMITS_CONF = "/etc/pam.d/pam-limits-conf"` (L83) を render する `limits.conf.j2` も `sonic-host-services/data/templates/limits.conf.j2` で確認。L1412-1478 で `SSH_SERVER` から `pam_limits` / `limits.conf` を render（verified at: 2026-05-09）。
 
 # SSH サーバ全体設定（SSH_SERVER.POLICIES）
 
