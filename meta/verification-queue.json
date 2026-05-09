@@ -4,7 +4,7 @@
   "entries": [
     {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",
-      "issue": null,
+      "issue": 240,
       "verification": "hld-only",
       "concerns": [
         "ConfigDBConnector の YANG 検証デコレータが各 sonic-utilities config CLI に取り込まれているか未確認",
