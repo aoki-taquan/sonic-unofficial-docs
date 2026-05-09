@@ -411,14 +411,9 @@
     },
     {
       "page": "docs/system/warmboot-manager-hld.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "Warmboot Manager daemon の現行 master 採用状況確認 (Rev 0.1, Google 2023 提案)",
-        "既存 fast-reboot / finalize-warmboot.sh との共存実装確認",
-        "Component Warmboot States の STATE_DB スキーマ実装確認",
-        "Quiescence Timer / Unfreeze on Failure ロジックの実装確認",
-        "各 critical container（orchagent / syncd / teamd / xcvrd）への freeze プロトコル取り込み確認",
-        "採否不明な提案 HLD のため master 取り込み有無の最終確認"
+        "提案 HLD (Rev 0.1, 2023-09)。master には warmboot-finalizer のみ存在し、Warmboot Manager daemon 本体・STATE_DB Component states・freeze プロトコル取り込みなし"
       ],
       "priority": "high"
     },
@@ -567,22 +562,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/acl-qos/dynamically-headroom-calculation.md",
-      "verification": "hld-only",
-      "concerns": [
-        "buffermgrd の dynamic クラスと vendor Lua plugin 呼び出し経路の現行 master 取り込み確認",
-        "DEVICE_METADATA.buffer_model の sonic-yang-models 取り込み確認",
-        "ASIC_TABLE / PERIPHERAL_TABLE / PORT_PERIPHERAL_TABLE / BUFFER_MAX_PARAM の STATE_DB 公開実装確認",
-        "LOSSLESS_TRAFFIC_PATTERN / LOSSLESS_BUFFER_PARAM の YANG 取り込み確認",
-        "SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE の community SAI 取り込み確認",
-        "vendor (Mellanox/Broadcom) の dynamic Lua plugin と asic_table.json 提供状況確認"
-      ],
-      "priority": "medium",
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
-    },
-    {
       "page": "docs/acl-qos/egress-outer-dscp-change-table.md",
       "verification": "hld-only",
       "concerns": [
@@ -689,22 +668,6 @@
       "issue": 143,
       "pr": 144,
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/acl-qos/reclaim-reserved-buffer.md",
-      "verification": "hld-only",
-      "concerns": [
-        "buffermgrd の admin-down hook で zero_profile を APPL_DB に push する実装存在確認",
-        "BUFFER_PG / BUFFER_QUEUE / BUFFER_PORT_*_PROFILE_LIST の YANG 取り込み確認",
-        "db_migrator の admin-down ポート処理ロジック実装確認",
-        "Mellanox SAI 側で zero_pool / zero profile を受けて size=0 になる挙動確認",
-        "vendor 別 zero_profile 提供有無の現行 sonic-buildimage 確認",
-        "shared headroom pool model など複数 buffer model における zero_profile 互換性確認"
-      ],
-      "priority": "medium",
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
-      ]
     },
     {
       "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
@@ -1437,19 +1400,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md",
-      "verification": "hld-only",
-      "concerns": [
-        "FRR dplane_fpm_nl plugin への SONiC FRR 移行確認",
-        "fpmsyncd の応答チャネル（双方向 FPM socket）と RTM_F_OFFLOAD 設定の実装確認",
-        "DEVICE_METADATA.suppress-fib-pending の sonic-yang-models 取り込み確認",
-        "consistency monitoring script の現行 sonic-host-services / sonic-buildimage 取り込み確認",
-        "FRR 8.4 への version 上げと bgp suppress-fib-pending の SONiC FRR fork 有効化確認",
-        "MPLS / VNET routes 対象外のフィルタ実装と orchagent crash 経路との干渉確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1609,19 +1559,6 @@
       "notes": "HLD 本文の rifstat 表記は実装では intfstat (sonic-utilities/scripts/intfstat) に対応。命名差分のみで機能は一致。"
     },
     {
-      "page": "docs/routing/sonic-route-flow-counter-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "RoutePatternOrch および RouteOrch::ROUTE_MATCH 拡張の実装存在確認",
-        "FLOW_COUNTER_ROUTE_PATTERN テーブルの sonic-buildimage / sonic-yang-models 取り込み確認",
-        "config flowcnt-route / show flowcnt-route stats CLI の sonic-utilities 取り込み確認",
-        "SAI Generic Counter API (sai_counter_create_fn 等) の community SAI 取り込み確認",
-        "VNET ケースの (vnet, prefix) キー処理実装確認",
-        "max_match_count 超過時の route 選定アルゴリズムが reboot 後に不一致となる挙動の実装確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/routing/sonic-usid.md",
       "issue": 95,
       "verification": "code-verified",
@@ -1738,19 +1675,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/switching/brief-introduction-of-iccp-code.md",
-      "issue": 99,
-      "verification": "hld-only",
-      "concerns": [
-        "ICCPd 各ファイル・関数名の現行 master との整合",
-        "iccpd.j2 テンプレートおよび MC-LAG CONFIG_DB スキーマの最新形",
-        "mclagdctl の sonic-utilities 取り込み",
-        "Warm reboot 経路 (SIGUSR1) の現行実装",
-        "MLACP FSM 状態名の現行コードでの一致"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md",
@@ -1904,19 +1828,6 @@
       "pr": 527
     },
     {
-      "page": "docs/system/fast-reboot-flow-improvements-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "warmboot-finalizer を fast-reboot 兼用にする現行 sonic-buildimage / sonic-utilities 取り込み確認",
-        "restore_neighbors.py の現行 sonic-swss/neighsyncd 取り込み確認",
-        "enable_counters.py 等の finalizer flag 待ちロジック確認",
-        "syncd INIT/APPLY view framework の現行 sonic-sairedis 取り込み確認",
-        "vendor NOS → SONiC ISSU dump 仕様の文書化状況確認",
-        "HLD 実測値 (28s/25s) の現行 master での再現性確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/kdump-remote-ssh.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1977,14 +1888,9 @@
     },
     {
       "page": "docs/system/reset-local-users-passwords-during-init-hld.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "reset-local-users-passwords.service の sonic-host-services 取り込み確認",
-        "sonic-platform-common の LocalUsersConfigurationResetBase 実装存在確認",
-        "config local-users-passwords-reset CLI と sonic-local-users-passwords-reset YANG の現行 master 取り込み確認",
-        "ENABLE_LOCAL_USERS_PASSWORDS_RESET / CHANGE_DEFAULT_PASSWORD ビルドフラグの現行値確認",
-        "warm/fast-reboot 検知ロジックが service 内で正しく機能するか確認",
-        "systemd 依存関係 (sshd/getty/serial-getty より before) が現行 service unit に設定されているか確認"
+        "HLD は提案段階。reset-local-users-passwords.service / LocalUsersConfigurationResetBase / config local-users-passwords-reset CLI / sonic-local-users-passwords-reset.yang / ENABLE_LOCAL_USERS_PASSWORDS_RESET フラグのいずれも master に検出できない"
       ],
       "priority": "medium",
       "issue": 519,
@@ -2074,19 +1980,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/sonic-system-health-monitor-high-level-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "healthd / system health monitor の現行 master 取り込み確認（sonic-host-services 想定）",
-        "system_health_monitoring_config.json の filter 文法と現行実装の対応確認",
-        "external_checkers の出力フォーマット実装確認",
-        "/etc/supervisor/critical_processes の各 docker での更新状況確認",
-        "Monit を使わない経路（v0.2 追記）の現行実装確認",
-        "system status LED 制御 API（platform_chassis.set_status_led）との結線確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/static-dns-configuration.md",
       "issue": 31,
       "verification": "code-verified",
@@ -2100,28 +1993,10 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/transceiver-and-sensor-monitoring-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "xcvrd の現行 sonic-platform-daemons 取り込み確認",
-        "TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS の現行 schema（CMIS 拡張）確認",
-        "transceiver error bitmap の現行 sonic-platform-common 定義確認",
-        "polling interval (60s) の現行 default 値確認",
-        "port config change handler (v1.2 追記) の実装存在確認",
-        "vendor platform API (sfputil base) と xcvrd の event 連携確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/twamp-light-hld.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "twamp orch の sonic-swss 取り込み確認",
-        "SAI_TWAMP_SESSION_* 属性の community SAI 取り込み確認",
-        "CFG_TWAMP_SESSION_TABLE / STATE_TWAMP_SESSION_TABLE / STATE_SWITCH_CAPABILITY_TABLE の YANG 取り込み確認",
-        "config twamp-light / show twamp-light CLI の sonic-utilities 取り込み確認",
-        "COUNTERS_DB TWAMP counter polling の現行 flex counter 取り込み確認",
-        "ASIC vendor 別 TWAMP offload 対応状況（capability 判定の網羅性）確認"
+        "twamporch.cpp と SAI_TWAMP_SESSION_ATTR_* / NotificationTwampSessionEvent は master 取り込み済みだが、sonic-yang-models に sonic-twamp-light.yang・sonic-utilities に config/show twamp-light CLI は未取り込み（部分実装）"
       ],
       "priority": "medium"
     },
