@@ -392,6 +392,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
+      "verification": "hld-only",
+      "concerns": [
+        "Phase 1/2/3 の実装進捗 (swss/BGP, teamd/syncd, system 全体) の現行 master 状況確認",
+        "OID 復元 2 アプローチのうち idempotent libsairedis vs syncd view comparison のどちらが master に採用されたか確認",
+        "config warm_restart enable / show warm_restart config CLI の現行サポート確認",
+        "sonic-installer upgrade_docker の現行サブコマンド構造確認",
+        "system level warm reboot コマンドの現行存在確認 (warm-reboot binary)",
+        "本ドキュメントは open issues 形式で内容が古い。実装は SONiC_Warm_Restart.md 等の正式 HLD で更新されているはず。"
+      ],
+      "priority": "high",
+      "issue": 521,
+      "pr": 523
+    },
+    {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
       "verification": "code-verified",
       "concerns": [],
