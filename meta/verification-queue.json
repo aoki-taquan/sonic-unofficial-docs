@@ -1106,6 +1106,19 @@
       "priority": "medium",
       "issue": 179,
       "pr": 180
+    },
+    {
+      "page": "docs/management/default-credential-management-for-california-sb-327-conformance.md",
+      "verification": "hld-only",
+      "concerns": [
+        "CHANGE_DEFAULT_PASSWORD build flag の sonic-buildimage 取り込み確認",
+        "/etc/rc.local で 1st boot を判別し chage -d 0 を全 default user に適用するスクリプトの存在確認",
+        "pam_unix_account.so の expired 検知が現行 image の PAM 構成で有効か確認",
+        "/etc/passwd 走査で login shell = /bin/bash / /bin/sh のユーザのみ対象とする実装確認",
+        "image upgrade で 1st boot 扱いとなる仕組み（marker file 等）の現行確認"
+      ],
+      "priority": "low",
+      "issue": 181
     }
   ]
 }
