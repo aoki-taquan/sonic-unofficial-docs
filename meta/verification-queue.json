@@ -192,6 +192,22 @@
       "priority": "high"
     },
     {
+      "page": "docs/management/sonic-gnmi-server-interface-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-gnmi (旧 sonic-telemetry) コンテナの Set/Get/Capabilities RPC 実装の現行 master 取り込み確認",
+        "origin = sonic_db / sonic_yang の path 解析と generic_config_updater / special_config_updater への振り分け実装確認",
+        "host service 経由 dbus で config apply-patch / config reload を呼ぶ機構の実装確認",
+        "Set の single-worker キュー化と checkpoint 取得 / Get during write のロジック実装確認",
+        "Capabilities RPC を heartbeat として reset status を返す機能の実装確認",
+        "CONFIG_DB schema 入力でも YANG validation を経由するかの sonic-config-engine 側確認",
+        "本 HLD は 2022 年版で 4 年経過。仕様乖離の可能性大。priority=high"
+      ],
+      "priority": "high",
+      "issue": 492,
+      "pr": 494
+    },
+    {
       "page": "docs/overlay/dscp-remapping-for-tunnel-traffic.md",
       "issue": 19,
       "verification": "discrepancy-found",
