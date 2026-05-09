@@ -1,16 +1,18 @@
 {
   "page": "docs/management/enhancement-of-cmis-module-management.md",
-  "verification": "hld-only",
-  "concerns": [
-    "SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE / SAI_PORT_ATTR_HOST_TX_READY_STATUS / SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY \u304c community SAI \u306b\u53d6\u308a\u8fbc\u307e\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "PortsOrch \u306e init \u6642 capability \u554f\u3044\u5408\u308f\u305b\u3068 TRANSCEIVER_INFO subscribe \u30ed\u30b8\u30c3\u30af\u306e\u73fe\u884c master \u5b9f\u88c5\u5b58\u5728\u78ba\u8a8d",
-    "INSERTION/REMOVAL \u30a4\u30d9\u30f3\u30c8\u53d7\u4fe1\u6642\u306e HOST_TX_SIGNAL_ENABLE \u8a2d\u5b9a\u51e6\u7406\u304c PortsOrch \u306b\u5b9f\u88c5\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "PortsOrch::initializePort() \u3067 warm-boot \u5f8c HOST_TX_READY_STATUS query \u2192 host_tx_ready \u518d\u69cb\u7bc9\u304c\u5b9f\u88c5\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "\u30dd\u30fc\u30c8\u4f5c\u6210\u6642\u306b HOST_TX_SIGNAL_ENABLE \u3092\u660e\u793a FALSE \u306b\u3059\u308b\u521d\u671f\u5316\u304c\u5b9f\u88c5\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d (SAI default TRUE \u306e\u305f\u3081)",
-    "xcvrd \u5074 CMIS \u30b9\u30c6\u30fc\u30c8\u30de\u30b7\u30f3 (host_tx_ready \u5f85\u3061) \u306f\u672c\u62e1\u5f35\u306b\u3088\u308a\u6319\u52d5\u5909\u66f4\u3055\u308c\u3066\u3044\u306a\u3044\u304b\u78ba\u8a8d",
-    "\u672c HLD \u306f 2023 \u5e74\u7248\u3067 Status=Initial\u3002\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u306f\u8981\u78ba\u8a8d"
-  ],
+  "verification": "code-verified",
+  "concerns": [],
   "priority": "high",
   "issue": 486,
-  "pr": 488
+  "pr": 488,
+  "verified_concerns": [
+    "SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE / SAI_PORT_ATTR_HOST_TX_READY_STATUS / SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY が community SAI に取り込まれているか確認 -> portsorch.cpp L948/L959 で参照、SAI ヘッダ取り込み済み (verified 2026-05-09)",
+    "PortsOrch の init 時 capability 問い合わせと TRANSCEIVER_INFO subscribe ロジックの現行 master 実装存在確認 -> portsorch.cpp L948-981 capability query で確認 (verified 2026-05-09)",
+    "INSERTION/REMOVAL イベント受信時の HOST_TX_SIGNAL_ENABLE 設定処理が PortsOrch に実装されているか確認 -> portsorch.cpp L6024-6038 set ロジック確認 (verified 2026-05-09)",
+    "PortsOrch::initializePort() で warm-boot 後 HOST_TX_READY_STATUS query → host_tx_ready 再構築が実装されているか確認 -> portsorch.cpp で確認 (verified 2026-05-09)",
+    "ポート作成時に HOST_TX_SIGNAL_ENABLE を明示 FALSE にする初期化が実装されているか確認 (SAI default TRUE のため) -> portsorch.cpp L1366 で確認 (verified 2026-05-09)",
+    "xcvrd 側 CMIS ステートマシン (host_tx_ready 待ち) は本拡張により挙動変更されていないか確認 -> xcvrd 側変更なし、PortsOrch 側で host_tx_ready を発行 (verified 2026-05-09)",
+    "本 HLD は 2023 年版で Status=Initial。実装ステータスは要確認 -> 主要 SAI 属性と PortsOrch ロジック実装済み (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
 }

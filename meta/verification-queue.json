@@ -79,18 +79,20 @@
     },
     {
       "page": "docs/internals/dump-utility-for-easy-debugging.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-utilities の dump/ ディレクトリと Executor 抽象基底クラスの現行 master 実装存在確認",
-        "MatchEngine / MatchRequest クラスの API が HLD 記述 (Table/key_pattern/field/value/just_keys) と一致するか確認",
-        "現行実装で利用可能なモジュール一覧 (port/copp/acl_table/acl_rule/...) が HLD 記載と一致するか dump state --show で確認",
-        "techsupport への自動組込み（unified_view_dump/<module>）が実装されているか確認",
-        "multi-asic --namespace ハンドリング、single-ASIC でのエラー出力の現行挙動確認",
-        "本 HLD は 2021 年版 (Rev 1.0) で 4-5 年経過、Status=Initial。仕様乖離リスクあり"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 473,
-      "pr": 474
+      "pr": 474,
+      "verified_concerns": [
+        "sonic-utilities の dump/ ディレクトリと Executor 抽象基底クラスの現行 master 実装存在確認 -> sonic-utilities/dump/plugins/executor.py L5 Executor(ABC) で確認 (verified 2026-05-09)",
+        "MatchEngine / MatchRequest クラスの API が HLD 記述 (Table/key_pattern/field/value/just_keys) と一致するか確認 -> match_infra.py L35 MatchRequest / L346 MatchEngine で確認 (verified 2026-05-09)",
+        "現行実装で利用可能なモジュール一覧 (port/copp/acl_table/acl_rule/...) が HLD 記載と一致するか dump state --show で確認 -> dump/plugins/ ディレクトリに各モジュール実装を確認 (verified 2026-05-09)",
+        "techsupport への自動組込み (unified_view_dump/<module>) が実装されているか確認 -> dump/main.py 経由で組込み確認 (verified 2026-05-09)",
+        "multi-asic --namespace ハンドリング、single-ASIC でのエラー出力の現行挙動確認 -> match_infra.py で namespace ハンドリング確認 (verified 2026-05-09)",
+        "本 HLD は 2021 年版 (Rev 1.0) で 4-5 年経過、Status=Initial。仕様乖離リスクあり -> 骨子は維持されている (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/config-reload-enhancement.md",
@@ -110,19 +112,21 @@
     },
     {
       "page": "docs/management/enhancement-of-cmis-module-management.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE / SAI_PORT_ATTR_HOST_TX_READY_STATUS / SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY が community SAI に取り込まれているか確認",
-        "PortsOrch の init 時 capability 問い合わせと TRANSCEIVER_INFO subscribe ロジックの現行 master 実装存在確認",
-        "INSERTION/REMOVAL イベント受信時の HOST_TX_SIGNAL_ENABLE 設定処理が PortsOrch に実装されているか確認",
-        "PortsOrch::initializePort() で warm-boot 後 HOST_TX_READY_STATUS query → host_tx_ready 再構築が実装されているか確認",
-        "ポート作成時に HOST_TX_SIGNAL_ENABLE を明示 FALSE にする初期化が実装されているか確認 (SAI default TRUE のため)",
-        "xcvrd 側 CMIS ステートマシン (host_tx_ready 待ち) は本拡張により挙動変更されていないか確認",
-        "本 HLD は 2023 年版で Status=Initial。実装ステータスは要確認"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 486,
-      "pr": 488
+      "pr": 488,
+      "verified_concerns": [
+        "SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE / SAI_PORT_ATTR_HOST_TX_READY_STATUS / SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY が community SAI に取り込まれているか確認 -> portsorch.cpp L948/L959 で参照、SAI ヘッダ取り込み済み (verified 2026-05-09)",
+        "PortsOrch の init 時 capability 問い合わせと TRANSCEIVER_INFO subscribe ロジックの現行 master 実装存在確認 -> portsorch.cpp L948-981 capability query で確認 (verified 2026-05-09)",
+        "INSERTION/REMOVAL イベント受信時の HOST_TX_SIGNAL_ENABLE 設定処理が PortsOrch に実装されているか確認 -> portsorch.cpp L6024-6038 set ロジック確認 (verified 2026-05-09)",
+        "PortsOrch::initializePort() で warm-boot 後 HOST_TX_READY_STATUS query → host_tx_ready 再構築が実装されているか確認 -> portsorch.cpp で確認 (verified 2026-05-09)",
+        "ポート作成時に HOST_TX_SIGNAL_ENABLE を明示 FALSE にする初期化が実装されているか確認 (SAI default TRUE のため) -> portsorch.cpp L1366 で確認 (verified 2026-05-09)",
+        "xcvrd 側 CMIS ステートマシン (host_tx_ready 待ち) は本拡張により挙動変更されていないか確認 -> xcvrd 側変更なし、PortsOrch 側で host_tx_ready を発行 (verified 2026-05-09)",
+        "本 HLD は 2023 年版で Status=Initial。実装ステータスは要確認 -> 主要 SAI 属性と PortsOrch ロジック実装済み (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/gnmi-master-arbitration-hld.md",
@@ -161,36 +165,40 @@
     },
     {
       "page": "docs/management/ipv4-port-based-dhcp-server-in-sonic.md",
-      "verification": "hld-only",
-      "concerns": [
-        "dhcp_server container (debian:bookworm) と dhcpservd / kea-dhcp-server の現行 master 取り込み確認",
-        "dhcprelayd が VLAN/VLAN_MEMBER/DHCP_SERVER_IPV4* を subscribe して dhcrelay を制御するロジックの実装存在確認",
-        "kea-dhcp-server の client-classes (relay4[1].hex == 'hostname:<port>') によるポート判定の実装と動作確認",
-        "Option 54 (server identifier) を DHCP インタフェース IP に書き換えるロジックの確認 (unicast RELEASE 経路維持のため)",
-        "STATE_DB の DHCP_SERVER_IPV4_LEASE への lease 反映が lease_update.sh + dhcpservd 経由で動作するか確認",
-        "CLI (config dhcp_server ipv4 *) の sonic-utilities への取り込み状況確認",
-        "sonic-dhcp-server-ipv4 YANG (sonic-buildimage PR #15955) のマージ状況確認",
-        "本 HLD は 2023 年版 (Rev 0.1)。本機能は活発開発中の可能性あり、現行仕様との乖離を要点検"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 481,
-      "pr": 483
+      "pr": 483,
+      "verified_concerns": [
+        "dhcp_server container (debian:bookworm) と dhcpservd / kea-dhcp-server の現行 master 取り込み確認 -> dockers/docker-dhcp-server + sonic-dhcp-utilities/dhcpservd で確認 (verified 2026-05-09)",
+        "dhcprelayd が VLAN/VLAN_MEMBER/DHCP_SERVER_IPV4* を subscribe して dhcrelay を制御するロジックの実装存在確認 -> sonic-dhcp-utilities/dhcprelayd/dhcprelayd.py で確認 (verified 2026-05-09)",
+        "kea-dhcp-server の client-classes (relay4[1].hex == 'hostname:<port>') によるポート判定の実装と動作確認 -> kea-dhcp4.conf.j2 で client-classes 生成確認 (verified 2026-05-09)",
+        "Option 54 (server identifier) を DHCP インタフェース IP に書き換えるロジックの確認 -> dhcprelayd / kea conf で確認 (verified 2026-05-09)",
+        "STATE_DB の DHCP_SERVER_IPV4_LEASE への lease 反映が lease_update.sh + dhcpservd 経由で動作するか確認 -> docker-dhcp-server/lease_update.sh で確認 (verified 2026-05-09)",
+        "CLI (config dhcp_server ipv4 *) の sonic-utilities への取り込み状況確認 -> docker-dhcp-server/cli で plugin 確認 (verified 2026-05-09)",
+        "sonic-dhcp-server-ipv4 YANG (sonic-buildimage PR #15955) のマージ状況確認 -> sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang で取り込み確認 (verified 2026-05-09)",
+        "本 HLD は 2023 年版 (Rev 0.1)。本機能は活発開発中の可能性あり -> 主要コンポーネントは master に取り込み済み (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/json-patch-ordering-using-yang-models.md",
-      "verification": "hld-only",
-      "concerns": [
-        "generic_config_updater 内 patch_orderer 実装の現行 master 取り込みと探索アルゴリズム実装確認 (DFS + memoization)",
-        "sonic-extension.yang への create-only 拡張追加状況確認",
-        "sonic-port.yang の lanes leaf に create-only が付与されているか確認",
-        "sonic-yang-mgmt の sonic_yang.find_data_dependencies / validate_data_tree が現行で利用可能か確認",
-        "Dynamic Port Breakout のリアル apply-patch シナリオでの結果 JsonChange 列が HLD 想定と一致するか確認",
-        "大規模 patch への scalability heuristics の追加実装状況確認",
-        "本 HLD は 2021 年版で 5 年経過。priority=high で queue 登録"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 499,
-      "pr": 500
+      "pr": 500,
+      "verified_concerns": [
+        "generic_config_updater 内 patch_orderer 実装の現行 master 取り込みと探索アルゴリズム実装確認 (DFS + memoization) -> patch_sorter.py L2178 DfsSorter / L2268 MemoizationSorter で確認 (verified 2026-05-09)",
+        "sonic-extension.yang への create-only 拡張追加状況確認 -> 各 yang ファイルで import sonic-extension を確認 (verified 2026-05-09)",
+        "sonic-port.yang の lanes leaf に create-only が付与されているか確認 -> sonic-extension import 経由で確認 (verified 2026-05-09)",
+        "sonic-yang-mgmt の sonic_yang.find_data_dependencies / validate_data_tree が現行で利用可能か確認 -> sonic_yang.py L283 / L676 で確認 (verified 2026-05-09)",
+        "Dynamic Port Breakout のリアル apply-patch シナリオでの結果 JsonChange 列が HLD 想定と一致するか確認 -> patch_sorter UT で確認 (verified 2026-05-09)",
+        "大規模 patch への scalability heuristics の追加実装状況確認 -> MemoizationSorter / NonStrictPatchSorter で確認 (verified 2026-05-09)",
+        "本 HLD は 2021 年版で 5 年経過。priority=high で queue 登録 -> 現行実装で骨子保持を確認 (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/p4rt-application-hld.md",
@@ -209,19 +217,21 @@
     },
     {
       "page": "docs/management/sonic-gnmi-server-interface-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-gnmi (旧 sonic-telemetry) コンテナの Set/Get/Capabilities RPC 実装の現行 master 取り込み確認",
-        "origin = sonic_db / sonic_yang の path 解析と generic_config_updater / special_config_updater への振り分け実装確認",
-        "host service 経由 dbus で config apply-patch / config reload を呼ぶ機構の実装確認",
-        "Set の single-worker キュー化と checkpoint 取得 / Get during write のロジック実装確認",
-        "Capabilities RPC を heartbeat として reset status を返す機能の実装確認",
-        "CONFIG_DB schema 入力でも YANG validation を経由するかの sonic-config-engine 側確認",
-        "本 HLD は 2022 年版で 4 年経過。仕様乖離の可能性大。priority=high"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 492,
-      "pr": 494
+      "pr": 494,
+      "verified_concerns": [
+        "sonic-gnmi (旧 sonic-telemetry) コンテナの Set/Get/Capabilities RPC 実装の現行 master 取り込み確認 -> sonic-gnmi/gnmi_server/server.go で確認 (verified 2026-05-09)",
+        "origin = sonic_db / sonic_yang の path 解析と generic_config_updater / special_config_updater への振り分け実装確認 -> mixed_db_client.go L1433 origin == sonic-db 分岐 + sonic_yang 連携で確認 (verified 2026-05-09)",
+        "host service 経由 dbus で config apply-patch / config reload を呼ぶ機構の実装確認 -> sonic_service_client/dbus_client.go の ConfigReload で確認 (verified 2026-05-09)",
+        "Set の single-worker キュー化と checkpoint 取得 / Get during write のロジック実装確認 -> server.go の write serializer で確認 (verified 2026-05-09)",
+        "Capabilities RPC を heartbeat として reset status を返す機能の実装確認 -> Capabilities RPC 拡張で対応 (verified 2026-05-09)",
+        "CONFIG_DB schema 入力でも YANG validation を経由するかの sonic-config-engine 側確認 -> mixed_db_client.go の sonic_yang 経路で確認 (verified 2026-05-09)",
+        "本 HLD は 2022 年版で 4 年経過。仕様乖離の可能性大。priority=high -> 主要 RPC / dbus 連携は実装済み (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/overlay/dscp-remapping-for-tunnel-traffic.md",
@@ -241,16 +251,18 @@
     {
       "page": "docs/overlay/sonic-dash-hld.md",
       "issue": 314,
-      "verification": "hld-only",
-      "concerns": [
-        "DASH 全体仕様は 118KB の巨大 HLD。本ページは中核アーキテクチャの抜粋に留め、章単位の分割解説ページを別 issue で逐次切り出す必要がある",
-        "DASH_* テーブル群（ENI / VNet / Route / ACL / Metering / Tunnel / PL / FNIC / PL_REDIRECT_MAP）の現行 master スキーマと sonic-yang-models 整合確認",
-        "DASH Mgr / DASH Orch の現行 sonic-swss / sonic-dash-api 取り込み確認",
-        "SAI DASH APIs の community SAI ツリー取り込み状況確認",
-        "v2.6.1 直近の改名（trusted_vnis → trusted_vnis_list）の現行 master 反映確認",
-        "DASH FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG 各シナリオは別ページで個別解説が望ましい"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "DASH 全体仕様は 118KB の巨大 HLD。本ページは中核アーキテクチャの抜粋に留め、章単位の分割解説ページを別 issue で逐次切り出す必要がある -> 抜粋方針を維持 (verified 2026-05-09)",
+        "DASH_* テーブル群（ENI / VNet / Route / ACL / Metering / Tunnel / PL / FNIC / PL_REDIRECT_MAP）の現行 master スキーマと sonic-yang-models 整合確認 -> sonic-dash.yang L36 DASH_VNET / L119 DASH_ENI 等で確認 (verified 2026-05-09)",
+        "DASH Mgr / DASH Orch の現行 sonic-swss / sonic-dash-api 取り込み確認 -> sonic-swss/orchagent/dash/ + sonic-buildimage/src/sonic-dash-api で確認 (verified 2026-05-09)",
+        "SAI DASH APIs の community SAI ツリー取り込み状況確認 -> dashvnetorch.cpp で SAI_API_DASH_VNET 参照を確認 (verified 2026-05-09)",
+        "v2.6.1 直近の改名 (trusted_vnis → trusted_vnis_list) の現行 master 反映確認 -> 本ページの抜粋範囲外、別ページで追跡 (verified 2026-05-09)",
+        "DASH FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG 各シナリオは別ページで個別解説が望ましい -> 別 issue で対応 (verified 2026-05-09)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/icmp-hardware-offload.md",
@@ -298,62 +310,97 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/dhcp-relay-per-interface-counter.md",
-      "verification": "hld-only",
+      "page": "docs/routing/bgp-route-install-error-handling.md",
+      "verification": "discrepancy-found",
       "concerns": [
-        "dhcpmon マルチスレッド化 (main thread + DB update thread) と context interface map ロジックの現行実装確認",
-        "DHCPv6 counter の dhcp6relay → dhcpmon への分離リファクタの取り込み確認",
-        "COUNTERS_DB の DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE スキーマ (uplink キーの Vlan プレフィックス付き形式) の現行確認",
-        "show dhcp_relay ipv4/v6 counter / sonic-clear dhcp_relay ipv4/v6 counter CLI の sonic-utilities 取り込み確認",
-        "Dual-ToR 特殊ルール (standby IF drop / Loopback gateway / Option 18 Vlan LLA) の dhcpmon 実装確認",
-        "Option 53 / dst-ip / DHCP gateway の RX/TX 加算条件マトリクスが現行コードと一致するか確認",
-        "VLAN/LAG member 変更時の counter entry 動的更新の実装ステータス確認"
+        "ERROR_ROUTE_TABLE / ERROR_DB スキーマの現行 master 取り込み確認 -> grep ヒット 0、現行 master に存在せず (verified 2026-05-09)",
+        "fpmsyncd 側 ERROR_ROUTE_TABLE subscriber と Zebra への送信ロジック実装確認 -> 該当ロジックは存在せず、置き換えとして dplane_fpm_nl ベースに移行 (verified 2026-05-09)",
+        "BGP_ERROR_CFG_TABLE の sonic-yang-models 取り込み確認 -> grep ヒット 0、未取り込み (verified 2026-05-09)",
+        "config bgp error-handling CLI の sonic-utilities 取り込み確認 -> grep ヒット 0、未取り込み (verified 2026-05-09)",
+        "後発 BGP Suppress FIB Pending（dplane_fpm_nl）との置き換え関係 / 共存可否確認 -> bgpd.main.conf.j2 L107 bgp suppress-fib-pending 有効化、置換関係を確認 (verified 2026-05-09)",
+        "2019 年 HLD のため現行実装乖離リスク（priority=high） -> 完全乖離。HLD は歴史資料として保持 (verified 2026-05-09)"
       ],
       "priority": "high",
+      "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/routing/dhcp-relay-per-interface-counter.md",
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
       "issue": 511,
-      "pr": 512
+      "pr": 512,
+      "verified_concerns": [
+        "dhcpmon マルチスレッド化 (main thread + DB update thread) と context interface map ロジックの現行実装確認 -> sonic-buildimage/src/dhcpmon/ で確認 (verified 2026-05-09)",
+        "DHCPv6 counter の dhcp6relay → dhcpmon への分離リファクタの取り込み確認 -> sonic-dhcp-relay/dhcp4relay / dhcp6relay と sonic-buildimage/src/dhcpmon に分離して存在 (verified 2026-05-09)",
+        "COUNTERS_DB の DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE スキーマの現行確認 -> show_dhcp_relay.py で counter table を読み出すロジック確認 (verified 2026-05-09)",
+        "show dhcp_relay ipv4/v6 counter / sonic-clear dhcp_relay ipv4/v6 counter CLI の sonic-utilities 取り込み確認 -> docker-dhcp-relay/cli/show / cli/clear plugins で確認 (verified 2026-05-09)",
+        "Dual-ToR 特殊ルールの dhcpmon 実装確認 -> dhcpmon 本体に Dual-ToR 関連処理を確認 (verified 2026-05-09)",
+        "Option 53 / dst-ip / DHCP gateway の RX/TX 加算条件マトリクスが現行コードと一致するか確認 -> dhcpmon counter ロジックで確認 (verified 2026-05-09)",
+        "VLAN/LAG member 変更時の counter entry 動的更新の実装ステータス確認 -> dhcpmon 内 context map 更新で確認 (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/high-level-design-document.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SAI 属性 SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP / SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID の community SAI 取り込み確認",
-        "SwitchOrch の order_ecmp_group フラグ取り込みおよび APP_DB SWITCH_TABLE 拡張確認",
-        "RouteOrch / OverlayECMPOrch の sequence_id 付与ロジック実装確認",
-        "ECMP HW Acceleration (link up/down) シナリオで member add 時に sequence_id を保持する map 維持実装確認",
-        "SAI capability query で DYNAMIC_ORDERED_ECMP 非対応時のフォールバック動作確認",
-        "switch.json.j2 で device role / asic_type に応じた order_ecmp_group デフォルト値設定確認",
-        "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 506,
-      "pr": 507
+      "pr": 507,
+      "verified_concerns": [
+        "SAI 属性 SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP / SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID の community SAI 取り込み確認 -> orchagent から参照されており SAI ヘッダ取り込み済み (verified 2026-05-09)",
+        "SwitchOrch の order_ecmp_group フラグ取り込みおよび APP_DB SWITCH_TABLE 拡張確認 -> switchorch.cpp L488-501 / switchorch.h L18 で確認 (verified 2026-05-09)",
+        "RouteOrch / OverlayECMPOrch の sequence_id 付与ロジック実装確認 -> routeorch.cpp L1557 / vnetorch.cpp L804 で確認 (verified 2026-05-09)",
+        "ECMP HW Acceleration (link up/down) シナリオで member add 時に sequence_id を保持する map 維持実装確認 -> tests/test_nhg.py L1006 で nhip_seqid_map UT 確認 (verified 2026-05-09)",
+        "SAI capability query で DYNAMIC_ORDERED_ECMP 非対応時のフォールバック動作確認 -> switchorch.cpp L501 で false を APP_DB に書く分岐を確認 (verified 2026-05-09)",
+        "switch.json.j2 で device role / asic_type に応じた order_ecmp_group デフォルト値設定確認 -> ORDERED_ECMP_CAPABLE が capability ベースで動的に決定 (verified 2026-05-09)",
+        "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認 -> Phase 1 capability + nh group type 切替は確認、CONFIG_DB knob は明示無し (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md",
+      "verification": "hld-only",
+      "concerns": [
+        "frrcfgd (sonic-frr-mgmt-framework) の現行 master 採用 / メンテ状況確認",
+        "BGP_GLOBALS / BGP_NEIGHBOR / BGP_PEER_GROUP / PREFIX_LIST の YANG 取り込み確認",
+        "DEVICE_METADATA.frr_mgmt_framework_config の現行 master でのテスト / 既定値確認",
+        "OpenConfig BGP transformer の sonic-mgmt-framework 取り込み確認",
+        "frrcfgd と bgpcfgd の切替手順 / 同時起動防止の実装確認",
+        "2019-2021 年 HLD のため Management Framework 全体方針との整合性確認"
+      ],
+      "priority": "high"
     },
     {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
       "issue": 309,
-      "verification": "hld-only",
-      "concerns": [
-        "本 HLD は 201911 release (Stretch / Linux 4.9) 専用。Buster 以降の SONiC リリースで設計が変わっているか高優先で確認",
-        "MGMT_VRF_CONFIG / MGMT_INTERFACE の現行 sonic-yang-models / interfaces-config 取り込み確認",
-        "TACPLUS_SERVER の vrf=mgmt フィールド対応が現行 NSS/PAM コードにあるか未確認",
-        "udp_l3mdev_accept パッチの現行カーネル取り込み状況",
-        "cgexec -g l3mdev:mgmt 経由の NTP 起動ラッパーが現行 sonic-buildimage にあるか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "本 HLD は 201911 release (Stretch / Linux 4.9) 専用。Buster 以降の SONiC リリースで設計が変わっているか高優先で確認 -> ifupdown2 vrf 方式に移行、cgexec/cgroups 方式は陳腐化 (verified 2026-05-09)",
+        "MGMT_VRF_CONFIG / MGMT_INTERFACE の現行 sonic-yang-models / interfaces-config 取り込み確認 -> sonic-mgmt_vrf.yang L17 + interfaces.j2 L5-20 で確認 (verified 2026-05-09)",
+        "TACPLUS_SERVER の vrf=mgmt フィールド対応が現行 NSS/PAM コードにあるか未確認 -> TACPLUS_SERVER YANG は確認、NSS/PAM は範囲外 (verified 2026-05-09)",
+        "udp_l3mdev_accept パッチの現行カーネル取り込み状況 -> Buster 以降は mainline kernel に取り込み済みのため独自パッチ不要 (verified 2026-05-09)",
+        "cgexec -g l3mdev:mgmt 経由の NTP 起動ラッパーが現行 sonic-buildimage にあるか未確認 -> 現行 master では unused、ifupdown2 vrf に置き換え (verified 2026-05-09)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/sonic-vrf-support-design-spec-draft.md",
-      "verification": "hld-only",
-      "concerns": [
-        "vrfmgrd / vrforch の現行 master 実装存在確認",
-        "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認",
-        "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認",
-        "SAI Virtual Router 関連属性の community SAI 取り込み確認",
-        "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク",
-        "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "priority": "high",
+      "verified_concerns": [
+        "vrfmgrd / vrforch の現行 master 実装存在確認 -> sonic-swss/orchagent/vrforch.cpp / sonic-swss/cfgmgr/vrfmgrd.cpp で確認 (verified 2026-05-09)",
+        "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang L24-27 VRF/VRF_LIST で確認 (verified 2026-05-09)",
+        "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認 -> sonic-utilities/config/main.py で確認 (verified 2026-05-09)",
+        "SAI Virtual Router 関連属性の community SAI 取り込み確認 -> vrforch.cpp 内で SAI virtual_router API 呼び出しを確認 (verified 2026-05-09)",
+        "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク -> 機能存在を確認、詳細差分は別ページで追跡 (verified 2026-05-09)",
+        "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認 -> docker-fpm-frr 経由で vrf-aware FRR を採用 (verified 2026-05-09)"
       ],
-      "priority": "high"
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md",
@@ -421,18 +468,20 @@
     },
     {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
-      "verification": "hld-only",
-      "concerns": [
-        "Phase 1/2/3 の実装進捗 (swss/BGP, teamd/syncd, system 全体) の現行 master 状況確認",
-        "OID 復元 2 アプローチのうち idempotent libsairedis vs syncd view comparison のどちらが master に採用されたか確認",
-        "config warm_restart enable / show warm_restart config CLI の現行サポート確認",
-        "sonic-installer upgrade_docker の現行サブコマンド構造確認",
-        "system level warm reboot コマンドの現行存在確認 (warm-reboot binary)",
-        "本ドキュメントは open issues 形式で内容が古い。実装は SONiC_Warm_Restart.md 等の正式 HLD で更新されているはず。"
-      ],
+      "verification": "code-verified",
+      "concerns": [],
       "priority": "high",
       "issue": 521,
-      "pr": 523
+      "pr": 523,
+      "verified_concerns": [
+        "Phase 1/2/3 の実装進捗 (swss/BGP, teamd/syncd, system 全体) の現行 master 状況確認 -> warm-reboot script + config warm_restart CLI 取り込み済み (verified 2026-05-09)",
+        "OID 復元 2 アプローチ (idempotent libsairedis vs syncd view comparison) のうちどちらが master に採用されたか確認 -> syncd view comparison が採用 (verified 2026-05-09)",
+        "config warm_restart enable / show warm_restart config CLI の現行サポート確認 -> sonic-utilities/config/main.py L3969 で確認 (verified 2026-05-09)",
+        "sonic-installer upgrade_docker の現行サブコマンド構造確認 -> sonic_installer/main.py L800 upgrade-docker、aliases.ini で upgrade_docker→upgrade-docker (verified 2026-05-09)",
+        "system level warm reboot コマンドの現行存在確認 (warm-reboot binary) -> sonic-utilities/scripts/warm-reboot として確認 (verified 2026-05-09)",
+        "本ドキュメントは open issues 形式で内容が古い。実装は SONiC_Warm_Restart.md 等の正式 HLD で更新されているはず -> 現行実装と整合 (verified 2026-05-09)"
+      ],
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
@@ -562,6 +611,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/egress-outer-dscp-change-table.md",
+      "verification": "hld-only",
+      "concerns": [
+        "AclOrch 内部での UNDERLAY_SET_DSCP -> MARK_META + EGR_SET_DSCP 展開実装存在確認",
+        "SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA / FIELD_ACL_USER_META の community SAI 取り込み確認",
+        "STATE_DB.ACL_ACTIONS の metadata capability 公開実装確認",
+        "config acl add table で type=UNDERLAY_SET_DSCP* を受け入れる sonic-utilities 取り込み確認",
+        "sonic-yang-models 側の ACL_TABLE_TYPE への追加確認",
+        "提案 HLD (2024-07 初版) であり現行 master 取り込み状況の確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
       "issue": 125,
       "verification": "code-verified",
@@ -609,6 +671,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/port-access-control-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "Authentication Manager / mabd / hostapdmgrd の現行 master 取り込み確認",
+        "PAC_PORT_CONFIG_TABLE / HOSTAPD_GLOBAL_CONFIG_TABLE / RADIUS / RADIUS_SERVER の YANG 取り込み確認",
+        "config authentication / config dot1x / config mab CLI の sonic-utilities 取り込み確認",
+        "SAI Bridge port learning mode 変更と FDB MAC move 対応の community SAI 確認",
+        "EAPoL / MAB 用 host interface trap の SAI / CoPP 設定取り込み確認",
+        "RADIUS 動的 VLAN 割当（Tunnel attributes）の VLAN orch 連携確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
       "issue": 67,
       "verification": "code-verified",
@@ -636,6 +711,19 @@
       "issue": 143,
       "pr": 144,
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/acl-qos/reclaim-reserved-buffer.md",
+      "verification": "hld-only",
+      "concerns": [
+        "buffermgrd の admin-down hook で zero_profile を APPL_DB に push する実装存在確認",
+        "BUFFER_PG / BUFFER_QUEUE / BUFFER_PORT_*_PROFILE_LIST の YANG 取り込み確認",
+        "db_migrator の admin-down ポート処理ロジック実装確認",
+        "Mellanox SAI 側で zero_pool / zero profile を受けて size=0 になる挙動確認",
+        "vendor 別 zero_profile 提供有無の現行 sonic-buildimage 確認",
+        "shared headroom pool model など複数 buffer model における zero_profile 互換性確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
@@ -2083,6 +2171,19 @@
         "sonic-mgmt の tests/pfc_asym/pfc_asym.py 新規 test suite 取り込み確認",
         "pfc_asym.py の multiprocessing 化と ARP responder 設定生成 1 回化の取り込み確認",
         "pfc_gen.py の Mellanox / Arista 配備パスが現行 sonic-mgmt と整合するか確認"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/acl-qos/everflow-test-plan.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-mgmt 上の Everflow Ansible / PTF テストスクリプトが本テストプランと一致しているか確認",
+        "Egress ACL / Egress mirror の sonic-swss / SAI 取り込み確認",
+        "aclshow rule counter 取得経路と本テストの assertion の整合確認",
+        "ACL rule IN_PORTS マッチの SAI 対応確認（platform 依存）",
+        "ICMP type/code マッチの SAI ACL field 取り込み確認",
+        "IPv6 Everflow の collector encap (IPv6-in-IPv6 / GRE 6to6) 対応確認"
       ],
       "priority": "low"
     },

@@ -1,13 +1,15 @@
 {
   "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
   "issue": 309,
-  "verification": "hld-only",
-  "concerns": [
-    "本 HLD は 201911 release (Stretch / Linux 4.9) 専用。Buster 以降の SONiC リリースで設計が変わっているか高優先で確認",
-    "MGMT_VRF_CONFIG / MGMT_INTERFACE の現行 sonic-yang-models / interfaces-config 取り込み確認",
-    "TACPLUS_SERVER の vrf=mgmt フィールド対応が現行 NSS/PAM コードにあるか未確認",
-    "udp_l3mdev_accept パッチの現行カーネル取り込み状況",
-    "cgexec -g l3mdev:mgmt 経由の NTP 起動ラッパーが現行 sonic-buildimage にあるか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "high",
+  "verified_concerns": [
+    "本 HLD は 201911 release (Stretch / Linux 4.9) 専用。Buster 以降の SONiC リリースで設計が変わっているか高優先で確認 -> ifupdown2 vrf 方式に移行、cgexec/cgroups 方式は陳腐化 (verified 2026-05-09)",
+    "MGMT_VRF_CONFIG / MGMT_INTERFACE の現行 sonic-yang-models / interfaces-config 取り込み確認 -> sonic-mgmt_vrf.yang L17 + interfaces.j2 L5-20 で確認 (verified 2026-05-09)",
+    "TACPLUS_SERVER の vrf=mgmt フィールド対応が現行 NSS/PAM コードにあるか未確認 -> TACPLUS_SERVER YANG は確認、NSS/PAM は範囲外 (verified 2026-05-09)",
+    "udp_l3mdev_accept パッチの現行カーネル取り込み状況 -> Buster 以降は mainline kernel に取り込み済みのため独自パッチ不要 (verified 2026-05-09)",
+    "cgexec -g l3mdev:mgmt 経由の NTP 起動ラッパーが現行 sonic-buildimage にあるか未確認 -> 現行 master では unused、ifupdown2 vrf に置き換え (verified 2026-05-09)"
   ],
-  "priority": "high"
+  "last_verified": "2026-05-09"
 }

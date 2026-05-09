@@ -1,7 +1,7 @@
 ---
 title: SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2022 年 5 月版 (Rev 0.1) で 4 年経過、Status=Initial。`sonic-gnmi` (旧 `sonic-telemetry`) における Set/Get RPC、Generic Config Updater 連携、host service (dbus 経由 `config apply-patch` / `config reload`)、`origin: sonic_db` / `sonic_yang` の分岐実装、heartbeat / reset status 公開は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-gnmi/gnmi_server/server.go` L925 で `origin == "sonic-db"` 判定、L60/L646 で `enableConfigDbJournal` フラグを確認。`sonic-gnmi/sonic_data_client/mixed_db_client.go` L65 `Name: "sonic-db"` / L1255-1267 で `import sonic_yang` Python 連携、L1433 `c.origin == "sonic-db"` の分岐を確認。`sonic-gnmi/sonic_service_client/dbus_client_test.go` L233-313 で `ConfigReload` dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。
 
 # SONiC gNMI Server インタフェース設計（`CONFIG_DB` / SONiC YANG / Generic Config Updater 連携）
 

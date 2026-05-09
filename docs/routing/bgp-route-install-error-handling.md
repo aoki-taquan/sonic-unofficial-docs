@@ -1,7 +1,7 @@
 ---
 title: BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
 area: routing
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2019 年（Rev 0.1）の初期提案。同様の目的を持つ後発 HLD（[BGP Suppress FIB Pending](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md)）が dplane_fpm_nl ベースで標準化されているため、本 HLD の `ERROR_ROUTE_TABLE` 経路が現行 master に残っているかは要確認。`priority=high`。
+!!! danger "裏取りステータス: Discrepancy-found（HLD 提案は現行 master に取り込まれていない）"
+    `ERROR_ROUTE_TABLE` / `BGP_ERROR_CFG_TABLE` / `config bgp error-handling` CLI を `sonic-swss` / `sonic-utilities` / `sonic-buildimage` / `sonic-frr` / `sonic-buildimage/src/sonic-yang-models/` 全体に対して grep ヒット **0 件**（verified 2026-05-09）。本 HLD で提案された `ERROR_ROUTE_TABLE` 経由の FIB-install pending 機構は採用されず、後発の **[BGP Suppress FIB Pending](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md)**（`dplane_fpm_nl` + `bgp suppress-fib-pending` コマンド）に置き換えられている。`sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` L107 で `bgp suppress-fib-pending` のデフォルト有効化を確認。本 HLD は歴史的設計提案として残し、実装裏取りは BGP Suppress FIB Pending ページで継続。
 
 # BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
 

@@ -1,7 +1,7 @@
 ---
 title: dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）
 area: internals
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2021 年 5 月版 (Rev 1.0)。Status は Initial。`sonic-utilities` 側 `dump/` モジュール、`Executor` 抽象基底クラス、`MatchEngine` / `MatchRequest`、`acl_table` / `acl_rule` モジュール、TechSupport への組込みは未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-utilities/dump/` ディレクトリで `main.py` / `match_infra.py` / `helper.py` / `plugins/` を確認。`match_infra.py` L35 `class MatchRequest` / L346 `class MatchEngine` / L454 `class MatchRequestOptimizer`、`plugins/executor.py` L5 `class Executor(ABC)` を確認（verified 2026-05-09）。
 
 # `dump utility`（モジュール単位で複数 DB から関連 key を集約する debug CLI）
 

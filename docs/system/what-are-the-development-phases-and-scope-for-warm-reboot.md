@@ -1,7 +1,7 @@
 ---
 title: Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは Warm Reboot 全体設計の **open issues / 未確定事項** をまとめた古い議事ノート。Phase 1-3 の実装進捗、`config warm_restart` CLI、`sonic-installer upgrade_docker` の現行サポート、idempotent libsairedis と syncd view comparison のうちどちらが master に採用されたかは未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-utilities/config/main.py` L3938-3969 で `config warm_restart` group / `enable` コマンドを確認。`sonic-utilities/sonic_installer/main.py` L800-814 で `sonic-installer upgrade-docker` (旧 `upgrade_docker` は deprecation warning) を確認。`sonic-utilities/scripts/warm-reboot` は `fast-reboot` への symlink として存在（verified 2026-05-09）。OID 復元戦略は **syncd view comparison** が master に採用されている（syncd 内 SAI redis view-comparison ロジック）。
 
 # Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）
 

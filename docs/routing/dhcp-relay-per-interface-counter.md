@@ -1,7 +1,7 @@
 ---
 title: DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2023-2025 年に複数改訂。`dhcpmon` のマルチスレッド化、`dhcp6relay` から counter 機能の `dhcpmon` への分離、`DHCPV4_COUNTER_TABLE` / `DHCPV6_COUNTER_TABLE` の `COUNTERS_DB` 反映、show/clear CLI、Dual-ToR 専用ルールの現行実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/dhcpmon/` で dhcpmon 実装を確認。`sonic-buildimage/dockers/docker-dhcp-relay/cli/show/plugins/show_dhcp_relay.py` で `show dhcp_relay ipv4/ipv6 counter` CLI、`cli/clear/plugins/clear_dhcp_relay.py` で sonic-clear、`cli-plugin-tests/test_show_dhcpmon_counters.py` / `test_clear_dhcp_relay.py` で UT を確認（verified 2026-05-09）。`sonic-dhcp-relay/dhcp4relay` / `dhcp6relay` で relay daemon 本体を確認。
 
 # DHCP Relay per-interface counter（`dhcpmon` マルチスレッド + COUNTERS_DB 永続化）
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 巨大 HLD"
-    HLD は v2.6.1 / 2026-02 改訂、サイズ **118KB 超**。本ページは DASH の中核アーキテクチャと主要テーブルのみを抜粋する。**完全な詳細仕様（packet flow / SAI mapping / metering / Service Tunnel / Private Link / FastPath / Floating NIC 等）は HLD `doc/dash/dash-sonic-hld.md` を参照すること。** 章単位での分割解説ページは別 issue で逐次切り出すことを推奨。
+!!! success "裏取りステータス: Code-verified（中核アーキテクチャの抜粋範囲のみ）"
+    `sonic-swss/orchagent/dash/dashorch.h` L63 `class DashOrch : public ZmqOrch`、`dashvnetorch.cpp` L49-50 で `APP_DASH_VNET_TABLE_NAME` / `APP_DASH_VNET_MAPPING_TABLE_NAME` 操作、`dashaclorch.cpp` / `dashmeterorch.cpp` / `dashhaorch.cpp` / `dashhafloworch.cpp` / `dashenifwdorch.cpp` / `dashcounter.cpp` で各 Orch を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang` L36 `container DASH_VNET` / L119 `container DASH_ENI` で YANG を確認、`sonic-buildimage/src/sonic-dash-api` を確認（verified 2026-05-09）。**詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない**。章単位分割は別 issue で実施。
 
 # SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
 

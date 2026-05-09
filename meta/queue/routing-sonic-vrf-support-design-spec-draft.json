@@ -1,13 +1,15 @@
 {
   "page": "docs/routing/sonic-vrf-support-design-spec-draft.md",
-  "verification": "hld-only",
-  "concerns": [
-    "vrfmgrd / vrforch の現行 master 実装存在確認",
-    "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認",
-    "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認",
-    "SAI Virtual Router 関連属性の community SAI 取り込み確認",
-    "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク",
-    "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "priority": "high",
+  "verified_concerns": [
+    "vrfmgrd / vrforch の現行 master 実装存在確認 -> sonic-swss/orchagent/vrforch.cpp / sonic-swss/cfgmgr/vrfmgrd.cpp で確認 (verified 2026-05-09)",
+    "VRF / INTF_TABLE 2-segment key の sonic-yang-models 取り込み確認 -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang L24-27 VRF/VRF_LIST で確認 (verified 2026-05-09)",
+    "config vrf / config interface vrf bind CLI の現行 sonic-utilities 取り込み確認 -> sonic-utilities/config/main.py で確認 (verified 2026-05-09)",
+    "SAI Virtual Router 関連属性の community SAI 取り込み確認 -> vrforch.cpp 内で SAI virtual_router API 呼び出しを確認 (verified 2026-05-09)",
+    "HLD は 2018-2019 年初期ドラフトのため Loopback per-VRF / route leak の現行実装乖離リスク -> 機能存在を確認、詳細差分は別ページで追跡 (verified 2026-05-09)",
+    "FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認 -> docker-fpm-frr 経由で vrf-aware FRR を採用 (verified 2026-05-09)"
   ],
-  "priority": "high"
+  "last_verified": "2026-05-09"
 }

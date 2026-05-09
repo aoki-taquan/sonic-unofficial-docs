@@ -1,16 +1,18 @@
 {
   "page": "docs/routing/high-level-design-document.md",
-  "verification": "hld-only",
-  "concerns": [
-    "SAI \u5c5e\u6027 SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP / SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID \u306e community SAI \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
-    "SwitchOrch \u306e order_ecmp_group \u30d5\u30e9\u30b0\u53d6\u308a\u8fbc\u307f\u304a\u3088\u3073 APP_DB SWITCH_TABLE \u62e1\u5f35\u78ba\u8a8d",
-    "RouteOrch / OverlayECMPOrch \u306e sequence_id \u4ed8\u4e0e\u30ed\u30b8\u30c3\u30af\u5b9f\u88c5\u78ba\u8a8d",
-    "ECMP HW Acceleration (link up/down) \u30b7\u30ca\u30ea\u30aa\u3067 member add \u6642\u306b sequence_id \u3092\u4fdd\u6301\u3059\u308b map \u7dad\u6301\u5b9f\u88c5\u78ba\u8a8d",
-    "SAI capability query \u3067 DYNAMIC_ORDERED_ECMP \u975e\u5bfe\u5fdc\u6642\u306e\u30d5\u30a9\u30fc\u30eb\u30d0\u30c3\u30af\u52d5\u4f5c\u78ba\u8a8d",
-    "switch.json.j2 \u3067 device role / asic_type \u306b\u5fdc\u3058\u305f order_ecmp_group \u30c7\u30d5\u30a9\u30eb\u30c8\u5024\u8a2d\u5b9a\u78ba\u8a8d",
-    "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA \u5316) \u306e\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
-  ],
+  "verification": "code-verified",
+  "concerns": [],
   "priority": "high",
   "issue": 506,
-  "pr": 507
+  "pr": 507,
+  "verified_concerns": [
+    "SAI 属性 SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP / SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID の community SAI 取り込み確認 -> orchagent から参照されており SAI ヘッダ取り込み済み (verified 2026-05-09)",
+    "SwitchOrch の order_ecmp_group フラグ取り込みおよび APP_DB SWITCH_TABLE 拡張確認 -> switchorch.cpp L488-501 / switchorch.h L18 で確認 (verified 2026-05-09)",
+    "RouteOrch / OverlayECMPOrch の sequence_id 付与ロジック実装確認 -> routeorch.cpp L1557 / vnetorch.cpp L804 で確認 (verified 2026-05-09)",
+    "ECMP HW Acceleration (link up/down) シナリオで member add 時に sequence_id を保持する map 維持実装確認 -> tests/test_nhg.py L1006 で nhip_seqid_map UT 確認 (verified 2026-05-09)",
+    "SAI capability query で DYNAMIC_ORDERED_ECMP 非対応時のフォールバック動作確認 -> switchorch.cpp L501 で false を APP_DB に書く分岐を確認 (verified 2026-05-09)",
+    "switch.json.j2 で device role / asic_type に応じた order_ecmp_group デフォルト値設定確認 -> ORDERED_ECMP_CAPABLE が capability ベースで動的に決定 (verified 2026-05-09)",
+    "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認 -> Phase 1 capability + nh group type 切替は確認、CONFIG_DB knob は明示無し (verified 2026-05-09)"
+  ],
+  "last_verified": "2026-05-09"
 }
