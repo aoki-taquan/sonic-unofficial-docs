@@ -2234,6 +2234,19 @@
       "priority": "low"
     },
     {
+      "page": "docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sfputil read-eeprom / write-eeprom サブコマンドの sonic-utilities への取り込み確認",
+        "page/offset → 全体 offset 変換ロジック (CMIS / sff8472 / sff8636) の実装存在確認",
+        "sfp.read_eeprom / sfp.write_eeprom の各 vendor platform 対応状況確認",
+        "--verify オプションの動作確認 (書込後リードバック比較)",
+        "sff8472 wire-addr (a0h/a2h) ハンドリングの実装確認"
+      ],
+      "priority": "low",
+      "issue": 528
+    },
+    {
       "page": "docs/platform/sonic-port-fec-ber.md",
       "issue": 331,
       "verification": "hld-only",
