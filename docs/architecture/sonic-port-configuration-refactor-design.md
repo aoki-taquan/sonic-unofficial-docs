@@ -1,7 +1,7 @@
 ---
 title: port_config.ini パーサ統合（portconfig.py 一元化）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`portconfig.py` 一元化の現行進捗、`platform.json` への完全移行状況、`daemon_base.py` / `sfputilbase.py` / `sfputilhelper.py` / `sfputil/main.py` / `util_base.py` の現状は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-buildimage/src/sonic-config-engine/portconfig.py` に `get_port_config` / `parse_port_config_file` / `get_child_ports` / `get_breakout_mode` / `get_fabric_port_config` / `get_fabric_monitor_config` が一本化されている。これを `sonic-cfggen` (`:35 from portconfig import get_port_config`)、`minigraph.py` (`:18`)、`sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py` (`from portconfig import get_port_config`)、`sonic-utilities/show/interfaces/__init__.py` (`from portconfig import get_child_ports`) が呼び出しており、import 経路の一元化は達成。device 側 `platform.json` も既に多数の vendor で配布済 (Supermicro / Ragile / Arista 等)。
 
 # port_config.ini パーサ統合（portconfig.py 一元化）
 
@@ -132,3 +132,13 @@ HLD が示すテスト計画[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-config-refactor/port-config-refactor-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/src/sonic-config-engine/portconfig.py:171 def get_port_config(...); :214 def parse_port_config_file(port_config_file); ほか get_child_ports / get_breakout_mode / get_fabric_port_config / get_fabric_monitor_config
+- sonic-buildimage/src/sonic-config-engine/sonic-cfggen:35 from portconfig import get_port_config, get_breakout_mode
+- sonic-buildimage/src/sonic-config-engine/minigraph.py:18 from portconfig import get_port_config, get_fabric_port_config, get_fabric_monitor_config
+- sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py:15 from portconfig import get_port_config
+- sonic-utilities/show/interfaces/__init__.py:14 from portconfig import get_child_ports
+- platform.json: sonic-buildimage/device/{supermicro,ragile,...}/.../platform.json 配布済
+-->
+

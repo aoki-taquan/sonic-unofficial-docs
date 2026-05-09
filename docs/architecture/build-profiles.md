@@ -1,7 +1,7 @@
 ---
 title: ビルドプロファイル（rules/profiles/*.mk）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-buildimage` の `rules/profiles/` 配下と Makefile の `PROFILE` 変数取り込みは未裏取り。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD で提案されている `rules/profiles/` ディレクトリと Makefile での `PROFILE` 変数取り込みは現行 master に **取り込まれていない**。`sonic-buildimage/Makefile.work` は `include rules/config` と `-include rules/config.user` のみで、`profiles/$(PROFILE).mk` を後段で取り込む実装は無い。HLD は将来的な提案 / 別 fork での運用としてのみ参考にすべき。
 
 # ビルドプロファイル（rules/profiles/*.mk）
 
@@ -167,3 +167,9 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/Build-Profiles.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/rules/profiles/ ディレクトリは存在しない (find で確認)
+- sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
+- 結論: HLD は提案段階で master に未マージ
+-->

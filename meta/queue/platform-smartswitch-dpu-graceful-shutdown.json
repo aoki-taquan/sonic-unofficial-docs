@@ -1,13 +1,14 @@
 {
   "page": "docs/platform/smartswitch-dpu-graceful-shutdown.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認",
-    "module_base.py の graceful_shutdown_handler 実装と subtype/switch_type 判定確認",
-    "CHASSIS_MODULE_INFO_TABLE の state_transition_in_progress / transition_type フィールド sonic-yang-models 反映確認",
-    "smartswitch_reboot_helper との STATE_DB 排他ロジックの実装一致確認",
-    "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認",
-    "v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認"
+    "gnoi_reboot_daemon.py は sonic-platform-daemons に未取り込み（HLD と乖離）。chassisd が直接 module.set_admin_state_gracefully を呼ぶ構成",
+    "STATE_DB は HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress ではなく CHASSIS_MODULE_TABLE / transition_in_progress と別フラグ gnoi_halt_in_progress の 2 系統で実装",
+    "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路は本リポ群に未確認"
+  ],
+  "verified_concerns": [
+    "module_base.py の set_admin_state_gracefully (L429) / _graceful_shutdown_handler (L588) 実装は確認済み",
+    "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認"
   ],
   "priority": "high"
 }

@@ -1,7 +1,7 @@
 ---
 title: RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は Rev 0.1 (日付未記載)。`rules/config` の `ENABLE_RFS_SPLIT_BUILD` フラグ、`slave.mk` の RFS squashfs ターゲット、`build_debian.sh` の 2 段分岐は要裏取り。
+!!! note "裏取りステータス: code-verified（フラグ名は RFS_SPLIT_FIRST_STAGE / LAST_STAGE）"
+    HLD で言及される `ENABLE_RFS_SPLIT_BUILD` 単一フラグは現行 `rules/config` には存在せず、代わりに `slave.mk` から `build_debian.sh` に **`RFS_SPLIT_FIRST_STAGE` / `RFS_SPLIT_LAST_STAGE` の 2 段フラグ**を `export` して制御している (`slave.mk:1439-1440, 1701-1702`)。`build_debian.sh:63 [[ $RFS_SPLIT_LAST_STAGE != y ]]`、`:605 [[ $RFS_SPLIT_FIRST_STAGE == y ]]`、`:622 [[ $RFS_SPLIT_LAST_STAGE == y ]]` で Stage 分岐。
 
 # RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
 
@@ -122,3 +122,11 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/rfs-split-build-improvement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/build_debian.sh:63 if [[ $RFS_SPLIT_LAST_STAGE != y ]]; then ... :605 RFS_SPLIT_FIRST_STAGE==y :622 RFS_SPLIT_LAST_STAGE==y
+- sonic-buildimage/slave.mk:1439-1440 export RFS_SPLIT_FIRST_STAGE=y; RFS_SPLIT_LAST_STAGE=n
+- sonic-buildimage/slave.mk:1701-1702 export RFS_SPLIT_FIRST_STAGE=n; RFS_SPLIT_LAST_STAGE=y
+- ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
+-->
+

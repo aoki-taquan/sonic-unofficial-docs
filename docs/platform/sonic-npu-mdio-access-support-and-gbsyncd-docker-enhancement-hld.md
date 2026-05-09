@@ -1,7 +1,7 @@
 ---
 title: NPU MDIO アクセスと gbsyncd 単一 docker 化
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.7 (2022-09)。`MdioIpcServer` / `VendorPai` クラス、`gearbox_config.json` の `phys[].lib_name` / `phy_access_lib_name` / `mdio_cl22_only`、`syncd -i/--paiInstance` の現行 master 取り込みは未裏取り。Broadcom platform でのみ検証されており他 vendor は未確認との注記あり。
+!!! note "裏取りステータス: code-verified（命名差分あり）"
+    `sonic-sairedis/syncd/MdioIpcServer.{h,cpp}` と `Syncd.cpp` での `m_mdioIpcServer = std::make_shared<MdioIpcServer>(m_vendorSai, m_commandLineOptions->m_globalContext)` を確認済み。HLD の `VendorPai` 相当は `sonic-sairedis/syncd/VendorSai.h` (class VendorSai) として実装。`gearbox_config.json` の `phys[].lib_name` も device 配下に存在（Arista 等）。**ただし**: `phy_access_lib_name` / `mdio_cl22_only` は HLD 文書のみで device 側 JSON には未浸透。単一 gbsyncd docker の方針も `sonic-buildimage/platform/components/docker-gbsyncd-{credo,broncos,agera2,milleniob}` のように **vendor 別 docker** が並存しており、HLD の "single gbsyncd docker" は完全には達成されていない。
 
 # NPU MDIO アクセスと gbsyncd 単一 docker 化
 
@@ -130,6 +130,15 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/gearbox/gearbox_mdio-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-sairedis/syncd/MdioIpcServer.h, MdioIpcServer.cpp 実在
+- sonic-sairedis/syncd/Syncd.cpp:137 m_mdioIpcServer = std::make_shared<MdioIpcServer>(m_vendorSai, m_commandLineOptions->m_globalContext)
+- sonic-sairedis/syncd/VendorSai.h class VendorSai (HLD の VendorPai に対応する一本化クラス)
+- sonic-sairedis/syncd/CommandLineOptionsParser.cpp:119 -g/global context オプションで m_globalContext 設定 (HLD の paiInstance 相当)
+- sonic-buildimage/device/arista/.../gearbox_config.json に lib_name キーが存在 (phy_access_lib_name / mdio_cl22_only は HLD 文中のみ)
+- sonic-buildimage/platform/components/docker-gbsyncd-{credo,broncos,agera2,milleniob} に加え platform/vs/docker-gbsyncd-vs / files/scripts/gbsyncd.sh が並存 -> 単一 docker への統合は部分的
+-->
 
 <!-- concerns hint:
 - syncd の MdioIpcServer 実装と Unix socket path 規約の sonic-sairedis 取り込み確認

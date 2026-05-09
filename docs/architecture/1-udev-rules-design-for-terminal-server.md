@@ -1,7 +1,7 @@
 ---
 title: ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    本 HLD は 2020-07 改訂のターミナルサーバ向け設計で、ハードウェアトポロジ依存（usb hub + cp210x チップ）。`/etc/udev/rules.d/` への配置形式、現行 SONiC platform 配下での提供有無は実コードでの裏取り未済。
+!!! note "裏取りステータス: code-verified（haliburton platform で実装確認）"
+    `sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/haliburton/script/50-ttyUSB-C0.rules` に HLD と一致する `DRIVERS=="cp210x", ATTRS{interface}=="CP2108 Interface N", SYMLINK+="C0-X"` 形式の rules が確認できた。`platform-modules-haliburton.init` で /etc/udev/rules.d/ 配下に配置される。USB hub 故障の syslog / SNMP 通知機構は本 platform では実装なし。
 
 # ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
 
@@ -178,6 +178,11 @@ ls -l /dev/Mytty*
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/udev-terminalserver/udev rules for Terminal Server.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/haliburton/script/50-ttyUSB-C0.rules:10 ACTION=="add",KERNELS=="1-1.1.1:1.0",DRIVERS=="cp210x",ATTRS{bInterfaceNumber}=="00",ATTRS{interface}=="CP2108 Interface 0",SYMLINK+="C0-1",MODE="0666" (HLD と完全一致)
+- sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/debian/platform-modules-haliburton.init で udev rules を /etc/udev/rules.d/ に配置
+-->
 
 <!-- concerns hint:
 - terminal server 機能を提供する SONiC platform リポでの udev rules 配布有無確認

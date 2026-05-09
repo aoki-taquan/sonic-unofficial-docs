@@ -1,7 +1,7 @@
 ---
 title: ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は Debian Stretch 時代のスナップショット（Python 3.6、docker 18.09 への upgrade を提案）。`SONIC_USE_DOCKER_BUILDKIT` フラグ、`dockers/dockerfile-macros.j2`、`SAIREDIS_DPKG_TARGET=binary-syncd` の取り込み状況は要裏取り。
+!!! note "裏取りステータス: code-verified（部分実装）"
+    HLD は Debian Stretch 時代の文書だが、`sonic-buildimage/dockers/dockerfile-macros.j2` の `install_debian_packages` / `install_python_wheels` / `copy_files` マクロは現存。BuildKit は `SONIC_USE_DOCKER_BUILDKIT` フラグとしては未取り込みで、CI / `scripts/collect_docker_version_files.sh` で `DOCKER_BUILDKIT=1` を直接設定する形になっている (`.azure-pipelines/template-variables.yml` ではむしろ `DOCKER_BUILDKIT: 0` 既定)。`SAIREDIS_DPKG_TARGET=binary-syncd` 個別の指定は現行 `rules/sairedis.mk` には残っておらず、`slave.mk:879 $(if $($*_DPKG_TARGET),...)` の汎用機構に統合されている。dh `--parallel` 関連は debian/rules 側で patch 済み。
 
 # ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
 
@@ -194,3 +194,12 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/build_system_improvements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/dockers/dockerfile-macros.j2 :1 install_debian_packages, :16 install_python_wheels, :33 copy_files マクロ実装済
+- sonic-buildimage/.azure-pipelines/template-variables.yml:7 DOCKER_BUILDKIT: 0 (既定 OFF)
+- sonic-buildimage/scripts/collect_docker_version_files.sh:46-47 DOCKER_BUILDKIT=1 docker build (個別 script で BuildKit 利用)
+- SONIC_USE_DOCKER_BUILDKIT フラグ自体は grep 0 件 -> HLD で提案された名前ではなく素の DOCKER_BUILDKIT 環境変数で運用
+- sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
+-->
+
