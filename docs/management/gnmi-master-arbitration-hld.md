@@ -1,0 +1,212 @@
+---
+title: gNMI Master Arbitration（election ID と SetRequest 拡張）
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/mgmt/gnmi/master_arbitration.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - TELEMETRY
+  cli: []
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い Initial Proposal"
+    HLD は 2023-02 改訂の v0.1（Initial 版）で 2 年以上経過している。現行 master の `sonic-gnmi` 実装に取り込まれているか、`--with-master-arbitration` フラグや `TELEMETRY|gnmi:master_arbitration_enabled` スキーマがそのまま採用されているかは未確認。**Open / Action items は HLD 上 N/A だが、Restrictions に「default role 以外は無視」と記載がある点に注意**。
+
+# gNMI Master Arbitration（election ID と SetRequest 拡張）
+
+## 概要
+
+gNMI Master Arbitration は **複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、`Set` RPC を出せるのは唯一のマスタだけにする** ための調停機構である[^1]。
+
+仕様は openconfig 側の [gnmi-master-arbitration](https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-master-arbitration.md) に準じ、SONiC では `sonic-gnmi` の telemetry サーバ側に組み込む形で実装する。コアは以下のシンプルなルールである[^1]:
+
+- 各クライアントは **128-bit の単調増加 election ID (EID)** を保持する
+- クライアントは `SetRequest` の extension 領域に `MasterArbitration{role, election_id}` を載せて送る
+- ターゲット（gNMI server）は **過去に見た中で最大の EID** を保存し、それ未満／未指定の `Set` を `PermissionDenied` で拒否する
+- `Get` などの read RPC には影響しない[^1]
+
+SONiC では既定で **オフ**。コマンドラインフラグ `--with-master-arbitration` が指定された時のみ有効で、SWSS / syncd / SAI には変更を加えない[^1]。
+
+## 動作仕様
+
+### 全体像
+
+```mermaid
+sequenceDiagram
+    participant C1 as Controller 1 (EID=N)
+    participant C2 as Controller 2 (EID=N+M)
+    participant SV as gNMI server
+    C1->>SV: SetRequest(ext=MA{EID=N})
+    Note right of SV: masterEID = N
+    SV-->>C1: OK
+    C2->>SV: SetRequest(ext=MA{EID=N+M})
+    Note right of SV: N+M > N → masterEID = N+M
+    SV-->>C2: OK
+    C1->>SV: SetRequest(ext=MA{EID=N})
+    Note right of SV: N < masterEID → 拒否
+    SV-->>C1: PermissionDenied
+    C1->>SV: GetRequest(...)
+    Note right of SV: Master Arbitration は Set のみ対象
+    SV-->>C1: OK
+```
+
+### protobuf 拡張
+
+`MasterArbitration` は gNMI の汎用拡張領域に乗る。HLD は `gnmi_ext.proto` の `Extension` の `oneof ext` の 1 つとして定義する[^1]:
+
+```proto
+message MasterArbitration {
+  Role role = 1;
+  Uint128 election_id = 2;
+}
+message Uint128 { uint64 high = 1; uint64 low = 2; }
+message Role    { string id = 1; }
+```
+
+`SetRequest.extension`（repeated）に複数並ぶことがあり、その場合 **末尾の `MasterArbitration` を採用** する[^1]。
+
+### サーバ側ロジック
+
+サーバ起動時の分岐は以下の通り[^1]:
+
+```go
+var withMasterArbitration = flag.Bool("with-master-arbitration", false, "...")
+// ...
+if *withMasterArbitration {
+    gnmi.ReqFromMaster = gnmi.ReqFromMasterEnabledMA
+}
+```
+
+`Set` RPC は以下のように **認証より前** にマスタ判定を入れる。HLD いわく、マスタでないなら認証する意味すらないため[^1]:
+
+```go
+func (s *Server) Set(ctx context.Context, req *gnmipb.SetRequest) (*gnmipb.SetResponse, error) {
+    if !ReqFromMaster(req) {
+        return nil, status.Error(codes.PermissionDenied, "Not a master")
+    }
+    // 以降、authenticate と通常の Set 処理
+}
+```
+
+`ReqFromMasterEnabledMA` は受信した `SetRequest` の extension を全部走査し、最後に見つけた `MasterArbitration` の EID と内部の `masterEID` を 128-bit 比較する。新しい EID が大きければ更新、小さければ拒否する[^1]:
+
+```mermaid
+flowchart TD
+    A[SetRequest 受信] --> B[extension 全走査]
+    B --> C{MasterArbitration あり?}
+    C -->|なし| D[reqEID = 0,0]
+    C -->|あり| E[reqEID = 末尾 MA の EID]
+    D --> F{masterEID vs reqEID}
+    E --> F
+    F -->|masterEID > reqEID| G[reject: PermissionDenied]
+    F -->|masterEID < reqEID| H[masterEID = reqEID, accept]
+    F -->|等しい| I[accept]
+```
+
+注意点[^1]:
+
+- 等しい EID は **accept**（マスタが再送した場合を許容）
+- スイッチ再起動で `masterEID` は揮発し、初期値 `(0,0)` に戻る
+- 拡張が 1 つも無いケースでは `reqEID = (0,0)` が比較対象。Master Arbitration が enable で誰も EID を載せないと、最初の 1 回だけ `(0,0) == (0,0)` で通り、以降の EID > 0 が来ると非マスタ扱いになる
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  func (s *Server) Set(ctx context.Context, req *gnmipb.SetRequest) (*gnmipb.SetResponse, error) {
+    if !reqFromMaster(req) {
+      return nil, status.Error(codes.PermissionDenied, "Not a master")
+    }
+  ...
+  // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+  ...
+  // Use the election ID that is in the last extension, so, no 'break' here.
+reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。
+-->
+
+### Role（ほぼ未使用）
+
+仕様としては Role 単位でマスタを別々に持てる（control plane の役割分担を想定）。SONiC 実装は **default role のみ対応** で、`Role.id` フィールドは無視する[^1]。
+
+### ロギング
+
+HLD はサービサビリティのため次のログを要求する[^1]:
+
+- DEBUG: 新しいマスタが選ばれた時、非マスタが選ばれた時（`election_id` を含める）
+- ERROR: 非マスタが `Set` を試みた時の `Permission Deny`
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | Key | 説明 |
+|-------|-----|------|
+| `TELEMETRY` | `gnmi:master_arbitration_enabled` | `"true"` で機能を ON にすることが提案されている[^1] |
+
+ただし HLD 本文側では起動方法として **`--with-master-arbitration` コマンドラインフラグ** を採用している。CONFIG_DB スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。
+
+### 関連する CLI
+
+該当する CLI コマンドは HLD では未定義。telemetry コンテナ起動時のフラグでの制御を想定している[^1]。
+
+### 関連する YANG
+
+該当 YANG モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）[^1]。
+
+### 設定例（HLD 記述ベース）
+
+```bash
+# telemetry / gnmi コンテナ起動時にフラグを足す形（実装依存）
+# 例: telemetry コンテナの supervisord/argv に --with-master-arbitration を追加
+```
+
+クライアント側 (Go gNMI client 例):
+
+```go
+ext := &gnmi_ext.Extension{
+    Ext: &gnmi_ext.Extension_MasterArbitration{
+        MasterArbitration: &gnmi_ext.MasterArbitration{
+            ElectionId: &gnmi_ext.Uint128{High: 0, Low: uint64(myEID)},
+        },
+    },
+}
+req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
+```
+
+## 制限事項
+
+- **default role のみ**。`Role.id` を指定しても無視されるため、複数マスタ（役割分割）には未対応[^1]
+- **EID の永続化なし**。スイッチ再起動で `masterEID` は 0 に戻る。これは仕様上の選択であり、起動直後はどのコントローラもマスタになれる。HLD は EID の発行・採番方法を **out of scope** としている[^1]
+- 既定で **disable**。enable のフラグは telemetry / gNMI server の起動オプションで決まり、ランタイムでの ON/OFF 切替は想定していない[^1]
+- `Get` / `Subscribe` 等の read 系 RPC には何の効果も無い[^1]
+- 認証（`authenticate()`）よりマスタ判定が **先**。マスタでない接続は認証ログにも残らない可能性がある[^1]
+
+## 干渉する機能
+
+- **gNMI Set の挙動全般**: enable した瞬間、EID を載せない既存クライアントの `Set` は通らなくなる可能性。導入時はクライアント側を先に対応させる
+- **gNMI 認証 / RBAC**: マスタ判定が認証より前に走るため、RBAC で `Set` 権限を絞っていてもマスタ未取得の段階で拒否される
+- **Warm reboot / Fast reboot**: HLD は影響なしと明記[^1]。一方で `masterEID` は揮発するため、warm reboot でも EID は 0 に戻り、コントローラ側は再度 `Set` で EID を主張し直す必要がある（HLD 明記）[^1]
+- **複数 telemetry プロセス / マルチ ASIC**: HLD では言及無し。マルチ ASIC 環境で telemetry が複数立ち上がる場合の `masterEID` 共有有無は未定義
+
+## トラブルシューティング
+
+- 全クライアントの `Set` が `PermissionDenied "Not a master"` で落ちる: 起動フラグが ON のまま EID を載せていないクライアントが古い `masterEID` に負けている。各クライアントの `MasterArbitration` 拡張の EID 値とサーバの DEBUG ログを突き合わせる
+- 一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で `masterEID` をリセットするしかない（HLD 仕様）[^1]
+- `Get` は通るのに `Set` だけ落ちる: 仕様通り。Master Arbitration は `Set` のみ対象[^1]
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/master_arbitration.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか
+- --with-master-arbitration フラグが実装に取り込まれているか
+- TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマ存否
+- Role.id を無視する実装かどうか（HLD 上は default role のみ）
+- HLD は 2023 年 v0.1 Initial で 2 年超経過、現行 master との乖離可能性
+- openconfig 上流仕様 (gnmi-master-arbitration.md) との差分有無
+-->
