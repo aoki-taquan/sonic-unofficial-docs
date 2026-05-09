@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/platform-monitor-enhancement-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "psud / fand 新設 daemon の sonic-platform-daemons 取り込み確認",
+    "PLATFORM_INFO / CHASSIS_INFO / PSU_INFO / FAN_INFO スキーマの sonic-yang-models 反映確認",
+    "syseeprom 周辺一括収集 task (one-shot) の実装場所と起動経路確認",
+    "xcvrd 拡張 (eeprom 詳細) と現行 sonic_xcvr 階層の整合確認",
+    "show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認",
+    "ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認"
+  ],
+  "priority": "high"
+}

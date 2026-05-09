@@ -1,0 +1,127 @@
+---
+title: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
+area: system
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/pmon/pmon-enhancement-design.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - show platform fanstatus
+    - show platform psustatus
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い HLD"
+    HLD は v0.1（2017〜2019 と推定、日付不明）。`fand` / `psud` / `xcvrd` 拡張、`PLATFORM_INFO` / `CHASSIS_INFO` / `PSU_INFO` / `FAN_INFO` の現行 schema、syseeprom 周辺一括収集 task の実装は未裏取り。priority=high で queue 登録。
+
+# pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
+
+## 概要
+
+`pmon` container には既に `ledd`（LED）/ `xcvrd`（SFP）の daemon があるが、**PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは platform plugin を直接叩く** ため遅く、container 跨ぎでデータ重複も発生していた[^1]。本 HLD は **PSU / FAN 用 daemon を新設して周期収集 → STATE_DB**、misc syseeprom 系は **boot 時 1 回 dump → STATE_DB** とし、CLI / SNMP は **DB のみを read** する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。
+
+## 動作仕様
+
+### Daemon 構成
+
+```mermaid
+flowchart LR
+  subgraph pmon
+    L[ledd]
+    X[xcvrd]
+    P[psud (新)]
+    F[fand (新)]
+    M[misc one-shot task]
+  end
+  P -- platform plugin / API --> HW1[(PSU)]
+  F -- platform plugin / API --> HW2[(FAN)]
+  X -- platform plugin / API --> HW3[(SFP / xcvr)]
+  M -- syseeprom decode --> HW4[(syseeprom)]
+  P --> SDB[(STATE_DB)]
+  F --> SDB
+  X --> SDB
+  M --> SDB
+  CLI[show platform / SNMP] --> SDB
+  CLI -. set led / fan speed .-> CDB[(CONFIG_DB / STATE_DB)]
+  CDB --> P
+  CDB --> F
+```
+
+### Daemon 共通フロー
+
+- 起動時に **constant data**（serial, manufacturer, model 等）を 1 回読み込み STATE_DB に書く
+- 以降は **periodic loop**（PSU/FAN/xcvr の variable 値）で温度・電圧・回転数・status を更新
+- **set 操作**（status LED 色, fan speed 等）は CONFIG_DB 変更を subscribe してハンドラから platform API 呼出[^1]
+
+### Misc one-shot task
+
+boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。**1 回限りで exit**[^1]。
+
+### STATE_DB Schema
+
+```
+PLATFORM_INFO|<platform_name>:
+  chassis_list = <STRING>
+
+CHASSIS_INFO|<chassis_name>:
+  presence, model, serial, status, change_event,
+  base_mac_addr, reboot_cause,
+  module_num, fan_num, psu_num,
+  product_name, mac_addr_num, manufacture_date, manufacture,
+  platform_name, onie_version, crc32_checksum,
+  vendor_ext1, ...
+```
+
+PSU 系は `PSU_INFO|<name>`（`presence`, `status`, ...）に格納（[psud HLD](sonic-psu-daemon-design.md) と整合）[^1]。FAN 系は `FAN_INFO|<name>`、xcvr は既存 PORT_TABLE / TRANSCEIVER_INFO 拡張で eeprom 詳細を追加。
+
+### Business logic の境界
+
+- **共通 logic** のみ daemon に置く（例: status enum 変換、抜去/挿入 event の generic 化）
+- **platform 固有 logic** は platform plugin に閉じ込める[^1]（fan speed curve, sensor 個別の温度計算等）
+
+### CLI / SNMP の置換え
+
+- 旧: `show platform <psu|fan|sfp>` が platform plugin を直叩き
+- 新: STATE_DB を読むだけ → 高速化、container 跨ぎで一貫
+- SNMP も同じ STATE_DB が source
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  In current implementation when user try to fetch switch peripheral devices related data with CLI,
+  underneath it will directly access hardware via platform plugins, in some case it could be very slow
+  ... CLI/SNMP will access cached data(DB) instead, which will be much faster.
+reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
+-->
+
+## 制限事項
+
+- 共通 daemon への移行期は platform plugin 互換のため両系統が並存する可能性
+- 周期 (~3 秒) 内のリアルタイム性は犠牲。緊急 event は別経路で trap 化する必要
+- syseeprom 一発 dump は **再投入時の差分**（base_mac_addr 等が変わる）を想定していない
+- PSU の業務ロジック（power threshold ヒステリシス）は別 HLD（psud HLD v0.4）で発展している
+
+## 干渉する機能
+
+- **psud HLD**（power threshold ヒステリシス）: 本 HLD の延長で実装
+- **thermal-control / pmon thermal**: FAN/PSU データを利用する policy
+- **xcvrd / sfp-refactor**: xcvr 側の eeprom 拡張と接続
+- **s3ip-sysfs spec / framework**: kernel 側 sysfs の代替として将来的に重なる
+- **`show platform` 系 CLI**: STATE_DB ベースに切替
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/pmon/pmon-enhancement-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- psud / fand 新設 daemon の sonic-platform-daemons 取り込み確認
+- PLATFORM_INFO / CHASSIS_INFO / PSU_INFO / FAN_INFO スキーマの sonic-yang-models 反映確認
+- syseeprom 周辺一括収集 task (one-shot) の実装場所と起動経路確認
+- xcvrd 拡張 (eeprom 詳細) と現行 sonic_xcvr 階層の整合確認
+- show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認
+- ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
+-->
