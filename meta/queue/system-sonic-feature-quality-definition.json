@@ -1,0 +1,8 @@
+{
+  "page": "docs/system/sonic-feature-quality-definition.md",
+  "verification": "meta",
+  "concerns": [],
+  "priority": "low",
+  "issue": 515,
+  "pr": 516
+}

@@ -2252,6 +2252,14 @@
       "pr": 160
     },
     {
+      "page": "docs/system/sonic-feature-quality-definition.md",
+      "verification": "meta",
+      "concerns": [],
+      "priority": "low",
+      "issue": 515,
+      "pr": 516
+    },
+    {
       "page": "docs/system/sonic-logging-system-dumps-arch-spec.md",
       "issue": 295,
       "verification": "hld-only",
