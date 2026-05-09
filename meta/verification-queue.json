@@ -33,6 +33,17 @@
         "value update 時の SAI 挙動 (SET vs 再作成) は未確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/switching/wake-on-lan-in-sonic.md",
+      "issue": 17,
+      "verification": "hld-only",
+      "concerns": [
+        "WolRequest proto に -u / -a / -t に相当するフィールドが追加済みか未確認",
+        "sonic-host-service 側 D-Bus ハンドラの実装存在確認",
+        "wol CLI スクリプトが UDP モードで実装されているか未確認"
+      ],
+      "priority": "low"
     }
   ]
 }
