@@ -171,6 +171,18 @@
         "config interface ip add --secondary CLI の sonic-utilities 実装確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/platform/sonic-fast-link-up.md",
+      "issue": 41,
+      "verification": "hld-only",
+      "concerns": [
+        "switchorch / portsorch の Fast Link-Up コードパス実装の存在確認",
+        "SAI 属性 (SAI_SWITCH_ATTR_FAST_LINKUP_*, SAI_PORT_ATTR_FAST_LINKUP_ENABLED) が community SAI に取り込まれているか未確認",
+        "STATE_DB SWITCH_CAPABILITY|switch のフィールド名が HLD どおりか未確認",
+        "config switch-fast-linkup CLI が sonic-utilities に実装済みか未確認"
+      ],
+      "priority": "high"
     }
   ]
 }
