@@ -1,0 +1,231 @@
+---
+title: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/mgmt/gnmi/gnsi.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang:
+    - openconfig-gnsi-certz
+    - openconfig-gnsi-authz
+    - openconfig-gnsi-pathz
+    - openconfig-gnsi-credentialz
+---
+
+!!! warning "裏取りステータス: HLD-only / 古い Initial Proposal"
+    HLD は 2023-11 改訂 v0.1 で 2 年超経過、Initial Proposal のまま。Certz の `gnxi` デフォルトプロファイル、`console_mgmt` / `ssh_mgmt` という host service モジュール、gNMI server に追加するフラグ群（`EnableAuthzPolicy` 等）の **現行 master 実装は要確認**。
+
+# gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+
+## 概要
+
+gNSI（gRPC Network Security Interface）は、ネットワーク機器の **セキュリティクレデンシャルを gRPC 経由で安全にローテーションする** ためのマイクロサービス群である[^1]。SONiC では gNMI/UMF サーバ（`sonic-gnmi`）と `sonic-mgmt-common` に組み込み、対応する OpenConfig YANG モデルを公開する設計[^1]。
+
+主要 4 サービス[^1]:
+
+| サービス | 対象 | 主要 RPC |
+|---------|------|---------|
+| **Certz** | PKI（証明書 / Trust Bundle / CRL / Auth Policy） | `Rotate` / `GetProfileList` / `AddProfile` / `DeleteProfile` / `CanGenerateCSR` |
+| **Authz** | gRPC アクセス制御ポリシー（[gRPC A43](https://github.com/grpc/proposal/blob/master/A43-grpc-authorization-api.md)） | `Rotate` / `Probe` |
+| **Pathz** | gNMI パス単位の read/write 認可 | `Rotate` / `Probe` |
+| **Credentialz** | コンソール / SSH のユーザ・鍵管理 | `RotateAccountCredentials` / `RotateHostParameters` |
+
+全サービスに共通する **「Rotate モデル」**: 新ペイロードを送る → 旧状態のバックアップを取る → クライアントが `Finalize` を出さなければ自動ロールバック[^1]。
+
+## 動作仕様
+
+### Rotate の共通フロー
+
+```mermaid
+sequenceDiagram
+    participant CL as Client
+    participant SV as gNSI server
+    CL->>SV: Rotate stream open
+    CL->>SV: UploadRequest (新 cert / policy / credential)
+    SV->>SV: バックアップ作成 (旧状態)
+    SV-->>CL: UploadResponse (OK)
+    Note over CL,SV: クライアントが新状態で機能を検証
+    alt 検証 OK
+        CL->>SV: FinalizeRequest
+        SV->>SV: バックアップ破棄
+    else stream 切断 / 検証失敗
+        SV->>SV: バックアップから復元 (rollback)
+    end
+```
+
+**Finalize を送らずに stream を閉じれば必ずロールバック** されるのが gNSI の安全機構の核[^1]。
+
+### Certz
+
+`Certz.Rotate` は **bidirectional streaming RPC** で以下を入れ替える[^1]:
+
+- Server Certificate
+- Root Certificate Bundle (Trust Bundle)
+- Certificate Revocation List (CRL)
+- Authentication Policy
+
+#### Profile
+
+PKI 群を **SSL profile** 単位で束ねる。デフォルトは `gnxi` プロファイル（gNMI / gNOI / gNSI 自身が使う）[^1]:
+
+| RPC | 用途 |
+|-----|------|
+| `GetProfileList` | プロファイル列挙 |
+| `AddProfile` | 新規追加 |
+| `DeleteProfile` | 削除（**`gnxi` は削除不可**）[^1] |
+
+#### CSR
+
+server がオプションで対応すれば、`Rotate` ストリーム内で CSR を生成し、外部 CA に署名させて取り込める[^1]:
+
+- `CanGenerateCSR()` で能力照会
+- `Rotate(GenerateCSRRequest)` で CSR 取得 → 外部署名 → `Rotate` で証明書取り込み
+
+### Authz
+
+gRPC アクセスのポリシーベース認可。policy は **JSON 文字列**（[gRPC A43](https://github.com/grpc/proposal/blob/master/A43-grpc-authorization-api.md) スキーマ）で記述し、gRPC server に file watcher + Interceptor で適用する[^1]。
+
+- `Authz.Rotate()`: ポリシー差し替え（Certz と同じ Finalize/rollback 動作）
+- `Authz.Probe()`: 現行ポリシーで指定リクエストが通るかテスト
+
+### Pathz
+
+**gNMI パス単位** で read/write を絞り込む認可。ポリシープロセッサが gNMI request の冒頭で評価する[^1]。
+
+- `Pathz.Rotate()` / `Pathz.Probe()`
+
+### Credentialz
+
+コンソールユーザと SSH の鍵・パスワード管理。host service モジュール経由で `/etc/passwd` / `/etc/shadow` / `/etc/sshd/...` 等を直接書き換える[^1]。
+
+#### Console (`console_mgmt` host service module)
+
+```mermaid
+sequenceDiagram
+    participant FE as gNSI Credentialz FE
+    participant HS as console_mgmt
+    FE->>HS: create_checkpoint
+    HS->>HS: cp /etc/passwd /etc/shadow → backup
+    FE->>HS: set (JSON: ConsolePasswords[])
+    HS->>HS: replace /etc/passwd /etc/shadow
+    alt Finalize 受領
+        FE->>HS: delete_checkpoint
+        HS->>HS: backup を破棄
+    else 未 Finalize で stream 終了
+        FE->>HS: restore_checkpoint
+        HS->>HS: backup を上書き復元
+        HS->>HS: backup を破棄
+    end
+```
+
+`set` の payload[^1]:
+
+```json
+{ "ConsolePasswords": [ {"name": "alice", "password": "..."} ] }
+```
+
+#### SSH (`ssh_mgmt` host service module)
+
+`console_mgmt` と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（`sshd_config`、host key、各 home の `authorized_keys` / `authorized_users`、CA 公開鍵）に拡大される[^1]。
+
+`set` のリクエスト種別[^1]:
+
+| 種別 | キー | 動作 |
+|------|------|------|
+| 認可鍵 | `SshAccountKeys` | `/home/<account>/.ssh/authorized_keys` を置換 + sshd 再起動 |
+| 認可ユーザ | `SshAccountUsers` | `/home/<account>/.ssh/authorized_users` を置換 + sshd 再起動 |
+| CA 公開鍵 | `SshCaPublicKey` | `/etc/sshd/ssh_ca_pub_key` を置換 + sshd 再起動 |
+
+`options` には OpenSSH の `from=...` 等の鍵オプションをそのまま渡せる[^1]。
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  Credentialz is for managing SSH and Console access. Changes are made through dbus calls to appropiate host service modules.
+  ...
+  When this type of message is received the back-end will replace the content of /home/<account>/.ssh/authorized_keys file and restart the sshd daemon.
+reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。
+-->
+
+### gNMI / sonic-gnmi 側のフラグ追加
+
+HLD は gNMI server に以下のフラグを追加する想定[^1]:
+
+| フラグ | 用途 |
+|-------|------|
+| `EnableAuthzPolicy` / `AuthzPolicyFile` | Authz ポリシー有効化と JSON ファイルパス |
+| `EnablePathzPolicy` / `PathzPolicyFile` | Pathz 同上 |
+| `CertCRLConfig` | CRL ディレクトリ。空で無効化 |
+| `SshCredMetaFile` / `ConsoleCredMetaFile` | Credentialz メタデータ JSON |
+| `CredEntitiesMetaFile` | gRPC クレデンシャルメタ |
+| `AuthzMetaFile` / `PathzMetaFile` | 各サービスのメタデータ JSON |
+
+state の保管先として **`STATE_DB`** にプロファイルの freshness / state を入れる（OpenConfig gNSI モデル準拠）[^1]。
+
+## 設定
+
+### 関連する CONFIG_DB
+
+CONFIG_DB スキーマの追加は HLD 上「None」[^1]。状態は STATE_DB のみ。
+
+### 関連する CLI
+
+該当する CLI は HLD で言及無し。`gnoi_client` 系のような専用 CLI は HLD 内で未定義。
+
+### 関連する YANG
+
+OpenConfig 公開モデル（`openconfig-gnsi-certz` / `-authz` / `-pathz` / `-credentialz`）のパスを通す[^1]。
+
+### 設定例（運用イメージ）
+
+```bash
+# Certz: gnxi profile に新証明書を流し込む
+gnsi_client certz rotate --profile gnxi \
+  --cert ./new.pem --bundle ./root.pem --crl-dir ./crls/
+
+# 検証 OK で finalize
+gnsi_client certz finalize
+
+# Credentialz: SSH 認可鍵更新
+gnsi_client credentialz rotate-account \
+  --account root --keys ./new_authorized_keys.json
+```
+
+## 制限事項
+
+- **CRL の蓄積**: Go 版 gRPC は起動以降の **CRL 全履歴** を必要とする[^1]。CRL ローテーション回数に応じてメモリ・I/O が線形に増える
+- **`gnxi` profile は削除不可**[^1]
+- **同時 Rotate 拒否**: 各サービスで Concurrent Rotate を reject する想定（Unit Test cases 明記）[^1]
+- HLD 自体に `Pathz` の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要[^1]
+- Credentialz の `set` で sshd は再起動される。short-window で SSH 接続が拒否される可能性[^1]
+
+## 干渉する機能
+
+- **gNMI Master Arbitration**: gNSI の `Rotate` は `Set` ではないので Master Arbitration の対象外
+- **gNOI FactoryReset**: `retain_certs=true` で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い
+- **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる
+- **既存 sshd 設定**: `ssh_mgmt.set` は既存 `authorized_keys` を **置換** する（追記ではない）。warm boot 時の rollback ファイル管理に注意
+
+## トラブルシューティング
+
+- `Rotate` 後に証明書が古いまま: `Finalize` を送らずに stream を閉じた可能性。サーバ側のチェックポイント有無を確認
+- sshd が再起動ループ: `ssh_mgmt.set` で投入した `authorized_keys` / `sshd_config` が壊れている。`restore_checkpoint` で巻き戻す
+- `Pathz` の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否
+- console_mgmt / ssh_mgmt host service モジュール実装存否
+- EnableAuthzPolicy / EnablePathzPolicy フラグの現行 master 実装確認
+- STATE_DB に gNSI profile state を書き込む実装確認
+- HLD は 2023-11 v0.1 で 2 年超 Initial、現行 master との大幅乖離リスク
+- openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況
+-->
