@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/system-wide-warmboot.md",
+  "verification": "hld-only",
+  "concerns": [
+    "/host/warmboot/dump.rdb / sai-warmboot.bin の現行 fast-reboot スクリプト取り込み確認",
+    "SONIC_BOOT_TYPE 値の現行 master 表記確認 (fast-reboot vs fast)",
+    "SAI_SWITCH_ATTR_RESTART_WARM / SAI_KEY_WARM_BOOT_WRITE_FILE / SAI_KEY_BOOT_TYPE の community SAI 取り込み確認",
+    "WARM_RESTART_TABLE スキーマの sonic-yang-models 取り込み確認",
+    "Warmboot Manager (Google 2023) との共存 / 排他関係の現行設計確認",
+    "BGP graceful restart / teamd 90s timer 値の現行 master 確認"
+  ],
+  "priority": "high"
+}
