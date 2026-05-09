@@ -1296,6 +1296,20 @@
         "artifact 永続化と GC ポリシーの現行実装確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/management/gnoi-hld-for-os-apis.md",
+      "issue": 207,
+      "pr": 208,
+      "verification": "hld-only",
+      "concerns": [
+        "UMF / sonic-gnmi の OS RPC handler (Install/Activate/Verify) 実装存在確認",
+        "host_modules/image_service.py の install/activate/verify エンドポイント現行実装確認",
+        "chassis での standby_supervisor sync 経路確認",
+        "gnoi_client の os サブコマンド実装状況確認",
+        "Activate 起動失敗時のロールバック (sonic-installer next image pointer) 挙動確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
