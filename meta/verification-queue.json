@@ -817,6 +817,20 @@
         "集合一発成功 → 個別 fallback の判定ロジック"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md",
+      "issue": 141,
+      "verification": "hld-only",
+      "concerns": [
+        "AclOrch::queryAclCapabilities の現行 master 実装存在確認",
+        "SWITCH_CAPABILITY テーブルのキー命名（ACL_ACTIONS|INGRESS 等）が現行 STATE_DB スキーマと一致するか未確認",
+        "acl-loader の --mirror_stage オプションが sonic-utilities に取り込まれているか未確認",
+        "libsairedis の sai_query_attribute_enum_values_capability 実装状況未確認",
+        "HLD は 2019 年改訂のため現行 master 実装との大幅な乖離リスクあり"
+      ],
+      "priority": "high",
+      "pr": 142
     }
   ]
 }
