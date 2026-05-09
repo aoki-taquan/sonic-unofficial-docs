@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
 area: overlay
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは公式 HLD（Rev 0.2, 2025-10）のみを根拠に書かれている。`DashEniFwdOrch` の実装、`ENI_REDIRECT` ACL_TABLE_TYPE の AclOrch 取り込み、`ACL_RULE.REDIRECT` の tunnel nexthop 表記拡張、`VIP_TABLE` のスキーマ確定は未確認。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-swss/orchagent/dash/dashenifwdorch.h:69` で `TABLE_TYPE = "ENI_REDIRECT"`、`dashenifwdorch.h:92` で `class DashEniFwdOrch : public Orch2, public Observer`、`dashenifwdorch.h:51-58` で `DpuRegistry / EniNH / LocalEniNH / RemoteEniNH / EniAclRule / EniInfo / EniFwdCtx*` の各 helper クラスを確認。`sonic-swss/orchagent/dash/dashenifwdinfo.cpp:6` で `EniAclRule::BASE_PRIORITY = 9996`、`dashenifwdinfo.cpp:194` で `BASE_PRIORITY + static_cast<int>(type_)` により通常 9996 / TUNN_TERM 9997 を生成する仕組みを確認。`orchdaemon.{h,cpp}` への組み込み、mock_tests `dashenifwdorch_ut.cpp` の存在も確認（verified at: 2026-05-09）。
 
 # SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
 

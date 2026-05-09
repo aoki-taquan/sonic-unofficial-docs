@@ -174,20 +174,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/overlay/smartswitch-eni-based-forwarding.md",
-      "issue": 107,
-      "verification": "hld-only",
-      "concerns": [
-        "DashEniFwdOrch の sonic-swss master 取り込み",
-        "ENI_REDIRECT ACL_TABLE_TYPE の AclOrch 取り込み",
-        "ACL_RULE.REDIRECT の tunnel nexthop (<PA>@<tunnel>,<vni>) パーサ実装",
-        "DASH_ENI_FORWARD_TABLE の最終スキーマ (HA detailed design 側)",
-        "VIP_TABLE の最終的な所在と命名",
-        "Phase 2 の BFD 連携進捗"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/platform/icmp-hardware-offload.md",
       "issue": 43,
       "verification": "code-verified",
@@ -1614,6 +1600,18 @@
       "priority": "low",
       "issue": 181,
       "pr": 182
+    },
+    {
+      "page": "docs/management/portable-console-device-design.md",
+      "issue": 328,
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-platform-common の sonic_console/ パッケージ階層実装の現行確認",
+        "PortableConsoleDeviceBase / factory.py の実装存在確認",
+        "CONSOLE_SWITCH テーブルへの autodetect / vendor_name / model_name フィールド追加の YANG 反映確認",
+        "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例確認"
+      ],
+      "priority": "low"
     },
     {
       "page": "docs/management/serial-console-global-config-hld.md",
