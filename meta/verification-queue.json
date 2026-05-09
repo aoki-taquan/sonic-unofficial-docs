@@ -318,19 +318,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/bgp-setup-for-voq-chassis.md",
-      "issue": 224,
-      "verification": "hld-only",
-      "concerns": [
-        "FRR 側 bgp bestpath peer-type multipath-relax の SONiC 同梱 FRR (sonic-frr) への取り込み確認",
-        "bgpcfgd の voq_chassis テンプレート実装存在確認",
-        "CONFIG_DB の BGP_VOQ_CHASSIS_NEIGHBOR スキーマが現行 master にあるか未確認",
-        "sonic-config-engine の minigraph → BGP_VOQ_CHASSIS_NEIGHBOR 振り分け実装確認",
-        "HLD は 2020-09 改訂のため現行 master 実装との大幅な乖離リスクあり"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/routing/ipv6-link-local-enhancements.md",
       "issue": 308,
       "verification": "hld-only",
@@ -404,6 +391,18 @@
         "/proc/cmdline sonic_fips=1 と /etc/fips/fips_enable 検査ロジック → build_image.sh:214 で sonic_fips=1、build_debian.sh:691-692 で /etc/fips/fips_enable 初期化 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/process-and-docker-stats-availability-via-telemetry-agent.md",
+      "issue": 315,
+      "verification": "hld-only",
+      "concerns": [
+        "PROCESS_STATS / DOCKER_STATS デーモンの実装存在確認（sonic-buildimage/files/image_config 配下）",
+        "STATE_DB スキーマ（PROCESS_STATS / DOCKER_STATS / LastUpdateTime キー）の現行 master 取り込み確認",
+        "2 分周期と top-1024 プロセスのしきい値が現行実装で維持されているか未確認",
+        "HLD は 2019-09 改訂で 6 年以上経過、現行 master との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
     },
     {
       "page": "docs/system/sonic-os-sonic-docker-images-versioning.md",

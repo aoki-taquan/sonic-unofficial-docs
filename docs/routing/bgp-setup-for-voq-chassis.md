@@ -1,7 +1,7 @@
 ---
 title: VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    このページは公式 HLD のみを根拠に書かれている。HLD は 2020-09 (Rev 1.1) で改訂が古く、`bgpcfgd` の `voq_chassis` テンプレート、FRR への `bgp bestpath peer-type multipath-relax` 取り込み、minigraph 拡張は要裏取り。
+!!! success "裏取りステータス: Code-verified"
+    現行 master で実装済みを確認。`sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2` の voq_chassis テンプレート、`instance.conf.j2:5` で `bgp bestpath peer-type multipath-relax`、`bgpd.main.conf.j2:61,63,141,159,170,176,198` で `voq_chassis` 変数による分岐、`sonic-buildimage/src/sonic-config-engine/minigraph.py:2277` で `BGP_VOQ_CHASSIS_NEIGHBOR` テーブル生成を確認（verified at: 2026-05-09）。
 
 # VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
 
