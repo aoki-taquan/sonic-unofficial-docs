@@ -1,0 +1,141 @@
+---
+title: TACACS+ 認証テストプラン（pam_tacplus + ssh login）
+area: management
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/aaa/TACACS+ Test Plan.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - TACPLUS
+    - TACPLUS_SERVER
+    - AAA
+  cli:
+    - config aaa
+    - config tacacs
+    - show aaa
+    - show tacacs
+  yang: []
+---
+
+!!! warning "裏取りステータス: HLD-only"
+    本テストプランの設計記述。`hostcfgd` による PAM (`/etc/pam.d/common-auth-sonic`) 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動の現行 master 実装は未裏取り。
+
+# TACACS+ 認証テストプラン（`pam_tacplus` + ssh login）
+
+## 概要
+
+SONiC の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン[^1]。Authorization は CLI shell 整備後、Accounting は計画外[^1]。基盤は `pam_tacplus` (PAM モジュール) + `tac_plus` daemon (TACACS+ サーバ側)。
+
+## 動作仕様
+
+### 設定の保存先
+
+`config_db.json` に保存され、`hostcfgd` 系の host config enforcer が PAM/NSS 設定に反映する[^1]。minigraph には保存しない。サンプル[^1]:
+
+```json
+"TACPLUS": {
+  "global": { "auth_type": "pap", "src_ip": "100.1.1.1", "timeout": "3", "passkey": "test123" }
+},
+"TACPLUS_SERVER": {
+  "10.65.254.248": { "priority": "20", "tcp_port": "49" },
+  "10.65.254.222": { "priority": "30", "tcp_port": "49" }
+},
+"AAA": {
+  "authentication": { "login": "local,tacacs+", "failthrough": "True" }
+}
+```
+
+### CLI 一覧[^1]
+
+| Command | 用途 |
+|---------|------|
+| `config aaa authentication login {local\|tacacs+}` | login policy（順序付き組合せ可） |
+| `config aaa authentication failthrough enable` | 前段 PAM 失敗時に次段へ流す |
+| `config tacacs timeout <1-60>` | サーバ接続 timeout |
+| `config tacacs authtype {pap\|chap}` | 認証方式 |
+| `config tacacs passkey <TEXT>` | shared secret |
+| `config tacacs src_ip <ADDR>` | 送信元 IP（loopback 推奨） |
+| `config tacacs add <ADDR> --port --timeout --key --type --pri` | サーバ追加 |
+| `config tacacs delete <ADDR>` | サーバ削除 |
+| `show aaa` / `show tacacs` | 設定表示 |
+
+### tac_plus 側設定例
+
+```text
+key = "test123"
+
+group = network_admin {
+  default service = permit
+  service = exec { priv-lvl = 15 }
+  cmd = show { permit .* }
+}
+
+user = test {
+  login = des teWtwbeIm3BdA
+  pap   = des teWtwbeIm3BdA
+  member = network_admin
+}
+```
+
+`tac_pwd` でパスワードを des 暗号化する[^1]。
+
+## テストケース
+
+### 1. TACACS+ 認証基本動作[^1]
+
+```mermaid
+flowchart LR
+  PTF[ssh client<br>sshpass で login] --> DUT[SONiC DUT]
+  DUT -->|pam_tacplus| TS[(tac_plus<br>10.65.x.x:49)]
+  TS --> DUT
+  DUT --> PTF
+```
+
+- `config aaa` で TACACS+ 認証を有効化
+- `/etc/pam.d/common-auth-sonic` に TACACS+ エントリが入っていること
+- `ssh ... && whoami` で TACACS+ ユーザ名が返ること
+
+### 2. failthrough[^1]
+
+`login = local,tacacs+` 順で:
+- `failthrough disable` → ローカル失敗時に **TACACS+ に行かず即拒否**
+- `failthrough enable` → ローカル失敗で TACACS+ にフォールバックして成功
+
+### 3. source address[^1]
+
+実運用シナリオ: `config tacacs src_ip <loopback>` を loopback IP に設定し、TACACS+ サーバ側にその loopback への route が無いと login 失敗、route 追加で成功することを確認。
+
+## 設定
+
+### 関連する CONFIG_DB
+
+| Table | Key | 説明 |
+|-------|-----|------|
+| `TACPLUS` | `global` | 全体設定（auth_type / src_ip / timeout / passkey） |
+| `TACPLUS_SERVER` | `<addr>` | サーバ単位（priority / tcp_port） |
+| `AAA` | `authentication` | login 順 / failthrough |
+
+## 制限事項
+
+- **scope はテストプラン**: console login も同じ仕組みだが本テストは ssh のみ[^1]
+- Authorization / Accounting はテスト対象外[^1]
+- minigraph で TACACS+ 設定を扱わないため、`ansible/templates/topo/dev_metadata.j2` から TACACS+ 関連記述を削除する旨記載[^1]
+- スケール / 性能テストは対象外[^1]
+
+## 干渉する機能
+
+- **local 認証**: `login = local,tacacs+` の順序と failthrough で挙動が決まる
+- **loopback / 経路**: src_ip を loopback にする運用では DUT ↔ TACACS+ サーバ間の route 設計に依存
+
+## トラブルシューティング
+
+- PAM 設定の確認: `cat /etc/pam.d/common-auth-sonic` で `pam_tacplus.so` 行と引数を確認
+- パスワードログイン検証: `sshpass -p '<pw>' ssh <user>@DUT whoami`
+- TACACS+ サーバ側で `tac_plus -G` の foreground 起動 + tcpdump で UDP/TCP 49 を観測
+
+## 引用元
+
+[^1]: [sonic-net/SONiC doc/aaa/TACACS+ Test Plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Test%20Plan.md)
