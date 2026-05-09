@@ -3,6 +3,18 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/routing/routing-and-next-hop-table-enhancement.md",
+      "issue": 221,
+      "verification": "hld-only",
+      "concerns": [
+        "NhgOrch / NEXT_HOP_GROUP_TABLE の orchagent 実装が現行 master に存在するか未確認",
+        "APP_DB の ROUTE_TABLE.nexthop_group フィールド追加が swss-common スキーマに反映されているか未確認",
+        "RouteOrch 側の nexthop_group 解決と pending 再試行ロジックの実装存在確認",
+        "HLD は 2020-11 の Rev 0.1 (Initial) のため現行 master 実装との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/bgp-router-id-explicitly-configured.md",
       "issue": 11,
       "verification": "hld-only",
