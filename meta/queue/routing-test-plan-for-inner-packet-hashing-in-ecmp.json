@@ -1,0 +1,14 @@
+{
+  "page": "docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md",
+  "verification": "hld-only",
+  "concerns": [
+    "config pbh table/hash-field/hash/rule add/delete CLI \u306e sonic-utilities \u3078\u306e\u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "PBH Orchagent (PbhOrch?) \u3068 SAI \u30cf\u30c3\u30b7\u30e5\u5c5e\u6027 (SAI_ACL_ACTION_TYPE_SET_ECMP_HASH \u7b49) \u306e community SAI \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "INNER_DST_IPV4 / INNER_SRC_IPV4 / INNER_DST_IPV6 / INNER_SRC_IPV6 \u7b49\u306e hash field \u304c\u73fe\u884c SAI \u3067\u30b5\u30dd\u30fc\u30c8\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "VxLAN dst port 0x3412 (4789) \u3068 NVGRE IP proto 0x2f \u306e rule \u30de\u30c3\u30c1\u52d5\u4f5c\u78ba\u8a8d",
+    "warm-boot \u4e2d\u306e PBH \u30eb\u30fc\u30eb\u6c38\u7d9a\u5316\u3068 ECMP \u30cf\u30c3\u30b7\u30e5\u7d99\u7d9a\u52d5\u4f5c\u78ba\u8a8d",
+    "\u672c HLD \u306f 2021 \u5e74\u7248 Rev 1.1\u3002priority=high"
+  ],
+  "priority": "high",
+  "issue": 501
+}
