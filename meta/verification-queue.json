@@ -1438,6 +1438,18 @@
       "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
     },
     {
+      "page": "docs/routing/bgp-prefix-independent-convergence-architecture-document.md",
+      "verification": "hld-only",
+      "concerns": [
+        "nhgorch の hierarchical NHG (service / underlay) サポート状況の sonic-swss 取り込み確認",
+        "fpmsyncd の FAST/SLOW DOWNLOAD 区別実装確認",
+        "SAI NEXT_HOP_GROUP の hierarchical / hitless update 動作の vendor SAI 確認",
+        "FRR zebra の nexthop-group 機能と FPM への伝搬経路確認",
+        "single ↔ NHG hitless transition のテスト存在確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
       "issue": 230,
       "verification": "code-verified",
