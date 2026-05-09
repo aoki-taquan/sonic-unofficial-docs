@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-port-configuration-refactor-design/">
       
       
-        <link rel="prev" href="../config-db/">
+        <link rel="prev" href="../sonic-ip-interface-loopback-action/">
       
+      
+        <link rel="next" href="../ssdhealth-design/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>YANG リファレンス - SONiC 非公式ドキュメント</title>
+        <title>port_config.ini パーサ統合（portconfig.py 一元化） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#yang" class="md-skip">
+        <a href="#port_configini-portconfigpy" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -110,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              YANG リファレンス
+              port_config.ini パーサ統合（portconfig.py 一元化）
             
           </span>
         </div>
@@ -245,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -443,13 +447,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
           
   
   
@@ -539,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -564,20 +568,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -595,13 +602,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -621,7 +628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -649,7 +656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -677,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -705,7 +712,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -730,10 +737,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    port_config.ini パーサ統合（portconfig.py 一元化）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -749,6 +783,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portconfig モジュールの変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        散在パーサの集約対象
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform.json への移行を見据えた構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テスト方針
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -761,7 +981,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -2195,8 +2415,6 @@
       
   
   
-    
-  
   
   
     
@@ -2216,23 +2434,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../reference/" class="md-nav__link ">
               
   
   
@@ -2250,13 +2465,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2288,13 +2503,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2302,7 +2514,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../cli/" class="md-nav__link ">
+            <a href="../../reference/cli/" class="md-nav__link ">
               
   
   
@@ -2361,13 +2573,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2375,7 +2584,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../config-db/" class="md-nav__link ">
+            <a href="../../reference/config-db/" class="md-nav__link ">
               
   
   
@@ -2419,8 +2628,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2436,21 +2643,18 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../../reference/yang/" class="md-nav__link ">
               
   
   
@@ -2469,7 +2673,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2517,6 +2721,180 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portconfig モジュールの変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        散在パーサの集約対象
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform.json への移行を見据えた構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テスト方針
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2532,7 +2910,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/yang/index.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-port-configuration-refactor-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2540,10 +2918,132 @@
   
 
 
-<h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
-<p><code>sonic-yang-models</code> の YANG モデルを軸にしたリファレンス。CONFIG_DB スキーマと相互参照する。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>このページは公式 HLD のみを根拠にしている。<code>portconfig.py</code> 一元化の現行進捗、<code>platform.json</code> への完全移行状況、<code>daemon_base.py</code> / <code>sfputilbase.py</code> / <code>sfputilhelper.py</code> / <code>sfputil/main.py</code> / <code>util_base.py</code> の現状は未裏取り。</p>
+</div>
+<h1 id="port_configini-portconfigpy">port_config.ini パーサ統合（portconfig.py 一元化）<a class="headerlink" href="#port_configini-portconfigpy" title="Permanent link">&para;</a></h1>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>SONiC のポート定義は伝統的に <strong><code>port_config.ini</code></strong>（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。共通パーサ <code>sonic-buildimage/src/sonic-config-engine/portconfig.py</code> がいる一方で、<strong>他のリポジトリ・モジュールにも独自に同じファイルをパースするコード</strong> が散在しており、メンテ性が悪化している。</p>
+<p>本 HLD は <strong>すべての <code>port_config.ini</code> 関連ロジックを <code>portconfig.py</code> に寄せる</strong> リファクタを定義する。さらに当時並行で進んでいた <code>port_config.ini</code> → <code>platform.json</code> 移行を踏まえ、<strong>パース層を 1 箇所に集約しておけば後段の差し替えコストが下がる</strong> ことを動機にしている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="portconfig">portconfig モジュールの変更<a class="headerlink" href="#portconfig" title="Permanent link">&para;</a></h3>
+<p><code>portconfig.parse_port_config_file</code> の戻り値は <strong>常に index を含むよう統一</strong> する。<code>port_config.ini</code> 側で <code>index</code> が定義されていない場合でも、<strong>1-based の auto-increment</strong> をデフォルト値として埋める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>歴史的経緯として <code>port_config.ini</code> を <strong>0-based</strong> で書いている SKU が一部残っていた。これらは <strong>すべて 1-based に揃える</strong> ことが本リファクタの前提条件として示されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<blockquote>
+<p>"For now, there are still a few SKUs provided port_config.ini file with 0-based port index, all those port_config.ini files should be changed to 1-based." <sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+</blockquote>
+<p>ポート index は他モジュールでも使われるため、抜けがあると下流に伝播する。共通パーサが必ず index を返すことで、呼び出し側は「無いケース」を考えなくて済む構造になる。</p>
+<h3 id="_3">散在パーサの集約対象<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>5 ファイルが対象として列挙されている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>場所</th>
+<th>旧コード</th>
+<th>置き換え先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-buildimage/src/sonic-daemon-base/sonic_daemon_base/daemon_base.py</code></td>
+<td><code>port_config.ini</code> のパス取得</td>
+<td><code>portconfig.get_port_config_file_name</code></td>
+</tr>
+<tr>
+<td><code>sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilbase.py</code></td>
+<td>パース全般</td>
+<td><code>portconfig.get_port_config</code></td>
+</tr>
+<tr>
+<td><code>sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py</code></td>
+<td>パース全般</td>
+<td><code>portconfig.get_port_config</code></td>
+</tr>
+<tr>
+<td><code>sonic-utilities/sfputil/main.py</code></td>
+<td>パス取得</td>
+<td><code>portconfig.get_port_config_file_name</code></td>
+</tr>
+<tr>
+<td><code>sonic-utilities/utilities_common/util_base.py</code></td>
+<td>パス取得</td>
+<td><code>portconfig.get_port_config_file_name</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>sfputilbase.py</code> は内部で <strong>3 つの dict と 1 つの list</strong> に整形して保持しており、後続コードがそのデータ構造に依存している。データ構造そのものは維持し、<code>portconfig.py</code> の出力を <strong>既存構造に詰め替える adapter 的な変換</strong> を入れる方針<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sfputilhelper.py</code> と <code>sfputilbase.py</code> のロジックは似ているため、<strong>さらに共通箇所に切り出して再利用</strong> することも HLD で示唆されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ベンダ固有コードにも同様のパース箇所がある。これらは <strong>各ベンダ責任</strong> でリファクタする<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<pre class="mermaid"><code>flowchart LR
+    PCI[port_config.ini\n(or platform.json)] --&gt; PC[sonic-config-engine/portconfig.py]
+    PC -.-&gt; A[daemon_base.py\nget_port_config_file_name]
+    PC -.-&gt; B[sfputilbase.py\nget_port_config + adapter]
+    PC -.-&gt; C[sfputilhelper.py\nget_port_config]
+    PC -.-&gt; D[sfputil/main.py\nget_port_config_file_name]
+    PC -.-&gt; E[utilities_common/util_base.py\nget_port_config_file_name]
+    PC -.-&gt; V[vendor 固有モジュール\n(各ベンダ責任)]</code></pre>
+<h3 id="platformjson">platform.json への移行を見据えた構造<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
+<p><code>port_config.ini</code> から <code>platform.json</code> への置換は当時進行中の作業<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>パース層を 1 箇所に集約</strong> しておけば、ファイルフォーマットを切り替えるときも <code>portconfig.py</code> 内の実装を差し替えるだけで済み、呼び出し側 5 ファイル（および adapter）に手を入れずに後方互換が保てる、というのが副次的な狙い。</p>
+<!-- evidence:
+source: sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  There are also open PRs to begin transitioning from the "port_config.ini" file to a new "platform.json" file. So if we keep all parse logic in portconfig.py, it will be easy to keep backward compatible.
+reasoning: 一元化の動機が「platform.json への移行容易化」にあることの根拠。
+-->
+
+<h3 id="_4">依存関係<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>portconfig.py</code> 自体は <code>sonic-buildimage/src/sonic-config-engine</code> パッケージに属する。これを他モジュールから再利用するために、HLD は次の 2 点を要求している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>build-time の unit test を持つモジュール</strong> は <code>sonic-config-engine</code> を <strong>build-time dependency</strong> として宣言する。</li>
+<li><strong>docker 内にインストールされるモジュール</strong> （例: pmon）は、その docker に <strong><code>sonic-config-engine</code> を同梱</strong> する必要がある。HLD では pmon docker が既に同梱しているため再利用可能と注記している<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ol>
+<p>つまり「parse 関数を呼ぶ側が <code>portconfig</code> 本体をリンクできる導線」を、テストとランタイム双方で確保するのが必須要件。</p>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>該当エントリは無い。<code>port_config.ini</code> / <code>platform.json</code> は <strong>CONFIG_DB の上流</strong> にあるビルド成果物であり、本リファクタは「パース実装の集約」だけを扱う。CONFIG_DB の <code>PORT</code> テーブル等の schema は変更しない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>該当 CLI は無い。<code>show interfaces</code> 系や <code>sfputil</code> 系の <strong>出力は変わらない</strong> ことが test plan で明示されている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_6">テスト方針<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>HLD が示すテスト計画<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>t0 / t1-lag topology の regression</strong> を回し、既存テストが破壊されていないこと。</li>
+<li><strong><code>show interfaces</code> 全 sub-command</strong> をリファクタ前後で出力比較。</li>
+<li><strong><code>sfputil</code> 全 sub-command</strong> を比較。特に <code>sfputil lpmode</code> / <code>sfputil reset</code> が <strong>正しいインターフェース</strong> に効くことを確認。</li>
+<li>システム起動後、xcrvrd（transceiver daemon）が Redis に正しいデータを push しているか。</li>
+<li>SFP モジュール挿抜で status が反映されるか。</li>
+<li>xcrvrd を kill した後、Redis 側の関連情報が削除されるか。</li>
+<li>DOM 情報が正しく更新されるか。</li>
+</ol>
+<p>検証対象は <strong>Mellanox 全 SKU + 安定版 201911 image</strong> とされている<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。当時の master を切る基準点としての記述で、現在の community master との対応関係は別途確認が必要。</p>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>0-based index の SKU を 1-based に揃える必要がある</strong>。これを怠ると <code>parse_port_config_file</code> の auto-increment と既存記述が衝突するか、もしくは下流 index 参照と齟齬を起こす<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ベンダ固有コードはスコープ外</strong>。各ベンダリポジトリの port_config パース箇所は本 HLD では網羅しない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>リファクタの順序保証が無い。たとえば <code>sfputilbase.py</code> だけ移行・他は旧経路、という中間状態では、auto-increment の挙動と旧パーサの挙動が <strong>微妙にずれる</strong> 可能性がある（旧パーサが index を返さないケースの扱い）。</li>
+</ul>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>platform.json</code> への移行</strong>: 本リファクタが下地となる。パース層が 1 箇所なら <code>port_config.ini</code> か <code>platform.json</code> かを <code>portconfig.py</code> 内で吸収できる。</li>
+<li><strong>xcrvrd（transceiver daemon）</strong>: <code>port_config.ini</code> のパース経路に依存している。テスト計画でも DOM / 挿抜の挙動確認が必須項目になっている<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>sfputil</code> CLI</strong>: <code>lpmode</code> / <code>reset</code> が正しい interface に効くかが重要なチェックポイント。ポート名 → index のマッピングが auto-increment 経路に切り替わる際の影響範囲<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>build dependency</strong>: <code>sonic-config-engine</code> をビルド時依存に追加する変更が、他モジュールのビルド時間・コンテナサイズに微増の影響を与える可能性。</li>
+</ul>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>移行後にポート番号がずれる: <code>port_config.ini</code> 側で 0-based のまま残っていないかを確認。auto-increment 経路と混ざると 1 ずれる。</li>
+<li><code>sfputil lpmode &lt;Ethernet0&gt;</code> が別 interface に効く: <code>portconfig.get_port_config</code> の戻りと <code>sfputilbase.py</code> の dict / list 詰め替えの adapter にバグがある可能性。</li>
+<li>pmon が起動失敗: <code>sonic-config-engine</code> が docker 内に配置されていない。<code>portconfig.py</code> を import できないため<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/SONiC</code> <code>doc/port-config-refactor/port-config-refactor-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
