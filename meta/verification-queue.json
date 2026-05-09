@@ -2256,7 +2256,8 @@
       "verification": "meta",
       "concerns": [],
       "priority": "low",
-      "issue": 515
+      "issue": 515,
+      "pr": 516
     },
     {
       "page": "docs/system/sonic-logging-system-dumps-arch-spec.md",
