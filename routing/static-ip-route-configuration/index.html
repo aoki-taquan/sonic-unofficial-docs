@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/useful-sysctl-settings/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/static-ip-route-configuration/">
       
       
-        <link rel="prev" href="../swss-docker-warm-restart-code-reference/">
+        <link rel="prev" href="../static-configuration-of-srv6-in-sonic-hld/">
       
       
-        <link rel="next" href="../../management/">
+        <link rel="next" href="../../switching/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>FRR 用 sysctl チューニングのデフォルト - SONiC 非公式ドキュメント</title>
+        <title>Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#frr-sysctl" class="md-skip">
+        <a href="#static-ip-route-static_route-frrcfgd-frr" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FRR 用 sysctl チューニングのデフォルト
+              Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -1065,6 +1065,8 @@
       
   
   
+    
+  
   
   
     
@@ -1128,20 +1130,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1159,13 +1164,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1185,7 +1190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1213,7 +1218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1241,7 +1246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1269,7 +1274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1297,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1325,7 +1330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1353,7 +1358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1381,7 +1386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1409,7 +1414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1437,7 +1442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1465,7 +1470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1493,7 +1498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1521,7 +1526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1549,7 +1554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1577,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1605,7 +1610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -1633,7 +1638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1661,7 +1666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1689,7 +1694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1717,7 +1722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1745,7 +1750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -1773,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -1801,7 +1806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -1829,7 +1834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -1854,10 +1859,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1873,6 +1905,214 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        モジュール構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_resolve_tableappl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_RESOLVE_TABLE（APPL_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 間の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3371,8 +3611,6 @@
       
   
   
-    
-  
   
   
     
@@ -3436,23 +3674,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -3470,13 +3705,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3496,7 +3731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -3524,7 +3759,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -3552,7 +3787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -3580,7 +3815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -3608,7 +3843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -3636,7 +3871,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -3664,7 +3899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -3692,7 +3927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -3720,7 +3955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -3748,7 +3983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -3776,7 +4011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -3804,7 +4039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -3832,7 +4067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -3860,7 +4095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -3888,7 +4123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -3916,7 +4151,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -3944,7 +4179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -3972,7 +4207,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -4000,7 +4235,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -4028,7 +4263,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -4056,7 +4291,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -4084,7 +4319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -4112,7 +4347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -4140,7 +4375,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -4165,37 +4400,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FRR 用 sysctl チューニングのデフォルト
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -4211,247 +4419,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ipv4-ipv6-forwarding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv4 / IPv6 forwarding を有効化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ルート関連
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bgp-unnumbered-ospf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BGP unnumbered / OSPF 向け
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ipv6-admin-down" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv6 アドレスを admin down で残す
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#igmp-mld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IGMP / MLD のスケール
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arp-neighbor-gc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ARP / Neighbor GC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ecmp-neighbor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ECMP の neighbor 利用
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vrf-tcp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VRF と TCP
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        適用方法
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        確認方法
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -8426,21 +8393,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ipv4-ipv6-forwarding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        IPv4 / IPv6 forwarding を有効化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ルート関連
+        モジュール構成
       
     </span>
   </a>
@@ -8448,10 +8404,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgp-unnumbered-ospf" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        BGP unnumbered / OSPF 向け
+        CONFIG_DB スキーマ
       
     </span>
   </a>
@@ -8459,10 +8415,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ipv6-admin-down" class="md-nav__link">
+  <a href="#neigh_resolve_tableappl_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IPv6 アドレスを admin down で残す
+        NEIGH_RESOLVE_TABLE（APPL_DB）
       
     </span>
   </a>
@@ -8470,10 +8426,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#igmp-mld" class="md-nav__link">
+  <a href="#vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IGMP / MLD のスケール
+        VRF 間の挙動
       
     </span>
   </a>
@@ -8481,43 +8437,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#arp-neighbor-gc" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ARP / Neighbor GC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ecmp-neighbor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ECMP の neighbor 利用
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vrf-tcp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VRF と TCP
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        適用方法
+        YANG マッピング
       
     </span>
   </a>
@@ -8530,7 +8453,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -8542,7 +8465,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -8564,10 +8487,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#yang_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認方法
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
       
     </span>
   </a>
@@ -8580,7 +8514,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -8591,7 +8525,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -8602,7 +8536,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -8613,7 +8547,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8640,7 +8574,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/useful-sysctl-settings.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/static-ip-route-configuration.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -8649,148 +8583,139 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは sonic-frr の上流 FRR ドキュメントを再構成している。SONiC 側のイメージで実際に投入されている sysctl（<code>sonic-buildimage</code> の <code>etc/sysctl.d/</code> または起動スクリプトでの set）は未裏取り。SONiC が同等の値を採用しているとは限らないため、本ページは「FRR が推奨する出発点」として読むこと。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2021-04 改訂、4 年以上経過）</p>
+<p>HLD は v0.4 / 2021-04。<code>STATIC_ROUTE</code> テーブルとフィールド設計、<code>frrcfgd</code> による vtysh への注入、OpenConfig YANG マッピングが現行 master でこの仕様どおりかは未確認。</p>
 </div>
-<h1 id="frr-sysctl">FRR 用 sysctl チューニングのデフォルト<a class="headerlink" href="#frr-sysctl" title="Permanent link">&para;</a></h1>
+<h1 id="static-ip-route-static_route-frrcfgd-frr">Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）<a class="headerlink" href="#static-ip-route-static_route-frrcfgd-frr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。Linux カーネルの sysctl は <strong>forwarding 有効化、ARP 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など</strong> を細かく制御でき、FRR の挙動を大きく左右する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは sonic-frr 同梱の <code>doc/user/Useful_Sysctl_Settings.md</code> が示す <strong>「論理的なデフォルト set」</strong> を整理したもの。BGP unnumbered や OSPF を素直に動かすのに有用な値が並ぶ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<blockquote>
-<p>注意: これは <strong>FRR 上流の推奨値</strong>。SONiC のリリースイメージが同じ値を採用しているかは別途確認が必要。本ページの値を直接 <code>/etc/sysctl.d/99frr_defaults.conf</code> に流し込むなら、SONiC 既定値との差分を意識する必要がある。</p>
-</blockquote>
+<p>CLI / REST / gNMI から <strong>non-management な static route</strong> を SONiC 管理フレームワーク経由で投入する設計。CONFIG_DB の <code>STATIC_ROUTE</code> テーブルに書き込み、<code>frrcfgd</code> がそれを vtysh 経由で FRR に流し込む形を取る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VRF 間の route leak（<code>nexthop-vrf</code>）と blackhole route も同じテーブルで表現する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="ipv4-ipv6-forwarding">IPv4 / IPv6 forwarding を有効化<a class="headerlink" href="#ipv4-ipv6-forwarding" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>net.ipv4.ip_forward = 1
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>net.ipv6.conf.all.forwarding = 1
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>net.ipv4.conf.all.forwarding = 1
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>net.ipv4.conf.default.forwarding = 1
-</span></code></pre></div>
-<p>ルータとして使う以上、forwarding は ON 必須<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>all</code> と <code>default</code> の両方を立てるのは、新規生成 interface にも自動でデフォルト適用させる典型構成。</p>
-<h3 id="_3">ルート関連<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>net.ipv6.route.max_size = 131072
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>net.ipv4.conf.all.ignore_routes_with_linkdown = 1
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>net.ipv6.conf.all.ignore_routes_with_linkdown = 1
-</span></code></pre></div>
-<ul>
-<li>IPv6 ルート最大数を 128K に拡張<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 規模のフルテーブルを抱えるには既定値だと不足。</li>
-<li>リンクダウンしたインターフェース経由のルートを <strong>無視</strong> する。FRR が link state に追従して経路を切替えるための前提<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h3 id="bgp-unnumbered-ospf">BGP unnumbered / OSPF 向け<a class="headerlink" href="#bgp-unnumbered-ospf" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>net.ipv4.conf.all.rp_filter = 0
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>net.ipv4.conf.default.rp_filter = 0
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>net.ipv4.conf.lo.rp_filter = 0
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>net.ipv4.conf.default.arp_announce = 2
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>net.ipv4.conf.default.arp_notify = 1
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>net.ipv4.conf.default.arp_ignore = 1
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>net.ipv4.conf.all.arp_announce = 2
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>net.ipv4.conf.all.arp_notify = 1
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>net.ipv4.conf.all.arp_ignore = 1
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>net.ipv4.icmp_errors_use_inbound_ifaddr = 1
-</span></code></pre></div>
-<ul>
-<li><strong><code>rp_filter = 0</code></strong>: uRPF を無効化。BGP unnumbered のように非対称経路や IPv6 link-local 経由 nexthop を扱う構成では、strict mode の uRPF が誤って drop することがある<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ARP 系</strong>:</li>
-<li><code>arp_announce = 2</code>: best local address only を announce。loopback アドレスを意図せず ARP しないため。</li>
-<li><code>arp_notify = 1</code>: link up やアドレス追加時に GARP を送出。</li>
-<li><code>arp_ignore = 1</code>: 入力 interface 上のアドレス向けの ARP のみ応答<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-  これらは <strong>アドレスをループバックに集約</strong> する SONiC のような設計と相性が良い。</li>
-<li><code>icmp_errors_use_inbound_ifaddr = 1</code>: ICMP エラーの送信元アドレスに <strong>入力インターフェースのアドレス</strong> を使う。traceroute の見え方が直感的になる<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h3 id="ipv6-admin-down">IPv6 アドレスを admin down で残す<a class="headerlink" href="#ipv6-admin-down" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>net.ipv6.conf.all.keep_addr_on_down = 1
-</span></code></pre></div>
-<p>interface を admin down にしても、permanent な IPv6 アドレスを <strong>残す</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR の動作中に link を上げ下げしても link-local の neighborship を壊さないようにする。</p>
-<h3 id="igmp-mld">IGMP / MLD のスケール<a class="headerlink" href="#igmp-mld" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>net.ipv4.igmp_max_memberships = 1000
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>net.ipv4.neigh.default.mcast_solicit = 10
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>net.ipv6.mld_max_msf = 512
-</span></code></pre></div>
-<p>multicast 関連の上限を引き上げる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトのままでは多数の (S,G) を扱う運用で詰まりやすい。</p>
-<h3 id="arp-neighbor-gc">ARP / Neighbor GC<a class="headerlink" href="#arp-neighbor-gc" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>net.ipv4.neigh.default.gc_thresh2 = 7168
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>net.ipv4.neigh.default.gc_thresh3 = 8192
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>net.ipv4.neigh.default.base_reachable_time_ms = 14400000
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>net.ipv6.neigh.default.gc_thresh2 = 3584
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>net.ipv6.neigh.default.gc_thresh3 = 4096
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>net.ipv6.neigh.default.base_reachable_time_ms = 14400000
-</span></code></pre></div>
-<ul>
-<li><code>gc_thresh2/3</code>: neighbor table の <strong>soft / hard 上限</strong>。SONiC 規模のスイッチでは neighbor が数千になりがちなので緩める<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>base_reachable_time_ms = 14400000</code>（4 時間）: neighbor が reachable として扱われる時間。長めに取って probe 頻度を下げる<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<h3 id="ecmp-neighbor">ECMP の neighbor 利用<a class="headerlink" href="#ecmp-neighbor" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>net.ipv4.fib_multipath_use_neigh = 1
-</span></code></pre></div>
-<p>multipath ECMP の nexthop 選択に <strong>neighbor 情報を使う</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="vrf-tcp">VRF と TCP<a class="headerlink" href="#vrf-tcp" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>net.ipv4.tcp_l3mdev_accept = 1
-</span></code></pre></div>
-<p>VRF（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC で management VRF を使う場合などに有用。</p>
-<h3 id="_4">適用方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ファイルとして <code>/etc/sysctl.d/99frr_defaults.conf</code> に配置し、再起動するか以下で即時反映する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/99frr_defaults.conf
-</span></code></pre></div>
-<p>ファイル名の <code>99</code> プレフィックスは sysctl ファイルの読み込み順を <strong>遅らせて、他の設定を上書きする</strong> ための慣習。</p>
+<h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    F[/etc/sysctl.d/99frr_defaults.conf/] --&gt;|boot or sysctl -p| K[Linux kernel\nsysctl values]
-    K --&gt; FRR[FRR\nbgpd / ospfd / zebra]
-    K --&gt; KERNEL[Forwarding plane\n(Linux netdev / RIB)]</code></pre>
-<!-- evidence:
-source: sonic-net/sonic-frr/doc/user/Useful_Sysctl_Settings.md#L1-L60 (sha: 799f47f215e4266063c4ebde0041a0c7dd2d11d0)
-excerpt: |
-  # /etc/sysctl.d/99frr_defaults.conf
-  net.ipv6.route.max_size=131072
-  net.ipv4.conf.all.rp_filter = 0
-  net.ipv6.conf.all.keep_addr_on_down=1
-  net.ipv4.fib_multipath_use_neigh=1
-  net.ipv4.tcp_l3mdev_accept=1
-reasoning: 推奨デフォルト群の出典・キー名の根拠。
--->
-
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。sysctl は Linux カーネルの設定で、SONiC の CONFIG_DB は通らない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。SONiC の <code>config</code> 系から sysctl を直接編集する CLI は無い。Linux 標準の <code>sysctl</code> / <code>/etc/sysctl.d/</code> を使う。</p>
-<h3 id="_6">確認方法<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># 全 sysctl を確認</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sysctl<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;forward|rp_filter|gc_thresh|keep_addr_on_down&#39;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># 個別確認</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sysctl<span class="w"> </span>net.ipv6.route.max_size
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>sysctl<span class="w"> </span>net.ipv4.tcp_l3mdev_accept
+    CLI[config route / REST / gNMI] --&gt; MFW[Mgmt Framework\n transformer]
+    MFW --&gt; CDB[(CONFIG_DB STATIC_ROUTE)]
+    CDB --&gt; FCF[frrcfgd]
+    FCF --&gt;|vtysh| FRR[FRR zebra/staticd]
+    FRR --&gt;|fpmsyncd| APP[(APPL_DB ROUTE_TABLE)]
+    APP --&gt; RO[RouteOrch] --&gt; ASIC[(ASIC)]</code></pre>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    nexthop      = comma-list of IP    ; 0.0.0.0 を埋め草に使う
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ifname       = comma-list of ifname ; &quot;&quot; を埋め草に使う
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    distance     = comma-list of int   ; default 0
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    nexthop-vrf  = comma-list of VRF    ; route leak 用、空文字列で同 VRF
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    blackhole    = comma-list of bool   ; default false
 </span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>各カンマリストの <strong>同一インデックス</strong> が 1 つの next-hop set を表す。プレフィクスと next-hop の AF は揃える必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>例: 同じ prefix <code>10.11.1.0/24</code> に 3 つの next-hop（うち 1 つは VRF leak）を設定するエントリ：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>key  = STATIC_ROUTE|Vrf-RED|10.11.1.0/24
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>nexthop      = 0.0.0.0,    2.2.2.1, 0.0.0.0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ifname       = Ethernet0,  &quot;&quot;,      Ethernet12
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>distance     = 10,         0,       30
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>nexthop-vrf  = default,    &quot;&quot;,      Vrf-GREEN
+</span></code></pre></div>
+<p>Blackhole 例：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>key       = STATIC_ROUTE|default|10.12.11.0/24
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>nexthop   = 2.2.2.3, &quot;&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>distance  = 10,       40
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>blackhole = false,    true
+</span></code></pre></div>
+<h3 id="neigh_resolve_tableappl_db">NEIGH_RESOLVE_TABLE（APPL_DB）<a class="headerlink" href="#neigh_resolve_tableappl_db" title="Permanent link">&para;</a></h3>
+<p>next-hop が ARP/ND 未解決の場合、orchagent の router/neighbor モジュールが APPL_DB の <code>NEIGH_RESOLVE_TABLE</code> に書き、<code>nbrmgrd</code> が解決を起こす<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="vrf">VRF 間の挙動<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
+<p>インタフェースが他 VRF に移動すると、その IF を ifname に持つ静的経路は <strong>inactive</strong> になる（vtysh の running-config と CONFIG_DB の <code>STATIC_ROUTE</code> には残る）。元の VRF に戻れば再アクティブ化する。stale エントリの掃除はユーザ責任<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">YANG マッピング<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>OpenConfig 側は次のモジュールを使う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>：</p>
 <ul>
-<li>これは <strong>FRR 上流の推奨</strong>。SONiC 側で同じ値が既に投入されているか、別の値が好まれているかは別途確認が必要<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>rp_filter = 0</code> はセキュリティ機能（spoof 防止）を弱める方向の変更。<strong>意図的に外して unnumbered / 非対称ルーティングを許容する</strong> 性格の設定。要件次第で <code>loose mode (1)</code> を選ぶ判断もありうる。</li>
-<li><code>gc_thresh2/3</code> の数値はスイッチ規模に応じて調整する。データセンタ向けにはここよりさらに大きくしたい場合がある。</li>
-<li><code>base_reachable_time_ms = 14400000</code> は <code>4h</code> で長め。stale neighbor の検知が遅くなる副作用があるが、neighbor フラッピングを抑える狙いで意図された値<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>keep_addr_on_down</code> は IPv6 link-local の挙動を変える。link-local を再生成して欲しい運用と衝突する可能性がある。</li>
+<li><code>openconfig-network-instance.yang</code></li>
+<li><code>openconfig-local-routing.yang</code></li>
+<li><code>openconfig-local-routing-ext.yang</code>（未対応フィールドや拡張用）</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATIC_ROUTE</code></td>
+<td>VRF + prefix 単位の静的経路定義</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config route add prefix &lt;p&gt; nexthop &lt;ip&gt;</code></td>
+<td>静的経路追加</td>
+</tr>
+<tr>
+<td><code>config route del prefix &lt;p&gt; nexthop &lt;ip&gt;</code></td>
+<td>削除</td>
+</tr>
+<tr>
+<td><code>show ip route</code> / <code>show ipv6 route</code></td>
+<td>FRR 経由で経路確認</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang_1">関連する YANG<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>BGP unnumbered</strong>: <code>rp_filter=0</code>、<code>keep_addr_on_down=1</code>、<code>arp_*</code> 群と整合的な構成<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらが揃わないと unnumbered の neighborship が安定しないことがある。</li>
-<li><strong>management VRF</strong>: <code>tcp_l3mdev_accept=1</code> がないと、VRF 上のサービス（mgmt VRF 経由 SSH 等）に bind しないアプリから接続できないケースが出る<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ECMP</strong>: <code>fib_multipath_use_neigh=1</code> が無いと multipath で実 reachable な nexthop に偏らせる挙動が弱まる<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>IGMP / MLD scale</strong>: マルチキャストを使う運用で <code>igmp_max_memberships</code> / <code>mld_max_msf</code> が既定だとカウンタ詰まりが起きる。<code>mcast_solicit=10</code> は応答性のチューニング。</li>
-<li><strong>大規模 IPv6 RIB</strong>: <code>net.ipv6.route.max_size=131072</code> を超える RIB を扱うとカーネル側でルートが落ち始める。フルテーブルの IPv6 を扱うなら更に拡張が必要。</li>
+<li><code>openconfig-network-instance</code> / <code>openconfig-local-routing</code>（OpenConfig 標準）</li>
+<li>拡張は <code>openconfig-local-routing-ext</code></li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 通常の静的経路</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>route<span class="w"> </span>add<span class="w"> </span>prefix<span class="w"> </span><span class="m">10</span>.11.1.0/24<span class="w"> </span>nexthop<span class="w"> </span><span class="m">2</span>.2.2.1
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># VRF leak 付き</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s1">  &quot;STATIC_ROUTE&quot;: {</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s1">    &quot;Vrf-RED|10.11.1.0/24&quot;: {</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s1">      &quot;nexthop&quot;:     &quot;0.0.0.0,2.2.2.1,0.0.0.0&quot;,</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s1">      &quot;ifname&quot;:      &quot;Ethernet0,,Ethernet12&quot;,</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s1">      &quot;distance&quot;:    &quot;10,0,30&quot;,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">      &quot;nexthop-vrf&quot;: &quot;default,,Vrf-GREEN&quot;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">    }</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">  }</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s1">}&#39;</span><span class="w"> </span>--write-to-db
+</span></code></pre></div>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP unnumbered の neighborship が成立しない: <code>rp_filter</code>, <code>arp_*</code>, <code>keep_addr_on_down</code> を確認。<code>sysctl -a | grep -E 'rp_filter|arp_'</code> で値を点検<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>IPv6 ルートが受け取れない / 一部 drop される: <code>net.ipv6.route.max_size</code> の上限に達している可能性。<code>dmesg</code> に該当メッセージがないか確認<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>neighbor が大量に消える: <code>gc_thresh2/3</code> を超過。値を上げる<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>traceroute の "から" の IP が想定と違う: <code>icmp_errors_use_inbound_ifaddr=1</code> の有無を確認<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>mgmt VRF 上のアプリで bind 失敗: <code>tcp_l3mdev_accept=1</code> の有無を確認<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>next-hop の AF は prefix と同じである必要がある（IPv4 prefix に IPv6 next-hop は不可）。</li>
+<li>インタフェース VRF 移動時の inactive 経路の自動 cleanup は無し（ユーザ責任）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>nexthop</code> / <code>ifname</code> / <code>distance</code> / <code>nexthop-vrf</code> / <code>blackhole</code> のリスト長は同一インデックスで対応関係を持つため、揃える必要がある。</li>
+<li>Warm boot 時の静的経路保持は HLD で要件として明記されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>frrcfgd / FRR staticd</strong>: 本機能の出力先。FRR 側で <code>staticd</code> daemon が動いている必要がある。</li>
+<li><strong>VRF</strong>: route leak 機能はターゲット VRF が事前定義されている必要がある。</li>
+<li><strong>fpmsyncd / RouteOrch</strong>: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / SAI 側の特別処理は不要。</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>静的経路が ASIC に積まれない → <code>vtysh -c 'show ip route static'</code> で FRR 側に入っているか確認、<code>fpmsyncd</code> のログでエラーがないか確認。</li>
+<li>VRF leak が動かない → <code>nexthop-vrf</code> で指定した VRF が VRF テーブルに存在し、対象インタフェースがその VRF にバインドされているかを確認。</li>
+<li>設定が反映されない → <code>frrcfgd</code> が起動しているか、CONFIG_DB の <code>STATIC_ROUTE</code> キーフォーマット（<code>vrf|prefix</code>）が正しいか確認。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-frr</code> <code>doc/user/Useful_Sysctl_Settings.md</code> @ <code>799f47f215e4266063c4ebde0041a0c7dd2d11d0</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/static-route/SONiC_static_route_hdl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
