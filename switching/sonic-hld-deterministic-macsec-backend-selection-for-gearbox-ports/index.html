@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/dump-on-sai-failure/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sonic-bum-storm-control/">
       
       
-        <link rel="next" href="../icmp-hardware-offload/">
+        <link rel="next" href="../sonic-ip-lag-incremental-update/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP） - SONiC 非公式ドキュメント</title>
+        <title>Gearbox PHY ごとの MACsec backend 決定（macsec_supported） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" class="md-skip">
+        <a href="#gearbox-phy-macsec-backend-macsec_supported" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+              Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
             
           </span>
         </div>
@@ -291,11 +291,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../switching/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1139,6 +1139,8 @@
       
   
   
+    
+  
   
   
     
@@ -1170,20 +1172,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../switching/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1201,13 +1206,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1227,7 +1232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/brief-introduction-of-iccp-code/" class="md-nav__link">
+      <a href="../brief-introduction-of-iccp-code/" class="md-nav__link">
         
   
   
@@ -1255,7 +1260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
+      <a href="../control-sonic-behaviors-with-system-defaults-table/" class="md-nav__link">
         
   
   
@@ -1283,7 +1288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
+      <a href="../increasing-lacp-pdu-timeout-during-warm-reboot/" class="md-nav__link">
         
   
   
@@ -1311,7 +1316,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/sonic-bum-storm-control/" class="md-nav__link">
+      <a href="../sonic-bum-storm-control/" class="md-nav__link">
         
   
   
@@ -1336,10 +1341,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1355,6 +1387,264 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearbox_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gearbox_config.json への追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バックエンド決定ロジック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンポーネント変更
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コンポーネント変更">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-gearsyncdgearboxparser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A) gearsyncd（GearboxParser）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-gearboxutilsorchagent-lib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B) GearboxUtils（orchagent / lib）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C) MACsecOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot-fast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot / Fast boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backward Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1367,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/sonic-ip-lag-incremental-update/" class="md-nav__link">
+      <a href="../sonic-ip-lag-incremental-update/" class="md-nav__link">
         
   
   
@@ -1395,7 +1685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/sonic-sai-post-support-for-macsec/" class="md-nav__link">
+      <a href="../sonic-sai-post-support-for-macsec/" class="md-nav__link">
         
   
   
@@ -1423,7 +1713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/view-switching-in-producerstatetable/" class="md-nav__link">
+      <a href="../view-switching-in-producerstatetable/" class="md-nav__link">
         
   
   
@@ -1451,7 +1741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../switching/wake-on-lan-in-sonic/" class="md-nav__link">
+      <a href="../wake-on-lan-in-sonic/" class="md-nav__link">
         
   
   
@@ -2349,8 +2639,6 @@
       
   
   
-    
-  
   
   
     
@@ -2374,23 +2662,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -2408,13 +2693,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2431,37 +2716,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -2477,236 +2735,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        要件
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体シーケンス
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動の手順
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スクリプトの分担
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dump-rotation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dump の出力先と rotation
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#techsupport" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        techsupport との連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI API への影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-yang-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定 / CLI / YANG / DB Migrator
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dump" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dump の確認
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2719,7 +2747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2747,7 +2775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2775,7 +2803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2803,7 +2831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3398,7 +3426,18 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearbox_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gearbox_config.json への追加
       
     </span>
   </a>
@@ -3409,7 +3448,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体シーケンス
+        バックエンド決定ロジック
       
     </span>
   </a>
@@ -3420,7 +3459,19 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動の手順
+        コンポーネント変更
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コンポーネント変更">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-gearsyncdgearboxparser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A) gearsyncd（GearboxParser）
       
     </span>
   </a>
@@ -3428,10 +3479,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#b-gearboxutilsorchagent-lib" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スクリプトの分担
+        B) GearboxUtils（orchagent / lib）
       
     </span>
   </a>
@@ -3439,10 +3490,26 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dump-rotation" class="md-nav__link">
+  <a href="#c-macsecorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        dump の出力先と rotation
+        C) MACsecOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-boot-fast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm boot / Fast boot
       
     </span>
   </a>
@@ -3450,32 +3517,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#techsupport" class="md-nav__link">
+  <a href="#backward-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        techsupport との連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI API への影響
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-yang-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定 / CLI / YANG / DB Migrator
+        Backward Compatibility
       
     </span>
   </a>
@@ -3488,7 +3533,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3511,6 +3556,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3522,10 +3578,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dump" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        dump の確認
+        関連する YANG
       
     </span>
   </a>
@@ -3538,7 +3594,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3549,7 +3605,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3560,7 +3616,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3571,7 +3627,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3598,7 +3654,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/dump-on-sai-failure.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3608,149 +3664,163 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 列挙値、<code>/usr/bin/syncd_dump.sh</code> / <code>/usr/bin/platform_syncd_dump.sh</code>、<code>/var/log/sai_failure_dump/</code> 出力、<code>SAI_MAX_FAILURE_DUMPS=10</code> のローテーション、techsupport の収集 / クリア経路は未裏取り。</p>
+<p>本ページは公式 HLD（Rev 0.1, 2025-09 ドラフト）のみを根拠に書かれている。<code>gearsyncd</code> / <code>GearboxUtils</code> / <code>MACsecOrch</code> の <code>macsec_supported</code> 取り扱い、APP_DB <code>_GEARBOX_TABLE</code> のフィールド追加、現行 master のコード反映状況は未確認。</p>
 </div>
-<h1 id="sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）<a class="headerlink" href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" title="Permanent link">&para;</a></h1>
+<h1 id="gearbox-phy-macsec-backend-macsec_supported">Gearbox PHY ごとの MACsec backend 決定（<code>macsec_supported</code>）<a class="headerlink" href="#gearbox-phy-macsec-backend-macsec_supported" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI 呼び出しが失敗すると、<code>orchagent</code> は <strong>abort</strong> し、依存する syncd を含む各 service が再起動される。再起動の過程で <strong>失敗時点の SAI / SDK / 下位レイヤの状態</strong> が失われ、原因解析ができなくなるという問題があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は SAI 失敗を検知した瞬間に、<code>orchagent</code> が <strong>abort 前に syncd へ dump 取得を依頼</strong> し、結果をホスト側にも見える <code>/var/log/sai_failure_dump/</code> に保存する仕組みを定義する。後で <code>techsupport</code> を取ればこの dump も自動で取り込まれて回収できる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の <code>switch_id</code> に紐づいて管理されている。従来の MACsec orchestration は <strong>「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」</strong> という固定動作だった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。問題は、PHY SAI が MACsec エンジンを実装していない場合に <strong><code>SAI_STATUS_NOT_IMPLEMENTED</code></strong> が返り、<code>gbsyncd</code> がエラー、orchagent が不安定になる点。</p>
+<p>本 HLD は HWSKU の <code>gearbox_config.json</code> に <strong>PHY ごとの <code>macsec_supported</code>（boolean）</strong> を加え、<code>MACsecOrch</code> がその capability を見て「PHY backend」か「NPU backend（既定 SAI switch）」を <strong>決定論的に選ぶ</strong> ようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。runtime probing やフォールバックは行わない。</p>
+<p>互換性を保つため、フィールドが無い場合は <strong><code>true</code>（PHY backend）扱い</strong>。既存挙動を壊さない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<ul>
-<li>dump は abort の <strong>前に同期的</strong> に取る（非同期だと abort と競合して取れない可能性）。</li>
-<li>techsupport と同様の仕組みで <strong>プラットフォーム固有スクリプトを呼び出せる</strong> こと。</li>
-<li>dump はホストから見える場所に保存し、techsupport 経由で回収できること。</li>
-<li>dump 数の <strong>上限（rotation）</strong> を設けること。</li>
-</ul>
-<h3 id="_4">全体シーケンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant ORCH as orchagent
-    participant SAIR as sairedis (SAI client)
-    participant SYNCD as syncd
-    participant DUMP as /usr/bin/syncd_dump.sh
-    participant PDUMP as /usr/bin/platform_syncd_dump.sh
-    participant FS as /var/log/sai_failure_dump/
-
-    ORCH-&gt;&gt;SAIR: SAI call
-    SAIR--&gt;&gt;ORCH: error
-    Note over ORCH: SAI 失敗を検知
-    ORCH-&gt;&gt;SAIR: set SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD\n= SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP
-    SAIR-&gt;&gt;SYNCD: notify dump
-    SYNCD-&gt;&gt;DUMP: exec
-    DUMP-&gt;&gt;FS: write generic dump
-    DUMP-&gt;&gt;PDUMP: exec (if exists)
-    PDUMP-&gt;&gt;FS: write platform-specific dump
-    DUMP-&gt;&gt;FS: rotate (keep SAI_MAX_FAILURE_DUMPS)
-    SYNCD--&gt;&gt;ORCH: complete
-    Note over ORCH: abort 実行</code></pre>
-<h3 id="_5">起動の手順<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>実装の中核は <strong>新規列挙値 <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code></strong> の追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><code>orchagent</code> が SAI 失敗を検知。</li>
-<li>abort 直前に <code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> 属性を <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> で set する。</li>
-<li><code>syncd</code> がこの属性を受け、汎用スクリプト <code>/usr/bin/syncd_dump.sh</code> を実行する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>汎用スクリプトはプラットフォーム固有スクリプト <code>/usr/bin/platform_syncd_dump.sh</code> の存在を確認し、あれば呼び出す<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>dump 完了後、<code>/var/log/sai_failure_dump/</code> に対して rotation を行い、<code>orchagent</code> 側の abort が進む。</li>
-</ol>
-<h3 id="_6">スクリプトの分担<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    HWSKU[HWSKU gearbox_config.json\nphys[].macsec_supported] --&gt;|起動時パース| GS[gearsyncd\nGearboxParser]
+    GS --&gt; APP[(APP_DB\n_GEARBOX_TABLE:phy:&lt;id&gt;\nmacsec_supported)]
+    APP --&gt; GU[GearboxUtils\nloadPhyMap]
+    GU --&gt; MACO[MACsecOrch]
+    MACO --&gt; Q{phy.macsec_supported}
+    Q --&gt;|true / 不在| PHY[PHY 側 SAI でMACsec object を作成]
+    Q --&gt;|false| NPU[NPU 側 gSwitchId でMACsec object を作成]</code></pre>
+<h3 id="gearbox_configjson">gearbox_config.json への追加<a class="headerlink" href="#gearbox_configjson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;phys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;phy_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;phy1&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;macsec_supported&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;phy_access&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mdio&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;config_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">}],</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">&quot;interfaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;phy_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;system_lanes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;line_lanes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">}</span>
+</span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>スクリプト</th>
-<th>配置</th>
-<th>役割</th>
+<th>フィールド</th>
+<th>型</th>
+<th>デフォルト</th>
+<th>意味</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>/usr/bin/syncd_dump.sh</code></td>
-<td>syncd docker（共通）</td>
-<td>汎用 dump 起点。<code>platform_syncd_dump.sh</code> の有無を確認して呼び出し、最後に rotation を実行</td>
-</tr>
-<tr>
-<td><code>/usr/bin/platform_syncd_dump.sh</code></td>
-<td>syncd docker（ベンダ提供 / optional）</td>
-<td>ベンダ固有の SDK dump、register dump 等。実装はベンダ責任</td>
+<td><code>phys[].macsec_supported</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>PHY が MACsec をサポートするか。<code>false</code> のとき NPU backend を強制</td>
 </tr>
 </tbody>
 </table>
-<h3 id="dump-rotation">dump の出力先と rotation<a class="headerlink" href="#dump-rotation" title="Permanent link">&para;</a></h3>
+<h3 id="_4">バックエンド決定ロジック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    P[ポートに MACsec を有効化] --&gt; M[GearboxUtils で\nマップされた PHY を取得]
+    M --&gt; C{PHY 取得できた?}
+    C --&gt;|No| D[既定 PHY backend\n(後方互換)]
+    C --&gt;|Yes| E{phy.macsec_supported}
+    E --&gt;|true / 不在| F[PHY backend]
+    E --&gt;|false| G[NPU backend\n(gSwitchId + 前面パネル port OID)]</code></pre>
+<p>ルール（HLD まとめ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>dump は <strong><code>/var/log/sai_failure_dump/</code></strong> に書き出す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>このディレクトリは <strong>ホストから見える</strong> ことが要件（syncd docker から bind mount される想定）。</li>
-<li><strong>1 回の dump = 1 ファイル</strong> にすることでローテーションロジックを単純化する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>汎用スクリプト中の変数 <code>SAI_MAX_FAILURE_DUMPS</code> で上限を制御。<strong>既定 10</strong>。プラットフォーム固有スクリプトで上書き可能<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>macsec_supported == false</code>: NPU backend</li>
+<li><code>macsec_supported == true</code> または不在: PHY backend（既定）</li>
+<li><code>_GEARBOX_TABLE</code> のエントリ自体が無い: PHY backend（NOTICE ログ、後方互換）</li>
+<li>PHY 側 SAI から <code>SAI_STATUS_NOT_IMPLEMENTED</code> が返ったとき <strong>runtime fallback はしない</strong>。エラーログを出して失敗扱い</li>
 </ul>
-<h3 id="techsupport">techsupport との連携<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h3>
-<p><code>techsupport</code> が手動 / auto で起動されると、このディレクトリ内の dump を <strong>収集してアーカイブ</strong> に組み込み、収集後に <code>/var/log/sai_failure_dump/</code> を <strong>クリア</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これによって運用は次のフローに収束する:</p>
-<pre class="mermaid"><code>flowchart LR
-    SAIE[SAI 失敗] --&gt; DUMP[syncd_dump.sh\n→ /var/log/sai_failure_dump/]
-    DUMP --&gt; ROTATE[rotation\nSAI_MAX_FAILURE_DUMPS=10]
-    ROTATE --&gt; WAIT[ホストにファイルが滞留]
-    WAIT --&gt; TS[techsupport 起動]
-    TS --&gt; ARCHIVE[techsupport tarball に収納]
-    TS --&gt; CLEAR[/var/log/sai_failure_dump/ をクリア]</code></pre>
-<p>dump はあくまで <strong>失敗時点の証拠保全</strong> が目的。orchagent の abort と service 再起動自体は防げない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>「自動フォールバックしない」というのが本 HLD の重要な設計判断で、ASIC ベンダーが自分の plat で <code>macsec_supported</code> を正しく宣言することが運用要件になる。</p>
+<h3 id="_5">コンポーネント変更<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="a-gearsyncdgearboxparser">A) gearsyncd（<code>GearboxParser</code>）<a class="headerlink" href="#a-gearsyncdgearboxparser" title="Permanent link">&para;</a></h4>
+<p><code>phys</code> ループに以下の追加が入る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">phy</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;macsec_supported&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">phy</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">phy</span><span class="p">[</span><span class="s">&quot;macsec_supported&quot;</span><span class="p">];</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;macsec_supported&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>_GEARBOX_TABLE:phy:&lt;id&gt;</code> の他の PHY 属性と並べて attribute として書き込む。</p>
+<h4 id="b-gearboxutilsorchagent-lib">B) <code>GearboxUtils</code>（orchagent / lib）<a class="headerlink" href="#b-gearboxutilsorchagent-lib" title="Permanent link">&para;</a></h4>
+<p><code>gearbox_phy_t</code> 構造体に <code>bool macsec_supported</code>（デフォルト true）を追加し、<code>loadPhyMap()</code> でパースする<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">bool</span><span class="w"> </span><span class="n">cap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// default</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fv</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ovalues</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fv</span><span class="p">.</span><span class="n">first</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;macsec_supported&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">cap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">fv</span><span class="p">.</span><span class="n">second</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="p">);</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">phy</span><span class="p">.</span><span class="n">macsec_supported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cap</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="c-macsecorch">C) <code>MACsecOrch</code><a class="headerlink" href="#c-macsecorch" title="Permanent link">&para;</a></h4>
+<p>ポート単位で次のように分岐する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">bool</span><span class="w"> </span><span class="n">use_phy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// default</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">phy</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">phy</span><span class="o">-&gt;</span><span class="n">macsec_supported</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;MACsec: %s -&gt; backend=NPU (phy marked unsupported)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">port_name</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">use_phy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">return</span><span class="w"> </span><span class="n">use_phy</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">usePhy</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">useNpu</span><span class="p">();</span>
+</span></code></pre></div>
+<p><code>useNpu()</code> 経路では既定 SAI switch（<code>gSwitchId</code>）と front-panel port OID で MACsec object を作る。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/SAI_failure_handling/dump_on_sai_failure.md#L48-L51 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/macsec-gearbox/macsec_backend_gearbox.md#L78-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  A new enum value for SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD is defined (SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP). When there is a SAI failure, before calling the abort, orchagent sets the switch attribute SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD with value SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP attribute. On receiving this attribute syncd calls the generic dump script which is present in /usr/bin/syncd_dump.sh.
-  A variable by name SAI_MAX_FAILURE_DUMPS is defined in the generic script which by default is set to 10.
-reasoning: notify 機構と汎用スクリプト・rotation 既定値の根拠。
+  For each port:
+  - If `macsec_supported == false`: use NPU/global switch for MACsec
+  - If `macsec_supported == true` OR field is absent: use PHY switch for MACsec (default, preserves existing behavior)
+  No runtime fallback. If PHY SAI does not implement MACsec and the field is true/absent, the operation fails and is logged.
+reasoning: 「フォールバックしない」「不在は true 扱い」という本設計の中核ルールの根拠。
 -->
 
-<h3 id="sai-api">SAI API への影響<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
-<p>HLD は SAI API レベルの新規定義を <strong>不要</strong> と明言している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> 自体は既存の sairedis 拡張属性であり、列挙値が 1 つ増えるだけの拡張。</p>
-<h3 id="cli-yang-db-migrator">設定 / CLI / YANG / DB Migrator<a class="headerlink" href="#cli-yang-db-migrator" title="Permanent link">&para;</a></h3>
+<h3 id="warm-boot-fast-boot">Warm boot / Fast boot<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h3>
+<p>バックエンド選定は決定論的（<code>gearbox_config.json</code> 由来）であり、再起動後も同じ結果になる。Warm/Fast boot に対する追加処理は不要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="backward-compatibility">Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Permanent link">&para;</a></h3>
 <ul>
-<li>新しい config / show コマンドは <strong>追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>DB Migrator 変更も <strong>無し</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>YANG model 変更も <strong>無し</strong><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>warm boot / fast boot に <strong>影響なし</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>macsec_supported</code> は <strong>optional</strong>。指定が無いプラットフォームは従来どおり PHY backend</li>
+<li>CONFIG_DB / APP_DB の意味論は変わらない（追加フィールドのみ）</li>
+<li>ローリングアップグレード安全<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<p>つまりユーザ向けの設定インターフェースを増やさず、動的に SAI 失敗が起きた時にだけ動く “見えない安全網” として機能する。</p>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。<code>techsupport</code> 系のコマンドが間接的に関わるが、本機能のために新規追加された CLI は無い<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="dump">dump の確認<a class="headerlink" href="#dump" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 失敗が起きた直後の確認</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log/sai_failure_dump/
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># techsupport 取得（dump も自動で取り込まれる）</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
+<p>CONFIG_DB スキーマには変更を加えない。設定の入口は HWSKU の <code>gearbox_config.json</code><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="app_db">APP_DB<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>_GEARBOX_TABLE:phy:&lt;phy_id&gt;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    macsec_supported : &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>他の PHY 属性（<code>phy_id</code>, <code>name</code>, <code>bus_id</code>, <code>context_id</code>, <code>macsec_ipg</code> など）と同じテーブルに並ぶ。</p>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>専用 CLI は導入しない。プラットフォームオーナが HWSKU 側 <code>gearbox_config.json</code> で宣言する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>abort 自体は止められない</strong>。本機能は dump を取るだけで、orchagent / syncd の再起動を回避するものではない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>dump は <strong>同期的</strong> に走るため、その間 <code>orchagent</code> は abort を遅らせている。プラットフォーム固有スクリプトが極端に長時間化すると、復旧時間に影響する。</li>
-<li>ベンダが <code>platform_syncd_dump.sh</code> を提供しない場合は <strong>汎用 dump のみ</strong> が取られる。SDK 内部状態の取得は限定的<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ローテーション上限の既定 10 は、dump が頻発するケースだと <strong>古いものから消える</strong>。長期トレンド分析にはホスト側の別収集（techsupport 自動取得など）と組み合わせる前提<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>HLD は <strong>SAI 失敗時の dump のみ</strong> を対象とする。orchagent 以外で発火する SAI 失敗（例えば counter ポーリング失敗）の扱いは明示されていない。</li>
+<li>対象は <strong>外部 PHY / Gearbox プラットフォームのみ</strong>。NPU 直結ポートには影響なし</li>
+<li><code>macsec_supported=true</code> を宣言しているのに PHY SAI が MACsec を実装していない場合、フォールバックされず <strong>エラーで失敗する</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。プラットフォーム側の宣言責任が大きい</li>
+<li><code>wpa_supplicant</code> のドライバ動作には変更なし<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>運用者向け CLI は無い（後方互換と単純性のためあえて切られている）</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>orchagent</code> の SAI 失敗ハンドリング</strong>: 既存の abort 前に 1 ステップ挟む形。エラーパスにスクリプト実行が入るため、abort 経路のテストが追加で必要<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>syncd</code> の attribute set 受信</strong>: <code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> の既存ハンドラに <code>INVOKE_DUMP</code> 分岐が増える。既存の他の <code>NOTIFY_SYNCD</code> 値（warm restart など）の処理と同じ仕組みに乗る<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>techsupport（auto/manual）</strong>: 本 dump ディレクトリを <strong>収集対象</strong> に含める拡張が必要。本 HLD ではその責務が示唆されている<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ベンダ syncd docker</strong>: ベンダ固有 dump を取りたい場合は <code>/usr/bin/platform_syncd_dump.sh</code> を docker に追加する責任を負う。スクリプトが未実行可能 / 異常終了の場合の汎用スクリプト側挙動は HLD では明示されていない。</li>
-<li><strong>/var/log のホスト同期</strong>: <code>/var/log/sai_failure_dump/</code> がホストから見える前提なので、syncd docker の volume mount 構成（<code>-v</code> 指定）に依存する。</li>
+<li><strong><code>gbsyncd</code></strong>: PHY backend を選んだとき MACsec オブジェクトは <code>gbsyncd</code> 経由で PHY SAI に作られる</li>
+<li><strong><code>PortsOrch</code></strong>: Gearbox ポートを PHY <code>switch_id</code> に紐づけている既存ロジックと組み合わさる</li>
+<li><strong><code>MACsecOrch</code></strong>: 既存 MACsec orch ロジックに「PHY 能力に応じた backend 切替」が割り込む</li>
+<li><strong>HWSKU パッケージング</strong>: <code>gearbox_config.json</code> の更新が必須となる platform がある</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>失敗が起きたのに dump が無い: orchagent が <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> を呼ぶコードパスを通らずに abort した可能性。<code>/var/log/syslog</code> の orchagent ログで abort 直前の挙動を確認<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ベンダ固有情報が取れていない: <code>platform_syncd_dump.sh</code> がベンダ docker に同梱されていない<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ベンダ docker の <code>/usr/bin/</code> を確認。</li>
-<li>古い dump が消えてしまう: <code>SAI_MAX_FAILURE_DUMPS</code> の既定 10 を超えてローテーションされた可能性。プラットフォーム固有スクリプトでこの値を上書き可能<sup id="fnref26:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>techsupport を取ったのに dump が同梱されない: techsupport 側の収集ロジックが本ディレクトリを対象にしているか確認。HLD は対応を要件化している<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、実装裏取りが必要。</li>
-<li>abort が遅い: <code>platform_syncd_dump.sh</code> の処理時間を計測。長すぎる SDK dump は問題報告に値する。</li>
+<li>MACsec が PHY backend で <code>SAI_STATUS_NOT_IMPLEMENTED</code> で失敗する場合、HWSKU <code>gearbox_config.json</code> で当該 PHY に <code>"macsec_supported": false</code> を入れる</li>
+<li>バックエンド選定結果は orchagent ログの <code>MACsec: &lt;port&gt; -&gt; backend=NPU (phy marked unsupported)</code> NOTICE で確認できる</li>
+<li><code>_GEARBOX_TABLE</code> 自体が無い場合、<code>gearsyncd</code> が <code>gearbox_config.json</code> をパースできていない可能性。gearsyncd ログを確認</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- gearsyncd / gearboxparser.cpp に macsec_supported パース処理が入っているか
+- GearboxUtils gearbox_phy_t と loadPhyMap の現行コード差分
+- MACsecOrch の usePhy() / useNpu() 切替実装
+- APP_DB _GEARBOX_TABLE スキーマの最終形
+- HWSKU 側 gearbox_config.json サンプルの存在
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/SAI_failure_handling/dump_on_sai_failure.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref26:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref27:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/macsec-gearbox/macsec_backend_gearbox.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
