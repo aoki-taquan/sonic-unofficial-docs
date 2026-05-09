@@ -11,5 +11,6 @@
     "TODO \u9805\u76ee (fallback_lookup / route leak / everflow) \u306e\u73fe\u884c\u5b9f\u88c5\u30b9\u30c6\u30fc\u30bf\u30b9\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 509
+  "issue": 509,
+  "pr": 510
 }

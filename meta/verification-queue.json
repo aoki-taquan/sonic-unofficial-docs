@@ -1457,7 +1457,8 @@
         "TODO 項目 (fallback_lookup / route leak / everflow) の現行実装ステータス確認"
       ],
       "priority": "medium",
-      "issue": 509
+      "issue": 509,
+      "pr": 510
     },
     {
       "page": "docs/routing/vrf-vs-test-plan.md",
