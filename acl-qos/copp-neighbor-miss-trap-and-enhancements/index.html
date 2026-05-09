@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/acl-support-in-sonic/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/copp-neighbor-miss-trap-and-enhancements/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../acl-support-in-sonic/">
       
       
-        <link rel="next" href="../copp-neighbor-miss-trap-and-enhancements/">
+        <link rel="next" href="../dhcp-dos-mitigation-in-sonic/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ） - SONiC 非公式ドキュメント</title>
+        <title>CoPP Neighbor Miss trap と enum capability query（show copp configuration） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#acl-acl_table-acl_rule" class="md-skip">
+        <a href="#copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+              CoPP Neighbor Miss trap と enum capability query（show copp configuration）
             
           </span>
         </div>
@@ -1823,6 +1823,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-support-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -1842,7 +1870,7 @@
   <span class="md-ellipsis">
     
   
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
   
 
     
@@ -1860,7 +1888,7 @@
   <span class="md-ellipsis">
     
   
-    ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
+    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
   
 
     
@@ -1909,32 +1937,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_TABLE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_RULE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされる操作
+        全体構造
       
     </span>
   </a>
@@ -1942,10 +1948,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート連携
+        Init フロー
       
     </span>
   </a>
@@ -1953,10 +1959,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スケール
+        Config フロー
       
     </span>
   </a>
@@ -1964,10 +1970,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#neighbor-miss-trap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定の流れ
+        Neighbor miss trap デフォルト設定
       
     </span>
   </a>
@@ -1975,10 +1981,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        カウンタ
+        STATE_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
       
     </span>
   </a>
@@ -1991,7 +2030,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -2001,6 +2040,17 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
@@ -2014,21 +2064,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#yang_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（HLD ベース）
+        関連する YANG
       
     </span>
   </a>
@@ -2041,7 +2080,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -2052,7 +2091,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -2063,7 +2102,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -2074,7 +2113,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -2088,34 +2127,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../copp-neighbor-miss-trap-and-enhancements/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CoPP Neighbor Miss trap と enum capability query（show copp configuration）
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -3714,32 +3725,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#acl_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_TABLE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acl_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ACL_RULE スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サポートされる操作
+        全体構造
       
     </span>
   </a>
@@ -3747,10 +3736,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポート連携
+        Init フロー
       
     </span>
   </a>
@@ -3758,10 +3747,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スケール
+        Config フロー
       
     </span>
   </a>
@@ -3769,10 +3758,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#neighbor-miss-trap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定の流れ
+        Neighbor miss trap デフォルト設定
       
     </span>
   </a>
@@ -3780,10 +3769,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        カウンタ
+        STATE_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warmboot-fastboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warmboot / Fastboot
       
     </span>
   </a>
@@ -3796,7 +3818,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -3806,6 +3828,17 @@
   
     <nav class="md-nav" aria-label="設定">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
@@ -3819,21 +3852,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#yang_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（HLD ベース）
+        関連する YANG
       
     </span>
   </a>
@@ -3846,7 +3868,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3857,7 +3879,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3868,7 +3890,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3879,7 +3901,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3906,7 +3928,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/acl-support-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3916,227 +3938,192 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは初期版の HLD（要件文書）に基づく。<code>l3</code> / <code>mirror</code> 以外の table type、<code>config acl</code> CLI、aclorch の SAI 属性マッピング、<code>l2_prot_type</code> の IPv6 拡張等、実装は HLD よりも先行している箇所が多いため、このページは <strong>後続 HLD・実コード裏取りで上書きされる前提</strong> で読むこと。</p>
+<p>本ページは公式 HLD（Rev 0.1, 2025-02）のみを根拠に書かれている。<code>Copporch</code> の SAI enum capability query 実装、<code>STATE_DB.COPP_TRAP_CAPABILITY_TABLE</code> のスキーマ、<code>show copp configuration</code> CLI の sonic-utilities 取り込みは未確認。</p>
 </div>
-<h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
+<h1 id="copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration">CoPP Neighbor Miss trap と enum capability query（<code>show copp configuration</code>）<a class="headerlink" href="#copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の data plane ACL の <strong>初期設計</strong> を定義する文書。ハードウェア（SAI）に降ろすための ACL テーブル / ルールの <strong>APP_DB スキーマ</strong> と、それを操作する <code>swssconfig</code> ベースの設定フローを規定している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>要件は <strong>Must Have (M)</strong> と <strong>Should Have (S)</strong> に分かれており、リリース必須機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>データプレーン ACL のサポート</li>
-<li>ACL テーブルが <strong>predefined type</strong>（<code>l3</code> / <code>mirror</code> 等）を持ち、type ごとに使える match と action が決まる</li>
-<li>フロントパネル物理ポートへの bind</li>
-<li>同一ポートに <strong>複数の ACL テーブルを bind 可能</strong>（permit/deny の <code>l3</code> テーブルと mirror テーブルの併用が想定例）</li>
-<li>match: src/dst IP, IP protocol, TCP/UDP port, <strong>port range</strong></li>
-<li>action: permit/deny, <strong>erspan mirror</strong></li>
-<li>ルール毎の <strong>packet counter</strong>（byte counter は Should Have）</li>
-</ul>
-<p>スケール目標は <strong><code>l3</code> テーブルで 1K rule、<code>mirror</code> テーブルで 256 rule</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の CoPP（Control Plane Policing）はトラップ単位でレートを切るが、本 HLD は次の 4 点を一括で改善する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><strong>Neighbor miss trap</strong> の追加: ARP / ND 解決前の IP パケット（neighbor miss）が CPU に殺到すると IP2ME など他の重要トラフィックを巻き添えにする。これを <strong><code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code></strong> で個別 policer に分離する</li>
+<li><strong>SAI enum capability query</strong> で trap type サポートを事前確認し、未対応 trap を投げて orchagent が例外を出すバグを根絶</li>
+<li><strong>STATE_DB に対応 trap 一覧と各 trap の <code>hw_status</code></strong> を公開し、可視化</li>
+<li><strong><code>show copp configuration</code> CLI</strong> を新設して CoPP 設定と HW status をまとめて見られるようにする</li>
+</ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="acl_table"><code>ACL_TABLE</code> スキーマ<a class="headerlink" href="#acl_table" title="Permanent link">&para;</a></h3>
-<p>ACL テーブル定義<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>key            = ACL_TABLE:name              ; name は unique
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>policy_desc    = 1*255VCHAR                  ; 説明文
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>type           = &quot;mirror&quot; | &quot;l3&quot;             ; テーブル種別
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ports          = port_name のリスト          ; bind 先ポート（空も可）
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mirror_session_name = name                   ; mirror 用にのみ意味を持つ
-</span></code></pre></div>
-<p><code>type</code> がそのテーブルで使える match field と action のセットを規定する。例えば <code>mirror</code> テーブルでは action は <strong>mirror のみ</strong> 利用可能<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="acl_rule"><code>ACL_RULE</code> スキーマ<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>key: ACL_RULE_TABLE:table_name:seq
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>action       = &quot;permit&quot; | &quot;deny&quot;            ; mirror table type なら mirror も
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>l2_prot_type = &quot;ipv4&quot;                       ; HLD 当初は v4 のみ
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>l3_prot_type = &quot;icmp&quot; | &quot;tcp&quot; | &quot;udp&quot; | &quot;any&quot;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ipv4_src     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ipv4_dst     = ipv4_prefix | &quot;any&quot;
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>l4_src_port  = port_num | [port_num_L - port_num_H]
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>l4_dst_port  = port_num | [port_num_L - port_num_H]
-</span></code></pre></div>
-<p>注意点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>seq</code> は <strong>同一 ACL ポリシ内でユニーク</strong> な数値。<strong>適用順序を決定する</strong> キーとなる。</li>
-<li><code>l2_prot_type</code> で IPv4/IPv6 を切り替える設計だが、初期版は <strong>v4 only</strong>。</li>
-<li>L4 ポートは <strong>単一値または範囲指定</strong>。範囲は <code>port_num_L &lt; port_num_H</code> の制約。</li>
-</ul>
-<pre class="mermaid"><code>classDiagram
-    class ACL_TABLE {
-      +name (key)
-      +policy_desc
-      +type: "mirror"|"l3"
-      +ports: list
-      +mirror_session_name
-    }
-    class ACL_RULE {
-      +table_name (key)
-      +seq (key)
-      +action: permit|deny|mirror
-      +l3_prot_type
-      +ipv4_src
-      +ipv4_dst
-      +l4_src_port
-      +l4_dst_port
-    }
-    ACL_TABLE "1" --&gt; "*" ACL_RULE : owns</code></pre>
-<h3 id="_3">サポートされる操作<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD の Supported operations<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>ACL テーブルを <strong>type 指定</strong> で作成</li>
-<li>ACL ルールを作成し ACL テーブルに紐付け</li>
-<li>ACL テーブルをポートに <strong>attach / detach</strong></li>
-<li>ACL ルールの削除</li>
-</ul>
-<p>これだけが初期スコープ。LAG への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">ポート連携<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port の oper status up/down は ACL bind に影響しない</strong>。port が down でも binding は維持される<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>port を削除した場合は unbind が必要</strong>だが、初期リリースでは未実装<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
+<h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    PKT[Packet] --&gt; P[Front panel port]
-    P --&gt; ACL_L3[l3 ACL table\nbind 済]
-    P --&gt; ACL_M[mirror ACL table\nbind 済]
-    ACL_L3 --&gt;|permit/deny| FWD[forwarding]
-    ACL_M --&gt;|mirror| ESPAN[ERSPAN]</code></pre>
-<p>同じポートに <strong><code>l3</code> と <code>mirror</code> の 2 つのテーブルを同時に bind</strong> できる。両者の action は競合しない（一方は permit/deny、他方は mirror）前提で運用する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">スケール<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>仕様目標<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>テーブル種別</th>
-<th>スケール</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>l3</code> ACL</td>
-<td>1K rules</td>
-</tr>
-<tr>
-<td>mirror ACL</td>
-<td>256 rules</td>
-</tr>
-</tbody>
-</table>
-<p>これはハードウェア依存の上限ではなく、<strong>機能として担保される下限</strong> という位置付け。</p>
-<h3 id="_6">設定の流れ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>swssconfig</code> で APP_DB に流し込む方式<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>flowchart LR
-    USER[ユーザ] --&gt; JSON[JSON 設定ファイル]
-    JSON --&gt; SC[swssconfig]
-    SC --&gt; APPDB[(APP_DB\nACL_TABLE / ACL_RULE_TABLE)]
-    APPDB --&gt; ORCH[aclorch]
-    ORCH --&gt; SAI[SAI ACL]</code></pre>
-<p><strong><code>swssconfig</code> には 2 つのモード</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>モード</th>
-<th>振る舞い</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>full</code></td>
-<td>既存の ACL ルールとテーブルを <strong>すべて削除</strong> し、新規構成で完全置換</td>
-</tr>
-<tr>
-<td><code>partial</code></td>
-<td>既存に対する <strong>差分</strong> として新構成を適用</td>
-</tr>
-</tbody>
-</table>
-<p>ステージングと本番反映の使い分けや、incremental update の運用に対応する設計。</p>
+    SAI[SAI 実装] --&gt;|enum capability query| CO[Copporch]
+    CO --&gt; SUP[supported_trap_ids リスト]
+    SUP --&gt; ST1[(STATE_DB\nCOPP_TRAP_CAPABILITY_TABLE|traps)]
+    APPL[(APPL_DB\nCoPP trap 設定)] --&gt; CO
+    CO --&gt; CHK{supported?}
+    CHK --&gt;|Yes| INS[create_hostif_trap\nhw_status=installed]
+    CHK --&gt;|No| ERR[syslog ERR\nhw_status=not-installed]
+    INS --&gt; ST2[(STATE_DB\nCOPP_TRAP_TABLE|&lt;trap&gt;)]
+    ERR --&gt; ST2
+    CLI[show copp configuration] --&gt; CFG[(copp_cfg.json / CONFIG_DB)]
+    CLI --&gt; ST2</code></pre>
+<h3 id="init">Init フロー<a class="headerlink" href="#init" title="Permanent link">&para;</a></h3>
+<p><code>Copporch</code> 初期化時<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><code>sai_query_attribute_enum_values_capability</code> で <code>SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE</code> の対応値を問い合わせる</li>
+<li>結果を <code>supported_trap_ids</code> ローカルリストに保持</li>
+<li>SAI が enum capability query 自体を非対応の場合、後方互換のため <strong><code>default_supported_trap_ids</code></strong>（既存 Copporch が知っている全 trap）をフォールバックに使う</li>
+<li><code>supported_trap_ids</code> を <code>STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps</code> に出版する</li>
+</ol>
+<h3 id="config">Config フロー<a class="headerlink" href="#config" title="Permanent link">&para;</a></h3>
+<p>APPL_DB 経由で CoPP trap 設定を受けた際<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><code>supported_trap_ids</code> に含まれているか確認</li>
+<li>含まれていれば SAI に <code>create_hostif_trap</code> で投入し <code>STATE_DB.COPP_TRAP_TABLE|&lt;trap&gt;</code> に <code>hw_status=installed</code></li>
+<li>含まれていなければ syslog <code>ERR</code> を出して <code>hw_status=not-installed</code>（未試行）</li>
+</ol>
+<p>これにより「BGP 機能が無効な T0 で BGP trap だけ未 install」などが CLI から判別可能になる。</p>
+<h3 id="neighbor-miss-trap">Neighbor miss trap デフォルト設定<a class="headerlink" href="#neighbor-miss-trap" title="Permanent link">&para;</a></h3>
+<p><code>copp_cfg.j2</code> に以下を追加<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>新規 trap group <code>queue1_group3</code>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&quot;queue1_group3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;trap_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;trap&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;trap_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;meter_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sr_tcm&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">&quot;cir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">&quot;cbs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">&quot;red_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;drop&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>新規 trap <code>neighbor_miss</code>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;neighbor_miss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;neighbor_miss&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue1_group3&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;always_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>always_enabled=true</code> なので feature flag に関わらず常に有効。CIR/CBS=200 packets/s で <code>red_action=drop</code>。</p>
+<h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>COPP_TRAP_CAPABILITY_TABLE|traps
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    trap_ids : &quot;stp,lacp,eapol,lldp,...,neighbor_miss,...,bgp,bgpv6,bfd,...&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>COPP_TRAP_TABLE|&lt;trap_name&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    state     : &quot;ok&quot; | ...
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    hw_status : &quot;installed&quot; | &quot;not-installed&quot;
+</span></code></pre></div>
+<p>例:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;COPP_TRAP_TABLE|neighbor_miss&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;hw_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;installed&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nt">&quot;COPP_TRAP_CAPABILITY_TABLE|traps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stp,lacp,eapol,lldp,...,neighbor_miss,...,bgp,bgpv6,bfd,...&quot;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>hw_status</code> 列が今回の追加。<code>COPP_TRAP_CAPABILITY_TABLE</code> はテーブル新設<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/acl/acl.md#L103-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/copp/Copp_Neighbor_Miss_Trap_And_Enhancements.md#L78-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  User generate json based configuration file based on the schema defined above, and then use the swssconfig to configure the ACl table and rules.
-  swssconfig should have two configuration mode, full and partial. In full configuration mode, all existing acl rules and table are removed and replaced by the new configuration. In partial configuration mode, new configuration are delta to current configuration.
-reasoning: 設定フローと full / partial モードの根拠。
+  During initialization, Copporch in Orchagent will perform an SAI enum capability query to identify supported trap types and maintain them in a local list called `supported_trap_ids`.
+  Additionally, Copporch will maintain a list called `default_supported_trap_ids` ...
+  If the SAI does not support the enum capability query API, Copporch will assume that the `default_supported_trap_ids` are supported for backward compatibility.
+reasoning: 「enum capability query で対応 trap を絞る」「query 自体が無ければ default にフォールバック」という設計の根拠。
 -->
 
-<h3 id="_7">カウンタ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ルール毎の <strong>packet counter は Must Have</strong>（必須機能）。</li>
-<li>ルール毎の <strong>byte counter は Should Have</strong>（できれば実装）<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ul>
-<p>具体的なカウンタの保存テーブル名や CLI は本 HLD には記述がない（後続の watermark / flex counter 系 HLD と組み合わせて実装される）。</p>
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="sai-api">SAI API<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
+<p>新規 SAI API は無し。既存 API のみで実装<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>主要フィールド</th>
+<th>API</th>
+<th>属性</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ACL_TABLE</code></td>
-<td><code>&lt;name&gt;</code></td>
-<td><code>policy_desc</code>, <code>type</code>, <code>ports</code>, <code>mirror_session_name</code></td>
+<td><code>sai_query_attribute_enum_values_capability</code></td>
+<td><code>SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE</code></td>
+<td>（列挙値取得）</td>
 </tr>
 <tr>
-<td><code>ACL_RULE</code></td>
-<td><code>&lt;table_name&gt;:&lt;seq&gt;</code></td>
-<td><code>action</code>, <code>l2_prot_type</code>, <code>l3_prot_type</code>, <code>ipv4_src</code>, <code>ipv4_dst</code>, <code>l4_src_port</code>, <code>l4_dst_port</code></td>
+<td><code>create_hostif_trap_fn</code></td>
+<td><code>SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE</code></td>
+<td><code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code></td>
+</tr>
+<tr>
+<td><code>remove_hostif_trap_fn</code></td>
+<td>同</td>
+<td>同</td>
+</tr>
+<tr>
+<td><code>set_hostif_trap_attribute_fn</code></td>
+<td>同</td>
+<td><code>sai_object_id_t</code></td>
 </tr>
 </tbody>
 </table>
-<p>注: HLD では実際のキー名として <code>ACL_RULE_TABLE</code> も登場する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、ここは APP_DB 側の表記揺れ（<code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code>）として整理されているため、最終実装では <code>aclorch</code> のソースを参照する必要がある（裏取り課題）。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の sonic-utilities では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
-<h3 id="hld">設定例（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE:DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Data plane ACL&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;l3&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0,Ethernet4&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE_TABLE:DATAACL:10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;permit&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;l3_prot_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">&quot;ipv4_src&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">&quot;ipv4_dst&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.1.0/24&quot;</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;l4_dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[8000-8999]&quot;</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
+<h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-copp</code> に変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="warmboot-fastboot">Warmboot / Fastboot<a class="headerlink" href="#warmboot-fastboot" title="Permanent link">&para;</a></h3>
+<p>影響なし<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p>新設: <code>show copp configuration</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>└── copp
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    └── configuration
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        └── detailed [--trapid &lt;trapid&gt; | --group &lt;group&gt;]
 </span></code></pre></div>
-<p>実際の CLI 構文は <code>config acl</code> 系コマンドや <code>aclshow</code> などの後続実装のドキュメントを参照する必要がある。</p>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>HLD 段階で明示されている制限<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>サマリ出力例（HLD 抜粋, 一部省略）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>TrapId           Trap Group     Action  CBS   CIR  Meter Type  Mode    HW Status
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>---------------  -------------  ------  ----  ---  ----------  ------  -------------
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>arp_req          queue4_group2  copy    600   600  packets     sr_tcm  installed
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>bgp              queue4_group1  trap   6000  6000  packets     sr_tcm  not-installed
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>neighbor_miss    queue1_group3  trap    200   200  packets     sr_tcm  installed
+</span></code></pre></div>
+<p>詳細表示:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>copp<span class="w"> </span>configuration<span class="w"> </span>detailed<span class="w"> </span>--trapid<span class="w"> </span>neighbor_miss
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>copp<span class="w"> </span>configuration<span class="w"> </span>detailed<span class="w"> </span>--group<span class="w"> </span>queue1_group3
+</span></code></pre></div>
+<p><code>--trapid</code> は trap 単位、<code>--group</code> は trap_group 単位の詳細を出す<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>既存 <code>COPP_TRAP</code> / <code>COPP_GROUP</code> を使う。スキーマ変更なし（追加 default は <code>copp_cfg.j2</code> テンプレ側）。</p>
+<h3 id="yang_1">関連する YANG<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
+<p><code>sonic-copp</code> を再利用（変更なし）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>type は <code>l3</code> と <code>mirror</code> のみ</strong>（初期版）。</li>
-<li><strong><code>l2_prot_type</code> は <code>ipv4</code> のみ</strong>（IPv6 は当時未対応）。</li>
-<li>bind 対象は <strong>フロントパネル物理ポートのみ</strong>。<strong>LAG bind は初期版では未対応</strong>。</li>
-<li><strong>同一ポートに bind した複数テーブル間で action が競合しない</strong> ことが前提（<code>l3</code>+<code>mirror</code> の組み合わせを想定）。競合する組み合わせの挙動は HLD では定義されていない。</li>
-<li>ポート削除時の <strong>自動 unbind は初期版では未実装</strong>。</li>
-<li>byte counter は <strong>Should Have</strong> 扱いで、必須ではない。</li>
+<li>Neighbor miss trap の SAI 対応は <strong>ベンダー依存</strong>。<code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code> を実装していない ASIC では <code>hw_status=not-installed</code> となる</li>
+<li><code>default_supported_trap_ids</code> は SAI が enum capability query を持たない古い ASIC 向けフォールバック。新 trap を入れた場合に「この trap が default に含まれていない」と未 install になる可能性</li>
+<li>HLD のデフォルト値（CIR/CBS=200、queue=1）はデバイス・トラフィックパターンに合わせて調整余地あり</li>
 </ul>
-<p>これらの多くは後続の HLD / 実装で拡張されている可能性が高く、本ページは <strong>基盤要件と APP_DB スキーマの起点</strong> として読むのが妥当。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>mirror_session</strong>: <code>mirror</code> ACL テーブルは <code>mirror_session_name</code> を介して mirror セッション設定と連動する。<code>MIRROR_SESSION</code> テーブルが先に存在する必要がある。</li>
-<li><strong>port 設定（PORT, PORTCHANNEL）</strong>: <code>ports</code> フィールドは物理ポート名で参照する。port 削除時に自動 unbind しないため、stale な binding が残る可能性がある<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>swssconfig</code> の full/partial モード</strong>: 運用上、本番系で <code>full</code> を打つと一瞬全 ACL が無効化される時間窓ができる。partial モードや stage 環境での試験を推奨。</li>
-<li><strong>後続機能</strong>: ACL flex counter、egress mirroring、egress ACL bug fix、ACL action capability check など、本 HLD 以降の HLD 群がこのスキーマを拡張している。</li>
+<li><strong><code>Copporch</code></strong>: 主要変更箇所。capability query と hw_status の更新が追加</li>
+<li><strong>既存 trap（arp_req / bgp / lldp 等）</strong>: 全部 <code>hw_status</code> を新規に持つようになる</li>
+<li><strong><code>copp_cfg.j2</code> テンプレート</strong>: 新規 group / trap が追加される。既存設定との merge に注意</li>
+<li><strong><code>show</code> 系 CLI</strong>: <code>show copp configuration</code> 新設。既存スクリプトが従来出力を parse している場合、互換性確認</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ルールが反映されない: <code>seq</code> 値が同一テーブル内で重複していないか、<code>type</code> で許される action のみ使っているかを確認。</li>
-<li>mirror が動かない: <code>mirror_session_name</code> で参照する <code>MIRROR_SESSION</code> の存在と、対象テーブルの <code>type</code> が <code>mirror</code> であることを確認<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ARP 解決前の IP トラフィックで CPU 高負荷の場合、<code>show copp configuration</code> で <code>neighbor_miss</code> の <code>hw_status=installed</code> を確認</li>
+<li><code>not-installed</code> のまま戻らない trap がある場合、SAI が enum capability query で当該 trap を返していない可能性。<code>STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids</code> で確認</li>
+<li>設定したのに ASIC に反映されない場合、syslog の <code>Copporch</code> ERR を確認</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- Copporch の SAI enum capability query (sai_query_attribute_enum_values_capability) 実装
+- supported_trap_ids / default_supported_trap_ids の管理コード
+- STATE_DB COPP_TRAP_CAPABILITY_TABLE と COPP_TRAP_TABLE.hw_status の最終スキーマ
+- copp_cfg.j2 への queue1_group3 / neighbor_miss 追加の master 反映
+- show copp configuration CLI の sonic-utilities 取り込み
+- SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS のベンダー実装状況
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/acl/acl.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/copp/Copp_Neighbor_Miss_Trap_And_Enhancements.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
