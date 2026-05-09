@@ -1,0 +1,12 @@
+{
+  "page": "docs/system/sonic-express-reboot-hld-spec.md",
+  "issue": 322,
+  "verification": "hld-only",
+  "concerns": [
+    "fast-reboot スクリプトの express-reboot symlink と Cisco 8000 強制チェック実装確認",
+    "syncd の SYNCD_RESTART_TYPE_EXPRESS / SAI_START_TYPE_EXPRESS_BOOT 列挙値追加が現行 master に取り込まれているか未確認",
+    "Syncd::setPreShutdownOnAllSwitches() の SAI_SWITCH_ATTR_FAST_API_ENABLE=true ロジック確認",
+    "sonic-host-services の show reboot-cause での express 認識拡張の実装確認"
+  ],
+  "priority": "medium"
+}
