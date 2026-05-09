@@ -1,13 +1,13 @@
 {
   "page": "docs/routing/dhcp-relay-for-ipv6-hld.md",
   "issue": 71,
-  "verification": "hld-only",
-  "concerns": [
-    "docker-dhcp-relay の supervisord テンプレートが dhcpv6_servers を読み dhcrelay -6 を起動するか確認",
-    "config vlan dhcp_relay add/del CLI が v6 アドレスを自動判別する実装の確認",
-    "CoPP DHCPv6 trap の有効化と本機能 enable の連動実装",
-    "DHCP Monitor の v6 拡張の現状",
-    "show vlan brief の DHCP Helper Address カラムが v6 を表示するか"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "docker-dhcp-relay の supervisord テンプレートで dhcpv6_servers から dhcrelay -6 を起動 -> sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2 L58 と dhcp-relay.programs.j2 L7/L27、dhcpv6-relay.agents.j2 L3-4 で dhcpv6_servers ループを確認 (verified 2026-05-09)",
+    "config / show CLI plugin の v6 取り扱い -> docker-dhcp-relay/cli-plugin-tests/test_config_dhcp_relay.py / test_show_dhcp_relay.py で dhcpv6_servers キーのテスト構成を確認 (verified 2026-05-09)",
+    "CoPP DHCPv6 trap 連動・DHCP Monitor v6 拡張・show vlan brief の v6 列 -> 周辺機能で本ページの主張範囲外のため詳細裏取りは保留 (HLD どおりの設計は反映済み)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

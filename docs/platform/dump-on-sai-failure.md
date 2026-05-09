@@ -1,7 +1,7 @@
 ---
 title: SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
 area: platform
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 列挙値、`/usr/bin/syncd_dump.sh` / `/usr/bin/platform_syncd_dump.sh`、`/var/log/sai_failure_dump/` 出力、`SAI_MAX_FAILURE_DUMPS=10` のローテーション、techsupport の収集 / クリア経路は未裏取り。
+!!! danger "裏取りステータス: Discrepancy-found（汎用スクリプト名がリネーム）"
+    `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 列挙値、`/var/log/sai_failure_dump/` 出力ディレクトリ、`SAI_MAX_FAILURE_DUMPS=10` 既定値、`platform_syncd_dump.sh` プラットフォーム固有スクリプトは実装と一致 (`sonic-sairedis/syncd/Syncd.cpp` L4493、`syncd/scripts/sai_failure_dump.sh` L8/L10/L12)。**ただし HLD で `/usr/bin/syncd_dump.sh` と書かれている汎用スクリプト名は実装では `/usr/bin/sai_failure_dump.sh` にリネームされている**。`Syncd.cpp` L45 と `tests.cpp` L46 の `SAI_FAILURE_DUMP_SCRIPT` 定数、`syncd/scripts/` 配下のファイル名がそれを示す。記述上の名前は HLD 当時の名称であり、現行コードでは別名となっている点に注意（verified at: 2026-05-09）。
 
 # SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
 
@@ -164,6 +164,12 @@ sudo show techsupport
 - 古い dump が消えてしまう: `SAI_MAX_FAILURE_DUMPS` の既定 10 を超えてローテーションされた可能性。プラットフォーム固有スクリプトでこの値を上書き可能[^1]。
 - techsupport を取ったのに dump が同梱されない: techsupport 側の収集ロジックが本ディレクトリを対象にしているか確認。HLD は対応を要件化している[^1]が、実装裏取りが必要。
 - abort が遅い: `platform_syncd_dump.sh` の処理時間を計測。長すぎる SDK dump は問題報告に値する。
+
+## 実装との乖離
+
+- **HLD**: 汎用 dump 起点スクリプトを `/usr/bin/syncd_dump.sh` と表記。
+- **現行 master**: `sonic-sairedis/syncd/Syncd.cpp` L45 / `tests.cpp` L46 の `#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"`、`sonic-sairedis/syncd/scripts/sai_failure_dump.sh` L8/L10/L12 で確認したとおり、汎用スクリプトは **`/usr/bin/sai_failure_dump.sh`** にリネームされている。`SAI_MAX_FAILURE_DUMPS=10` の既定値、`/var/log/sai_failure_dump/` 出力先、`platform_syncd_dump.sh` の有無確認 → 呼び出しという挙動は HLD のとおり。
+- 上記以外の HLD 表現（`SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 列挙値、`SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD` 経由のディスパッチ）は `Syncd.cpp` L4493 で確認済みで一致。
 
 ## 引用元
 

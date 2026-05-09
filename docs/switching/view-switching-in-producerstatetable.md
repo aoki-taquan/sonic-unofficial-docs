@@ -1,7 +1,7 @@
 ---
 title: ProducerStateTable の view switching（warm reboot 用の差分適用）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-swss-common` の `ProducerStateTable::create_temp_view` / `apply_temp_view` 実装、`m_tempViewState` / `m_tempViewActive` メンバの存在、`fpmsyncd` 等の利用側コードは未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-swss-common/common/producerstatetable.h` L51/L53 で `create_temp_view()` / `apply_temp_view()`、L58 で `bool m_tempViewActive`、L66 で `TableDump m_tempViewState` を確認。`producerstatetable.cpp` L31 で `m_tempViewActive(false)` 初期化、L132/L172/L205/L254 の各 set/del 系で `m_tempViewActive` 分岐により `m_tempViewState` を更新、L324-479 で `create_temp_view` / `apply_temp_view` の差分計算（既存 key の比較 + 新規 add + 既存削除）と Lua 引数組み立てを確認（verified at: 2026-05-09）。
 
 # ProducerStateTable の view switching（warm reboot 用の差分適用）
 

@@ -1,14 +1,15 @@
 {
   "page": "docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md",
-  "verification": "hld-only",
-  "concerns": [
-    "buffermgrd / buffer manager の INACTIVE port zero profile 適用ロジックの実装存在確認",
-    "BUFFER_MAX_PARAM_TABLE の現行 STATE_DB スキーマと portsorch 側の書き込みコード確認",
-    "BufferOrch の create_buffer_profile / set_ingress_priority_group_attribute SAI 呼び出し経路確認",
-    "PG / queue 削除サポートを表すフラグの場所と命名（`support removing PGs` の実体）未確認",
-    "sonic-cfggen の buffer template (Jinja) で INACTIVE port 判定と zero profile 生成が現行 master にあるか未確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "buffermgrd の zero profile 適用ロジック -> sonic-swss/cfgmgr/buffermgrdyn.cpp L245-275 で pgs_to_apply_zero_profile / ingress_zero_profile / queues_to_apply_zero_profile / egress_zero_profile のパースと適用を確認 (verified 2026-05-09)",
+    "buffermgrd の起動オプション -> buffermgrd.cpp L26/L98-121 で -z zero_profiles.json を確認 (verified 2026-05-09)",
+    "BUFFER_MAX_PARAM_TABLE のスキーマ -> sonic-swss-common/common/schema.h L480 で STATE_BUFFER_MAXIMUM_VALUE_TABLE = 'BUFFER_MAX_PARAM_TABLE' を確認 (verified 2026-05-09)",
+    "zero_profile_name のフィールド命名 -> buffermgrdyn.h L33 で zero_profile_name メンバを確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 143,
-  "pr": 144
+  "pr": 144,
+  "last_verified": "2026-05-09"
 }

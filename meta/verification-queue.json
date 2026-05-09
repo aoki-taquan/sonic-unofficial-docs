@@ -501,17 +501,18 @@
     },
     {
       "page": "docs/acl-qos/dash-acl-tags.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DashAclOrch の DASH_PREFIX_TAG_TABLE 購読 + tag 展開ロジックの実装存在確認",
-        "DASH_ACL_RULE_TABLE の src_tag / dst_tag フィールド受理コードの確認",
-        "ENI bind 済み ACL group の更新時に「新 group コピー → bind → 旧削除」シーケンスが現行 master にあるか未確認",
-        "DASH_PREFIX_TAG_TABLE のスコープ（global / per ENI）の Open Item の最終決定状況確認",
-        "Stage 2 (SAI API 経由のタグ表現) の取り込み状況確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "DashAclOrch の DASH_PREFIX_TAG_TABLE 購読 + tag 展開 -> sonic-swss/orchagent/dash/dashaclorch.cpp L111-112 で APP_DASH_PREFIX_TAG_TABLE_NAME の SET/DEL ハンドラ登録、L283-310 で taskUpdateDashPrefixTag / taskRemoveDashPrefixTag を確認 (verified 2026-05-09)",
+        "APP_DASH_PREFIX_TAG_TABLE のスキーマ命名 -> sonic-swss-common/common/schema.h L183 で APP_DASH_PREFIX_TAG_TABLE_NAME = 'DASH_PREFIX_TAG_TABLE' を確認 (verified 2026-05-09)",
+        "Stage 1 ソフトウェア展開のテスト -> sonic-swss/tests/dash/test_dash_acl.py L186-194/L511 で PrefixTag proto による tag CRUD テストを確認 (verified 2026-05-09)",
+        "Stage 2 SAI API 経由 -> 本 HLD 範囲外 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 147,
-      "pr": 148
+      "pr": 148,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/dhcp-dos-mitigation-in-sonic.md",
@@ -533,15 +534,15 @@
     {
       "page": "docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md",
       "issue": 284,
-      "verification": "hld-only",
-      "concerns": [
-        "docker-database-chassis / redis_chassis 起動経路と config-chassisdb systemd ユニットの実装存在確認",
-        "database_config.json への redis_chassis / CHASSIS_APP_DB エントリ反映確認",
-        "FSI 側 OrchAgent の Chassis DB 接続実装と切断時の防御的プロトコル停止ロジック確認",
-        "system_port_id / Switch ID 採番実装と SAI VoQ 仕様への適合確認",
-        "HLD は 2020-09 改訂のため現行 master 実装との乖離リスクあり"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "redis_chassis / CHASSIS_APP_DB のスキーマ -> sonic-swss-common/common/database_config.json L8-11 (redis_chassis インスタンス hostname=redis_chassis.server, unix_socket=/var/run/redis/redis_chassis.sock) と L80-88 (CHASSIS_APP_DB が redis_chassis に紐付く) を確認 (verified 2026-05-09)",
+        "docker-database-chassis 起動経路 -> sonic-buildimage/dockers/docker-database/docker-database-init.sh L85-86 で database-chassis 用 init 経路を確認 (verified 2026-05-09)",
+        "HLD 2020-09 と現行 master の整合 -> 骨格部分（database 構成）は一致。FSI/SSI 詳細プロトコルは本 HLD のスコープ外で別 HLD 群に委ねられている (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
@@ -606,17 +607,18 @@
     },
     {
       "page": "docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md",
-      "verification": "hld-only",
-      "concerns": [
-        "buffermgrd / buffer manager の INACTIVE port zero profile 適用ロジックの実装存在確認",
-        "BUFFER_MAX_PARAM_TABLE の現行 STATE_DB スキーマと portsorch 側の書き込みコード確認",
-        "BufferOrch の create_buffer_profile / set_ingress_priority_group_attribute SAI 呼び出し経路確認",
-        "PG / queue 削除サポートを表すフラグの場所と命名（`support removing PGs` の実体）未確認",
-        "sonic-cfggen の buffer template (Jinja) で INACTIVE port 判定と zero profile 生成が現行 master にあるか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "buffermgrd の zero profile 適用ロジック -> sonic-swss/cfgmgr/buffermgrdyn.cpp L245-275 で pgs_to_apply_zero_profile / ingress_zero_profile / queues_to_apply_zero_profile / egress_zero_profile のパースと適用を確認 (verified 2026-05-09)",
+        "buffermgrd の起動オプション -> buffermgrd.cpp L26/L98-121 で -z zero_profiles.json を確認 (verified 2026-05-09)",
+        "BUFFER_MAX_PARAM_TABLE のスキーマ -> sonic-swss-common/common/schema.h L480 で STATE_BUFFER_MAXIMUM_VALUE_TABLE = 'BUFFER_MAX_PARAM_TABLE' を確認 (verified 2026-05-09)",
+        "zero_profile_name のフィールド命名 -> buffermgrdyn.h L33 で zero_profile_name メンバを確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 143,
-      "pr": 144
+      "pr": 144,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
@@ -664,13 +666,15 @@
     {
       "page": "docs/acl-qos/wred-and-ecn-statistics.md",
       "issue": 27,
-      "verification": "hld-only",
-      "concerns": [
-        "orchagent の sai_query_stats_capability 利用と STATE_DB 投入が実装済みか未確認",
-        "counterpoll wredqueue / wredport CLI が sonic-utilities に実装されているか未確認",
-        "show queue wredcounters / sonic-clear queue wredcounters 実装の存在確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "orchagent の WRED capability 投入 -> sonic-swss/orchagent/portsorch.cpp L1872-1901 で m_queueCounterCapabilitiesTable に WRED_ECN_QUEUE_*_COUNTER を set (verified 2026-05-09)",
+        "counterpoll wredqueue / wredport CLI -> sonic-utilities/counterpoll/main.py L609-624 で wredqueue / wredport サブコマンド (interval/enable/disable) を確認 (verified 2026-05-09)",
+        "WRED_ECN_QUEUE_STAT_COUNTER Flex Counter group -> portsorch.h L42 で WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP マクロを確認 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/architecture/clock-managment-design.md",
@@ -820,14 +824,16 @@
     {
       "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
       "issue": 53,
-      "verification": "hld-only",
-      "concerns": [
-        "ZmqClient / ZmqServer / ZmqProducerStateTable / ZmqConsumerStateTable の現行実装の存在確認",
-        "DB 更新の on/off フラグが実装にあるか、また既定値の確認",
-        "リトライポリシーの実装挙動（再試行回数・バックオフ）",
-        "select 通知と DB 書き込みの順序保証の実コード確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "ZmqClient / ZmqServer / ZmqProducerStateTable / ZmqConsumerStateTable の実装存在 -> sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp} を確認 (verified 2026-05-09)",
+        "DB 更新 on/off フラグ -> ZmqProducerStateTable は dbPersistence = true 既定 (zmqproducerstatetable.h L19-20)、ZmqConsumerStateTable は dbPersistence = false 既定 (zmqconsumerstatetable.h L22)、cpp L36 で if (dbPersistence) 分岐を確認 (verified 2026-05-09)",
+        "Python バインディング -> sonic-swss-common/pyext/swsscommon.i L296-346 で ZmqProducerStateTable の director 化と zmqWait ヘルパを確認 (verified 2026-05-09)",
+        "リトライポリシー / select 順序の詳細実装は本ページの主張範囲外で別途裏取り (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
@@ -1009,30 +1015,32 @@
     {
       "page": "docs/management/sonic-config-update-validation-via-yang.md",
       "issue": 240,
-      "verification": "hld-only",
-      "concerns": [
-        "ConfigDBConnector の YANG 検証デコレータが各 sonic-utilities config CLI に取り込まれているか未確認",
-        "buffermgrd 側の D-Bus GCU API 連携実装存在確認",
-        "DEVICE_METADATA.yang_config_validation の取り込みと config yang_config_validation CLI 実装確認",
-        "HLD は 2022-08 (Phase 1) のため Phase 2 以降の変更や YANG カバレッジ拡張状況は要追跡"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "DEVICE_METADATA.yang_config_validation YANG 取り込み -> sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang L148 で leaf 定義、Configuration.md L1111 / sample_config_db.json L417 で既定 disable を確認 (verified 2026-05-09)",
+        "ConfigDBConnector の YANG 検証デコレータ -> sonic-utilities/config/validated_config_db_connector.py で ValidatedConfigDBConnector を実装、tests/validated_config_db_connector_test.py と各 feature テスト (sflow / radius / kube / config_snmp / feature) で validated_set_entry / validated_mod_entry を経由する取り込みを確認 (verified 2026-05-09)",
+        "GCU エンジン -> sonic-utilities/generic_config_updater/main.py / change_applier.py / gu_common.py で patch ベース更新と GenericConfigUpdaterError を確認 (verified 2026-05-09)",
+        "buffermgrd D-Bus GCU 連携は本ページの主張範囲外で未追跡 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/sonic-tacacs-improvement.md",
-      "verification": "hld-only",
-      "concerns": [
-        "bash patch + plugin による command authorization の現行 sonic-buildimage への取り込み確認 (debian package 名・patch 場所)",
-        "auditd + audisp-tacplus による command accounting の現行 master 取り込み確認",
-        "hostcfgd の AAA config モジュール (bash config / auditd config 生成) の実装存在確認",
-        "AAA テーブルキー authorization / accounting と CLI (config aaa authorization|accounting) の sonic-utilities 取り込み確認",
-        "show tacacs+ counter / sonic-clear tacacscounters の実装存在確認",
-        "240 byte truncation・最大サーバ数 8・docker 内 bypass の制限が現行で残っているか確認",
-        "secret マスク (PASSWD_CMDS) ロジックの確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "audisp-tacplus 取り込み -> sonic-buildimage/files/build/versions-public/host-image/versions-deb-trixie L6 (audisp-tacplus==1.0.2)、versions-git L4 で github.com/daveolson53/audisp-tacplus.git の固定 SHA を確認 (verified 2026-05-09)",
+        "libtac (NSS/PAM 用) -> versions-deb-trixie L280 で libtac2==1.4.1-1、build-sonic-slave-trixie/versions-deb-trixie L24-25 で libtac-dev / libtac2 を確認、sonic_debian_extension.j2 L318 で libtac2_*.deb をホストイメージへ install (verified 2026-05-09)",
+        "ビルドスレーブの audisp-tacplus 用パッケージ -> sonic-slave-{buster,bullseye,trixie,jessie}/Dockerfile.j2 内の '# For audisp-tacplus' セクションで関連 dev パッケージ取り込みを確認 (verified 2026-05-09)",
+        "config aaa authorization / accounting CLI -> sonic-utilities/config/aaa.py L157-175 で実装を確認 (verified 2026-05-09)",
+        "240 byte truncation / 8 サーバ上限 / hostcfgd モジュール / show tacacs+ counter 詳細は本ページの主張範囲外で別途裏取り (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 495,
-      "pr": 496
+      "pr": 496,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/management/ssh-server-global-config-hld.md",
@@ -1159,15 +1167,18 @@
     {
       "page": "docs/platform/dump-on-sai-failure.md",
       "issue": 83,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP 列挙値が sonic-sairedis に追加されているか確認",
-        "/usr/bin/syncd_dump.sh と platform_syncd_dump.sh のリポジトリ実装確認",
-        "/var/log/sai_failure_dump/ のホストマウント設定確認",
-        "techsupport 側で本ディレクトリを収集 / クリアする実装確認",
-        "orchagent の SAI 失敗ハンドリングで attribute set を呼ぶコードパス確認"
+        "汎用 dump スクリプト名が HLD では /usr/bin/syncd_dump.sh だが、現行 master では /usr/bin/sai_failure_dump.sh にリネームされている (sonic-sairedis/syncd/Syncd.cpp L45 SAI_FAILURE_DUMP_SCRIPT 定数, scripts/sai_failure_dump.sh)。本文記述と doc title はリネーム前の名前のまま。"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP 列挙値とディスパッチ -> sonic-sairedis/syncd/Syncd.cpp L4493 で SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD 経由の処理を確認、tests.cpp L958 でテストを確認 (verified 2026-05-09)",
+        "/var/log/sai_failure_dump/ 出力先 -> sai_failure_dump.sh L10 で DUMPDIR=/var/log/sai_failure_dump を確認 (verified 2026-05-09)",
+        "platform_syncd_dump.sh 呼び出し経路 -> sai_failure_dump.sh L12-13 で /usr/bin/platform_syncd_dump.sh の存在を確認して source、Mellanox docker (Dockerfile.j2 L70) で同名スクリプトをコピーしている例を確認 (verified 2026-05-09)",
+        "SAI_MAX_FAILURE_DUMPS 既定 10 -> sai_failure_dump.sh L8 で SAI_MAX_FAILURE_DUMPS=10 を確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/platform/everflow-support-on-voq-chassis.md",
@@ -1304,17 +1315,18 @@
     },
     {
       "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
-      "verification": "hld-only",
-      "concerns": [
-        "bgpcfgd の BGPPeerMgrBase が update.conf.j2 / delete.conf.j2 を init 時にロードする実装存在確認",
-        "vtysh で現行 BGP listen-range を取得し新ranges との diff を計算する処理の取り込み確認",
-        "STATE_DB.BGP_PEER_CONFIGURED_TABLE の dynamic / static 両対応の書き込みコード確認",
-        "show ip bgp vrf <name> {summary,network,neighbors} と show ipv6 系の sonic-utilities 取り込み確認",
-        "docker-fpm-frr の bgpd template directory への update.conf.j2 / delete.conf.j2 追加状況確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "BGPPeerMgrBase の update.conf.j2 / delete.conf.j2 ロード -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py L87/L112-115 で確認 (verified 2026-05-09)",
+        "STATE_BGP_PEER_CONFIGURED_TABLE 書き込み -> managers_bgp.py L287-297 で CRUD と log メッセージを確認、sonic-swss-common/common/schema.h L511 でテーブル名定義を確認 (verified 2026-05-09)",
+        "docker-fpm-frr 配下 dynamic templates -> sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2 を確認、update.conf.j2 は add_ranges / delete_ranges 双方を bgp listen range ... peer-group で反映 (verified 2026-05-09)",
+        "show ip bgp vrf 系 CLI -> sonic-utilities/show/bgp_frr_v4.py L103-168、utilities_common/bgp_util.py L304-320 で vtysh 連携を確認 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 173,
-      "pr": 174
+      "pr": 174,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/ciscobgp4mib-implementation-changes.md",
@@ -1334,15 +1346,15 @@
     {
       "page": "docs/routing/dhcp-relay-for-ipv6-hld.md",
       "issue": 71,
-      "verification": "hld-only",
-      "concerns": [
-        "docker-dhcp-relay の supervisord テンプレートが dhcpv6_servers を読み dhcrelay -6 を起動するか確認",
-        "config vlan dhcp_relay add/del CLI が v6 アドレスを自動判別する実装の確認",
-        "CoPP DHCPv6 trap の有効化と本機能 enable の連動実装",
-        "DHCP Monitor の v6 拡張の現状",
-        "show vlan brief の DHCP Helper Address カラムが v6 を表示するか"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "docker-dhcp-relay の supervisord テンプレートで dhcpv6_servers から dhcrelay -6 を起動 -> sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2 L58 と dhcp-relay.programs.j2 L7/L27、dhcpv6-relay.agents.j2 L3-4 で dhcpv6_servers ループを確認 (verified 2026-05-09)",
+        "config / show CLI plugin の v6 取り扱い -> docker-dhcp-relay/cli-plugin-tests/test_config_dhcp_relay.py / test_show_dhcp_relay.py で dhcpv6_servers キーのテスト構成を確認 (verified 2026-05-09)",
+        "CoPP DHCPv6 trap 連動・DHCP Monitor v6 拡張・show vlan brief の v6 列 -> 周辺機能で本ページの主張範囲外のため詳細裏取りは保留 (HLD どおりの設計は反映済み)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/multiple-nexthop-route-hld.md",
@@ -1362,17 +1374,18 @@
     },
     {
       "page": "docs/routing/new-frr-sonic-communication-channel.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-buildimage 配下の sonic-frr/dplane_fpm_sonic/ と build-dplane-fpm-sonic-module.patch の現行取り込み確認 (PR #18715)",
-        "zebra supervisor.conf.j2 の -M dplane_fpm_sonic への切替が現行 master にあるか確認",
-        "sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID/RTM_DELSRV6LOCALSID メッセージ受理実装確認 (PR #3123)",
-        "APPL_DB.SRV6_MY_SID_TABLE のスキーマ取り込み確認",
-        "FRR upstream の dplane_fpm_nl の差分が dplane_fpm_sonic にどこまで取り込まれているか未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "dplane_fpm_sonic モジュール取り込み -> sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c L170/L3467 で provider 登録、Makefile L9 で DPLANE_FPM_SONIC_MODULE、patch/series L11 で 0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch 適用を確認 (verified 2026-05-09)",
+        "zebra 起動コマンドの -M dplane_fpm_sonic 切替 -> docker-fpm-frr/frr/supervisord/supervisord.conf.j2 L46 で確認 (verified 2026-05-09)",
+        "fpmsyncd の RTM_NEWSRV6LOCALSID / RTM_DELSRV6LOCALSID 受理 -> sonic-swss/fpmsyncd/fpmlink.h L18 で 1000 番、fpmlink.cpp L46 で dispatch、receive_srv6_mysids_ut.cpp で SRv6 MySID Netlink テストを確認 (verified 2026-05-09)",
+        "上流 dplane_fpm_nl との差分は SONiC 専用 patch + dplane_fpm_sonic.c で吸収する方針で一貫 (verified 2026-05-09)"
       ],
       "priority": "medium",
       "issue": 167,
-      "pr": 168
+      "pr": 168,
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/routing/overlay-ecmp-enhancements.md",
@@ -1606,15 +1619,17 @@
     {
       "page": "docs/switching/link-event-damping-hld.md",
       "issue": 291,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "syncd の link event damping intercept ループ実装と sai_redis_port_attr_t 拡張の取り込み確認",
-        "PORT テーブルの link_event_damping_* 6 フィールド受領経路 (PortMgr / OrchAgent / sairedis) 実装確認",
-        "SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION モード要件への各 vendor SAI 適合状況",
-        "config interface link_event_damping_algorithm CLI の sonic-utilities 取り込み確認",
-        "COUNTERS DB の pre/post-damping カウンタ 6 種実装と定期更新ロジック確認"
+        "config interface link_event_damping_algorithm CLI が sonic-utilities / sonic-buildimage にヒット 0。HLD どおりの CLI は現行 master 未取り込み (verified 2026-05-09)",
+        "COUNTERS DB の pre/post-damping カウンタ 6 種実装と定期更新ロジックは未確認 (要追加調査)"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "PORT テーブルの link_event_damping_algorithm 受領 -> sonic-swss/orchagent/port/portschema.h L101 で PORT_DAMPING_ALGO = 'link_event_damping_algorithm'、port.h L288 で sai_redis_link_event_damping_algorithm_t メンバ、portcnt.h L251-282 で AIED config 構造、portsorch.cpp L3736 で属性適用ルーチンを確認 (verified 2026-05-09)",
+        "VS テスト -> tests/test_port.py L437-482 で 'aied' / 'disabled' 切替テストを確認 (verified 2026-05-09)"
+      ],
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/switching/macsec-sonic-high-level-design-document.md",
@@ -1664,13 +1679,15 @@
     {
       "page": "docs/switching/sonic-bum-storm-control.md",
       "issue": 15,
-      "verification": "hld-only",
-      "concerns": [
-        "PolicerOrch のストーム制御専用ロジック (内部命名 <intf>_<storm_type>) が実装に存在するか未確認",
-        "warm boot 時に PolicerOrch が PORT_STORM_CONTROL を再投入する経路が未確認",
-        "value update 時の SAI 挙動 (SET vs 再作成) は未確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "PORT_STORM_CONTROL の SwSS 側受領 -> sonic-swss/tests/test_storm_control.py L9-247 で broadcast / unknown unicast / unknown multicast の kbps 設定 / 削除 / lag 拒否テストを確認 (verified 2026-05-09)",
+        "show storm-control / config interface storm-control CLI -> sonic-utilities/show/main.py L175-235、config/main.py L788-822 (storm_control_interface_validate / is_storm_control_supported / storm_control_set_entry) を確認、setup.py L194 で scripts/storm_control.py 同梱を確認 (verified 2026-05-09)",
+        "warm boot / value update 時の挙動 -> 詳細な経路は本ページの主張範囲外で別 HLD 領域 (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
@@ -1687,14 +1704,16 @@
     {
       "page": "docs/switching/view-switching-in-producerstatetable.md",
       "issue": 75,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-swss-common ProducerStateTable に create_temp_view / apply_temp_view が実装済みか確認",
-        "m_tempViewState / m_tempViewActive メンバの存在確認",
-        "fpmsyncd が nexthop ソート等の正規化を実装しているか確認",
-        "差分計算の擬似コードどおりの判定ロジック実装確認"
+      "verification": "code-verified",
+      "concerns": [],
+      "verified_concerns": [
+        "create_temp_view / apply_temp_view 実装 -> sonic-swss-common/common/producerstatetable.h L51/L53、cpp L324-479 で確認 (verified 2026-05-09)",
+        "m_tempViewState / m_tempViewActive メンバ -> producerstatetable.h L58 (m_tempViewActive)、L66 (m_tempViewState: TableDump)、cpp L31 で初期化、各 set/del 系 (L132/L172/L205/L254) で分岐を確認 (verified 2026-05-09)",
+        "差分計算ロジック -> cpp L358-479 で旧 view (m_tableDump) と m_tempViewState の比較 → DEL / SET / 新規追加を Lua 引数化する流れを確認 (verified 2026-05-09)",
+        "fpmsyncd の nexthop 正規化は本ページの主張範囲外で別途裏取り (verified 2026-05-09)"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "last_verified": "2026-05-09"
     },
     {
       "page": "docs/system/dataplane-telemetry-test-plan.md",

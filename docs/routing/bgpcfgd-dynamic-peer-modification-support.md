@@ -1,7 +1,7 @@
 ---
 title: bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `bgpcfgd` の `BGPPeerMgrBase` が `update.conf.j2` / `delete.conf.j2` をロードして dynamic peer 更新時に diff を rendering するロジック、`STATE_DB.BGP_PEER_CONFIGURED_TABLE` の書き込み、`show ip bgp vrf <name> {summary|network|neighbors}` の sonic-utilities 取り込みは実コードでの裏取り未済。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` L87 で `BGPPeerMgrBase` 定義、L112-115 で `update.conf.j2` / `delete.conf.j2` を `searchpath` 上で確認しロード、L287-297 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` への CRUD を確認。`sonic-swss-common/common/schema.h` L511 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"` を確認。`dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2` で `add_ranges` / `delete_ranges` の `bgp listen range ... peer-group` 反映ロジックを確認。`sonic-utilities/show/bgp_frr_v4.py` L103-168 で `show ip bgp vrf <name> {summary|neighbors|network}` 系コマンド、`utilities_common/bgp_util.py` L304-320 で vtysh 経由の vrf JSON 取得を確認（verified at: 2026-05-09）。
 
 # bgpcfgd の dynamic BGP peer 動的変更（`update.conf.j2` / `delete.conf.j2`）
 

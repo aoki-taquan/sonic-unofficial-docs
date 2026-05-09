@@ -1,7 +1,7 @@
 ---
 title: リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 area: switching
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,14 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2022-07 (Rev 0.1, Phase 1)。`syncd` の link event damping intercept、`sairedis.h` の port 拡張属性、CLI 取り込み、`SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION` 要件への適合は要裏取り。**詳細な状態遷移シナリオやテストケースは原文 HLD を参照**。
+!!! danger "裏取りステータス: Discrepancy-found（CLI 未実装）"
+    swss 側は実装あり: `sonic-swss/orchagent/port/portschema.h` L101 で `PORT_DAMPING_ALGO = "link_event_damping_algorithm"`、`port.h` L288 / `portcnt.h` L251-282 / `portsorch.cpp` L3736 で `sai_redis_link_event_damping_algorithm_t` と AIED config 反映ロジックを確認、`tests/test_port.py` L437-482 でも `link_event_damping_algorithm = "aied" / "disabled"` の VS テストを確認。一方、**`sonic-utilities` 配下に `link_event_damping` をキーとする `config interface link_event_damping_algorithm` CLI のヒットが 0 件**、`sonic-buildimage` 配下にも対応する CLI plugin が見当たらず、HLD で要件化された CLI は現行 master 未取り込みである（verified at: 2026-05-09）。設定経路は `CONFIG_DB.PORT|<port>` への直接書き込み、または上位のマネジメントフレームワーク（YANG/REST）経由が必要となる可能性が高い。
+
+## 実装との乖離
+
+- **HLD 要件**: `config interface link_event_damping_algorithm <port> <aied|disabled>` 系 CLI を sonic-utilities に追加。
+- **現状**: `sonic-utilities` / `sonic-buildimage` の grep で `link_event_damping` ヒット 0。SwSS 側の port 属性受理は実装済みだが、ユーザ向け CLI は未取り込み。
+- **影響**: HLD どおりに `config interface link_event_damping_algorithm ...` を打っても CLI が解決しない。CONFIG_DB を直接編集するか、別の管理フレームワークから設定する必要がある。
 
 # リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 

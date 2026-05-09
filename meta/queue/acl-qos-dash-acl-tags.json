@@ -1,14 +1,15 @@
 {
   "page": "docs/acl-qos/dash-acl-tags.md",
-  "verification": "hld-only",
-  "concerns": [
-    "DashAclOrch の DASH_PREFIX_TAG_TABLE 購読 + tag 展開ロジックの実装存在確認",
-    "DASH_ACL_RULE_TABLE の src_tag / dst_tag フィールド受理コードの確認",
-    "ENI bind 済み ACL group の更新時に「新 group コピー → bind → 旧削除」シーケンスが現行 master にあるか未確認",
-    "DASH_PREFIX_TAG_TABLE のスコープ（global / per ENI）の Open Item の最終決定状況確認",
-    "Stage 2 (SAI API 経由のタグ表現) の取り込み状況確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "DashAclOrch の DASH_PREFIX_TAG_TABLE 購読 + tag 展開 -> sonic-swss/orchagent/dash/dashaclorch.cpp L111-112 で APP_DASH_PREFIX_TAG_TABLE_NAME の SET/DEL ハンドラ登録、L283-310 で taskUpdateDashPrefixTag / taskRemoveDashPrefixTag を確認 (verified 2026-05-09)",
+    "APP_DASH_PREFIX_TAG_TABLE のスキーマ命名 -> sonic-swss-common/common/schema.h L183 で APP_DASH_PREFIX_TAG_TABLE_NAME = 'DASH_PREFIX_TAG_TABLE' を確認 (verified 2026-05-09)",
+    "Stage 1 ソフトウェア展開のテスト -> sonic-swss/tests/dash/test_dash_acl.py L186-194/L511 で PrefixTag proto による tag CRUD テストを確認 (verified 2026-05-09)",
+    "Stage 2 SAI API 経由 -> 本 HLD 範囲外 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 147,
-  "pr": 148
+  "pr": 148,
+  "last_verified": "2026-05-09"
 }

@@ -1,12 +1,14 @@
 {
   "page": "docs/switching/view-switching-in-producerstatetable.md",
   "issue": 75,
-  "verification": "hld-only",
-  "concerns": [
-    "sonic-swss-common ProducerStateTable に create_temp_view / apply_temp_view が実装済みか確認",
-    "m_tempViewState / m_tempViewActive メンバの存在確認",
-    "fpmsyncd が nexthop ソート等の正規化を実装しているか確認",
-    "差分計算の擬似コードどおりの判定ロジック実装確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "create_temp_view / apply_temp_view 実装 -> sonic-swss-common/common/producerstatetable.h L51/L53、cpp L324-479 で確認 (verified 2026-05-09)",
+    "m_tempViewState / m_tempViewActive メンバ -> producerstatetable.h L58 (m_tempViewActive)、L66 (m_tempViewState: TableDump)、cpp L31 で初期化、各 set/del 系 (L132/L172/L205/L254) で分岐を確認 (verified 2026-05-09)",
+    "差分計算ロジック -> cpp L358-479 で旧 view (m_tableDump) と m_tempViewState の比較 → DEL / SET / 新規追加を Lua 引数化する流れを確認 (verified 2026-05-09)",
+    "fpmsyncd の nexthop 正規化は本ページの主張範囲外で別途裏取り (verified 2026-05-09)"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "last_verified": "2026-05-09"
 }

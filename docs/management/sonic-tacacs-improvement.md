@@ -1,7 +1,7 @@
 ---
 title: TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -21,8 +21,8 @@ related:
     - sonic-system-aaa
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    bash パッチによる plugin フック、libtac 経由の authorization、auditd + audisp-tacplus による accounting、hostcfgd の AAA config モジュールの現行 master 実装は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/files/build/versions-public/host-image/versions-deb-trixie` L6 で `audisp-tacplus==1.0.2`、L280 で `libtac2==1.4.1-1`、`files/build/versions-public/default/versions-git` L4 で `audisp-tacplus.git` の SHA を確認。各 `sonic-slave-{buster,bullseye,trixie,jessie}/Dockerfile.j2` に `# For audisp-tacplus` セクションがあり、ビルドスレーブ側に取り込み済み。`files/build_templates/sonic_debian_extension.j2` L318 で `libtac2_*.deb` をホストイメージにインストール。`sonic-utilities/config/aaa.py` L157-175 で `aaa authorization` / `aaa accounting` CLI を確認（verified at: 2026-05-09）。
 
 # TACACS+ コマンド authorization / accounting（patched bash + `audisp-tacplus`）
 

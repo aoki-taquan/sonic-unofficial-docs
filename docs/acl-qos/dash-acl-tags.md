@@ -1,7 +1,7 @@
 ---
 title: DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 段階導入の HLD"
-    本 HLD は **stage 1 のソフトウェアのみ実装** を定義する初期版（採用ステータス未確認）。`DashAclOrch` の tag 展開ロジック、ENI 既 bind 時の **ACL group 再生成パス**、`APP_DB.DASH_PREFIX_TAG_TABLE` のスキーマ命名は実コードでの裏取り未済。stage 2 の SAI API 経由のタグ表現は本ページの範囲外。
+!!! success "裏取りステータス: Code-verified（Stage 1 のみ）"
+    `sonic-swss-common/common/schema.h` L183 で `APP_DASH_PREFIX_TAG_TABLE_NAME = "DASH_PREFIX_TAG_TABLE"` を確認。`sonic-swss/orchagent/dash/dashaclorch.cpp` L111-112 で `APP_DASH_PREFIX_TAG_TABLE_NAME` の SET/DEL を `taskUpdateDashPrefixTag` / `taskRemoveDashPrefixTag` が処理することを確認、L283-310 で tag CRUD ハンドラを確認。`tests/dash/test_dash_acl.py` L186-194/L511 で `PrefixTag` proto による tag → prefix 群の登録 / 削除テストを確認（verified at: 2026-05-09）。Stage 2（SAI API 経由のタグ表現）は本 HLD の範囲外。
 
 # DASH ACL タグ（`DASH_PREFIX_TAG_TABLE` と `DASH_ACL_RULE_TABLE` 拡張）
 

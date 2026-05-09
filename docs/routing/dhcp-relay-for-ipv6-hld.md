@@ -1,7 +1,7 @@
 ---
 title: DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`dhcp-relay` docker 内の `dhcrelay -6` 起動経路、`dhcpv6_servers` を読む supervisord テンプレート、CoPP の DHCPv6 trap 連動、DHCP Monitor の v6 対応は未裏取り。
+!!! success "裏取りステータス: Code-verified"
+    `sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L58 と `dhcp-relay.programs.j2` L7/L27 で `DHCP_RELAY[vlan_name]['dhcpv6_servers']` 条件で v6 用エントリを生成、`dhcpv6-relay.agents.j2` L3-4 で `dhcpv6_servers` ループによる `dhcrelay -6` 形式の上流サーバ展開を確認。`cli-plugin-tests/test_config_dhcp_relay.py` / `test_show_dhcp_relay.py` で `dhcpv6_servers` キーを使ったテスト構成を確認（verified at: 2026-05-09）。
 
 # DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
 

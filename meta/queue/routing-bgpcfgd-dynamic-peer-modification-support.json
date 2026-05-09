@@ -1,14 +1,15 @@
 {
   "page": "docs/routing/bgpcfgd-dynamic-peer-modification-support.md",
-  "verification": "hld-only",
-  "concerns": [
-    "bgpcfgd の BGPPeerMgrBase が update.conf.j2 / delete.conf.j2 を init 時にロードする実装存在確認",
-    "vtysh で現行 BGP listen-range を取得し新ranges との diff を計算する処理の取り込み確認",
-    "STATE_DB.BGP_PEER_CONFIGURED_TABLE の dynamic / static 両対応の書き込みコード確認",
-    "show ip bgp vrf <name> {summary,network,neighbors} と show ipv6 系の sonic-utilities 取り込み確認",
-    "docker-fpm-frr の bgpd template directory への update.conf.j2 / delete.conf.j2 追加状況確認"
+  "verification": "code-verified",
+  "concerns": [],
+  "verified_concerns": [
+    "BGPPeerMgrBase の update.conf.j2 / delete.conf.j2 ロード -> sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py L87/L112-115 で確認 (verified 2026-05-09)",
+    "STATE_BGP_PEER_CONFIGURED_TABLE 書き込み -> managers_bgp.py L287-297 で CRUD と log メッセージを確認、sonic-swss-common/common/schema.h L511 でテーブル名定義を確認 (verified 2026-05-09)",
+    "docker-fpm-frr 配下 dynamic templates -> sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2 を確認、update.conf.j2 は add_ranges / delete_ranges 双方を bgp listen range ... peer-group で反映 (verified 2026-05-09)",
+    "show ip bgp vrf 系 CLI -> sonic-utilities/show/bgp_frr_v4.py L103-168、utilities_common/bgp_util.py L304-320 で vtysh 連携を確認 (verified 2026-05-09)"
   ],
   "priority": "medium",
   "issue": 173,
-  "pr": 174
+  "pr": 174,
+  "last_verified": "2026-05-09"
 }

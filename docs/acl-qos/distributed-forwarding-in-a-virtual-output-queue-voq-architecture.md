@@ -1,7 +1,7 @@
 ---
 title: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2020-09 (Rev 2.1)。`docker-database-chassis` / `redis_chassis` の起動経路、`config-chassisdb` systemd サービス、CHASSIS_APP_DB スキーマは要裏取り。
+!!! success "裏取りステータス: Code-verified（骨格のみ）"
+    `sonic-swss-common/common/database_config.json` L8-11 で `redis_chassis` インスタンス（hostname `redis_chassis.server`、`/var/run/redis/redis_chassis.sock`）、L80-88 で `CHASSIS_APP_DB` が `redis_chassis` インスタンスに紐付くこと、`sonic-buildimage/dockers/docker-database/docker-database-init.sh` L85-86 で `database-chassis` 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。
 
 !!! note "area の経緯"
     backlog 上は `acl-qos` カテゴリだが、内容は分散転送のアーキテクチャ全体（routing / platform / system にまたがる）。本ページは backlog の指定どおり `acl-qos` 配下に置く。
