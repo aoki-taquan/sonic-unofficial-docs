@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/persistent-log-level-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/routing-and-next-hop-table-enhancement/">
       
       
-        <link rel="prev" href="../kdump-remote-ssh/">
+        <link rel="prev" href="../router-interface-counters-in-sonic/">
       
       
-        <link rel="next" href="../reboot-support-blockingmode-in-sonic/">
+        <link rel="next" href="../sonic-usid/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行） - SONiC 非公式ドキュメント</title>
+        <title>NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#loglevel_db-config_dblogger" class="md-skip">
+        <a href="#next_hop_group_table-app_db" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
+              NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -915,6 +915,8 @@
       
   
   
+    
+  
   
   
     
@@ -956,20 +958,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -987,13 +992,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1013,7 +1018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1041,7 +1046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1069,7 +1074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1097,7 +1102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1125,7 +1130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -1153,7 +1158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1181,7 +1186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1209,7 +1214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1237,7 +1242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1265,7 +1270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1293,7 +1298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1318,10 +1323,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1337,6 +1369,192 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スキーマ変更（APP_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 側の処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除・参照カウント
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routeorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存 RouteOrch 内ネクストホップ群との非干渉
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1349,7 +1567,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -1377,7 +1595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -2591,8 +2809,6 @@
       
   
   
-    
-  
   
   
     
@@ -2636,23 +2852,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -2670,13 +2883,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2696,7 +2909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -2724,7 +2937,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -2752,7 +2965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -2780,7 +2993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -2808,7 +3021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -2833,37 +3046,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -2879,225 +3065,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        スキーマ移行
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swssloglevel の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時の挙動
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3110,7 +3077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -3138,7 +3105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -3166,7 +3133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -3194,7 +3161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -3222,7 +3189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -3250,7 +3217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -3278,7 +3245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -3306,7 +3273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -3334,7 +3301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -5124,10 +5091,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スキーマ変更（APP_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 側の処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スキーマ移行
+        削除・参照カウント
       
     </span>
   </a>
@@ -5135,65 +5124,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#routeorch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#swssloglevel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        swssloglevel の変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reboot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        永続化と reboot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm upgrade の移行ロジック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#phase-2-loglevel_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2: LOGLEVEL_DB の完全削除
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動時の挙動
+        既存 RouteOrch 内ネクストホップ群との非干渉
       
     </span>
   </a>
@@ -5206,7 +5140,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -5240,18 +5174,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -5267,7 +5190,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -5278,7 +5212,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -5289,7 +5223,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -5316,7 +5250,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/persistent-log-level-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/routing-and-next-hop-table-enhancement.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -5325,216 +5259,102 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-swss-common</code> の <code>logger.cpp</code> / <code>loglevel.cpp</code> 変更、各 <code>*mgrd</code> / <code>*syncd</code> の listener thread 変更、<code>db_migrator</code> の LOGLEVEL DB → CONFIG DB 変換、Phase 2 の LOGLEVEL_DB / <code>JINJA2_CACHE</code> 完全削除の進捗は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 採否不明な提案</p>
+<p>このページは公式 HLD のみを根拠に書かれている。HLD は 2020-11 の Rev 0.1 (Initial) のままで、現行 master に取り込まれているか未確認。<code>orchagent</code> 側の <code>NhgOrch</code> 実装存在およびスキーマ取り込みは要裏取り。</p>
 </div>
-<h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>
+<h1 id="next_hop_group_table-app_db">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離<a class="headerlink" href="#next_hop_group_table-app_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では <code>swssloglevel</code> コマンドで <code>orchagent</code> / <code>syncd</code> / 各種 <code>*mgrd</code> / <code>*syncd</code> / SAI API ごとに動的にログ深さを変えられる。しかし設定先が <strong>LOGLEVEL_DB (#3)</strong> に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 <code>NOTICE</code> に戻ってしまっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ目的で <code>DEBUG</code> を出していても、再起動を挟むと忘れられる運用上の不便があった。</p>
-<p>本機能はログレベルテーブルを <strong>CONFIG_DB (#4) の <code>LOGGER</code> テーブル</strong> に移し、<code>config save</code> の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と <code>JINJA2_CACHE</code> を完全削除する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>従来の SONiC では、<code>APP_DB.ROUTE_TABLE</code> の各エントリにネクストホップ情報（<code>nexthop</code> / <code>ifname</code>）を <strong>直接埋め込んで</strong> いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートごとに同一情報を APP_DB に書き、<code>orchagent</code> 側でも毎ルート分パースする必要があり、メモリと処理時間の双方が重い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は <strong>APP_DB 側で「ネクストホップ群」を独立したテーブルに切り出し</strong>、ルートはそのキー参照を持つだけにする。新たに <code>NEXT_HOP_GROUP_TABLE</code> を導入し、<code>ROUTE_TABLE</code> エントリには <code>nexthop_group</code> フィールドを追加してそのキーを参照させる。多数のルートが同じ群を共有する場合、APP_DB の総容量と orchagent の処理量が大幅に削減される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スキーマ移行<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>旧 LOGLEVEL_DB (#3) のキーは <code>&lt;component&gt;:&lt;component&gt;</code> 形式（例: <code>orchagent:orchagent</code>）だった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LOGLEVEL_DB (旧)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a> orchagent:orchagent
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>   LOGLEVEL  = INFO
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a> SAI_API_BUFFER:SAI_API_BUFFER
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>   LOGLEVEL  = SAI_LOG_LEVEL_NOTICE
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>   LOGOUTPUT = SYSLOG
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a> JINJA2_CACHE:...   ← 旧 warm-reboot 高速化用キャッシュ
+<h3 id="app_db">スキーマ変更（APP_DB）<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
+<p>新規追加される <code>NEXT_HOP_GROUP_TABLE</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NEXT_HOP_GROUP_TABLE
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  key     = NEXT_HOP_GROUP_TABLE:&lt;arbitrary string&gt;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  nexthop = *prefix       ; カンマ区切りの IP（空ならゲートウェイなし）
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  ifname  = *PORT_TABLE.key ; カンマ区切りのインタフェース
 </span></code></pre></div>
-<p>新スキーマは CONFIG_DB の <code>LOGGER</code> テーブルにフラット化する。キーは <strong>コンポーネント名のみ</strong>（<code>Logger:&lt;componentName&gt;</code> から最終的にコンポーネント名のみへ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;LOGGER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;orchagent&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span><span class="w">                  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;SAI_API_BUFFER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;LOGLEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SAI_LOG_LEVEL_NOTICE&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;LOGOUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSLOG&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+<p><code>ROUTE_TABLE</code> には次のフィールドが <strong>追加</strong> される（既存フィールドは残す）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ROUTE_TABLE
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  key            = ROUTE_TABLE:&lt;prefix&gt;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  nexthop        = *prefix
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ifname         = *PORT_TABLE.key
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  blackhole      = BIT
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  nexthop_group  = NEXT_HOP_GROUP_TABLE:key   ; 新規。指定時は nexthop/ifname の代替
 </span></code></pre></div>
-<p><code>LOGOUTPUT</code> の値（<code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code>）も合わせて永続化される。</p>
-<h3 id="_4">全体フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    User[swssloglevel CLI] --&gt; CDB[(CONFIG_DB\nLOGGER)]
-    Save[config save] --&gt; CDB
-    Save --&gt;|copy| JSON[/etc/sonic/config_db.json]
-    CDB --&gt;|change event| LIS[各コンポーネントの settingThread\n(listener)]
-    LIS --&gt; COMP[Logger singleton\n(loglevel property)]
-    Boot[再起動] --&gt; JSON
-    JSON --&gt;|database container init| CDB</code></pre>
-<p>各 SONiC コンポーネントは <strong>Logger シングルトン + listener スレッド (<code>settingThread</code>)</strong> を持っており、購読対象 DB の変更を検知して loglevel プロパティを更新する。本機能はこの <code>settingThread</code> の購読先を LOGLEVEL_DB から CONFIG_DB に切り替える<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>影響を受けるコンポーネント<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>buffermgrd</code>, <code>coppmgrd</code>, <code>fdbsyncd</code>, <code>fpmsyncd</code>, <code>gearsyncd</code>, <code>intfmgrd</code>, <code>portsyncd</code>, <code>syncd</code>, <code>teammgrd</code>, <code>teamsyncd</code>, <code>tlm_teamd</code>, <code>tunnelmgrd</code>, <code>vlanmgrd</code>, <code>vrfmgrd</code>, <code>vxlanmgrd</code>, <code>wjhd</code>, <code>nbrmgrd</code>, <code>neighsyncd</code>, <code>orchagent</code>, <code>portmgrd</code>。</p>
-<h3 id="swssloglevel"><code>swssloglevel</code> の変更<a class="headerlink" href="#swssloglevel" title="Permanent link">&para;</a></h3>
-<p>スクリプト本体は <code>sonic-swss-common/common/loglevel.cpp</code> 由来で、書き込み先を CONFIG_DB に変更する。さらに <strong>既定値に戻す <code>-d</code> オプション</strong> を新設し、全コンポーネントを既定値（<code>SWSS NOTICE</code>、<code>SAI_LOG_LEVEL_NOTICE</code>）にリセットできるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>swssloglevel -l NOTICE -c orchagent       # orchagent を NOTICE に
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swssloglevel -l SAI_LOG_LEVEL_DEBUG -s -a # 全 SAI_API_* を DEBUG に
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>swssloglevel -d                           # 全コンポーネント既定値に戻す（新規）
-</span></code></pre></div>
-<h3 id="reboot">永続化と reboot<a class="headerlink" href="#reboot" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>永続化要件</th>
-<th>reboot 後の挙動</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ログレベル変更のみ</td>
-<td>不要</td>
-<td>cold/fast 後は既定値、warm 後は維持（CONFIG_DB は flush しない）</td>
-</tr>
-<tr>
-<td>ログレベル変更 + <code>config save</code></td>
-<td>必要</td>
-<td>cold/fast/warm すべてで設定維持</td>
-</tr>
-</tbody>
-</table>
-<h3 id="warm-upgrade">Warm upgrade の移行ロジック<a class="headerlink" href="#warm-upgrade" title="Permanent link">&para;</a></h3>
-<p>旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。HLD は <strong><code>db_migrator</code> を拡張</strong> して以下を行うと明記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<ol>
-<li><code>db_migrator</code> に LOGLEVEL_DB コネクタを追加。</li>
-<li>LOGLEVEL_DB の Logger テーブルを CONFIG_DB に移し（キー名を変換）、LOGLEVEL_DB を消す。</li>
-<li><code>swss-common/sonicv2-connector.h</code> から <code>del</code> を公開して上記消去を可能にする。</li>
-</ol>
-<p>ダウングレード（新→旧）はシナリオが入り組み、HLD は <strong>完全サポートしない</strong> と明記する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新版で <code>config save</code> 済みのテーブルは旧バージョンでは未知のため、再 upgrade 時に「LOGLEVEL_DB 側の Logger テーブルが CONFIG_DB の未使用テーブルを上書きする」非対称が発生し得る。</p>
-<h3 id="phase-2-loglevel_db">Phase 2: LOGLEVEL_DB の完全削除<a class="headerlink" href="#phase-2-loglevel_db" title="Permanent link">&para;</a></h3>
-<p>LOGLEVEL_DB に残るのは <code>JINJA2_CACHE</code> のみとなる。これは jinja2 テンプレートのバイトコードキャッシュで、warm-reboot 高速化目的で導入された経緯があるが、その後の最適化により <strong>効果が無くなった</strong> ため Phase 2 で削除する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ネクストホップ群のキーは <strong>アプリケーションが任意に決める</strong> 文字列であり、ランダムでも算術的でも構わない。HLD は命名規則を規定しない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="admonition note">
+<p class="admonition-title">競合ルール</p>
+<p><code>nexthop_group</code> と従来の <code>nexthop</code>/<code>ifname</code> の <strong>両方</strong> を持つ ROUTE_TABLE エントリは無視される（HLD 明記）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+</div>
+<h3 id="orchagent">orchagent 側の処理<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<p>新たな <code>NhgOrch</code> 系の orchestration agent が <code>NEXT_HOP_GROUP_TABLE</code> を受ける。群のメンバ数で分岐する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<pre class="mermaid"><code>flowchart TD
+  IN[NEXT_HOP_GROUP_TABLE update] --&gt; N{member 数}
+  N --&gt;|1| SINGLE[NeighOrch から SAI ID 取得\n→ 群の SAI ID として使用]
+  N --&gt;|&gt;1| MULTI[ASIC_DB に next_hop_group 作成\nメンバを next_hop_group_member として追加]
+  SINGLE --&gt; MAP[APP_DB key ↔ SAI ID マップ更新]
+  MULTI --&gt; MAP
+  MAP --&gt; RT[RouteOrch が参照解決]</code></pre>
+<p>ルート側は次のように振る舞う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>schema.h</code> から <code>LOGLEVEL_DB</code> を削除。</li>
-<li><code>sonic-config-engine/build/lib/redis_bcc.py</code> を削除。</li>
-<li>約 50 ファイルの「全 DB リスト」から LOGLEVEL_DB を除く。</li>
-<li><code>fdbsyncd.cpp</code> で残っていた未使用 LOGLEVEL_DB connector を撤去。</li>
+<li><code>RouteOrch</code> が <code>nexthop_group</code> フィールドを見て <code>NhgOrch</code> に SAI OID を問い合わせる。</li>
+<li>群がまだ ASIC_DB に存在しなければルートは pending リストに残り、後続サイクルで再試行される。</li>
+<li>ハードウェア限界で群を作成できない場合、<strong>1 メンバを暫定使用</strong> する縮退モードに入り、ルート側にも「暫定形式」と通知される。ルートは群が正規形になるまで pending を保ち続ける<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>旧 DB ID 番号
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> 0 APPL_DB
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> 1 ASIC_DB
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a> 2 COUNTERS_DB
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a> 3 LOGLEVEL_DB     ← Phase 2 で削除
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a> 4 CONFIG_DB
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a> ...
-</span></code></pre></div>
+<h3 id="_3">削除・参照カウント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>群は参照しているルートが残っているうちは削除されない。<code>NhgOrch</code> は群の <strong>参照カウント</strong> を保持する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> が再起動した場合、未更新のルートは ASIC_DB に書けない過渡状態になるが、ROUTE_TABLE が更新されれば回復する。</p>
+<h3 id="routeorch">既存 RouteOrch 内ネクストホップ群との非干渉<a class="headerlink" href="#routeorch" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch</code> が暗黙に管理してきた既存のネクストホップ群（メンバ集合をキーとする）と、新 <code>NhgOrch</code> が管理する群（任意キー）は <strong>同一メンバでも別物として ASIC_DB に書かれる</strong>。HLD は「全ルートを旧形式か新形式のいずれかに統一する想定」と明記している<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Fine grained ECMP 用の群は影響を受けない。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/logging/persistent_logger/persistent_loglevel.md#L246-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  After moving the Logger's table from LOGLEVEL DB, the leftover in LOGLEVEL DB will be the JINJA2_CACHE key.
-  ... we recommend removing the jinja2 cache and the LOGLEVEL DB.
-  - Removing /sonic-config-engine/build/lib/redis_bcc.py file.
-reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除する設計の根拠。
+  A new orchestration agent will be written to handle the new NEXT_HOP_GROUP_TABLE in APP_DB.
+  ... If the group has a single next hop, the next hop group orchagent will simply get the SAI identifier...
+  ... If a next hop group cannot be programmed because the data plane limit has been reached, one next hop will be picked to be temporarily used for that group.
+reasoning: 単一/複数メンバの分岐、暫定モード、参照カウントの設計根拠。
 -->
 
-<h3 id="_5">起動時の挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><code>database</code> コンテナ初期化中に <code>config_db.json</code> が CONFIG_DB に読み込まれる。<strong><code>rsyslog-config</code> は database コンテナ起動後</strong> に立ち上がるため、これより前にログメッセージが出ることは想定していない（出た場合は既定 loglevel）と HLD は明言している<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>LOGGER</code></td>
-<td><code>&lt;componentName&gt;</code></td>
-<td><code>LOGLEVEL</code></td>
-<td>SWSS or SAI のログレベル列挙値</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td><code>LOGOUTPUT</code></td>
-<td><code>SYSLOG</code> / <code>STDOUT</code> / <code>STDERR</code></td>
-</tr>
-</tbody>
-</table>
-<p><code>&lt;componentName&gt;</code> の例: <code>orchagent</code>, <code>syncd</code>, <code>buffermgrd</code>, <code>vxlanmgrd</code>, <code>SAI_API_BUFFER</code> 等。</p>
+<p>このページの機能は <strong>APP_DB</strong> スキーマ拡張であり、ユーザ向け CONFIG_DB は変更されない。<code>NEXT_HOP_GROUP_TABLE</code> および <code>ROUTE_TABLE.nexthop_group</code> を APP_DB に書き込むのは外部のルーティングアプリケーション（カスタム fpmsyncd 等）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>swssloglevel -l &lt;level&gt; -c &lt;component&gt;</code></td>
-<td>コンポーネント単体の設定</td>
-</tr>
-<tr>
-<td><code>swssloglevel -l &lt;level&gt; -a</code></td>
-<td>全コンポーネントに一括適用</td>
-</tr>
-<tr>
-<td><code>swssloglevel -l &lt;level&gt; -s -c &lt;api&gt;</code></td>
-<td><code>SAI_API_&lt;api&gt;</code> への適用</td>
-</tr>
-<tr>
-<td><code>swssloglevel -d</code></td>
-<td>全コンポーネントを既定値に戻す（新規）</td>
-</tr>
-<tr>
-<td><code>swssloglevel -p</code></td>
-<td>DB に登録されているコンポーネント一覧</td>
-</tr>
-<tr>
-<td><code>config save</code></td>
-<td>現在の CONFIG_DB を <code>config_db.json</code> に書き出す。本機能の永続化に必須</td>
-</tr>
-</tbody>
-</table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-logger.yang</code> モジュールに <code>LOGGER</code> テーブルを定義<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">EMERG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ALERT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">CRIT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_CRITICAL</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_WARN</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_NOTICE</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_INFO</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SAI_LOG_LEVEL_DEBUG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">container</span><span class="w"> </span><span class="nv">LOGGER</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">list</span><span class="w"> </span><span class="nv">LOGGER_LIST</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="p">;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGLEVEL</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">mandatory</span><span class="w"> </span><span class="nc">true</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">union</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">swss_loglevel</span><span class="p">;</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">sai_loglevel</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="k">leaf</span><span class="w"> </span><span class="nv">LOGOUTPUT</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDOUT</span><span class="p">;</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nv">STDERR</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nv">SYSLOG</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+<p><code>show ip route</code> / <code>show ipv6 route</code> は <strong>出力フォーマット不変</strong> が要件として規定されている<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI 側は <code>ROUTE_TABLE.nexthop_group</code> を解決して従来と同じネクストホップ表示を行う。</p>
+<p>新規 CLI コマンドは HLD では追加されない。</p>
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>ルーティングアプリケーションが APP_DB に直接書き込む形になる:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>NEXT_HOP_GROUP_TABLE:NHG1
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  nexthop = 10.0.0.1,10.0.0.2
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  ifname  = Ethernet0,Ethernet4
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ROUTE_TABLE:10.100.0.0/24
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  nexthop_group = NHG1
 </span></code></pre></div>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># orchagent を DEBUG にして恒久化</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-c<span class="w"> </span>orchagent
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>config<span class="w"> </span>save
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># 何もかも DEBUG にして調査</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>DEBUG<span class="w"> </span>-a
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>SAI_LOG_LEVEL_DEBUG<span class="w"> </span>-s<span class="w"> </span>-a
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 既定値に戻す</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>swssloglevel<span class="w"> </span>-d
-</span></code></pre></div>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>config save</code></strong>: 永続化はこの CLI に完全依存。設定だけして save しないと cold/fast 後にロスト。</li>
-<li><strong>warm reboot</strong>: CONFIG_DB を flush しないため、save 不要で維持される（旧仕様も同様）。</li>
-<li><strong><code>db_migrator</code></strong>: warm upgrade 経路で LOGLEVEL_DB の値を CONFIG_DB に移す変換が走る。これが入っていない古い <code>db_migrator</code> だと旧設定が失われる。</li>
-<li><strong>ダウングレード</strong>: HLD で完全サポート外と明記。新→旧 移行は loglevel が既定にリセットされる前提。</li>
-<li><strong><code>JINJA2_CACHE</code> 削除（Phase 2）</strong>: warm-reboot 性能への影響が無いことが事前計測で確認されているが、特殊な構成では再計測が必要。</li>
+<li><strong>fpmsyncd 非対応</strong>: 標準 fpmsyncd は本機能を使うように更新されない。利用するには改造版 fpmsyncd を用意するか、APP_DB に直接書き込むアプリケーションが必要<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の併記は無視</strong> される（前述）。</li>
+<li><strong>既存形式との混在不可（実質）</strong>: 旧 RouteOrch 群と新 NhgOrch 群は ASIC_DB 上で別オブジェクトとして並走するため、両形式の混在は ASIC リソースを二重消費する。</li>
+<li><strong>Warm upgrade 未対応</strong>: 既存アプリは本機能を使わないため warm upgrade は対象外。将来採用するアプリが現れたら別 enhancement で対応する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ログレベルを変えたのに反映されない: 該当コンポーネントの <code>settingThread</code> が CONFIG_DB を購読する新版になっているか syslog で確認。古いバイナリだと LOGLEVEL_DB のままを見ている可能性。</li>
-<li>再起動後にロスト: <code>config save</code> 漏れ。<code>/etc/sonic/config_db.json</code> の <code>LOGGER</code> セクションを確認する。</li>
-<li>warm upgrade 後にロスト: <code>db_migrator</code> が走っているか、<code>swss-common</code> のバージョンに <code>del</code> がエクスポートされているか確認。</li>
-<li><code>swssloglevel -p</code> の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。</li>
+<li><strong>Fine grained ECMP</strong>: 既存 fine grained next hop group orchagent の群は本変更で挙動が変わらない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Warm boot</strong>: ルートと群の対応関係を維持する責務は <strong>アプリケーション側</strong> にある。アプリは群キーを再起動跨ぎで安定させるか、起動時に APP_DB から復元する必要がある<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Fast reboot / BGP graceful restart</strong>: 影響なし（BGP アプリが APP_DB に何を書くかの選択肢が増えるだけ）。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ルートが ASIC_DB に書かれない場合、<code>NEXT_HOP_GROUP_TABLE</code> に対応するキーが存在するか確認する。群が未到着なら RouteOrch の pending に積まれる。</li>
+<li>ASIC のネクストホップ群リソース枯渇時は群が暫定 1 メンバ形式で書かれる。<code>asic-db</code> の <code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER</code> 数を確認する。</li>
+<li><code>show ip route</code> の出力が群参照のまま残っていないか（実装側の解決バグの兆候）を確認する。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/logging/persistent_logger/persistent_loglevel.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/ip/next_hop_group_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
