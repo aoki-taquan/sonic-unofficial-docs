@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/sonic-usid/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/swss-docker-warm-restart-code-reference/">
       
       
-        <link rel="prev" href="../routing-and-next-hop-table-enhancement/">
+        <link rel="prev" href="../static-dns-configuration/">
       
       
-        <link rel="next" href="../srv6-sid-l3adj/">
+        <link rel="next" href="../useful-sysctl-settings/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） - SONiC 非公式ドキュメント</title>
+        <title>SWSS docker の Warm Restart 実装メモ（開発時リファレンス） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#srv6-usidsrv6orch-unuaudtudx" class="md-skip">
+        <a href="#swss-docker-warm-restart" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
+              SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -1035,8 +1035,6 @@
       
   
   
-    
-  
   
   
     
@@ -1094,23 +1092,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -1128,13 +1123,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1154,7 +1149,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -1182,7 +1177,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bfd-hw-offload/" class="md-nav__link">
+      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -1210,7 +1205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -1238,7 +1233,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -1266,7 +1261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -1294,7 +1289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -1322,7 +1317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -1350,7 +1345,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -1378,7 +1373,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -1406,7 +1401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -1434,7 +1429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -1462,7 +1457,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1490,7 +1485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -1518,7 +1513,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -1546,7 +1541,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -1574,7 +1569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -1602,7 +1597,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reliable-tsa/" class="md-nav__link">
+      <a href="../../routing/reliable-tsa/" class="md-nav__link">
         
   
   
@@ -1630,7 +1625,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -1658,7 +1653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -1683,37 +1678,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/sonic-usid/" class="md-nav__link">
         
   
   
@@ -1729,181 +1697,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#end-behavior" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加される end behavior
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        orchagent 側変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#usid-carrier" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        uSID carrier のフォーマット
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1916,7 +1709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -1944,7 +1737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -3368,6 +3161,8 @@
       
   
   
+    
+  
   
   
     
@@ -3431,20 +3226,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3462,13 +3260,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3488,7 +3286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -3516,7 +3314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -3544,7 +3342,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -3572,7 +3370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -3600,7 +3398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -3628,7 +3426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -3656,7 +3454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -3684,7 +3482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -3712,7 +3510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -3740,7 +3538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -3768,7 +3566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -3796,7 +3594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -3824,7 +3622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -3852,7 +3650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -3880,7 +3678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -3908,7 +3706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -3936,7 +3734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -3964,7 +3762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -3992,7 +3790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -4020,7 +3818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -4048,7 +3846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -4076,7 +3874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -4104,7 +3902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -4129,10 +3927,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -4148,6 +3973,253 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm Restart テーブル（STATE_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5 領域の改修ポイント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5 領域の改修ポイント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-swss-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. swss / syncd の分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-swss-flushdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. swss-flushdb
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-idempotent-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. データ復元（idempotent orchagent）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Redis ライブラリ拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-libsairedis-redis-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. libsairedis の Redis API 冪等性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4160,7 +4232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -7220,10 +7292,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#end-behavior" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        追加される end behavior
+        CLI 例
       
     </span>
   </a>
@@ -7231,10 +7303,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
+  <a href="#warm-restart-state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        orchagent 側変更
+        Warm Restart テーブル（STATE_DB）
       
     </span>
   </a>
@@ -7242,13 +7314,74 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#usid-carrier" class="md-nav__link">
+  <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        uSID carrier のフォーマット
+        5 領域の改修ポイント
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="5 領域の改修ポイント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-swss-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. swss / syncd の分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-swss-flushdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. swss-flushdb
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-idempotent-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. データ復元（idempotent orchagent）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Redis ライブラリ拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-libsairedis-redis-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. libsairedis の Redis API 冪等性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -7281,10 +7414,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する YANG
       
     </span>
   </a>
@@ -7368,7 +7512,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/sonic-usid.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/swss-docker-warm-restart-code-reference.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -7377,188 +7521,137 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは公式 HLD（2022-07）のみを根拠に書かれている。<code>srv6orch</code> 実装、SAI の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> 等の現行 master での利用可能性は未確認。</p>
+<p class="admonition-title">裏取りステータス: HLD-only / 開発時メモ</p>
+<p>このドキュメントは HLD 自身が冒頭で <strong>"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"</strong> と述べる、warm-restart 機能開発当時のコードリファレンスメモ。<strong>現行 master の Warm Restart の正確な仕様ではない</strong>。具体的な分岐先 PR は当時の開発者個人の fork であり、現行 master では取り込み・改変されている。</p>
 </div>
-<h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>
+<h1 id="swss-docker-warm-restart">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）<a class="headerlink" href="#swss-docker-warm-restart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>uSID（micro-SID）は IETF <a href="https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/">Compressed SRv6 Segment List Encoding</a> と <a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/">SRv6 uSID instructions</a> で定義される、SRv6 SID を <strong>16 bit などに圧縮</strong> する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に <strong>最大 6 個の uSID</strong> を詰められる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。</p>
-<p>本 HLD は SONiC の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張のみを定義する。SAI API は既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> ですべて表現できるため、SAI の変更は不要である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC の FRR 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
+<p><code>sonic-installer upgrade_docker</code> で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI 動作例と関連リポジトリへの diff リンクが主な内容で、以下の 5 領域の実装変更を扱う。</p>
+<ol>
+<li>SWSS warm restart の有効化スイッチ（<code>config warm_restart enable swss</code>）</li>
+<li><code>swss</code> と <code>syncd</code> サービスの分離 + warm start での CONFIG_DB 取り扱い</li>
+<li><code>swss-flushdb</code> スクリプトの追加</li>
+<li>SWSS データ復元（idempotent な orchagent 動作）</li>
+<li>Redis client の <code>hmset</code> / <code>hgetallordered</code> 追加と libsairedis の Redis API 冪等性サポート</li>
+</ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="end-behavior">追加される end behavior<a class="headerlink" href="#end-behavior" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Behavior</th>
-<th>SAI mapping</th>
-<th>flavor</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>un</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code></td>
-<td><code>PSP_AND_USD</code></td>
-</tr>
-<tr>
-<td><code>ua</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA</code></td>
-<td><code>PSP_AND_USD</code></td>
-</tr>
-<tr>
-<td><code>udt4</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</code></td>
-<td>(既存 End.DT4 と同じ)</td>
-</tr>
-<tr>
-<td><code>udt6</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</code></td>
-<td>同 End.DT6</td>
-</tr>
-<tr>
-<td><code>udt46</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</code></td>
-<td>同 End.DT46</td>
-</tr>
-<tr>
-<td><code>udx4</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</code></td>
-<td>同 End.DX4</td>
-</tr>
-<tr>
-<td><code>udx6</code></td>
-<td><code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</code></td>
-<td>同 End.DX6</td>
-</tr>
-</tbody>
-</table>
-<p>要点:</p>
-<ul>
-<li><code>uN</code> / <code>uA</code> は <strong>PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>uDT*</code> / <code>uDX*</code> は SAI レイヤでは既存の End.DT<em> / End.DX</em> と完全に同じ。orchagent の文字列マッピングだけが追加される</li>
-</ul>
-<h3 id="orchagent">orchagent 側変更<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    APP[(APPL_DB\nSRV6_MY_SID_TABLE)] --&gt;|SET\naction=un/ua/udt*/udx*| ORCH[srv6orch]
-    ORCH --&gt;|behavior + flavor 解決| MAP{end_behavior_map\nend_flavor_map}
-    MAP --&gt; SAI[SAI my_sid_entry create]
-    SAI --&gt; ASIC[ASIC]</code></pre>
-<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> だけの変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。APPL_DB スキーマ自体に変更は無い。</p>
-<p>具体的なマップ追記内容（HLD 抜粋）:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// end_behavior_map に追加</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s">&quot;udx6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</span><span class="p">},</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span><span class="s">&quot;udx4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4</span><span class="p">},</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">{</span><span class="s">&quot;udt6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6</span><span class="p">},</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">{</span><span class="s">&quot;udt4&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4</span><span class="p">},</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span><span class="s">&quot;udt46&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46</span><span class="p">},</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</span><span class="p">},</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA</span><span class="p">}</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">// end_flavor_map に追加（uN, uA は PSP_AND_USD）</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">{</span><span class="s">&quot;un&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">},</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">{</span><span class="s">&quot;ua&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD</span><span class="p">}</span>
+<h3 id="cli">CLI 例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a># Warm Restart の有効化
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>root@sonic:~# config warm_restart enable swss
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>root@sonic:~# show warm_restart
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>WARM_RESTART teamd enable false
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>WARM_RESTART swss neighbor_timer 5
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>WARM_RESTART swss enable true
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>WARM_RESTART system enable false
 </span></code></pre></div>
-<!-- evidence:
-source: sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Changes in orchagent,
-  - While processing MYSID entries, from SRV6_MY_SID_TABLE off of APPDB, handling of new actions uN, uA, uDT and uDX added in srv6orch. No APPDB schema changes required.
-reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。
--->
-
-<h3 id="usid-carrier">uSID carrier のフォーマット<a class="headerlink" href="#usid-carrier" title="Permanent link">&para;</a></h3>
-<p>128bit IPv6 アドレスは次のレイアウトで uSID を詰める<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;uSID-Block&gt;&lt;Active-uSID&gt;&lt;Next-uSID&gt;...&lt;Last-uSID&gt;&lt;End-of-Carrier&gt;[&lt;End-of-Carrier&gt;...]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># docker upgrade
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --cleanup_image
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a># 内部で systemctl stop swss → docker rm/load/tag → systemctl restart swss を実行
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>uSID Block</td>
-<td>uSID 群を含む IPv6 プレフィクス</td>
-</tr>
-<tr>
-<td>Active uSID</td>
-<td>現在処理対象の uSID</td>
-</tr>
-<tr>
-<td>Next uSID</td>
-<td>Active の次に処理する uSID</td>
-</tr>
-<tr>
-<td>Last uSID</td>
-<td>End-of-Carrier 直前の最後の uSID</td>
-</tr>
-<tr>
-<td>End-of-Carrier</td>
-<td>終端マーカ。グローバル予約値 <code>0000</code>。128bit を埋めるために必要なだけ並べる</td>
-</tr>
-</tbody>
-</table>
-<p>例（HLD 抜粋）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uSID block:    2001:41f0::
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Active uSID:   0100
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Next uSID:     0200
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Last uSID:     0A00
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>End-of-Carrier: 0000 (2 個並べて 128bit 充足)
+<h3 id="warm-restart-state_db">Warm Restart テーブル（STATE_DB）<a class="headerlink" href="#warm-restart-state_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>WARM_RESTART_TABLE:portsyncd
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>WARM_RESTART_TABLE:neighsyncd
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>WARM_RESTART_TABLE:vlanmgrd
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>WARM_RESTART_TABLE:orchagent
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>WARM_RESTART_TABLE:orchagent
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  restart_count = 4
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>WARM_RESTART_TABLE:neighsyncd
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  restart_count = 4
 </span></code></pre></div>
-<p><code>srv6orch</code> の locator パース長は既存どおり <code>locator_block_len:locator_node_len:function_len:args_len</code>（例: <code>16:8:8:8</code>）を再利用する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>各サブシステムがリスタート回数を <code>restart_count</code> として記録する。</p>
+<h3 id="5">5 領域の改修ポイント<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    A[1. config warm_restart enable swss] --&gt; B[2. swss / syncd サービス分離]
+    B --&gt; C[3. swss-flushdb スクリプト]
+    C --&gt; D[4. swss データ復元 idempotent]
+    D --&gt; E[5. RedisClient hmset/hgetallordered\n + libsairedis 冪等性]</code></pre>
+<h4 id="1-swss-syncd">1. swss / syncd の分離<a class="headerlink" href="#1-swss-syncd" title="Permanent link">&para;</a></h4>
+<p>warm restart 対象は <strong>swss コンテナのみ</strong>。syncd は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="2-swss-flushdb">2. swss-flushdb<a class="headerlink" href="#2-swss-flushdb" title="Permanent link">&para;</a></h4>
+<p>旧 swss コンテナが落ちる前に APPL_DB / STATE_DB の特定エントリをクリーンに保つためのスクリプト。</p>
+<h4 id="3-idempotent-orchagent">3. データ復元（idempotent orchagent）<a class="headerlink" href="#3-idempotent-orchagent" title="Permanent link">&para;</a></h4>
+<p>新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと SAI 側の既存オブジェクトを突き合わせ、<strong>同じプログラムを再実行しても副作用を起こさない</strong>（idempotent）動作をする必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h4 id="4-redis">4. Redis ライブラリ拡張<a class="headerlink" href="#4-redis" title="Permanent link">&para;</a></h4>
+<p><code>hmset</code> と <code>hgetallordered</code> を <code>RedisClient</code> に追加。順序付き hash 取得は復元時の決定論的な再生に必要。</p>
+<h4 id="5-libsairedis-redis-api">5. libsairedis の Redis API 冪等性<a class="headerlink" href="#5-libsairedis-redis-api" title="Permanent link">&para;</a></h4>
+<p>orchagent の復元処理に必要な、Redis 経由の SAI コマンド再実行で結果が変わらないようにする改修。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD では新規 CONFIG_DB スキーマは導入されない。SRv6 全体としては既存の <code>SRV6_MY_SID_TABLE</code>（APPL_DB）と関連する CONFIG_DB スキーマ（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 参照）を使う。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>専用 CLI は本 HLD で提案されていない。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WARM_RESTART</code></td>
+<td><code>swss</code></td>
+<td><code>enable</code> / <code>neighbor_timer</code></td>
+<td>SWSS warm restart 有効化と timer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config warm_restart enable swss</code></td>
+<td>SWSS の warm restart を有効化</td>
+</tr>
+<tr>
+<td><code>show warm_restart</code></td>
+<td>各サブシステムの warm restart 状態</td>
+</tr>
+<tr>
+<td><code>sonic-installer upgrade_docker &lt;name&gt; &lt;tag&gt; &lt;url&gt;</code></td>
+<td>Docker 単体アップグレード</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>HLD に YANG モデルの記述は無い。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>uN（uSID transit）を持つノード:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;16:8:8:8:2001:41f0:0100::&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;un&quot;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>uDT46（VRF にデキャプ）:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;16:8:8:8:2001:41f0:0100::&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;udt46&quot;</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;vrf&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VRF-1001&quot;</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>warm_restart
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># アップグレード</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-installer<span class="w"> </span>upgrade_docker<span class="w"> </span>swss<span class="w"> </span>test_v03<span class="w"> </span>docker-orchagent-brcm_v03.gz<span class="w"> </span>--cleanup_image
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本 HLD のスコープは <strong>データプレーン programming のみ</strong>。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を BGP / IS-IS で配布する経路は別問題<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>uN / uA は flavor が <strong>PSP_AND_USD 固定</strong>。他の flavor を選びたいユースケースは現状非対応</li>
-<li>ベース SRv6 HLD 由来の制約（locator パース、locator_block_len 等の事前合意値）はそのまま継承する</li>
+<li>HLD 自体が「temporary」で、現行 master の Warm Restart 仕様の権威ではない。</li>
+<li>HLD 内で参照されている各 PR/diff は <strong>当時の個人 fork</strong>（jipanyang）への compare URL。現行 master では複数 PR にバラされて取り込まれている。</li>
+<li><code>virtual switch</code> テストの結果（45 tests passed）も当時のスナップショットにすぎない。</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 SRv6 機能（End / End.X / End.DT<em> / End.DX</em> / End.B6.*）</strong>: 同じ <code>SRV6_MY_SID_TABLE</code> を共有する。<code>action</code> 文字列で区別する</li>
-<li><strong>VRF</strong>: <code>udt4</code> / <code>udt6</code> / <code>udt46</code> は <code>vrf</code> フィールドで宛先 VRF を指定する</li>
-<li><strong>SAI 実装</strong>: SAI 側に <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code> / <code>UA</code> を実装していない ASIC では <code>un</code> / <code>ua</code> が拒否される</li>
+<li><strong>syncd warm restart</strong>: 別途 <code>sonic-buildimage</code> 側の syncd warm restart 設計を参照する必要がある。</li>
+<li><strong>teamd warm restart</strong>: <code>WARM_RESTART teamd</code> フラグで別管理。</li>
+<li><strong>System warm restart (kernel)</strong>: <code>WARM_RESTART system</code> フラグで別管理。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>un</code> / <code>ua</code> を SET したのに ASIC に入らない場合、まず <code>srv6orch</code> のログで behavior マップヒットを確認。SAI から <code>SAI_STATUS_NOT_SUPPORTED</code> が返ってきている場合は ASIC ベンダーの SAI 実装が UN/UA 未対応の可能性</li>
-<li>uSID carrier の解釈ずれは locator_block_len 等の合意値が一致しているかを確認</li>
+<li>SWSS docker upgrade でデータプレーンが切れる → <code>WARM_RESTART_TABLE:*</code> の <code>restart_count</code> が増えているかを確認。</li>
+<li><code>swss-flushdb</code> 失敗 → APPL_DB の状態が不整合な可能性。手動で <code>redis-cli -n 0 keys *_TABLE:*</code> で確認。</li>
+<li>復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。</li>
+<li>詳細実装は HLD <code>doc/warm-reboot/code_implementation.md</code> を参照（このドキュメントは要点のみ）。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- srv6orch の end_behavior_map に un/ua/udt*/udx* が現行 master で追加されているか
-- SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN / UA が community SAI で利用可能か
-- FRR の SRv6 制御プレーン対応の進捗（HLD 後の状況）
-- locator パースの 16:8:8:8 デフォルトが現行コードでも有効か
--->
-
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/srv6/SRv6_uSID.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/code_implementation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
