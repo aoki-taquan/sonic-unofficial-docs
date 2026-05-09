@@ -91,6 +91,17 @@
         "STATS_MODE_READ_AND_CLEAR が syncd / SAI で実装済みか未確認"
       ],
       "priority": "medium"
+    },
+    {
+      "page": "docs/acl-qos/wred-and-ecn-statistics.md",
+      "issue": 27,
+      "verification": "hld-only",
+      "concerns": [
+        "orchagent の sai_query_stats_capability 利用と STATE_DB 投入が実装済みか未確認",
+        "counterpoll wredqueue / wredport CLI が sonic-utilities に実装されているか未確認",
+        "show queue wredcounters / sonic-clear queue wredcounters 実装の存在確認"
+      ],
+      "priority": "medium"
     }
   ]
 }
