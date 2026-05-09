@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-optional-feature-control-enhancement/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-policy-based-hashing/">
       
       
-        <link rel="prev" href="../sonic-logging-system-dumps-arch-spec/">
+        <link rel="prev" href="../sonic-on-gns3-vm/">
       
       
-        <link rel="next" href="../sonic-os-sonic-docker-images-versioning/">
+        <link rel="next" href="../sonic-port-auto-fec-design/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>FEATURE テーブルによるオプショナル機能の有効/無効制御 - SONiC 非公式ドキュメント</title>
+        <title>Sonic policy based hashing - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#feature" class="md-skip">
+        <a href="#policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FEATURE テーブルによるオプショナル機能の有効/無効制御
+              Sonic policy based hashing
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -594,20 +596,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -625,13 +630,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -651,7 +656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -679,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -707,7 +712,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -735,7 +740,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -763,7 +768,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -791,7 +796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -819,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -847,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -875,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -903,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
+      <a href="../sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -931,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -959,7 +964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -987,7 +992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1015,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1043,7 +1048,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1068,10 +1073,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sonic policy based hashing
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1087,6 +1119,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hash-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hash field とシンメトリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modification-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modification flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-fast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm / Fast boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1099,7 +1306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
+      <a href="../sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1127,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1155,7 +1362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1183,7 +1390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -4361,8 +4568,6 @@
       
   
   
-    
-  
   
   
     
@@ -4454,23 +4659,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -4488,13 +4690,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4514,7 +4716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4542,7 +4744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4570,7 +4772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -4598,7 +4800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -4626,7 +4828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -4654,7 +4856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -4682,7 +4884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -4710,7 +4912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -4738,7 +4940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -4766,7 +4968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -4794,7 +4996,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -4822,7 +5024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4850,7 +5052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -4878,7 +5080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -4906,7 +5108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -4934,7 +5136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -4962,7 +5164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -4990,7 +5192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5018,7 +5220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5046,7 +5248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5074,7 +5276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5102,7 +5304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5127,37 +5329,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブルによるオプショナル機能の有効/無効制御
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5173,203 +5348,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コンポーネントとフロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ（初版）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hostcfgd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hostcfgd の責務
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5382,7 +5360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5410,7 +5388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5438,7 +5416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5466,7 +5444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -5494,7 +5472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -5522,7 +5500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -5550,7 +5528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -5578,7 +5556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -5606,7 +5584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -5634,7 +5612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -5662,7 +5640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-wide-warmboot/" class="md-nav__link">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -5690,7 +5668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -5718,7 +5696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../twamp-light-hld/" class="md-nav__link">
+      <a href="../../system/twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -5746,7 +5724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -5774,7 +5752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../warmboot-manager-hld/" class="md-nav__link">
+      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -5802,7 +5780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -12677,10 +12655,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コンポーネントとフロー
+        Components
       
     </span>
   </a>
@@ -12691,7 +12669,7 @@
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ（初版）
+        CONFIG_DB
       
     </span>
   </a>
@@ -12699,15 +12677,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#hostcfgd" class="md-nav__link">
+  <a href="#hash-field" class="md-nav__link">
     <span class="md-ellipsis">
       
-        hostcfgd の責務
+        Hash field とシンメトリ
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#modification-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modification flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-fast-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm / Fast boot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
@@ -12729,67 +12746,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -12798,7 +12754,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12809,7 +12765,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12820,7 +12776,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12847,7 +12803,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-optional-feature-control-enhancement.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-policy-based-hashing.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12855,152 +12811,128 @@
   
 
 
+<hr />
+<p>title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
+area: architecture
+verification: hld-only
+last_verified: 2026-05-09
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/pbh/pbh-design.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - PBH_TABLE
+    - PBH_RULE
+    - PBH_HASH
+    - PBH_HASH_FIELD
+  cli:
+    - config pbh
+    - show pbh
+  yang:
+    - sonic-pbh</p>
+<hr />
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2019 年）</p>
-<p>本ページは公式 HLD（Rev 0.1, 2019-10）のみを根拠に書かれている。FEATURE テーブルは 2019 年の本提案以降に大きく拡張され、現行 master では <code>state</code> 以外にも <code>auto_restart</code> / <code>delayed</code> / <code>has_global_scope</code> 等の多数フィールドを持つ。本ドキュメントは <strong>オリジナル設計の最小構成</strong> を示すもので、現行実装は別途検証が必要。</p>
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p><code>PbhOrch</code> の現行 master 取り込み、SAI fine-grained hash 関連属性の community SAI 取り込み、<code>PBH_*</code> テーブル / CLI / YANG の取り込み、CRM 連携は未確認。</p>
 </div>
-<h1 id="feature">FEATURE テーブルによるオプショナル機能の有効/無効制御<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h1>
+<h1 id="policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）<a class="headerlink" href="#policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC には telemetry agent 等、デバイスによっては不要な <strong>オプショナルなコンテナ/サービス</strong> がある。本 HLD（2019 年の初期提案）はこれらを <code>CONFIG_DB.FEATURE</code> テーブルで一括制御する仕組みを定義した<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の <strong>基盤となる初版設計</strong> である。</p>
-<p>本提案の要点は次の 3 つ:</p>
-<ol>
-<li>CONFIG_DB に <strong><code>FEATURE</code></strong> テーブルを追加し、機能名 → <code>status: enabled/disabled</code> を持つ</li>
-<li>CLI <code>config feature enable|disable &lt;feature_name&gt;</code> および対応 <code>show</code> を追加</li>
-<li><code>hostcfgd</code> が FEATURE テーブルを購読し、対応 service を <strong>systemd で start+enable または stop+disable</strong> する</li>
-</ol>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">コンポーネントとフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-    USER[管理者] --&gt;|config feature enable telemetry| CLI[sonic-utilities]
-    CLI --&gt; CFG[(CONFIG_DB.FEATURE\n|&lt;feature&gt;: status)]
-    CFG --&gt; HC[hostcfgd]
-    HC --&gt;|systemctl enable + start| SVC[telemetry.service]
-    HC --&gt;|systemctl stop + disable| SVC
-    BOOT[起動時の sonic-cfggen] --&gt; CFG</code></pre>
-<h3 id="config_db">CONFIG_DB スキーマ（初版）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FEATURE|&lt;feature_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    status : &quot;enabled&quot; | &quot;disabled&quot;
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>キー</th>
-<th>例</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>&lt;feature_name&gt;</code></td>
-<td><code>telemetry</code>, <code>lldp</code>, <code>bgp</code>, ...</td>
-<td>サービス名と概ね一致</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td><code>enabled</code> / <code>disabled</code></td>
-<td>機能の有効性</td>
-</tr>
-</tbody>
-</table>
-<p><code>sonic-cfggen</code> は <strong>デフォルトで <code>telemetry</code> を enabled にする</strong> よう拡張される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="hostcfgd"><code>hostcfgd</code> の責務<a class="headerlink" href="#hostcfgd" title="Permanent link">&para;</a></h3>
+<p>NVGRE / VxLAN のような encapsulated トラフィックでは、ECMP / LAG ハッシュが outer ヘッダだけを見ると <strong>flow が偏る</strong>。PBH は <strong>ACL でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる</strong> 機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn（2021）作。</p>
+<p>スコープ:</p>
 <ul>
-<li>FEATURE テーブルを subscribe し、変更があれば対応 service を <code>systemctl</code> で操作</li>
-<li><strong>起動時</strong>: FEATURE 全体を読み、現在の service 状態と突合。差分があれば合わせる（<code>enable+start</code> または <code>stop+disable</code>）</li>
+<li>In: NVGRE / VxLAN inner 5-tuple ベースの PBH</li>
+<li>Out: PBH FG hash リソースの CRM 監視<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CLI as sonic-utilities
-    participant CFG as CONFIG_DB.FEATURE
-    participant HC as hostcfgd
-    participant SD as systemd
-    CLI-&gt;&gt;CFG: SET FEATURE|telemetry status=enabled
-    CFG--&gt;&gt;HC: 通知
-    HC-&gt;&gt;SD: systemctl enable telemetry
-    HC-&gt;&gt;SD: systemctl start telemetry
-    Note over HC,SD: 逆向きは disable+stop
-    Note over HC: hostcfgd 起動時は全エントリ読み戻し\n現状とのズレを修正</code></pre>
+<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    USER[(CONFIG_DB\nPBH_TABLE / PBH_RULE /\nPBH_HASH / PBH_HASH_FIELD)] --&gt; PBHO[PbhOrch]
+    PBHO --&gt;|hash field 編成| SAI_HF[(SAI fine-grained hash field)]
+    PBHO --&gt;|hash 編成| SAI_H[(SAI hash)]
+    PBHO --&gt;|ACL rule に hash を関連付け| ACLO[AclOrch]
+    ACLO --&gt; SAI_ACL[(SAI ACL entry)]
+    PBHO --&gt; STATE[(STATE_DB\nPBH_*)]
+    STATE --&gt; CLI[show pbh]</code></pre>
+<p>PBH は <strong>ACL の上に乗る</strong>。ACL rule が match した packet にだけ、PBH が組み立てた hash function を適用する形<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PBH_TABLE|&lt;name&gt;:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  interface_list   = &lt;ports&gt;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  description
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>PBH_RULE|&lt;table&gt;|&lt;rule&gt;:
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  priority
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  ether_type, ip_protocol, gre_key, inner_ether_type
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  hash             = &lt;hash-name&gt;
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  packet_action    = SET_ECMP_HASH | SET_LAG_HASH
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  flow_counter     = enabled/disabled
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>PBH_HASH|&lt;hash-name&gt;:
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  hash_field_list  = &lt;PBH_HASH_FIELD names&gt;
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>PBH_HASH_FIELD|&lt;field-name&gt;:
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  hash_field       = INNER_DST_IPV4 | INNER_SRC_IPV4 | ... | INNER_L4_DST_PORT | ...
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  ip_mask          = &lt;mask&gt;
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  sequence_id      = &lt;int&gt;          # 同 sequence_id の field は対称（src/dst を同等視）
+</span></code></pre></div>
+<h3 id="hash-field">Hash field とシンメトリ<a class="headerlink" href="#hash-field" title="Permanent link">&para;</a></h3>
+<p><code>sequence_id</code> を共有する field は「対称」と扱われ、双方向トラフィックで同じ hash 値になる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより flow の往復が同じ ECMP NH に乗る。</p>
+<h3 id="modification-flow">Modification flow<a class="headerlink" href="#modification-flow" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    A[既存 PBH rule] -- key 変更（hash 構成変更）--&gt; DEL[一旦 remove → 新規 add]
+    A -- field 値のみ更新 --&gt; SET[SAI set / del]</code></pre>
+<p>key（hash 構成）の変更は in-place できず、PBH rule を削除→再作成する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。field の値だけなら in-place（v0.3 で追加された PBH update flow）。</p>
+<h3 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
+<p>PBH は CONFIG_DB に persist。warm/fast boot 越しに継続。SAI 側 hash オブジェクト OID は再生成される。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/optional-feature-control/Optional-Feature-Control.md#L13-L19 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  Add feature in hostcfgd to listen for Config DB FEATURE table entry changes, and enable & start or stop & disable the respective service as appropriate.
-  When hostcfgd first starts, it reads all entries in the FEATURE table and compares with current status of each service. If there is mismatch, hostcfgd will enable & start or stop & disable as appropriate.
-reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両方を担うという責務の根拠。
+  In scope: PBH for NVGRE/VxLAN packets based on inner 5-tuple
+  ... PBH | PBH update flow ... introduce field set/del
+reasoning: スコープと field-only 更新（v0.3）の根拠。
 -->
 
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config feature enable &lt;feature_name&gt;</code></td>
-<td>機能を有効化（FEATURE.status=enabled）</td>
-</tr>
-<tr>
-<td><code>config feature disable &lt;feature_name&gt;</code></td>
-<td>機能を無効化</td>
-</tr>
-<tr>
-<td><code>show feature</code></td>
-<td>FEATURE テーブルの一覧表示</td>
-</tr>
-</tbody>
-</table>
-<p><code>sonic-utilities</code> 側に <code>config feature</code> / <code>show feature</code> を追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<p><code>FEATURE|&lt;name&gt;</code> に <code>status</code> のみを持つ最小スキーマ（初版）。後発で <code>auto_restart</code>・<code>delayed</code>・<code>set_owner</code> など多数フィールドが追加されているが、本 HLD のスコープには含まれない。</p>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<p><code>config feature enable/disable</code> と <code>show feature</code>。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは初版 HLD で言及されていない（後発の拡張で <code>sonic-feature.yang</code> 等が追加されている）。</p>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 機能を有効化</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>feature<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>telemetry
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># 確認</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>show<span class="w"> </span>feature
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 機能を無効化</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>config<span class="w"> </span>feature<span class="w"> </span>disable<span class="w"> </span>telemetry
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config pbh table add &lt;name&gt; --interface-list &quot;Ethernet0,Ethernet4&quot;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config pbh hash-field add &lt;field&gt; --hash-field INNER_SRC_IPV4 --ip-mask /32 --sequence-id 1
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config pbh hash-field add &lt;field2&gt; --hash-field INNER_DST_IPV4 --ip-mask /32 --sequence-id 1   # 対称
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config pbh hash add &lt;hash&gt; --hash-field-list &lt;field1&gt;,&lt;field2&gt;,...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>config pbh rule add &lt;table&gt; &lt;rule&gt; --priority 100 --ether-type 0x0800 --ip-protocol 47 --gre-key 0x2500/0xffffff00 --hash &lt;hash&gt; --packet-action SET_ECMP_HASH
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>show pbh table / rule / hash / hash-field
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>本 HLD は 2019 年の初版</strong>。現行 master の FEATURE テーブルは <code>auto_restart</code> / <code>delayed</code> / <code>has_global_scope</code> / <code>set_owner</code> 等の追加フィールドを持ち、<code>hostcfgd</code> の挙動も拡張されている</li>
-<li>初版は <strong>systemd 操作 (<code>enable</code> / <code>start</code> / <code>disable</code> / <code>stop</code>) のみ</strong>。後続の HLD（<a href="../../management/config-reload-enhancement/">Config Reload Enhancement</a> 等）と組み合わさって event-driven 起動が実装されている</li>
-<li>「機能名」と「systemd unit 名」の対応は規約。例外（<code>teamd</code>, <code>swss</code> 等の必須サービス）の取り扱いは初版では未明示</li>
+<li>inner 5-tuple は IPv4 / IPv6 限定。NVGRE / VxLAN 以外の encap には未対応 schema</li>
+<li>CRM の hash field リソース監視は <strong>out of scope</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>key 変更は in-place 不可（rule 削除→再作成）</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: FEATURE 購読の主担当。AAA / TACACS / Banner など他の hostcfgd 機能と並列に動く</li>
-<li><strong><code>sonic-cfggen</code></strong>: デフォルト FEATURE エントリ生成</li>
-<li><strong>後発の HLD（auto_restart / delayed / FEATURE.event-driven 起動）</strong>: 本 HLD の上に積み重なっている</li>
-<li><strong><code>config save</code> / <code>config reload</code></strong>: FEATURE 変更が永続化されるか・reload で reapply されるかは hostcfgd の処理に依存</li>
+<li><strong>ACL Orch / AclOrch</strong>: PBH rule は ACL rule に紐付くため AclOrch との連携が必須</li>
+<li><strong>Dynamic Port Breakout (DPB)</strong>: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要</li>
+<li><strong>CRM</strong>: 現状監視外（追加検討）</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>config feature enable</code> 後に service が上がらない場合、<code>hostcfgd</code> ログで systemctl 操作のエラーを確認</li>
-<li>起動時に状態が再現しない場合、<code>hostcfgd</code> の起動時 reconcile が動いているかを確認</li>
-<li>現行 master の <code>show feature</code> 出力は本 HLD より列が多いので、フィールド差分を意識する</li>
+<li>PBH 効かない → ACL rule が hit しているか aclshow で確認、<code>SET_ECMP_HASH</code>/<code>SET_LAG_HASH</code> 設定確認</li>
+<li>双方向で別パスに行く → <code>sequence_id</code> の対称性確認（src/dst が同じ id か）</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- 現行 master の FEATURE テーブル拡張フィールド (auto_restart / delayed / has_global_scope / set_owner) との関係
-- hostcfgd の FEATURE 購読パスの最終形
-- sonic-cfggen のデフォルト FEATURE エントリ生成
-- sonic-feature.yang 等 YANG モジュールの追加状況
-- 後発 HLD (event-driven config reload, delayed services) との重なり
+- PbhOrch の sonic-swss 取り込み確認
+- PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の sonic-yang-models 取り込み確認
+- SAI fine-grained hash 関連属性（SAI_HASH_ATTR_*, SAI_FINE_GRAINED_HASH_FIELD_*）の community SAI 取り込み確認
+- config pbh / show pbh CLI の sonic-utilities 取り込み確認
+- v0.3 (2021-11) で追加された field set/del modification flow の取り込み確認
+- CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/optional-feature-control/Optional-Feature-Control.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/pbh/pbh-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -13010,9 +12942,6 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 
 
 
-
-  
-  
 
 
 
