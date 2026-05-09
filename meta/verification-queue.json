@@ -3,6 +3,19 @@
   "schema_version": 1,
   "entries": [
     {
+      "page": "docs/architecture/build-system-improvements.md",
+      "issue": 265,
+      "verification": "hld-only",
+      "concerns": [
+        "dockers/dockerfile-macros.j2 の copy_files / install_debian_packages / install_python_wheels マクロ実装と各 Dockerfile.j2 への適用状況",
+        "SONIC_USE_DOCKER_BUILDKIT フラグと警告メッセージ実装確認",
+        "rules/sairedis.mk の SAIREDIS_DPKG_TARGET=binary-syncd 適用と ENABLE_SYNCD_RPC 条件付き libthrift 依存の確認",
+        "swss / swss-common / sairedis の dh --parallel 対応 (debian/compat または rules) 確認",
+        "HLD は Stretch / docker 18.09 時代の文章 - Bookworm / 新 docker への移行に伴う乖離が大きい可能性"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/architecture/rfs-split-build-improvements-hld.md",
       "issue": 262,
       "verification": "hld-only",
