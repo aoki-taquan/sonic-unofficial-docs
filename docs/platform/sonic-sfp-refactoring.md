@@ -1,7 +1,7 @@
 ---
 title: SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v5.0 (2021-07)。`sonic-platform-common/sonic_platform_base/sonic_xcvr/` ディレクトリ構造（`api/` `mem_maps/` `codes/` `xcvr_eeprom.py` `xcvr_api_factory.py`）の現行実装と SFF-8472 / SFF-8436 / CMIS 各 API の取り込み状況は未裏取り。`SfpOptoeBase` の現行クラス階層も未確認。
+!!! note "裏取りステータス: code-verified"
+    `sonic-platform-common/sonic_platform_base/sonic_xcvr/` 配下に `api/` `mem_maps/` `codes/` `fields/` `cdb/` `utils/` および `xcvr_api_factory.py` `xcvr_eeprom.py` `sfp_optoe_base.py` が確認できた。`api/public/` に `cmis.py` `c_cmis.py` `sff8472.py` 等が実装されており、`xcvr_api_factory.py:51 class XcvrApiFactory` が `id_mapping` で identifier → API クラスを切り替える。`sonic-platform-daemons/sonic-xcvrd/xcvrd/` 配下が `sfp.get_xcvr_api()` を全面的に使用。
 
 # SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
 
@@ -139,6 +139,14 @@ reasoning: identifier-based spec 判定への切替の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sfp-refactor/sfp-refactor.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-platform-common/sonic_platform_base/sonic_xcvr/{__init__.py,api,cdb,codes,fields,mem_maps,utils,sfp_optoe_base.py,xcvr_api_factory.py,xcvr_eeprom.py}
+- sonic_xcvr/api/public/{cmis.py, c_cmis.py, sff8472.py, ...} と vendor 別 (amphenol/credo/hisense/innolight)
+- sonic_xcvr/xcvr_api_factory.py:51 class XcvrApiFactory; :125 id_mapping = {...} で 0x18/0x19/0x1b/0x1e -> CmisApi, など切替
+- sonic_xcvr/sfp_optoe_base.py:14 class SfpOptoeBase(SfpBase)
+- sonic-platform-daemons/sonic-xcvrd/xcvrd/{xcvrd_utilities/optics_si_parser.py:162, media_settings_parser.py:337/375/396, sff_mgr.py:396, common.py:119/242, utils.py:19} で sfp.get_xcvr_api() 使用
+-->
 
 <!-- concerns hint:
 - sonic_xcvr (api/ mem_maps/ codes/ xcvr_eeprom.py xcvr_api_factory.py) の sonic-platform-common 取り込み確認

@@ -1,11 +1,13 @@
 {
   "page": "docs/architecture/build-profiles.md",
   "issue": 59,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "sonic-buildimage の Makefile に PROFILE 変数取り込みロジックが現存するか確認",
-    "rules/profiles/ ディレクトリ配下に実例が存在するか確認",
-    "rules/config / config.user / profiles の取り込み優先順位が HLD どおりか確認"
+    "rules/profiles/ ディレクトリは現行 master に存在しない (HLD 未マージ)",
+    "Makefile.work には include rules/config と -include rules/config.user のみで profiles/$(PROFILE).mk を取り込む実装が無い"
+  ],
+  "verified_concerns": [
+    "rules/config / config.user の include 順は確認 (Makefile.work:155-156)"
   ],
   "priority": "low"
 }

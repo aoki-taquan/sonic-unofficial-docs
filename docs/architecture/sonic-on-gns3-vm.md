@@ -1,7 +1,7 @@
 ---
 title: GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 手順書ベース"
-    このページは利用者向け手順書をベースにしている。Azure pipeline (#142) の URL や `sonic-vs.img.gz` のパスは時期により変わりうる。`sonic-buildimage` の VS ターゲットビルド成果物を確認すること。
+!!! note "裏取りステータス: code-verified（手順書ベース）"
+    `sonic-buildimage/platform/vs/README.gns3.md` および `sonic-gns3a.sh` スクリプトが現存し、`sonic-vs.img` を入力に GNS3 アプライアンスファイル (.gns3a) を生成する手順を記述。デフォルト認証情報 `admin / YourPaSsWoRd` は `sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd` で実装と一致。Azure pipeline 番号や成果物 URL は時期で変わるため、ビルド時の最新値に追従されたい。
 
 # GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
 
@@ -118,3 +118,11 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-gns3/GNS3 VM for SONiC.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-buildimage/platform/vs/README.gns3.md (HOWTO Create a GNS3 Appliance File)
+- sonic-buildimage/platform/vs/sonic-gns3a.sh (HLD と同じ手順スクリプト)
+- sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd
+- sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
+-->
+

@@ -1,11 +1,15 @@
 {
   "page": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
   "issue": 63,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "sonic-mgmt の dip_sip.py / dip_sip.yml / testcases.yml の現存と本 HLD 記載パラメータとの一致",
-    "対応 topology リストが現行 sonic-mgmt の testbed 種別と整合するか確認",
-    "uRPF / ACL とのテスト前提条件が他のテストインフラ HLD でカバーされているか確認"
+    "HLD の独立 PTF スクリプト ansible/roles/test/files/ptftests/dip_sip.py は削除済 (gh search で 0 件)",
+    "テストは sonic-mgmt/tests/ipfwd/test_dip_sip.py (pytest) に移行されている",
+    "ansible/roles/test/tasks/dip_sip.yml は pytest_runner.yml への 114 byte ラッパに縮約",
+    "対応 topology / uRPF / ACL の現行テスト前提は test_dip_sip.py 側に追従要"
+  ],
+  "verified_concerns": [
+    "ansible/roles/test/vars/testcases.yml は実在 (size 11721)"
   ],
   "priority": "low"
 }

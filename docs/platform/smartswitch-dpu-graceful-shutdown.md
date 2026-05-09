@@ -1,7 +1,7 @@
 ---
 title: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
 area: platform
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 (2025-12) Initial Proposal。`gnoi_reboot_daemon.py` / `module_base.py` の graceful 経路、`CHASSIS_MODULE_INFO_TABLE` の `state_transition_in_progress` / `transition_type` フィールド、PMON 制限下での gNOI HALT 起動経路は未裏取り。priority=high で queue 登録。
+!!! danger "裏取りステータス: discrepancy-found"
+    HLD は v0.1 (2025-12) Initial Proposal。実装は **HLD と乖離**。`sonic-platform-common` `module_base.py` の `set_admin_state_gracefully()` / `_graceful_shutdown_handler()` および `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` の `submit_dpu_callback()` は実在するが、HLD で提案されている独立した `gnoi_reboot_daemon.py` は **sonic-platform-daemons に未取り込み**。STATE_DB のフラグも HLD の `CHASSIS_MODULE_INFO_TABLE` / `state_transition_in_progress` ではなく `CHASSIS_MODULE_TABLE` の `transition_in_progress` (`set_module_state_transition`) と独立した `gnoi_halt_in_progress` フラグの 2 系統で実装されている。chassisd が直接 `module.set_admin_state_gracefully` を呼ぶ構成で、独立した gNOI 経路は実体がない。
 
 # Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
 
@@ -121,6 +121,14 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/graceful-shutdown/graceful-shutdown.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御
+- sonic-platform-common/sonic_platform_base/module_base.py L624 set_module_state_transition() は CHASSIS_MODULE_TABLE|<name> に transition_in_progress / transition_type / start_time を hset (HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress とは別キー)
+- sonic-platform-daemons/sonic-chassisd/scripts/chassisd L1362 module.set_admin_state_gracefully(admin_state); L1373 module.clear_module_gnoi_halt_in_progress() を直接呼ぶ
+- sonic-platform-daemons 配下に gnoi_reboot_daemon.py / sonic-pmon は未取り込み (find -iname "*gnoi*" -> 空)
+- sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang に transition_in_progress / gnoi_halt_in_progress フィールドの取り込みは確認できず
+-->
 
 <!-- concerns hint:
 - gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認

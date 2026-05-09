@@ -295,14 +295,15 @@
     },
     {
       "page": "docs/platform/smartswitch-dpu-graceful-shutdown.md",
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "gnoi_reboot_daemon.py の sonic-platform-daemons / sonic-pmon 取り込み確認",
-        "module_base.py の graceful_shutdown_handler 実装と subtype/switch_type 判定確認",
-        "CHASSIS_MODULE_INFO_TABLE の state_transition_in_progress / transition_type フィールド sonic-yang-models 反映確認",
-        "smartswitch_reboot_helper との STATE_DB 排他ロジックの実装一致確認",
-        "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認",
-        "v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認"
+        "gnoi_reboot_daemon.py は sonic-platform-daemons に未取り込み（HLD と乖離）。chassisd が直接 module.set_admin_state_gracefully を呼ぶ構成",
+        "STATE_DB は HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress ではなく CHASSIS_MODULE_TABLE / transition_in_progress と別フラグ gnoi_halt_in_progress の 2 系統で実装",
+        "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路は本リポ群に未確認"
+      ],
+      "verified_concerns": [
+        "module_base.py の set_admin_state_gracefully (L429) / _graceful_shutdown_handler (L588) 実装は確認済み",
+        "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認"
       ],
       "priority": "high"
     },
@@ -1340,42 +1341,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "syncd の MdioIpcServer 実装と Unix socket path 規約の sonic-sairedis 取り込み確認",
-        "VendorPai クラス定義と paiInstance / contextConfig 引数の sonic-sairedis 取り込み確認",
-        "gearbox_config.json の lib_name / phy_access_lib_name / mdio_cl22_only キー sonic-buildimage 反映確認",
-        "SAI switch api の clause 22 read/write 拡張の opencomputeproject/SAI 取り込み確認",
-        "単一 gbsyncd docker での vendor 別 PAI/MDIO lib 同梱方針の現行 build 構成確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/platform/sonic-psu-daemon-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "psud の 3 秒ループ実装と power_overload 判定ロジックの sonic-platform-daemons 取り込み確認",
-        "PSU_INFO の power_warning_suppress_threshold / power_critical_threshold / power_overload の sonic-yang-models 反映確認",
-        "PsuBase の get_psu_power_*_threshold / get_input_voltage / get_input_current の sonic-platform-common 取り込み確認",
-        "show platform psustatus の WARNING ステータス表示の sonic-utilities 取り込み確認",
-        "psuutil 出力での threshold 列追加の確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/platform/sonic-sfp-refactoring.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic_xcvr (api/ mem_maps/ codes/ xcvr_eeprom.py xcvr_api_factory.py) の sonic-platform-common 取り込み確認",
-        "SFF-8024 / SFF-8436 / SFF-8472 / CMIS 各 XcvrApi 実装の存在確認",
-        "identifier → XcvrApi class マップ (id_mapping) の実装確認",
-        "SfpOptoeBase の現行クラス階層と vendor 移行状況の確認",
-        "xcvrd が新 XcvrApi を使う形に書き換わっているかの確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
       "issue": 307,
       "verification": "discrepancy-found",
@@ -1391,18 +1356,6 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
-    },
-    {
-      "page": "docs/routing/bgp-prefix-independent-convergence-architecture-document.md",
-      "verification": "hld-only",
-      "concerns": [
-        "nhgorch の hierarchical NHG (service / underlay) サポート状況の sonic-swss 取り込み確認",
-        "fpmsyncd の FAST/SLOW DOWNLOAD 区別実装確認",
-        "SAI NEXT_HOP_GROUP の hierarchical / hitless update 動作の vendor SAI 確認",
-        "FRR zebra の nexthop-group 機能と FPM への伝搬経路確認",
-        "single ↔ NHG hitless transition のテスト存在確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
@@ -2046,85 +1999,30 @@
       "priority": "medium"
     },
     {
-      "page": "docs/architecture/1-udev-rules-design-for-terminal-server.md",
-      "verification": "hld-only",
-      "concerns": [
-        "terminal server 機能を提供する SONiC platform リポでの udev rules ファイル配布有無確認",
-        "/etc/udev/rules.d/ への配置パスと命名規約（platform 別 rules ファイル）の現行確認",
-        "cp210x ドライバが提供する ATTRS{interface} 名（'CP2108 Interface N'）の現行カーネル / 装置での実際の値確認",
-        "故障 USB hub port 検出を syslog / SNMP に通知する仕組みの有無確認",
-        "HLD は 2020 年改訂のため現行 master との乖離リスクあり"
-      ],
-      "priority": "low",
-      "issue": 195,
-      "pr": 196
-    },
-    {
       "page": "docs/architecture/build-profiles.md",
       "issue": 59,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "sonic-buildimage の Makefile に PROFILE 変数取り込みロジックが現存するか確認",
-        "rules/profiles/ ディレクトリ配下に実例が存在するか確認",
-        "rules/config / config.user / profiles の取り込み優先順位が HLD どおりか確認"
+        "rules/profiles/ ディレクトリは現行 master に存在しない (HLD 未マージ)",
+        "Makefile.work には include rules/config と -include rules/config.user のみで profiles/$(PROFILE).mk を取り込む実装が無い"
       ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/architecture/build-system-improvements.md",
-      "issue": 265,
-      "verification": "hld-only",
-      "concerns": [
-        "dockers/dockerfile-macros.j2 の copy_files / install_debian_packages / install_python_wheels マクロ実装と各 Dockerfile.j2 への適用状況",
-        "SONIC_USE_DOCKER_BUILDKIT フラグと警告メッセージ実装確認",
-        "rules/sairedis.mk の SAIREDIS_DPKG_TARGET=binary-syncd 適用と ENABLE_SYNCD_RPC 条件付き libthrift 依存の確認",
-        "swss / swss-common / sairedis の dh --parallel 対応 (debian/compat または rules) 確認",
-        "HLD は Stretch / docker 18.09 時代の文章 - Bookworm / 新 docker への移行に伴う乖離が大きい可能性"
+      "verified_concerns": [
+        "rules/config / config.user の include 順は確認 (Makefile.work:155-156)"
       ],
       "priority": "low"
     },
     {
       "page": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
       "issue": 63,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "sonic-mgmt の dip_sip.py / dip_sip.yml / testcases.yml の現存と本 HLD 記載パラメータとの一致",
-        "対応 topology リストが現行 sonic-mgmt の testbed 種別と整合するか確認",
-        "uRPF / ACL とのテスト前提条件が他のテストインフラ HLD でカバーされているか確認"
+        "HLD の独立 PTF スクリプト ansible/roles/test/files/ptftests/dip_sip.py は削除済 (gh search で 0 件)",
+        "テストは sonic-mgmt/tests/ipfwd/test_dip_sip.py (pytest) に移行されている",
+        "ansible/roles/test/tasks/dip_sip.yml は pytest_runner.yml への 114 byte ラッパに縮約",
+        "対応 topology / uRPF / ACL の現行テスト前提は test_dip_sip.py 側に追従要"
       ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/architecture/rfs-split-build-improvements-hld.md",
-      "issue": 262,
-      "verification": "hld-only",
-      "concerns": [
-        "rules/config の ENABLE_RFS_SPLIT_BUILD フラグ取り込み確認",
-        "slave.mk の RFS squashfs ターゲット生成ロジック実装確認",
-        "build_debian.sh の Stage 1 / Stage 2 分岐実装と squashfs 保存・読み込みパス確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/architecture/sonic-on-gns3-vm.md",
-      "issue": 268,
-      "verification": "hld-only",
-      "concerns": [
-        "Azure Pipeline #142 の URL や sonic-vs.img.gz の artifact 配置が現行 master でも有効か確認",
-        "デフォルト認証情報 admin / YourPaSsWoRd が sonic-vs.img の現行ビルドで変わっていないか確認",
-        "推奨リソース (RAM 8GB / vCPU 4) が現行 SONiC VS で妥当か未確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/architecture/sonic-port-configuration-refactor-design.md",
-      "issue": 65,
-      "verification": "hld-only",
-      "concerns": [
-        "portconfig.py 一元化の現行進捗（5 ファイルすべて移行完了か）",
-        "platform.json への完全移行が community master でどこまで進んでいるか",
-        "parse_port_config_file の戻り値が常に index を含むよう修正されているか",
-        "0-based SKU が 1-based に揃え終わっているか"
+      "verified_concerns": [
+        "ansible/roles/test/vars/testcases.yml は実在 (size 11721)"
       ],
       "priority": "low"
     },

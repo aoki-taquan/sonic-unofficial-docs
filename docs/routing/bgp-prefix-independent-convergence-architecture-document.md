@@ -1,7 +1,7 @@
 ---
 title: BGP PIC（Prefix Independent Convergence / NHG 階層）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v1.0 (2024-01) と新しいが、SONiC 側の `nhgorch` の hierarchical NHG 取り込み、`fpmsyncd` の `FAST DOWNLOAD` / `SLOW DOWNLOAD` 区別、SAI `NEXT_HOP_GROUP` の hierarchical update 動作は未裏取り。
+!!! note "裏取りステータス: code-verified（FAST/SLOW DOWNLOAD は warm-restart 経由）"
+    `sonic-swss/orchagent/nhgorch.{h,cpp}` で `NextHopGroup::m_is_recursive` / `setRecursive(bool)` / `isRecursive()` と `is_recursive` フラグによる hierarchical NHG 制御が確認できた。`fpmsyncd` 側の **FAST/SLOW DOWNLOAD** という用語は実装に存在せず、`fpmsyncd/fpmsyncd.cpp` で `WarmRestartHelper` 経由の **warm-restart timer** 区別として実装されている。SAI vendor 側の hitless update 動作と FRR zebra→FPM 経路は本 cache では未確認。
 
 # BGP PIC（Prefix Independent Convergence / NHG 階層）
 
@@ -136,6 +136,12 @@ reasoning: FAST/SLOW DOWNLOAD 二段収束の根拠と call flow ステップの
 [^1]: `sonic-net/SONiC` `doc/pic/bgp_pic_arch_doc.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 参考: IETF `draft-ietf-rtgwg-bgp-pic`
+
+<!-- evidence (verifier-batch-20):
+- sonic-swss/orchagent/nhgorch.h:50 class NextHopGroup; :86 isRecursive(); :88 setRecursive(); m_is_recursive メンバ
+- sonic-swss/orchagent/nhgorch.cpp:65 bool is_recursive = false; :118 if (is_recursive) ... :292 nhg->setRecursive(is_recursive); :691 NextHopGroup ctor で m_is_recursive(false)
+- sonic-swss/fpmsyncd/fpmsyncd.cpp:12 #include "warmRestartHelper.h"; :153 sync.getWarmStartHelper().checkAndStart() (FAST/SLOW DOWNLOAD は warm-restart timer に対応)
+-->
 
 <!-- concerns hint:
 - nhgorch の hierarchical NHG (service / underlay) サポート状況の sonic-swss 取り込み確認

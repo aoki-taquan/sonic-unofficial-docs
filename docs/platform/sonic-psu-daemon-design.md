@@ -1,7 +1,7 @@
 ---
 title: psud（PSU 監視デーモン / power threshold ヒステリシス）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.4 (2022-08)。`PSU_INFO` の `power_overload` / `power_*_threshold` フィールド、`PsuBase` の `get_psu_power_*_threshold` 抽象 API、3 秒ループの psud 実装は未裏取り。
+!!! note "裏取りステータス: code-verified"
+    `sonic-platform-daemons/sonic-psud/scripts/psud` で `PSU_INFO_UPDATE_PERIOD_SECS = 3`、`PSU_INFO_POWER_OVERLOAD = 'power_overload'`、`PSU_INFO_POWER_WARNING_SUPPRESS_THRESHOLD` / `PSU_INFO_POWER_CRITICAL_THRESHOLD` の定数と判定ロジックが確認できた。`sonic-platform-common/sonic_platform_base/psu_base.py` の `get_psu_power_warning_suppress_threshold` / `get_psu_power_critical_threshold` / `get_input_voltage` / `get_input_current` 抽象 API も実在。`sonic-utilities/scripts/psushow` で `power_overload` を読み取り `WARNING` / `OK` を表示。
 
 # psud（PSU 監視デーモン / power threshold ヒステリシス）
 
@@ -143,6 +143,14 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/psud/PSU_daemon_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- sonic-platform-daemons/sonic-psud/scripts/psud:81 PSU_INFO_UPDATE_PERIOD_SECS = 3, :540 self.stop_event.wait(PSU_INFO_UPDATE_PERIOD_SECS)
+- sonic-platform-daemons/sonic-psud/scripts/psud:60-62 PSU_INFO_POWER_OVERLOAD/_WARNING_SUPPRESS_THRESHOLD/_CRITICAL_THRESHOLD
+- sonic-platform-daemons/sonic-psud/scripts/psud:637 power_critical_threshold + power_warning_suppress_threshold で判定
+- sonic-platform-common/sonic_platform_base/psu_base.py:227 get_psu_power_warning_suppress_threshold, :237 get_psu_power_critical_threshold, :269 get_input_voltage, :279 get_input_current
+- sonic-utilities/scripts/psushow:41 db.get(STATE_DB, PSU_INFO|<name>, 'power_overload'); :42 status = 'WARNING' if power_overload == 'True' else 'OK'
+-->
 
 <!-- concerns hint:
 - psud の 3 秒ループ実装と power_overload 判定ロジックの sonic-platform-daemons 取り込み確認

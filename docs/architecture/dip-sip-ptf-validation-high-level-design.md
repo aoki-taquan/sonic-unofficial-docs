@@ -1,7 +1,7 @@
 ---
 title: DIP=SIP PTF 検証テスト
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-mgmt` の `ansible/roles/test/files/ptftests/dip_sip.py` / `tasks/dip_sip.yml` / `vars/testcases.yml` の現存と本 HLD 記載内容との一致は未裏取り。
+!!! danger "裏取りステータス: discrepancy-found（pytest 移行）"
+    HLD で提案されている独立 PTF スクリプト `ansible/roles/test/files/ptftests/dip_sip.py` は **既に削除済**。代わりに `sonic-mgmt/tests/ipfwd/test_dip_sip.py` (pytest) に移行されており、`ansible/roles/test/tasks/dip_sip.yml` は `pytest_runner.yml` を呼ぶラッパに縮約されている (114 byte)。`vars/testcases.yml` は実在 (11721 byte)。HLD のテスト本体記述は **現行コードと構造が異なる** ため、test_dip_sip.py 側の最新仕様に追従する必要あり。
 
 # DIP=SIP PTF 検証テスト
 
@@ -190,3 +190,11 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence (verifier-batch-20):
+- gh api search/code: sonic-net/sonic-mgmt 配下に tests/ipfwd/test_dip_sip.py (pytest) が現存
+- gh api repos/sonic-net/sonic-mgmt/contents/ansible/roles/test/tasks/dip_sip.yml: size 114 byte; 中身は include_tasks: roles/test/tasks/pytest_runner.yml + test_node: ipfwd/test_dip_sip.py のラッパ
+- ansible/roles/test/files/ptftests/dip_sip.py は GitHub 検索でヒットせず -> 削除済
+- ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
+-->
+
