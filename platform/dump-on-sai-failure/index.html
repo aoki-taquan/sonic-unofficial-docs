@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/dhcp-relay-for-ipv6-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/dump-on-sai-failure/">
       
       
-        <link rel="prev" href="../default-route/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../mpls-tc-to-tc-map/">
+        <link rel="next" href="../icmp-hardware-offload/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス） - SONiC 非公式ドキュメント</title>
+        <title>SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dhcpv6-dhcp-relay-docker-dhcrelay-6" class="md-skip">
+        <a href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+              SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
             
           </span>
         </div>
@@ -269,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../routing/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -795,8 +795,6 @@
       
   
   
-    
-  
   
   
     
@@ -820,23 +818,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../routing/" class="md-nav__link ">
               
   
   
@@ -854,13 +849,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -880,7 +875,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -908,7 +903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-route/" class="md-nav__link">
+      <a href="../../routing/default-route/" class="md-nav__link">
         
   
   
@@ -933,37 +928,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -979,214 +947,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        構成と前提
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        起動コマンド
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        並列プロセス構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp-monitor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP Monitor
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        初期化フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1199,7 +959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -1227,7 +987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2259,6 +2019,8 @@
       
   
   
+    
+  
   
   
     
@@ -2282,20 +2044,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2313,13 +2078,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2336,10 +2101,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2355,6 +2147,236 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動の手順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スクリプトの分担
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dump-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dump の出力先と rotation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        techsupport との連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang-db-migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定 / CLI / YANG / DB Migrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dump の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2367,7 +2389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -2395,7 +2417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -2423,7 +2445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -2451,7 +2473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -3046,18 +3068,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        構成と前提
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB スキーマ
+        要件
       
     </span>
   </a>
@@ -3068,7 +3079,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        起動コマンド
+        全体シーケンス
       
     </span>
   </a>
@@ -3079,18 +3090,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        並列プロセス構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp-monitor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP Monitor
+        起動の手順
       
     </span>
   </a>
@@ -3101,7 +3101,51 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        初期化フロー
+        スクリプトの分担
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dump-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dump の出力先と rotation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        techsupport との連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-yang-db-migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定 / CLI / YANG / DB Migrator
       
     </span>
   </a>
@@ -3126,7 +3170,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CONFIG_DB
@@ -3148,10 +3192,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#dump" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定例
+        dump の確認
       
     </span>
   </a>
@@ -3164,7 +3208,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -3175,7 +3219,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -3186,7 +3230,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -3197,7 +3241,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -3224,7 +3268,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/dhcp-relay-for-ipv6-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/dump-on-sai-failure.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3234,194 +3278,149 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠にしている。<code>dhcp-relay</code> docker 内の <code>dhcrelay -6</code> 起動経路、<code>dhcpv6_servers</code> を読む supervisord テンプレート、CoPP の DHCPv6 trap 連動、DHCP Monitor の v6 対応は未裏取り。</p>
+<p>このページは公式 HLD のみを根拠にしている。<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 列挙値、<code>/usr/bin/syncd_dump.sh</code> / <code>/usr/bin/platform_syncd_dump.sh</code>、<code>/var/log/sai_failure_dump/</code> 出力、<code>SAI_MAX_FAILURE_DUMPS=10</code> のローテーション、techsupport の収集 / クリア経路は未裏取り。</p>
 </div>
-<h1 id="dhcpv6-dhcp-relay-docker-dhcrelay-6">DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）<a class="headerlink" href="#dhcpv6-dhcp-relay-docker-dhcrelay-6" title="Permanent link">&para;</a></h1>
+<h1 id="sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）<a class="headerlink" href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の DHCPv4 リレーは <code>dhcp-relay</code> docker 内の <code>isc-dhcp</code> ベースの <code>dhcrelay</code> プロセスで実装されている。本 HLD は <strong>同じ <code>dhcp-relay</code> docker に IPv6 用の <code>dhcrelay -6</code> を並走させる</strong> 形で DHCPv6 リレー機能を追加する設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主な機能要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>下流（VLAN 側）から上流への DHCPv6 パケットの中継。</li>
-<li><code>dhcp-relay</code> コンテナ内に <strong>IPv4 とは別プロセス</strong> として動かす。</li>
-<li>上流の <strong>複数の unicast / multicast 宛先</strong> へのリレーをサポート。</li>
-</ul>
+<p>SAI 呼び出しが失敗すると、<code>orchagent</code> は <strong>abort</strong> し、依存する syncd を含む各 service が再起動される。再起動の過程で <strong>失敗時点の SAI / SDK / 下位レイヤの状態</strong> が失われ、原因解析ができなくなるという問題があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は SAI 失敗を検知した瞬間に、<code>orchagent</code> が <strong>abort 前に syncd へ dump 取得を依頼</strong> し、結果をホスト側にも見える <code>/var/log/sai_failure_dump/</code> に保存する仕組みを定義する。後で <code>techsupport</code> を取ればこの dump も自動で取り込まれて回収できる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">構成と前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_3">要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>下流（downstream）は VLAN インターフェース。<strong>Global IPv6 アドレスがその interface に設定されていること</strong> が前提<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>DHCPv6 のリレー機能を有効にすると、<strong>CoPP マネージャから DHCPv6 trap を有効化</strong> する。逆に無効化したら trap も外す。両者は連動する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>dhcp-relay</code> コンテナの依存は IPv4 と同じく <strong><code>isc-dhcp</code></strong> プロジェクト。<code>dhcrelay</code> バイナリの <code>-6</code> オプションを使う<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>dump は abort の <strong>前に同期的</strong> に取る（非同期だと abort と競合して取れない可能性）。</li>
+<li>techsupport と同様の仕組みで <strong>プラットフォーム固有スクリプトを呼び出せる</strong> こと。</li>
+<li>dump はホストから見える場所に保存し、techsupport 経由で回収できること。</li>
+<li>dump 数の <strong>上限（rotation）</strong> を設けること。</li>
 </ul>
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p><code>VLAN</code> テーブルに <code>dhcpv6_servers</code> フィールドが追加される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;VLAN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;Vlan1000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;dhcp_servers&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">[</span><span class="s2">&quot;192.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;192.0.0.2&quot;</span><span class="p">],</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;dhcpv6_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;21da:d3:0:2f3b::7&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;21da:d3:0:2f3b::6&quot;</span><span class="p">],</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;vlanid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>dhcp_servers</code>（v4）と <code>dhcpv6_servers</code>（v6）が <strong>同じ VLAN エントリ内に並ぶ</strong>。両方を同時に持っても良い。</p>
-<h3 id="_4">起動コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p><code>dhcp-relay</code> コンテナ内で v6 用デーモンが個別に上がる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>/usr/sbin/dhcrelay<span class="w"> </span>-6<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>--name-alias-map-file<span class="w"> </span>/tmp/port-name-alias-map.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>-l<span class="w"> </span>Vlan1000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>-u<span class="w"> </span>21da:d3:0:2f3b::7%Ethernet28<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>-u<span class="w"> </span>21da:d3:0:2f3b::6%Ethernet28
-</span></code></pre></div>
-<p>引数の意味<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_4">全体シーケンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant ORCH as orchagent
+    participant SAIR as sairedis (SAI client)
+    participant SYNCD as syncd
+    participant DUMP as /usr/bin/syncd_dump.sh
+    participant PDUMP as /usr/bin/platform_syncd_dump.sh
+    participant FS as /var/log/sai_failure_dump/
+
+    ORCH-&gt;&gt;SAIR: SAI call
+    SAIR--&gt;&gt;ORCH: error
+    Note over ORCH: SAI 失敗を検知
+    ORCH-&gt;&gt;SAIR: set SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD\n= SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP
+    SAIR-&gt;&gt;SYNCD: notify dump
+    SYNCD-&gt;&gt;DUMP: exec
+    DUMP-&gt;&gt;FS: write generic dump
+    DUMP-&gt;&gt;PDUMP: exec (if exists)
+    PDUMP-&gt;&gt;FS: write platform-specific dump
+    DUMP-&gt;&gt;FS: rotate (keep SAI_MAX_FAILURE_DUMPS)
+    SYNCD--&gt;&gt;ORCH: complete
+    Note over ORCH: abort 実行</code></pre>
+<h3 id="_5">起動の手順<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>実装の中核は <strong>新規列挙値 <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code></strong> の追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ol>
+<li><code>orchagent</code> が SAI 失敗を検知。</li>
+<li>abort 直前に <code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> 属性を <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> で set する。</li>
+<li><code>syncd</code> がこの属性を受け、汎用スクリプト <code>/usr/bin/syncd_dump.sh</code> を実行する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>汎用スクリプトはプラットフォーム固有スクリプト <code>/usr/bin/platform_syncd_dump.sh</code> の存在を確認し、あれば呼び出す<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>dump 完了後、<code>/var/log/sai_failure_dump/</code> に対して rotation を行い、<code>orchagent</code> 側の abort が進む。</li>
+</ol>
+<h3 id="_6">スクリプトの分担<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>引数</th>
-<th>意味</th>
+<th>スクリプト</th>
+<th>配置</th>
+<th>役割</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>-6</code></td>
-<td>DHCPv6 モード</td>
+<td><code>/usr/bin/syncd_dump.sh</code></td>
+<td>syncd docker（共通）</td>
+<td>汎用 dump 起点。<code>platform_syncd_dump.sh</code> の有無を確認して呼び出し、最後に rotation を実行</td>
 </tr>
 <tr>
-<td><code>-d</code></td>
-<td>foreground / debug</td>
-</tr>
-<tr>
-<td><code>--name-alias-map-file</code></td>
-<td>port name エイリアスマップファイル</td>
-</tr>
-<tr>
-<td><code>-l Vlan1000</code></td>
-<td>downstream interface（lower）</td>
-</tr>
-<tr>
-<td><code>-u &lt;addr&gt;%&lt;iface&gt;</code></td>
-<td>upstream の unicast / multicast 宛先（複数指定可）</td>
+<td><code>/usr/bin/platform_syncd_dump.sh</code></td>
+<td>syncd docker（ベンダ提供 / optional）</td>
+<td>ベンダ固有の SDK dump、register dump 等。実装はベンダ責任</td>
 </tr>
 </tbody>
 </table>
-<p>複数の <code>-u</code> を指定することで <strong>複数の DHCPv6 サーバへ同時にリレー</strong> できる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">並列プロセス構成<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="dump-rotation">dump の出力先と rotation<a class="headerlink" href="#dump-rotation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>dump は <strong><code>/var/log/sai_failure_dump/</code></strong> に書き出す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>このディレクトリは <strong>ホストから見える</strong> ことが要件（syncd docker から bind mount される想定）。</li>
+<li><strong>1 回の dump = 1 ファイル</strong> にすることでローテーションロジックを単純化する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>汎用スクリプト中の変数 <code>SAI_MAX_FAILURE_DUMPS</code> で上限を制御。<strong>既定 10</strong>。プラットフォーム固有スクリプトで上書き可能<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h3 id="techsupport">techsupport との連携<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h3>
+<p><code>techsupport</code> が手動 / auto で起動されると、このディレクトリ内の dump を <strong>収集してアーカイブ</strong> に組み込み、収集後に <code>/var/log/sai_failure_dump/</code> を <strong>クリア</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これによって運用は次のフローに収束する:</p>
 <pre class="mermaid"><code>flowchart LR
-    subgraph DR[dhcp-relay docker]
-        V4[dhcrelay (IPv4 既存)]
-        V6[dhcrelay -6 (IPv6 新規)]
-    end
-    DOWN[Downstream VLAN\nGlobal IPv6 設定済] --&gt; V6
-    V6 --&gt;|-u list| UP1[DHCPv6 Server 1]
-    V6 --&gt;|-u list| UP2[DHCPv6 Server 2]
-    DOWN --&gt; V4
-    V4 --&gt; UPv4[DHCPv4 Server]</code></pre>
-<p>IPv4 と IPv6 は <strong>同一コンテナ内の別プロセス</strong>。両方有効でも片方のみでも構成可能<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="dhcp-monitor">DHCP Monitor<a class="headerlink" href="#dhcp-monitor" title="Permanent link">&para;</a></h3>
-<p>既存の DHCP Monitor が <strong>DHCPv6 対応に拡張</strong> される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的な拡張点（監視するメッセージタイプの増加、メトリクス命名の方針など）は HLD には詳細記述がない。</p>
-<h3 id="_6">初期化フロー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>HLD には init フロー図（<code>init.svg</code>）が貼られているが文章での詳細はない。一般的な依存関係として、CONFIG_DB の VLAN にエントリが入った段階で <code>dhcp-relay</code> コンテナが起動 / 再起動して <code>dhcrelay -6</code> プロセスを立てる、という流れになる。</p>
+    SAIE[SAI 失敗] --&gt; DUMP[syncd_dump.sh\n→ /var/log/sai_failure_dump/]
+    DUMP --&gt; ROTATE[rotation\nSAI_MAX_FAILURE_DUMPS=10]
+    ROTATE --&gt; WAIT[ホストにファイルが滞留]
+    WAIT --&gt; TS[techsupport 起動]
+    TS --&gt; ARCHIVE[techsupport tarball に収納]
+    TS --&gt; CLEAR[/var/log/sai_failure_dump/ をクリア]</code></pre>
+<p>dump はあくまで <strong>失敗時点の証拠保全</strong> が目的。orchagent の abort と service 再起動自体は防げない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/SAI_failure_handling/dump_on_sai_failure.md#L48-L51 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  - DHCPv6 trap should be enabled through the COPP manager when the DHCP relay feature is enabled and vice versa.
-  - Downstream network is the VLAN interface with the relay configuration. Global IPv6 address is required to be configured on that interface.
-  "dhcpv6_servers": [ "21da:d3:0:2f3b::7", "21da:d3:0:2f3b::6" ]
-reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
+  A new enum value for SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD is defined (SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP). When there is a SAI failure, before calling the abort, orchagent sets the switch attribute SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD with value SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP attribute. On receiving this attribute syncd calls the generic dump script which is present in /usr/bin/syncd_dump.sh.
+  A variable by name SAI_MAX_FAILURE_DUMPS is defined in the generic script which by default is set to 10.
+reasoning: notify 機構と汎用スクリプト・rotation 既定値の根拠。
 -->
 
+<h3 id="sai-api">SAI API への影響<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
+<p>HLD は SAI API レベルの新規定義を <strong>不要</strong> と明言している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> 自体は既存の sairedis 拡張属性であり、列挙値が 1 つ増えるだけの拡張。</p>
+<h3 id="cli-yang-db-migrator">設定 / CLI / YANG / DB Migrator<a class="headerlink" href="#cli-yang-db-migrator" title="Permanent link">&para;</a></h3>
+<ul>
+<li>新しい config / show コマンドは <strong>追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>DB Migrator 変更も <strong>無し</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>YANG model 変更も <strong>無し</strong><sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>warm boot / fast boot に <strong>影響なし</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<p>つまりユーザ向けの設定インターフェースを増やさず、動的に SAI 失敗が起きた時にだけ動く “見えない安全網” として機能する。</p>
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>VLAN</code></td>
-<td><code>&lt;Vlan name&gt;</code></td>
-<td><code>dhcpv6_servers</code></td>
-<td>リレー先の DHCPv6 サーバアドレス（list）</td>
-</tr>
-<tr>
-<td><code>VLAN</code></td>
-<td><code>&lt;Vlan name&gt;</code></td>
-<td><code>dhcp_servers</code></td>
-<td>既存の DHCPv4 リレー先（list、v4/v6 共存可）</td>
-</tr>
-</tbody>
-</table>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>該当なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>既存の <code>config vlan dhcp_relay</code> コマンドが <strong>IPv4 / IPv6 共通</strong> に拡張される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config vlan dhcp_relay add &lt;vlan_id&gt; &lt;ip&gt;</code></td>
-<td>リレー先サーバを追加（v4/v6 自動判別）</td>
-</tr>
-<tr>
-<td><code>config vlan dhcp_relay del &lt;vlan_id&gt; &lt;ip&gt;</code></td>
-<td>同 削除</td>
-</tr>
-<tr>
-<td><code>show vlan brief</code></td>
-<td>VLAN 一覧（<code>DHCP Helper Address</code> カラムに v4/v6 サーバが混在表示）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">1000</span><span class="w"> </span>21da:d3:0:2f3b::7
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Added<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>destination<span class="w"> </span>address<span class="w"> </span>21da:d3:0:2f3b::7<span class="w"> </span>to<span class="w"> </span>Vlan1000
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Restarting<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>service...
+<p>該当なし。<code>techsupport</code> 系のコマンドが間接的に関わるが、本機能のために新規追加された CLI は無い<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="dump">dump の確認<a class="headerlink" href="#dump" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 失敗が起きた直後の確認</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log/sai_failure_dump/
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># techsupport 取得（dump も自動で取り込まれる）</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
 </span></code></pre></div>
-<p><code>show vlan brief</code> の出力例<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>+---------+----------------------+------------+----------+-----------------------+----------+
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>| VLAN ID | IP Address           | Ports      | Tagging  | DHCP Helper Address   | ProxyARP |
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>+=========+======================+============+==========+=======================+==========+
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>|    1000 | 21da:d3:0:2f3b::6/96 | Ethernet28 | untagged | 21da:d3:0:2f3b::6     | disabled |
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>|         |                      |            |          | 21da:d3:0:2f3b::7     |          |
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>+---------+----------------------+------------+----------+-----------------------+----------+
-</span></code></pre></div>
-<p>CLI 操作後は <code>Restarting DHCP relay service...</code> と表示され、コンテナごと再起動して新構成で <code>dhcrelay -6</code> が立ち上がる<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VLAN インターフェースに global IPv6 アドレスが必須</strong>。link-local だけでは relay は起動しない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>リレー先サーバ追加 / 削除のたびに <strong>DHCP relay service を再起動</strong> する設計。短時間ではあるがリレー断が発生する<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>HLD は <code>isc-dhcp</code> 由来の <code>dhcrelay -6</code> に依存。同 OSS の v6 機能の制約（option ハンドリング、<code>-u</code> の宛先数上限など）を引き継ぐ。HLD では明示されていない。</li>
-<li><code>dhcrelay -6 -u &lt;addr&gt;%&lt;iface&gt;</code> の zone-id 表記が必要なため、<strong>upstream interface 名がコンテナ内で参照可能</strong> であることが前提。</li>
+<li><strong>abort 自体は止められない</strong>。本機能は dump を取るだけで、orchagent / syncd の再起動を回避するものではない<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>dump は <strong>同期的</strong> に走るため、その間 <code>orchagent</code> は abort を遅らせている。プラットフォーム固有スクリプトが極端に長時間化すると、復旧時間に影響する。</li>
+<li>ベンダが <code>platform_syncd_dump.sh</code> を提供しない場合は <strong>汎用 dump のみ</strong> が取られる。SDK 内部状態の取得は限定的<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ローテーション上限の既定 10 は、dump が頻発するケースだと <strong>古いものから消える</strong>。長期トレンド分析にはホスト側の別収集（techsupport 自動取得など）と組み合わせる前提<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>HLD は <strong>SAI 失敗時の dump のみ</strong> を対象とする。orchagent 以外で発火する SAI 失敗（例えば counter ポーリング失敗）の扱いは明示されていない。</li>
 </ul>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CoPP マネージャ</strong>: DHCPv6 trap の有効化と相互連動する。CoPP 側で trap を別途無効化していると DHCPv6 メッセージが CPU に上がらず、リレー機能だけ有効でも実際に中継できない<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>既存 DHCPv4 リレー</strong>: 同一 <code>dhcp-relay</code> docker に並走する別プロセス。<code>config vlan dhcp_relay add/del</code> の引数 IP のアドレス族で自動判別される設計<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>DHCP Monitor</strong>: 既存 monitor の v6 拡張。監視 / メトリクスの一貫性確保のため、運用上は v4/v6 同時に enable する想定<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>docker-dhcp-relay</code> の supervisord</strong>: VLAN 構成に応じて <code>-6 -l &lt;vlan&gt; -u &lt;addr&gt;%&lt;iface&gt;</code> を組み立てる Jinja テンプレート（実装詳細は本 HLD で言及されていない）が必要になる。</li>
-<li><strong>VLAN の Global IPv6 アドレス管理</strong>: <code>config interface ip add</code> 等で適切に設定されていないと relay が立ち上がらない<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>orchagent</code> の SAI 失敗ハンドリング</strong>: 既存の abort 前に 1 ステップ挟む形。エラーパスにスクリプト実行が入るため、abort 経路のテストが追加で必要<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>syncd</code> の attribute set 受信</strong>: <code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD</code> の既存ハンドラに <code>INVOKE_DUMP</code> 分岐が増える。既存の他の <code>NOTIFY_SYNCD</code> 値（warm restart など）の処理と同じ仕組みに乗る<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>techsupport（auto/manual）</strong>: 本 dump ディレクトリを <strong>収集対象</strong> に含める拡張が必要。本 HLD ではその責務が示唆されている<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>ベンダ syncd docker</strong>: ベンダ固有 dump を取りたい場合は <code>/usr/bin/platform_syncd_dump.sh</code> を docker に追加する責任を負う。スクリプトが未実行可能 / 異常終了の場合の汎用スクリプト側挙動は HLD では明示されていない。</li>
+<li><strong>/var/log のホスト同期</strong>: <code>/var/log/sai_failure_dump/</code> がホストから見える前提なので、syncd docker の volume mount 構成（<code>-v</code> 指定）に依存する。</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>dhcrelay -6</code> が立ち上がらない: VLAN に global IPv6 が設定されているか確認。link-local のみだと不可<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>DHCPv6 が一切来ない: CoPP 側の DHCPv6 trap が有効か確認。HLD の連動仕様どおりに動いていない場合、relay enable とは別に trap を確認する必要<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>リレー先追加で短時間断: <code>Restarting DHCP relay service...</code> が出る挙動どおり。コンテナ再起動分のダウンタイムが発生<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>show vlan brief</code> の <code>DHCP Helper Address</code> に v6 が出ない: CLI または <code>show</code> 側が当該機能未対応の可能性。実装確認は裏取り課題。</li>
+<li>失敗が起きたのに dump が無い: orchagent が <code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> を呼ぶコードパスを通らずに abort した可能性。<code>/var/log/syslog</code> の orchagent ログで abort 直前の挙動を確認<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ベンダ固有情報が取れていない: <code>platform_syncd_dump.sh</code> がベンダ docker に同梱されていない<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ベンダ docker の <code>/usr/bin/</code> を確認。</li>
+<li>古い dump が消えてしまう: <code>SAI_MAX_FAILURE_DUMPS</code> の既定 10 を超えてローテーションされた可能性。プラットフォーム固有スクリプトでこの値を上書き可能<sup id="fnref26:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>techsupport を取ったのに dump が同梱されない: techsupport 側の収集ロジックが本ディレクトリを対象にしているか確認。HLD は対応を要件化している<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、実装裏取りが必要。</li>
+<li>abort が遅い: <code>platform_syncd_dump.sh</code> の処理時間を計測。長すぎる SDK dump は問題報告に値する。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/SAI_failure_handling/dump_on_sai_failure.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref26:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref27:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
