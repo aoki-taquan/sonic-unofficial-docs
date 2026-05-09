@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/critical-resource-monitoring/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-bulk-counter-design/">
       
       
-        <link rel="prev" href="../banner-messages-hld/">
+        <link rel="prev" href="../sonic-arm-architecture-support/">
       
       
-        <link rel="next" href="../dataplane-telemetry-test-plan/">
+        <link rel="next" href="../sonic-generic-hash/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>クリティカルリソースモニタリング (CRM) 要件 - SONiC 非公式ドキュメント</title>
+        <title>Bulk Counter（sai_bulk_object_get_stats / chunk size） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#crm" class="md-skip">
+        <a href="#bulk-countersai_bulk_object_get_stats-chunk-size" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              クリティカルリソースモニタリング (CRM) 要件
+              Bulk Counter（sai_bulk_object_get_stats / chunk size）
             
           </span>
         </div>
@@ -247,11 +247,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../architecture/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -357,13 +359,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -541,6 +541,8 @@
       
   
   
+    
+  
   
   
     
@@ -590,20 +592,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../architecture/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -621,13 +626,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -647,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -675,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-profiles/" class="md-nav__link">
+      <a href="../build-profiles/" class="md-nav__link">
         
   
   
@@ -703,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
+      <a href="../build-system-improvements/" class="md-nav__link">
         
   
   
@@ -731,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
+      <a href="../clock-managment-design/" class="md-nav__link">
         
   
   
@@ -759,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -787,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -815,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
+      <a href="../reset-factory-design/" class="md-nav__link">
         
   
   
@@ -843,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -871,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -899,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
+      <a href="../sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -927,7 +932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -952,10 +957,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bulk Counter（sai_bulk_object_get_stats / chunk size）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -971,6 +1003,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-per-object-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk 採用判定（per object type）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulkstatscontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BulkStatsContext
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-chunk-sizev02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk chunk size（v0.2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timestampv02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        正確な timestamp（v0.2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -983,7 +1173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
+      <a href="../sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1011,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1039,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1067,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1095,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
+      <a href="../ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -1123,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -4301,8 +4491,6 @@
       
   
   
-    
-  
   
   
     
@@ -4394,23 +4582,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -4428,13 +4613,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4454,7 +4639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -4482,7 +4667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -4507,37 +4692,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クリティカルリソースモニタリング (CRM) 要件
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -4553,203 +4711,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        機能要件
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視対象リソース
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        しきい値とヒステリシス
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#syslog" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        syslog フォーマット
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポーリング周期
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装方針（参考）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4762,7 +4723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -4790,7 +4751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -4818,7 +4779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -4846,7 +4807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -4874,7 +4835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -4902,7 +4863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -4930,7 +4891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -4958,7 +4919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -4986,7 +4947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5014,7 +4975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -5042,7 +5003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -5070,7 +5031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -5098,7 +5059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -5126,7 +5087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -5154,7 +5115,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -5182,7 +5143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -5210,7 +5171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -5238,7 +5199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -5266,7 +5227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -5294,7 +5255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -5322,7 +5283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -5350,7 +5311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -5378,7 +5339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -5406,7 +5367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -5434,7 +5395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -5462,7 +5423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -5490,7 +5451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -5518,7 +5479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -5546,7 +5507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -5574,7 +5535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -5602,7 +5563,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-wide-warmboot/" class="md-nav__link">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -5630,7 +5591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -5658,7 +5619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../twamp-light-hld/" class="md-nav__link">
+      <a href="../../system/twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -5686,7 +5647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -5714,7 +5675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../warmboot-manager-hld/" class="md-nav__link">
+      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -5742,7 +5703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -12620,7 +12581,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        機能要件
+        全体構成
       
     </span>
   </a>
@@ -12628,10 +12589,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#bulk-per-object-type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監視対象リソース
+        Bulk 採用判定（per object type）
       
     </span>
   </a>
@@ -12639,10 +12600,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#bulkstatscontext" class="md-nav__link">
     <span class="md-ellipsis">
       
-        しきい値とヒステリシス
+        BulkStatsContext
       
     </span>
   </a>
@@ -12650,10 +12611,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#syslog" class="md-nav__link">
+  <a href="#bulk-chunk-sizev02" class="md-nav__link">
     <span class="md-ellipsis">
       
-        syslog フォーマット
+        Bulk chunk size（v0.2）
       
     </span>
   </a>
@@ -12661,21 +12622,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#timestampv02" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ポーリング周期
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装方針（参考）
+        正確な timestamp（v0.2）
       
     </span>
   </a>
@@ -12688,7 +12638,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -12696,49 +12646,21 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        制限事項
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -12749,7 +12671,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -12760,7 +12682,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -12787,7 +12709,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/critical-resource-monitoring.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-bulk-counter-design.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -12797,142 +12719,105 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD（要件定義文書）のみを根拠に書かれている。<code>orchagent</code> の CRM 実装、CLI (<code>crm show</code>)、CONFIG_DB の <code>CRM</code> テーブル等の実装裏取りは未済。</p>
+<p><code>sonic-sairedis</code> の <code>BulkStatsContext</code> 実装、SAI bulk API（<code>sai_bulk_object_get_stats</code> / <code>sai_bulk_object_clear_stats</code>）の community SAI 取り込み、bulk chunk size 設定 (v0.2 追記) のフォーマットは未確認。</p>
 </div>
-<h1 id="crm">クリティカルリソースモニタリング (CRM) 要件<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h1>
+<h1 id="bulk-countersai_bulk_object_get_stats-chunk-size">Bulk Counter（sai_bulk_object_get_stats / chunk size）<a class="headerlink" href="#bulk-countersai_bulk_object_get_stats-chunk-size" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった <strong>テーブル容量が有限なリソース</strong> を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (CRM) は、こうしたリソースの <strong>使用量と空き容量を SAI 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知</strong> するための機能要件である。</p>
-<p>本ページの一次情報は <strong>要件定義 (<code>CRM_requirements.md</code>)</strong> であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は HLD 内で「設計会議で詰める」と注記されている段階のものである点に注意する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SAI に追加された <strong>bulk stats API</strong>（<code>sai_bulk_object_get_stats</code> / <code>sai_bulk_object_clear_stats</code>、SAI PR #1352）を SONiC の Flex Counter framework が活用するための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port / queue / pg / RIF 等の counter 取得が 1 オブジェクト 1 SAI call から <strong>bulk 1 call</strong> になり、polling 性能が改善する。Phase 1 は <strong>syncd 内部の改造のみ</strong>で、CLI / swss 側の変更なし。</p>
+<p>v0.2（2024-12, Stephen Sun）で <strong>bulk chunk size の指定</strong>（ports を細分化して polling 周期を分散）と <strong>正確な polling 時刻の COUNTER_DB 添付</strong> が追加<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">機能要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>CRM が満たすべき基本要件は次の 2 点である。</p>
-<ol>
-<li>ユーザは CLI（<code>show</code> 系コマンド）で各リソースの <strong>使用数と空き数</strong> を照会できる。</li>
-<li>使用量が事前に決めたしきい値を超えた場合、システムは syslog に WARNING を出力する。</li>
-</ol>
-<h3 id="_4">監視対象リソース<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>要件は次のリソースを明示的に列挙している。各項目について「使用数」「空き数」を返せることが要求される。</p>
-<table>
-<thead>
-<tr>
-<th>カテゴリ</th>
-<th>監視対象</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>L3 ルーティング</td>
-<td>IPv4 ルート / IPv6 ルート</td>
-</tr>
-<tr>
-<td>Nexthop</td>
-<td>IPv4 Nexthop / IPv6 Nexthop</td>
-</tr>
-<tr>
-<td>Neighbor</td>
-<td>IPv4 Neighbor / IPv6 Neighbor</td>
-</tr>
-<tr>
-<td>Nexthop グループ</td>
-<td>グループ member 数 / グループ オブジェクト数</td>
-</tr>
-<tr>
-<td>ACL TCAM</td>
-<td>ACL Table / ACL Group / ACL Entries / ACL Counters/Statistics</td>
-</tr>
-<tr>
-<td>L2</td>
-<td>FDB エントリ</td>
-</tr>
-</tbody>
-</table>
-<p>ACL TCAM は単一の値ではなく Table / Group / Entries / Counters の 4 サブカテゴリで個別に追跡される点に注意する。</p>
-<h3 id="_5">しきい値とヒステリシス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>しきい値は <strong>ヒステリシス方式</strong> で設定される。値が上限しきい値（upper）を超えると WARNING が生成され、下限しきい値（lower）を下回ると CLEAR が生成される。これは、しきい値付近で値が振動した場合に WARNING / CLEAR が連発するのを防ぐための古典的なヒステリシス制御である。</p>
-<p>しきい値の指定単位はユーザが選べる。</p>
-<ol>
-<li>パーセンテージ</li>
-<li>実使用カウント（actual used count）</li>
-<li>実空きカウント（actual free count）</li>
-</ol>
-<p>ユーザ設定値は CONFIG_DB に記録される（テーブル名は本 HLD では明示されていない）。<strong>ユーザ未設定時のデフォルト</strong> は次のとおり一般的な値で固定される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<table>
-<thead>
-<tr>
-<th>しきい値</th>
-<th>デフォルト</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>upper（WARNING 発火）</td>
-<td>85 %</td>
-</tr>
-<tr>
-<td>lower（CLEAR 発火）</td>
-<td>70 %</td>
-</tr>
-</tbody>
-</table>
-<h3 id="syslog">syslog フォーマット<a class="headerlink" href="#syslog" title="Permanent link">&para;</a></h3>
-<p>syslog 出力は次の固定フォーマットで生成される。<code>&lt;TH_TYPE&gt;</code> は <code>TH_PERCENTAGE</code> / <code>TH_USED</code> / <code>TH_FREE</code> のいずれかで、ユーザがどの単位でしきい値を指定したかを示す。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&lt;Date/Time&gt; &lt;Device&gt; WARNING &lt;Process&gt;: THRESHOLD_EXCEEDED for &lt;TH_TYPE&gt; &lt;CR name&gt; &lt;%&gt; Used count &lt;value&gt; free count &lt;value&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>&lt;Date/Time&gt; &lt;Device&gt; NOTICE  &lt;Process&gt;: THRESHOLD_CLEAR    for &lt;TH_TYPE&gt; &lt;CR name&gt; &lt;%&gt; Used count &lt;value&gt; free count &lt;value&gt;
-</span></code></pre></div>
-<p><strong>抑止ルール</strong>: 同一メッセージは 10 回出力した時点で抑止される。これは閾値付近で値が継続的に超え続けるケースで syslog が溢れるのを防ぐためのもの。</p>
-<h3 id="_6">ポーリング周期<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>デフォルトのポーリング周期は <strong>5 分</strong> に制限される。これより短くする運用は HLD では想定されていない。</p>
-<h3 id="_7">実装方針（参考）<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p>要件文書はあくまで <strong>要件</strong> だが、末尾に実装方針が併記されている。設計会議でさらに詰める前提のため、ここでは「示唆されている方針」として扱う。</p>
+<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI ASIC&lt;br/&gt;各テーブル容量] --&gt;|SAI API&lt;br/&gt;available count| ORCH[orchagent]
-    SAI --&gt;|FLEX Counter 流&lt;br/&gt;polling| SYNCD[syncd]
-    SYNCD --&gt; CDB[(COUNTERS_DB)]
-    CDB --&gt; CRMP[critical_resource_monitoring プロセス]
-    ORCH --&gt;|programmed entries| CRMP
-    CRMP --&gt;|threshold check| LOG[syslog]
-    CRMP --&gt;|show 系| CLI[CLI]</code></pre>
+    SWSS[swss / FlexCounterOrch] --&gt;|FLEX_COUNTER_TABLE| CDB[(FLEX DB)]
+    CDB --&gt; SYNCD[syncd FlexCounter]
+    SYNCD --&gt;|capability query| SAI[(SAI vendor)]
+    SAI -.-&gt;|bulk supported / not| SYNCD
+    SYNCD --&gt;|bulk get / clear| SAI
+    SAI --&gt;|stats| SYNCD
+    SYNCD --&gt; COUNT[(COUNTERS_DB)]
+    SYNCD --&gt; TS[timestamp 添付]
+    TS --&gt; COUNT</code></pre>
+<h3 id="bulk-per-object-type">Bulk 採用判定（per object type）<a class="headerlink" href="#bulk-per-object-type" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    GROUP[counter group] --&gt; Q1{object type 単位で bulk capability?}
+    Q1 --&gt;|all counter IDs supported| BULK[sai_bulk_object_get_stats を使う]
+    Q1 --&gt;|一部のみ| FALLBACK[非 bulk API へ fallback]
+    BULK --&gt; READMODE{stats mode}
+    READMODE --&gt; RM[SAI_STATS_MODE_BULK_READ\nor BULK_READ_AND_CLEAR]</code></pre>
+<p>判定ルール<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>使用数の供給</strong>: <code>orchagent</code> が自身でプログラムしたエントリを追跡し、使用数を保持する。</li>
-<li><strong>空き数の供給</strong>: SAI が「現在の available count」を返す API を提供しており、これを利用する。</li>
-<li><strong>値の流通</strong>: FLEX Counter と同様に <code>syncd</code> が SAI からカウンタを引き、<code>COUNTERS_DB</code> に書き込む。</li>
-<li><strong>しきい値判定</strong>: 別プロセス <code>critical_resource_monitoring</code> が <code>COUNTERS_DB</code> から値を読み、計算としきい値判定を行う。</li>
+<li>counter group 内で <strong>object type ごとに bulk / 非 bulk を選べる</strong>（例: queue は bulk、PG は非 bulk）</li>
+<li>ある object type 内では <strong>すべての counter ID が bulk 対応</strong> な場合のみ bulk を使う</li>
+<li>capability query は <code>sai_bulk_object_get_stats</code> を試し、<code>SAI_STATUS_NOT_SUPPORTED</code> 等のエラーで fallback</li>
+<li>bulk は <strong>必ず flex counter スレッド</strong> で呼ぶ。main thread を塞がない</li>
 </ul>
+<h3 id="bulkstatscontext"><code>BulkStatsContext</code><a class="headerlink" href="#bulkstatscontext" title="Permanent link">&para;</a></h3>
+<p>新規構造体。各 object type ごとに 1 つ持ち、object 増減・counter ID 変更時にだけ rebuild する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">struct</span><span class="w"> </span><span class="nc">BulkStatsContext</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">sai_object_type_t</span><span class="w"> </span><span class="n">object_type</span><span class="p">;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_object_id_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object_vids</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_object_key_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object_keys</span><span class="p">;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_stat_id_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">counter_ids</span><span class="p">;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_status_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object_statuses</span><span class="p">;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">counters</span><span class="p">;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">default_bulk_chunk_size</span><span class="p">;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">};</span>
+</span></code></pre></div>
+<p><code>m_portBulkContexts: map&lt;vector&lt;sai_port_stat_t&gt;, BulkStatsContext&gt;</code> のように counter ID set ごとにキー分け。</p>
+<h3 id="bulk-chunk-sizev02">Bulk chunk size（v0.2）<a class="headerlink" href="#bulk-chunk-sizev02" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;COUNTER_NAME_PREFIX&gt;:&lt;bulk_chunk_size&gt;{,&lt;COUNTER_NAME_PREFIX_I&gt;:&lt;bulk_chunk_size_i&gt;}
+</span></code></pre></div>
+<ul>
+<li>counter group 全体の chunk size 指定 + counter ID prefix ごとの chunk size 個別指定が可能</li>
+<li>例: 「<code>IF_OUT_QLEN</code> は全 port まとめて 1 bulk」「他 port stat は <strong>32 port ごと bulk</strong>」と分ける</li>
+<li>目的: PFC watchdog のような時間敏感な polling が、巨大 bulk と vendor SDK の critical section を取り合って遅延するのを防ぐ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h3 id="timestampv02">正確な timestamp（v0.2）<a class="headerlink" href="#timestampv02" title="Permanent link">&para;</a></h3>
+<p>これまで Lua plugin（PFC WD 等）側で時刻を取っていたが、polling と Lua 実行の間に gap がある。<strong>sairedis 内で polling 直後に時刻取得し COUNTER_DB に push</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
-source: sonic-net/SONiC/doc/crm/CRM_requirements.md#L44-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+source: sonic-net/SONiC/doc/bulk_counter/bulk_counter.md#L30-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  In regards to CLI command to query the USED and AVAILABLE numbers, SAI provides API to query the current available entries.
-  This means, Orchagent shall keep track of the respective entries that are programmed and implements the logic to calculate the Used/Available entries.
-  To poll the counter values from SAI, suggest to follow the same approach as FLEX Counters where syncd can update the values to COUNTER_DB and critical_resource_monitoring process can fetch the information from COUNTER_DB and perform the calculations.
-reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX Counter 流で COUNTERS_DB 経由」という 3 点の方針の根拠。
+  Syncd shall use bulk stats APIs based on object type.
+  ... For a certain object in a counter group, it shall use bulk stats only if all counter IDs support bulk API
+  ... Syncd shall automatically fall back to old way if bulk stats APIs are not supported
+reasoning: 採用判定ルールと fallback の根拠。
 -->
 
-<h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>要件 HLD 上はテーブル名が明示されていない。実装側で <code>CRM</code> テーブルが追加されている可能性が高いが、本ページでは未確認のため空配列とする。実装裏取り（<code>code-verified</code> 昇格）時に追記する想定。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>要件 HLD は <code>show</code> 系コマンドの提供を要求しているのみで、具体的なコマンド名は規定していない。実装としては <code>crm config thresholds</code> / <code>crm show resources</code> などが提供されている可能性があるが、本ページでは未確認。</p>
-<h3 id="_9">設定例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>要件文書のため具体的な設定コマンド例は記載されていない。</p>
-<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>CLI / CONFIG_DB の <strong>新規追加なし</strong>（Phase 1）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FLEX_COUNTER_TABLE 既存スキーマの <code>STATS_MODE</code> から bulk mode を導出するのみ。</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>orchagent</code></strong>: 使用数の追跡を担うため、ACL / Route / Nexthop など各オブジェクトを管理する各 orch が CRM 用にカウントを公開する必要がある。</li>
-<li><strong><code>syncd</code> の FLEX Counter 機構</strong>: ポーリング基盤を共有する設計であるため、FLEX Counter 側の構成（ポーリング周期、グループ）と整合させる必要がある。</li>
-<li><strong>syslog 抑止</strong>: 「10 回で抑止」のため、長期にわたる過負荷状態の二次検知は CRM では取りこぼす可能性がある。別レイヤ（テレメトリ等）で補完するのが望ましい。</li>
-<li><strong>ACL の細分監視</strong>: ACL TCAM は 4 サブカテゴリに分かれて監視されるため、しきい値も 4 種類個別に設定できる前提で運用設計する必要がある。</li>
+<li>vendor SAI が bulk 未対応の object type は従来通り</li>
+<li>bulk chunk size 指定の文法は HLD 提案ベース、master 取り込み時に変わる可能性</li>
+<li>timestamp 添付は対応 counter group 限定（PFC WD など時間敏感なものから）</li>
 </ul>
-<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>WARNING が出ない場合、まずポーリングが回っているか（デフォルト 5 分間隔のため、即時検知は期待できない）を確認する。</li>
-<li>同じリソースの WARNING が一度出てから止まったように見える場合、<strong>10 回で抑止</strong> されている可能性が高い。一旦リソースを下げるか、process を再起動して抑止カウンタをリセットする運用を検討する。</li>
-<li>「使用数は増えているのに空き数が減らない」など整合が崩れて見える場合、<code>orchagent</code> 側の自己追跡（使用数）と SAI 側の available count の更新タイミングがズレている可能性がある。</li>
+<li><strong>PFC Watchdog</strong>: 時間敏感、chunk 細分化と timestamp の主要動機</li>
+<li><strong>Trap Flow Counter / Route Flow Counter</strong>: bulk 対応で polling 周期短縮の恩恵</li>
+<li><strong>CRM</strong>: counter polling とは別系列だが、リソース監視の負荷分散と関連</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>一部 counter が更新されない → fallback 経路に落ちている可能性。syncd ログで bulk capability rejection を確認</li>
+<li>chunk 細分化したが分散しない → counter ID prefix の表記揺れに注意</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- sai_bulk_object_get_stats / sai_bulk_object_clear_stats の community SAI 取り込み確認
+- BulkStatsContext / m_portBulkContexts の sonic-sairedis FlexCounter 取り込み確認
+- bulk chunk size 指定の FLEX_COUNTER_TABLE スキーマ取り込み確認（v0.2）
+- polling 直後 timestamp の COUNTER_DB push 実装確認（v0.2）
+- vendor 別 bulk capability の現状（Mellanox / Broadcom / Cisco）
+- fallback 経路の単体テスト存在確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/crm/CRM_requirements.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/bulk_counter/bulk_counter.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
