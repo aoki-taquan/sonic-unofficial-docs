@@ -1,5 +1,5 @@
-site_name: Sonic 非公式ドキュメント
-site_description: Sonic（valeriansaliou/sonic）の日本語非公式ドキュメント
+site_name: SONiC 非公式ドキュメント
+site_description: SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント
 site_url: https://aoki-taquan.github.io/sonic-unofficial-docs/
 repo_url: https://github.com/aoki-taquan/sonic-unofficial-docs
 repo_name: aoki-taquan/sonic-unofficial-docs
@@ -86,3 +86,26 @@ extra:
 
 nav:
   - ホーム: index.md
+  - アーキテクチャ:
+      - architecture/index.md
+  - ルーティング:
+      - routing/index.md
+  - スイッチング:
+      - switching/index.md
+  - オーバーレイ:
+      - overlay/index.md
+  - ACL & QoS:
+      - acl-qos/index.md
+  - システム:
+      - system/index.md
+  - マネジメント:
+      - management/index.md
+  - プラットフォーム:
+      - platform/index.md
+  - 内部実装:
+      - internals/index.md
+  - リファレンス:
+      - reference/index.md
+      - CLI: reference/cli/index.md
+      - CONFIG_DB: reference/config-db/index.md
+      - YANG: reference/yang/index.md

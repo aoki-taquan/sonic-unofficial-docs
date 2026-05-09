@@ -1,0 +1,66 @@
+name: ページ作成タスク
+description: 1 ドキュメントページを作成するタスク
+title: "[<area>] <ページタイトル>"
+labels:
+  - type/hld-port
+body:
+  - type: input
+    id: target-path
+    attributes:
+      label: 出力先パス
+      description: docs/ からの相対パス
+      placeholder: routing/bgp-unnumbered.md
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: area
+      options:
+        - architecture
+        - routing
+        - switching
+        - overlay
+        - acl-qos
+        - system
+        - management
+        - platform
+        - internals
+        - reference
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: ページ種別
+      options:
+        - hld-port
+        - cli-ref
+        - schema-ref
+        - architecture
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: 一次情報候補
+      description: 参照すべき HLD / コード / issue を URL もしくは repo path で。Indexer が pre-fill する想定
+      placeholder: |
+        - sonic-net/SONiC/doc/bgp/BGP-Unnumbered.md
+        - sonic-net/sonic-buildimage/dockers/docker-fpm-frr/...
+    validations:
+      required: true
+  - type: textarea
+    id: reader-questions
+    attributes:
+      label: 想定する読者の質問
+      description: このページが答えるべき具体的な疑問
+      placeholder: |
+        - SONiC で BGP unnumbered はどう設定するか？
+        - 必要な前提（IPv6 LLA 等）は何か？
+        - フェイルオーバー時の挙動は？
+  - type: textarea
+    id: notes
+    attributes:
+      label: 備考
+      description: 干渉する機能・既知の差分・参考 issue 等

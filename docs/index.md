@@ -1,27 +1,44 @@
-# Sonic 非公式ドキュメント
+---
+title: SONiC 非公式ドキュメント
+verification: meta
+---
 
-[Sonic](https://github.com/valeriansaliou/sonic) の日本語非公式ドキュメントへようこそ。
+# SONiC 非公式ドキュメント
+
+[SONiC NOS](https://github.com/sonic-net/SONiC) の日本語非公式ドキュメントへようこそ。
 
 !!! warning "非公式ドキュメントについて"
-    このドキュメントは Sonic の有志による非公式ドキュメントです。Sonic の開発元（valeriansaliou）とは関係ありません。
-    内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は[公式リポジトリ](https://github.com/valeriansaliou/sonic) を参照してください。
+    このドキュメントは有志による非公式ドキュメントです。SONiC プロジェクトおよび SONiC Foundation とは関係ありません。
+    内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は [公式リポジトリ](https://github.com/sonic-net/SONiC) を参照してください。
 
-## Sonic とは
+## SONiC とは
 
-Sonic は Rust で書かれた、軽量で高速な検索バックエンドです。Elasticsearch のような全文検索エンジンの軽量代替として設計されています。
+SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベースのオープンソースなネットワーク OS（NOS）です。Microsoft と Open Compute Project（OCP）によって開発され、現在は Linux Foundation 配下のオープンソースプロジェクトとして運営されています。
 
-- **軽量**: メモリ使用量が少ない
-- **高速**: 検索クエリのレイテンシが極めて低い
-- **シンプル**: スキーマ定義が不要
+主要な構成要素:
 
-## このドキュメントについて
+- **SAI (Switch Abstraction Interface)**: ASIC ベンダーを抽象化する標準 API
+- **コンテナ化されたマイクロサービス群**: BGP（FRR）、LLDP、SNMP、PMON など機能ごとに Docker コンテナで分離
+- **Redis を中央データベースとした状態管理**: CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB など
 
-本ドキュメントは現在準備中です。今後、以下のような内容を追加予定です。
+## このドキュメントの方針
 
-- インストール手順
-- Sonic Channel プロトコルの解説
-- 各種クライアントライブラリの使い方
-- 運用 Tips
+- 公式 HLD の翻訳ではなく、**再構成**された解説
+- HLD・実コード・issue を横断して引用し、各ページの末尾に出典を明示
+- 各ページに裏取りステータス（HLD-only / Issue-confirmed / Code-verified）を付与
+
+## 目次
+
+- [アーキテクチャ](architecture/index.md)
+- [ルーティング](routing/index.md)
+- [スイッチング](switching/index.md)
+- [オーバーレイ](overlay/index.md)
+- [ACL & QoS](acl-qos/index.md)
+- [システム](system/index.md)
+- [マネジメント](management/index.md)
+- [プラットフォーム](platform/index.md)
+- [内部実装](internals/index.md)
+- [リファレンス](reference/index.md)
 
 ## ライセンス
 

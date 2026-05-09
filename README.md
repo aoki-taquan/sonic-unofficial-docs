@@ -1,6 +1,17 @@
 # sonic-unofficial-docs
 
-[Sonic](https://github.com/valeriansaliou/sonic) の日本語非公式ドキュメント。
+[SONiC NOS](https://github.com/sonic-net/SONiC) の日本語非公式ドキュメント。
+
+公式ドキュメントは品質と分散の問題があり、HLD はリポジトリごとに散らばり、HLD にも書かれていない仕様が実コードや issue にしか存在しない、という状況がある。本プロジェクトはそれを AI 駆動で再構成して読みやすい形に整え直すことを目的とする。
+
+## スコープ
+
+- 対象: コミュニティ版 SONiC の `master` のみ（ベンダー版・他ブランチは対象外）
+- 言語: 日本語のみ
+- 方針: 公式 HLD の翻訳ではなく **再構成**。HLD・実コード・issue を横断して、読み手が探す単位でページを書き直す
+- 一次情報の引用を必須とし、各ページに裏取りステータスのバッジを付与する
+
+詳しい運用ルールは [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。
 
 ## ローカルでのプレビュー
 

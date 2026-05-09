@@ -19,3 +19,13 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# SONiC リポジトリのローカルクローン（Indexer 用）
+/.cache/
+
+# meta/index は生成物だが、リポに含めて差分管理する
+# meta/backlog も同様
+
+# Claude Code 用ローカル設定
+.claude/
+CLAUDE.local.md
