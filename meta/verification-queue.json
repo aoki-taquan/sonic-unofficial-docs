@@ -275,7 +275,8 @@
         "ACL counter (aclshow) が counterpoll acl の状態に応じて正しく値を返すか確認"
       ],
       "priority": "medium",
-      "issue": 446
+      "issue": 446,
+      "pr": 450
     },
     {
       "page": "docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md",

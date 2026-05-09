@@ -9,5 +9,6 @@
     "ACL counter (aclshow) \u304c counterpoll acl \u306e\u72b6\u614b\u306b\u5fdc\u3058\u3066\u6b63\u3057\u304f\u5024\u3092\u8fd4\u3059\u304b\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 446
+  "issue": 446,
+  "pr": 450
 }
