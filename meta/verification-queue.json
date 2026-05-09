@@ -828,6 +828,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/sonic-port-link-training-design.md",
+      "issue": 670,
+      "verification": "hld-only",
+      "concerns": [
+        "PortsOrch の m_port_cap_lt フィールドと per-port 能力照会ロジックの実装存在確認",
+        "CONFIG_DB PORT.link_training / APPL_DB PORT_TABLE.link_training / STATE_DB PORT_TABLE.link_training_status の現行 master スキーマ取り込み確認",
+        "config interface link-training / show interfaces link-training status の sonic-utilities への取り込み確認",
+        "SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE が community SAI に取り込まれているか未確認",
+        "PortsOrch のリンクトレーニングステータスポーラ（タイマースレッド）実装確認",
+        "warmboot 中に LT パラメータでポート flap させない要件が PortsOrch / syncd で守られているか未確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
       "issue": 49,
       "verification": "code-verified",
