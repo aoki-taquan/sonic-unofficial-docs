@@ -219,6 +219,20 @@
       "priority": "medium"
     },
     {
+      "page": "docs/overlay/vnet-local-endpoint-forwarding.md",
+      "issue": 79,
+      "verification": "hld-only",
+      "concerns": [
+        "VNET_ROUTE_TUNNEL_TABLE.check_directly_connected フィールドの sonic-swss スキーマ追加確認",
+        "VnetOrch の ARP 検査と ECMP / tunnel 切替ロジック実装",
+        "VNET_LOCAL_ENDPOINT_REDIRECT ACL テーブルタイプの aclorch 対応",
+        "TUNNEL_TERM match の SAI ACL 属性サポート確認",
+        "hamgrd の VNET_ROUTE_TUNNEL_TABLE 書き込み経路",
+        "Overlay ECMP enhancements HLD と smart-switch-ha-hld との依存関係整理"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/switching/sonic-ip-lag-incremental-update.md",
       "issue": 77,
       "verification": "hld-only",
