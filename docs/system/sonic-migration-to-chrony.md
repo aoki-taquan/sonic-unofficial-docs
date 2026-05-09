@@ -1,7 +1,7 @@
 ---
 title: ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v1.0 (2024-10)。`chrony` パッケージの sonic-buildimage 取り込み、`/etc/chrony/chrony.conf` のテンプレート生成（NTP_SERVER CONFIG_DB 連携）、`config-setup` と DHCP 経由の NTP server 取得は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage` master に `files/image_config/chrony/chrony-config.sh` と `src/sonic-config-engine/tests/chrony.conf.j2`、`build_debian.sh` / `files/build_templates/sonic_debian_extension.j2` の chrony 取り込み処理を確認。NTP_SERVER CONFIG_DB → `chrony.conf` 生成パスと chrony パッケージ同梱は master 取り込み済み。
 
 # ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC Logging & System Dumps（要件レベル仕様）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 要件レベル仕様"
-    HLD は **要件記述に近い概念ペーパ**で、具体的な API / CLI / CONFIG_DB スキーマは規定していない。実装の対応は別文書（`logger.cpp` / `generate_dump` / `show techsupport` 等）と要照合。
+!!! info "裏取りステータス: code-verified（要件レベル仕様）"
+    HLD は要件記述ペーパ。実装側は `sonic-utilities/scripts/generate_dump`（103KB の bash で General/Per daemon/Per platform ダンプを統合、`PLUGINS_DIR=/usr/local/bin/debug-dump` で plugin 機構実装）、`scripts/coredump_gen_handler.py`（クラッシュ → sysdump 連動）、`utilities_common/auto_techsupport_helper.py`、`scripts/techsupport_cleanup.py` を確認。要件で挙げられた sysdump 3 区分 / クラッシュ自動生成パスは master 取り込み済み。
 
 # SONiC Logging & System Dumps（要件レベル仕様）
 

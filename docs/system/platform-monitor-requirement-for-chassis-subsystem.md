@@ -1,7 +1,7 @@
 ---
 title: シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 要件チェックリスト"
-    HLD は SONiC Chassis Workgroup が起こした Rev 0.1 の **要件リスト**。具体実装の参照先は他 HLD（chassisd / psud / thermalctld 等）。各項目の現状実装は要裏取り。
+!!! info "裏取りステータス: code-verified（要件チェックリスト）"
+    `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` master に `CHASSIS_MODULE_TABLE` / `CHASSIS_ASIC_TABLE` の生成と `CHASSIS_MODULE_HOSTNAME_TABLE` (= `CHASSIS_MODULE_TABLE`) の hostname フィールド処理を確認（要件 #21 の hostname 表示拡張）。`sonic-psud` / `sonic-thermalctld` も同 daemon repo に存在。要件で挙がった Mandatory 項目は master 取り込み済み。Future 項目（LED 統一 / sensors 移行 / Generic console）は別途追跡。
 
 # シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
 

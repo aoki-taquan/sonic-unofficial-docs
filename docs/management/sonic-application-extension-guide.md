@@ -1,7 +1,7 @@
 ---
 title: SONiC Application Extension 開発・移植ガイド
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / Initial Proposal"
-    HLD は v0.1 / 2021-02 改訂の **Initial Proposal**。`sonic-package-manager` / マニフェスト形式 / `SONIC_PACKAGES_LOCAL` make ターゲット が現行 master でこの仕様どおりかは未確認。本ページは開発者向けガイドの抜粋であり、コア HLD は `sonic-application-extention-hld.md` を別途参照。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/sonic_package_manager/` に `manifest.py`（`ManifestSchema` / un-marshal / 検証）、`manager.py`、`metadata.py`、`database.py`、`dockerapi.py`、`main.py`、`constraint.py` が master に存在。マニフェスト形式と `sonic-package-manager` CLI 経路は master 取り込み済み。コア HLD（`sonic-application-extention-hld.md`）と整合。
 
 # SONiC Application Extension 開発・移植ガイド
 

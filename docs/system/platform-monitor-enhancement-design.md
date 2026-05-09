@@ -1,7 +1,7 @@
 ---
 title: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は v0.1（2017〜2019 と推定、日付不明）。`fand` / `psud` / `xcvrd` 拡張、`PLATFORM_INFO` / `CHASSIS_INFO` / `PSU_INFO` / `FAN_INFO` の現行 schema、syseeprom 周辺一括収集 task の実装は未裏取り。priority=high で queue 登録。
+!!! info "裏取りステータス: code-verified"
+    `sonic-platform-daemons` master に `sonic-psud`、`sonic-syseepromd`、`sonic-xcvrd`、`sonic-thermalctld` が存在し、HLD で「fand」と呼ばれていた FAN 周期収集は `sonic-thermalctld` (= thermalctld) として実装されている。`scripts/psushow` / `fanshow` (`sonic-utilities`) が `STATE_DB` の `CHASSIS_INFO` / `PSU_INFO` / `FAN_INFO` を直接 read することを確認。HLD の中心方針（CLI/SNMP は STATE_DB のみ参照、daemon 側で plugin 直叩きを集約）は master 取り込み済み。`fand` 単独 daemon は無いという用語差のみ。
 
 # pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
 

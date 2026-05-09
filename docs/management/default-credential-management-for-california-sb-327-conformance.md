@@ -1,7 +1,7 @@
 ---
 title: 既定パスワードの初回ログイン強制変更（California SB-327 準拠）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `CHANGE_DEFAULT_PASSWORD` build flag の sonic-buildimage 取り込み、`/etc/rc.local` で `chage -d 0 <user>` を 1st boot 時に呼ぶ実装、`pam_unix_account.so` 連携の現行 image での挙動は実コードでの裏取り未済。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/rules/config` に `CHANGE_DEFAULT_PASSWORD ?= n` のオプション、`build_debian.sh` に `[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]` 分岐と `password_expire="$( ... && echo true || echo false )"` の export 処理を確認。`Makefile.work` / `slave.mk` でも flag を伝搬。HLD で要求された build flag の sonic-buildimage 取り込みは master で確認できた。
 
 # 既定パスワードの初回ログイン強制変更（California SB-327 準拠）
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC-VS のビルドと libvirt 起動手順
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 手順書ベース"
-    この文書は手順書由来。`sonic-buildimage` のビルドフラグ（`NOJESSIE` 等の no-* スイッチ）は時期により変わる。`sonic1-vs.xml` の URL や Debian 系 distro 名も実態と合わせて確認すること。
+!!! info "裏取りステータス: code-verified（手順書ベース）"
+    `sonic-buildimage` master の `Makefile` / `Makefile.work` で `NOJESSIE` / `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` / `NOBOOKWORM` の no-* ビルドスイッチ群と `make NOJESSIE=1 KEEP_SLAVE_ON=yes` の使用例を確認。VS 経路も `platform/vs/docker-sonic-vs.{mk,dep}` 等で生きている。手順書としての主張は master と整合。実機ビルドでは現行リリース 1 種だけを残す（古い distro はスキップ）運用が前提。
 
 # SONiC-VS のビルドと libvirt 起動手順
 

@@ -1,7 +1,7 @@
 ---
 title: platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠にしている。`sonic-platform-common` の Platform API 側で `capabilities` を読む経路、ベンダ固有 `platform.json` への実装反映状況、`controllable=false` の場合の上位アプリ振る舞いは未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json` 等で `chassis.status_led.controllable`、`fans[].speed.controllable` / `minimum`、`status_led.colors` 配列、`status_led.available` のスキーマが実機向け platform.json に既に展開されていることを確認。Marvell / Dell の複数プラットフォームで採用済み。HLD の capabilities 拡張は実装に取り込まれている。
 
 # platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
 

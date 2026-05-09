@@ -1,7 +1,7 @@
 ---
 title: sai_query_stats_capability による Counter Capability 一括取得
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / upstream 由来"
-    HLD は SAI に追加された `sai_query_stats_capability` API を SONiC 側 `FlexCounter` で使う改修の説明。SAI 上流での API 取り込み状況、`sonic-sairedis` の `FlexCounter.cpp` 改修取り込み状況は要裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-sairedis/syncd/FlexCounter.cpp` master に `querySupportedCounters()` 実装と `use_sai_stats_capa_query` フラグ、`sai_stat_capability_list_t` を使った 2 段呼び出し（count 取得 → list 取り直し）パターン、`SAI_STATUS_NOT_IMPLEMENTED` フォールバックを確認。Port / Queue / PG / RIF / BufferPool で同パターン。HLD の改修は master 取り込み済み。
 
 # sai_query_stats_capability による Counter Capability 一括取得
 

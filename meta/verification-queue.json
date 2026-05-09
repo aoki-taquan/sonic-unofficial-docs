@@ -453,19 +453,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/platform-monitor-enhancement-design.md",
-      "verification": "hld-only",
-      "concerns": [
-        "psud / fand 新設 daemon の sonic-platform-daemons 取り込み確認",
-        "PLATFORM_INFO / CHASSIS_INFO / PSU_INFO / FAN_INFO スキーマの sonic-yang-models 反映確認",
-        "syseeprom 周辺一括収集 task (one-shot) の実装場所と起動経路確認",
-        "xcvrd 拡張 (eeprom 詳細) と現行 sonic_xcvr 階層の整合確認",
-        "show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認",
-        "ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
       "verification": "discrepancy-found",
       "concerns": [
@@ -1830,32 +1817,6 @@
       "pr": 520
     },
     {
-      "page": "docs/system/secure-upgrade.md",
-      "verification": "hld-only",
-      "concerns": [
-        "build_image.sh の SECURE_UPGRADE_MODE 分岐実装の sonic-buildimage 取り込み確認",
-        "sign_image_dev.sh / sign_image_${platform}.sh の同梱と sign_image_prod 規約確認",
-        "sharch.sh prefix と sha1 / size 検証の実装確認",
-        "sonic-installer main.py での verification 経路の取り込み確認",
-        "ONIE 側 PR #11862 / #2337 の merge 状況と互換性確認",
-        "Secure Boot との chain of trust 整合確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/system/smart-switch-ip-address-assignment.md",
-      "verification": "hld-only",
-      "concerns": [
-        "bridge-midplane の systemd-networkd 設定 (.netdev / .network) と systemd-sonic-generator 取り込み確認",
-        "midplane-network-npu.service / dpu.service の oneshot 起動と database.service Before= 連携確認",
-        "DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT の sonic-yang-models 反映確認",
-        "t1-smartswitch topology テンプレートの sonic-cfggen 取り込み確認",
-        "DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認",
-        "DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
       "issue": 317,
       "verification": "code-verified",
@@ -1903,19 +1864,6 @@
       "pr": 166,
       "last_verified": "2026-05-09",
       "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
-    },
-    {
-      "page": "docs/system/sonic-migration-to-chrony.md",
-      "verification": "hld-only",
-      "concerns": [
-        "chrony パッケージの sonic-buildimage 同梱と ntpd / ntpsec の削除確認",
-        "/etc/chrony/chrony.conf テンプレートの sonic-buildimage / sonic-host-services 取り込み確認",
-        "NTP / NTP_SERVER CONFIG_DB → chrony.conf 生成パスの確認",
-        "DHCP 経由 NTP server 取得 (chrony-helper / dhclient hook) の確認",
-        "HW RTC 自動 sync が kernel time discipline 経由で動いていることの確認",
-        "config ntp 系 CLI の chronyc 経由実装への切替確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/system/sonic-openssl-fips-140-3-hld.md",
@@ -2029,31 +1977,6 @@
       "priority": "low"
     },
     {
-      "page": "docs/architecture/steps-to-bring-up-sonic-vs.md",
-      "issue": 270,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-buildimage の NOJESSIE/NOSTRETCH/NOBUSTER/NOBULLSEYE フラグが現行 Makefile に存在するか確認",
-        "sonic1-vs.xml サンプル XML の URL とブリッジ名 (mgtbr0/vmbr0) が現行 master と整合するか確認",
-        "デフォルト認証情報 admin / YourPaSsWoRd が現行 sonic-vs ビルドで有効か確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/management/default-credential-management-for-california-sb-327-conformance.md",
-      "verification": "hld-only",
-      "concerns": [
-        "CHANGE_DEFAULT_PASSWORD build flag の sonic-buildimage 取り込み確認",
-        "/etc/rc.local で 1st boot を判別し chage -d 0 を全 default user に適用するスクリプトの存在確認",
-        "pam_unix_account.so の expired 検知が現行 image の PAM 構成で有効か確認",
-        "/etc/passwd 走査で login shell = /bin/bash / /bin/sh のユーザのみ対象とする実装確認",
-        "image upgrade で 1st boot 扱いとなる仕組み（marker file 等）の現行確認"
-      ],
-      "priority": "low",
-      "issue": 181,
-      "pr": 182
-    },
-    {
       "page": "docs/management/portable-console-device-design.md",
       "issue": 328,
       "verification": "hld-only",
@@ -2062,19 +1985,6 @@
         "PortableConsoleDeviceBase / factory.py の実装存在確認",
         "CONSOLE_SWITCH テーブルへの autodetect / vendor_name / model_name フィールド追加の YANG 反映確認",
         "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/management/sonic-application-extension-guide.md",
-      "issue": 327,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-package-manager の現行 sonic-utilities 取り込み確認",
-        "manifest 形式（_CONTAINER_PRIVILEGED 等）の rules/functions での実装確認",
-        "SONIC_PACKAGES_LOCAL ターゲットの Makefile.work での扱い確認",
-        "CLI plugin register API の現行 sonic-utilities での互換性確認",
-        "本ページは v0.1 Initial Proposal ガイドの抜粋。コア HLD (sonic-application-extention-hld.md) の現行仕様との整合確認"
       ],
       "priority": "low"
     },
@@ -2165,31 +2075,6 @@
       "priority": "low"
     },
     {
-      "page": "docs/platform/platform-capability-file-enhancement.md",
-      "issue": 81,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-platform-common の Platform API 側で capabilities セクションを読む経路の実装確認",
-        "ベンダ提供 platform.json で capabilities が埋まっている事例の確認",
-        "fan speed の単位 (% or RPM) の明文化",
-        "controllable=false を尊重しない上位アプリ経路がないか",
-        "thermalctld / fan control 系の minimum/maximum 反映実装"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/platform/query-stats-capability-new-sai-api-indroduction.md",
-      "issue": 252,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-sairedis (syncd) FlexCounter.cpp で sai_query_stats_capability を使う改修が現行 master に取り込まれているか未確認",
-        "updateSupportedPortCounters / Queue / PG / RIF / BufferPool 5 関数の改修存在確認",
-        "vendor SAI 不実装時の SAI_STATUS_NOT_IMPLEMENTED フォールバック動作確認",
-        "sai_stat_capability_t の stats_modes ビットマスク利用範囲 (active 化されているか)"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/platform/s3ip-sysfs-specification.md",
       "verification": "hld-only",
       "concerns": [
@@ -2214,18 +2099,6 @@
       "priority": "low",
       "issue": 528,
       "pr": 529
-    },
-    {
-      "page": "docs/platform/sonic-port-fec-ber.md",
-      "issue": 331,
-      "verification": "hld-only",
-      "concerns": [
-        "port_rates.lua への Pre/Post FEC BER 計算ロジック追加が現行 sonic-swss にあるか未確認",
-        "portstat.py の -f 出力に FEC_PRE_BER / FEC_POST_BER 列が含まれるか未確認",
-        "SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS / SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES のプラットフォーム対応状況",
-        "serdes 速度 lookup テーブルが現行 lua で網羅されているか未確認"
-      ],
-      "priority": "low"
     },
     {
       "page": "docs/platform/sonic-port-naming-convention-change.md",
@@ -2265,18 +2138,6 @@
       "priority": "low"
     },
     {
-      "page": "docs/system/platform-monitor-requirement-for-chassis-subsystem.md",
-      "issue": 297,
-      "verification": "hld-only",
-      "concerns": [
-        "chassisd の CHASSIS_MODULE_TABLE / CHASSIS_ASIC_TABLE 生成実装の現状確認",
-        "psud のシャーシ向けパワーアルゴリズムと thermalctld のシャーシ FAN アルゴリズム実装確認",
-        "show chassis module status の hostname 表示拡張 (要件 #21) 取り込み確認",
-        "Future 要件 (LED 統一 / sensors 移行 / Generic console) の進捗追跡"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/system/sonic-debian-upgrade-cadence.md",
       "verification": "hld-only",
       "concerns": [
@@ -2295,18 +2156,6 @@
       "priority": "low",
       "issue": 515,
       "pr": 516
-    },
-    {
-      "page": "docs/system/sonic-logging-system-dumps-arch-spec.md",
-      "issue": 295,
-      "verification": "hld-only",
-      "concerns": [
-        "libswss-common の共通 logging / sysdump API 実装範囲確認",
-        "Per daemon / Per platform ダンプ登録機構の実装存在確認 (generate_dump / show techsupport 等)",
-        "sonic-mgmt 側の sysdump 取得 / 設定デプロイパイプラインの整合確認",
-        "クラッシュ検知 → sysdump 自動生成パスの実装確認"
-      ],
-      "priority": "low"
     },
     {
       "page": "docs/system/sonic-optional-feature-control-enhancement.md",
