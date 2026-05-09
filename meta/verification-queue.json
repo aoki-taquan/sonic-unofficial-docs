@@ -907,7 +907,8 @@
         "secret マスク (PASSWD_CMDS) ロジックの確認"
       ],
       "priority": "medium",
-      "issue": 495
+      "issue": 495,
+      "pr": 496
     },
     {
       "page": "docs/management/ssh-server-global-config-hld.md",

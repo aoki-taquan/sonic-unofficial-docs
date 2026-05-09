@@ -11,5 +11,6 @@
     "secret \u30de\u30b9\u30af (PASSWD_CMDS) \u30ed\u30b8\u30c3\u30af\u306e\u78ba\u8a8d"
   ],
   "priority": "medium",
-  "issue": 495
+  "issue": 495,
+  "pr": 496
 }
