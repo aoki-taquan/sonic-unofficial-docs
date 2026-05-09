@@ -1,7 +1,7 @@
 ---
 title: ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは初期版の HLD（要件文書）に基づく。`l3` / `mirror` 以外の table type、`config acl` CLI、aclorch の SAI 属性マッピング、`l2_prot_type` の IPv6 拡張等、実装は HLD よりも先行している箇所が多いため、このページは **後続 HLD・実コード裏取りで上書きされる前提** で読むこと。
+!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+    現行 master の `sonic-swss/orchagent/aclorch.cpp` で **byte counter** (`SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT` 周辺、aclorch.cpp:517)、**IPv6 ルックアップ拡張** (`SAI_ACL_IP_TYPE_IPV6ANY` / `..._NON_IPV6` / `MATCH_INNER_ETHER_TYPE` 等、aclorch.cpp:84,508-509)、**LAG bind** (`SAI_ACL_BIND_POINT_TYPE_LAG`、aclorch.cpp:106,3733)、**MCLAG/portchannel リダイレクト** が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。
 
 # ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
 
