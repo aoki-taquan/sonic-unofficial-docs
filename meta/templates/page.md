@@ -75,13 +75,21 @@ config xxx ...
 [^2]: <issue or PR URL>
 
 <!-- concerns hint:
-verification: hld-only / issue-confirmed の場合、以下の観点で 3-6 件の concerns を
-meta/verification-queue.json に登録すること（重複削除可）:
-  - 該当 Orch / daemon / handler の実装存在確認
-  - CONFIG_DB / STATE_DB のスキーマ追加が現行 master に取り込まれているか
-  - CLI コマンドの sonic-utilities への取り込み状況
-  - SAI 属性 / API が community SAI / syncd で利用可能か
-  - HLD 改訂日付が古い場合の現行 master 実装との乖離リスク
-  - upstream 仕様（FRR / SAI / Linux 等）との差分の有無
+verification: hld-only / issue-confirmed の場合、6 軸から 3-6 件の concerns を
+meta/verification-queue.json に登録する（重複削除可、動詞句で終える）:
+  (1) 該当 Orch / daemon / handler の実装存在確認
+  (2) CONFIG_DB / STATE_DB のスキーマ追加が現行 master に取り込まれているか
+  (3) CLI コマンドの sonic-utilities への取り込み状況
+  (4) SAI 属性 / API が community SAI / syncd で利用可能か
+  (5) HLD 改訂日付が古い / Proposal ステータスの場合の現行 master との乖離
+  (6) upstream 仕様（FRR / SAI / Linux 等）との差分の有無
+
+各 concern の語尾例:
+  - "<X>Orch の <feature> 実装存在確認"
+  - "CONFIG_DB の <TABLE> スキーマが現行 master にあるか未確認"
+  - "config <X> CLI の sonic-utilities への取り込み確認"
+  - "SAI 属性 SAI_<...> が community SAI に取り込まれているか未確認"
+  - "HLD は YYYY 年改訂のため現行 master 実装との大幅な乖離リスクあり"
+  - "<upstream-component> 上流仕様との差分は未確認"
 -->
 

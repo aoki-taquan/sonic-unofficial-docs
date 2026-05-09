@@ -44,6 +44,18 @@
 - `related.cli`: コマンドの先頭フォーム（例: `config bgp`、`show interface counters`）
 - `related.yang`: YANG モジュール名のみ。**拡張子 `.yang` やリビジョンは付けない**（例: `sonic-bgp`、`sonic-port`）
 
+## title の長さ
+
+- frontmatter `title`（日本語）は **40 字を目安**。長い注釈は本文 H1 以降の説明文で扱う
+- nav 表示が崩れない範囲で短く意味重視
+
+## verification-queue.entries[].concerns の表現ガイド
+
+- 各 concern は **動詞句で終わる**（「〜の確認」「〜の実装存在確認」「〜が現行 master にあるか未確認」等）
+- 主語は省略可、対象（Orch / daemon / DB スキーマ / CLI / SAI 属性）を必ず含める
+- 1 行 60 〜 120 字程度に収める。長くなるなら分ける
+- 6 軸を網羅できれば十分: **(1) Orch / daemon の実装存在 (2) CONFIG_DB / STATE_DB スキーマ (3) CLI 取り込み (4) SAI 属性 / API (5) HLD 改訂日と現行 master の乖離 (6) upstream 仕様との差分**
+
 ## エビデンスコメントの形式
 
 ```markdown
