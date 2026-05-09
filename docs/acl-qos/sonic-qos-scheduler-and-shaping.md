@@ -22,6 +22,9 @@ related:
 !!! warning "裏取りステータス: HLD-only / 古い HLD"
     本 HLD は 2019 年 10 月版 (Rev 0.1) で 6 年超経過、Status は Initial。`QosOrch` の SCHEDULER / QUEUE / PORT_QOS_MAP テーブル処理、SAI scheduler API 利用、warm-reboot 横断保持の現行 master 実装は未裏取り。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
 
 ## 概要

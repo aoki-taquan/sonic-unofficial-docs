@@ -26,6 +26,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     `buffermgrd` の dynamic クラス、Lua plugin（vendor 提供）、`buffer_model` フィールド、`asic_table.json` / `peripheral_table.json` 経由の STATE_DB 公開、`SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE` の community SAI 取り込みは未確認。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # Dynamic Headroom Calculation（buffer_model = dynamic）
 
 ## 概要

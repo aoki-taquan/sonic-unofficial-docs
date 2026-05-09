@@ -47,7 +47,10 @@
       ],
       "priority": "high",
       "issue": 464,
-      "pr": 465
+      "pr": 465,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md",
@@ -62,18 +65,21 @@
       ],
       "priority": "high",
       "issue": 440,
-      "pr": 441
+      "pr": 441,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "IntfMgr / IntfsOrch の SAG ハンドラ実装の現行 master 取り込み確認",
-        "SAG / SAG_TABLE スキーマと VLAN_INTERFACE.static_anycast_gateway フィールドの sonic-yang-models 反映確認",
-        "config static-anycast-gateway / config vlan static-anycast-gateway CLI の sonic-utilities 取り込み確認",
-        "RouteOrch の MAC 変更時 IPv6 link-local me-route 再追加実装確認",
-        "HLD は 2021-10 改訂で 4 年経過、現行 master との乖離リスクあり"
+        "HLD v0.3 (2021-10) で承認済みだが community master sonic-buildimage HEAD 9ea932e には src/sonic-sag が無く、sonic-yang-models にも sonic-static-anycast-gateway.yang が存在しない。SAI / IntfsOrch 統合も未取り込み"
+      ],
+      "verified_concerns": [
+        "HLD path doc/sag/sag-HLD.md は SONiC HEAD 380509d でも存在し、ページ記述と整合",
+        "IntfMgr / IntfsOrch / sonic-utilities CLI / sonic-yang-models のいずれにも SAG 関連シンボルが master に取り込まれていないことを 2026-05-09 に確認"
       ],
       "priority": "high"
     },
@@ -370,7 +376,10 @@
         "frrcfgd と bgpcfgd の切替手順 / 同時起動防止の実装確認",
         "2019-2021 年 HLD のため Management Framework 全体方針との整合性確認"
       ],
-      "priority": "high"
+      "priority": "high",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
@@ -415,7 +424,10 @@
       ],
       "priority": "high",
       "issue": 501,
-      "pr": 502
+      "pr": 502,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/switching/layer-2-forwarding-enhancements.md",
@@ -464,7 +476,39 @@
       ],
       "priority": "high",
       "issue": 524,
-      "pr": 525
+      "pr": 525,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
+    },
+    {
+      "page": "docs/system/sonic-swss-docker-warm-restart.md",
+      "verification": "hld-only",
+      "concerns": [
+        "orchagent の m_toSync 空判定 + restart prepare API の実装確認",
+        "ProducerStateTable / ConsumerStateTable の consumer-only modify 改修取り込み確認",
+        "swss / syncd docker 分離の現行 systemd unit 構成確認",
+        "WARM_RESTART テーブルの sonic-yang-models 取り込み確認",
+        "warm start 失敗時の cold restart 自動 fallback 実装確認",
+        "Warmboot Manager との置換 / 共存関係の現行設計確認"
+      ],
+      "priority": "high"
+    },
+    {
+      "page": "docs/system/system-wide-warmboot.md",
+      "verification": "hld-only",
+      "concerns": [
+        "/host/warmboot/dump.rdb / sai-warmboot.bin の現行 fast-reboot スクリプト取り込み確認",
+        "SONIC_BOOT_TYPE 値の現行 master 表記確認 (fast-reboot vs fast)",
+        "SAI_SWITCH_ATTR_RESTART_WARM / SAI_KEY_WARM_BOOT_WRITE_FILE / SAI_KEY_BOOT_TYPE の community SAI 取り込み確認",
+        "WARM_RESTART_TABLE スキーマの sonic-yang-models 取り込み確認",
+        "Warmboot Manager (Google 2023) との共存 / 排他関係の現行設計確認",
+        "BGP graceful restart / teamd 90s timer 値の現行 master 確認"
+      ],
+      "priority": "high",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
@@ -611,6 +655,22 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/dynamically-headroom-calculation.md",
+      "verification": "hld-only",
+      "concerns": [
+        "buffermgrd の dynamic クラスと vendor Lua plugin 呼び出し経路の現行 master 取り込み確認",
+        "DEVICE_METADATA.buffer_model の sonic-yang-models 取り込み確認",
+        "ASIC_TABLE / PERIPHERAL_TABLE / PORT_PERIPHERAL_TABLE / BUFFER_MAX_PARAM の STATE_DB 公開実装確認",
+        "LOSSLESS_TRAFFIC_PATTERN / LOSSLESS_BUFFER_PARAM の YANG 取り込み確認",
+        "SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE の community SAI 取り込み確認",
+        "vendor (Mellanox/Broadcom) の dynamic Lua plugin と asic_table.json 提供状況確認"
+      ],
+      "priority": "medium",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
+    },
+    {
       "page": "docs/acl-qos/egress-outer-dscp-change-table.md",
       "verification": "hld-only",
       "concerns": [
@@ -621,7 +681,10 @@
         "sonic-yang-models 側の ACL_TABLE_TYPE への追加確認",
         "提案 HLD (2024-07 初版) であり現行 master 取り込み状況の確認"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
@@ -681,7 +744,10 @@
         "EAPoL / MAB 用 host interface trap の SAI / CoPP 設定取り込み確認",
         "RADIUS 動的 VLAN 割当（Tunnel attributes）の VLAN orch 連携確認"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/acl-qos/port-buffer-drop-counters-in-sonic.md",
@@ -723,7 +789,10 @@
         "vendor 別 zero_profile 提供有無の現行 sonic-buildimage 確認",
         "shared headroom pool model など複数 buffer model における zero_profile 互換性確認"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/acl-qos/sonic-port-mirroring-hld.md",
@@ -888,7 +957,10 @@
       ],
       "priority": "medium",
       "issue": 199,
-      "pr": 200
+      "pr": 200,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+      ]
     },
     {
       "page": "docs/internals/sonic-counter-initialization-optimization.md",

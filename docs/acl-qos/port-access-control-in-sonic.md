@@ -24,6 +24,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     `Authentication Manager` / `mabd` / `hostapdmgrd` の現行 master 取り込み、SAI Bridge port learning モード変更、PAC 用 host interface trap、各 CONFIG_DB スキーマ・CLI の sonic-utilities 取り込みは未確認。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # Port Access Control（PAC: 802.1x / MAB / RADIUS）
 
 ## 概要

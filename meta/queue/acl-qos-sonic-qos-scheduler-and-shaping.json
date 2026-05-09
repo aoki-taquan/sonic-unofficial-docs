@@ -2,14 +2,17 @@
   "page": "docs/acl-qos/sonic-qos-scheduler-and-shaping.md",
   "verification": "hld-only",
   "concerns": [
-    "QosOrch (orchagent) \u3067 SCHEDULER / QUEUE / PORT_QOS_MAP \u30c6\u30fc\u30d6\u30eb\u304b\u3089 SAI scheduler \u3092\u751f\u6210\u3059\u308b\u5b9f\u88c5\u306e\u73fe\u884c master \u78ba\u8a8d",
-    "SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE / MAX_BANDWIDTH_RATE / SCHEDULING_WEIGHT \u7b49\u306e SAI \u5c5e\u6027\u304c community SAI \u3067\u30b5\u30dd\u30fc\u30c8\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
-    "VLAN / PortChannel \u306b scheduler \u3092\u9069\u7528\u3057\u305f\u969b\u306e\u30a8\u30e9\u30fc\u30cf\u30f3\u30c9\u30ea\u30f3\u30b0\u5b9f\u88c5\u78ba\u8a8d",
-    "warm-reboot \u6a2a\u65ad\u3067 scheduler profile \u3068 queue/port \u30d0\u30a4\u30f3\u30c9\u304c\u4fdd\u6301\u3055\u308c\u308b\u304b\u78ba\u8a8d",
-    "scheduler profile \u306e\u6700\u5927\u500b\u6570 128 \u304c\u73fe\u884c ASIC \u7fa4\u3067\u59a5\u5f53\u304b\u78ba\u8a8d",
-    "\u672c HLD \u306f 2019 \u5e74\u7248\u3067 6 \u5e74\u4ee5\u4e0a\u7d4c\u904e\u3057\u3066\u304a\u308a Status=Initial\u3002\u4ed5\u69d8\u304c\u73fe\u884c\u3068\u4e56\u96e2\u3057\u3066\u3044\u308b\u53ef\u80fd\u6027\u5927"
+    "QosOrch (orchagent) で SCHEDULER / QUEUE / PORT_QOS_MAP テーブルから SAI scheduler を生成する実装の現行 master 確認",
+    "SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE / MAX_BANDWIDTH_RATE / SCHEDULING_WEIGHT 等の SAI 属性が community SAI でサポートされているか確認",
+    "VLAN / PortChannel に scheduler を適用した際のエラーハンドリング実装確認",
+    "warm-reboot 横断で scheduler profile と queue/port バインドが保持されるか確認",
+    "scheduler profile の最大個数 128 が現行 ASIC 群で妥当か確認",
+    "本 HLD は 2019 年版で 6 年以上経過しており Status=Initial。仕様が現行と乖離している可能性大"
   ],
   "priority": "high",
   "issue": 464,
-  "pr": 465
+  "pr": 465,
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

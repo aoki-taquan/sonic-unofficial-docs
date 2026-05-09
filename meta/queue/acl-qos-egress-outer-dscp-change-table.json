@@ -9,5 +9,8 @@
     "sonic-yang-models 側の ACL_TABLE_TYPE への追加確認",
     "提案 HLD (2024-07 初版) であり現行 master 取り込み状況の確認"
   ],
-  "priority": "medium"
+  "priority": "medium",
+  "verified_concerns": [
+    "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認"
+  ]
 }

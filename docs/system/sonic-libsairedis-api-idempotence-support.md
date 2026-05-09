@@ -16,6 +16,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     HLD は warm-reboot 議事系。`ATTR2OID_*` / `OID2ATTR_*` / `DEFAULT_*` 各キープレフィックスを RESTORE_DB (DB 7) に置く設計が現行 sairedis の master ブランチに採用されているかは未裏取り（`syncd view comparison` 案との競合あり）。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
 
 ## 概要

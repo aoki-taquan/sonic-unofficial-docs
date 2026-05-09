@@ -19,6 +19,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     `UNDERLAY_SET_DSCP` / `MARK_META` / `EGR_SET_DSCP` の AclOrch 内部展開、SAI metadata 属性の community SAI 取り込み、CLI の sonic-utilities 取り込みは未確認。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
 
 ## 概要

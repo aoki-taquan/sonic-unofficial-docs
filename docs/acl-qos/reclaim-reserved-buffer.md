@@ -22,6 +22,9 @@ related:
 !!! warning "裏取りステータス: HLD-only"
     `zero_profile` を含む BUFFER スキーマ拡張、buffermgrd / db_migrator / Mellanox SAI 側挙動は現行 master 未裏取り。
 
+!!! note "Verifier 2026-05-09: HLD パス再確認済み"
+    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+
 # Reclaim Reserved Buffer（admin-down ポートの zero_profile）
 
 ## 概要
