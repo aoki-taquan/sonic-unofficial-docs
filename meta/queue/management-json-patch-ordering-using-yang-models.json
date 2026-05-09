@@ -11,5 +11,6 @@
     "\u672c HLD \u306f 2021 \u5e74\u7248\u3067 5 \u5e74\u7d4c\u904e\u3002priority=high \u3067 queue \u767b\u9332"
   ],
   "priority": "high",
-  "issue": 499
+  "issue": 499,
+  "pr": 500
 }

@@ -189,7 +189,8 @@
         "本 HLD は 2021 年版で 5 年経過。priority=high で queue 登録"
       ],
       "priority": "high",
-      "issue": 499
+      "issue": 499,
+      "pr": 500
     },
     {
       "page": "docs/management/p4rt-application-hld.md",
