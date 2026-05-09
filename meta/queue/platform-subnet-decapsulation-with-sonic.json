@@ -1,0 +1,14 @@
+{
+  "page": "docs/platform/subnet-decapsulation-with-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "TunnelDecapOrch \u306e SUBNET_DECAP / TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE \u53d6\u308a\u8fbc\u307f\u78ba\u8a8d",
+    "MP2MP decap term type \u306e SAI \u5b9f\u88c5\u3068\u5404 ASIC \u5bfe\u5fdc\u72b6\u6cc1\u78ba\u8a8d",
+    "IPINIP_SUBNET / IPINIP_V6_SUBNET \u306e\u81ea\u52d5\u751f\u6210\u30c6\u30f3\u30d7\u30ec\u30fc\u30c8\u304c swssconfig \u914d\u4e0b\u306b\u8ffd\u52a0\u3055\u308c\u3066\u3044\u308b\u304b\u78ba\u8a8d",
+    "src_ip / src_ip_v6 \u52d5\u7684\u66f4\u65b0\u6642\u306b decap term \u306e source IP \u304c\u66f4\u65b0\u3055\u308c\u308b\u30ed\u30b8\u30c3\u30af\u306e\u5b9f\u88c5\u78ba\u8a8d",
+    "swssconfig.sh \u306e warm-reboot \u62e1\u5f35 (subnet decap \u7528 2 tunnel \u306e\u307f\u66f8\u8fbc) \u306e\u5b9f\u88c5\u78ba\u8a8d",
+    "SUBNET_DECAP YANG \u30e2\u30c7\u30eb\u306e\u53d6\u308a\u8fbc\u307f\u72b6\u6cc1\u78ba\u8a8d"
+  ],
+  "priority": "medium",
+  "issue": 532
+}
