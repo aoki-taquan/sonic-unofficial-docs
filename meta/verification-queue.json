@@ -901,7 +901,8 @@
         "MuxOrch が standby 移行時に ingress drop ACL を skip するロジックの実装確認"
       ],
       "priority": "high",
-      "issue": 151
+      "issue": 151,
+      "pr": 152
     }
   ]
 }
