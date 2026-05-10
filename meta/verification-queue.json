@@ -336,6 +336,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/platform/sonictpidsettinghld1.md",
+      "issue": 685,
+      "verification": "hld-only",
+      "concerns": [
+        "PortsOrch / IntfMgr の TPID 設定 code path 実装存在確認",
+        "PORT.tpid / PORTCHANNEL.tpid の現行 master CONFIG_DB スキーマ取り込み確認",
+        "config interface tpid / show interface tpid CLI の sonic-utilities 取り込み確認",
+        "SWITCH_CAPABILITY|switch の PORT_TPID_CAPABLE / LAG_TPID_CAPABLE 取り込みと boot 時 capability query 実装確認",
+        "SAI_PORT_ATTR_TPID / SAI_LAG_ATTR_TPID (SAI PR #1089) の community SAI 取り込み状況確認",
+        "HLD は 2020-07 In Review Rev 0.2 で停滞。現行 master との大幅な乖離リスクあり"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/bfd-hw-offload.md",
       "issue": 91,
       "verification": "code-verified",
