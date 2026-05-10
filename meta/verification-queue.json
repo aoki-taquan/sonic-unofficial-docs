@@ -280,6 +280,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/platform/cmis-and-c-cmis-support-for-zr.md",
+      "verification": "hld-only",
+      "concerns": [
+        "xcvrd の CMIS state machine 実装と C-CMIS 拡張取り込みの現行 master 確認",
+        "TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS スキーマの ZR 拡張フィールド確認",
+        "config interface transceiver-frequency / transceiver-power CLI の sonic-utilities 取り込み確認",
+        "sonic-platform-common SfpOptoeBase の C-CMIS 対応 method（laser tuning / power / app-select）確認",
+        "ZR module Application Select マッピング（100G/400G / FEC mode）の per-vendor 差分確認",
+        "port auto-FEC / autoneg / fast-link-up / port-profile-init との挙動整合確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/platform/icmp-hardware-offload.md",
       "issue": 43,
       "verification": "code-verified",
@@ -371,6 +384,32 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/routing/evpn-vxlan-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnRouteOrch の現行実装存在確認",
+        "CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認",
+        "FRR BGP-EVPN（bgpd / zebra）と SONiC 連携（fpmsyncd / FRR template）の現行実装確認",
+        "show evpn / show vxlan CLI の sonic-utilities 取り込み確認",
+        "Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap オブジェクト）確認",
+        "EVPN VxLAN multihoming HLD（ESI / DF election / Type-1 / Type-4）との実装上の境界確認"
+      ],
+      "priority": "high"
+    },
+    {
+      "page": "docs/routing/evpn-vxlan-multihoming.md",
+      "verification": "hld-only",
+      "concerns": [
+        "VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4 ハンドリング）の現行実装存在確認",
+        "CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認",
+        "FRR EVPN-MH（bgpd / zebra）の SONiC ビルド取り込み version と機能カバレッジ確認",
+        "SAI ESI label / split-horizon サポート（SAI_TUNNEL / SAI_TUNNEL_TERM 拡張属性）の community SAI 取り込み確認",
+        "show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認",
+        "DF election hold timer / mobility extended community の現行既定値と挙動確認"
+      ],
+      "priority": "high"
+    },
+    {
       "page": "docs/routing/high-level-design-document.md",
       "verification": "code-verified",
       "concerns": [],
@@ -387,6 +426,19 @@
         "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認 -> Phase 1 capability + nh group type 切替は確認、CONFIG_DB knob は明示無し (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/routing/local-ars-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認",
+        "ARSOrch（または NextHopOrch / NextHopGroupOrch 拡張）の現行実装存在確認",
+        "CONFIG_DB ARS / ARS_PROFILE / ARS_INTERFACE スキーマの現行 sonic-yang-models 取り込み確認",
+        "config ars / show ars CLI の sonic-utilities 取り込み確認",
+        "対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認",
+        "inner packet hashing / policy-based hashing / fine-grained ECMP / weighted ECMP との同居挙動確認"
+      ],
+      "priority": "high"
     },
     {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
@@ -492,6 +544,19 @@
         "本ドキュメントは open issues 形式で内容が古い。実装は SONiC_Warm_Restart.md 等の正式 HLD で更新されているはず -> 現行実装と整合 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/zero-touch-provisioning-ztp.md",
+      "verification": "hld-only",
+      "concerns": [
+        "ztp daemon (sonic-ztp パッケージ) の現行 master 取り込みと systemd 起動経路の確認",
+        "DHCP option 番号（option 67 / 225 / 239 等）の platform 別現行値とテンプレート確認",
+        "plugin section type（configdb-json / firmware / connectivity-check / provisioning-script 等）の現行サポート一覧確認",
+        "ZTP JSON state ファイル（/var/lib/ztp/ztp_state）スキーマの現行値確認",
+        "show ztp status / ztp run / ztp disable CLI の sonic-utilities 取り込み確認",
+        "secure-upgrade / fwutil / gNOI OS API との image 検証・OS 適用統合の現行実装確認"
+      ],
+      "priority": "high"
     },
     {
       "page": "docs/acl-qos/acl-flex-counters-support.md",
@@ -1436,6 +1501,19 @@
       "priority": "medium"
     },
     {
+      "page": "docs/routing/gnmi-subscription-for-yang-data.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-gnmi server の subscribe ハンドラ実装と現行 master 取り込み確認",
+        "Redis keyspace notification (notify-keyspace-events) の有効化と STATE_DB / COUNTERS_DB 連携の現行実装確認",
+        "ON_CHANGE 対応 path の実装範囲（openconfig interfaces / network-instances 等のサポート）確認",
+        "TARGET_DEFINED の選択ロジック（path 種別 → SAMPLE/ON_CHANGE）が現行実装でどう決まっているか確認",
+        "TLS / client cert 認証と gNSI / gNOI 統合の現行実装確認",
+        "gNMI Master Arbitration / dial-out telemetry / dial-in との実装関係確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/multiple-nexthop-route-hld.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1748,6 +1826,32 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/system/critical-resource-monitoring-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "CrmOrch の現行 master 実装（追加 CRM resource 種別・SRv6 / NAT / multi-asic 拡張）の確認",
+        "SAI object availability API（SAI_OBJECT_TYPE_*_AVAILABLE_*) の community SAI 取り込み確認",
+        "CONFIG_DB CRM スキーマの現行 sonic-yang-models 取り込み確認",
+        "crm config / crm show CLI の sonic-utilities 取り込み確認",
+        "generic-sai-extension CRM HLD との実装統合・新 resource 追加機構の確認",
+        "system health monitor / telemetry dial-out への CRM 通知連携の現行実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/system/event-driven-techsupport-invocation-coredump-mgmt.md",
+      "verification": "hld-only",
+      "concerns": [
+        "coredump_gen_handler / techsupport_cleanup script の現行 sonic-utilities / sonic-buildimage 取り込み確認",
+        "/proc/sys/kernel/core_pattern の現行設定値（handler 経路と引数）の確認",
+        "CONFIG_DB AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE スキーマと sonic-yang-models 取り込み確認",
+        "STATE_DB AUTO_TECHSUPPORT スキーマの現行値確認",
+        "config auto-techsupport / show auto-techsupport CLI の sonic-utilities 取り込み確認",
+        "system health monitor / kdump / persistent log level との連携の現行実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/kdump-remote-ssh.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1776,6 +1880,19 @@
         "sonic-memory-statistics YANG モジュールの sonic-yang-models 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/multi-asic-warm-reboot.md",
+      "verification": "hld-only",
+      "concerns": [
+        "warm-reboot スクリプトの multi-asic 対応経路（namespace 横断の barrier 制御）の現行実装確認",
+        "per-namespace /host/warmboot/<ns>/ ファイル配置と命名規則の現行値確認",
+        "swss@asicN / syncd@asicN の warm shutdown 順序制御の現行 systemd / docker_image_ctl 実装確認",
+        "BGP_INTERNAL_NEIGHBOR の hold timer / GR timer の現行既定値確認",
+        "multi-asic single-json と WARM_RESTART 設定の互換性・per-asic 上書き挙動確認",
+        "HLD 記述と現行 multi-asic warm reboot CI / sonic-mgmt テストカバレッジの差異確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/system/persistent-log-level-hld.md",
@@ -1831,6 +1948,45 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/system/sonic-bmc-platform-management-monitoring.md",
+      "verification": "hld-only",
+      "concerns": [
+        "sonic-platform-common の Psu / Fan / Thermal クラスの BMC backend 切替実装の現行確認",
+        "pmon docker 内での Redfish / IPMI クライアントライブラリ取り込みと依存パッケージの確認",
+        "STATE_DB FAN_INFO / PSU_INFO / THERMAL_INFO スキーマと BMC 由来データ追加カラムの現行確認",
+        "BMC イベント（SEL / Redfish event）から system health monitor / syslog への通知経路の現行実装確認",
+        "BMC 認証情報の格納方式と rotation の現行運用フロー確認",
+        "vendor 別 Redfish スキーマ差吸収レイヤ（OEM 属性マッピング）の現行実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/system/sonic-container-hardening.md",
+      "verification": "hld-only",
+      "concerns": [
+        "docker_image_ctl.j2 の cap-add / cap-drop 制御テンプレート化の現行実装確認",
+        "各 docker（swss / syncd / bgp / teamd / lldp / dhcp_relay / pmon 等）の必要 capability matrix の現行値確認",
+        "read-only ファイルシステム / tmpfs 適用状況の docker 別の現行確認",
+        "vendor SAI / SDK が要求する device / privileged 要件の現行 platform 別確認",
+        "application extension manifest の capability 宣言サポート（required-caps / privileged フラグ）の現行実装確認",
+        "HLD 記述と現行 master の hardening 進捗（どの docker まで脱 privileged 済か）の差分確認"
+      ],
+      "priority": "medium"
+    },
+    {
+      "page": "docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "config interface breakout / show interfaces breakout の sonic-utilities への取り込みと依存解決ロジックの現行実装確認",
+        "platform.json supported breakout modes の現行 platform 別記述確認",
+        "BREAKOUT_CFG スキーマと sonic-yang-models 取り込み確認",
+        "PortsOrch の dynamic port create / remove 経路（SAI port object 再生成）の現行実装確認",
+        "VLAN_MEMBER / PORT_CHANNEL_MEMBER / ACL_RULE / INTERFACE / ROUTE 等の依存削除自動化の現行範囲確認",
+        "multi-asic 環境 / CMIS Application-Select / ZR fixed-app との整合の現行実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/sonic-express-reboot-hld-spec.md",
       "issue": 322,
       "verification": "code-verified",
@@ -1866,6 +2022,19 @@
       "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
     },
     {
+      "page": "docs/system/sonic-network-time-protocol-ntp-client-configuration.md",
+      "verification": "hld-only",
+      "concerns": [
+        "現行 master の NTP daemon（ntpd vs chrony）の選定状況の確認",
+        "hostcfgd の NTP config rendering 経路（jinja テンプレート / ntp.conf or chrony.conf）の現行実装確認",
+        "CONFIG_DB NTP / NTP_SERVER / NTP_KEY スキーマと sonic-yang-models 取り込み確認",
+        "config ntp / show ntp CLI の sonic-utilities 取り込み確認",
+        "mgmt VRF と data VRF 経路の同時利用が現行実装でどう扱われているか確認",
+        "chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/system/sonic-python-logger-enhancement.md",
       "issue": 133,
       "verification": "discrepancy-found",
@@ -1898,6 +2067,19 @@
       "issue": 155,
       "pr": 156,
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/sonic-warm-reboot.md",
+      "verification": "hld-only",
+      "concerns": [
+        "WARM_RESTART スキーマ（system / docker 別）の現行 sonic-yang-models 取り込み確認",
+        "warm-reboot script の現行 SONIC_BOOT_TYPE / /host/warmboot/sai-warmboot.bin パスの確認",
+        "syncd warm recovery（init view → apply view → diff）の現行実装確認",
+        "各アプリ（bgp / teamd / lldp / dhcp_relay）の warm restart 対応の現行実装範囲確認",
+        "HLD 記述（same image / no-downgrade only）と express-reboot / fast-reboot 等の派生機能との関係整理",
+        "vendor SAI の warm boot サポート要件（SAI_KEY_BOOT_TYPE / RESTART_WARM 等）の現行 community SAI 文書確認"
+      ],
+      "priority": "medium"
     },
     {
       "page": "docs/system/static-dns-configuration.md",
@@ -2025,6 +2207,19 @@
       "priority": "low"
     },
     {
+      "page": "docs/routing/detailed-steps-to-upgrade-frr-in-sonic.md",
+      "verification": "hld-only",
+      "concerns": [
+        "src/sonic-frr/patches/ ディレクトリ構造と quilt-like 適用機構の現行実装確認",
+        "sonic-buildimage submodule pin の現行 FRR version 確認",
+        "bgpcfgd / fpmsyncd / frrcfgd の FRR version 互換ロジックの現行実装確認",
+        "graceful restart timer / warm-restart との連動の現行値確認",
+        "BMP / SRv6 / VRF / unnumbered 関連 patch の upstream 化進捗確認",
+        "HLD 自体の改訂日と現行 master FRR version の乖離リスク確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/switching/wake-on-lan-in-sonic.md",
       "issue": 17,
       "verification": "discrepancy-found",
@@ -2059,6 +2254,32 @@
       "priority": "low",
       "issue": 515,
       "pr": 516
+    },
+    {
+      "page": "docs/system/sonic-pcie-monitoring-services-hld.md",
+      "verification": "hld-only",
+      "concerns": [
+        "pcied daemon の現行 sonic-platform-daemons 取り込みと systemd 起動経路の確認",
+        "platform 別 pcie.yaml manifest の現行整備状況確認",
+        "STATE_DB PCIE_DEVICE / PCIE_DETACH / PCIE_AER スキーマの現行値（フィールド名・key 形式）の確認",
+        "show platform pcieinfo CLI の sonic-utilities 取り込み確認",
+        "AER 取得の現行実装（sysfs 直接アクセス / aer_inject の使用有無）の確認",
+        "system health monitor / show techsupport plugin との連携の現行実装確認"
+      ],
+      "priority": "low"
+    },
+    {
+      "page": "docs/system/sonic-storage-monitoring-daemon-design.md",
+      "verification": "hld-only",
+      "concerns": [
+        "storagemond daemon の現行 sonic-platform-daemons 取り込みと systemd 起動経路の確認",
+        "STATE_DB STORAGE_INFO スキーマの現行値（フィールド名・型・device key 形式）の確認",
+        "SsdUtil / StorageUtil plugin API の sonic-platform-common 定義の現行確認",
+        "show platform storage / show platform ssdhealth CLI の sonic-utilities 取り込み確認",
+        "旧 ssdhealth-design HLD との実装統合 / 廃止状況の確認",
+        "system health monitor / show techsupport plugin との連携の現行実装確認"
+      ],
+      "priority": "low"
     },
     {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",
