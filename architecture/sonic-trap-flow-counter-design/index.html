@@ -626,6 +626,8 @@
       
         
       
+        
+      
     
     
     
@@ -978,6 +980,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14819,9 +14849,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Initial version (Rev 0.1)。<code>Flow Counter Handler</code> クラス、<code>FLOW_CNT_TRAP</code> group、<code>COUNTERS_TRAP_NAME_MAP</code> テーブル、CLI <code>counterpoll flowcnt-trap</code> / <code>show flowcnt trap stats</code> の sonic-utilities / sonic-swss / sonic-sairedis 取込状況は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-swss/orchagent/flexcounterorch.cpp:58 FLOW_CNT_TRAP_KEY</code> と <code>:87 {FLOW_CNT_TRAP_KEY, HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP}</code> で flex counter group が登録され、<code>copporch.cpp:196,1452,1494</code> で <code>COUNTERS_TRAP_NAME_MAP</code> への trap 名 ↔ OID マップが管理される。CLI は <code>sonic-utilities/show/flow_counters.py:11-15 flowcnt_trap</code> で実装。HLD どおりに沿っている。</p>
 </div>
 <h1 id="trap-flow-counterhost-if-trap-generic-counter">Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）<a class="headerlink" href="#trap-flow-counterhost-if-trap-generic-counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

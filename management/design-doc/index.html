@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14841,9 +14871,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.2 (2022)。<code>ycabled</code> の gRPC client 実装、<code>STATE_DB</code> 上の gRPC channel state テーブル、SoC 上の DualToRActive gRPC server、NIC-simulator 連携の sonic-mgmt 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-platform-daemons/sonic-ycabled/setup.py:15-22</code> で <code>proto/proto_out/linkmgr_grpc_driver.proto</code> から <code>linkmgr_grpc_driver_pb2_grpc.py</code> を <code>grpc_tools.protoc</code> で生成し、<code>grpcio-tools</code> / <code>grpcio</code> を依存に持つ。<code>tests/test_ycable.py</code> で <code>grpc_client</code>, <code>fwd_state_response_tbl</code> を使った forwarding state 同期が test されており、HLD の ycabled→SoC gRPC client design が実装に取り込まれている。</p>
 </div>
 <h1 id="grpc-clientactive-active-dualtor-ycabled-soc">gRPC client（active-active DualToR / ycabled ↔ SoC 連携）<a class="headerlink" href="#grpc-clientactive-active-dualtor-ycabled-soc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14775,9 +14805,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2019-10 改訂 (Rev 0.1) で 6 年以上停滞。Management Framework 系（mgmt-framework container, REST GW, transformer 経由）の RPC 経由 techsupport 起動経路、<code>sonic-hostservices</code> への依存実装は未確認。<code>verification-queue.priority = high</code>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p>YANG モデル <code>sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang</code> に <code>rpc sonic-show-techsupport-info</code> が定義され、annotations <code>sonic-showtech-annot.yang</code> で transformer に紐付け済み。tarball 採取本体は <code>sonic-utilities/scripts/generate_dump</code> (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。<code>sonic-buildimage</code> には <code>sonic-auto_techsupport.yang</code> も存在。RPC 起動経路は HLD どおり実装。</p>
 </div>
 <h1 id="management-framework-show-techsupportrestgnmiietf-since">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）<a class="headerlink" href="#management-framework-show-techsupportrestgnmiietf-since" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

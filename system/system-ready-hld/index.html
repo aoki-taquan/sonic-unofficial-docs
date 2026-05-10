@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14819,9 +14849,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.4 (2023-06)。<code>sysmonitor</code> daemon の sonic-buildimage 取り込み、<code>STATE_DB SYSTEM_READY</code> / app 単位の app-ready 通知メカニズム、<code>show system-health sysready-status [brief|detail]</code> の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-buildimage/src/system-health/health_checker/sysmonitor.py</code> に sysmonitor 本体が存在し、<code>sonic-utilities/scripts/sysreadyshow:30</code> が <code>SYSREADY_TABLE = "SYSTEM_READY|SYSTEM_STATE"</code> を STATE_DB から読む。CLI は <code>sonic-utilities/show/system_health.py:141 @system_health.group('sysready-status', invoke_without_command=True)</code> で実装、<code>brief</code> / <code>detail</code> サブコマンドも <code>tests/system_health_test.py:329-336</code> で検証されており、HLD どおり。</p>
 </div>
 <h1 id="system-readysysmonitor-per-app-closest-up-status-event">System Ready（sysmonitor + per-app closest UP status の event 集約）<a class="headerlink" href="#system-readysysmonitor-per-app-closest-up-status-event" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

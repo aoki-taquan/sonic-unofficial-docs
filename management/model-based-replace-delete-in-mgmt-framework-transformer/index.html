@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14753,9 +14783,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.1 (2025-03)。Mgmt-Framework Transformer の現行実装、<code>validate-xfmr</code> annotation 改名、defaults 適用ルール、virtual table の取扱の現行 master コードパスは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-mgmt-common/translib/transformer/</code> に transformer 本体と <code>xspec.go:941 case "validate-xfmr"</code> の処理が入り、<code>models/yang/annotations/sonic-extensions.yang:78-79 extension validate-xfmr { argument "validate-xfmr-name"; }</code> で extension 定義が公開されている。テスト用 <code>openconfig-test-xfmr-annot.yang</code> でも <code>sonic-ext:validate-xfmr</code> を実 annotation として使用しており、HLD で改名された validate-xfmr 名が現行 master に取り込み済み。</p>
 </div>
 <h1 id="mgmt-framework-transformer-model-based-putreplace-delete">Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE<a class="headerlink" href="#mgmt-framework-transformer-model-based-putreplace-delete" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

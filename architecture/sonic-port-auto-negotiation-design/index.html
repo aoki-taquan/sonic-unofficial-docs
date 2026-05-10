@@ -626,6 +626,8 @@
       
         
       
+        
+      
     
     
     
@@ -978,6 +980,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14819,9 +14849,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.4。<code>SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE</code> (SAI 1.7.1+) のベンダ実装、APPL_DB 経由で xcvrd が interface_type を動的に上書きする経路、portsyncd / portmgrd の autoneg incremental 反映ロジックは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-swss/orchagent/portsorch.cpp:3525 getPortAdvSpeeds</code> / <code>:3613 SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE</code> / <code>:5080-5108</code> adv_speeds incremental update が実装。STATE_DB の <code>rmt_adv_speeds</code> (peer から学習) も <code>:4862</code> で扱う。CLI は <code>sonic-utilities/config/main.py:5372 def advertised_speeds()</code> で実装済み。HLD どおり autoneg / advertised-speeds / interface-type の組合せがランタイム反映される。</p>
 </div>
 <h1 id="auto-negotiationadvertised-speeds-interface-type">ポート Auto-Negotiation（advertised-speeds / interface-type）<a class="headerlink" href="#auto-negotiationadvertised-speeds-interface-type" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

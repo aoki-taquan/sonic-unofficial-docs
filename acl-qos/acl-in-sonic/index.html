@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14797,9 +14827,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 1.1 (2025-04)。<code>AclOrch</code> の現行 master 実装、L3 / Mirror / VXLAN inner src MAC rewrite といったテーブル型対応、<code>SAI_OBJECT_TYPE_ACL_*</code> の利用範囲、<code>aclshow</code> / <code>config acl</code> の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-swss/orchagent/aclorch.cpp</code> / <code>aclorch.h</code> / <code>acltable.h</code> で AclOrch 本体が実装。APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> 名は <code>sonic-swss-common/common/schema.h:94,96</code> で <code>APP_ACL_TABLE_TABLE_NAME</code> として定義され、HLD のスタック構造（CONFIG → APPL → AclOrch → SAI）と一致。後発の DASH ACL は <code>APP_DASH_ACL_RULE_TABLE_NAME</code> (schema.h:178) として別系統で共存。</p>
 </div>
 <h1 id="acl-in-sonic-swss">ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）<a class="headerlink" href="#acl-in-sonic-swss" title="Permanent link">&para;</a></h1>
 <blockquote>

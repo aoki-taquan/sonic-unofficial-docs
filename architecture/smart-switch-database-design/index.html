@@ -626,6 +626,8 @@
       
         
       
+        
+      
     
     
     
@@ -978,6 +980,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14841,9 +14871,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD のみを根拠にした再構成。<code>featured</code> daemon が <code>has_per_dpu_scope</code> を解釈して per-DPU の database container を起動する実装、<code>database_global.json</code> の include 解決、<code>platform_env.conf</code> の <code>NUM_DPU</code> 取扱は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>has_per_dpu_scope</code> は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:85</code> で feature leaf として定義され、<code>sonic-host-services/scripts/featured:86,415</code> が読んで per-DPU instance を起動する。<code>database_global.json.j2</code> (<code>dockers/docker-database/</code>) は <code>NUM_DPU is defined</code> で DPU 用 redis をテンプレート展開し、<code>docker-database-init.sh:104</code> が <code>NUM_DPU &gt; 1</code> で global database を使う条件分岐を実装済み。</p>
 </div>
 <h1 id="smart-switch-npu-dpu-overlay-db">Smart Switch のデータベース構成（NPU 上の DPU overlay DB）<a class="headerlink" href="#smart-switch-npu-dpu-overlay-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

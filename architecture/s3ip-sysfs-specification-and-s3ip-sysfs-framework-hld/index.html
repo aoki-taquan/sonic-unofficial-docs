@@ -626,6 +626,8 @@
       
         
       
+        
+      
     
     
     
@@ -978,6 +980,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14775,9 +14805,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 採否不明</p>
-<p>HLD は 2022-08 改訂、Initial version のまま。<code>s3ip_sysfs.ko</code> の <code>sonic-platform-common</code> への取り込み、<code>/sys_switch/</code> ディレクトリツリーが現行 master の platform/2 拠点プラットフォームで標準化されているかは未確認。<code>s3ip-sysfs.service</code> の sonic-buildimage 取込状況も追跡要。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-buildimage/platform/s3ip-sysfs/</code> に host package source があり (<code>build.sh</code> / <code>debian/</code> / <code>s3ip_sysfs_frame/{cpld,fan,psu,sysled,...}_sysfs.c</code> / <code>scripts/s3ip-sysfs.service</code>)、<code>/sys_switch/</code> 仕様準拠ドライバが取り込まれている。Tencent (<code>platform/broadcom/sonic-platform-modules-tencent/tcs9400/s3ip_config</code>) と Micas (<code>...modules-micas/m2-w6940-64oc/s3ip_sysfs_cfg</code>) の 2 拠点プラットフォームで利用中。HLD どおり kernel/sysfs 層完結で CONFIG_DB は使わない。</p>
 </div>
 <h1 id="s3ip-sysfssys_switch">S3IP sysfs（/sys_switch 統一ハードウェアアクセス層）<a class="headerlink" href="#s3ip-sysfssys_switch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14776,8 +14806,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Phase 1 提案</p>
-<p>HLD は 2022-06 改訂 (Rev 0.1, "Phase 1 Design"). <code>signing_secure_boot_dev.py</code> / <code>_production.py</code> の sonic-buildimage 取り込み、<code>SB_BUILD</code> build flag、ベンダ署名サーバ統合の現状は未確認。<code>verification-queue.priority = high</code>。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found (2026-05-10)</p>
+<p>実装は HLD と少し異なる: ① 署名スクリプトは <code>.py</code> ではなく <strong>bash 版</strong> <code>sonic-buildimage/scripts/signing_secure_boot_dev.sh</code> (検証は <code>secure_boot_signature_verification.sh</code>)。② build flag は <code>SB_BUILD</code> ではなく <code>SECURE_UPGRADE_MODE</code> (<code>build_image.sh</code> で <code>!= "no_sign"</code> 判定) と <code>SECURE_UPGRADE_DEV_SIGNING_KEY</code> (<code>rules/config:287-294</code>)。③ Production 用は固定スクリプトではなく <code>SECURE_UPGRADE_PROD_SIGNING_TOOL</code> 変数で外部ツール経路を指定 (<code>Makefile.work:376-383</code>)。Boot chain (shim/grub/vmlinuz/KO) の検証思想自体は HLD どおり。</p>
 </div>
 <h1 id="sonic-secure-bootshimgrubvmlinuzko-chain-of-trust">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）<a class="headerlink" href="#sonic-secure-bootshimgrubvmlinuzko-chain-of-trust" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

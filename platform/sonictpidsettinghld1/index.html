@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14819,9 +14849,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / Status: In Review</p>
-<p>HLD は 2020-07 作成 Rev 0.2 / <strong>Status In Review</strong> のまま。<code>SAI_PORT_ATTR_TPID</code> / <code>SAI_LAG_ATTR_TPID</code> の community SAI 取込 (SAI PR #1089)、<code>PORT_TPID_CAPABLE</code> / <code>LAG_TPID_CAPABLE</code> の SWITCH_CAPABILITY テーブル更新、<code>config interface tpid</code> CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-swss/orchagent/switchorch.cpp</code> で <code>sai_query_attribute_capability(... SAI_PORT_ATTR_TPID ...)</code> と <code>SAI_LAG_ATTR_TPID</code> の capability query が実装され、<code>SWITCH_CAPABILITY_TABLE_PORT_TPID_CAPABLE</code> / <code>LAG_TPID_CAPABLE</code> を STATE_DB に書き込み済み (<code>switchorch.h</code>)。<code>portsorch.cpp</code> で <code>SAI_PORT_ATTR_TPID</code> / <code>SAI_LAG_ATTR_TPID</code> の <code>set_*_attribute</code> を発行。CLI は <code>sonic-utilities/config/main.py</code> の <code>def tpid()</code> (line 5614) と <code>show/interfaces/__init__.py</code> の <code>def tpid()</code> (line 175) で実装。HLD どおりに community 取り込み済み。</p>
 </div>
 <h1 id="lag-tpid-0x81000x91000x92000x88a8">ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）<a class="headerlink" href="#lag-tpid-0x81000x91000x92000x88a8" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -624,6 +624,8 @@
       
         
       
+        
+      
     
     
     
@@ -973,6 +975,34 @@
     
   
     JSON Change Application（apply-change / table 単位 alphabetical 適用）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
   
 
     
@@ -14819,9 +14849,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は 2019-07 改訂 (Rev 0.2) で 5 年以上停滞。<code>config-setup</code> の sonic-buildimage への取り込み、<code>updategraph</code> から責務移譲が完了しているか、frr 等の Config DB 外の設定 backup/restore 範囲は未確認。<code>verification-queue.priority = high</code>。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<p><code>sonic-buildimage/files/build_templates/config-setup.service.j2</code> で systemd unit が組み込まれ、<code>files/image_config/config-setup/config-setup</code> (本体スクリプト) と <code>config-setup.conf</code> が image に同梱される。<code>updategraph*</code> のソースは見つからず、HLD の方針どおり責務が <code>config-setup</code> に集約された結果と整合。<code>first_boot</code> / <code>factory_reset</code> / <code>migration</code> の各ハンドラは config-setup スクリプト本体に実装。</p>
 </div>
 <h1 id="config-setup-first-boot-config-migration">config-setup サービス（first-boot config 生成 / 版間 migration）<a class="headerlink" href="#config-setup-first-boot-config-migration" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
