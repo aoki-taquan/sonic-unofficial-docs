@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-pfcwd/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-vnet/">
       
       
-        <link rel="prev" href="../config-nat/">
+        <link rel="prev" href="../config-vlan/">
       
       
-        <link rel="next" href="../config-platform-firmware/">
+        <link rel="next" href="../config-vrf/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config pfcwd サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>config vnet サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-pfcwd" class="md-skip">
+        <a href="#config-vnet" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config pfcwd サブコマンド
+              config vnet サブコマンド
             
           </span>
         </div>
@@ -15847,10 +15847,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config-pfcwd-start" class="md-nav__link">
+  <a href="#config-vnet-add" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config pfcwd start
+        config vnet add
       
     </span>
   </a>
@@ -15858,10 +15858,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#config-vnet-del" class="md-nav__link">
     <span class="md-ellipsis">
       
-        その他の設定
+        config vnet del
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-vnet-add-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config vnet add-route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-vnet-del-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config vnet del-route
       
     </span>
   </a>
@@ -15874,18 +15896,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        注意
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15912,7 +15923,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-pfcwd.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-vnet.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15920,9 +15931,9 @@
   
 
 
-<h1 id="config-pfcwd">config pfcwd サブコマンド<a class="headerlink" href="#config-pfcwd" title="Permanent link">&para;</a></h1>
+<h1 id="config-vnet">config vnet サブコマンド<a class="headerlink" href="#config-vnet" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config pfcwd</code> は PFC watchdog の設定操作を <code>pfcwd</code> 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は <code>pfcwd</code> 側が担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config vnet</code> は overlay VNET と VNET route を CONFIG_DB に作成・削除する CLI グループ。multi-ASIC では <code>--namespace</code> で対象 namespace を選択できる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -15933,66 +15944,50 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config pfcwd start [options] &lt;ports&gt;... &lt;detection-time&gt;</code></td>
-<td>port 群で PFC watchdog を開始</td>
+<td><code>config vnet add &lt;vnet_name&gt; &lt;vni&gt; &lt;vxlan_tunnel&gt; [options]</code></td>
+<td><code>VNET|&lt;vnet_name&gt;</code> を追加/更新</td>
 </tr>
 <tr>
-<td><code>config pfcwd stop</code></td>
-<td>PFC watchdog を停止</td>
+<td><code>config vnet del &lt;vnet_name&gt;</code></td>
+<td>VNET と関連 interface/route を削除</td>
 </tr>
 <tr>
-<td><code>config pfcwd interval &lt;poll_interval&gt;</code></td>
-<td>counter polling 間隔を設定</td>
+<td><code>config vnet add-route &lt;vnet_name&gt; &lt;prefix&gt; &lt;endpoint&gt; [options]</code></td>
+<td>tunnel route を追加/更新</td>
 </tr>
 <tr>
-<td><code>config pfcwd counter_poll enable\|disable</code></td>
-<td>counter polling を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd big_red_switch enable\|disable</code></td>
-<td>BIG_RED_SWITCH mode を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd pfc_stat_history enable\|disable [ports]...</code></td>
-<td>historical statistics を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd start_default</code></td>
-<td>default 設定で PFC watchdog を開始</td>
+<td><code>config vnet del-route &lt;vnet_name&gt; [&lt;prefix&gt;]</code></td>
+<td>route 1件または VNET 配下全 route を削除</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-pfcwd-start"><code>config pfcwd start</code><a class="headerlink" href="#config-pfcwd-start" title="Permanent link">&para;</a></h3>
+<h3 id="config-vnet-add"><code>config vnet add</code><a class="headerlink" href="#config-vnet-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config pfcwd start [--action drop|forward|alert]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                   [--restoration-time &lt;100-60000&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                   [--pfc-stat-history]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                   [--verbose]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                   &lt;ports&gt;... &lt;detection-time&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config vnet add &lt;vnet_name&gt; &lt;vni&gt; &lt;vxlan_tunnel&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [--peer_list &lt;list&gt;]
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [--guid &lt;guid&gt;]
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    [--scope default|...]
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    [--advertise_prefix true|false]
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    [--overlay_dmac &lt;mac&gt;]
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    [--src_mac &lt;mac&gt;]
 </span></code></pre></div>
-<p><code>&lt;detection-time&gt;</code> は 100-5000 ms。<code>--restoration-time</code> は 100-60000 ms。<code>ports</code> には個別 port または <code>all</code> を渡す想定で、CLI は <code>pfcwd start ...</code> を組み立てて実行する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="_4">その他の設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>stop</code> は <code>pfcwd stop</code> を実行する。</li>
-<li><code>interval &lt;poll_interval&gt;</code> は 100-1000 ms の範囲を Click で検証し、<code>pfcwd interval &lt;poll_interval&gt;</code> を実行する。</li>
-<li><code>counter_poll</code>, <code>big_red_switch</code>, <code>pfc_stat_history</code> は <code>enable</code> / <code>disable</code> のみ受け付ける。</li>
-<li><code>start_default</code> は <code>pfcwd start_default</code> を実行する。</li>
-</ul>
-<h2 id="_5">注意<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li>このページで扱う <code>config pfcwd</code> は wrapper であり、DB table 名や永続化の詳細は <code>pfcwd</code> 側の実装に依存する。</li>
-<li><code>show pfcwd config</code> / <code>show pfcwd stats</code> も同じ <code>pfcwd</code> 実行ファイルへ委譲される。</li>
-</ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p><code>&lt;vnet_name&gt;</code> は <code>Vnet</code> で始まり、最大 15 文字。<code>VNET|&lt;vnet_name&gt;</code> に <code>vni</code>, <code>vxlan_tunnel</code> と指定オプションを書き込む。<code>peer_list</code> の各 peer も同じ VNET 名検証を受ける<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="config-vnet-del"><code>config vnet del</code><a class="headerlink" href="#config-vnet-del" title="Permanent link">&para;</a></h3>
+<p><code>VNET|&lt;vnet_name&gt;</code> が存在することを確認し、関連 interface の <code>vnet_name</code> と <code>VNET_ROUTE_TUNNEL</code> / <code>VNET_ROUTE</code> を削除してから VNET entry を削除する。</p>
+<h3 id="config-vnet-add-route"><code>config vnet add-route</code><a class="headerlink" href="#config-vnet-add-route" title="Permanent link">&para;</a></h3>
+<p><code>VNET_ROUTE_TUNNEL|&lt;vnet_name&gt;|&lt;prefix&gt;</code> に endpoint, vni, mac address, monitoring/profile 系の属性を書き込む。対象 VNET が無い場合はエラー。</p>
+<h3 id="config-vnet-del-route"><code>config vnet del-route</code><a class="headerlink" href="#config-vnet-del-route" title="Permanent link">&para;</a></h3>
+<p><code>&lt;prefix&gt;</code> 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config pfcwd</code> グループと各 command は <code>config/main.py</code> の PFC watchdog セクションで定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>config vnet</code> グループ定義。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10057">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10057</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>start</code> は Click の range/choice 検証後、<code>pfcwd start</code> に引数を渡す。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>VNET 名検証は <code>vnet_name_is_valid()</code>。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L467">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L467</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

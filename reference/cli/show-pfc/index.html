@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-pfcwd/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-pfc/">
       
       
-        <link rel="prev" href="../config-nat/">
+        <link rel="prev" href="../show-nat/">
       
       
-        <link rel="next" href="../config-platform-firmware/">
+        <link rel="next" href="../show-platform/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config pfcwd サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>show pfc サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-pfcwd" class="md-skip">
+        <a href="#show-pfc" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config pfcwd サブコマンド
+              show pfc サブコマンド
             
           </span>
         </div>
@@ -15838,43 +15838,15 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        各コマンドの詳細
+        詳細
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config-pfcwd-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config pfcwd start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        その他の設定
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         注意
@@ -15885,7 +15857,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15912,7 +15884,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-pfcwd.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/show-pfc.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15920,9 +15892,9 @@
   
 
 
-<h1 id="config-pfcwd">config pfcwd サブコマンド<a class="headerlink" href="#config-pfcwd" title="Permanent link">&para;</a></h1>
+<h1 id="show-pfc">show pfc サブコマンド<a class="headerlink" href="#show-pfc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config pfcwd</code> は PFC watchdog の設定操作を <code>pfcwd</code> 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は <code>pfcwd</code> 側が担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show pfc</code> は PFC counter と PFC priority mapping を表示する CLI グループ。<code>show pfcwd</code> は同じ領域の watchdog 表示 wrapper で、<code>pfcwd show ...</code> に委譲する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -15933,66 +15905,44 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config pfcwd start [options] &lt;ports&gt;... &lt;detection-time&gt;</code></td>
-<td>port 群で PFC watchdog を開始</td>
+<td><code>show pfc counters [options]</code></td>
+<td>PFC counters を表示</td>
 </tr>
 <tr>
-<td><code>config pfcwd stop</code></td>
-<td>PFC watchdog を停止</td>
+<td><code>show pfc priority [options]</code></td>
+<td>PFC priority 設定を表示</td>
 </tr>
 <tr>
-<td><code>config pfcwd interval &lt;poll_interval&gt;</code></td>
-<td>counter polling 間隔を設定</td>
+<td><code>show pfc asymmetric [options]</code></td>
+<td>asymmetric PFC 設定を表示</td>
 </tr>
 <tr>
-<td><code>config pfcwd counter_poll enable\|disable</code></td>
-<td>counter polling を有効/無効化</td>
+<td><code>show pfcwd config [-d true|false]</code></td>
+<td>PFC watchdog config を表示</td>
 </tr>
 <tr>
-<td><code>config pfcwd big_red_switch enable\|disable</code></td>
-<td>BIG_RED_SWITCH mode を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd pfc_stat_history enable\|disable [ports]...</code></td>
-<td>historical statistics を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd start_default</code></td>
-<td>default 設定で PFC watchdog を開始</td>
+<td><code>show pfcwd stats [-d true|false]</code></td>
+<td>PFC watchdog stats を表示</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-pfcwd-start"><code>config pfcwd start</code><a class="headerlink" href="#config-pfcwd-start" title="Permanent link">&para;</a></h3>
-<p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config pfcwd start [--action drop|forward|alert]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                   [--restoration-time &lt;100-60000&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                   [--pfc-stat-history]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                   [--verbose]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                   &lt;ports&gt;... &lt;detection-time&gt;
-</span></code></pre></div>
-<p><code>&lt;detection-time&gt;</code> は 100-5000 ms。<code>--restoration-time</code> は 100-60000 ms。<code>ports</code> には個別 port または <code>all</code> を渡す想定で、CLI は <code>pfcwd start ...</code> を組み立てて実行する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="_4">その他の設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h2 id="_3">詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>show pfc</code> 配下の command は <code>pfcstat</code> / <code>pfc</code> 系 utility を実行する wrapper として定義される。interface alias mode の場合は必要に応じて alias を SONiC port 名へ変換してから外部コマンドへ渡す。</p>
+<p><code>show pfcwd config</code> は <code>pfcwd show config -d &lt;display&gt;</code>、<code>show pfcwd stats</code> は <code>pfcwd show stats -d &lt;display&gt;</code> を実行する。<code>display</code> は multi-ASIC 共通 option の表示制御値<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>stop</code> は <code>pfcwd stop</code> を実行する。</li>
-<li><code>interval &lt;poll_interval&gt;</code> は 100-1000 ms の範囲を Click で検証し、<code>pfcwd interval &lt;poll_interval&gt;</code> を実行する。</li>
-<li><code>counter_poll</code>, <code>big_red_switch</code>, <code>pfc_stat_history</code> は <code>enable</code> / <code>disable</code> のみ受け付ける。</li>
-<li><code>start_default</code> は <code>pfcwd start_default</code> を実行する。</li>
+<li><code>config interface pfc ...</code> は設定系で、<code>show pfc</code> は表示系。</li>
+<li>PFC watchdog の永続化や counter の詳細は <code>pfcwd</code> 実装側に依存する。</li>
 </ul>
-<h2 id="_5">注意<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li>このページで扱う <code>config pfcwd</code> は wrapper であり、DB table 名や永続化の詳細は <code>pfcwd</code> 側の実装に依存する。</li>
-<li><code>show pfcwd config</code> / <code>show pfcwd stats</code> も同じ <code>pfcwd</code> 実行ファイルへ委譲される。</li>
-</ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config pfcwd</code> グループと各 command は <code>config/main.py</code> の PFC watchdog セクションで定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>show pfc</code> グループ定義。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L670">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L670</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>start</code> は Click の range/choice 検証後、<code>pfcwd start</code> に引数を渡す。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>show pfcwd</code> の <code>config</code> / <code>stats</code> wrapper。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L724">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L724</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

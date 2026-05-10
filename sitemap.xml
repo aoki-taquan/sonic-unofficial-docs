@@ -873,7 +873,15 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-platform-firmware/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-portchannel/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-qos/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -897,11 +905,19 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-vnet/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-vrf/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-vxlan/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-warm_restart/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -918,6 +934,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-bgp/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-buffer/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -945,7 +965,19 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-pfc/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-platform/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-priority-group/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-queue/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1141,11 +1173,19 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/nat/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp-global/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp-server/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1158,6 +1198,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/policer/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/port-qos-map/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1198,6 +1242,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/sflow/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/static-route/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1269,6 +1317,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-bgp-aggregate-address/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-bgp-global/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1329,11 +1381,23 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-nat/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-ntp/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-pbh/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-pfcwd/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-port-qos-map/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1361,6 +1425,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-static-route/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-syslog/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1370,6 +1438,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-tc-queue-map/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-vlan-sub-interface/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
