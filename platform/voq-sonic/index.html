@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/swss-docker-warm-restart-code-reference/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/voq-sonic/">
       
       
-        <link rel="prev" href="../static-dns-configuration/">
+        <link rel="prev" href="../thermal-control-test-plan/">
       
       
-        <link rel="next" href="../system-ready-hld/">
+        <link rel="next" href="../../internals/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SWSS docker の Warm Restart 実装メモ（開発時リファレンス） - SONiC 非公式ドキュメント</title>
+        <title>VoQ SONiC（distributed VoQ chassis / system-port / fabric） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#swss-docker-warm-restart" class="md-skip">
+        <a href="#voq-sonicdistributed-voq-chassis-system-port-fabric" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+              VoQ SONiC（distributed VoQ chassis / system-port / fabric）
             
           </span>
         </div>
@@ -357,13 +357,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../system/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -5291,8 +5291,6 @@
       
   
   
-    
-  
   
   
     
@@ -5426,23 +5424,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../system/" class="md-nav__link ">
               
   
   
@@ -5460,13 +5455,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5486,7 +5481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -5514,7 +5509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -5542,7 +5537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../banner-messages-hld/" class="md-nav__link">
+      <a href="../../system/banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -5570,7 +5565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../critical-resource-monitoring/" class="md-nav__link">
+      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5598,7 +5593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5626,7 +5621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -5654,7 +5649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -5682,7 +5677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -5710,7 +5705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -5738,7 +5733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-secure-boot/" class="md-nav__link">
+      <a href="../../system/hld-secure-boot/" class="md-nav__link">
         
   
   
@@ -5766,7 +5761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../independent-dpu-upgrade/" class="md-nav__link">
+      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
         
   
   
@@ -5794,7 +5789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump-remote-ssh/" class="md-nav__link">
+      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -5822,7 +5817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kdump/" class="md-nav__link">
+      <a href="../../system/kdump/" class="md-nav__link">
         
   
   
@@ -5850,7 +5845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -5878,7 +5873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistent-log-level-hld/" class="md-nav__link">
+      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -5906,7 +5901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
+      <a href="../../system/platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
         
   
   
@@ -5934,7 +5929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
+      <a href="../../system/platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -5962,7 +5957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -5990,7 +5985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6018,7 +6013,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6046,7 +6041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -6074,7 +6069,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -6102,7 +6097,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../secure-upgrade/" class="md-nav__link">
+      <a href="../../system/secure-upgrade/" class="md-nav__link">
         
   
   
@@ -6130,7 +6125,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../show-techsupport/" class="md-nav__link">
+      <a href="../../system/show-techsupport/" class="md-nav__link">
         
   
   
@@ -6158,7 +6153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-ip-address-assignment/" class="md-nav__link">
+      <a href="../../system/smart-switch-ip-address-assignment/" class="md-nav__link">
         
   
   
@@ -6186,7 +6181,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-reboot-high-level-design/" class="md-nav__link">
+      <a href="../../system/smart-switch-reboot-high-level-design/" class="md-nav__link">
         
   
   
@@ -6214,7 +6209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -6242,7 +6237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
+      <a href="../../system/snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
         
   
   
@@ -6270,7 +6265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-boot-chart/" class="md-nav__link">
+      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -6298,7 +6293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-configuration-setup-service/" class="md-nav__link">
+      <a href="../../system/sonic-configuration-setup-service/" class="md-nav__link">
         
   
   
@@ -6326,7 +6321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-debian-upgrade-cadence/" class="md-nav__link">
+      <a href="../../system/sonic-debian-upgrade-cadence/" class="md-nav__link">
         
   
   
@@ -6354,7 +6349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
+      <a href="../../system/sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
         
   
   
@@ -6382,7 +6377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -6410,7 +6405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -6438,7 +6433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fips-deployment/" class="md-nav__link">
+      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -6466,7 +6461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -6494,7 +6489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -6522,7 +6517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
+      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
         
   
   
@@ -6550,7 +6545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-openssl-fips-140-3-hld/" class="md-nav__link">
+      <a href="../../system/sonic-openssl-fips-140-3-hld/" class="md-nav__link">
         
   
   
@@ -6578,7 +6573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -6606,7 +6601,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -6634,7 +6629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
         
   
   
@@ -6662,7 +6657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -6690,7 +6685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -6718,7 +6713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -6746,7 +6741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -6774,7 +6769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
+      <a href="../../system/sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
         
   
   
@@ -6802,7 +6797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -6830,7 +6825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -6858,7 +6853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
+      <a href="../../system/sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
         
   
   
@@ -6886,7 +6881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -6914,7 +6909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static-dns-configuration/" class="md-nav__link">
+      <a href="../../system/static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -6939,37 +6934,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -6985,253 +6953,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI 例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-restart-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm Restart テーブル（STATE_DB）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5 領域の改修ポイント
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5 領域の改修ポイント">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-swss-syncd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. swss / syncd の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-swss-flushdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. swss-flushdb
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-idempotent-orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. データ復元（idempotent orchagent）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Redis ライブラリ拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-libsairedis-redis-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. libsairedis の Redis API 冪等性
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7244,7 +6965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-ready-hld/" class="md-nav__link">
+      <a href="../../system/system-ready-hld/" class="md-nav__link">
         
   
   
@@ -7272,7 +6993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../system-wide-warmboot/" class="md-nav__link">
+      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -7300,7 +7021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -7328,7 +7049,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../twamp-light-hld/" class="md-nav__link">
+      <a href="../../system/twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -7356,7 +7077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../useful-sysctl-settings/" class="md-nav__link">
+      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -7384,7 +7105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../warmboot-manager-hld/" class="md-nav__link">
+      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -7412,7 +7133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -8808,6 +8529,8 @@
       
   
   
+    
+  
   
   
     
@@ -8897,20 +8620,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -8928,13 +8654,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -8954,7 +8680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -8982,7 +8708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -9010,7 +8736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -9038,7 +8764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -9066,7 +8792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -9094,7 +8820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -9122,7 +8848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9150,7 +8876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
         
   
   
@@ -9178,7 +8904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -9206,7 +8932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -9234,7 +8960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -9262,7 +8988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -9290,7 +9016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -9318,7 +9044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -9346,7 +9072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -9374,7 +9100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -9402,7 +9128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -9430,7 +9156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -9458,7 +9184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9486,7 +9212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/s3ip-sysfs-specification/" class="md-nav__link">
+      <a href="../s3ip-sysfs-specification/" class="md-nav__link">
         
   
   
@@ -9514,7 +9240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -9542,7 +9268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
         
   
   
@@ -9570,7 +9296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -9598,7 +9324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -9626,7 +9352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -9654,7 +9380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
         
   
   
@@ -9682,7 +9408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -9710,7 +9436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+      <a href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
         
   
   
@@ -9738,7 +9464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -9766,7 +9492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -9794,7 +9520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-psu-daemon-design/" class="md-nav__link">
+      <a href="../sonic-psu-daemon-design/" class="md-nav__link">
         
   
   
@@ -9822,7 +9548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-sfp-refactoring/" class="md-nav__link">
+      <a href="../sonic-sfp-refactoring/" class="md-nav__link">
         
   
   
@@ -9850,7 +9576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-thermal-control-design/" class="md-nav__link">
+      <a href="../sonic-thermal-control-design/" class="md-nav__link">
         
   
   
@@ -9878,7 +9604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
         
   
   
@@ -9906,7 +9632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -9934,7 +9660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -9962,7 +9688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/thermal-control-test-plan/" class="md-nav__link">
+      <a href="../thermal-control-test-plan/" class="md-nav__link">
         
   
   
@@ -9987,10 +9713,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/voq-sonic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VoQ SONiC（distributed VoQ chassis / system-port / fabric）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -10006,6 +9759,131 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -14853,106 +14731,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI 例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-restart-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm Restart テーブル（STATE_DB）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5 領域の改修ポイント
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5 領域の改修ポイント">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-swss-syncd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. swss / syncd の分離
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-swss-flushdb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. swss-flushdb
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-idempotent-orchagent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. データ復元（idempotent orchagent）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Redis ライブラリ拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-libsairedis-redis-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. libsairedis の Redis API 冪等性
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -14979,32 +14757,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
       
     </span>
   </a>
@@ -15017,7 +14773,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15028,7 +14784,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15039,7 +14795,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15050,7 +14806,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15077,7 +14833,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/swss-docker-warm-restart-code-reference.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/voq-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15085,87 +14841,74 @@
   
 
 
-<div class="admonition danger">
-<p class="admonition-title">裏取りステータス: discrepancy-found（HLD は temporary な開発メモであり一部 API は現行と齟齬）</p>
-<p>HLD 自身が冒頭で <strong>"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"</strong> と述べる、warm-restart 機能開発当時のコードリファレンスメモ。実コードと突き合わせた結果:
-- <code>RedisClient::hmset</code> / <code>DBConnector::hmset</code> は現行 <code>sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp}</code> に <strong>存在し</strong> 実装も活きている（concerns 解消）
-- 一方 <code>swss-flushdb</code> スクリプトは現行 master の <code>sonic-utilities</code> / <code>sonic-buildimage</code> / <code>sonic-swss-common</code> に <strong>ヒットしない</strong> （HLD の記述と齟齬）
-- <code>hgetallordered</code> も現行 sonic-swss-common には見当たらず、HLD 当時の API に依存する記述あり</p>
-<p>本ページは現行 master の正規仕様ではないため、<strong>Warm Restart の挙動を理解する目的では <code>docs/system/sonic-warm-reboot.md</code> 等の正式 HLD ベースのページを参照すべき</strong>。本ページは歴史的開発メモのアーカイブとして残す。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>VoQ chassis 機能は実装規模が大きく、関連する distributed VoQ / fabric / counter / BGP の各 HLD と合わせて読む必要がある。本ページは voq_hld.md の主要構造のみを再構成した概略。</p>
 </div>
-<h1 id="swss-docker-warm-restart">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）<a class="headerlink" href="#swss-docker-warm-restart" title="Permanent link">&para;</a></h1>
+<h1 id="voq-sonicdistributed-voq-chassis-system-port-fabric">VoQ SONiC（distributed VoQ chassis / system-port / fabric）<a class="headerlink" href="#voq-sonicdistributed-voq-chassis-system-port-fabric" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-installer upgrade_docker</code> で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI 動作例と関連リポジトリへの diff リンクが主な内容で、以下の 5 領域の実装変更を扱う。</p>
-<ol>
-<li>SWSS warm restart の有効化スイッチ（<code>config warm_restart enable swss</code>）</li>
-<li><code>swss</code> と <code>syncd</code> サービスの分離 + warm start での CONFIG_DB 取り扱い</li>
-<li><code>swss-flushdb</code> スクリプトの追加</li>
-<li>SWSS データ復元（idempotent な orchagent 動作）</li>
-<li>Redis client の <code>hmset</code> / <code>hgetallordered</code> 追加と libsairedis の Redis API 冪等性サポート</li>
-</ol>
+<p>複数の Network Processing Unit (NPU / line card) を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える <strong>分散 VoQ chassis</strong> を SONiC で動かす設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>要点:</p>
+<ul>
+<li><strong>Virtual Output Queue (VoQ)</strong>: 入力側 NPU が、出力側 NPU の各 port / class に対する仮想キューを持つ。HoL ブロッキングを避け、輻輳判定を fabric を跨いで行う</li>
+<li><strong>system-port</strong>: chassis 全体で一意な論理 port 識別子。各 NPU の物理 port は system-port にマップされる</li>
+<li><strong>distributed control plane</strong>: BGP / FRR は複数 NPU 上で協調する。各 NPU の supervisor / control plane と fabric が連動</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI 例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a># Warm Restart の有効化
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>root@sonic:~# config warm_restart enable swss
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>root@sonic:~# show warm_restart
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>WARM_RESTART teamd enable false
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>WARM_RESTART swss neighbor_timer 5
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>WARM_RESTART swss enable true
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>WARM_RESTART system enable false
-</span></code></pre></div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># docker upgrade
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --cleanup_image
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a># 内部で systemctl stop swss → docker rm/load/tag → systemctl restart swss を実行
-</span></code></pre></div>
-<h3 id="warm-restart-state_db">Warm Restart テーブル（STATE_DB）<a class="headerlink" href="#warm-restart-state_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>WARM_RESTART_TABLE:portsyncd
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>WARM_RESTART_TABLE:neighsyncd
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>WARM_RESTART_TABLE:vlanmgrd
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>WARM_RESTART_TABLE:orchagent
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>WARM_RESTART_TABLE:orchagent
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  restart_count = 4
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>WARM_RESTART_TABLE:neighsyncd
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  restart_count = 4
-</span></code></pre></div>
-<p>各サブシステムがリスタート回数を <code>restart_count</code> として記録する。</p>
-<h3 id="5">5 領域の改修ポイント<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-    A[1. config warm_restart enable swss] --&gt; B[2. swss / syncd サービス分離]
-    B --&gt; C[3. swss-flushdb スクリプト]
-    C --&gt; D[4. swss データ復元 idempotent]
-    D --&gt; E[5. RedisClient hmset/hgetallordered\n + libsairedis 冪等性]</code></pre>
-<h4 id="1-swss-syncd">1. swss / syncd の分離<a class="headerlink" href="#1-swss-syncd" title="Permanent link">&para;</a></h4>
-<p>warm restart 対象は <strong>swss コンテナのみ</strong>。syncd は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="2-swss-flushdb">2. swss-flushdb<a class="headerlink" href="#2-swss-flushdb" title="Permanent link">&para;</a></h4>
-<p>旧 swss コンテナが落ちる前に APPL_DB / STATE_DB の特定エントリをクリーンに保つためのスクリプト。</p>
-<h4 id="3-idempotent-orchagent">3. データ復元（idempotent orchagent）<a class="headerlink" href="#3-idempotent-orchagent" title="Permanent link">&para;</a></h4>
-<p>新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと SAI 側の既存オブジェクトを突き合わせ、<strong>同じプログラムを再実行しても副作用を起こさない</strong>（idempotent）動作をする必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="4-redis">4. Redis ライブラリ拡張<a class="headerlink" href="#4-redis" title="Permanent link">&para;</a></h4>
-<p><code>hmset</code> と <code>hgetallordered</code> を <code>RedisClient</code> に追加。順序付き hash 取得は復元時の決定論的な再生に必要。</p>
-<h4 id="5-libsairedis-redis-api">5. libsairedis の Redis API 冪等性<a class="headerlink" href="#5-libsairedis-redis-api" title="Permanent link">&para;</a></h4>
-<p>orchagent の復元処理に必要な、Redis 経由の SAI コマンド再実行で結果が変わらないようにする改修。</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph LineCardA[Line card A]
+      NPUA[NPU A]
+    end
+    subgraph LineCardB[Line card B]
+      NPUB[NPU B]
+    end
+    subgraph FabricCard[Fabric card]
+      FAB[(fabric ASIC)]
+    end
+    NPUA &lt;--&gt; FAB
+    NPUB &lt;--&gt; FAB
+    NPUA -. system-port view .- NPUB</code></pre>
+<p>主要な構成要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong><code>DEVICE_METADATA|localhost.switch_type=voq</code></strong>: chassis-wide で VoQ モードを示す</li>
+<li><strong><code>SYSTEM_PORT</code></strong>: chassis 内のすべての port の論理マップ。<code>switch_id</code>、<code>core_index</code>、<code>core_port_index</code>、<code>speed</code> 等</li>
+<li><strong><code>VOQ_INBAND_INTERFACE</code></strong>: chassis 内 NPU 間制御 plane 通信用 inband interface</li>
+<li><strong>fabric port</strong>: NPU↔fabric 接続を表す port。CRM / link state / counter は専用扱い</li>
+<li><strong>chassis-wide BGP</strong>: line card ごとに ASN / loopback を分けず chassis として 1 つの BGP speaker（または multi-speaker 連携）として振る舞う設計</li>
+</ul>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>WARM_RESTART</code></td>
-<td><code>swss</code></td>
-<td><code>enable</code> / <code>neighbor_timer</code></td>
-<td>SWSS warm restart 有効化と timer</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>switch_type=voq</code>、<code>sub_role</code>、<code>switch_id</code>、<code>max_cores</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM_PORT</code></td>
+<td>chassis 全 port の論理識別</td>
+</tr>
+<tr>
+<td><code>VOQ_INBAND_INTERFACE</code></td>
+<td>NPU 間 control plane の inband</td>
+</tr>
+<tr>
+<td><code>PORT</code></td>
+<td>通常の per-NPU port（system-port にも紐づく）</td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR</code></td>
+<td>chassis-wide で構成</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -15175,52 +14918,63 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config warm_restart enable swss</code></td>
-<td>SWSS の warm restart を有効化</td>
+<td><code>show chassis</code></td>
+<td>chassis モジュール一覧</td>
 </tr>
 <tr>
-<td><code>show warm_restart</code></td>
-<td>各サブシステムの warm restart 状態</td>
+<td><code>show chassis modules status</code></td>
+<td>line card / fabric の状態</td>
 </tr>
 <tr>
-<td><code>sonic-installer upgrade_docker &lt;name&gt; &lt;tag&gt; &lt;url&gt;</code></td>
-<td>Docker 単体アップグレード</td>
+<td><code>show fabric counters</code></td>
+<td>fabric port の counter</td>
+</tr>
+<tr>
+<td><code>show system-port</code></td>
+<td>system-port 一覧</td>
+</tr>
+<tr>
+<td><code>show interfaces counters fabric</code></td>
+<td>fabric 方向</td>
 </tr>
 </tbody>
 </table>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
-<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>warm_restart
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># アップグレード</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-installer<span class="w"> </span>upgrade_docker<span class="w"> </span>swss<span class="w"> </span>test_v03<span class="w"> </span>docker-orchagent-brcm_v03.gz<span class="w"> </span>--cleanup_image
-</span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD 自体が「temporary」で、現行 master の Warm Restart 仕様の権威ではない。</li>
-<li>HLD 内で参照されている各 PR/diff は <strong>当時の個人 fork</strong>（jipanyang）への compare URL。現行 master では複数 PR にバラされて取り込まれている。</li>
-<li><code>virtual switch</code> テストの結果（45 tests passed）も当時のスナップショットにすぎない。</li>
+<li><strong>対応 ASIC が限定的</strong>: VoQ アーキテクチャをサポートする NPU / fabric chip でのみ動く</li>
+<li><strong>single-asic 前提機能との非互換</strong>: 一部の機能（VLAN、特定の ACL）は VoQ 上で挙動が異なるか未対応</li>
+<li><strong>show コマンドの単位</strong>: 既存 <code>show interfaces counters</code> の意味が VoQ では port / system-port / fabric のどれか曖昧になりやすい</li>
+<li><strong>HLD は包括設計のみ</strong>: バッファ計算、scheduler、warmboot、congestion 詳細は派生 HLD を参照</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>syncd warm restart</strong>: 別途 <code>sonic-buildimage</code> 側の syncd warm restart 設計を参照する必要がある。</li>
-<li><strong>teamd warm restart</strong>: <code>WARM_RESTART teamd</code> フラグで別管理。</li>
-<li><strong>System warm restart (kernel)</strong>: <code>WARM_RESTART system</code> フラグで別管理。</li>
+<li><strong>distributed VoQ counter</strong>: 入出力 NPU を跨ぐ統計の集計（同 area の別 HLD）</li>
+<li><strong>fabric port support</strong>: fabric port 単独の管理（同 area）</li>
+<li><strong>everflow on VoQ chassis</strong>: mirror の宛先解決が system-port 単位</li>
+<li><strong>single-asic VoQ fixed system</strong>: VoQ 機能を 1 ASIC platform で適用する派生（同 area 別 HLD）</li>
+<li><strong>chassis BGP / chassis-wide management</strong>: control-plane 側 HLD 群</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SWSS docker upgrade でデータプレーンが切れる → <code>WARM_RESTART_TABLE:*</code> の <code>restart_count</code> が増えているかを確認。</li>
-<li><code>swss-flushdb</code> 失敗 → APPL_DB の状態が不整合な可能性。手動で <code>redis-cli -n 0 keys *_TABLE:*</code> で確認。</li>
-<li>復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。</li>
-<li>詳細実装は HLD <code>doc/warm-reboot/code_implementation.md</code> を参照（このドキュメントは要点のみ）。</li>
+<li>system-port が出ない → <code>DEVICE_METADATA.switch_type=voq</code> と <code>SYSTEM_PORT</code> の populate 状態を確認</li>
+<li>fabric link 不安定 → <code>show fabric counters errors</code>、cable 状態、neighbor NPU の状態</li>
+<li>統計が物理 port と合わない → VoQ 集計の単位（system-port vs front-panel）を確認</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- DEVICE_METADATA.switch_type=voq の現行 sonic-yang-models 取り込み確認
+- SYSTEM_PORT / VOQ_INBAND_INTERFACE スキーマの現行値とフィールド差分確認
+- show chassis / show fabric / show system-port CLI の sonic-utilities 取り込み確認
+- 対応 NPU / fabric platform リストの現行範囲確認
+- VoQ chassis-wide BGP（FRR multi-instance / ASN 共有）の現行設計確認
+- single-asic VoQ fixed system / fabric port / VoQ counter HLD との実装連携確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/code_implementation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/voq/voq_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
