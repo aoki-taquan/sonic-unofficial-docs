@@ -322,19 +322,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/voq-sonic.md",
-      "verification": "hld-only",
-      "concerns": [
-        "DEVICE_METADATA.switch_type=voq / sub_role / switch_id の現行 sonic-yang-models 取り込みとフィールド名確認",
-        "SYSTEM_PORT / VOQ_INBAND_INTERFACE スキーマ（switch_id / core_index / core_port_index 等）の現行値確認",
-        "show chassis / show fabric counters / show system-port CLI の sonic-utilities 取り込み確認",
-        "対応 NPU / fabric platform（Cisco 8000・Broadcom Jericho 等）リストの現行範囲確認",
-        "VoQ chassis-wide BGP（FRR multi-instance / chassis ASN 共有）の現行設計確認",
-        "派生 HLD（distributed VoQ counter / fabric port / single-asic VoQ fixed system）との現行実装連携確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/routing/bfd-hw-offload.md",
       "issue": 91,
       "verification": "code-verified",
@@ -1307,19 +1294,6 @@
       "notes": "FEC FLR 計算/RATES 書き込み/portstat 表示は完全に取り込み済み。HLD §New CLI の counterpoll port flr-interval-factor サブコマンドが現行 master 未取り込み のため discrepancy-found。"
     },
     {
-      "page": "docs/platform/handle-asic-sdk-health-event.md",
-      "verification": "hld-only",
-      "concerns": [
-        "SAI health notification API（SAI_SWITCH_ATTR_*_NOTIFY 系・新規 attribute）の community SAI 取り込み確認",
-        "orchagent / SwitchOrch 側 health event handler と STATE_DB 書き出しロジックの現行実装存在確認",
-        "STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE スキーマ（severity / category / timestamp / count フィールド）の現行値確認",
-        "CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT スキーマと sonic-yang-models 取り込み確認",
-        "show asic-sdk-health-event / config asic-sdk-health-event CLI の sonic-utilities 取り込み確認",
-        "system health monitor / dump-on-sai-failure / telemetry dial-out との統合経路の現行実装確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/platform/hld-for-handling-sai-failures.md",
       "issue": 259,
       "verification": "discrepancy-found",
@@ -1366,19 +1340,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/platform/sonic-fw-utility.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-utilities/fwutil/ の現行 master 取り込みと CLI subcommand 一覧確認",
-        "platform_components.json スキーマと現行 platform 実装（Cisco / Mellanox / Celestica 等）の記述差分確認",
-        "Chassis / Component plugin API の現行 sonic-platform-common での定義（get_firmware_version / install_firmware 等）確認",
-        "secure-upgrade / secure-boot との image 検証統合（署名検証）の現行実装確認",
-        "smart-switch / DPU 環境での fwutil 拡張（DPU 個別更新）の現行実装確認",
-        "ASIC 本体 firmware の扱い境界（fwutil 範囲外 vs SAI / vendor SDK）の整理状況確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
@@ -1960,20 +1921,6 @@
       "priority": "medium"
     },
     {
-      "page": "docs/acl-qos/sonic-test-ingress-discards-hld.md",
-      "issue": 716,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-mgmt 側の対応テストコード (ingress discards 21 ケース) の存在確認",
-        "counterpoll port / rif の現行 master 取り込みと正確な counter ID マッピング確認",
-        "portstat / intfstat / aclshow CLI の出力フォーマット確認",
-        "ベンダ間 L2/L3 drop counter 合算挙動の differential を SAI capability などで判定する手段の実装確認",
-        "ケース 21 (ERIF disabled で drop なし) の意味と対応 SAI attribute 確認",
-        "ACL DROP ケース 20 で使用される ACL ルールの sonic-mgmt 側設定確認"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/architecture/build-profiles.md",
       "issue": 59,
       "verification": "discrepancy-found",
@@ -2027,19 +1974,6 @@
       "verified_concerns": [
         "2026-05-10 sonic-platform-common master 直読: sonic_platform_base/ 直下に console 系 base クラス無し、sonic_console/ ディレクトリも存在せず",
         "CONSOLE_SWITCH テーブル自体は sonic-yang-models/yang-models/sonic-console.yang と sonic-utilities/config/console.py で取り込み済み（escape_char 等を含む別 HLD 経由）"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/management/sonic-user-manual.md",
-      "verification": "hld-only",
-      "concerns": [
-        "User Manual の現行版（章構成・記述更新）と当サイト個別 HLD ページ群の整合確認",
-        "sonic-utilities (click) と sonic-cli (KLISH) の現行カバレッジ差分確認",
-        "config save / save-on-set / GCU apply-patch の現行で推奨される使い分け方針の確認",
-        "minigraph.xml の deprecated 状況と現行 master の config load_minigraph 実装確認",
-        "show techsupport の現行収集対象（plugin 機構経由のものを含む）の確認",
-        "application extension が CLI を拡張する entry-point 仕様の現行実装確認"
       ],
       "priority": "low"
     },
@@ -2119,54 +2053,12 @@
       "notes": "discrepancy-found: HLD は signing_secure_boot_dev.py / SB_BUILD と書いているが実装は .sh / SECURE_UPGRADE_MODE。boot chain の verify 思想は HLD どおり。verified 2026-05-10 (verifier batch-23)."
     },
     {
-      "page": "docs/system/snmp-transceiver-monitoring-testbed-test-plan.md",
-      "issue": 694,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-snmpagent (sonic_ax_impl) の Entity MIB / Entity Sensor MIB 実装範囲確認",
-        "TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_INFO テーブルの STATE_DB スキーマ取り込み確認",
-        "sonic-mgmt 側のこのテストプランに沿ったテストコード存在確認",
-        "Entity MIB extension HLD (extension-to-physical-entity-mib.md) との整合性確認",
-        "down/未挿入 port の MIB エントリ取扱が実装/テストでどう扱われているか未確認",
-        "entitySensorValue の単位 (TX power dBm vs uW 等) の SNMP 出力フォーマット確認"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/system/sonic-feature-quality-definition.md",
       "verification": "meta",
       "concerns": [],
       "priority": "low",
       "issue": 515,
       "pr": 516
-    },
-    {
-      "page": "docs/system/sonic-pmon-sensor-monitoring-enhancement.md",
-      "issue": 698,
-      "verification": "hld-only",
-      "concerns": [
-        "SensorMon daemon の sonic-platform-daemons リポジトリ取り込み確認",
-        "STATE_DB の VOLTAGE_INFO / CURRENT_INFO テーブルスキーマ取り込み確認",
-        "VoltageBase / CurrentBase platform API の sonic-platform-common 取り込み確認",
-        "sonic-snmpagent の Entity MIB / Entity Sensor MIB 拡張で voltage/current sensor を出すコードパス確認",
-        "system health 集約 (sonic_health_check 等) への SensorMon alarm 反映ルート確認",
-        "show platform voltage / current 等の具体的 CLI コマンドの sonic-utilities 取り込み確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/system/sonic-telemetry-in-dial-out-mode-2.md",
-      "issue": 696,
-      "verification": "hld-only",
-      "concerns": [
-        "dialout_client_cli (Go 実装) の sonic-gnmi リポジトリ取り込み確認",
-        "CONFIG_DB TELEMETRY_CLIENT|Global / DestinationGroup_* / Subscription_* スキーマ取り込み確認",
-        "openconfig telemetry YANG との SONiC 側 YANG mapping 確認",
-        "DestinationGroup フェイルオーバ (CSV 順次試行) のロジック実装確認",
-        "TLS/mTLS で dial-out する場合の証明書ロード経路確認",
-        "report_type=stream / once の動作実装確認"
-      ],
-      "priority": "low"
     },
     {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",

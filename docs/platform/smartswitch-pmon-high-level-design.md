@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
     - sonic-chassis
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    SmartSwitch（NPU+DPU 一体 platform）の pmon 拡張。NPU/DPU 双方の現行実装と CONFIG_DB / STATE_DB スキーマは未確認。
+!!! info "裏取りステータス: code-verified"
+    DPU 監視ループは `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` および `tests/test_dpu_chassisd.py`、Module/DPU API は `sonic-platform-common/sonic_platform_base/module_base.py`（`get_dpu_id` ほか）、CLI は `sonic-utilities/show/chassis_modules.py`・`sonic-utilities/config/chassis_modules.py`（`show chassis-modules` / `config chassis modules startup`）で確認済み。
 
 # SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
 

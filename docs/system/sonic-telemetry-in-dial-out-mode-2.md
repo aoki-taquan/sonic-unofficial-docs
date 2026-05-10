@@ -1,7 +1,7 @@
 ---
 title: telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/sonic-gnmi
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    `dialout_client_cli` の sonic-gnmi 実装、`TELEMETRY_CLIENT.Global` / `DestinationGroup_*` / `Subscription_*` の現行スキーマ取り込み、openconfig telemetry YANG との対応は未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-gnmi/dialout/{dialout_client,dialout_client_cli,dialout_server,dialout_server_cli}/` の Go 実装と `dialout_client.go`（`TELEMETRY_CLIENT` 読み出し / DestinationGroup / Subscription 走査）、および `sonic_data_client/{db_client,mixed_db_client}.go` を確認。openconfig telemetry YANG との完全 mapping は範囲外（実装は SONiC 独自 schema 中心）。
 
 # telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）
 

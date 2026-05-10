@@ -1,7 +1,7 @@
 ---
 title: SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only / Test plan"
-    HLD は test plan であって機能 HLD ではない。検査対象機能（xcvrd → snmp Entity MIB / Entity Sensor MIB）の現行 sonic-snmpagent / sonic-mgmt 実装は本ページから直接検証していない。
+!!! info "裏取りステータス: code-verified（test plan）"
+    検査対象 MIB の sonic-snmpagent 実装（`src/sonic_ax_impl/mibs/ietf/rfc2737.py` Entity MIB、`rfc3433.py` Entity Sensor MIB、`physical_entity_sub_oid_generator.py`、`sensor_data.py`）の存在を確認。sonic-mgmt 側のテストコードは本サイト裏取り対象外（test plan の網羅性のみ確認）。down/未挿入 port の MIB 出力やセンサ単位（dBm vs uW）は実装/ベンダ依存。
 
 # SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）
 

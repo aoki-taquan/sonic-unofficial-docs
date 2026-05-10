@@ -1,7 +1,7 @@
 ---
 title: ingress discards テスト計画（21 ケースで drop counter を検証）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only / Test plan"
-    HLD は test plan であり、対応する SAI debug counter のベンダ実装、port / RIF / ACL counter の SONiC 内部の集約挙動（L2/L3 drop の合算 vs 分離）は ASIC 依存で未確認。
+!!! info "裏取りステータス: code-verified（test plan）"
+    HLD 21 ケース表と CLI チェック方法（`portstat -j` / `intfstat -j` / `aclshow -a`）、`counterpoll port|rif enable` を `sonic-utilities/scripts/{portstat,intfstat,aclshow}` および HLD 本文で確認。SAI debug counter のベンダ実装差や L2/L3 drop counter の合算挙動は ASIC 依存のため本ページでは触れない。
 
 # ingress discards テスト計画（21 ケースで drop counter を検証）
 
