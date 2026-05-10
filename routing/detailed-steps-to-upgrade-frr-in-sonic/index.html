@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/detailed-steps-to-upgrade-frr-in-sonic/">
       
       
-        <link rel="prev" href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/">
+        <link rel="prev" href="../default-route/">
       
       
-        <link rel="next" href="../single-asic-voq-fixed-system-sonic/">
+        <link rel="next" href="../dhcp-relay-for-ipv6-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作） - SONiC 非公式ドキュメント</title>
+        <title>SONiC における FRR upgrade の手順とパッチ管理 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sfputil-read-eeprom-write-eeprom-sfpqsfp-eeprom" class="md-skip">
+        <a href="#sonic-frr-upgrade" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
+              SONiC における FRR upgrade の手順とパッチ管理
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -1845,6 +1845,8 @@
       
   
   
+    
+  
   
   
     
@@ -1954,20 +1956,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1985,13 +1990,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2011,7 +2016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -2039,7 +2044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -2067,7 +2072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -2095,7 +2100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
+      <a href="../bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
         
   
   
@@ -2123,7 +2128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -2151,7 +2156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
         
   
   
@@ -2179,7 +2184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -2207,7 +2212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -2235,7 +2240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -2263,7 +2268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -2291,7 +2296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
+      <a href="../bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
         
   
   
@@ -2319,7 +2324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -2347,7 +2352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -2375,7 +2380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -2400,10 +2405,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/detailed-steps-to-upgrade-frr-in-sonic/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC における FRR upgrade の手順とパッチ管理
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2419,6 +2451,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upgrade フロー（HLD ベース）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2431,7 +2549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -2459,7 +2577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -2487,7 +2605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2515,7 +2633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2543,7 +2661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -2571,7 +2689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/local-ars-hld/" class="md-nav__link">
+      <a href="../local-ars-hld/" class="md-nav__link">
         
   
   
@@ -2599,7 +2717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-for-sonic-high-level-design-document/" class="md-nav__link">
+      <a href="../mpls-for-sonic-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2627,7 +2745,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -2655,7 +2773,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -2683,7 +2801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -2711,7 +2829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -2739,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -2767,7 +2885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/path-tracing-midpoint/" class="md-nav__link">
+      <a href="../path-tracing-midpoint/" class="md-nav__link">
         
   
   
@@ -2795,7 +2913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -2823,7 +2941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -2851,7 +2969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2879,7 +2997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -2907,7 +3025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
+      <a href="../segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
         
   
   
@@ -2935,7 +3053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2963,7 +3081,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+      <a href="../sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
         
   
   
@@ -2991,7 +3109,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -3019,7 +3137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -3047,7 +3165,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -3075,7 +3193,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -3103,7 +3221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-weighted-ecmp/" class="md-nav__link">
+      <a href="../sonic-weighted-ecmp/" class="md-nav__link">
         
   
   
@@ -3131,7 +3249,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -3159,7 +3277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -3187,7 +3305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -3215,7 +3333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -3243,7 +3361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -3271,7 +3389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/virtual-router-redundancy-protocol-adaptation-hld/" class="md-nav__link">
+      <a href="../virtual-router-redundancy-protocol-adaptation-hld/" class="md-nav__link">
         
   
   
@@ -3299,7 +3417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -3327,7 +3445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -8589,8 +8707,6 @@
       
   
   
-    
-  
   
   
     
@@ -8690,23 +8806,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -8724,13 +8837,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -8750,7 +8863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -8778,7 +8891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
         
   
   
@@ -8806,7 +8919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -8834,7 +8947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cmis-and-c-cmis-support-for-zr/" class="md-nav__link">
+      <a href="../../platform/cmis-and-c-cmis-support-for-zr/" class="md-nav__link">
         
   
   
@@ -8862,7 +8975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -8890,7 +9003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -8918,7 +9031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -8946,7 +9059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -8974,7 +9087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9002,7 +9115,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
         
   
   
@@ -9030,7 +9143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -9058,7 +9171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -9086,7 +9199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../handle-asic-sdk-health-event/" class="md-nav__link">
+      <a href="../../platform/handle-asic-sdk-health-event/" class="md-nav__link">
         
   
   
@@ -9114,7 +9227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -9142,7 +9255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -9170,7 +9283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -9198,7 +9311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -9226,7 +9339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -9254,7 +9367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -9282,7 +9395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -9310,7 +9423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -9338,7 +9451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9366,7 +9479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../s3ip-sysfs-specification/" class="md-nav__link">
+      <a href="../../platform/s3ip-sysfs-specification/" class="md-nav__link">
         
   
   
@@ -9394,7 +9507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sai-api-version-check/" class="md-nav__link">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -9422,7 +9535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
+      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
         
   
   
@@ -9447,37 +9560,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -9493,120 +9579,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#page-offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        page / offset 範囲チェック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装方針
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -9619,7 +9591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -9647,7 +9619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -9675,7 +9647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-pmon-high-level-design/" class="md-nav__link">
+      <a href="../../platform/smartswitch-pmon-high-level-design/" class="md-nav__link">
         
   
   
@@ -9703,7 +9675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
         
   
   
@@ -9731,7 +9703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -9759,7 +9731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fw-utility/" class="md-nav__link">
+      <a href="../../platform/sonic-fw-utility/" class="md-nav__link">
         
   
   
@@ -9787,7 +9759,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
         
   
   
@@ -9815,7 +9787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -9843,7 +9815,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -9871,7 +9843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-psu-daemon-design/" class="md-nav__link">
+      <a href="../../platform/sonic-psu-daemon-design/" class="md-nav__link">
         
   
   
@@ -9899,7 +9871,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sfp-refactoring/" class="md-nav__link">
+      <a href="../../platform/sonic-sfp-refactoring/" class="md-nav__link">
         
   
   
@@ -9927,7 +9899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-thermal-control-design/" class="md-nav__link">
+      <a href="../../platform/sonic-thermal-control-design/" class="md-nav__link">
         
   
   
@@ -9955,7 +9927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
         
   
   
@@ -9983,7 +9955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -10011,7 +9983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -10039,7 +10011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../thermal-control-test-plan/" class="md-nav__link">
+      <a href="../../platform/thermal-control-test-plan/" class="md-nav__link">
         
   
   
@@ -10067,7 +10039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../voq-sonic/" class="md-nav__link">
+      <a href="../../platform/voq-sonic/" class="md-nav__link">
         
   
   
@@ -14922,68 +14894,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrade-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upgrade フロー（HLD ベース）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
+        注意点
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#page-offset" class="md-nav__link">
-    <span class="md-ellipsis">
       
-        page / offset 範囲チェック
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装方針
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -14994,7 +14927,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15021,7 +14965,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/detailed-steps-to-upgrade-frr-in-sonic.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15029,93 +14973,70 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-utilities/sfputil/main.py</code> で <code>read-eeprom</code> (L1812-) / <code>write-eeprom</code> (L1862-) サブコマンドを確認。<code>--page (-n)</code> / <code>--offset (-o)</code> / <code>--size</code> / <code>--no-format</code> / <code>--wire-addr</code>（sff8472 用）/ <code>--verify</code>（write 後リードバック比較）の各オプション、および <code>get_overall_offset_sff8472</code> ヘルパによる sff8472 wire-addr ハンドリング、<code>sfp.read_eeprom(flat_offset, size)</code> / <code>sfp.write_eeprom(overall_offset, len(bytes), bytes)</code> 経路をすべて確認。<code>sfp.read_eeprom() is currently not implemented for this platform</code> の ERROR_NOT_IMPLEMENTED 経路もエラー処理として実装されている。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / メタドキュメント</p>
+<p>本ページは「SONiC FRR 保守者向けの作業手順」を再構成したもの。実際の手順は upstream / SONiC 双方の実装事情に依存し、頻繁に変わる。</p>
 </div>
-<h1 id="sfputil-read-eeprom-write-eeprom-sfpqsfp-eeprom"><code>sfputil read-eeprom</code> / <code>write-eeprom</code>（ページ + オフセット指定で SFP/QSFP EEPROM 操作）<a class="headerlink" href="#sfputil-read-eeprom-write-eeprom-sfpqsfp-eeprom" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-frr-upgrade">SONiC における FRR upgrade の手順とパッチ管理<a class="headerlink" href="#sonic-frr-upgrade" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>既存 platform API <code>sfp.read_eeprom</code> / <code>sfp.write_eeprom</code> は <strong>「全体 offset」</strong> しか取らず、ユーザは規格毎に page/offset の合算を自前計算する必要があった。本機能は <strong>page と offset</strong> を直接渡せる sfputil サブコマンド <code>read-eeprom</code> / <code>write-eeprom</code> を追加し、cable type 毎の妥当性検査を入れる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sfputil read-eeprom -p &lt;port&gt; -n &lt;page&gt; -o &lt;offset&gt; -s &lt;size&gt; [--no-format] [--wire-addr a0h|a2h]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sfputil write-eeprom -p &lt;port&gt; -n &lt;page&gt; -o &lt;offset&gt; -d &lt;hex&gt; [--wire-addr a0h|a2h] [--verify]
-</span></code></pre></div>
+<p>SONiC は upstream <code>frrouting/frr</code> を <strong>branch スナップショット + per-release patch 集</strong> という形で取り込んでいる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR を新しい upstream version に上げる際は次の点を整える必要がある:</p>
 <ul>
-<li><code>--no-format</code>: 整形なし生 hex</li>
-<li><code>--wire-addr</code>: sff8472 (SFP) のみ。<code>a0h</code> / <code>a2h</code></li>
-<li><code>--verify</code>: 書き込み後リードバックして比較</li>
+<li>どの upstream tag / commit を base にするか</li>
+<li>SONiC 固有 patch（FPM 拡張、SAI と整合させる修正、SONiC ビルド適合）の rebase</li>
+<li>ビルド成果物（<code>docker-fpm-frr</code> 等）の入れ替え</li>
+<li>既存テスト（PR テスト・mgmt-vrf・graceful restart 等）の通過確認</li>
 </ul>
-<p>例<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sfputil read-eeprom -p Ethernet0 -n 0 -o 100 -s 2
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>        00000064 4a 44                                            |..|
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sfputil write-eeprom -p Ethernet0 -n 0 -o 100 -d 4a44 --verify
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Error: Write data failed! Write: 4a44, read: 0000.
-</span></code></pre></div>
-<h3 id="page-offset">page / offset 範囲チェック<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#page-offset" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>規格</th>
-<th>passive cable</th>
-<th>active cable</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>CMIS</strong></td>
-<td>page 0 / offset 0-255</td>
-<td>page 0-255、page 0 (0-255)、他 (128-255)</td>
-</tr>
-<tr>
-<td><strong>sff8436 / sff8636</strong></td>
-<td>同上</td>
-<td>同上</td>
-</tr>
-<tr>
-<td><strong>sff8472</strong></td>
-<td>wire <code>A0h</code> / offset 0-128</td>
-<td>wire <code>A0h</code> (0-255) + <code>A2h</code> (0-255)</td>
-</tr>
-</tbody>
-</table>
+<h2 id="upgrade-hld">upgrade フロー（HLD ベース）<a class="headerlink" href="#upgrade-hld" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    PICK[upstream tag 選定\nfrr X.Y.Z] --&gt; FORK[sonic-frr リポジトリで\nbranch を up-rebase]
+    FORK --&gt; PATCH[patches/ ディレクトリの\n.patch 群を rebase]
+    PATCH --&gt; BUILD[docker-fpm-frr 再ビルド]
+    BUILD --&gt; SMOKE[sonic-mgmt smoke\n(BGP / OSPF / GR / VRF / PIM)]
+    SMOKE --&gt; PR[sonic-buildimage で\nsubmodule pin 更新 PR]
+    PR --&gt; CI[community CI 全 platform]
+    CI --&gt; MERGE[merge → release branch backport]</code></pre>
+<p>各ステップの要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>offset + size</code> が page 範囲を超えるなら無効</li>
-<li>page&gt;0 で offset&lt;128 は <strong>lower memory</strong> で、CMIS / sff8636 active 系では無効</li>
-<li>active cable の page existence は <strong>完全検証不可</strong>。ユーザがケーブルマニュアル参照で担保<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>patch 集の管理</strong>: <code>src/sonic-frr/patches/</code> のような場所に SONiC 固有 patch を <code>.patch</code> ファイルで保持し、<code>quilt</code> 系で順次適用する設計</li>
+<li><strong>submodule pin</strong>: <code>sonic-buildimage</code> の <code>src/sonic-frr</code> submodule が SONiC 側 fork branch を指す</li>
+<li><strong>互換性</strong>: SONiC 側 <code>bgpcfgd</code> / <code>fpmsyncd</code> / <code>frrcfgd</code> が FRR の vty フォーマットや FPM zebra route 表現に依存している。version up でフォーマットが変わる箇所は patch / SONiC 側コードの両側で対処</li>
+<li><strong>テスト</strong>: PR テスト・既存 dual-tor / VRF / GR / BMP / SRv6 の sonic-mgmt テストを通過させる</li>
 </ul>
-<p>検証例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sfputil read-eeprom -p Ethernet0 -n 0 -o 255 -s 2  # invalid (255+2=257)
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sfputil read-eeprom -p Ethernet0 -n 1 -o 0   -s 1  # invalid (page 1 では offset&gt;=128)
-</span></code></pre></div>
-<h3 id="_3">実装方針<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h2 id="_2">注意点<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-utilities/sfputil</code> に 2 サブコマンド追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>内部で page/offset → 全体 offset への変換を規格別に実装し、既存 <code>sfp.read_eeprom</code> / <code>sfp.write_eeprom</code> を呼ぶ</li>
-<li>vendor 未対応 (<code>NotImplementedError</code>) は明示的にハンドル</li>
-<li>それ以外のエラーは read/write 失敗として扱う</li>
-<li>RJ45 ポートは対象外<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>patch を upstream に提案するのが第一</strong>: 同じ修正を毎回 rebase するのは負債なので、汎用的な修正は upstream へ</li>
+<li><strong>バックポート</strong>: 既 release（202311 等）への backport では vendor SDK / SAI 互換性も併せて確認</li>
+<li><strong>graceful restart 互換</strong>: GR / GR-helper の動作が version で微妙に変わる。warm reboot との相性に直撃する</li>
+<li><strong>管理 VRF / unnumbered / bfd</strong>: SONiC でよく使われる feature の互換性確認は手厚く</li>
 </ul>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>vendor の platform API 実装が前提。未実装 vendor では <code>NotImplementedError</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>active cable の page 存在チェックは完全には行わない</li>
-<li>RJ45 不可</li>
-<li>warm/fast-boot 影響なし、メモリ消費影響なし<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>bgpcfgd / fpmsyncd / frrcfgd / new-frr-sonic-communication-channel</strong>: FRR と SONiC を繋ぐ周辺コード</li>
+<li><strong>graceful restart / warm reboot</strong>: GR タイマと convergence の整合</li>
+<li><strong>management VRF / VRF design</strong>: VRF 周りは upstream 側変更の影響を受けやすい</li>
+<li><strong>BMP / FRR ext config</strong>: <code>sonic-frr-bgp-extended-unified-configuration-management-framework</code> 等の SONiC 拡張</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">トラブルシューティング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>sfputil</code> 既存サブコマンド</strong>: 同じ CLI ツールに追加される</li>
-<li><strong><code>sonic_platform_base.sfp_base.SfpBase.read_eeprom</code> / <code>write_eeprom</code></strong>: 下位 API</li>
-<li><strong>xcvrd / pmon</strong>: EEPROM への書込はモジュール状態に影響するため運用注意</li>
+<li>新版 FRR で起動しない → patch 適用順、<code>vtysh</code> config 互換性、<code>config db</code> 由来 template との差分</li>
+<li>BGP routes がインストールされない → <code>fpmsyncd</code> の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分</li>
+<li>GR 効かない → <code>bgpd</code> GR タイマ、SONiC 側の warm-restart 連動、log の <code>BGP gr</code> メッセージ</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- src/sonic-frr/patches/ ディレクトリ構造と quilt-like 適用機構の現行実装確認
+- sonic-buildimage submodule pin の現行 frr version 確認
+- bgpcfgd / fpmsyncd / frrcfgd の FRR version 互換ロジックの現行実装確認
+- graceful restart timer / warm-restart との連動の現行値確認
+- BMP / SRv6 / VRF / unnumbered 関連 patch の upstream 化進捗確認
+- 文書自体（HLD）の改訂日・現行 master FRR version との乖離リスク確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sfputil/read_write_eeprom_by_page.md">sonic-net/SONiC doc/sfputil/read_write_eeprom_by_page.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/frr_maintainer/sonic-frr_upgrade_process.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
