@@ -1,4 +1,22 @@
 title: スイッチング
 nav:
   - index.md
-  - ...
+  - add-support-for-vlan-interface-using-openconfig-yang.md
+  - sonic-basic-l2-mode-test-plan.md
+  - switch-port-modes-and-vlan-cli-enhancement.md
+  - brief-introduction-of-iccp-code.md
+  - lag-on-distributed-voq-system.md
+  - mclag-enhancements.md
+  - openconfig-support-for-portchannel-aggregate-interface.md
+  - sonic-ip-lag-incremental-update.md
+  - multiple-spanning-tree-protocol.md
+  - macsec-sonic-high-level-design-document.md
+  - sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md
+  - sonic-sai-post-support-for-macsec.md
+  - increasing-lacp-pdu-timeout-during-warm-reboot.md
+  - view-switching-in-producerstatetable.md
+  - control-sonic-behaviors-with-system-defaults-table.md
+  - link-event-damping-hld.md
+  - sonic-bum-storm-control.md
+  - layer-2-forwarding-enhancements.md
+  - wake-on-lan-in-sonic.md

@@ -1,4 +1,41 @@
 title: CLI
 nav:
   - index.md
-  - ...
+  - config-aaa.md
+  - config-acl.md
+  - config-bgp.md
+  - config-dhcp-relay.md
+  - config-interface.md
+  - config-kdump.md
+  - config-mclag.md
+  - config-mgmt-trio.md
+  - config-muxcable.md
+  - config-nat.md
+  - config-portchannel.md
+  - config-route.md
+  - config-sflow.md
+  - config-snmp.md
+  - config-syslog.md
+  - config-vlan.md
+  - config-vrf.md
+  - config-vxlan.md
+  - show-acl.md
+  - show-bgp.md
+  - show-feature.md
+  - show-interfaces.md
+  - show-ip.md
+  - show-mclag.md
+  - show-muxcable.md
+  - show-nat.md
+  - show-platform.md
+  - show-route-map.md
+  - show-running-config.md
+  - show-system-health.md
+  - show-techsupport.md
+  - show-vlan.md
+  - clear.md
+  - sonic-cfggen.md
+  - sonic-installer.md
+  - sonic-package-manager.md
+  - debug-group.md
+  - reboot-fast-warm.md

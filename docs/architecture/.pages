@@ -1,4 +1,44 @@
 title: アーキテクチャ
 nav:
   - index.md
-  - ...
+  - clock-managment-design.md
+  - json-change-application.md
+  - pw-hardening-design.md
+  - reset-factory-design.md
+  - sonic-generic-configuration-update-and-rollback.md
+  - alpine-high-level-design.md
+  - build-profiles.md
+  - build-system-improvements.md
+  - rfs-split-build-improvements-hld.md
+  - sonic-arm-architecture-support.md
+  - sonic-on-gns3-vm.md
+  - steps-to-bring-up-sonic-vs.md
+  - port-illegal-packets-drop-design.md
+  - port-profile-init-hld.md
+  - sonic-generic-hash.md
+  - sonic-ip-interface-loopback-action.md
+  - sonic-packet-trimming.md
+  - sonic-policy-based-hashing.md
+  - sonic-port-auto-fec-design.md
+  - sonic-port-auto-negotiation-design.md
+  - sonic-port-configuration-refactor-design.md
+  - sonic-port-link-training-design.md
+  - sonic-sub-port-interface-high-level-design.md
+  - dhcpv4-relay-agent.md
+  - dhcpv6-relay-agent.md
+  - nat-in-sonic.md
+  - sag-high-level-design-for-sonic.md
+  - sflow-high-level-design.md
+  - sflow-test-plan.md
+  - smart-switch-database-design.md
+  - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
+  - smartswitch-high-availability-manager-daemon-hamgrd-design.md
+  - 1-udev-rules-design-for-terminal-server.md
+  - debug-framework-in-sonic.md
+  - error-handling-framework-in-sonic.md
+  - s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
+  - sonic-bulk-counter-design.md
+  - sonic-trap-flow-counter-design.md
+  - ssdhealth-design.md
+  - dip-sip-ptf-validation-high-level-design.md
+  - sonic-application-extension-infrastructure.md

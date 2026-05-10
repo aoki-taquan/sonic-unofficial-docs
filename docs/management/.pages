@@ -1,4 +1,46 @@
 title: マネジメント
 nav:
   - index.md
-  - ...
+  - json-patch-ordering-using-yang-models.md
+  - model-based-replace-delete-in-mgmt-framework-transformer.md
+  - save-on-set-hld.md
+  - sonic-config-update-validation-via-yang.md
+  - sonic-management-framework.md
+  - sonic-nos-configuration-methods.md
+  - sonic-yang-model-guidelines.md
+  - gnmi-master-arbitration-hld.md
+  - gnmi-usage.md
+  - gnoi-hld-for-file-and-factory-reset-apis.md
+  - gnoi-hld-for-healthz-api.md
+  - gnoi-hld-for-os-apis.md
+  - gnoi-hld-for-system-apis.md
+  - gnsi-hld.md
+  - openconfig-support-for-ethernet-interfaces.md
+  - smart-switch-gnmi-feedback-design-omit-in-toc.md
+  - sonic-gnmi-server-interface-design.md
+  - aaa-improvements.md
+  - default-credential-management-for-california-sb-327-conformance.md
+  - hld-ldap.md
+  - radius-management-user-authentication.md
+  - sonic-tacacs-improvement.md
+  - tacacs-authentication.md
+  - tacacs-passkey-encryption.md
+  - tacacs-test-plan.md
+  - p4rt-application-hld.md
+  - p4rt-read-cache-hld.md
+  - packetio.md
+  - pins-hld.md
+  - send-to-ingress-hld.md
+  - dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md
+  - ipv4-port-based-dhcp-server-in-sonic.md
+  - portable-console-device-design.md
+  - serial-console-global-config-hld.md
+  - sonic-console-switch.md
+  - ssh-server-global-config-hld.md
+  - redis-client-manager-rcm-hld.md
+  - sonic-application-extension-guide.md
+  - sonic-user-manual.md
+  - config-reload-enhancement.md
+  - design-doc.md
+  - enhancement-of-cmis-module-management.md
+  - sonic-cli-auto-generation-tool.md
