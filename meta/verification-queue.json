@@ -1440,6 +1440,20 @@
       "priority": "medium"
     },
     {
+      "page": "docs/platform/sonic-thermal-control-design.md",
+      "issue": 692,
+      "verification": "hld-only",
+      "concerns": [
+        "thermalctld (または pmon 内サブモジュール) の現行 sonic-platform-daemons 実装存在確認",
+        "STATE_DB TEMPERATURE_INFO / FAN_INFO スキーマの取り込み確認",
+        "ThermalBase / FanBase platform API の sonic-platform-common 取り込み状況確認",
+        "thermal_policy.json (ベンダ JSON) のフォーマットと parser の実装確認",
+        "光モジュール温度を xcvrd と thermalctld のどちらが管理するかの責任分担確認",
+        "HLD は Rev 0.3 で日付欄空欄。pmon-enhancement-design.md との整合性確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
       "issue": 307,
       "verification": "discrepancy-found",
