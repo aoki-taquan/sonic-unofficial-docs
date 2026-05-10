@@ -8775,6 +8775,8 @@
       
         
       
+        
+      
     
     
     
@@ -8844,6 +8846,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -14901,9 +14931,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
-<p>HLD は 170KB 超の包括設計書。ここでは <strong>architecturally distinctive な要素</strong>（北/南境界の責務分担と Translib / Transformer の役割）に絞る。各 transformer・URL マッピング・openconfig モジュール対応など詳細は HLD <code>doc/mgmt/Management Framework.md</code> を参照。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。docker-sonic-mgmt-framework: sonic-buildimage/dockers/docker-sonic-mgmt-framework / sonic-mgmt-common/translib/transformer/* (interfaces / portchannel / sflow openconfig + sonic test) で確認。</p>
 </div>
 <h1 id="sonic-management-frameworkrest-gnmi-translib-transformer">SONiC Management Framework（REST / gNMI / Translib / Transformer）<a class="headerlink" href="#sonic-management-frameworkrest-gnmi-translib-transformer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

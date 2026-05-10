@@ -8620,6 +8620,8 @@
       
         
       
+        
+      
     
     
     
@@ -8692,6 +8694,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15023,9 +15053,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only / 比較的新しい (2024-12 ～ 2026-02)</p>
-<p>HLD は Rev 0.3 (2026-02)。<code>xcvrd</code> の media_settings.json gearbox attr 解釈、<code>orchagent</code> の <code>doPortTask</code> 内 gearbox serdes attr 適用 (<code>sonic-swss</code> PR #4113)、SAI レベルでの line-side / system-side serdes 属性は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。gearbox: sonic-swss/orchagent/portsorch.cpp の m_gearboxTable / m_gearboxEnabled 経路 + tests/mock_tests/portsorch_ut.cpp:1711-1721 (gb_line_pre1..3, gb_line_main, gb_line_post1..3, gb_system_*) で 7 種 attr を確認。</p>
 </div>
 <h1 id="gearbox-gb_line_-gb_system_-in-media_settingsjson">Gearbox 動的チューニング（gb_line_<em> / gb_system_</em> in media_settings.json）<a class="headerlink" href="#gearbox-gb_line_-gb_system_-in-media_settingsjson" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

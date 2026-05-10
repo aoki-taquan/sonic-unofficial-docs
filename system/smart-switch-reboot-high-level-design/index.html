@@ -8880,6 +8880,8 @@
       
         
       
+        
+      
     
     
     
@@ -8949,6 +8951,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15111,9 +15141,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.5 (2024-11)。<code>ModuleBase</code> の <code>pci_detach()</code> / <code>pci_reattach()</code> / <code>dpu_reboot()</code> 系 API、PCIe daemon の DPU 個別検出 / 復帰経路、<code>reboot</code> script の DPU 単位サブコマンドは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。ModuleBase: sonic-platform-common/sonic_platform_base/module_base.py:411 (pci_detach), 420 (pci_reattach), 504 (dpu_reboot_timeout) / reboot script: sonic-utilities/scripts/reboot:55-56 (DPU_MODULE_NAME, REBOOT_DPU), :153 (-d オプション), :223-224, :290 (handle_smart_switch), :298 (smartswitch + REBOOT_DPU=yes), reboot_smartswitch_helper で確認。</p>
 </div>
 <h1 id="smartswitch-reboot-npu-dpu-gnoi-halt-pci-detach-reboot">SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）<a class="headerlink" href="#smartswitch-reboot-npu-dpu-gnoi-halt-pci-detach-reboot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

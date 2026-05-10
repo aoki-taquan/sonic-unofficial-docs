@@ -8880,6 +8880,8 @@
       
         
       
+        
+      
     
     
     
@@ -8949,6 +8951,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15111,9 +15141,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.2 (2024-09)。FRR <code>vrrpd</code> の SONiC コンテナ取り込み、<code>VRRP</code> / <code>VRRP6</code> / <code>VRRP_TRACK</code> テーブルの現行 master スキーマ、<code>config interface vrrp</code> 系 CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。FRR vrrpd: sonic-frr/ に vrrpd モジュール存在 / CFG_VRRP_TABLE / CFG_VRRP6_TABLE / APP_VRRP_TABLE_NAME: sonic-swss-common/common/schema.h:109,380,381 で取り込み確認 / config interface vrrp + show vrrp: sonic-utilities/config/main.py:6853-6868, show/main.py:1278-1313 で確認 / openconfig-if-ip ip-vrrp-tracking: sonic-mgmt-common/models/yang/openconfig-if-ip.yang:678-716 で確認。</p>
 </div>
 <h1 id="vrrpfrr-vrrpd-vrrpv2v3-uplink-tracking">VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）<a class="headerlink" href="#vrrpfrr-vrrpd-vrrpv2v3-uplink-tracking" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

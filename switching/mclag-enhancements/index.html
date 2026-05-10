@@ -8891,6 +8891,8 @@
       
         
       
+        
+      
     
     
     
@@ -8960,6 +8962,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15133,9 +15163,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.1。<code>MclagSyncd</code> の現行 master 実装、<code>STATE_MCLAG_*</code> テーブル、<code>ISOLATION_GROUP_TABLE</code>、<code>APP_MCLAG_FDB_TABLE</code> の SWSS / FdbOrch コードパス、<code>config mclag</code> Click CLI / SONiC CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。iccpd: sonic-buildimage/src/iccpd / mclagsyncd: sonic-swss/mclagsyncd/mclagsyncd.cpp / schema: APP_MCLAG_FDB_TABLE_NAME, APP_ISOLATION_GROUP_TABLE_NAME, CFG_MCLAG_TABLE_NAME (MCLAG_DOMAIN), CFG_MCLAG_INTF_TABLE_NAME (MCLAG_INTERFACE): sonic-swss-common/common/schema.h:118,119,378,379 / sonic-mclag.yang で確認。</p>
 </div>
 <h1 id="mclag-enhancementsdynamic-config-unique-ip-isolation-group-static-mac">MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）<a class="headerlink" href="#mclag-enhancementsdynamic-config-unique-ip-isolation-group-static-mac" title="Permanent link">&para;</a></h1>
 <blockquote>

@@ -8847,6 +8847,8 @@
       
         
       
+        
+      
     
     
     
@@ -8916,6 +8918,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15045,9 +15075,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.3。<code>sonic-snmpagent</code> (<code>sonic_ax_impl</code>) の Entity MIB 拡張、<code>entPhysicalContainedIn</code> による hierarchy 表現、PSU / FAN / sensor の MIB 化が現行 master でどこまで実装されているかは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。rfc2737 (Entity MIB): sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2737.py:241,672,822,1144 (entPhysicalContainedIn, FAN_INFO map) / rfc3433 (Entity Sensor MIB): rfc3433.py に RFC 3433 link / sub_oid: physical_entity_sub_oid_generator.py で確認。</p>
 </div>
 <h1 id="entity-mib-entity-sensor-mib-chassis-sensor-fan-psu">Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）<a class="headerlink" href="#entity-mib-entity-sensor-mib-chassis-sensor-fan-psu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -8847,6 +8847,8 @@
       
         
       
+        
+      
     
     
     
@@ -8916,6 +8918,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15045,9 +15075,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.1。<code>containercfgd</code> の sonic-buildimage 取り込み、<code>hostcfgd</code> の SYSLOG_CONFIG 監視、<code>rsyslog-container.conf.j2</code> の rate-limit 変数化、APP extension 経由の設定は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。containercfgd: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py:18,21,22,98,133-135 (SYSLOG_CONFIG_FEATURE_TABLE, SYSLOG_RATE_LIMIT_INTERVAL, SYSLOG_RATE_LIMIT_BURST, @config_handler) / config syslog rate-limit-feature: sonic-utilities/config/syslog.py:514-515 で確認。</p>
 </div>
 <h1 id="syslog-rate-limit-syslog_config-syslog_config_feature">syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）<a class="headerlink" href="#syslog-rate-limit-syslog_config-syslog_config_feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

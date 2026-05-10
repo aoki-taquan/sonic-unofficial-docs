@@ -8797,6 +8797,8 @@
       
         
       
+        
+      
     
     
     
@@ -8866,6 +8868,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -14945,9 +14975,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。実装側（<code>sflowmgrd</code> / <code>hsflowd</code> プラグイン / SAI sample-packet API）の現行 master との一致は未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>実装側裏取り済み（<code>sonic-swss/cfgmgr/sflowmgr.cpp</code> の <code>SflowMgr</code> および <code>orchagent/sfloworch.cpp</code> の <code>SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE</code> 設定経路、<code>sonic-buildimage/files/build_templates/sflow.service.j2</code>、<code>sonic-yang-models/yang-models/sonic-sflow.yang</code>、<code>sonic-utilities/config/main.py</code> の <code>config sflow</code>）。ただし下記「sample_rate 既定値」表は HLD と乖離あり: HLD (<code>sonic-net/SONiC</code> <code>doc/sflow/sflow_hld.md</code> L492-501) は <code>(ifSpeed / 1e6)</code> ＝ 1G→1000 / 10G→10000 / 40G→40000 / 50G→50000 / 100G→100000 / 400G→400000 と定義しており、実装も <code>sflowmgr.cpp::findSamplingRate()</code> で <code>oper_speed</code> (Mbps) を返すだけ。本ページが書いていた「100G→50000 / 50G→30000 / 40G→30000 / 25G→10000」は誤り。</p>
 </div>
 <h1 id="sflowhsflowd-sflowmgrd-sai-sample-packet">sFlow（hsflowd / sflowmgrd / SAI sample-packet）<a class="headerlink" href="#sflowhsflowd-sflowmgrd-sai-sample-packet" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -14976,16 +15006,16 @@
 <li><code>agent_id</code> は collector が flow を識別するための論理 IP。明示しない場合は <code>Loopback0</code> 等から自動選択</li>
 </ul>
 <h2 id="sample_rate">sample_rate 既定値<a class="headerlink" href="#sample_rate" title="Permanent link">&para;</a></h2>
-<p>リンク速度から自動計算する設計（HLD 表記）:</p>
+<p>HLD と実装は揃って <code>(ifSpeed / 1e6)</code> を既定値とする（<code>SflowMgr::findSamplingRate()</code> は <code>oper_speed</code> 文字列を Mbps 単位でそのまま返す）:</p>
 <ul>
-<li>100G → 50000</li>
-<li>50G  → 30000</li>
-<li>40G  → 30000</li>
-<li>25G  → 10000</li>
-<li>10G  → 10000</li>
 <li>1G   → 1000</li>
+<li>10G  → 10000</li>
+<li>40G  → 40000</li>
+<li>50G  → 50000</li>
+<li>100G → 100000</li>
+<li>400G → 400000</li>
 </ul>
-<p>明示設定があればそちらを優先。port speed 変更時は <code>sflowmgrd</code> が追従して <code>SFLOW_SESSION_TABLE</code> を更新する想定。</p>
+<p>明示設定があればそちらを優先。port speed 変更時は <code>sflowmgrd</code> が追従して <code>SFLOW_SESSION_TABLE</code> を更新する（<code>sflowProcessOperSpeed()</code>）。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/sflow/sflow_hld.md#L1-L400 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |

@@ -8620,6 +8620,8 @@
       
         
       
+        
+      
     
     
     
@@ -8692,6 +8694,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15067,9 +15097,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 0.3。<code>thermalctld</code>（または <code>thermal_control</code> 内モジュール）の実装、<code>STATE_DB TEMPERATURE_INFO</code> / <code>FAN_INFO</code> の現行 master スキーマ、ベンダ別 thermal policy / algorithm の plug-in は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。thermalctld: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld (POLICY_FILE = /usr/share/sonic/platform/thermal_policy.json:1291) / ThermalBase / FanBase: sonic-platform-common/sonic_platform_base/{thermal_base.py,fan_base.py,fan_drawer_base.py,sonic_thermal_control/} で確認。</p>
 </div>
 <h1 id="thermal-controlthermalctld-fan-cooling">Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）<a class="headerlink" href="#thermal-controlthermalctld-fan-cooling" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -8897,6 +8897,8 @@
       
         
       
+        
+      
     
     
     
@@ -8966,6 +8968,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15145,9 +15175,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 1.0 (2021-12)。<code>fpmsyncd</code> の MPLS netlink 解釈、<code>LABEL_ROUTE_TABLE</code> の APPL_DB スキーマ、<code>SAI_INSEG_ENTRY</code> 系 SAI API のベンダ実装、<code>config interface mpls</code> CLI の sonic-utilities 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。fpmsyncd MPLS: sonic-swss/fpmsyncd/routesync.cpp:158 (APP_LABEL_ROUTE_TABLE_NAME ProducerStateTable), 2066 (AF_MPLS), 2914 (LWTUNNEL_ENCAP_MPLS), 2936 (RTA_NEWDST = MPLS NH label stack) で確認。</p>
 </div>
 <h1 id="sonic-mpls-per-rif-mpls-label_route_table-lsp">SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）<a class="headerlink" href="#sonic-mpls-per-rif-mpls-label_route_table-lsp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

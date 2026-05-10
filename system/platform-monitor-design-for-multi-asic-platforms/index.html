@@ -8858,6 +8858,8 @@
       
         
       
+        
+      
     
     
     
@@ -8927,6 +8929,34 @@
     
   
     1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
   
 
     
@@ -15067,9 +15097,9 @@
   
 
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は文書中に Revision 表が無い古めの文書。<code>DaemonBase</code> の namespace 引数、<code>SfpUtilHelper</code> の multi-asic 拡張、Mellanox 系 plugin の syncd-per-namespace 対応は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>実装裏取り済み（下記コード位置）。namespace 引数: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1285 (DaemonBase) + sonic-xcvrd/xcvrd/xcvrd_utilities/port_event_helper.py:52-86 (namespaces 引数 + daemon_base.db_connect(namespace=ns)) で確認。</p>
 </div>
 <h1 id="pmon-multi-asic-global-db-per-asic-namespace">PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）<a class="headerlink" href="#pmon-multi-asic-global-db-per-asic-namespace" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
