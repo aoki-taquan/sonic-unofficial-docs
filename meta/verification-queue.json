@@ -2171,6 +2171,20 @@
       "pr": 516
     },
     {
+      "page": "docs/system/sonic-pmon-sensor-monitoring-enhancement.md",
+      "issue": 698,
+      "verification": "hld-only",
+      "concerns": [
+        "SensorMon daemon の sonic-platform-daemons リポジトリ取り込み確認",
+        "STATE_DB の VOLTAGE_INFO / CURRENT_INFO テーブルスキーマ取り込み確認",
+        "VoltageBase / CurrentBase platform API の sonic-platform-common 取り込み確認",
+        "sonic-snmpagent の Entity MIB / Entity Sensor MIB 拡張で voltage/current sensor を出すコードパス確認",
+        "system health 集約 (sonic_health_check 等) への SensorMon alarm 反映ルート確認",
+        "show platform voltage / current 等の具体的 CLI コマンドの sonic-utilities 取り込み確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",
       "issue": 316,
       "verification": "discrepancy-found",
