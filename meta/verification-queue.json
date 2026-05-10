@@ -2171,6 +2171,20 @@
       "pr": 516
     },
     {
+      "page": "docs/system/sonic-telemetry-in-dial-out-mode-2.md",
+      "issue": 696,
+      "verification": "hld-only",
+      "concerns": [
+        "dialout_client_cli (Go 実装) の sonic-gnmi リポジトリ取り込み確認",
+        "CONFIG_DB TELEMETRY_CLIENT|Global / DestinationGroup_* / Subscription_* スキーマ取り込み確認",
+        "openconfig telemetry YANG との SONiC 側 YANG mapping 確認",
+        "DestinationGroup フェイルオーバ (CSV 順次試行) のロジック実装確認",
+        "TLS/mTLS で dial-out する場合の証明書ロード経路確認",
+        "report_type=stream / once の動作実装確認"
+      ],
+      "priority": "low"
+    },
+    {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",
       "issue": 316,
       "verification": "discrepancy-found",
