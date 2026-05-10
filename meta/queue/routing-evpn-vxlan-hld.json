@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/evpn-vxlan-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnRouteOrch の現行実装存在確認",
+    "CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認",
+    "FRR BGP-EVPN（bgpd / zebra）と SONiC 連携（fpmsyncd / FRR template）の現行実装確認",
+    "show evpn / show vxlan CLI の sonic-utilities 取り込み確認",
+    "Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap オブジェクト）確認",
+    "EVPN VxLAN multihoming HLD（ESI / DF election / Type-1 / Type-4）との実装上の境界確認"
+  ],
+  "priority": "high"
+}
