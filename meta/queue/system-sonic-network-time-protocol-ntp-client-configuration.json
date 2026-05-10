@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-network-time-protocol-ntp-client-configuration.md",
+  "verification": "hld-only",
+  "concerns": [
+    "現行 master の NTP daemon（ntpd vs chrony）の選定状況の確認",
+    "hostcfgd の NTP config rendering 経路（jinja テンプレート / ntp.conf or chrony.conf）の現行実装確認",
+    "CONFIG_DB NTP / NTP_SERVER / NTP_KEY スキーマと sonic-yang-models 取り込み確認",
+    "config ntp / show ntp CLI の sonic-utilities 取り込み確認",
+    "mgmt VRF と data VRF 経路の同時利用が現行実装でどう扱われているか確認",
+    "chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況確認"
+  ],
+  "priority": "medium"
+}
