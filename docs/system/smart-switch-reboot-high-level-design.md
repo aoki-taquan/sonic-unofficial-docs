@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.5 (2024-11)。`ModuleBase` の `pci_detach()` / `pci_reattach()` / `dpu_reboot()` 系 API、PCIe daemon の DPU 個別検出 / 復帰経路、`reboot` script の DPU 単位サブコマンドは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。ModuleBase: sonic-platform-common/sonic_platform_base/module_base.py:411 (pci_detach), 420 (pci_reattach), 504 (dpu_reboot_timeout) / reboot script: sonic-utilities/scripts/reboot:55-56 (DPU_MODULE_NAME, REBOOT_DPU), :153 (-d オプション), :223-224, :290 (handle_smart_switch), :298 (smartswitch + REBOOT_DPU=yes), reboot_smartswitch_helper で確認。
 
 # SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
 

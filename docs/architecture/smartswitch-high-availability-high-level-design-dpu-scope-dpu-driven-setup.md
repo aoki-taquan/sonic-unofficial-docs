@@ -1,7 +1,7 @@
 ---
 title: SmartSwitch HA - DPU-Scope-DPU-Driven 構成
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は 2024-06 改訂 (Rev 0.3) 。`hamgrd` の DPU-driven モードコードパス、HA 状態 (`Connecting` / `PendingActiveActivation` 等) の SAI notification 経由 SDN 上申、BFD responder の DPU 側起動制御は未確認。本ページは ENI-Scope-NPU-Driven の主 HLD との **差分** に焦点を当てる。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。DASH HA tables: sonic-swss/orchagent/orchdaemon.cpp:1354-1355 で APP_DASH_HA_SET_TABLE_NAME / APP_DASH_HA_SCOPE_TABLE_NAME を確認。SAI ha_set_event / ha_scope_event: sonic-swss/orchagent/notifications.cpp:65,79。
 
 # SmartSwitch HA - DPU-Scope-DPU-Driven 構成
 

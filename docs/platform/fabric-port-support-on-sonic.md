@@ -1,7 +1,7 @@
 ---
 title: VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 3.6 (2025-10) と継続的に改訂されている重要 HLD。`switch_type=fabric` の DEVICE_METADATA、`fabricmgrd` 系の link monitoring（CRC / misaligned threshold）、`STATE_DB FABRIC_PORT_TABLE` 反映と `show fabric port status` の sonic-utilities 取込状況は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。switch_type=fabric: sonic-yang-models/yang-models/sonic-port.yang:75 / APP_FABRIC_PORT_TABLE_NAME: sonic-swss-common/common/schema.h:40, 549 / FabricPortsOrch: sonic-swss/orchagent/fabricportsorch.{cpp,h} / show fabric: sonic-utilities/show/fabric.py + scripts/fabricstat + config/fabric.py で確認。
 
 # VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
 

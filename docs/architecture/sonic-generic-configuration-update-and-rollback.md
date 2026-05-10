@@ -1,7 +1,7 @@
 ---
 title: Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`generic_config_updater` の現行 master 取り込み状況、依存解決アルゴリズム、YANG validation 統合は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。GCU: sonic-utilities/generic_config_updater/{main.py,generic_updater.py,patch_sorter.py,change_applier.py,gu_common.py} で確認。
 
 # Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
 

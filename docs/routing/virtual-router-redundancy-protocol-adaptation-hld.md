@@ -1,7 +1,7 @@
 ---
 title: VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - sonic-vrrp
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.2 (2024-09)。FRR `vrrpd` の SONiC コンテナ取り込み、`VRRP` / `VRRP6` / `VRRP_TRACK` テーブルの現行 master スキーマ、`config interface vrrp` 系 CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。FRR vrrpd: sonic-frr/ に vrrpd モジュール存在 / CFG_VRRP_TABLE / CFG_VRRP6_TABLE / APP_VRRP_TABLE_NAME: sonic-swss-common/common/schema.h:109,380,381 で取り込み確認 / config interface vrrp + show vrrp: sonic-utilities/config/main.py:6853-6868, show/main.py:1278-1313 で確認 / openconfig-if-ip ip-vrrp-tracking: sonic-mgmt-common/models/yang/openconfig-if-ip.yang:678-716 で確認。
 
 # VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）
 

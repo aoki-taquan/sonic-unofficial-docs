@@ -1,7 +1,7 @@
 ---
 title: MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）
 area: switching
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.1。`MclagSyncd` の現行 master 実装、`STATE_MCLAG_*` テーブル、`ISOLATION_GROUP_TABLE`、`APP_MCLAG_FDB_TABLE` の SWSS / FdbOrch コードパス、`config mclag` Click CLI / SONiC CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。iccpd: sonic-buildimage/src/iccpd / mclagsyncd: sonic-swss/mclagsyncd/mclagsyncd.cpp / schema: APP_MCLAG_FDB_TABLE_NAME, APP_ISOLATION_GROUP_TABLE_NAME, CFG_MCLAG_TABLE_NAME (MCLAG_DOMAIN), CFG_MCLAG_INTF_TABLE_NAME (MCLAG_INTERFACE): sonic-swss-common/common/schema.h:118,119,378,379 / sonic-mclag.yang で確認。
 
 # MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）
 

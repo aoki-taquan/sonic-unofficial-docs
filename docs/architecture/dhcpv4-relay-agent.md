@@ -1,7 +1,7 @@
 ---
 title: DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - sonic-dhcp-relay
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`dhcrelay` / `dhcpmon` の現行 docker / supervisor 設定、option-82 の実装挙動は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。dhcpmon / dhcrelay: sonic-buildimage/dockers/docker-dhcp-relay/dhcp-relay.monitors.j2 で program:dhcpmon-{vlan} と /usr/sbin/dhcpmon -id <vlan> を確認。yang: sonic-dhcpv4-relay.yang。
 
 # DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）
 

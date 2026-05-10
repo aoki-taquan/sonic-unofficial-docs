@@ -1,7 +1,7 @@
 ---
 title: NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -22,8 +22,8 @@ related:
     - sonic-nat
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`natsyncd` / `natmgrd` / `NatOrch` の現行実装と SAI NAT API の community 取り込み状況は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。natmgrd: sonic-swss/cfgmgr/natmgrd.cpp + natmgr.cpp / natsyncd: sonic-swss/natsyncd/natsyncd.cpp / NatOrch: sonic-swss/orchagent/natorch.cpp で確認。docker-nat: sonic-buildimage/dockers/docker-nat 取り込み済み。CONFIG_DB STATIC_NAT / NAT_POOL / NAT_BINDINGS / NAT_ZONE: sonic-yang-models sonic-nat.yang で確認。config nat / show nat: sonic-utilities/config/nat.py 取り込み済み。
 
 # NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
 

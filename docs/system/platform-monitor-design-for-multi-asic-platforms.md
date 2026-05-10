@@ -1,7 +1,7 @@
 ---
 title: PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は文書中に Revision 表が無い古めの文書。`DaemonBase` の namespace 引数、`SfpUtilHelper` の multi-asic 拡張、Mellanox 系 plugin の syncd-per-namespace 対応は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。namespace 引数: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1285 (DaemonBase) + sonic-xcvrd/xcvrd/xcvrd_utilities/port_event_helper.py:52-86 (namespaces 引数 + daemon_base.db_connect(namespace=ns)) で確認。
 
 # PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）
 
