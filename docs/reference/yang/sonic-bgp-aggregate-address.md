@@ -1,0 +1,77 @@
+---
+title: sonic-bgp-aggregate-address YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-10
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [BGP_AGGREGATE_ADDRESS]
+  cli: ["config bgp"]
+  yang: []
+---
+
+# sonic-bgp-aggregate-address YANG
+
+## 概要
+
+- module: `sonic-bgp-aggregate-address`
+- namespace: `http://github.com/sonic-net/sonic-bgp-aggregate-address`
+- revision: `2024-07-10`
+- import: `ietf-inet-types`
+- top container: `sonic-bgp-aggregate-address`
+
+SONIC BGP aggregate address configuration module.[^1]
+
+## ツリー
+
+```
+module: sonic-bgp-aggregate-address
+  +--rw sonic-bgp-aggregate-address
+     +--rw BGP_AGGREGATE_ADDRESS
+        +--rw BGP_AGGREGATE_ADDRESS_LIST* [aggregate-address]
+           +--rw aggregate-address                   inet:ip-prefix
+           +--rw bbr-required?                       boolean
+           +--rw summary-only?                       boolean
+           +--rw as-set?                             boolean
+           +--rw aggregate-address-prefix-list?      string
+           +--rw contributing-address-prefix-list?   string
+```
+
+## container / list 一覧
+
+| 種別 | パス | key | 説明 |
+|------|------|-----|------|
+| `container` | `sonic-bgp-aggregate-address` |  |  |
+| `container` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS` |  | BGP aggregate address configuration for summarizing prefixes. |
+| `list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST` | `aggregate-address` | Each entry defines a BGP aggregate address and its advertisement options. |
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `aggregate-address` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/aggregate-address` | `inet:ip-prefix` | yes |  |  | Aggregate address to be advertised |
+| `bbr-required` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/bbr-required` | `boolean` |  | false |  | Require a Border Gateway Protocol Best Route (BBR) entry before generating the aggregate. |
+| `summary-only` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/summary-only` | `boolean` |  | false |  | Suppress more-specific routes and only advertise the aggregate summary. |
+| `as-set` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/as-set` | `boolean` |  | false |  | Include AS_SET path information in the aggregate to preserve origin AS data. |
+| `aggregate-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/aggregate-address-prefix-list` | `string` |  |  | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which prefixes are included in the aggregate advertisement. |
+| `contributing-address-prefix-list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST/contributing-address-prefix-list` | `string` |  |  | length `0..128`; pattern `[0-9a-zA-Z_-]*` | Prefix list used to filter which contributing routes are considered for the aggregate. |
+
+## leafref / 依存
+
+- なし
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `BGP_AGGREGATE_ADDRESS`
+- CLI: `config bgp`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
