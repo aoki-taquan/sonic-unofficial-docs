@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/multi-asic-warm-reboot.md",
+  "verification": "hld-only",
+  "concerns": [
+    "warm-reboot スクリプトの multi-asic 対応経路（namespace 横断の barrier 制御）の現行実装確認",
+    "per-namespace /host/warmboot/<ns>/ ファイル配置と命名規則の現行値確認",
+    "swss@asicN / syncd@asicN の warm shutdown 順序制御の現行 systemd / docker_image_ctl 実装確認",
+    "BGP_INTERNAL_NEIGHBOR の hold timer / GR timer の現行既定値確認",
+    "multi-asic single-json と WARM_RESTART 設定の互換性・per-asic 上書き挙動確認",
+    "HLD 記述と現行 multi-asic warm reboot CI / sonic-mgmt テストカバレッジの差異確認"
+  ],
+  "priority": "medium"
+}
