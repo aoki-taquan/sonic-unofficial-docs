@@ -1,0 +1,15 @@
+{
+  "page": "docs/system/sonic-configuration-setup-service.md",
+  "issue": 702,
+  "verification": "hld-only",
+  "concerns": [
+    "/usr/bin/config-setup スクリプトの sonic-buildimage への取り込みと サブコマンド体系確認",
+    "config-setup.service systemd unit の存在確認 (boot 時起動順)",
+    "updategraph から config-setup への責務移譲が現行 master でどこまで進んでいるか確認",
+    "frr.conf 等 Config DB 外設定の backup/restore 対象ファイル一覧確認",
+    "warm-boot 時に migration step を skip する判定ロジックの実装確認",
+    "ZTP 動作中の factory default 抑止ロジックの実装確認",
+    "HLD は 2019-07 Rev 0.2 で 5 年以上停滞。現行 master との大幅な乖離リスク"
+  ],
+  "priority": "high"
+}
