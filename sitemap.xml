@@ -2113,6 +2113,58 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/advanced/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/architecture/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/concept/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/operations/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/setup/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/advanced/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/architecture/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/concept/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/ecmp/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/operations/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/setup/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/05-dual-tor/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -2134,6 +2186,58 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/05-dual-tor/setup/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/advanced/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/architecture/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/concept/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/operations/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/setup/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/advanced/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/architecture/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/concept/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/internals/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/operations/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/07-acl-copp-mirror/setup/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
