@@ -1521,6 +1521,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/hld-secure-boot/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/independent-dpu-upgrade/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1573,6 +1577,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/show-techsupport/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/smart-switch-ip-address-assignment/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1598,6 +1606,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-debian-upgrade-cadence/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-entity-mib-and-entity-sensor-mib-extension/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
