@@ -1,0 +1,15 @@
+{
+  "page": "docs/system/sonic-syslog-message-rate-limit-configuration-per-container.md",
+  "issue": 704,
+  "verification": "hld-only",
+  "concerns": [
+    "containercfgd daemon の sonic-buildimage 取り込み確認",
+    "hostcfgd の SYSLOG_CONFIG|GLOBAL 監視ロジック実装確認",
+    "SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE テーブルの CONFIG_DB スキーマ取り込みと init_cfg.json.j2 default 投入確認",
+    "rsyslog.conf.j2 / rsyslog-container.conf.j2 の rate_limit_interval / rate_limit_burst 変数化確認",
+    "config syslog rate-limit-host / rate-limit-container CLI の sonic-utilities 取り込み確認",
+    "App extension の capability 申告と自前 rate limit 反映の framework 整備確認",
+    "single-ASIC での rsyslog.conf → rsyslog-container.conf.j2 切替の後方互換維持確認"
+  ],
+  "priority": "medium"
+}
