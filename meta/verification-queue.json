@@ -1345,6 +1345,20 @@
       "pr": 531
     },
     {
+      "page": "docs/platform/fabric-port-support-on-sonic.md",
+      "issue": 690,
+      "verification": "hld-only",
+      "concerns": [
+        "switch_type=fabric の DEVICE_METADATA 取り込み確認とその container 制御 (lldp/teamd/bgp 等の disable) の実装確認",
+        "STATE_DB FABRIC_PORT_TABLE のスキーマ取り込み確認",
+        "fabric port 用 SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS 等 counter ID の community SAI/syncd 取り込み確認",
+        "fabric link monitoring (FEC error threshold-based isolate, persistent link flap detection Rev 3.6) の sonic-swss/sonic-platform-daemons 実装確認",
+        "show fabric port status / show fabric counters / clear fabric counters CLI の sonic-utilities 取り込み確認",
+        "SSI (Supervisor SONiC Instance) で fabric ASIC 用 syncd container を hotswap で start/stop する制御実装確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/platform/fec-flr-support-in-sonic.md",
       "issue": 219,
       "pr": 220,
