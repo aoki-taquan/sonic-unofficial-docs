@@ -15183,6 +15183,69 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hld-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HLD-only のページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -15207,11 +15270,213 @@
 
 
 <h1 id="_1">プラットフォーム<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PMON、センサー、トランシーバ、SAI、プラットフォーム抽象化レイヤーなど、ハードウェア寄りの機能を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは現在準備中です。</p>
-</div>
+<p>SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ページ数: 43</li>
+<li>分布: Code-verified: 33 / Discrepancy-found: 6 / HLD-only: 4</li>
+</ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a></li>
+<li><a href="hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></li>
+<li><a href="dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a></li>
+<li><a href="sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a></li>
+<li><a href="smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a></li>
+<li><a href="liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a></li>
+</ul>
+<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="support-bmc-flows-in-sonic/">BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）</a></li>
+<li><a href="subnet-decapsulation-with-sonic/">VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）</a></li>
+<li><a href="everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a></li>
+<li><a href="enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="1-6t-support-in-sonic/">1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="handle-asic-sdk-health-event/">ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="support-bmc-flows-in-sonic/">BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="custom-si-settings-for-cmis-modules/">CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="automatic-module-provisioning-for-chassis/">Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-dynamic-gearbox-tuning-design-plan/">Gearbox 動的チューニング（gb_line_<em> / gb_system_</em> in media_settings.json）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="icmp-hardware-offload/">ICMP Hardware Offload（DualToR link prober の NPU 化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="media-based-port-settings-in-sonic/">Media-based Port Settings（media_settings.json による SerDes プロファイル）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="multi-asic-single-json-configuration-design/">Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/">NPU MDIO アクセスと gbsyncd 単一 docker 化</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-port-fec-ber/">Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="s3ip-sysfs-specification/">S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-sfp-refactoring/">SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-fast-link-up/">SONiC Fast Link-Up（リンク再起動時の EQ 再利用）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="1-sonic-on-multi-asic-platforms/">SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smartswitch-pmon-high-level-design/">SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="thermal-control-test-plan/">Thermal Control テストプラン</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-thermal-control-design/">Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="subnet-decapsulation-with-sonic/">VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="recirculation-port-support-on-voq-chassis/">VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="fabric-port-support-on-sonic/">VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="voq-sonic/">VoQ SONiC（distributed VoQ chassis / system-port / fabric）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cmis-and-c-cmis-support-for-zr/">ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-fw-utility/">fwutil（platform component firmware の install / update / show）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="db-design-for-multi-asic-scenarios/">multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="pcieinfo-design/">pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="platform-capability-file-enhancement/">platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-psu-daemon-design/">psud（PSU 監視デーモン / power threshold ヒステリシス）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="query-stats-capability-new-sai-api-indroduction/">sai_query_stats_capability による Counter Capability 一括取得</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/">sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/">sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonictpidsettinghld1/">ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="single-asic-voq-fixed-system-sonic/">単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="global-platform-specific-psuutil-class-instance/">新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+</tbody>
+</table>
 
 
 

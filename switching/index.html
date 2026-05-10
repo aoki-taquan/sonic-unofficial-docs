@@ -15183,6 +15183,69 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hld-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HLD-only のページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -15207,11 +15270,114 @@
 
 
 <h1 id="_1">スイッチング<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VLAN、LAG、MCLAG、STP など、L2 スイッチング関連の機能を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは現在準備中です。</p>
-</div>
+<p>VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ページ数: 19</li>
+<li>分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3</li>
+</ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a></li>
+<li><a href="switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a></li>
+<li><a href="wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a></li>
+<li><a href="link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a></li>
+</ul>
+<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="brief-introduction-of-iccp-code/">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）</a></li>
+<li><a href="control-sonic-behaviors-with-system-defaults-table/">SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約</a></li>
+<li><a href="lag-on-distributed-voq-system/">分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="sonic-bum-storm-control/">BUM ストームコントロール（PORT_STORM_CONTROL）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-sai-post-support-for-macsec/">FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/">Gearbox PHY ごとの MACsec backend 決定（macsec_supported）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="brief-introduction-of-iccp-code/">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-ip-lag-incremental-update/">IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="macsec-sonic-high-level-design-document/">MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="mclag-enhancements/">MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="multiple-spanning-tree-protocol/">Multiple Spanning Tree Protocol (MSTP) on SONiC</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="openconfig-support-for-portchannel-aggregate-interface/">PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="view-switching-in-producerstatetable/">ProducerStateTable の view switching（warm reboot 用の差分適用）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-basic-l2-mode-test-plan/">SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="control-sonic-behaviors-with-system-defaults-table/">SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="add-support-for-vlan-interface-using-openconfig-yang/">VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="lag-on-distributed-voq-system/">分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）</a></td>
+<td>HLD-only</td>
+</tr>
+</tbody>
+</table>
 
 
 

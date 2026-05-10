@@ -15193,7 +15193,51 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        想定する内容
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hld-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HLD-only のページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
       
     </span>
   </a>
@@ -15226,18 +15270,81 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SwSS（orchagent / portsyncd / intfsyncd など）、syncd、SAI 実装、各 docker の構成など、コンポーネントレベルの内部実装を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは Phase の後半で着手予定です。</p>
-</div>
-<h2 id="_2">想定する内容<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>orchagent の各 Orch クラスの責務（PortsOrch, IntfsOrch, RouteOrch, NeighOrch, AclOrch …）</li>
-<li>portsyncd / intfsyncd / fpmsyncd / teamsyncd / natsyncd 等の役割と通信経路</li>
-<li>syncd の動作とリスタート・ウォームブート</li>
-<li>Redis のテーブル間の参照・依存関係</li>
+<li>ページ数: 12</li>
+<li>分布: Code-verified: 10 / Discrepancy-found: 1 / HLD-only: 1</li>
 </ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a></li>
+</ul>
+<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="sonic-flexcounter-refactor/">FlexCounter リファクタ（CounterContext テンプレート化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="p4-orchagent/">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="aggregate-voq-counters-in-sonic/">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-counter-initialization-optimization/">flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="byte-packet-rates-port-utilization-in-sonic/">バイト/パケットレートとポート使用率（RATES テーブル + EMA）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a></td>
+<td>Code-verified</td>
+</tr>
+</tbody>
+</table>
 
 
 

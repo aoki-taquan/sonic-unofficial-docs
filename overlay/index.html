@@ -15183,6 +15183,58 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -15207,11 +15259,65 @@
 
 
 <h1 id="_1">オーバーレイ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VXLAN、EVPN、IP-in-IP など、オーバーレイネットワーク関連の機能を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは現在準備中です。</p>
-</div>
+<p>VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ページ数: 9</li>
+<li>分布: Code-verified: 8 / Discrepancy-found: 1</li>
+</ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="active-active-dual-tor/">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dash-sonic-kvm/">DASH SONiC KVM（BMv2 ベース仮想 DPU）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="nvgre-tunnel-in-sonic/">NVGRE トンネル（nvgreorch / decap mapper）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-dash-hld/">SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="smartswitch-eni-based-forwarding/">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="vnet-local-endpoint-forwarding/">VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="vxlan-sonic/">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+</tbody>
+</table>
 
 
 

@@ -15192,6 +15192,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -15216,12 +15257,577 @@
 
 
 <h1 id="_1">リファレンス<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>機械抽出と AI 整形をベースに、網羅性を重視するリファレンス章。</p>
+<p>CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>この章は運用中に直接引く参照情報を集める。CLI、CONFIG_DB、YANG の 3 系統を起点に、HLD ページから参照される実装上の名前を確認する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="cli/">CLI リファレンス</a>: 全コマンド</li>
-<li><a href="config-db/">CONFIG_DB リファレンス</a>: 全テーブル・全フィールド・干渉マップ</li>
-<li><a href="yang/">YANG リファレンス</a>: YANG モデルベースの参照</li>
+<li>ページ数: 135</li>
+<li>分布: Code-verified: 135</li>
 </ul>
+<h2 id="_4">ページ一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CLI</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="cli/clear/">clear (sonic-clear) コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-aaa/">config aaa / tacacs / radius サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-acl/">config acl サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-bgp/">config bgp サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-dhcp-relay/">config dhcp_relay / dhcpv4_relay サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-interface/">config interface サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-kdump/">config kdump サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-mclag/">config mclag サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-muxcable/">config muxcable サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-nat/">config nat サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-portchannel/">config portchannel サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-route/">config route サブコマンド（static route）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-mgmt-trio/">config save / load / reload / replace / qos reload</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-sflow/">config sflow サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-snmp/">config snmp / snmpagentaddress / snmptrap サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-syslog/">config syslog サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-vlan/">config vlan サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-vrf/">config vrf サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/config-vxlan/">config vxlan サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/debug-group/">debug / undebug コマンド群</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/reboot-fast-warm/">reboot / fast-reboot / warm-reboot コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-acl/">show acl サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-bgp/">show bgp / show ip bgp / show ipv6 bgp サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-feature/">show feature サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-interfaces/">show interfaces サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-ip/">show ip サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-mclag/">show mclag (mclagdctl) コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-muxcable/">show muxcable サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-nat/">show nat サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-platform/">show platform サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-route-map/">show route-map コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-running-config/">show runningconfiguration / startupconfiguration サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-system-health/">show system-health サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-techsupport/">show techsupport コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/show-vlan/">show vlan サブコマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/sonic-cfggen/">sonic-cfggen コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/sonic-installer/">sonic-installer コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="cli/sonic-package-manager/">sonic-package-manager コマンド</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><strong>CONFIG_DB</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="config-db/acl-rule/">ACL_RULE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/acl-table/">ACL_TABLE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/as-path-set/">AS_PATH_SET テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/auto-techsupport/">AUTO_TECHSUPPORT テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-aggregate-address/">BGP_AGGREGATE_ADDRESS テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-device-global/">BGP_DEVICE_GLOBAL テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-globals/">BGP_GLOBALS テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-neighbor/">BGP_NEIGHBOR テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-neighbor-af/">BGP_NEIGHBOR_AF テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-peer-group/">BGP_PEER_GROUP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/bgp-peer-group-af/">BGP_PEER_GROUP_AF テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/buffer-pg/">BUFFER_PG テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/buffer-pool/">BUFFER_POOL テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/buffer-profile/">BUFFER_PROFILE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/buffer-queue/">BUFFER_QUEUE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/community-set/">COMMUNITY_SET テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/copp-group/">COPP_GROUP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/copp-trap/">COPP_TRAP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/crm/">CRM テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/debug-counter/">DEBUG_COUNTER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/device-metadata/">DEVICE_METADATA テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/device-neighbor/">DEVICE_NEIGHBOR テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/device-neighbor-metadata/">DEVICE_NEIGHBOR_METADATA テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/dhcpv4-relay/">DHCPV4_RELAY テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/dhcp-server-ipv4/">DHCP_SERVER_IPV4 テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/dscp-to-tc-map/">DSCP_TO_TC_MAP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/feature/">FEATURE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/fg-nhg/">FG_NHG テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/flex-counter-table/">FLEX_COUNTER_TABLE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/interface/">INTERFACE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/kdump/">KDUMP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/kubernetes-master/">KUBERNETES_MASTER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/ldap-server/">LDAP_SERVER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/loopback-interface/">LOOPBACK_INTERFACE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/mgmt-interface/">MGMT_INTERFACE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/mgmt-port/">MGMT_PORT テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/mgmt-vrf-config/">MGMT_VRF_CONFIG テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/mirror-session/">MIRROR_SESSION テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/mux-cable/">MUX_CABLE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/ntp-global/">NTP テーブル (global)</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/ntp-server/">NTP_SERVER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/peer-switch/">PEER_SWITCH テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/pfc-wd/">PFC_WD テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/policer/">POLICER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/port/">PORT テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/portchannel/">PORTCHANNEL テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/portchannel-interface/">PORTCHANNEL_INTERFACE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/portchannel-member/">PORTCHANNEL_MEMBER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/prefix-list/">PREFIX_LIST テーブル (BGP)</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/prefix-set/">PREFIX_SET テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/queue/">QUEUE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/route-map/">ROUTE_MAP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/scheduler/">SCHEDULER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/sflow/">SFLOW テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/syslog-server/">SYSLOG_SERVER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/system-defaults/">SYSTEM_DEFAULTS テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/tacplus-server/">TACPLUS_SERVER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/tc-to-queue-map/">TC_TO_QUEUE_MAP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/telemetry/">TELEMETRY テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/tunnel/">TUNNEL テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/tunnel-decap-table/">TUNNEL_DECAP_TABLE (APPL_DB)</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vlan/">VLAN テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vlan-interface/">VLAN_INTERFACE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vlan-member/">VLAN_MEMBER テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vrf/">VRF テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vxlan-tunnel/">VXLAN_TUNNEL テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/vxlan-tunnel-map/">VXLAN_TUNNEL_MAP テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="config-db/wred-profile/">WRED_PROFILE テーブル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><strong>YANG</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="yang/sonic-bgp-global/">sonic-bgp-global YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-bgp-neighbor/">sonic-bgp-neighbor YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-bgp-peergroup/">sonic-bgp-peergroup YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-buffer-pg/">sonic-buffer-pg YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-buffer-pool/">sonic-buffer-pool YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-buffer-profile/">sonic-buffer-profile YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-buffer-queue/">sonic-buffer-queue YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-copp/">sonic-copp YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-device_metadata/">sonic-device_metadata YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-dscp-tc-map/">sonic-dscp-tc-map YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-feature/">sonic-feature YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-interface/">sonic-interface YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-loopback-interface/">sonic-loopback-interface YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-mclag/">sonic-mclag YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-mirror-session/">sonic-mirror-session YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-ntp/">sonic-ntp YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-pfcwd/">sonic-pfcwd YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-port/">sonic-port YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-portchannel/">sonic-portchannel YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-queue/">sonic-queue YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-route-common/">sonic-route-common YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-route-map/">sonic-route-map YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-scheduler/">sonic-scheduler YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-syslog/">sonic-syslog YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-system-aaa/">sonic-system-aaa YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-tc-queue-map/">sonic-tc-queue-map YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-vlan/">sonic-vlan YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-vrf/">sonic-vrf YANG</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="yang/sonic-vxlan/">sonic-vxlan YANG</a></td>
+<td>Code-verified</td>
+</tr>
+</tbody>
+</table>
 
 
 

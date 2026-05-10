@@ -15183,6 +15183,69 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hld-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HLD-only のページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -15207,11 +15270,330 @@
 
 
 <h1 id="_1">システム<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Syslog、SNMP、NTP、TACACS+、AAA など、システム共通機能を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは現在準備中です。</p>
-</div>
+<p>reboot、warm restart、telemetry、logging、security、techsupport など装置共通の運用機能を扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ページ数: 71</li>
+<li>分布: Code-verified: 55 / Discrepancy-found: 6 / HLD-only: 9 / Meta: 1</li>
+</ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a></li>
+<li><a href="sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）</a></li>
+<li><a href="hld-secure-boot/">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）</a></li>
+<li><a href="swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a></li>
+<li><a href="sonic-python-logger-enhancement/">SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）</a></li>
+<li><a href="sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a></li>
+</ul>
+<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="dataplane-telemetry-test-plan/">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）</a></li>
+<li><a href="fast-reboot-flow-improvements-hld/">Fast-reboot Flow Improvements（finalizer / reconciliation）</a></li>
+<li><a href="sonic-syslog-source-ip/">Syslog Source IP（SSIP / rsyslog omfwd / VRF / IP_FREEBIND）</a></li>
+<li><a href="sonic-system-health-monitor-high-level-design/">System Health Monitor（critical service / Monit / peripheral）</a></li>
+<li><a href="twamp-light-hld/">TWAMP Light（Session-Sender / Session-Reflector）</a></li>
+<li><a href="transceiver-and-sensor-monitoring-hld/">Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）</a></li>
+<li><a href="warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a></li>
+<li><a href="critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a></li>
+<li><a href="reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="asic-thermal-monitoring-high-level-design/">ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="critical-resource-monitoring-in-sonic/">Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dataplane-telemetry-test-plan/">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="dataplane-telemetry-in-sonic/">Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-entity-mib-and-entity-sensor-mib-extension/">Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="event-driven-techsupport-invocation-coredump-mgmt/">Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-express-reboot-hld-spec/">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能の有効/無効制御</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="useful-sysctl-settings/">FRR 用 sysctl チューニングのデフォルト</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="fast-reboot-flow-improvements-hld/">Fast-reboot Flow Improvements（finalizer / reconciliation）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="generic-sai-extension-critical-resource-monitoring-crm/">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="show-techsupport/">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="multi-asic-warm-reboot/">Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-openssl-fips-140-3-hld/">OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-pcie-monitoring-services-hld/">PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="platform-monitor-design-for-multi-asic-platforms/">PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="process-and-docker-stats-availability-via-telemetry-agent/">Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-snmp-changes-to-support-ipv6/">SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-snmp-table-schema-proposal/">SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="snmp-transceiver-monitoring-testbed-test-plan/">SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="snmp-migration-from-snmp-yml-to-configdb/">SNMP 設定の snmp.yml → CONFIG_DB 移行</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-bmc-platform-management-monitoring/">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-boot-chart/">SONiC Boot Chart（systemd-bootchart 統合）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-container-hardening/">SONiC Container Hardening（capability / read-only / privileged 削減）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-debian-upgrade-cadence/">SONiC Debian アップグレード方針（base / container / 廃止 cadence）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="analysis-of-disk-writers-in-sonic-devices/">SONiC Disk I/O 削減（writer 分析と tmpfs 化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-feature-quality-definition/">SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）</a></td>
+<td>Meta</td>
+</tr>
+<tr>
+<td><a href="sonic-logging-system-dumps-arch-spec/">SONiC Logging &amp; System Dumps（要件レベル仕様）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-os-sonic-docker-images-versioning/">SONiC OS と Docker イメージのセマンティックバージョニング</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="hld-secure-boot/">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-warm-reboot/">SONiC Warm Reboot（要件・順序・docker 別 warm restart）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-swss-docker-warm-restart/">SWSS docker warm restart（state restore / consistency / sync up）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="secure-upgrade/">Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-pmon-sensor-monitoring-enhancement/">SensorMon（PMON 内の voltage / current センサ監視）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="smart-switch-ip-address-assignment/">Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="independent-dpu-upgrade/">Smart Switch: DPU 独立アップグレード（gNOI 経路）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="smart-switch-reboot-high-level-design/">SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-python-logger-enhancement/">SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-syslog-source-ip/">Syslog Source IP（SSIP / rsyslog omfwd / VRF / IP_FREEBIND）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-system-health-monitor-high-level-design/">System Health Monitor（critical service / Monit / peripheral）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="system-wide-warmboot/">System-wide Warmboot（going down / up path / SAI 期待値）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="twamp-light-hld/">TWAMP Light（Session-Sender / Session-Reflector）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="transceiver-and-sensor-monitoring-hld/">Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="what-are-the-development-phases-and-scope-for-warm-reboot/">Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="zero-touch-provisioning-ztp/">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-telemetry-in-dial-out-mode/">gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="kdump-remote-ssh/">kdump リモート転送（SSH）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-migration-to-chrony/">ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="platform-monitor-enhancement-design/">pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="reboot-support-blockingmode-in-sonic/">reboot コマンドの blocking mode（reboot.conf / -b / -v）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dump-sfp-eeprom-page-data-in-show-techsupport-command/">show techsupport での SFP EEPROM ページダンプ取り込み</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-storage-monitoring-daemon-design/">storagemond（SSD / eMMC の health 監視）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-syslog-message-rate-limit-configuration-per-container/">syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-telemetry-in-dial-out-mode-2/">telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="platform-monitor-requirement-for-chassis-subsystem/">シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="banner-messages-hld/">バナーメッセージ（login / motd / logout）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="memory-statistics-feature-in-sonic/">メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="persistent-log-level-hld/">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-dynamic-port-breakout-feature-high-level-design/">動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="static-dns-configuration/">静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）</a></td>
+<td>Code-verified</td>
+</tr>
+</tbody>
+</table>
 
 
 

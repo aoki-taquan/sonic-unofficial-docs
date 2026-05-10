@@ -15193,7 +15193,51 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        予定している内容
+        この章の読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証状況
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装差分があるページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hld-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HLD-only のページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ページ一覧
       
     </span>
   </a>
@@ -15226,20 +15270,209 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC 全体の構成と、各サブシステムの役割を解説する章。</p>
-<div class="admonition info">
-<p class="admonition-title">準備中</p>
-<p>このセクションは現在準備中です。</p>
-</div>
-<h2 id="_2">予定している内容<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>SONiC 全体構成、ビルド、管理基盤、共通設計を横断的に扱う章。</p>
+<h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。</p>
+<h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>全体構成図（コンテナ・データベース・SAI・ASIC）</li>
-<li>Redis を中心とした状態管理（CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB / COUNTERS_DB）</li>
-<li>SwSS（Switch State Service）と orchagent の役割</li>
-<li>syncd と SAI の関係</li>
-<li>各 docker コンテナ（bgp, lldp, snmp, dhcp_relay, pmon, teamd など）の役割</li>
-<li>設定の流れ（ユーザー入力 → CONFIG_DB → orchagent → APPL_DB → syncd → ASIC）</li>
+<li>ページ数: 41</li>
+<li>分布: Code-verified: 27 / Discrepancy-found: 8 / HLD-only: 6</li>
 </ul>
+<h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a></li>
+<li><a href="debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a></li>
+<li><a href="error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a></li>
+<li><a href="sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a></li>
+<li><a href="ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a></li>
+<li><a href="smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a></li>
+<li><a href="sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a></li>
+<li><a href="build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a></li>
+</ul>
+<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="sonic-bulk-counter-design/">Bulk Counter（sai_bulk_object_get_stats / chunk size）</a></li>
+<li><a href="sonic-packet-trimming/">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）</a></li>
+<li><a href="sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a></li>
+<li><a href="sonic-port-auto-fec-design/">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）</a></li>
+<li><a href="sonic-sub-port-interface-high-level-design/">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）</a></li>
+<li><a href="port-illegal-packets-drop-design/">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）</a></li>
+</ul>
+<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>検証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="alpine-high-level-design/">Alpine 仮想 SONiC（ALViS / KNE デプロイ）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-bulk-counter-design/">Bulk Counter（sai_bulk_object_get_stats / chunk size）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="clock-managment-design/">Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dhcpv4-relay-agent/">DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dhcpv6-relay-agent/">DHCPv6 Relay Agent（Option 79 / dual ToR loopback）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-on-gns3-vm/">GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-generic-configuration-update-and-rollback/">Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-generic-hash/">Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-ip-interface-loopback-action/">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="json-change-application/">JSON Change Application（apply-change / table 単位 alphabetical 適用）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="nat-in-sonic/">NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-packet-trimming/">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-port-auto-fec-design/">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="port-profile-init-hld/">Port Profile Init（SAI bulk port API による fast-boot 高速化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="rfs-split-build-improvements-hld/">RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld/">S3IP sysfs（/sys_switch 統一ハードウェアアクセス層）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-application-extension-infrastructure/">SONiC Application Extension Infrastructure（sonic-package-manager / SPM）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-arm-architecture-support/">SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="smart-switch-database-design/">Smart Switch のデータベース構成（NPU 上の DPU overlay DB）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">SmartSwitch HA - DPU-Scope-DPU-Driven 構成</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sonic-sub-port-interface-high-level-design/">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）</a></td>
+<td>HLD-only</td>
+</tr>
+<tr>
+<td><a href="sonic-trap-flow-counter-design/">Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-port-configuration-refactor-design/">port_config.ini パーサ統合（portconfig.py 一元化）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="reset-factory-design/">reset-factory（keep-basic / keep-all-config / only-config）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sflow-test-plan/">sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="1-udev-rules-design-for-terminal-server/">ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="pw-hardening-design/">パスワード強化（password hardening / aging / complexity / history）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="build-system-improvements/">ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-port-auto-negotiation-design/">ポート Auto-Negotiation（advertised-speeds / interface-type）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="sonic-port-link-training-design/">ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="port-illegal-packets-drop-design/">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）</a></td>
+<td>HLD-only</td>
+</tr>
+</tbody>
+</table>
 
 
 
