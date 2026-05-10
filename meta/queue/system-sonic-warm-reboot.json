@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-warm-reboot.md",
+  "verification": "hld-only",
+  "concerns": [
+    "WARM_RESTART スキーマ（system / docker 別）の現行 sonic-yang-models 取り込み確認",
+    "warm-reboot script の現行 SONIC_BOOT_TYPE / /host/warmboot/sai-warmboot.bin パスの確認",
+    "syncd warm recovery（init view → apply view → diff）の現行実装確認",
+    "各アプリ（bgp / teamd / lldp / dhcp_relay）の warm restart 対応の現行実装範囲確認",
+    "HLD 記述（same image / no-downgrade only）と express-reboot / fast-reboot 等の派生機能との関係整理",
+    "vendor SAI の warm boot サポート要件（SAI_KEY_BOOT_TYPE / RESTART_WARM 等）の現行 community SAI 文書確認"
+  ],
+  "priority": "medium"
+}
