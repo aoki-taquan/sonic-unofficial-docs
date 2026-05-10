@@ -1,0 +1,94 @@
+---
+title: sonic-port-qos-map YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-10
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-port-qos-map.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [PORT_QOS_MAP]
+  cli: ["config qos"]
+  yang: [sonic-port, sonic-tc-priority-group-map, sonic-tc-queue-map, sonic-pfc-priority-queue-map, sonic-pfc-priority-priority-group-map, sonic-dscp-tc-map, sonic-dot1p-tc-map, sonic-scheduler, sonic-tc-dscp-map]
+---
+
+# sonic-port-qos-map YANG
+
+## 概要
+
+- module: `sonic-port-qos-map`
+- namespace: `http://github.com/sonic-net/sonic-port-qos-map`
+- revision: `2019-05-15`
+- import: `sonic-port`, `sonic-tc-priority-group-map`, `sonic-tc-queue-map`, `sonic-pfc-priority-queue-map`, `sonic-pfc-priority-priority-group-map`, `sonic-dscp-tc-map`, `sonic-dot1p-tc-map`, `sonic-scheduler`, `sonic-tc-dscp-map`
+- top container: `sonic-port-qos-map`
+
+Binds QoS maps and scheduler profiles to specific ports or globally.[^1]
+
+## ツリー
+
+```
+module: sonic-port-qos-map
+  +--rw sonic-port-qos-map
+     +--rw PORT_QOS_MAP
+        +--rw PORT_QOS_MAP_LIST* [ifname]
+           +--rw ifname              union
+           +--rw tc_to_pg_map?       -> /tpgm:sonic-tc-priority-group-map/TC_TO_PRIORITY_GROUP_MAP/TC_TO_PRIORITY_GROUP_MAP_LIST/name
+           +--rw tc_to_queue_map?    -> /tqm:sonic-tc-queue-map/TC_TO_QUEUE_MAP/TC_TO_QUEUE_MAP_LIST/name
+           +--rw pfc_enable?         string
+           +--rw pfcwd_sw_enable?    string
+           +--rw pfc_to_queue_map?   -> /ppqm:sonic-pfc-priority-queue-map/MAP_PFC_PRIORITY_TO_QUEUE/MAP_PFC_PRIORITY_TO_QUEUE_LIST/name
+           +--rw pfc_to_pg_map?      -> /pppgm:sonic-pfc-priority-priority-group-map/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/name
+           +--rw dscp_to_tc_map?     -> /dtm:sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/name
+           +--rw tc_to_dscp_map?     -> /tdm:sonic-tc-dscp-map/TC_TO_DSCP_MAP/TC_TO_DSCP_MAP_LIST/name
+           +--rw dot1p_to_tc_map?    -> /dot1ptm:sonic-dot1p-tc-map/DOT1P_TO_TC_MAP/DOT1P_TO_TC_MAP_LIST/name
+           +--rw scheduler?          -> /sch:sonic-scheduler/SCHEDULER/SCHEDULER_LIST/name
+```
+
+## container / list 一覧
+
+| 種別 | パス | key | 説明 |
+|------|------|-----|------|
+| `container` | `sonic-port-qos-map` |  |  |
+| `container` | `sonic-port-qos-map/PORT_QOS_MAP` |  | Configures QoS map bindings, PFC settings, and scheduler for ports. |
+| `list` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST` | `ifname` | QoS map binding for a port or the global default. |
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `ifname` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/ifname` | `union` | yes |  | union(string: pattern `global`, leafref: /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name) | Reference of port or global on which QOS MAPS to be configured. |
+| `tc_to_pg_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_pg_map` | `leafref` |  |  | /tpgm:sonic-tc-priority-group-map/tpgm:TC_TO_PRIORITY_GROUP_MAP/tpgm:TC_TO_PRIORITY_GROUP_MAP_LIST/tpgm:name | Reference to a traffic class to priority group map. |
+| `tc_to_queue_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_queue_map` | `leafref` |  |  | /tqm:sonic-tc-queue-map/tqm:TC_TO_QUEUE_MAP/tqm:TC_TO_QUEUE_MAP_LIST/tqm:name | Reference to a traffic class to egress queue map. |
+| `pfc_enable` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_enable` | `string` |  |  | pattern `([0-7](,[0-7])*)?` | Specify the queue(s) on which PFC is enabled. Empty string is allowed to disable PFC on all queues. |
+| `pfcwd_sw_enable` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfcwd_sw_enable` | `string` |  |  | pattern `([0-7](,[0-7])*)?` | Specify the queue(s) on which software pfc watchdog are enabled. Empty string is allowed to disable watchdog on all queues. |
+| `pfc_to_queue_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_queue_map` | `leafref` |  |  | /ppqm:sonic-pfc-priority-queue-map/ppqm:MAP_PFC_PRIORITY_TO_QUEUE/ppqm:MAP_PFC_PRIORITY_TO_QUEUE_LIST/ppqm:name | Reference to a PFC priority to egress queue map. |
+| `pfc_to_pg_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_pg_map` | `leafref` |  |  | /pppgm:sonic-pfc-priority-priority-group-map/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/pppgm:name | Reference to a PFC priority to priority group map. |
+| `dscp_to_tc_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dscp_to_tc_map` | `leafref` |  |  | /dtm:sonic-dscp-tc-map/dtm:DSCP_TO_TC_MAP/dtm:DSCP_TO_TC_MAP_LIST/dtm:name | Reference to a DSCP to traffic class map. |
+| `tc_to_dscp_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_dscp_map` | `leafref` |  |  | /tdm:sonic-tc-dscp-map/tdm:TC_TO_DSCP_MAP/tdm:TC_TO_DSCP_MAP_LIST/tdm:name | Reference to a traffic class to DSCP remarking map. |
+| `dot1p_to_tc_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dot1p_to_tc_map` | `leafref` |  |  | /dot1ptm:sonic-dot1p-tc-map/dot1ptm:DOT1P_TO_TC_MAP/dot1ptm:DOT1P_TO_TC_MAP_LIST/dot1ptm:name | Reference to a DOT1P to traffic class map. |
+| `scheduler` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/scheduler` | `leafref` |  |  | /sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name | Scheduler for port. |
+
+## leafref / 依存
+
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_pg_map` → `/tpgm:sonic-tc-priority-group-map/tpgm:TC_TO_PRIORITY_GROUP_MAP/tpgm:TC_TO_PRIORITY_GROUP_MAP_LIST/tpgm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_queue_map` → `/tqm:sonic-tc-queue-map/tqm:TC_TO_QUEUE_MAP/tqm:TC_TO_QUEUE_MAP_LIST/tqm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_queue_map` → `/ppqm:sonic-pfc-priority-queue-map/ppqm:MAP_PFC_PRIORITY_TO_QUEUE/ppqm:MAP_PFC_PRIORITY_TO_QUEUE_LIST/ppqm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_pg_map` → `/pppgm:sonic-pfc-priority-priority-group-map/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/pppgm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dscp_to_tc_map` → `/dtm:sonic-dscp-tc-map/dtm:DSCP_TO_TC_MAP/dtm:DSCP_TO_TC_MAP_LIST/dtm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_dscp_map` → `/tdm:sonic-tc-dscp-map/tdm:TC_TO_DSCP_MAP/tdm:TC_TO_DSCP_MAP_LIST/tdm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dot1p_to_tc_map` → `/dot1ptm:sonic-dot1p-tc-map/dot1ptm:DOT1P_TO_TC_MAP/dot1ptm:DOT1P_TO_TC_MAP_LIST/dot1ptm:name`
+- `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/scheduler` → `/sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name`
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `PORT_QOS_MAP`
+- CLI: `config qos`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-port-qos-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
