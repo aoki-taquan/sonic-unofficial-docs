@@ -1,0 +1,8 @@
+title: Dual-ToR と Mux 制御
+nav:
+  - index.md
+  - concept.md
+  - internals.md
+  - setup.md
+  - operations.md
+  - advanced.md
