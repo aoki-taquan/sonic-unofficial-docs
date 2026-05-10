@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-port-auto-fec-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-container-hardening/">
       
       
-        <link rel="prev" href="../sonic-policy-based-hashing/">
+        <link rel="prev" href="../sonic-configuration-setup-service/">
       
       
-        <link rel="next" href="../sonic-port-auto-negotiation-design/">
+        <link rel="next" href="../sonic-debian-upgrade-cadence/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto） - SONiC 非公式ドキュメント</title>
+        <title>SONiC Container Hardening（capability / read-only / privileged 削減） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto" class="md-skip">
+        <a href="#sonic-container-hardeningcapability-read-only-privileged" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
+              SONiC Container Hardening（capability / read-only / privileged 削減）
             
           </span>
         </div>
@@ -247,13 +247,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
           
   
   
@@ -359,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -541,8 +541,6 @@
       
   
   
-    
-  
   
   
     
@@ -638,23 +636,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../architecture/" class="md-nav__link ">
               
   
   
@@ -672,13 +667,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -698,7 +693,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-udev-rules-design-for-terminal-server/" class="md-nav__link">
+      <a href="../../architecture/1-udev-rules-design-for-terminal-server/" class="md-nav__link">
         
   
   
@@ -726,7 +721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alpine-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/alpine-high-level-design/" class="md-nav__link">
         
   
   
@@ -754,7 +749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-profiles/" class="md-nav__link">
+      <a href="../../architecture/build-profiles/" class="md-nav__link">
         
   
   
@@ -782,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../build-system-improvements/" class="md-nav__link">
+      <a href="../../architecture/build-system-improvements/" class="md-nav__link">
         
   
   
@@ -810,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../clock-managment-design/" class="md-nav__link">
+      <a href="../../architecture/clock-managment-design/" class="md-nav__link">
         
   
   
@@ -838,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/debug-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -866,7 +861,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv4-relay-agent/" class="md-nav__link">
+      <a href="../../architecture/dhcpv4-relay-agent/" class="md-nav__link">
         
   
   
@@ -894,7 +889,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcpv6-relay-agent/" class="md-nav__link">
+      <a href="../../architecture/dhcpv6-relay-agent/" class="md-nav__link">
         
   
   
@@ -922,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
   
@@ -950,7 +945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../error-handling-framework-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/error-handling-framework-in-sonic/" class="md-nav__link">
         
   
   
@@ -978,7 +973,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-change-application/" class="md-nav__link">
+      <a href="../../architecture/json-change-application/" class="md-nav__link">
         
   
   
@@ -1006,7 +1001,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nat-in-sonic/" class="md-nav__link">
+      <a href="../../architecture/nat-in-sonic/" class="md-nav__link">
         
   
   
@@ -1034,7 +1029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-illegal-packets-drop-design/" class="md-nav__link">
+      <a href="../../architecture/port-illegal-packets-drop-design/" class="md-nav__link">
         
   
   
@@ -1062,7 +1057,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../port-profile-init-hld/" class="md-nav__link">
+      <a href="../../architecture/port-profile-init-hld/" class="md-nav__link">
         
   
   
@@ -1090,7 +1085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pw-hardening-design/" class="md-nav__link">
+      <a href="../../architecture/pw-hardening-design/" class="md-nav__link">
         
   
   
@@ -1118,7 +1113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reset-factory-design/" class="md-nav__link">
+      <a href="../../architecture/reset-factory-design/" class="md-nav__link">
         
   
   
@@ -1146,7 +1141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rfs-split-build-improvements-hld/" class="md-nav__link">
+      <a href="../../architecture/rfs-split-build-improvements-hld/" class="md-nav__link">
         
   
   
@@ -1174,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld/" class="md-nav__link">
+      <a href="../../architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld/" class="md-nav__link">
         
   
   
@@ -1202,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sag-high-level-design-for-sonic/" class="md-nav__link">
+      <a href="../../architecture/sag-high-level-design-for-sonic/" class="md-nav__link">
         
   
   
@@ -1230,7 +1225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/sflow-high-level-design/" class="md-nav__link">
         
   
   
@@ -1258,7 +1253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sflow-test-plan/" class="md-nav__link">
+      <a href="../../architecture/sflow-test-plan/" class="md-nav__link">
         
   
   
@@ -1286,7 +1281,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-database-design/" class="md-nav__link">
+      <a href="../../architecture/smart-switch-database-design/" class="md-nav__link">
         
   
   
@@ -1314,7 +1309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/" class="md-nav__link">
+      <a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/" class="md-nav__link">
         
   
   
@@ -1342,7 +1337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
+      <a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/" class="md-nav__link">
         
   
   
@@ -1370,7 +1365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-infrastructure/" class="md-nav__link">
+      <a href="../../architecture/sonic-application-extension-infrastructure/" class="md-nav__link">
         
   
   
@@ -1398,7 +1393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-arm-architecture-support/" class="md-nav__link">
+      <a href="../../architecture/sonic-arm-architecture-support/" class="md-nav__link">
         
   
   
@@ -1426,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bulk-counter-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-bulk-counter-design/" class="md-nav__link">
         
   
   
@@ -1454,7 +1449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-generic-configuration-update-and-rollback/" class="md-nav__link">
+      <a href="../../architecture/sonic-generic-configuration-update-and-rollback/" class="md-nav__link">
         
   
   
@@ -1482,7 +1477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-generic-hash/" class="md-nav__link">
+      <a href="../../architecture/sonic-generic-hash/" class="md-nav__link">
         
   
   
@@ -1510,7 +1505,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ip-interface-loopback-action/" class="md-nav__link">
+      <a href="../../architecture/sonic-ip-interface-loopback-action/" class="md-nav__link">
         
   
   
@@ -1538,7 +1533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-on-gns3-vm/" class="md-nav__link">
+      <a href="../../architecture/sonic-on-gns3-vm/" class="md-nav__link">
         
   
   
@@ -1566,7 +1561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-packet-trimming/" class="md-nav__link">
+      <a href="../../architecture/sonic-packet-trimming/" class="md-nav__link">
         
   
   
@@ -1594,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-policy-based-hashing/" class="md-nav__link">
+      <a href="../../architecture/sonic-policy-based-hashing/" class="md-nav__link">
         
   
   
@@ -1619,37 +1614,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/sonic-port-auto-fec-design/" class="md-nav__link">
         
   
   
@@ -1665,192 +1633,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 属性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#portsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portsorch の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-fast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm / Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1863,7 +1645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-auto-negotiation-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-auto-negotiation-design/" class="md-nav__link">
         
   
   
@@ -1891,7 +1673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-configuration-refactor-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-configuration-refactor-design/" class="md-nav__link">
         
   
   
@@ -1919,7 +1701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-link-training-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-port-link-training-design/" class="md-nav__link">
         
   
   
@@ -1947,7 +1729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sub-port-interface-high-level-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-sub-port-interface-high-level-design/" class="md-nav__link">
         
   
   
@@ -1975,7 +1757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-trap-flow-counter-design/" class="md-nav__link">
+      <a href="../../architecture/sonic-trap-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -2003,7 +1785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssdhealth-design/" class="md-nav__link">
+      <a href="../../architecture/ssdhealth-design/" class="md-nav__link">
         
   
   
@@ -2031,7 +1813,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../steps-to-bring-up-sonic-vs/" class="md-nav__link">
+      <a href="../../architecture/steps-to-bring-up-sonic-vs/" class="md-nav__link">
         
   
   
@@ -5659,6 +5441,8 @@
       
   
   
+    
+  
   
   
     
@@ -5798,20 +5582,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -5829,13 +5616,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5855,7 +5642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -5883,7 +5670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -5911,7 +5698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -5939,7 +5726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5967,7 +5754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5995,7 +5782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -6023,7 +5810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -6051,7 +5838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -6079,7 +5866,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -6107,7 +5894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/hld-secure-boot/" class="md-nav__link">
+      <a href="../hld-secure-boot/" class="md-nav__link">
         
   
   
@@ -6135,7 +5922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
+      <a href="../independent-dpu-upgrade/" class="md-nav__link">
         
   
   
@@ -6163,7 +5950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -6191,7 +5978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump/" class="md-nav__link">
+      <a href="../kdump/" class="md-nav__link">
         
   
   
@@ -6219,7 +6006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -6247,7 +6034,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/multi-asic-warm-reboot/" class="md-nav__link">
+      <a href="../multi-asic-warm-reboot/" class="md-nav__link">
         
   
   
@@ -6275,7 +6062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -6303,7 +6090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
+      <a href="../platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
         
   
   
@@ -6331,7 +6118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-enhancement-design/" class="md-nav__link">
+      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -6359,7 +6146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -6387,7 +6174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6415,7 +6202,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6443,7 +6230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -6471,7 +6258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -6499,7 +6286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/secure-upgrade/" class="md-nav__link">
+      <a href="../secure-upgrade/" class="md-nav__link">
         
   
   
@@ -6527,7 +6314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/show-techsupport/" class="md-nav__link">
+      <a href="../show-techsupport/" class="md-nav__link">
         
   
   
@@ -6555,7 +6342,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/smart-switch-ip-address-assignment/" class="md-nav__link">
+      <a href="../smart-switch-ip-address-assignment/" class="md-nav__link">
         
   
   
@@ -6583,7 +6370,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/smart-switch-reboot-high-level-design/" class="md-nav__link">
+      <a href="../smart-switch-reboot-high-level-design/" class="md-nav__link">
         
   
   
@@ -6611,7 +6398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -6639,7 +6426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
+      <a href="../snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
         
   
   
@@ -6667,7 +6454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-bmc-platform-management-monitoring/" class="md-nav__link">
+      <a href="../sonic-bmc-platform-management-monitoring/" class="md-nav__link">
         
   
   
@@ -6695,7 +6482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -6723,7 +6510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-configuration-setup-service/" class="md-nav__link">
+      <a href="../sonic-configuration-setup-service/" class="md-nav__link">
         
   
   
@@ -6748,10 +6535,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/sonic-container-hardening/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC Container Hardening（capability / read-only / privileged 削減）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -6767,6 +6581,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様（コンテナ起動時）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様（コンテナ起動時）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        進め方（HLD ベース）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -6779,7 +6696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-debian-upgrade-cadence/" class="md-nav__link">
+      <a href="../sonic-debian-upgrade-cadence/" class="md-nav__link">
         
   
   
@@ -6807,7 +6724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
+      <a href="../sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
         
   
   
@@ -6835,7 +6752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -6863,7 +6780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -6891,7 +6808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -6919,7 +6836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -6947,7 +6864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -6975,7 +6892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
         
   
   
@@ -7003,7 +6920,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-openssl-fips-140-3-hld/" class="md-nav__link">
+      <a href="../sonic-openssl-fips-140-3-hld/" class="md-nav__link">
         
   
   
@@ -7031,7 +6948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -7059,7 +6976,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -7087,7 +7004,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
+      <a href="../sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
         
   
   
@@ -7115,7 +7032,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -7143,7 +7060,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -7171,7 +7088,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -7199,7 +7116,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -7227,7 +7144,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
+      <a href="../sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
         
   
   
@@ -7255,7 +7172,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -7283,7 +7200,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -7311,7 +7228,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
         
   
   
@@ -7339,7 +7256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -7367,7 +7284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -7395,7 +7312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -7423,7 +7340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-ready-hld/" class="md-nav__link">
+      <a href="../system-ready-hld/" class="md-nav__link">
         
   
   
@@ -7451,7 +7368,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -7479,7 +7396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -7507,7 +7424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -7535,7 +7452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -7563,7 +7480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -7591,7 +7508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -15177,63 +15094,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        動作仕様（コンテナ起動時）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="動作仕様（コンテナ起動時）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#sai" class="md-nav__link">
+  <a href="#hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI 属性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#portsorch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        portsorch の流れ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-fast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm / Fast boot
+        進め方（HLD ベース）
       
     </span>
   </a>
@@ -15249,45 +15122,6 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -15296,7 +15130,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15307,7 +15141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15318,7 +15152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15345,7 +15179,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/architecture/sonic-port-auto-fec-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/sonic-container-hardening.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15355,152 +15189,75 @@
 
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>portsorch</code> 側の <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> capability query と FEC=auto の処理、<code>SAI_PORT_ATTR_OPER_PORT_FEC_MODE</code> 読み出しは未確認。</p>
+<p>各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は未確認。</p>
 </div>
-<h1 id="port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）<a class="headerlink" href="#port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-container-hardeningcapability-read-only-privileged">SONiC Container Hardening（capability / read-only / privileged 削減）<a class="headerlink" href="#sonic-container-hardeningcapability-read-only-privileged" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの <strong>autoneg と FEC モードの組み合わせの挙動を決定論的にする</strong> ための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor SAI 任せだった。SAI に新属性 <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> を入れ、<strong>FEC mode = <code>auto</code></strong> という新値を SONiC に追加することで、user 意図を明示する。</p>
-<table>
-<thead>
-<tr>
-<th>FEC</th>
-<th>autoneg</th>
-<th>期待</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>none</code> / <code>rs</code> / <code>fc</code></td>
-<td>on</td>
-<td>user 値が autoneg 結果より優先（override=true）</td>
-</tr>
-<tr>
-<td><code>auto</code></td>
-<td>on</td>
-<td>autoneg 結果に従う（override=false）</td>
-</tr>
-<tr>
-<td><code>auto</code></td>
-<td>off</td>
-<td>FEC は SAI_PORT_FEC_MODE_NONE（autoneg なしで auto は無意味）</td>
-</tr>
-<tr>
-<td>未設定</td>
-<td>on</td>
-<td>既存挙動（vendor 依存）を維持（後方互換）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-</tbody>
-</table>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE   (CREATE_AND_SET, default false)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → true: SAI_PORT_ATTR_FEC_MODE が autoneg 結果より優先
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → false: autoneg 結果が優先
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>SAI_PORT_ATTR_OPER_PORT_FEC_MODE           (READ_ONLY)
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  → port down / autoneg 中: SAI_PORT_FEC_MODE_NONE
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  → autoneg on: 折衝結果
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  → autoneg off: 設定値
-</span></code></pre></div>
-<h3 id="portsorch">portsorch の流れ<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h3>
+<p>SONiC の docker は歴史的に多くが <strong><code>--privileged</code></strong> で動いていた。CVE 対策とコンプライアンス要請から、<strong>最低限必要な linux capability・mount・device だけを与える</strong> 形に絞り込む取り組みが本 HLD のスコープ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>主な硬化軸:</p>
+<ul>
+<li><strong>capabilities</strong>: <code>--cap-add</code> のみで必要な能力を与え、それ以外は drop</li>
+<li><strong>filesystem</strong>: read-only ファイルシステム + 必要パスのみ writable bind</li>
+<li><strong>devices</strong>: <code>/dev/kmsg</code> などの最小限のみ提供</li>
+<li><strong>non-privileged</strong>: <code>--privileged</code> を可能な docker から外す</li>
+<li><strong>user namespace</strong>: root を取り除く方向の検討</li>
+</ul>
+<h2 id="_2">動作仕様（コンテナ起動時）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    USR[(CONFIG_DB.PORT\nfec=auto/rs/fc/none\nautoneg=on/off)] --&gt; ORCH[portsorch]
-    ORCH --&gt; CAP{SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE\n対応?}
-    CAP --&gt;|no| LEGACY[既存ロジック（vendor 任せ）]
-    CAP --&gt;|yes| BRANCH{fec=?}
-    BRANCH --&gt;|none/rs/fc| OVR[OVERRIDE=true\nFEC_MODE=設定値]
-    BRANCH --&gt;|auto + AN=on| AUTO[OVERRIDE=false]
-    BRANCH --&gt;|auto + AN=off| ZERO[FEC_MODE=NONE]</code></pre>
-<h3 id="show">Show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
-<p><code>show interface fec</code> などで <strong>operational FEC</strong> を表示するために <code>SAI_PORT_ATTR_OPER_PORT_FEC_MODE</code> を読み出す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    UNIT[systemd unit\n(&lt;feature&gt;.service)] --&gt; CTL[docker_image_ctl.j2]
+    CTL --&gt; RUN[docker run\n--cap-add ... --cap-drop=all\n--read-only\n--tmpfs /run\n-v /var/log/&lt;f&gt;:/var/log\n-v /etc/sonic:/etc/sonic:ro\n...]
+    RUN --&gt; CONT[(docker container)]</code></pre>
+<p>各 docker は <strong>何が必要か</strong> を改修ごとに洗い出してテンプレート化する。たとえば<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>port down または autoneg 進行中: <code>none</code> 表示</li>
-<li>autoneg on: 折衝結果（rs / fc など）</li>
-<li>autoneg off: 設定値そのまま</li>
+<li><strong>swss / syncd</strong>: Redis socket / shm へのアクセス、syncd は SAI vendor の特殊 device が必要なことがある</li>
+<li><strong>bgp</strong>: routing socket、netlink 操作。NET_ADMIN 等は必要</li>
+<li><strong>teamd</strong>: NET_ADMIN、NET_RAW</li>
+<li><strong>lldp</strong>: NET_RAW + 特定 interface への access</li>
+<li><strong>dhcp_relay</strong>: NET_BIND_SERVICE / NET_RAW</li>
 </ul>
-<h3 id="yang">YANG 拡張<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-port</code> の <code>fec</code> enum に <strong><code>auto</code></strong> を追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
-<p><code>PORT.fec=auto</code> は CONFIG_DB に persist されるため warm/fast boot 越しに継続。autoneg 折衝は再起動後にやり直し<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/port_auto_neg/auto-fec.md#L56-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  In order to facilitate the behavior of FEC when autoneg is enabled, the SAI attribute SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE was introduced.
-  ... A new FEC mode called 'auto' is introduced.
-  ... If FEC is configured as 'auto' by the user SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE will be set to false.
-reasoning: 新 SAI 属性と FEC=auto 値の根拠。
--->
-
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config interface fec &lt;if&gt; auto</code></td>
-<td>自動折衝モード</td>
-</tr>
-<tr>
-<td><code>config interface fec &lt;if&gt; rs</code></td>
-<td>強制 RS</td>
-</tr>
-<tr>
-<td><code>config interface fec &lt;if&gt; fc</code></td>
-<td>強制 FC</td>
-</tr>
-<tr>
-<td><code>config interface fec &lt;if&gt; none</code></td>
-<td>強制 disabled</td>
-</tr>
-<tr>
-<td><code>show interface fec &lt;if&gt;</code></td>
-<td>設定値 + operational</td>
-</tr>
-</tbody>
-</table>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT|&lt;if&gt;:
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  fec      = auto | rs | fc | none
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  autoneg  = on | off
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  speed    = ...
-</span></code></pre></div>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="hld">進め方（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
+<ol>
+<li>docker ごとに <strong>capability matrix</strong> を作る（必要な cap、不要な cap）</li>
+<li>テンプレート (<code>docker_image_ctl.j2</code>) で <code>--cap-drop=all</code> を default にし、必要なものだけ <code>--cap-add</code> で復活</li>
+<li>CI で全 docker の起動・主要シナリオが通ることを確認</li>
+<li>read-only / tmpfs 化を docker 単位で順次適用</li>
+<li><code>--privileged</code> を残す docker は justification を明文化</li>
+</ol>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> 未対応 platform では既存挙動（vendor 依存）に fall back<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>auto</code> + AN off は意味的に non-FEC（NONE）に倒す</li>
-<li><code>OPER_PORT_FEC_MODE</code> 未対応 SAI では operational FEC を出せない</li>
+<li><strong>vendor SAI / SDK</strong> が <code>--privileged</code> を要求する場合、syncd 単独で完全な脱 privileged は難しい</li>
+<li><strong>3rd-party container（application extension）</strong>: manifest 側で必要 capability を宣言する必要があり、未対応 package は緩い設定で動く</li>
+<li><strong>既存運用スクリプト</strong>: hardening 後に動かなくなる ad-hoc スクリプトが顕在化する</li>
+<li><strong>完全に root を捨てる</strong>: user namespace 化は kernel 設定とコンテナ内 user 全体の見直しが必要</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Port Auto Negotiation</strong>: 本機能の前提。autoneg 設定とセット運用</li>
-<li><strong>CMIS / 光モジュール</strong>: ある cable / module type は特定 FEC のみ動作するため auto の折衝結果に注意</li>
-<li><strong>Port Link Training</strong>: 同じ AN フェーズで動く</li>
+<li><strong>application extension / 3rd-party container</strong>: 拡張側にも hardening 方針を波及させる</li>
+<li><strong>secure-boot / secure-upgrade</strong>: 端から root 権限を縮小する文脈で同時進行</li>
+<li><strong>show techsupport</strong>: 一部の log / dump 取得で privileged が必要だったコマンドを再評価</li>
+<li><strong>warm reboot</strong>: capability 不足で warm shutdown フックが失敗するパターンを警戒</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>auto</code> にしても変わらない → <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> 対応 SAI か portsorch ログで確認</li>
-<li>show 表示と実態が違う → <code>OPER_PORT_FEC_MODE</code> 未対応の可能性</li>
+<li>docker が EPERM で死ぬ → <code>docker logs &lt;c&gt;</code> と auditd / dmesg を見て不足 capability を特定</li>
+<li>read-only で write できない → tmpfs / volume の bind 漏れ</li>
+<li>vendor 機能が動かない → syncd の cap-add リストと vendor の要件確認</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
-- SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / OPER_PORT_FEC_MODE の community SAI 取り込み確認
-- portsorch での capability query と FEC=auto 分岐の現行 master 取り込み確認
-- sonic-yang-models の sonic-port.yang での fec=auto 追加確認
-- show interface fec の sonic-utilities での operational 表示実装確認
-- 旧 image からの upgrade 時の後方互換挙動の実装確認
-- vendor SAI（Mellanox/Broadcom/Cisco）の override 属性対応状況
+- docker_image_ctl.j2 の cap-add / cap-drop 制御の現行実装確認
+- 各 docker（swss / syncd / bgp / teamd / lldp / dhcp_relay 等）の必要 capability matrix の現行値確認
+- read-only / tmpfs 適用状況の docker 別の現行確認
+- vendor SAI / SDK が要求する device / privileged 要件の現行 platform 確認
+- application extension manifest の capability 宣言サポートの現行実装確認
+- HLD 記述と現行 master の hardening 進捗の差分確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port_auto_neg/auto-fec.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/Container Hardening/SONiC_container_hardening_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
