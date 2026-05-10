@@ -1,0 +1,13 @@
+{
+  "page": "docs/platform/voq-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "DEVICE_METADATA.switch_type=voq / sub_role / switch_id の現行 sonic-yang-models 取り込みとフィールド名確認",
+    "SYSTEM_PORT / VOQ_INBAND_INTERFACE スキーマ（switch_id / core_index / core_port_index 等）の現行値確認",
+    "show chassis / show fabric counters / show system-port CLI の sonic-utilities 取り込み確認",
+    "対応 NPU / fabric platform（Cisco 8000・Broadcom Jericho 等）リストの現行範囲確認",
+    "VoQ chassis-wide BGP（FRR multi-instance / chassis ASN 共有）の現行設計確認",
+    "派生 HLD（distributed VoQ counter / fabric port / single-asic VoQ fixed system）との現行実装連携確認"
+  ],
+  "priority": "high"
+}
