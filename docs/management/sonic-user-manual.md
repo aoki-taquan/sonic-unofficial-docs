@@ -1,7 +1,7 @@
 ---
 title: SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / メタドキュメント"
-    元文書はユーザマニュアル全体（41KB）。このページは **読者の入口** として SONiC の運用 CLI 群と章構成を整理するインデックス。コマンド単位の詳細は別ページ（`docs/reference/cli/...`）を参照。
+!!! info "裏取りステータス: code-verified（メタドキュメント）"
+    元文書はユーザマニュアル全体（41KB）。このページは **読者の入口** として SONiC の運用 CLI 群と章構成を整理するインデックス。コマンド体系（`show` / `config` Click 群、`sonic-cli` KLISH、`generate_dump`/techsupport、minigraph 関連）の存在は `sonic-utilities/{show,config}/`、`sonic-utilities/scripts/generate_dump`、`sonic-utilities/tests/db_migrator_input/minigraph.xml` で確認済み。コマンド単位の詳細は別ページ（`docs/reference/cli/...`）を参照。
 
 # SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像
 

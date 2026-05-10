@@ -1,7 +1,7 @@
 ---
 title: ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-asic-sdk-health-event
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    SAI notification と orchagent 側ハンドラの現行 master 取り込み、CONFIG_DB スキーマ名称は未確認。
+!!! info "裏取りステータス: code-verified"
+    orchagent 側 health event handler は `sonic-swss/orchagent/switchorch.{h,cpp}`、CONFIG_DB suppress スキーマは `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang`、CLI は `sonic-utilities/{show,config}/main.py` および `tests/asic_sdk_health_event_test.py` で確認済み。SAI 側の各ベンダ実装の充足度は ASIC 依存。
 
 # ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）
 

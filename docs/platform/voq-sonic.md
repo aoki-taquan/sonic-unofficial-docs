@@ -1,7 +1,7 @@
 ---
 title: VoQ SONiC（distributed VoQ chassis / system-port / fabric）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -23,8 +23,8 @@ related:
     - sonic-system-port
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    VoQ chassis 機能は実装規模が大きく、関連する distributed VoQ / fabric / counter / BGP の各 HLD と合わせて読む必要がある。本ページは voq_hld.md の主要構造のみを再構成した概略。
+!!! info "裏取りステータス: code-verified（要点裏取り）"
+    `DEVICE_METADATA.{switch_type,switch_id,sub_role}` は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang`、SYSTEM_PORT / VOQ_INBAND_INTERFACE / chassis BGP は同 repo の `sonic-system-port.yang` / `sonic-voq-inband-interface.yang` / `sonic-bgp-voq-chassis-neighbor.yang`、CLI は `sonic-utilities/show/{chassis_modules,fabric}.py` および `chassis_modules.py:system_ports`（`voqutil`）で確認済み。distributed VoQ counter / fabric port などの詳細は派生 HLD ページを参照。
 
 # VoQ SONiC（distributed VoQ chassis / system-port / fabric）
 

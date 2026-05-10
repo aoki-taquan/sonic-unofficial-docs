@@ -1,7 +1,7 @@
 ---
 title: SensorMon（PMON 内の voltage / current センサ監視）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 1.0。`SensorMon` daemon の sonic-platform-daemons 取り込み、`STATE_DB VOLTAGE_INFO` / `CURRENT_INFO` 系のスキーマ、Entity MIB / Entity Sensor MIB 拡張対応は未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-platform-daemons/sonic-sensormond/scripts/sensormond` で `VOLTAGE_INFO` / `CURRENT_INFO` テーブル更新と `VoltageSensorFs` / `CurrentSensorFs` の使用を確認。base API は `sonic-platform-common/sonic_platform_base/sensor_base.py` / `sensor_fs.py` / `chassis_base.py`（`get_all_voltage_sensors` / `get_all_current_sensors`）、Module も `module_base.py` 経由で公開。SNMP Entity Sensor MIB 拡張は `rfc3433.py` 側で対応するセンサ種別を確認。
 
 # SensorMon（PMON 内の voltage / current センサ監視）
 

@@ -1,7 +1,7 @@
 ---
 title: fwutil（platform component firmware の install / update / show）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    実装側（`sonic-utilities/fwutil/` と各 platform plugin）の現行 master 取り込みは未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/fwutil/{main,lib,log}.py` と `sonic-platform-common/sonic_platform_base/component_base.py`（`get_firmware_version` / `install_firmware` 等）の存在を確認。各 platform plugin と `platform_components.json` の正確な記述差はベンダ依存のため範囲外。
 
 # fwutil（platform component firmware の install / update / show）
 

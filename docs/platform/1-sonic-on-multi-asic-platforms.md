@@ -1,7 +1,7 @@
 ---
 title: SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
     - sonic-device_metadata
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
-    HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞り、設定詳細や BGP テンプレートは HLD 本文を参照する形にする。
+!!! info "裏取りステータス: code-verified（大規模 HLD・要点裏取り）"
+    HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞っており、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang`（`sub_role` / `asic_id` / `switch_id` / `switch_type`）、`sonic-bgp-internal-neighbor.yang`、`sonic-buildimage/files/build_templates/per_namespace/{swss,syncd,bgp}.service.j2`（per-ASIC instanced unit）、および `sonic-utilities` の `--namespace`/`-n` オプション（`show/main.py`）で裏取り済み。設定詳細や BGP テンプレートは HLD 本文を参照。
 
 # SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
 
