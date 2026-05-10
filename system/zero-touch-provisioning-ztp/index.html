@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sai-api-version-check/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/zero-touch-provisioning-ztp/">
       
       
-        <link rel="prev" href="../s3ip-sysfs-specification/">
+        <link rel="prev" href="../what-are-the-development-phases-and-scope-for-warm-reboot/">
       
       
-        <link rel="next" href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/">
+        <link rel="next" href="../../management/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査） - SONiC 非公式ドキュメント</title>
+        <title>Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sai-api-sai_query_api_version" class="md-skip">
+        <a href="#zero-touch-provisioningztpdhcp-option-plugin-state-machine" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
+              Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
             
           </span>
         </div>
@@ -357,11 +357,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../system/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -401,13 +403,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../platform/" class="md-tabs__link">
           
   
   
@@ -5441,6 +5441,8 @@
       
   
   
+    
+  
   
   
     
@@ -5582,20 +5584,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../system/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -5613,13 +5618,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5639,7 +5644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
+      <a href="../analysis-of-disk-writers-in-sonic-devices/" class="md-nav__link">
         
   
   
@@ -5667,7 +5672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/asic-thermal-monitoring-high-level-design/" class="md-nav__link">
+      <a href="../asic-thermal-monitoring-high-level-design/" class="md-nav__link">
         
   
   
@@ -5695,7 +5700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/banner-messages-hld/" class="md-nav__link">
+      <a href="../banner-messages-hld/" class="md-nav__link">
         
   
   
@@ -5723,7 +5728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/critical-resource-monitoring/" class="md-nav__link">
+      <a href="../critical-resource-monitoring/" class="md-nav__link">
         
   
   
@@ -5751,7 +5756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-in-sonic/" class="md-nav__link">
+      <a href="../dataplane-telemetry-in-sonic/" class="md-nav__link">
         
   
   
@@ -5779,7 +5784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dataplane-telemetry-test-plan/" class="md-nav__link">
+      <a href="../dataplane-telemetry-test-plan/" class="md-nav__link">
         
   
   
@@ -5807,7 +5812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
+      <a href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/" class="md-nav__link">
         
   
   
@@ -5835,7 +5840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/fast-reboot-flow-improvements-hld/" class="md-nav__link">
+      <a href="../fast-reboot-flow-improvements-hld/" class="md-nav__link">
         
   
   
@@ -5863,7 +5868,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
+      <a href="../generic-sai-extension-critical-resource-monitoring-crm/" class="md-nav__link">
         
   
   
@@ -5891,7 +5896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/hld-secure-boot/" class="md-nav__link">
+      <a href="../hld-secure-boot/" class="md-nav__link">
         
   
   
@@ -5919,7 +5924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/independent-dpu-upgrade/" class="md-nav__link">
+      <a href="../independent-dpu-upgrade/" class="md-nav__link">
         
   
   
@@ -5947,7 +5952,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump-remote-ssh/" class="md-nav__link">
+      <a href="../kdump-remote-ssh/" class="md-nav__link">
         
   
   
@@ -5975,7 +5980,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/kdump/" class="md-nav__link">
+      <a href="../kdump/" class="md-nav__link">
         
   
   
@@ -6003,7 +6008,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/memory-statistics-feature-in-sonic/" class="md-nav__link">
+      <a href="../memory-statistics-feature-in-sonic/" class="md-nav__link">
         
   
   
@@ -6031,7 +6036,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/multi-asic-warm-reboot/" class="md-nav__link">
+      <a href="../multi-asic-warm-reboot/" class="md-nav__link">
         
   
   
@@ -6059,7 +6064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/persistent-log-level-hld/" class="md-nav__link">
+      <a href="../persistent-log-level-hld/" class="md-nav__link">
         
   
   
@@ -6087,7 +6092,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
+      <a href="../platform-monitor-design-for-multi-asic-platforms/" class="md-nav__link">
         
   
   
@@ -6115,7 +6120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-enhancement-design/" class="md-nav__link">
+      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -6143,7 +6148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
+      <a href="../platform-monitor-requirement-for-chassis-subsystem/" class="md-nav__link">
         
   
   
@@ -6171,7 +6176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
+      <a href="../process-and-docker-stats-availability-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6199,7 +6204,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
+      <a href="../reboot-cause-information-via-telemetry-agent/" class="md-nav__link">
         
   
   
@@ -6227,7 +6232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reboot-support-blockingmode-in-sonic/" class="md-nav__link">
+      <a href="../reboot-support-blockingmode-in-sonic/" class="md-nav__link">
         
   
   
@@ -6255,7 +6260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/reset-local-users-passwords-during-init-hld/" class="md-nav__link">
+      <a href="../reset-local-users-passwords-during-init-hld/" class="md-nav__link">
         
   
   
@@ -6283,7 +6288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/secure-upgrade/" class="md-nav__link">
+      <a href="../secure-upgrade/" class="md-nav__link">
         
   
   
@@ -6311,7 +6316,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/show-techsupport/" class="md-nav__link">
+      <a href="../show-techsupport/" class="md-nav__link">
         
   
   
@@ -6339,7 +6344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/smart-switch-ip-address-assignment/" class="md-nav__link">
+      <a href="../smart-switch-ip-address-assignment/" class="md-nav__link">
         
   
   
@@ -6367,7 +6372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/smart-switch-reboot-high-level-design/" class="md-nav__link">
+      <a href="../smart-switch-reboot-high-level-design/" class="md-nav__link">
         
   
   
@@ -6395,7 +6400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
+      <a href="../snmp-migration-from-snmp-yml-to-configdb/" class="md-nav__link">
         
   
   
@@ -6423,7 +6428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
+      <a href="../snmp-transceiver-monitoring-testbed-test-plan/" class="md-nav__link">
         
   
   
@@ -6451,7 +6456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-bmc-platform-management-monitoring/" class="md-nav__link">
+      <a href="../sonic-bmc-platform-management-monitoring/" class="md-nav__link">
         
   
   
@@ -6479,7 +6484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-boot-chart/" class="md-nav__link">
+      <a href="../sonic-boot-chart/" class="md-nav__link">
         
   
   
@@ -6507,7 +6512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-configuration-setup-service/" class="md-nav__link">
+      <a href="../sonic-configuration-setup-service/" class="md-nav__link">
         
   
   
@@ -6535,7 +6540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-container-hardening/" class="md-nav__link">
+      <a href="../sonic-container-hardening/" class="md-nav__link">
         
   
   
@@ -6563,7 +6568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-debian-upgrade-cadence/" class="md-nav__link">
+      <a href="../sonic-debian-upgrade-cadence/" class="md-nav__link">
         
   
   
@@ -6591,7 +6596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
+      <a href="../sonic-entity-mib-and-entity-sensor-mib-extension/" class="md-nav__link">
         
   
   
@@ -6619,7 +6624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-express-reboot-hld-spec/" class="md-nav__link">
+      <a href="../sonic-express-reboot-hld-spec/" class="md-nav__link">
         
   
   
@@ -6647,7 +6652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-feature-quality-definition/" class="md-nav__link">
+      <a href="../sonic-feature-quality-definition/" class="md-nav__link">
         
   
   
@@ -6675,7 +6680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-fips-deployment/" class="md-nav__link">
+      <a href="../sonic-fips-deployment/" class="md-nav__link">
         
   
   
@@ -6703,7 +6708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
+      <a href="../sonic-libsairedis-api-idempotence-support/" class="md-nav__link">
         
   
   
@@ -6731,7 +6736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
+      <a href="../sonic-logging-system-dumps-arch-spec/" class="md-nav__link">
         
   
   
@@ -6759,7 +6764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-migration-to-chrony/" class="md-nav__link">
+      <a href="../sonic-migration-to-chrony/" class="md-nav__link">
         
   
   
@@ -6787,7 +6792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-openssl-fips-140-3-hld/" class="md-nav__link">
+      <a href="../sonic-openssl-fips-140-3-hld/" class="md-nav__link">
         
   
   
@@ -6815,7 +6820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-optional-feature-control-enhancement/" class="md-nav__link">
+      <a href="../sonic-optional-feature-control-enhancement/" class="md-nav__link">
         
   
   
@@ -6843,7 +6848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
+      <a href="../sonic-os-sonic-docker-images-versioning/" class="md-nav__link">
         
   
   
@@ -6871,7 +6876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
+      <a href="../sonic-pmon-sensor-monitoring-enhancement/" class="md-nav__link">
         
   
   
@@ -6899,7 +6904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-python-logger-enhancement/" class="md-nav__link">
+      <a href="../sonic-python-logger-enhancement/" class="md-nav__link">
         
   
   
@@ -6927,7 +6932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
+      <a href="../sonic-snmp-changes-to-support-ipv6/" class="md-nav__link">
         
   
   
@@ -6955,7 +6960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-snmp-table-schema-proposal/" class="md-nav__link">
+      <a href="../sonic-snmp-table-schema-proposal/" class="md-nav__link">
         
   
   
@@ -6983,7 +6988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-swss-docker-warm-restart/" class="md-nav__link">
+      <a href="../sonic-swss-docker-warm-restart/" class="md-nav__link">
         
   
   
@@ -7011,7 +7016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
+      <a href="../sonic-syslog-message-rate-limit-configuration-per-container/" class="md-nav__link">
         
   
   
@@ -7039,7 +7044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-syslog-source-ip/" class="md-nav__link">
+      <a href="../sonic-syslog-source-ip/" class="md-nav__link">
         
   
   
@@ -7067,7 +7072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-system-health-monitor-high-level-design/" class="md-nav__link">
+      <a href="../sonic-system-health-monitor-high-level-design/" class="md-nav__link">
         
   
   
@@ -7095,7 +7100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode-2/" class="md-nav__link">
         
   
   
@@ -7123,7 +7128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
+      <a href="../sonic-telemetry-in-dial-out-mode/" class="md-nav__link">
         
   
   
@@ -7151,7 +7156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/static-dns-configuration/" class="md-nav__link">
+      <a href="../static-dns-configuration/" class="md-nav__link">
         
   
   
@@ -7179,7 +7184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/swss-docker-warm-restart-code-reference/" class="md-nav__link">
+      <a href="../swss-docker-warm-restart-code-reference/" class="md-nav__link">
         
   
   
@@ -7207,7 +7212,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-ready-hld/" class="md-nav__link">
+      <a href="../system-ready-hld/" class="md-nav__link">
         
   
   
@@ -7235,7 +7240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/system-wide-warmboot/" class="md-nav__link">
+      <a href="../system-wide-warmboot/" class="md-nav__link">
         
   
   
@@ -7263,7 +7268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
+      <a href="../transceiver-and-sensor-monitoring-hld/" class="md-nav__link">
         
   
   
@@ -7291,7 +7296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/twamp-light-hld/" class="md-nav__link">
+      <a href="../twamp-light-hld/" class="md-nav__link">
         
   
   
@@ -7319,7 +7324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/useful-sysctl-settings/" class="md-nav__link">
+      <a href="../useful-sysctl-settings/" class="md-nav__link">
         
   
   
@@ -7347,7 +7352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/warmboot-manager-hld/" class="md-nav__link">
+      <a href="../warmboot-manager-hld/" class="md-nav__link">
         
   
   
@@ -7375,7 +7380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
+      <a href="../what-are-the-development-phases-and-scope-for-warm-reboot/" class="md-nav__link">
         
   
   
@@ -7400,10 +7405,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../system/zero-touch-provisioning-ztp/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -7419,6 +7451,125 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガと取得経路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugin-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plugin section の例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state machine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -8799,8 +8950,6 @@
       
   
   
-    
-  
   
   
     
@@ -8900,23 +9049,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../platform/" class="md-nav__link ">
               
   
   
@@ -8934,13 +9080,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -8960,7 +9106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -8988,7 +9134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../1-sonic-on-multi-asic-platforms/" class="md-nav__link">
+      <a href="../../platform/1-sonic-on-multi-asic-platforms/" class="md-nav__link">
         
   
   
@@ -9016,7 +9162,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -9044,7 +9190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cmis-and-c-cmis-support-for-zr/" class="md-nav__link">
+      <a href="../../platform/cmis-and-c-cmis-support-for-zr/" class="md-nav__link">
         
   
   
@@ -9072,7 +9218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -9100,7 +9246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -9128,7 +9274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dump-on-sai-failure/" class="md-nav__link">
+      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -9156,7 +9302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -9184,7 +9330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9212,7 +9358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
         
   
   
@@ -9240,7 +9386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -9268,7 +9414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -9296,7 +9442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../handle-asic-sdk-health-event/" class="md-nav__link">
+      <a href="../../platform/handle-asic-sdk-health-event/" class="md-nav__link">
         
   
   
@@ -9324,7 +9470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -9352,7 +9498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../icmp-hardware-offload/" class="md-nav__link">
+      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -9380,7 +9526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -9408,7 +9554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -9436,7 +9582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -9464,7 +9610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pcieinfo-design/" class="md-nav__link">
+      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -9492,7 +9638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -9520,7 +9666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -9548,7 +9694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9576,7 +9722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../s3ip-sysfs-specification/" class="md-nav__link">
+      <a href="../../platform/s3ip-sysfs-specification/" class="md-nav__link">
         
   
   
@@ -9601,37 +9747,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -9647,203 +9766,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルドシステムの構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_api_version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の SAI_API_VERSION マクロ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api-sai_query_api_version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新 API: sai_query_api_version()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ac_try_run" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルド時検査（AC_TRY_RUN）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        不整合がもたらす問題（背景）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        確認方法（手動）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -9856,7 +9778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
+      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
         
   
   
@@ -9884,7 +9806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -9912,7 +9834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -9940,7 +9862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -9968,7 +9890,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-pmon-high-level-design/" class="md-nav__link">
+      <a href="../../platform/smartswitch-pmon-high-level-design/" class="md-nav__link">
         
   
   
@@ -9996,7 +9918,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
         
   
   
@@ -10024,7 +9946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fast-link-up/" class="md-nav__link">
+      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -10052,7 +9974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-fw-utility/" class="md-nav__link">
+      <a href="../../platform/sonic-fw-utility/" class="md-nav__link">
         
   
   
@@ -10080,7 +10002,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
         
   
   
@@ -10108,7 +10030,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -10136,7 +10058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -10164,7 +10086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-psu-daemon-design/" class="md-nav__link">
+      <a href="../../platform/sonic-psu-daemon-design/" class="md-nav__link">
         
   
   
@@ -10192,7 +10114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-sfp-refactoring/" class="md-nav__link">
+      <a href="../../platform/sonic-sfp-refactoring/" class="md-nav__link">
         
   
   
@@ -10220,7 +10142,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-thermal-control-design/" class="md-nav__link">
+      <a href="../../platform/sonic-thermal-control-design/" class="md-nav__link">
         
   
   
@@ -10248,7 +10170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
         
   
   
@@ -10276,7 +10198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -10304,7 +10226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -10332,7 +10254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../thermal-control-test-plan/" class="md-nav__link">
+      <a href="../../platform/thermal-control-test-plan/" class="md-nav__link">
         
   
   
@@ -10360,7 +10282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../voq-sonic/" class="md-nav__link">
+      <a href="../../platform/voq-sonic/" class="md-nav__link">
         
   
   
@@ -15218,137 +15140,59 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        トリガと取得経路
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルドシステムの構造
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_api_version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の SAI_API_VERSION マクロ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api-sai_query_api_version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新 API: sai_query_api_version()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ac_try_run" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ビルド時検査（AC_TRY_RUN）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        不整合がもたらす問題（背景）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#plugin-section" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
+        plugin section の例
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#state-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state machine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        関連 CLI
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        確認方法（手動）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15359,7 +15203,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15370,7 +15214,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15397,7 +15241,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sai-api-version-check.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/zero-touch-provisioning-ztp.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15405,141 +15249,143 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">裏取りステータス: code-verified（実装は緩和版）</p>
-<p><code>sonic-sairedis/configure.ac</code> (l.226-261) で <code>AC_CHECK_FUNCS(sai_query_api_version, [AC_TRY_RUN([...]) ])</code> の検査が確認できる。<code>sonic-sairedis/syncd/VendorSai.cpp</code> (l.52) で <code>.query_api_version = &amp;sai_query_api_version</code> も実装済。ただし HLD 提案の「MAJOR.MINOR 一致」相当ではなく、<strong><code>sai_api_version_t minversion = SAI_VERSION(1,9,0)</code> の floor チェック</strong> に緩和されており、<code>(version &lt; minversion) || (SAI_API_VERSION &lt; minversion)</code> だけが失敗条件（PATCH どころか MINOR の上方差も許容）。詳細は configure.ac のコメントで OCP PR 1297/1795 を引用して説明。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p>HLD は 119KB。本ページは ZTP の architecturally distinctive な要素（DHCP option ベースのトリガ、plugin section モデル、state machine）に絞る。各 plugin 仕様の網羅は HLD 本文を参照。</p>
 </div>
-<h1 id="sai-api-sai_query_api_version">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）<a class="headerlink" href="#sai-api-sai_query_api_version" title="Permanent link">&para;</a></h1>
+<h1 id="zero-touch-provisioningztpdhcp-option-plugin-state-machine">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）<a class="headerlink" href="#zero-touch-provisioningztpdhcp-option-plugin-state-machine" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の syncd は <strong>OCP SAI リポジトリのヘッダ</strong> に対してコンパイルされ、リンクは <strong>vendor が <code>sonic-buildimage</code> 配下に配置した <code>libsai.so</code></strong> に対して行われる。OCP SAI ヘッダが更新されたが vendor 側 <code>libsai.so</code> の差し替えが間に合っていないと、ABI 不一致や属性 ID / enum 値のミスマッチが発生し、最悪 syncd が起動しない or 不可解な振る舞いをする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI は属性追加・enum 拡張に <strong>後方互換を保たない</strong> ため、片方だけ進むと壊れる。</p>
-<p>本機能は次の 2 段で問題を検出する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li>SAI に新規 API <strong><code>sai_query_api_version()</code></strong> を追加し、<code>libsai.so</code> 自身が「どのバージョンのヘッダに対して実装されたか」を返せるようにする。</li>
-<li><code>sonic-sairedis</code> のビルド時に autotools <code>AC_TRY_RUN</code> で <strong>vendor の <code>libsai.so</code> が返すバージョン</strong> と <strong><code>sonic-sairedis</code> の SAI ヘッダのバージョン</strong> を比較し、不一致ならビルドを失敗させる。</li>
-</ol>
-<p>これにより、組み合わせの不整合がイメージビルド時点で検知され、「動かしてみて初めて気づく」事態を防ぐ。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">ビルドシステムの構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>ZTP は <strong>箱出し直後の SONiC を、DHCP オプションで指示された ZTP JSON を取得・順次適用して自動構成する</strong> 仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙いは:</p>
+<ul>
+<li>工場出荷後の手動初期構成を不要にする</li>
+<li>機種・ロケーションごとの構成を ZTP server 側で集中管理</li>
+<li>失敗時に再試行・状態確認が可能な state machine を提供</li>
+</ul>
+<h2 id="_2">トリガと取得経路<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    SAIH[sonic-sairedis\nSAI headers (OCP SAI submodule)] --&gt; SYNCD[syncd 本体\n(コンパイル対象)]
-    VENDH[vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)] --&gt; VLIB[vendor libsai.so\n(sonic-buildimage)]
-    SYNCD --&gt;|link| VLIB
-    SYNCD --&gt;|sai_query_api_version()\nビルド時 AC_TRY_RUN| VLIB</code></pre>
-<p>ベンダーによっては SAI ヘッダを公開しているところ（Mellanox-SAI など）と、<code>libsai.so</code> バイナリのみ配布するところがある。後者の場合「ヘッダだけ更新して libsai を放置」が容易に起こり得るため、本機能の効果が大きい<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="sai_api_version">既存の <code>SAI_API_VERSION</code> マクロ<a class="headerlink" href="#sai_api_version" title="Permanent link">&para;</a></h3>
-<p>OCP SAI の <code>saiversion.h</code> には次のマクロが既に定義されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#define SAI_MAJOR 1</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#define SAI_MINOR 9</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#define SAI_REVISION 1</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="cp">#define SAI_VERSION(major, minor, revision) (10000 * (major) + 100 * (minor) + (revision))</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="cp">#define SAI_API_VERSION SAI_VERSION(SAI_MAJOR, SAI_MINOR, SAI_REVISION)</span>
-</span></code></pre></div>
-<p>ただしこれは <strong>ヘッダ側</strong> の値であり、<code>libsai.so</code> バイナリ単体からは取得できない。本提案はそれを取得可能にする。</p>
-<h3 id="api-sai_query_api_version">新 API: <code>sai_query_api_version()</code><a class="headerlink" href="#api-sai_query_api_version" title="Permanent link">&para;</a></h3>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cm">/**</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cm"> * @brief Retrieve a SAI API version this implementation is aligned to</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cm"> *</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="cm"> * @param[out] version Version number</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="cm"> *</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="cm"> * @return #SAI_STATUS_SUCCESS on success, failure status code on error</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="cm"> */</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_api_version</span><span class="p">(</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="n">_Out_</span><span class="w"> </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">);</span>
-</span></code></pre></div>
-<p>実装は trivial で、ベンダー libsai 内で <code>*version = SAI_API_VERSION</code> を返すだけ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">sai_query_api_version</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">        </span><span class="n">_Out_</span><span class="w"> </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="o">*</span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_API_VERSION</span><span class="p">;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>「<code>SAI_API_VERSION</code> は <strong>ベンダーがコンパイルに使った SAI ヘッダ</strong> に由来する値」という点が本質的に重要。これを runtime で取り出せる窓を libsai 側に常設する。</p>
-<h3 id="ac_try_run">ビルド時検査（AC_TRY_RUN）<a class="headerlink" href="#ac_try_run" title="Permanent link">&para;</a></h3>
-<p><code>sonic-sairedis</code> の <code>configure</code> ステップで次の流れで検査する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant Conf as configure (autotools)
-    participant Test as 小さなテストプログラム
-    participant LSAI as vendor libsai.so
-    Conf-&gt;&gt;Test: AC_TRY_RUN でコンパイル &amp; 実行
-    Test-&gt;&gt;LSAI: sai_query_api_version(&amp;v)
-    LSAI--&gt;&gt;Test: v = vendor 側 SAI_API_VERSION
-    Test-&gt;&gt;Test: v vs SAIREDIS の SAI_API_VERSION (ヘッダ)
-    alt 一致 (or MAJOR.MINOR 一致)
-        Test--&gt;&gt;Conf: exit 0
-    else 不一致
-        Test--&gt;&gt;Conf: exit 非ゼロ
-        Conf-&gt;&gt;Conf: configure 失敗 → ビルド停止
-    end</code></pre>
-<p>セマンティックバージョニングに従う限りは、テストプログラムが <strong>MAJOR.MINOR</strong> のみを比較し PATCH の差は許容するという緩和も提案されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより小さい修正リリースで全ビルド連鎖がブロックされるのを避ける。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/sonic-build-system/saiversioncheck.md#L77-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Using that new API we can implement a configure-time check in sonic-sairedis with autotools AC_TRY_RUN:
-  ...
-  In case, SAI versioning follows sematical versioning rules, the test program can implement a check for only MAJOR and MINOR version, relaxing the constraint on the PATCH version.
-reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシーの根拠。
--->
-
-<h3 id="_4">不整合がもたらす問題（背景）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>HLD は不整合時の典型症状を 4 つ列挙している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    BOOT[初回 boot\nconfig_db.json なし] --&gt; DHCP[DHCP discover\nmgmt interface]
+    DHCP --&gt; SRV[(DHCP server)]
+    SRV --&gt;|option 67 / 239 / 225 等| ZTPCFG[ZTP JSON URL]
+    ZTPCFG --&gt; FETCH[ztp daemon\nfetch via HTTP/HTTPS/TFTP]
+    FETCH --&gt; EXEC[plugin runner\nsection 単位で順次実行]
+    EXEC --&gt; STATE[/var/lib/ztp/ztp_state\n state machine]
+    STATE --&gt; APPLY[config / firmware / image / scripts 適用]</code></pre>
+<p>主要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ABI 変更によるリンク失敗（syncd が <code>libsai.so</code> とリンクできない）。</li>
-<li>属性 ID ミスマッチ。SAI が <strong>後方互換を保たずに新属性を追加</strong> するため、片方が新版なら ID が一致せず syncd が異常終了 or 微妙に誤動作する。</li>
-<li>enum 値ミスマッチ。同様の理由で列挙の番号が変わる。</li>
-<li>それ以外（暗黙の動作差異）。</li>
+<li><strong>トリガ</strong>: <code>/etc/sonic/config_db.json</code> が存在しない（or ztp 強制）状態で boot</li>
+<li><strong>DHCP option</strong>: ZTP JSON URL を伝える option 番号は platform / 環境設定に従う（option 67 / 225 / 239 等）</li>
+<li><strong>transport</strong>: HTTP / HTTPS / TFTP / FTP / file</li>
+<li><strong>plugin model</strong>: ZTP JSON は <strong>section の集合</strong>。各 section は plugin 種別と引数を持ち、順番に走る</li>
 </ul>
-<p>これらは production で出ると気付くまでに時間がかかるため、ビルド時に弾く価値が高い。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。本機能はビルドシステムレベルの整合性チェックで、runtime 設定を持たない。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当なし。</p>
-<h3 id="_6">確認方法（手動）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>ベンダー libsai 単体に対し、簡易プログラムから <code>sai_query_api_version()</code> を呼べばバージョンが取り出せる。</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sai.h&gt;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">sai_api_version_t</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sai_query_api_version</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="c1">// v = 10000 * MAJOR + 100 * MINOR + REVISION</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;vendor libsai SAI_API_VERSION = %lu</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="n">v</span><span class="p">);</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>SAI_VERSION(major, minor, revision)</code> の式は <code>10000*major + 100*minor + revision</code> なので、<code>v / 10000</code> が major、<code>(v / 100) % 100</code> が minor、<code>v % 100</code> が revision になる。</p>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="plugin-section">plugin section の例<a class="headerlink" href="#plugin-section" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>section type</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>configdb-json</code></td>
+<td><code>/etc/sonic/config_db.json</code> の取得 / 適用</td>
+</tr>
+<tr>
+<td><code>connectivity-check</code></td>
+<td>ネットワーク到達性確認</td>
+</tr>
+<tr>
+<td><code>firmware</code></td>
+<td>platform component firmware 更新</td>
+</tr>
+<tr>
+<td><code>download</code></td>
+<td>任意ファイル DL</td>
+</tr>
+<tr>
+<td><code>graphservice</code> (minigraph)</td>
+<td>旧来の minigraph 取得</td>
+</tr>
+<tr>
+<td><code>provisioning-script</code></td>
+<td>任意スクリプトの実行</td>
+</tr>
+<tr>
+<td><code>plugin</code></td>
+<td>ベンダー / 拡張 plugin</td>
+</tr>
+</tbody>
+</table>
+<p>各 section は <strong><code>reboot-on-success</code> / <code>reboot-on-failure</code></strong> 等の policy を持ち、適用後に再起動するか継続するかを制御する。</p>
+<h2 id="state-machine">state machine<a class="headerlink" href="#state-machine" title="Permanent link">&para;</a></h2>
+<p><code>/var/lib/ztp/ztp_state</code> に現在状態が JSON で保存される。代表状態:</p>
 <ul>
-<li><strong>OCP SAI のリリースサイクル</strong>: 本機能が機能するのは OCP SAI 側に <code>sai_query_api_version</code> が追加された後。それ以前は <code>dlsym</code> で関数が見つからない可能性があり、ビルド時テストが「シンボル無し」エラーで失敗する。これは <strong>「未対応 vendor libsai は失格」</strong> という強い前提を持つ設計である。</li>
-<li><strong>マルチベンダー環境</strong>: 1 つの <code>sonic-sairedis</code> を複数ベンダーで再利用するため、<code>sai_query_api_version</code> を全ベンダー libsai が実装している必要がある。実装漏れベンダーがあるとビルドが通らない。</li>
-<li><strong>CI / PR チェック</strong>: HLD は「<code>sonic-sairedis</code> を更新したら同じ PR で全ベンダー libsai を更新する責任」を明記している<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CI が PR でこのビルド時検査を回す形になる。</li>
-<li><strong>PATCH 緩和</strong>: 提案レベルでは MAJOR.MINOR のみ比較する案が出ている。実装がそのとおりかは裏取り対象。</li>
+<li><code>BOOT</code> → <code>IN-PROGRESS</code> → <code>SUCCESS</code> / <code>FAILED</code> / <code>DISABLED</code></li>
+<li>各 section にも <code>pending</code> / <code>in-progress</code> / <code>success</code> / <code>failed</code> / <code>skipped</code></li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p><code>ztp</code> CLI で再試行・abort・状態表示が可能。</p>
+<h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show ztp status</code></td>
+<td>現在の ZTP 状態</td>
+</tr>
+<tr>
+<td><code>ztp run</code></td>
+<td>再実行</td>
+</tr>
+<tr>
+<td><code>ztp disable</code></td>
+<td>ZTP 無効化（起動完了後の運用）</td>
+</tr>
+<tr>
+<td><code>ztp enable</code></td>
+<td>有効化</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ビルドが <code>configure: error: SAI version mismatch ...</code> で止まる: <code>sonic-sairedis</code> 配下の SAI ヘッダ（OCP SAI submodule）と vendor libsai のバージョンを照合する。たいていは vendor libsai 側を更新する必要がある。</li>
-<li><code>sai_query_api_version</code> 未定義エラー: ベンダー libsai が古く、本 API 未実装。ベンダーに更新を要求する。</li>
-<li>検査をスキップしたい（緊急ビルド）: HLD では明示されていないが、<code>AC_TRY_RUN</code> 検査は configure フラグでスキップ可能なように作るのが一般的。実装裏取り対象。</li>
-<li>Runtime での挙動が怪しい: ビルド検査は通っても、ベンダー libsai が <code>SAI_API_VERSION</code> を <strong>実態と異なる値で返す</strong> バグがあると検知できない。属性 ID / enum 値の異常は依然として可能性がある。</li>
+<li><strong>management interface 経由のみが基本</strong>: data port 経由の ZTP は対応する DHCP option / route 設定が要る</li>
+<li><strong>HTTPS の cert 検証</strong>: 本番では信頼できる CA / pinning が必要（HLD は緩い検証も許す）</li>
+<li><strong>plugin 拡張の互換性</strong>: vendor 拡張 plugin は対応版の ztp daemon が必要</li>
+<li><strong>failure 時の半適用</strong>: 一部 section だけ成功した状態で停止すると整合性保証なし</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- evidence (verifier-batch-19):
-- sonic-sairedis `configure.ac` l.226-261: `AC_CHECK_FUNCS(sai_query_api_version, [AC_MSG_CHECKING([SAI headers API version and library version check]) AC_TRY_RUN([...])`
-- 実装は **`minversion = SAI_VERSION(1,9,0)` floor** で `return (version < minversion) || (SAI_API_VERSION < minversion);` のみ判定（HLD 案の MAJOR.MINOR equality より緩い）。理由は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）と PR 1795（structs）を参照
-- sonic-sairedis `syncd/VendorSai.cpp` l.52: `.query_api_version = &sai_query_api_version,`
-- vendor lib に `sai_query_api_version` が無ければ `AC_MSG_ERROR("SAI library libsai.so does not have sai_query_api_version API which is required")` で停止
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>DHCP relay (v4/v6)</strong>: ZTP は DHCP に強く依存。relay の設定不備が直撃</li>
+<li><strong>fwutil</strong>: firmware section 経由で fwutil が呼ばれる</li>
+<li><strong>secure-upgrade / secure-boot</strong>: 取得 image の検証</li>
+<li><strong>gnoi-OS / file APIs</strong>: 後発の運用 API（gNOI）と用途が一部重なる</li>
+</ul>
+<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ZTP がトリガしない → <code>/etc/sonic/config_db.json</code> の有無、ztp daemon の起動、DHCP lease 確認</li>
+<li>JSON 取得失敗 → DHCP option / URL 解決、ファイアウォール、HTTPS 証明書</li>
+<li>section が常に失敗 → 該当 plugin のログ（<code>/var/log/ztp/</code>）、state ファイルの error 詳細</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- ztp daemon の現行 master 取り込みと systemd 起動経路の確認
+- DHCP option 番号（option 67 / 225 / 239 等）の platform 別現行値確認
+- plugin section type の現行サポート一覧確認
+- ZTP JSON state ファイル（/var/lib/ztp/ztp_state）スキーマの現行値確認
+- show ztp / ztp run / ztp disable CLI の sonic-utilities 取り込み確認
+- secure-upgrade / fwutil との image 検証統合の現行実装確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/saiversioncheck.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/ztp/ztp.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
