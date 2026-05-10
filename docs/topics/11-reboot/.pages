@@ -1,0 +1,8 @@
+title: Reboot / Upgrade / Lifecycle
+nav:
+  - index.md
+  - concept.md
+  - architecture.md
+  - setup.md
+  - operations.md
+  - upgrade.md
