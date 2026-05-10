@@ -4,8 +4,80 @@ verification: stub
 ---
 
 # ルーティング
+BGP、VRF、ECMP、SRv6、MPLS、DHCP relay など L3 制御面を扱う章。
+## この章の読み方
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+## 検証状況
+- ページ数: 51
+- 分布: Code-verified: 40 / Discrepancy-found: 5 / HLD-only: 6
 
-BGP、Static Route、Route Map、VRF など、L3 ルーティング関連の機能を解説する章。
+## 実装差分があるページ
+- [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](bgp-route-install-error-handling.md)
+- [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](bfd-hw-offload-for-bgp-session.md)
+- [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](evpn-vxlan-multihoming.md)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](evpn-vxlan-hld.md)
+- [Local ARS（Adaptive Routing & Switching の local 完結版）](local-ars-hld.md)
 
-!!! info "準備中"
-    このセクションは現在準備中です。
+## HLD-only のページ
+- [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](bgp-suppress-announcements-of-routes-not-installed-in-hw.md)
+- [Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）](sonic-route-flow-counter-design.md)
+- [VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）](vrf-feature-ansible-test-plan-omit-in-toc.md)
+- [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](vrf-vs-test-plan.md)
+- [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
+- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](default-route.md)
+
+## ページ一覧
+
+| ページ | 検証 |
+|---|---|
+| [BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）](bgp-route-aggregation-with-bbr-awareness.md) | Code-verified |
+| [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](bfd-hw-offload.md) | Code-verified |
+| [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](bgp-loading-optimization-for-sonic.md) | Code-verified |
+| [BGP PIC（Prefix Independent Convergence / NHG 階層）](bgp-prefix-independent-convergence-architecture-document.md) | Code-verified |
+| [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](bgp-route-install-error-handling.md) | Discrepancy-found |
+| [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](bgp-suppress-announcements-of-routes-not-installed-in-hw.md) | HLD-only |
+| [BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）](bgp-router-id-explicitly-configured.md) | Code-verified |
+| [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](bfd-hw-offload-for-bgp-session.md) | Discrepancy-found |
+| [BMP（BGP Monitoring Protocol / BMP_STATE_DB）](bmp-for-monitoring-sonic-bgp-info.md) | Code-verified |
+| [CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）](ciscobgp4mib-implementation-changes.md) | Code-verified |
+| [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](dhcp-relay-per-interface-counter.md) | Code-verified |
+| [DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）](dhcp-relay-for-ipv6-hld.md) | Code-verified |
+| [ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）](test-plan-for-inner-packet-hashing-in-ecmp.md) | Code-verified |
+| [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](evpn-vxlan-multihoming.md) | Discrepancy-found |
+| [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](evpn-vxlan-hld.md) | Discrepancy-found |
+| [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](sonic-frr-bgp-extended-unified-configuration-management-framework.md) | Code-verified |
+| [Fine Grained ECMP（FG_NHG / fgnhgorch）](sonic-fine-grained-ecmp.md) | Code-verified |
+| [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](ipv6-link-local-enhancements.md) | Code-verified |
+| [Local ARS（Adaptive Routing & Switching の local 完結版）](local-ars-hld.md) | Discrepancy-found |
+| [MPLS TC → TC map（MPLS パケットの QoS classification）](mpls-tc-to-tc-map.md) | Code-verified |
+| [Management VRF 設計（201911 release / l3mdev + cgroups）](sonic-management-vrf-design-document-201911-release.md) | Code-verified |
+| [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](routing-and-next-hop-table-enhancement.md) | Code-verified |
+| [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](high-level-design-document.md) | Code-verified |
+| [Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）](overlay-ecmp-with-bfd-monitoring.md) | Code-verified |
+| [Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張](overlay-ecmp-enhancements.md) | Code-verified |
+| [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](path-tracing-midpoint.md) | Code-verified |
+| [Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）](reliable-tsa.md) | Code-verified |
+| [Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）](sonic-route-flow-counter-design.md) | HLD-only |
+| [SONiC における FRR upgrade の手順とパッチ管理](detailed-steps-to-upgrade-frr-in-sonic.md) | Code-verified |
+| [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](mpls-for-sonic-high-level-design-document.md) | Code-verified |
+| [SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）](srv6-sid-l3adj.md) | Code-verified |
+| [SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）](static-configuration-of-srv6-in-sonic-hld.md) | Code-verified |
+| [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](srv6-vpn-hld.md) | Code-verified |
+| [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](sonic-usid.md) | Code-verified |
+| [SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）](segment-routing-over-ipv6-srv6-hld.md) | Code-verified |
+| [Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）](static-ip-route-configuration.md) | Code-verified |
+| [VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）](vrf-feature-ansible-test-plan-omit-in-toc.md) | HLD-only |
+| [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](vrf-vs-test-plan.md) | HLD-only |
+| [VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）](sonic-vrf-support-design-spec-draft.md) | Code-verified |
+| [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](virtual-router-redundancy-protocol-adaptation-hld.md) | Code-verified |
+| [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](bgp-setup-for-voq-chassis.md) | Code-verified |
+| [Weighted ECMP（WCMP / BGP link-bandwidth ext community）](sonic-weighted-ecmp.md) | Code-verified |
+| [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](bgpcfgd-dynamic-peer-modification-support.md) | Code-verified |
+| [dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）](multiple-nexthop-route-hld.md) | Code-verified |
+| [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) | HLD-only |
+| [gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）](gnmi-subscription-for-yang-data.md) | Code-verified |
+| [linkmgrd のデフォルトルート連動（DualToR mux 制御）](default-route.md) | HLD-only |
+| [クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP](class-based-forwarding-enhancement.md) | Code-verified |
+| [プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）](prefix-based-mux-neighbors.md) | Code-verified |
+| [ルータインタフェース (RIF) カウンタ](router-interface-counters-in-sonic.md) | Code-verified |
+| [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](new-frr-sonic-communication-channel.md) | Code-verified |
