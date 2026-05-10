@@ -296,3 +296,10 @@ APP_DB 側で `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入するこ�
 - HER (head-end replication) の現行実装
 - CLI (config vxlan / show vxlan) の sonic-utilities への取り込み形
 -->
+
+## 関連ページ
+- [CLI: config vxlan](../reference/cli/config-vxlan.md)
+- [CONFIG_DB: VXLAN_TUNNEL](../reference/config-db/vxlan-tunnel.md)
+- [CONFIG_DB: VXLAN_TUNNEL_MAP](../reference/config-db/vxlan-tunnel-map.md)
+- [YANG: sonic-vxlan](../reference/yang/sonic-vxlan.md)
+- [HLD: EVPN VXLAN](../routing/evpn-vxlan-hld.md)

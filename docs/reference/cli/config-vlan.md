@@ -127,3 +127,9 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 [^1]: `vlan` グループは `config/vlan.py` で定義され、`config/main.py` 末尾で `config.add_command(vlan.vlan)` 相当の登録が行われる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py>
 
 [^2]: `proxy_arp` は VLAN そのものではなく `VLAN_INTERFACE` テーブルに書き込まれる（L3 SVI 機能のため）。`config/vlan.py` L302-L320。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py#L302>
+
+## 関連ページ
+- [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
+- [CONFIG_DB: VLAN](../config-db/vlan.md)
+- [CONFIG_DB: VLAN_MEMBER](../config-db/vlan-member.md)
+- [YANG: sonic-vlan](../yang/sonic-vlan.md)

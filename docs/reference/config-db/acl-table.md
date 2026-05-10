@@ -89,3 +89,9 @@ ACL_TABLE|<table_name>
 ## 引用元
 
 [^1]: フィールド名・type 値は `sonic-swss/orchagent/aclorch.{h,cpp}` (sha `43055961`) のマクロ定義と type バリデーションロジックから抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.cpp>
+
+## 関連ページ
+- [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [CLI: config acl](../cli/config-acl.md)
+- [CLI: show acl](../cli/show-acl.md)
+- [CONFIG_DB: ACL_RULE](acl-rule.md)

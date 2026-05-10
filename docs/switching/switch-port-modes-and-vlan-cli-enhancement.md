@@ -220,3 +220,10 @@ sudo config switchport mode routed Ethernet0
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 関連ページ
+- [CLI: config vlan](../reference/cli/config-vlan.md)
+- [CLI: show vlan](../reference/cli/show-vlan.md)
+- [CONFIG_DB: VLAN](../reference/config-db/vlan.md)
+- [CONFIG_DB: VLAN_MEMBER](../reference/config-db/vlan-member.md)
+- [YANG: sonic-vlan](../reference/yang/sonic-vlan.md)

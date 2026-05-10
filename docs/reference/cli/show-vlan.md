@@ -95,3 +95,8 @@ excerpt: |
 ## 引用元
 
 [^1]: `vlan` グループ全体は `show/vlan.py` で定義。`brief` と `config` の 2 コマンドのみ。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vlan.py>
+
+## 関連ページ
+- [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
+- [CLI: config vlan](config-vlan.md)
+- [CONFIG_DB: VLAN](../config-db/vlan.md)

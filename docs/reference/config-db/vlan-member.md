@@ -62,3 +62,9 @@ VLAN_MEMBER|<vlan_name>|<port>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vlan.yang` 内 `VLAN_MEMBER` コンテナ。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273>
+
+## 関連ページ
+- [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
+- [CLI: config vlan](../cli/config-vlan.md)
+- [CONFIG_DB: VLAN](vlan.md)
+- [YANG: sonic-vlan](../yang/sonic-vlan.md)

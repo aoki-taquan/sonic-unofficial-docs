@@ -236,3 +236,9 @@ if clicommon.get_interface_naming_mode() == "alias":
 ## 引用元
 
 [^1]: `interface` グループ定義は `config/main.py` L5080-L5092。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L5080>
+
+## 関連ページ
+- [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
+- [CONFIG_DB: PORT](../config-db/port.md)
+- [CONFIG_DB: INTERFACE](../config-db/interface.md)
+- [YANG: sonic-interface](../yang/sonic-interface.md)

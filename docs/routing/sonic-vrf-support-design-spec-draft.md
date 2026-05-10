@@ -170,3 +170,10 @@ config bgp neighbor add Vrf-Red 10.0.0.2 65001
 - 2018-2019 年 HLD のため、Loopback per-VRF / route leak の現行実装乖離リスク（priority=high）
 - FRR upstream の vrf-aware bgpd / zebra 仕様との差分確認
 -->
+
+## 関連ページ
+- [CLI: config vrf](../reference/cli/config-vrf.md)
+- [CLI: config interface](../reference/cli/config-interface.md)
+- [CONFIG_DB: VRF](../reference/config-db/vrf.md)
+- [CONFIG_DB: INTERFACE](../reference/config-db/interface.md)
+- [YANG: sonic-vrf](../reference/yang/sonic-vrf.md)

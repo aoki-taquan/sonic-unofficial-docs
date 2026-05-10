@@ -92,3 +92,8 @@ related:
 [^1]: `syslog` グループは `config/syslog.py` L361-L368。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361>
 
 [^2]: `add` / `delete` は `config/syslog.py` L370-L454。重複検査は `is_exist_in_db`。
+
+## 関連ページ
+- [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
+- [CONFIG_DB: SYSLOG_SERVER](../config-db/syslog-server.md)
+- [YANG: sonic-syslog](../yang/sonic-syslog.md)
