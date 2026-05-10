@@ -1,0 +1,14 @@
+{
+  "page": "docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md",
+  "issue": 683,
+  "verification": "hld-only",
+  "concerns": [
+    "sfputil read-eeprom / write-eeprom コマンドの sonic-utilities sfputil モジュール取り込み確認",
+    "規格 (CMIS / SFF-8636 / SFF-8472) 別の page-to-overall offset 変換実装確認",
+    "--verify オプションの read-back ロジック実装確認",
+    "ベンダ platform API plugin での NotImplementedError ハンドリング (専用エラー表示) 動作確認",
+    "RJ45 ポートに対する明示的なブロック処理の実装確認",
+    "HLD は Initial で日付欄空欄。改訂履歴更新と master 取り込み状況追跡が必要"
+  ],
+  "priority": "low"
+}
