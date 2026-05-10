@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/event-driven-techsupport-invocation-coredump-mgmt.md",
+  "verification": "hld-only",
+  "concerns": [
+    "coredump_gen_handler / techsupport_cleanup script の現行 sonic-utilities / sonic-buildimage 取り込み確認",
+    "/proc/sys/kernel/core_pattern の現行設定値（handler 経路と引数）の確認",
+    "CONFIG_DB AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE スキーマと sonic-yang-models 取り込み確認",
+    "STATE_DB AUTO_TECHSUPPORT スキーマの現行値確認",
+    "config auto-techsupport / show auto-techsupport CLI の sonic-utilities 取り込み確認",
+    "system health monitor / kdump / persistent log level との連携の現行実装確認"
+  ],
+  "priority": "medium"
+}
