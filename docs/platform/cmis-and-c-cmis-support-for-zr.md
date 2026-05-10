@@ -1,0 +1,115 @@
+---
+title: ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
+area: platform
+verification: hld-only
+last_verified: 2026-05-10
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/platform_api/CMIS_and_C-CMIS_support_for_ZR.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - PORT
+    - PORT_TABLE
+  cli:
+    - show interfaces transceiver
+    - sfputil
+  yang:
+    - sonic-port
+---
+
+!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
+    HLD は 97KB。本ページは ZR/ZR+ で SONiC の transceiver 管理（CMIS 状態機械、coherent optics 拡張）にどんな差が出るかに絞る。詳細レジスタ / state machine 完全網羅は HLD 本文を参照。
+
+# ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
+
+## 概要
+
+QSFP-DD ZR / ZR+ のような **coherent optics** は従来の grey optics と比べ:
+
+- **DSP / laser tuning** が必要（周波数・power・modulation）
+- **CMIS 5.x の C-CMIS 拡張**で coherent 固有の Page / レジスタ群がある
+- **Application Select**（モジュール側で 100G/400G / FEC タイプを切り替え）必須
+
+このため `xcvrd`（pmon 内 transceiver daemon）と sonic-platform-common 側の **CMIS state machine** に C-CMIS 対応が要る[^1]。
+
+## 動作仕様
+
+```mermaid
+flowchart LR
+    PORT[CONFIG_DB PORT\n(speed / autoneg / lanes)] --> XC[xcvrd]
+    XC --> SDK[sonic-platform / sfp_optoe driver]
+    SDK --> EEP[transceiver EEPROM\n(CMIS pages + C-CMIS pages)]
+    XC --> STATE[STATE_DB\nTRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS]
+    XC -. CMIS state machine .-> EEP
+    USER[管理者] --> CFG[config interface transceiver-frequency\nconfig interface transceiver-power]
+    CFG --> CDB[(CONFIG_DB)]
+    CDB --> XC
+```
+
+CMIS state machine の主要状態（HLD ベース）:
+
+- `MODULE_LOW_PWR` → `MODULE_PWR_UP` → `MODULE_READY`
+- `DATAPATH_DEACTIVATED` → `DATAPATH_INIT` → `DATAPATH_INITIALIZED` → `DATAPATH_ACTIVATED`
+- 各遷移で **Application Select** と lane mapping を CMIS Page 0x10 / 0x11 に書き込む
+
+C-CMIS 拡張[^1]:
+
+- **Tx laser frequency**（ITU grid / 100GHz）の設定と現在値の readback
+- **Tx output power** 範囲設定
+- **modulation type / FEC mode** の確認
+- **media lane** の lane-by-lane fault state
+
+## 設定
+
+### 関連する CONFIG_DB / STATE_DB
+
+| Table | DB | 用途 |
+|-------|----|------|
+| `PORT` | CONFIG | speed / lanes / autoneg / `transceiver-frequency` / `transceiver-power` 等 |
+| `TRANSCEIVER_INFO` | STATE | manufacturer / vendor PN / supported applications |
+| `TRANSCEIVER_DOM_SENSOR` | STATE | DOM (laser bias / temp / Rx power) |
+| `TRANSCEIVER_STATUS` | STATE | datapath state, fault flags |
+
+### 関連する CLI
+
+| Command | 用途 |
+|---------|------|
+| `show interfaces transceiver eeprom -d` | EEPROM dump |
+| `show interfaces transceiver dom` | DOM 値 |
+| `sfputil show eeprom` / `sfputil show dom` | 低レベル確認 |
+| `config interface transceiver-frequency <if> <THz>` | ZR の laser tuning |
+| `config interface transceiver-power <if> <dBm>` | Tx power |
+
+## 制限事項
+
+- **module 側の Application Select 表に依存**: 同一 module でも対応 application 集合は ベンダ固有
+- **CMIS バージョン差**: 5.0 / 5.1 / C-CMIS 1.x で page layout に微差。xcvrd 側で吸収
+- **電源予算**: ZR モジュールは消費電力が大きく、port / shelf の電源プロファイル確認が必要
+- **autoneg と coherent**: ZR は固定 application select。autoneg は無効化される
+
+## 干渉する機能
+
+- **port auto-FEC / port auto-negotiation**: ZR では FEC / autoneg 設定が CMIS Application Select に従う
+- **fast link up**: link bring-up シーケンスと CMIS DATAPATH state の整合
+- **port profile init**: port 起動時の初期 application select
+- **enhanced LPO debug registers**: 派生する低レベルデバッグ HLD
+
+## トラブルシューティング
+
+- module は認識するが link しない → `TRANSCEIVER_STATUS` の datapath state、Application Select の不一致
+- laser power が想定値と違う → `transceiver-power` 設定値、module 側上下限
+- frequency が変わらない → ITU グリッド外指定、module の wavelength 範囲
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/platform_api/CMIS_and_C-CMIS_support_for_ZR.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- concerns hint:
+- xcvrd の CMIS state machine 実装と C-CMIS 拡張取り込みの現行確認
+- TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS スキーマの ZR 拡張フィールド確認
+- config interface transceiver-frequency / transceiver-power CLI の sonic-utilities 取り込み確認
+- sonic-platform-common SfpOptoeBase の C-CMIS 対応 method 確認
+- ZR module Application Select マッピング（100G/400G / FEC mode）の per-vendor 差分確認
+- port auto-FEC / autoneg / fast-link-up との挙動整合確認
+-->
