@@ -1,7 +1,7 @@
 ---
 title: ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
 area: acl-qos
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - sonic-acl
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 1.1 (2025-04)。`AclOrch` の現行 master 実装、L3 / Mirror / VXLAN inner src MAC rewrite といったテーブル型対応、`SAI_OBJECT_TYPE_ACL_*` の利用範囲、`aclshow` / `config acl` の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-swss/orchagent/aclorch.cpp` / `aclorch.h` / `acltable.h` で AclOrch 本体が実装。APPL_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` 名は `sonic-swss-common/common/schema.h:94,96` で `APP_ACL_TABLE_TABLE_NAME` として定義され、HLD のスタック構造（CONFIG → APPL → AclOrch → SAI）と一致。後発の DASH ACL は `APP_DASH_ACL_RULE_TABLE_NAME` (schema.h:178) として別系統で共存。
 
 # ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
 

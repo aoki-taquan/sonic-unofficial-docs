@@ -1,7 +1,7 @@
 ---
 title: gRPC client（active-active DualToR / ycabled ↔ SoC 連携）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.2 (2022)。`ycabled` の gRPC client 実装、`STATE_DB` 上の gRPC channel state テーブル、SoC 上の DualToRActive gRPC server、NIC-simulator 連携の sonic-mgmt 取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-platform-daemons/sonic-ycabled/setup.py:15-22` で `proto/proto_out/linkmgr_grpc_driver.proto` から `linkmgr_grpc_driver_pb2_grpc.py` を `grpc_tools.protoc` で生成し、`grpcio-tools` / `grpcio` を依存に持つ。`tests/test_ycable.py` で `grpc_client`, `fwd_state_response_tbl` を使った forwarding state 同期が test されており、HLD の ycabled→SoC gRPC client design が実装に取り込まれている。
 
 # gRPC client（active-active DualToR / ycabled ↔ SoC 連携）
 

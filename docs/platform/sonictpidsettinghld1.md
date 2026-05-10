@@ -1,7 +1,7 @@
 ---
 title: ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / Status: In Review"
-    HLD は 2020-07 作成 Rev 0.2 / **Status In Review** のまま。`SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` の community SAI 取込 (SAI PR #1089)、`PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` の SWITCH_CAPABILITY テーブル更新、`config interface tpid` CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-swss/orchagent/switchorch.cpp` で `sai_query_attribute_capability(... SAI_PORT_ATTR_TPID ...)` と `SAI_LAG_ATTR_TPID` の capability query が実装され、`SWITCH_CAPABILITY_TABLE_PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` を STATE_DB に書き込み済み (`switchorch.h`)。`portsorch.cpp` で `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` の `set_*_attribute` を発行。CLI は `sonic-utilities/config/main.py` の `def tpid()` (line 5614) と `show/interfaces/__init__.py` の `def tpid()` (line 175) で実装。HLD どおりに community 取り込み済み。
 
 # ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
 

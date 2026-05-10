@@ -1,8 +1,8 @@
 ---
 title: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/flow_counters/flow_counters.md
@@ -17,8 +17,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Initial version (Rev 0.1)。`Flow Counter Handler` クラス、`FLOW_CNT_TRAP` group、`COUNTERS_TRAP_NAME_MAP` テーブル、CLI `counterpoll flowcnt-trap` / `show flowcnt trap stats` の sonic-utilities / sonic-swss / sonic-sairedis 取込状況は未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-swss/orchagent/flexcounterorch.cpp:58 FLOW_CNT_TRAP_KEY` と `:87 {FLOW_CNT_TRAP_KEY, HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP}` で flex counter group が登録され、`copporch.cpp:196,1452,1494` で `COUNTERS_TRAP_NAME_MAP` への trap 名 ↔ OID マップが管理される。CLI は `sonic-utilities/show/flow_counters.py:11-15 flowcnt_trap` で実装。HLD どおりに沿っている。
 
 # Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
 

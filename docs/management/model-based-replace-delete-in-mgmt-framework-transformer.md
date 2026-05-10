@@ -1,7 +1,7 @@
 ---
 title: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.1 (2025-03)。Mgmt-Framework Transformer の現行実装、`validate-xfmr` annotation 改名、defaults 適用ルール、virtual table の取扱の現行 master コードパスは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-mgmt-common/translib/transformer/` に transformer 本体と `xspec.go:941 case "validate-xfmr"` の処理が入り、`models/yang/annotations/sonic-extensions.yang:78-79 extension validate-xfmr { argument "validate-xfmr-name"; }` で extension 定義が公開されている。テスト用 `openconfig-test-xfmr-annot.yang` でも `sonic-ext:validate-xfmr` を実 annotation として使用しており、HLD で改名された validate-xfmr 名が現行 master に取り込み済み。
 
 # Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE
 
