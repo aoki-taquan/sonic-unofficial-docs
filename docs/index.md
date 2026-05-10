@@ -11,6 +11,15 @@ verification: meta
     このドキュメントは有志による非公式ドキュメントです。SONiC プロジェクトおよび SONiC Foundation とは関係ありません。
     内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は [公式リポジトリ](https://github.com/sonic-net/SONiC) を参照してください。
 
+## 読み手別の入口
+
+目的に応じて、既存ページを読む順番をまとめたガイドです。
+
+- [初学者向け](guides/beginner.md): SONiC の全体像、設定モデル、仮想環境での導入を順に把握したい読者向け。
+- [運用者向け](guides/operator.md): 日々の確認、設定変更、障害調査、CONFIG_DB の意味確認を素早く引きたい読者向け。
+- [開発者向け](guides/developer.md): HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。
+- [評価者向け](guides/evaluator.md): ラボで SONiC を起動し、基本設定と状態確認まで一連の流れを辿りたい読者向け。
+
 ## SONiC とは
 
 SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベースのオープンソースなネットワーク OS（NOS）です。Microsoft と Open Compute Project（OCP）によって開発され、現在は Linux Foundation 配下のオープンソースプロジェクトとして運営されています。
@@ -29,6 +38,7 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 
 ## 目次
 
+- [読み手別ガイド](guides/index.md)
 - [アーキテクチャ](architecture/index.md)
 - [ルーティング](routing/index.md)
 - [スイッチング](switching/index.md)
