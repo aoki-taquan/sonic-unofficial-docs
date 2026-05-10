@@ -1,0 +1,67 @@
+---
+title: ACL / CoPP / Mirror / Packet Action
+area: topics
+verification: meta
+last_verified: 2026-05-10
+sources:
+  - docs/acl-qos/acl-in-sonic.md
+  - docs/acl-qos/acl-support-in-sonic.md
+  - docs/categories/sai-extensions.md
+  - docs/acl-qos/acl-user-defined-table-type-support.md
+  - docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md
+  - docs/acl-qos/acl-flex-counters-support.md
+  - docs/architecture/sonic-trap-flow-counter-design.md
+  - docs/reference/cli/config-acl.md
+  - docs/reference/cli/show-acl.md
+  - docs/reference/config-db/acl-table.md
+  - docs/reference/config-db/acl-rule.md
+  - docs/reference/config-db/policer.md
+  - docs/reference/config-db/mirror-session.md
+  - docs/reference/config-db/copp-group.md
+  - docs/reference/config-db/copp-trap.md
+  - docs/reference/yang/sonic-copp.md
+  - docs/reference/yang/sonic-mirror-session.md
+  - docs/acl-qos/enhancements-on-show-acl-commands.md
+  - docs/acl-qos/sonic-port-mirroring-hld.md
+  - docs/acl-qos/everflow-test-plan.md
+  - docs/acl-qos/configurable-drop-counters-in-sonic.md
+  - docs/acl-qos/sonic-test-ingress-discards-hld.md
+  - docs/architecture/port-illegal-packets-drop-design.md
+  - docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md
+  - docs/acl-qos/egress-outer-dscp-change-table.md
+  - docs/architecture/sonic-packet-trimming.md
+  - docs/acl-qos/copp-manager-redesign-test-plan.md
+  - docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md
+  - docs/acl-qos/dash-acl-tags.md
+  - docs/acl-qos/port-access-control-in-sonic.md
+  - docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+---
+
+# ACL / CoPP / Mirror / Packet Action
+
+この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。既存ページは ACL、CoPP、mirror、drop counter、packet trimming などの HLD 単位に分かれているため、ここでは運用者や設計者の質問順に並べ直します。
+
+ACL は data plane の分類器、CoPP は control plane へ punt されるパケットの保護、mirror は観測用コピー、counter は設定が本当に効いているかを確かめる計測面です。これらは別機能に見えますが、SONiC 内部では `ACL_TABLE` / `ACL_RULE`、SAI ACL action、policer、hostif trap、flex counter といった共通部品でつながっています。
+
+## この章で答える質問
+
+- ACL table type、match、action、counter はどの階層で理解するのか。
+- CoPP、policer、trap、mirror は ACL とどこで交わり、どこから別物なのか。
+- `show acl`、`aclshow`、trap flow counter、drop counter は運用でどう使い分けるのか。
+- egress mirror、outer DSCP 書換、packet trimming のような ASIC 依存 action はどう確認するのか。
+- DASH ACL、PAC、DHCP DoS 緩和は通常 ACL と同じ章で読むべきか。
+
+## 読み進め方
+
+1. [概念](concept.md): ACL / CoPP / mirror / counter の境界と、table type が決めること。
+2. [アーキテクチャ](architecture.md): `AclOrch`、SAI ACL、counter、CoPP trap の流れ。
+3. [設定](setup.md): `ACL_TABLE` / `ACL_RULE`、policer、mirror、CoPP の最小構成。
+4. [運用](operations.md): `show acl`、counter、mirror、drop 調査の実用順序。
+5. [内部実装](internals.md): action capability、egress mirror、outer DSCP、packet trimming。
+6. [発展トピック](advanced.md): CoPP redesign、DASH ACL、PAC、DHCP DoS との境界。
+
+## 関連ページ
+
+- [ACL in SONiC](../../acl-qos/acl-in-sonic.md)
+- [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [SAI 拡張属性追加系](../../categories/sai-extensions.md)
