@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/snmp-transceiver-monitoring-testbed-test-plan.md",
+  "issue": 694,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-snmpagent (sonic_ax_impl) の Entity MIB / Entity Sensor MIB 実装範囲確認",
+    "TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_INFO テーブルの STATE_DB スキーマ取り込み確認",
+    "sonic-mgmt 側のこのテストプランに沿ったテストコード存在確認",
+    "Entity MIB extension HLD (extension-to-physical-entity-mib.md) との整合性確認",
+    "down/未挿入 port の MIB エントリ取扱が実装/テストでどう扱われているか未確認",
+    "entitySensorValue の単位 (TX power dBm vs uW 等) の SNMP 出力フォーマット確認"
+  ],
+  "priority": "low"
+}
