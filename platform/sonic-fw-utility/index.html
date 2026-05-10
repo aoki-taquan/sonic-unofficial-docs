@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/sonic-dash-hld/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-fw-utility/">
       
       
-        <link rel="prev" href="../smartswitch-eni-based-forwarding/">
+        <link rel="prev" href="../sonic-fast-link-up/">
       
       
-        <link rel="next" href="../vnet-local-endpoint-forwarding/">
+        <link rel="next" href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 - SONiC 非公式ドキュメント</title>
+        <title>fwutil（platform component firmware の install / update / show） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-dashdisaggregated-apis-for-sonic-hosts" class="md-skip">
+        <a href="#fwutilplatform-component-firmware-install-update-show" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
+              fwutil（platform component firmware の install / update / show）
             
           </span>
         </div>
@@ -313,13 +313,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../overlay/" class="md-tabs__link">
           
   
   
@@ -403,11 +401,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../platform/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -3943,8 +3943,6 @@
       
   
   
-    
-  
   
   
     
@@ -3976,23 +3974,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../overlay/" class="md-nav__link ">
               
   
   
@@ -4010,13 +4005,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4036,7 +4031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-active-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-active-dual-tor/" class="md-nav__link">
         
   
   
@@ -4064,7 +4059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../active-standby-dual-tor/" class="md-nav__link">
+      <a href="../../overlay/active-standby-dual-tor/" class="md-nav__link">
         
   
   
@@ -4092,7 +4087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dash-sonic-kvm/" class="md-nav__link">
+      <a href="../../overlay/dash-sonic-kvm/" class="md-nav__link">
         
   
   
@@ -4120,7 +4115,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
+      <a href="../../overlay/dscp-remapping-for-tunnel-traffic/" class="md-nav__link">
         
   
   
@@ -4148,7 +4143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nvgre-tunnel-in-sonic/" class="md-nav__link">
+      <a href="../../overlay/nvgre-tunnel-in-sonic/" class="md-nav__link">
         
   
   
@@ -4176,7 +4171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smartswitch-eni-based-forwarding/" class="md-nav__link">
+      <a href="../../overlay/smartswitch-eni-based-forwarding/" class="md-nav__link">
         
   
   
@@ -4201,37 +4196,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../overlay/sonic-dash-hld/" class="md-nav__link">
         
   
   
@@ -4247,214 +4215,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        構成オブジェクト（抜粋）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-dash-app-db-v261" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要 CONFIG_DB / DASH APP DB テーブル（v2.6.1 時点）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        モジュール構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld-11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要シナリオ（HLD §1.1 抜粋）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#scaling-hld-14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scaling 要件（HLD §1.4）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4467,7 +4227,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vnet-local-endpoint-forwarding/" class="md-nav__link">
+      <a href="../../overlay/vnet-local-endpoint-forwarding/" class="md-nav__link">
         
   
   
@@ -4495,7 +4255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vxlan-sonic/" class="md-nav__link">
+      <a href="../../overlay/vxlan-sonic/" class="md-nav__link">
         
   
   
@@ -8769,6 +8529,8 @@
       
   
   
+    
+  
   
   
     
@@ -8860,20 +8622,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../platform/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -8891,13 +8656,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -8917,7 +8682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/1-6t-support-in-sonic/" class="md-nav__link">
+      <a href="../1-6t-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -8945,7 +8710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/automatic-module-provisioning-for-chassis/" class="md-nav__link">
+      <a href="../automatic-module-provisioning-for-chassis/" class="md-nav__link">
         
   
   
@@ -8973,7 +8738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/custom-si-settings-for-cmis-modules/" class="md-nav__link">
+      <a href="../custom-si-settings-for-cmis-modules/" class="md-nav__link">
         
   
   
@@ -9001,7 +8766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/db-design-for-multi-asic-scenarios/" class="md-nav__link">
+      <a href="../db-design-for-multi-asic-scenarios/" class="md-nav__link">
         
   
   
@@ -9029,7 +8794,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/dump-on-sai-failure/" class="md-nav__link">
+      <a href="../dump-on-sai-failure/" class="md-nav__link">
         
   
   
@@ -9057,7 +8822,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/enhanced-lpo-debug-registers-hld/" class="md-nav__link">
+      <a href="../enhanced-lpo-debug-registers-hld/" class="md-nav__link">
         
   
   
@@ -9085,7 +8850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/everflow-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../everflow-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9113,7 +8878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
         
   
   
@@ -9141,7 +8906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/fec-flr-support-in-sonic/" class="md-nav__link">
+      <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
   
@@ -9169,7 +8934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/global-platform-specific-psuutil-class-instance/" class="md-nav__link">
+      <a href="../global-platform-specific-psuutil-class-instance/" class="md-nav__link">
         
   
   
@@ -9197,7 +8962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/hld-for-handling-sai-failures/" class="md-nav__link">
+      <a href="../hld-for-handling-sai-failures/" class="md-nav__link">
         
   
   
@@ -9225,7 +8990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/icmp-hardware-offload/" class="md-nav__link">
+      <a href="../icmp-hardware-offload/" class="md-nav__link">
         
   
   
@@ -9253,7 +9018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
+      <a href="../liquid-cooling-leakage-detection-in-sonic/" class="md-nav__link">
         
   
   
@@ -9281,7 +9046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/media-based-port-settings-in-sonic/" class="md-nav__link">
+      <a href="../media-based-port-settings-in-sonic/" class="md-nav__link">
         
   
   
@@ -9309,7 +9074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/multi-asic-single-json-configuration-design/" class="md-nav__link">
+      <a href="../multi-asic-single-json-configuration-design/" class="md-nav__link">
         
   
   
@@ -9337,7 +9102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/pcieinfo-design/" class="md-nav__link">
+      <a href="../pcieinfo-design/" class="md-nav__link">
         
   
   
@@ -9365,7 +9130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/platform-capability-file-enhancement/" class="md-nav__link">
+      <a href="../platform-capability-file-enhancement/" class="md-nav__link">
         
   
   
@@ -9393,7 +9158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
+      <a href="../query-stats-capability-new-sai-api-indroduction/" class="md-nav__link">
         
   
   
@@ -9421,7 +9186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/recirculation-port-support-on-voq-chassis/" class="md-nav__link">
+      <a href="../recirculation-port-support-on-voq-chassis/" class="md-nav__link">
         
   
   
@@ -9449,7 +9214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/s3ip-sysfs-specification/" class="md-nav__link">
+      <a href="../s3ip-sysfs-specification/" class="md-nav__link">
         
   
   
@@ -9477,7 +9242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sai-api-version-check/" class="md-nav__link">
+      <a href="../sai-api-version-check/" class="md-nav__link">
         
   
   
@@ -9505,7 +9270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/" class="md-nav__link">
         
   
   
@@ -9533,7 +9298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
+      <a href="../sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/" class="md-nav__link">
         
   
   
@@ -9561,7 +9326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/single-asic-voq-fixed-system-sonic/" class="md-nav__link">
+      <a href="../single-asic-voq-fixed-system-sonic/" class="md-nav__link">
         
   
   
@@ -9589,7 +9354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
+      <a href="../smartswitch-dpu-graceful-shutdown/" class="md-nav__link">
         
   
   
@@ -9617,7 +9382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
         
   
   
@@ -9645,7 +9410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
+      <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
   
@@ -9670,10 +9435,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../platform/sonic-fw-utility/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fwutil（platform component firmware の install / update / show）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -9689,6 +9481,120 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作仕様
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="動作仕様">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boot-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Boot type による動作差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -9701,7 +9607,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
+      <a href="../sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/" class="md-nav__link">
         
   
   
@@ -9729,7 +9635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-fec-ber/" class="md-nav__link">
+      <a href="../sonic-port-fec-ber/" class="md-nav__link">
         
   
   
@@ -9757,7 +9663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-port-naming-convention-change/" class="md-nav__link">
+      <a href="../sonic-port-naming-convention-change/" class="md-nav__link">
         
   
   
@@ -9785,7 +9691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-psu-daemon-design/" class="md-nav__link">
+      <a href="../sonic-psu-daemon-design/" class="md-nav__link">
         
   
   
@@ -9813,7 +9719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-sfp-refactoring/" class="md-nav__link">
+      <a href="../sonic-sfp-refactoring/" class="md-nav__link">
         
   
   
@@ -9841,7 +9747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonic-thermal-control-design/" class="md-nav__link">
+      <a href="../sonic-thermal-control-design/" class="md-nav__link">
         
   
   
@@ -9869,7 +9775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
         
   
   
@@ -9897,7 +9803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/subnet-decapsulation-with-sonic/" class="md-nav__link">
+      <a href="../subnet-decapsulation-with-sonic/" class="md-nav__link">
         
   
   
@@ -9925,7 +9831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/support-bmc-flows-in-sonic/" class="md-nav__link">
+      <a href="../support-bmc-flows-in-sonic/" class="md-nav__link">
         
   
   
@@ -9953,7 +9859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/thermal-control-test-plan/" class="md-nav__link">
+      <a href="../thermal-control-test-plan/" class="md-nav__link">
         
   
   
@@ -9981,7 +9887,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../platform/voq-sonic/" class="md-nav__link">
+      <a href="../voq-sonic/" class="md-nav__link">
         
   
   
@@ -14851,7 +14757,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        構成オブジェクト（抜粋）
+        主な操作
       
     </span>
   </a>
@@ -14859,117 +14765,23 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#config_db-dash-app-db-v261" class="md-nav__link">
+  <a href="#boot-type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        主要 CONFIG_DB / DASH APP DB テーブル（v2.6.1 時点）
+        Boot type による動作差
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        モジュール構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hld-11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要シナリオ（HLD §1.1 抜粋）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#scaling-hld-14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scaling 要件（HLD §1.4）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -14980,7 +14792,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -14991,7 +14803,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15002,7 +14814,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15029,7 +14841,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/overlay/sonic-dash-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/platform/sonic-fw-utility.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15037,116 +14849,95 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（中核アーキテクチャの抜粋範囲のみ）</p>
-<p><code>sonic-swss/orchagent/dash/dashorch.h</code> L63 <code>class DashOrch : public ZmqOrch</code>、<code>dashvnetorch.cpp</code> L49-50 で <code>APP_DASH_VNET_TABLE_NAME</code> / <code>APP_DASH_VNET_MAPPING_TABLE_NAME</code> 操作、<code>dashaclorch.cpp</code> / <code>dashmeterorch.cpp</code> / <code>dashhaorch.cpp</code> / <code>dashhafloworch.cpp</code> / <code>dashenifwdorch.cpp</code> / <code>dashcounter.cpp</code> で各 Orch を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang</code> L36 <code>container DASH_VNET</code> / L119 <code>container DASH_ENI</code> で YANG を確認、<code>sonic-buildimage/src/sonic-dash-api</code> を確認（verified 2026-05-09）。<strong>詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない</strong>。章単位分割は別 issue で実施。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p>実装側（<code>sonic-utilities/fwutil/</code> と各 platform plugin）の現行 master 取り込みは未確認。</p>
 </div>
-<h1 id="sonic-dashdisaggregated-apis-for-sonic-hosts">SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観<a class="headerlink" href="#sonic-dashdisaggregated-apis-for-sonic-hosts" title="Permanent link">&para;</a></h1>
+<h1 id="fwutilplatform-component-firmware-install-update-show">fwutil（platform component firmware の install / update / show）<a class="headerlink" href="#fwutilplatform-component-firmware-install-update-show" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DASH（<strong>Disaggregated APIs for SONiC Hosts</strong>）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の <strong>ENI (Elastic Network Interface)</strong> を扱い、各 ENI に対する VNet / ACL / metering / Service Tunnel / Private Link 等のデータプレーン処理を行うための仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本ファイルは DASH を SONiC 内に乗せるための実装側 HLD（API / Orch / Config DB / APP DB スキーマ）を扱う。一般 DASH 概念は <a href="https://github.com/sonic-net/DASH/tree/main/documentation/general/dash-high-level-design.md">DASH 高位 HLD</a> を参照。</p>
+<p>BIOS、CPLD、FPGA、BMC、SSD などのプラットフォームコンポーネントの <strong>ファームウェアを統一 CLI から操作</strong> するためのユーティリティ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙い:</p>
+<ul>
+<li>ベンダ固有 utility に頼らず SONiC 標準コマンドで firmware を扱う</li>
+<li>バージョン情報の取得・install・update（次回起動時反映）を共通インタフェース化</li>
+<li>platform 側の plugin で実機固有の install ロジックを吸収する</li>
+</ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">構成オブジェクト（抜粋）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ENI (Elastic Network Interface)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>└── VNet（VxLAN VNI / underlay 設定）
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ├── Outbound routing rules → routing_type（vnet, vnet_direct, direct, ...）
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ├── Inbound routing rules（PA Validation 含む）
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ├── ACL（v4/v6, Inbound/Outbound, ACL Group + Tag）
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ├── Metering (per-ACL / per-rule)
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    ├── Service Tunnel (ST)
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    └── Private Link (PL)
-</span></code></pre></div>
-<p>ENI ごとに上記のオブジェクト群がぶら下がる。複数 ENI を 1 DPU 上で並走させるのが DASH の設計目標。</p>
-<h3 id="config_db-dash-app-db-v261">主要 CONFIG_DB / DASH APP DB テーブル（v2.6.1 時点）<a class="headerlink" href="#config_db-dash-app-db-v261" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_APPLIANCE              ; appliance 1 つの基本情報、local Region ID
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>DASH_VNET                   ; VNet 定義（VNI 等）
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DASH_ENI                    ; ENI 個別属性
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DASH_ENI_ROUTE              ; ENI 単位のルートグループ参照
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>DASH_ROUTE_GROUP            ; route rule の集合
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>DASH_ROUTE                  ; outbound route rule（priority キー込み）
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>DASH_ROUTE_RULE             ; inbound route rule
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>DASH_PA_VALIDATION          ; inbound PA validation
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>DASH_VNET_MAPPING_TABLE     ; outbound VNI 解決
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>DASH_ACL_GROUP / DASH_ACL_RULE
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>DASH_METER_*
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>DASH_TUNNEL                 ; Service Tunnel / inner encap
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>DASH_PL_*                   ; Private Link
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>DASH_FNIC_*                 ; Floating NIC（v2.4 で追加）
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>DASH_PL_REDIRECT_MAP        ; v2.5 で追加
-</span></code></pre></div>
-<p>完全なフィールドリストは HLD §3 を参照。</p>
-<h3 id="_4">モジュール構成<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    GNMI[gNMI client] --&gt; SVR[gNMI server]
-    SVR --&gt; CDB[(CONFIG_DB DASH_*)]
-    CDB --&gt; DM[DASH Mgr]
-    DM --&gt; APP[(APP_DB / DASH APP DB)]
-    APP --&gt; DO[DASH Orch]
-    DO --&gt;|SAI DASH APIs| DPU[(DPU / appliance ASIC)]</code></pre>
-<p>DPU 上の DASH SAI 実装が、ENI に対する <strong>outbound routing → ACL → metering</strong> や <strong>inbound PA validation → ACL → routing</strong> のパイプラインを実行する。詳細は HLD §2 のパケットフロー図を参照<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="hld-11">主要シナリオ（HLD §1.1 抜粋）<a class="headerlink" href="#hld-11" title="Permanent link">&para;</a></h3>
+    USER[管理者] --&gt; CLI[fwutil CLI]
+    CLI --&gt; PLAT[/usr/share/sonic/device/&lt;platform&gt;/\nplatform_components.json]
+    CLI --&gt; PLUG[plugin\n(platform/chassis/component の Python class)]
+    PLUG --&gt;|read version| HW[(BIOS / CPLD / FPGA / BMC / SSD)]
+    PLUG --&gt;|install| HW</code></pre>
+<p>主要要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>VNet 内転送</strong>: ENI → outbound route → VxLAN encap → リモート VTEP</li>
-<li><strong>Service Tunnel (ST)</strong>: VNet 内とは別経路で SLB / NSG への中継</li>
-<li><strong>Private Link (PL)</strong>: 別 VNet 上のサービスに対する private endpoint 経由のアクセス</li>
-<li><strong>PL-NSG</strong>: Private Link with Network Security Group</li>
-<li><strong>FastPath</strong>: 一部のフローを accelerated 経路で最適化（v1.6）</li>
-<li><strong>Floating NIC (FNIC)</strong>: VM 移動時に ENI 設定をフォローする抽象（v2.4）</li>
+<li><strong><code>platform_components.json</code></strong>: platform ごとに <strong>install 可能な component と既定 firmware path</strong> を宣言する manifest</li>
+<li><strong>plugin API</strong>: <code>Chassis.get_component_list()</code> / <code>Component.install_firmware(image_path)</code> / <code>Component.get_firmware_version()</code> 等を platform 実装が提供</li>
+<li><strong>CLI サブコマンド</strong>: <code>show</code> / <code>install</code> / <code>update</code> / <code>show status</code> 等を統一フォーマットで提供</li>
 </ul>
-<h3 id="scaling-hld-14">Scaling 要件（HLD §1.4）<a class="headerlink" href="#scaling-hld-14" title="Permanent link">&para;</a></h3>
-<ul>
-<li>ENI 数: 数千〜数万（DPU プラットフォーム依存）</li>
-<li>ルート数: ENI あたり 数千 〜 数 100k</li>
-<li>ACL ルール: ENI あたり数千</li>
-</ul>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="_3">主な操作<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Prefix</th>
-<th>説明</th>
+<th>CLI</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>DASH_*</code></td>
-<td>上記テーブル群すべて</td>
+<td><code>fwutil show status</code></td>
+<td>各 component の現行 firmware version</td>
+</tr>
+<tr>
+<td><code>fwutil show updates</code></td>
+<td>利用可能な update（manifest 由来）</td>
+</tr>
+<tr>
+<td><code>fwutil install chassis component &lt;name&gt; fw &lt;path&gt;</code></td>
+<td>image を直接 install</td>
+</tr>
+<tr>
+<td><code>fwutil update</code></td>
+<td>manifest に従って一括 update</td>
 </tr>
 </tbody>
 </table>
-<p>ユーザはコントローラ／gNMI 経由で投入。手書き想定なし。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には CLI 体系の正式定義は無く、gNMI / RestAPI 経由の設定を主とする。<code>show dash</code> 系の表示 CLI が存在し得るが、HLD §3.4 を参照。</p>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反映は HLD で詳細規定なし。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>HLD §3.6 Example Configuration</code> を参照。例として 1 ENI に outbound 経路と ACL を入れるシナリオが示されている。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="boot-type">Boot type による動作差<a class="headerlink" href="#boot-type" title="Permanent link">&para;</a></h3>
+<p>ファームウェア書き換えは多くの platform で <strong>再起動を伴う</strong>。<code>fwutil</code> は cold reboot を要求するもの、warm reboot を許容するもの、即時反映するものを <strong>plugin の declaration</strong> で区別する設計。詳細な順序制御は platform plugin に委ねられる。</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD 全体は 118KB 超で、本ページは中核オブジェクトと参照リンクに留める。<strong>詳細仕様は必ず HLD <code>doc/dash/dash-sonic-hld.md</code> を参照すること</strong>。</li>
-<li>DASH は DPU / SmartSwitch 専用機能で、通常の SONiC NPU 上では動かない。</li>
-<li>各オブジェクトのフィールドは v2.0 以降頻繁に更新（v2.4 で <code>DASH_TUNNEL</code> / FNIC、v2.5 で PL redirect map、v2.6 で route rule priority のキー化、v2.6.1 で <code>trusted_vnis</code> → <code>trusted_vnis_list</code> 改名）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>SAI DASH API は OCP SAI とは別ツリーで開発されており、community SAI への取り込み状況は時期によって異なる。</li>
+<li><strong>platform plugin が必要</strong>: plugin 未実装の component は <code>fwutil</code> から触れない</li>
+<li><strong>ASIC 本体の firmware は対象外</strong>: SAI/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）</li>
+<li><strong>手動 image 指定 vs manifest</strong>: 両者で受け付ける引数フォーマットが異なる</li>
+<li><strong>書き換え失敗の rollback</strong>: 多くは hardware 側保証（dual-bank） に依存</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VxLAN / VNet (既存 SONiC NPU 機能)</strong>: DASH の VNet と既存 NPU 上の VNET は概念的には同様だが、実装パスは独立（DASH は DPU 側 SAI で完結）。</li>
-<li><strong>ACL / Metering</strong>: DASH のものは ENI 単位で独立。NPU 側 ACL とは別。</li>
-<li><strong>SmartSwitch HA</strong>: ハイアベイラビリティペア DPU 間で DASH 状態を同期する設計が別 HLD（<code>smart-switch-ha-hld.md</code>）で扱われ、<code>pinned_state</code> 等で本ページの後発機能と連動する。</li>
-<li><strong>Floating NIC (FNIC)</strong>: VM ライブマイグレーション時の ENI 追従。複雑な状態機械を持つ。</li>
+<li><strong>secure-upgrade / secure-boot</strong>: 署名検証や TPM 連携が必要な platform では fwutil の install 経路にも影響</li>
+<li><strong>show platform</strong>: <code>show platform firmware</code> で同じ情報を見られる platform もある</li>
+<li><strong>smart-switch DPU graceful shutdown</strong>: DPU 側 firmware 更新時のシャットダウン整合</li>
+<li><strong>kdump / fast-reboot</strong>: firmware install で求められる reboot 種別との相性</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ENI が出ない → DASH_APPLIANCE / DASH_ENI / DASH_VNET の参照整合を確認。</li>
-<li>外向き / 内向きで ACL 適用順が想定と違う → HLD §2 のパケットフロー図と routing_type の対応を確認。</li>
-<li>メータリングの値が出ない → DASH_METER_* テーブルが対応する ACL ルールに紐付いているかを確認。</li>
+<li>component が表示されない → <code>platform_components.json</code> と plugin 実装の存在を確認</li>
+<li><code>install</code> が失敗 → image 形式（vendor-specific binary）と plugin の対応版を確認</li>
+<li>反映されない → 再起動種別（cold が必要）を満たしているか確認</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- sonic-utilities/fwutil/ の現行 master 取り込みと CLI subcommand 一覧確認
+- platform_components.json スキーマと現行 platform 実装での記述差分確認
+- Chassis / Component plugin API の現行 sonic-platform-common での定義確認
+- secure-upgrade / secure-boot との install 検証統合の現行実装確認
+- smart-switch / DPU 環境での fwutil 拡張（DPU 個別更新）の現行実装確認
+- ASIC 本体 firmware の扱い境界（fwutil / SAI / vendor SDK）の整理状況確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dash/dash-sonic-hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/fwutil/fwutil.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
