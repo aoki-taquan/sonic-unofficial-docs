@@ -857,6 +857,20 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/sonic-port-auto-negotiation-design.md",
+      "issue": 681,
+      "verification": "hld-only",
+      "concerns": [
+        "PortsOrch の AN ON/OFF 遷移時の speed/FEC/IT/TX FIR replay/restore 実装存在確認",
+        "PORT.adv_speeds / PORT.adv_interface_types / PORT.interface_type の現行 master CONFIG_DB / sonic-port.yang 取り込み確認",
+        "config interface advertised-speeds / advertised-types / type CLI の sonic-utilities への取り込み確認",
+        "SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE (SAI 1.7.1+) のベンダ SAI 対応状況未確認",
+        "pmon xcvrd が APPL_DB PORT_TABLE.interface_type を媒体種別に応じて動的更新するコードパスの実装確認",
+        "AN 有効時の link-training 自動連動と FEC override の SAI レベル挙動が実装/community SAI で保証されているか未確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/sonic-port-link-training-design.md",
       "issue": 670,
       "verification": "hld-only",
