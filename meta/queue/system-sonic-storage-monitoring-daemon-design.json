@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-storage-monitoring-daemon-design.md",
+  "verification": "hld-only",
+  "concerns": [
+    "storagemond daemon の現行 sonic-platform-daemons 取り込みと systemd 起動経路の確認",
+    "STATE_DB STORAGE_INFO スキーマの現行値（フィールド名・型・device key 形式）の確認",
+    "SsdUtil / StorageUtil plugin API の sonic-platform-common 定義の現行確認",
+    "show platform storage / show platform ssdhealth CLI の sonic-utilities 取り込み確認",
+    "旧 ssdhealth-design HLD との実装統合 / 廃止状況の確認",
+    "system health monitor / show techsupport plugin との連携の現行実装確認"
+  ],
+  "priority": "low"
+}
