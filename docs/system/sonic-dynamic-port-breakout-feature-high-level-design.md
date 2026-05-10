@@ -1,7 +1,7 @@
 ---
 title: 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,11 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     PortConfigDoneOrch / PortBreakoutOrch（仮称）の現行 master 取り込み、依存 CONFIG_DB の cleanup ロジックは未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-utilities/config/main.py` の `breakout_cfg_file` / `_validate_interface_mode` 経路で動的 breakout 実装を確認。yang は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` に CONFIG_DB BREAKOUT_CFG スキーマを確認。
 
 # 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
 

@@ -1,7 +1,7 @@
 ---
 title: Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,11 @@ related:
     - sonic-ztp
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
+!!! warning "裏取りステータス: code-verified / 大規模 HLD"
     HLD は 119KB。本ページは ZTP の architecturally distinctive な要素（DHCP option ベースのトリガ、plugin section モデル、state machine）に絞る。各 plugin 仕様の網羅は HLD 本文を参照。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-buildimage/src/sonic-ztp` に ZTP daemon 実装が存在することを確認。`SONiC/doc/ztp` に上流 HLD があり、本ページの DHCP option / plugin / state machine 記述は実装と整合する。
 
 # Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
 

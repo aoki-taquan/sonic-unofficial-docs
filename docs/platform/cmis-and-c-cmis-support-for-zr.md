@@ -1,7 +1,7 @@
 ---
 title: ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,11 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
+!!! warning "裏取りステータス: code-verified / 大規模 HLD"
     HLD は 97KB。本ページは ZR/ZR+ で SONiC の transceiver 管理（CMIS 状態機械、coherent optics 拡張）にどんな差が出るかに絞る。詳細レジスタ / state machine 完全網羅は HLD 本文を参照。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-platform-daemons/sonic-xcvrd/xcvrd/cmis/` に CMIS state machine 実装、`xcvrd_utilities/xcvr_table_helper.py` で TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS テーブル管理を確認。`sonic-utilities/scripts/portconfig` に `transceiver-frequency` 系オプションを確認。C-CMIS の ZR 拡張は xcvrd cmis モジュール内で扱われている。
 
 # ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
 

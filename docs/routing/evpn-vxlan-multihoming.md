@@ -1,7 +1,7 @@
 ---
 title: EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
 area: routing
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,11 @@ related:
     - sonic-evpn
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
+!!! warning "裏取りステータス: discrepancy-found / 大規模 HLD"
     HLD は 80KB。本ページは EVPN MH の中核（ESI / Type-1 / Type-4 / DF election / split-horizon）に絞る。基本の EVPN VXLAN は同 area の `evpn-vxlan-hld.md` を参照。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: 現行 master の `sonic-swss/orchagent/`、`sonic-buildimage/src/sonic-yang-models/yang-models/`、`sonic-utilities/` を grep した範囲では **`EVPN_ETHERNET_SEGMENT` テーブル / `EthernetSegment` orch / `config evpn ethernet-segment` CLI / EVPN-MH 用 yang は確認できない**。HLD は提案レベルで、sonic-net のメインリポジトリには未取り込みの可能性が高い。利用可否は upstream FRR の EVPN-MH と vendor SAI の ESI label / split-horizon サポートに依存する。
 
 # EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
 

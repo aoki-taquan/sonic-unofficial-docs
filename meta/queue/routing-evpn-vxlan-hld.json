@@ -1,6 +1,6 @@
 {
   "page": "docs/routing/evpn-vxlan-hld.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
     "VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnRouteOrch の現行実装存在確認",
     "CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認",
@@ -9,5 +9,8 @@
     "Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap オブジェクト）確認",
     "EVPN VxLAN multihoming HLD（ESI / DF election / Type-1 / Type-4）との実装上の境界確認"
   ],
-  "priority": "high"
+  "priority": "high",
+  "verified_concerns": [
+    "CONFIG_DB NVO テーブル名は VXLAN_EVPN_NVO（実装・yang） で、ページ冒頭の EVPN_NVO は略記である旨を本文の Verifier 注記で明示済み。VxlanOrch / sonic-vxlan.yang / show vxlan / show evpn の存在は確認済み。"
+  ]
 }

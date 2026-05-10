@@ -1,7 +1,7 @@
 ---
 title: Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,11 @@ related:
     - sonic-warm-restart
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-utilities/scripts/warm-reboot` に namespace 横断の `execute_in_namespaces` ロジック（scope=all で global namespace と各 ASIC namespace に対して並列実行）を確認。multi-asic warm reboot の協調制御は本 script 経由で実装されている。
 
 # Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
 
