@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/sonic-bmc-platform-management-monitoring.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-platform-common の Psu / Fan / Thermal クラスの BMC backend 切替実装の現行確認",
+    "pmon docker 内での Redfish / IPMI クライアントライブラリ取り込みと依存パッケージの確認",
+    "STATE_DB FAN_INFO / PSU_INFO / THERMAL_INFO スキーマと BMC 由来データ追加カラムの現行確認",
+    "BMC イベント（SEL / Redfish event）から system health monitor / syslog への通知経路の現行実装確認",
+    "BMC 認証情報の格納方式と rotation の現行運用フロー確認",
+    "vendor 別 Redfish スキーマ差吸収レイヤ（OEM 属性マッピング）の現行実装確認"
+  ],
+  "priority": "medium"
+}
