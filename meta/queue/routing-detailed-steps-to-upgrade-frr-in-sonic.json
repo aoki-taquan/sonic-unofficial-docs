@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/detailed-steps-to-upgrade-frr-in-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "src/sonic-frr/patches/ ディレクトリ構造と quilt-like 適用機構の現行実装確認",
+    "sonic-buildimage submodule pin の現行 FRR version 確認",
+    "bgpcfgd / fpmsyncd / frrcfgd の FRR version 互換ロジックの現行実装確認",
+    "graceful restart timer / warm-restart との連動の現行値確認",
+    "BMP / SRv6 / VRF / unnumbered 関連 patch の upstream 化進捗確認",
+    "HLD 自体の改訂日と現行 master FRR version の乖離リスク確認"
+  ],
+  "priority": "low"
+}
