@@ -305,6 +305,26 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/guides/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/guides/beginner/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/guides/developer/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/guides/evaluator/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/guides/operator/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1166,6 +1186,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vlan/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vnet/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
