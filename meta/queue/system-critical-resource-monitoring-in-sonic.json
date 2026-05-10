@@ -1,0 +1,13 @@
+{
+  "page": "docs/system/critical-resource-monitoring-in-sonic.md",
+  "verification": "hld-only",
+  "concerns": [
+    "CrmOrch の現行 master 実装（追加 CRM resource 種別・SRv6 / NAT / multi-asic 拡張）の確認",
+    "SAI object availability API（SAI_OBJECT_TYPE_*_AVAILABLE_*) の community SAI 取り込み確認",
+    "CONFIG_DB CRM スキーマの現行 sonic-yang-models 取り込み確認",
+    "crm config / crm show CLI の sonic-utilities 取り込み確認",
+    "generic-sai-extension CRM HLD との実装統合・新 resource 追加機構の確認",
+    "system health monitor / telemetry dial-out への CRM 通知連携の現行実装確認"
+  ],
+  "priority": "medium"
+}
