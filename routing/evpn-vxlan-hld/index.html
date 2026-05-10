@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/management/config-reload-enhancement/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-hld/">
       
       
-        <link rel="prev" href="../aaa-improvements/">
+        <link rel="prev" href="../dhcp-relay-per-interface-counter/">
       
       
-        <link rel="next" href="../default-credential-management-for-california-sb-327-conformance/">
+        <link rel="next" href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config reload の event-driven 化（FEATURE.delayed + PortInitDone） - SONiC 非公式ドキュメント</title>
+        <title>EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-reload-event-driven-featuredelayed-portinitdone" class="md-skip">
+        <a href="#evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config reload の event-driven 化（FEATURE.delayed + PortInitDone）
+              EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
             
           </span>
         </div>
@@ -269,11 +269,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../routing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -379,13 +381,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../management/" class="md-tabs__link">
           
   
   
@@ -1845,6 +1845,8 @@
       
   
   
+    
+  
   
   
     
@@ -1956,20 +1958,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../routing/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1987,13 +1992,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2013,7 +2018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload-for-bgp-session/" class="md-nav__link">
+      <a href="../bfd-hw-offload-for-bgp-session/" class="md-nav__link">
         
   
   
@@ -2041,7 +2046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bfd-hw-offload/" class="md-nav__link">
+      <a href="../bfd-hw-offload/" class="md-nav__link">
         
   
   
@@ -2069,7 +2074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-loading-optimization-for-sonic/" class="md-nav__link">
+      <a href="../bgp-loading-optimization-for-sonic/" class="md-nav__link">
         
   
   
@@ -2097,7 +2102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
+      <a href="../bgp-prefix-independent-convergence-architecture-document/" class="md-nav__link">
         
   
   
@@ -2125,7 +2130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
+      <a href="../bgp-route-aggregation-with-bbr-awareness/" class="md-nav__link">
         
   
   
@@ -2153,7 +2158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-route-install-error-handling/" class="md-nav__link">
+      <a href="../bgp-route-install-error-handling/" class="md-nav__link">
         
   
   
@@ -2181,7 +2186,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-router-id-explicitly-configured/" class="md-nav__link">
+      <a href="../bgp-router-id-explicitly-configured/" class="md-nav__link">
         
   
   
@@ -2209,7 +2214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-setup-for-voq-chassis/" class="md-nav__link">
+      <a href="../bgp-setup-for-voq-chassis/" class="md-nav__link">
         
   
   
@@ -2237,7 +2242,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
+      <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/" class="md-nav__link">
         
   
   
@@ -2265,7 +2270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
+      <a href="../bgpcfgd-dynamic-peer-modification-support/" class="md-nav__link">
         
   
   
@@ -2293,7 +2298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
+      <a href="../bmp-for-monitoring-sonic-bgp-info/" class="md-nav__link">
         
   
   
@@ -2321,7 +2326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ciscobgp4mib-implementation-changes/" class="md-nav__link">
+      <a href="../ciscobgp4mib-implementation-changes/" class="md-nav__link">
         
   
   
@@ -2349,7 +2354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/class-based-forwarding-enhancement/" class="md-nav__link">
+      <a href="../class-based-forwarding-enhancement/" class="md-nav__link">
         
   
   
@@ -2377,7 +2382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/default-route/" class="md-nav__link">
+      <a href="../default-route/" class="md-nav__link">
         
   
   
@@ -2405,7 +2410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/detailed-steps-to-upgrade-frr-in-sonic/" class="md-nav__link">
+      <a href="../detailed-steps-to-upgrade-frr-in-sonic/" class="md-nav__link">
         
   
   
@@ -2433,7 +2438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-for-ipv6-hld/" class="md-nav__link">
+      <a href="../dhcp-relay-for-ipv6-hld/" class="md-nav__link">
         
   
   
@@ -2461,7 +2466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/dhcp-relay-per-interface-counter/" class="md-nav__link">
+      <a href="../dhcp-relay-per-interface-counter/" class="md-nav__link">
         
   
   
@@ -2486,10 +2491,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../routing/evpn-vxlan-hld/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2505,6 +2537,142 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="構成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-2-type-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type-2 / Type-5 の使い分け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anycast-symmetric-irb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anycast / Symmetric IRB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2517,7 +2685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
+      <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2545,7 +2713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/high-level-design-document/" class="md-nav__link">
+      <a href="../high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2573,7 +2741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/ipv6-link-local-enhancements/" class="md-nav__link">
+      <a href="../ipv6-link-local-enhancements/" class="md-nav__link">
         
   
   
@@ -2601,7 +2769,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/local-ars-hld/" class="md-nav__link">
+      <a href="../local-ars-hld/" class="md-nav__link">
         
   
   
@@ -2629,7 +2797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-for-sonic-high-level-design-document/" class="md-nav__link">
+      <a href="../mpls-for-sonic-high-level-design-document/" class="md-nav__link">
         
   
   
@@ -2657,7 +2825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/mpls-tc-to-tc-map/" class="md-nav__link">
+      <a href="../mpls-tc-to-tc-map/" class="md-nav__link">
         
   
   
@@ -2685,7 +2853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/multiple-nexthop-route-hld/" class="md-nav__link">
+      <a href="../multiple-nexthop-route-hld/" class="md-nav__link">
         
   
   
@@ -2713,7 +2881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/new-frr-sonic-communication-channel/" class="md-nav__link">
+      <a href="../new-frr-sonic-communication-channel/" class="md-nav__link">
         
   
   
@@ -2741,7 +2909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-enhancements/" class="md-nav__link">
+      <a href="../overlay-ecmp-enhancements/" class="md-nav__link">
         
   
   
@@ -2769,7 +2937,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
+      <a href="../overlay-ecmp-with-bfd-monitoring/" class="md-nav__link">
         
   
   
@@ -2797,7 +2965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/path-tracing-midpoint/" class="md-nav__link">
+      <a href="../path-tracing-midpoint/" class="md-nav__link">
         
   
   
@@ -2825,7 +2993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/prefix-based-mux-neighbors/" class="md-nav__link">
+      <a href="../prefix-based-mux-neighbors/" class="md-nav__link">
         
   
   
@@ -2853,7 +3021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/reliable-tsa/" class="md-nav__link">
+      <a href="../reliable-tsa/" class="md-nav__link">
         
   
   
@@ -2881,7 +3049,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/router-interface-counters-in-sonic/" class="md-nav__link">
+      <a href="../router-interface-counters-in-sonic/" class="md-nav__link">
         
   
   
@@ -2909,7 +3077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/routing-and-next-hop-table-enhancement/" class="md-nav__link">
+      <a href="../routing-and-next-hop-table-enhancement/" class="md-nav__link">
         
   
   
@@ -2937,7 +3105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
+      <a href="../segment-routing-over-ipv6-srv6-hld/" class="md-nav__link">
         
   
   
@@ -2965,7 +3133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-fine-grained-ecmp/" class="md-nav__link">
+      <a href="../sonic-fine-grained-ecmp/" class="md-nav__link">
         
   
   
@@ -2993,7 +3161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
+      <a href="../sonic-frr-bgp-extended-unified-configuration-management-framework/" class="md-nav__link">
         
   
   
@@ -3021,7 +3189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
+      <a href="../sonic-management-vrf-design-document-201911-release/" class="md-nav__link">
         
   
   
@@ -3049,7 +3217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-route-flow-counter-design/" class="md-nav__link">
+      <a href="../sonic-route-flow-counter-design/" class="md-nav__link">
         
   
   
@@ -3077,7 +3245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-usid/" class="md-nav__link">
+      <a href="../sonic-usid/" class="md-nav__link">
         
   
   
@@ -3105,7 +3273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-vrf-support-design-spec-draft/" class="md-nav__link">
+      <a href="../sonic-vrf-support-design-spec-draft/" class="md-nav__link">
         
   
   
@@ -3133,7 +3301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/sonic-weighted-ecmp/" class="md-nav__link">
+      <a href="../sonic-weighted-ecmp/" class="md-nav__link">
         
   
   
@@ -3161,7 +3329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-sid-l3adj/" class="md-nav__link">
+      <a href="../srv6-sid-l3adj/" class="md-nav__link">
         
   
   
@@ -3189,7 +3357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/srv6-vpn-hld/" class="md-nav__link">
+      <a href="../srv6-vpn-hld/" class="md-nav__link">
         
   
   
@@ -3217,7 +3385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
+      <a href="../static-configuration-of-srv6-in-sonic-hld/" class="md-nav__link">
         
   
   
@@ -3245,7 +3413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/static-ip-route-configuration/" class="md-nav__link">
+      <a href="../static-ip-route-configuration/" class="md-nav__link">
         
   
   
@@ -3273,7 +3441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
+      <a href="../test-plan-for-inner-packet-hashing-in-ecmp/" class="md-nav__link">
         
   
   
@@ -3301,7 +3469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/virtual-router-redundancy-protocol-adaptation-hld/" class="md-nav__link">
+      <a href="../virtual-router-redundancy-protocol-adaptation-hld/" class="md-nav__link">
         
   
   
@@ -3329,7 +3497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
+      <a href="../vrf-feature-ansible-test-plan-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -3357,7 +3525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../routing/vrf-vs-test-plan/" class="md-nav__link">
+      <a href="../vrf-vs-test-plan/" class="md-nav__link">
         
   
   
@@ -7255,8 +7423,6 @@
       
   
   
-    
-  
   
   
     
@@ -7356,23 +7522,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../management/" class="md-nav__link ">
               
   
   
@@ -7390,13 +7553,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -7416,7 +7579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aaa-improvements/" class="md-nav__link">
+      <a href="../../management/aaa-improvements/" class="md-nav__link">
         
   
   
@@ -7441,37 +7604,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../management/config-reload-enhancement/" class="md-nav__link">
         
   
   
@@ -7487,225 +7623,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        要件
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FEATURE テーブルのフィールド変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hostcfgd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hostcfgd の役割
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クリティカル / 非クリティカルの分類例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-boot-fast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        warm boot / fast boot 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存 timer の廃止
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-yang-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定 / CLI / YANG / DB Migrator まとめ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -7718,7 +7635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
+      <a href="../../management/default-credential-management-for-california-sb-327-conformance/" class="md-nav__link">
         
   
   
@@ -7746,7 +7663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../design-doc/" class="md-nav__link">
+      <a href="../../management/design-doc/" class="md-nav__link">
         
   
   
@@ -7774,7 +7691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
+      <a href="../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/" class="md-nav__link">
         
   
   
@@ -7802,7 +7719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enhancement-of-cmis-module-management/" class="md-nav__link">
+      <a href="../../management/enhancement-of-cmis-module-management/" class="md-nav__link">
         
   
   
@@ -7830,7 +7747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-master-arbitration-hld/" class="md-nav__link">
+      <a href="../../management/gnmi-master-arbitration-hld/" class="md-nav__link">
         
   
   
@@ -7858,7 +7775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnmi-usage/" class="md-nav__link">
+      <a href="../../management/gnmi-usage/" class="md-nav__link">
         
   
   
@@ -7886,7 +7803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-file-and-factory-reset-apis/" class="md-nav__link">
         
   
   
@@ -7914,7 +7831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-healthz-api/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-healthz-api/" class="md-nav__link">
         
   
   
@@ -7942,7 +7859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-os-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-os-apis/" class="md-nav__link">
         
   
   
@@ -7970,7 +7887,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnoi-hld-for-system-apis/" class="md-nav__link">
+      <a href="../../management/gnoi-hld-for-system-apis/" class="md-nav__link">
         
   
   
@@ -7998,7 +7915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../gnsi-hld/" class="md-nav__link">
+      <a href="../../management/gnsi-hld/" class="md-nav__link">
         
   
   
@@ -8026,7 +7943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-ldap/" class="md-nav__link">
+      <a href="../../management/hld-ldap/" class="md-nav__link">
         
   
   
@@ -8054,7 +7971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
+      <a href="../../management/ipv4-port-based-dhcp-server-in-sonic/" class="md-nav__link">
         
   
   
@@ -8082,7 +7999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../json-patch-ordering-using-yang-models/" class="md-nav__link">
+      <a href="../../management/json-patch-ordering-using-yang-models/" class="md-nav__link">
         
   
   
@@ -8110,7 +8027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../model-based-replace-delete-in-mgmt-framework-transformer/" class="md-nav__link">
+      <a href="../../management/model-based-replace-delete-in-mgmt-framework-transformer/" class="md-nav__link">
         
   
   
@@ -8138,7 +8055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
+      <a href="../../management/openconfig-support-for-ethernet-interfaces/" class="md-nav__link">
         
   
   
@@ -8166,7 +8083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-application-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-application-hld/" class="md-nav__link">
         
   
   
@@ -8194,7 +8111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../p4rt-read-cache-hld/" class="md-nav__link">
+      <a href="../../management/p4rt-read-cache-hld/" class="md-nav__link">
         
   
   
@@ -8222,7 +8139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../packetio/" class="md-nav__link">
+      <a href="../../management/packetio/" class="md-nav__link">
         
   
   
@@ -8250,7 +8167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pins-hld/" class="md-nav__link">
+      <a href="../../management/pins-hld/" class="md-nav__link">
         
   
   
@@ -8278,7 +8195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../portable-console-device-design/" class="md-nav__link">
+      <a href="../../management/portable-console-device-design/" class="md-nav__link">
         
   
   
@@ -8306,7 +8223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../radius-management-user-authentication/" class="md-nav__link">
+      <a href="../../management/radius-management-user-authentication/" class="md-nav__link">
         
   
   
@@ -8334,7 +8251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../redis-client-manager-rcm-hld/" class="md-nav__link">
+      <a href="../../management/redis-client-manager-rcm-hld/" class="md-nav__link">
         
   
   
@@ -8362,7 +8279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../save-on-set-hld/" class="md-nav__link">
+      <a href="../../management/save-on-set-hld/" class="md-nav__link">
         
   
   
@@ -8390,7 +8307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../send-to-ingress-hld/" class="md-nav__link">
+      <a href="../../management/send-to-ingress-hld/" class="md-nav__link">
         
   
   
@@ -8418,7 +8335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../serial-console-global-config-hld/" class="md-nav__link">
+      <a href="../../management/serial-console-global-config-hld/" class="md-nav__link">
         
   
   
@@ -8446,7 +8363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
+      <a href="../../management/smart-switch-gnmi-feedback-design-omit-in-toc/" class="md-nav__link">
         
   
   
@@ -8474,7 +8391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-application-extension-guide/" class="md-nav__link">
+      <a href="../../management/sonic-application-extension-guide/" class="md-nav__link">
         
   
   
@@ -8502,7 +8419,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-cli-auto-generation-tool/" class="md-nav__link">
+      <a href="../../management/sonic-cli-auto-generation-tool/" class="md-nav__link">
         
   
   
@@ -8530,7 +8447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-config-update-validation-via-yang/" class="md-nav__link">
+      <a href="../../management/sonic-config-update-validation-via-yang/" class="md-nav__link">
         
   
   
@@ -8558,7 +8475,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-console-switch/" class="md-nav__link">
+      <a href="../../management/sonic-console-switch/" class="md-nav__link">
         
   
   
@@ -8586,7 +8503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-gnmi-server-interface-design/" class="md-nav__link">
+      <a href="../../management/sonic-gnmi-server-interface-design/" class="md-nav__link">
         
   
   
@@ -8614,7 +8531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-management-framework/" class="md-nav__link">
+      <a href="../../management/sonic-management-framework/" class="md-nav__link">
         
   
   
@@ -8642,7 +8559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-nos-configuration-methods/" class="md-nav__link">
+      <a href="../../management/sonic-nos-configuration-methods/" class="md-nav__link">
         
   
   
@@ -8670,7 +8587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tacacs-improvement/" class="md-nav__link">
+      <a href="../../management/sonic-tacacs-improvement/" class="md-nav__link">
         
   
   
@@ -8698,7 +8615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-user-manual/" class="md-nav__link">
+      <a href="../../management/sonic-user-manual/" class="md-nav__link">
         
   
   
@@ -8726,7 +8643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-yang-model-guidelines/" class="md-nav__link">
+      <a href="../../management/sonic-yang-model-guidelines/" class="md-nav__link">
         
   
   
@@ -8754,7 +8671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ssh-server-global-config-hld/" class="md-nav__link">
+      <a href="../../management/ssh-server-global-config-hld/" class="md-nav__link">
         
   
   
@@ -8782,7 +8699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-authentication/" class="md-nav__link">
+      <a href="../../management/tacacs-authentication/" class="md-nav__link">
         
   
   
@@ -8810,7 +8727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-passkey-encryption/" class="md-nav__link">
+      <a href="../../management/tacacs-passkey-encryption/" class="md-nav__link">
         
   
   
@@ -8838,7 +8755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tacacs-test-plan/" class="md-nav__link">
+      <a href="../../management/tacacs-test-plan/" class="md-nav__link">
         
   
   
@@ -15060,19 +14977,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        構成
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="構成">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#type-2-type-5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        要件
+        Type-2 / Type-5 の使い分け
       
     </span>
   </a>
@@ -15080,65 +14997,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#feature" class="md-nav__link">
+  <a href="#anycast-symmetric-irb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        FEATURE テーブルのフィールド変更
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hostcfgd" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hostcfgd の役割
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クリティカル / 非クリティカルの分類例
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warm-boot-fast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        warm boot / fast boot 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存 timer の廃止
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-yang-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定 / CLI / YANG / DB Migrator まとめ
+        Anycast / Symmetric IRB
       
     </span>
   </a>
@@ -15151,41 +15013,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -15194,14 +15022,20 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CLI
+      
+    </span>
+  </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15212,7 +15046,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15223,7 +15057,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15234,7 +15068,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15261,7 +15095,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/management/config-reload-enhancement.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/routing/evpn-vxlan-hld.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15269,200 +15103,140 @@
   
 
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>現行 master の <code>sonic-host-services/scripts/featured</code>（<code>delayed</code> フィールド処理 / <code>enable_delayed_services</code> / PORT_TABLE 購読 + PortInitDone ハンドラ / <code>handle_port_table_timeout</code> / <code>waitAdvancedBootDone</code>）、<code>sonic-utilities/scripts/db_migrator.py:719-726</code> の <code>has_timer</code>→<code>delayed</code> 移行、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67</code> の <code>delayed</code> leaf、<code>sonic-swss/portsyncd/portsyncd.cpp:134</code> の <code>PortInitDone</code> publish を確認済み（verified at: 2026-05-09）。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p>HLD は 70KB。本ページは EVPN VXLAN の中核（control plane = BGP-EVPN、data plane = VXLAN、Type-2 host route と Type-5 IP prefix の役割境界）に絞る。multihoming は別 HLD（同 area）。</p>
 </div>
-<h1 id="config-reload-event-driven-featuredelayed-portinitdone">config reload の event-driven 化（FEATURE.delayed + PortInitDone）<a class="headerlink" href="#config-reload-event-driven-featuredelayed-portinitdone" title="Permanent link">&para;</a></h1>
+<h1 id="evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）<a class="headerlink" href="#evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の <code>config reload</code> は <code>systemctl restart sonic.target</code> で <strong><code>sonic.target</code> 配下の全サービスをまとめて再起動</strong> する実装だった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。systemd ファイルの順序定義に従ってほぼ同時に各 daemon が立ち上がるため、CPU 競合が大きく、スイッチ初期化と続くポート生成が遅れる。実害として <code>syncd</code> の SDK 側で「<code>create:SAI_OBJECT_TYPE_SWITCH</code> に 30 秒以上かかった」系のエラーログが出て、誤った印象を与える事象が報告されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>syncd#SDK: setEndTime: event &#39;create:SAI_OBJECT_TYPE_SWITCH:oid:0x21000000000000&#39; took 32913 ms to execute
-</span></code></pre></div>
-<p>reboot 経路では既に <strong>systemd の固定 timer</strong> で snmp / telemetry 等の <strong>非クリティカルサービスを意図的に遅らせる</strong> 対策があるが、これは時間ベースで event-driven ではない。本 HLD は <strong>「ポート初期化完了を待ってから非クリティカルサービスを起動する」イベント駆動方式</strong> を <code>config reload</code> と各種 reboot に共通で適用する設計を定義する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>EVPN は <strong>MAC / IP の到達情報を BGP で広告</strong> し、VXLAN は <strong>L2 over L3 のデータプレーン</strong> として trafic を運ぶ。SONiC は FRR の BGP-EVPN を control plane に、SAI VXLAN を data plane に使ってこの組合せを実現する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>代表的なタイプ:</p>
 <ul>
-<li>クリティカルサービスは config reload 直後に起動する。</li>
-<li>非クリティカルサービスは <strong>全ポート初期化完了後</strong> に起動する。</li>
-<li>サービスの「即時 / 遅延」は <strong><code>FEATURE</code> テーブルのフィールド</strong> で構成する。</li>
-<li>既存の systemd 固定 timer は <strong>本機構で置き換えて廃止</strong>。</li>
-<li>適用範囲は <strong>config reload + warm/fast/cold reboot 全般</strong>。</li>
+<li><strong>Type-2 (MAC/IP advertisement)</strong>: ホスト MAC（必要なら IP も）を VTEP で広告。Layer-2 VNI / Layer-3 VNI に対応</li>
+<li><strong>Type-3 (Inclusive Multicast)</strong>: VTEP の所属 VNI を通知（BUM 用 ingress replication）</li>
+<li><strong>Type-5 (IP Prefix)</strong>: VRF 内の IP prefix を VTEP 越しに広告</li>
 </ul>
-<h3 id="feature"><code>FEATURE</code> テーブルのフィールド変更<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h3>
-<p>旧フィールド <code>has_timer</code> → 新フィールド <code>delayed</code> に変更する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。型は boolean、既定 <code>false</code>。</p>
-<p>YANG model の対応定義<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">delayed</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;This configuration indicates if the feature needs to be</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="s2">                 delayed until system initialization&quot;</span><span class="p">;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nn">stypes</span><span class="p">:</span><span class="nv">boolean_type</span><span class="p">;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">;</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>db_migrator</code> が <strong>既存設定の <code>has_timer</code> を <code>delayed</code> に書き換える</strong> マイグレーションを担う<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これがないと旧 image からアップグレードしたシステムで非クリティカルサービスが「即起動」扱いになって元の競合に逆戻りする。</p>
-<h3 id="hostcfgd"><code>hostcfgd</code> の役割<a class="headerlink" href="#hostcfgd" title="Permanent link">&para;</a></h3>
-<p>中核ロジックは <code>hostcfgd</code> に集約される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant CR as config reload
-    participant SD as systemd
-    participant HC as hostcfgd
-    participant PS as portsyncd
-    participant CDB as CONFIG_DB (FEATURE)
-    participant ADB as APPL_DB (PORT_TABLE)
-
-    CR-&gt;&gt;SD: restart sonic.target
-    SD-&gt;&gt;HC: start (cached)
-    HC-&gt;&gt;CDB: read FEATURE
-    Note over HC: delayed=true のサービスをキャッシュ&lt;br/&gt;delayed=false は即起動
-    HC-&gt;&gt;SD: start critical services&lt;br/&gt;(swss / syncd / bgp 等)
-    SD-&gt;&gt;PS: start
-    PS-&gt;&gt;PS: 全ポート初期化
-    PS-&gt;&gt;ADB: SET PORT_TABLE:PortInitDone
-    HC-&gt;&gt;ADB: subscribe PORT_TABLE
-    ADB--&gt;&gt;HC: PortInitDone notify
-    HC-&gt;&gt;SD: start delayed services&lt;br/&gt;(snmp / lldp / telemetry 等)</code></pre>
-<p>ポイント<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><code>hostcfgd</code> 起動時に <code>FEATURE</code> テーブルを読み、<strong><code>delayed=true</code> のサービスをキャッシュ</strong>。</li>
-<li>クリティカルサービスは即起動。</li>
-<li>APPL_DB の <code>PORT_TABLE</code> を購読し、<code>portsyncd</code> が出す <strong><code>PortInitDone</code> キー</strong> を待つ。</li>
-<li><code>PortInitDone</code> 受信時、キャッシュした delayed サービスをまとめて enable。</li>
-<li><code>PortInitDone</code> が <strong>タイムアウト時間以内に来ない場合の保険</strong> として、固定タイムアウトを別途定義し、その時点で delayed サービスも上げる。これは「スイッチ初期化が失敗しても管理系サービスだけは生かす」ための fail-safe<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-</ol>
-<h3 id="_4">クリティカル / 非クリティカルの分類例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>HLD 内の例<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_2">構成<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    HOST1[Host A\nMAC/IP] --- LEAF1[Leaf 1\nVTEP loopback]
+    HOST2[Host B] --- LEAF2[Leaf 2\nVTEP loopback]
+    LEAF1 --- SP[(Spine)]
+    LEAF2 --- SP
+    LEAF1 -.BGP-EVPN.-&gt; LEAF2
+    LEAF1 -.VXLAN data.-&gt; LEAF2</code></pre>
+<p>主要 CONFIG_DB 要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong><code>VXLAN_TUNNEL|&lt;name&gt;</code></strong>: source IP（自身の VTEP loopback）を持つトンネル</li>
+<li><strong><code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code></strong>: VLAN ↔ VNI、VRF ↔ VNI のマッピング</li>
+<li><strong><code>EVPN_NVO</code></strong>: NVO（Network Virtualization Overlay）対象 tunnel 指定</li>
+<li><strong><code>VRF</code></strong>: L3 VNI を扱うときの VRF</li>
+<li><strong><code>VLAN</code></strong>: L2 VNI と紐づく VLAN</li>
+</ul>
+<h3 id="type-2-type-5">Type-2 / Type-5 の使い分け<a class="headerlink" href="#type-2-type-5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>区分</th>
-<th>例</th>
+<th></th>
+<th>Type-2</th>
+<th>Type-5</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>critical（即起動）</td>
-<td><code>swss</code>, <code>syncd</code>, <code>bgp</code></td>
+<td>広告対象</td>
+<td>host MAC（任意で IP）</td>
+<td>IP prefix（subnet）</td>
 </tr>
 <tr>
-<td>delayed（PortInitDone 待ち）</td>
-<td><code>snmp</code>, <code>lldp</code>, <code>telemetry</code></td>
-</tr>
-</tbody>
-</table>
-<p>実際の運用では <code>FEATURE.&lt;name&gt;.delayed</code> を見て判定する。HLD は具体例を示すのみ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="warm-boot-fast-boot">warm boot / fast boot 連携<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h3>
-<p>通常 boot とは別系統で、warm/fast boot 時には <code>hostcfgd</code> 自身が <strong>timer で遅らせて起動される</strong> 既存挙動があった。これも本 HLD で <strong><code>waitAdvancedBootDone</code> を待つ</strong> 形に置き換える<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>hostcfgd</code> の起動 timer を撤廃。代わりに warm/fast boot 完了確認の API（<code>waitAdvancedBootDone</code>）を呼んで待機する。</li>
-<li><code>warm-reboot</code> コマンド側に「<strong>delayed サービスを含む全サービスが起動完了するのを待ってから先に進む</strong>」チェックを追加する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm boot 完了判定の信頼性を上げるための補強。</li>
-</ul>
-<h3 id="timer">既存 timer の廃止<a class="headerlink" href="#timer" title="Permanent link">&para;</a></h3>
-<p>systemd で固定的に挿入されていた <code>*.timer</code> 定義は <strong>撤去</strong> される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより:</p>
-<ul>
-<li>起動シーケンスが時間ベースから <strong>event-driven へ完全に移行</strong>。</li>
-<li>各サービスを個別に「N 秒遅らせる」設定をしなくて済む。</li>
-<li>起動時間は <strong>実際にポート初期化が終わった瞬間</strong> に依存し、シナリオに応じて短縮される。</li>
-</ul>
-<h3 id="cli-yang-db-migrator">設定 / CLI / YANG / DB Migrator まとめ<a class="headerlink" href="#cli-yang-db-migrator" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>項目</th>
-<th>変更内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Config command</td>
-<td><strong>新規追加なし</strong><sup id="fnref30:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>主用途</td>
+<td>L2 stretch、host-route 流通</td>
+<td>L3 ルーティング、外部接続</td>
 </tr>
 <tr>
-<td>Show command</td>
-<td><strong>新規追加なし</strong><sup id="fnref31:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>DB Migrator</td>
-<td><code>FEATURE.has_timer</code> → <code>FEATURE.delayed</code> への移行<sup id="fnref32:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>YANG model</td>
-<td><code>feature</code> モデルに <code>delayed</code> leaf を追加（<code>has_timer</code> を置換）<sup id="fnref33:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
-</tr>
-<tr>
-<td>SAI API</td>
-<td>影響なし<sup id="fnref34:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>L2/L3 VNI</td>
+<td>両方</td>
+<td>L3 VNI</td>
 </tr>
 </tbody>
 </table>
-<p>ユーザ可視の CLI は変わらない。中身が timer ベースから event-driven に切り替わるだけ。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/config_reload/config_reload_enhancement.md#L66-L68 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Currently hostcfgd controls the services based on the feature table. The feature table has a specific field 'has_timer' for the non essential services which needs to be delayed during the reboot flow. This field will be now replaced by new field called "delayed". These services will controlled by hostcfgd.
-  ... The hostcfgd will also subscribe to PORT_TABLE in the APPL_DB. Once the switch is initialized and all the ports are created in ASIC and Kernel the PortSyncd will publish PortInitDone key in the APPL_DB. On receiving this key the hostcfgd will go through the delayed services list and enables them.
-reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の中核フローの根拠。
--->
-
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="anycast-symmetric-irb">Anycast / Symmetric IRB<a class="headerlink" href="#anycast-symmetric-irb" title="Permanent link">&para;</a></h3>
+<p>Anycast Gateway を VTEP 全台で共有（共通 MAC/IP）し、Symmetric IRB（route-then-bridge）で leaf 間 VRF を貫く構成が標準的。具体的な仕組みは HLD の図を参照。</p>
+<h2 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># VXLAN tunnel (VTEP loopback)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep<span class="w"> </span><span class="m">10</span>.0.0.1
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># L2 mapping</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>config<span class="w"> </span>vxlan<span class="w"> </span>map<span class="w"> </span>add<span class="w"> </span>vtep<span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="m">100</span><span class="w">      </span><span class="c1"># VLAN 1000 ↔ VNI 100</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># L3 mapping</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>config<span class="w"> </span>vxlan<span class="w"> </span>map_range<span class="w"> </span>add<span class="w"> </span>vtep<span class="w"> </span>Vrf-RED<span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="m">5000</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># FRR 側 BGP-EVPN は frr.conf / templates 経由</span>
+</span></code></pre></div>
+<h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
+<th>Command</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>FEATURE</code></td>
-<td><code>&lt;feature_name&gt;</code></td>
-<td><code>delayed</code> (<code>true</code> / <code>false</code>、既定 <code>false</code>)</td>
-<td>true なら PortInitDone まで起動を遅延</td>
+<td><code>show vxlan tunnel</code></td>
+<td>VXLAN tunnel 一覧</td>
+</tr>
+<tr>
+<td><code>show vxlan vlanvnimap</code></td>
+<td>L2 マッピング</td>
+</tr>
+<tr>
+<td><code>show vxlan vrfvnimap</code></td>
+<td>L3 マッピング</td>
+</tr>
+<tr>
+<td><code>show evpn vni</code></td>
+<td>EVPN VNI 状態</td>
+</tr>
+<tr>
+<td><code>show evpn mac vni &lt;n&gt;</code></td>
+<td>Type-2 で学習した MAC</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>新規 CLI は無し<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存の <code>config reload</code> / <code>warm-reboot</code> / <code>fast-reboot</code> / <code>reboot</code> がそのまま使える。</p>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># CONFIG_DB 直接編集</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|snmp&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|telemetry&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># config reload を実行（critical だけ即起動、delayed は PortInitDone 後）</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
-</span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>delayed=true</code> のサービスは <strong><code>PortInitDone</code> の publish に依存</strong>。<code>portsyncd</code> が何らかの理由でこのキーを書けないと、フォールバックタイムアウトまで起動を待つことになる<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>delayed=true</code> のサービス起動順は HLD で厳密には規定されていない。<code>hostcfgd</code> 内のキャッシュ順かもしくは <code>FEATURE</code> 列挙順依存になる可能性。順序が要件のサービス間では追加の依存関係定義が必要。</li>
-<li>既存 systemd timer の撤去によって、<strong>timer に暗黙的に依存していた他コンポーネント</strong> がある場合は影響が出る可能性。HLD では単純化として timer を消すが、第三者プラグインまでは網羅していない。</li>
-<li><code>db_migrator</code> 変更が前提。古い <code>has_timer</code> フィールドを保持したままでは、新 <code>hostcfgd</code> が delayed 判定を誤る可能性<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>HLD 内には Config / Show CLI 変更が <strong>新規無し</strong> と明記されている<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>ため、ユーザは <code>delayed</code> を直接見るためには <code>redis-cli</code> / <code>sonic-db-cli</code> で <code>FEATURE</code> を覗く必要がある。</li>
+<li><strong>下位 ASIC 機能依存</strong>: VXLAN encap/decap、Tunnel Termination の SAI 機能サポート要</li>
+<li><strong>MTU</strong>: VXLAN ヘッダ 50 byte 増。MTU 不足は黙ってドロップする傾向</li>
+<li><strong>EVPN multihoming</strong>: 別 HLD（同 area の <code>evpn-vxlan-multihoming.md</code>）で扱う</li>
+<li><strong>BUM</strong>: ingress replication 前提。multicast underlay は範囲外/オプション</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: 本機構の中心。<code>FEATURE</code> 購読・<code>PORT_TABLE</code> 購読・<code>waitAdvancedBootDone</code> 利用が同時に追加される<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>portsyncd</code></strong>: <code>PortInitDone</code> を APPL_DB に publish する責務<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD はこの publish に依存している。<code>portsyncd</code> 側の挙動変化があれば本機構も追従が必要。</li>
-<li><strong>systemd unit / timer</strong>: 既存 <code>*.timer</code> の撤去。残存していると本機構と二重に起動制御がかかってタイミングがズレる<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>warm-reboot / fast-reboot コマンド</strong>: warm boot 完了判定に「全 delayed サービス起動完了」を含める拡張<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm reboot のスクリプト経路に新たな wait が増える。</li>
-<li><strong>db_migrator</strong>: 旧 <code>has_timer</code> を新 <code>delayed</code> に書き換える<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config_db.json</code> のバージョン管理上のマイルストーンとなる。</li>
-<li><strong>YANG (<code>sonic-feature</code> モジュール)</strong>: <code>delayed</code> leaf の追加。CLI / GNMI 経由でこの値を扱う場合は YANG モデルとの整合確認が必要<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>MC-LAG / multihoming</strong>: ESI / DF election と組合せると挙動が複雑化</li>
+<li><strong>VRF / underlay BGP</strong>: VTEP loopback 到達性は underlay BGP に依存</li>
+<li><strong>DSCP remarking for tunnel traffic</strong>: encapsulated パケットの DSCP 維持・書換え</li>
+<li><strong>fpmsyncd / nexthop group</strong>: EVPN Type-5 の next-hop group インストール</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>config reload</code> 後に snmp / telemetry が起動しない: <code>FEATURE.&lt;name&gt;.delayed</code> が <code>true</code> で、<code>PortInitDone</code> が出ていない可能性。<code>sonic-db-cli APPL_DB HGETALL PORT_TABLE:PortInitDone</code> で確認<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><code>PortInitDone</code> が来ないまま長時間止まる: フォールバックタイムアウト到達まで delayed サービスは起動しない（HLD はタイムアウト後に起動すると規定）<sup id="fnref26:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>portsyncd</code> のログを確認。</li>
-<li>旧 image からアップグレード後に動作が変: <code>has_timer</code> のまま残っている可能性。<code>db_migrator</code> が走ったかを確認<sup id="fnref27:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>warm reboot がいつまでも完了しない: 全 delayed サービスの起動を待つ拡張により、待ちが長くなっている可能性<sup id="fnref28:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> のログで未起動サービスを特定する。</li>
-<li>syncd の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を <code>config reload</code> の同時起動による CPU 競合のせいと指摘している<sup id="fnref29:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。</li>
+<li>対向 VTEP に届かない → underlay reachability、<code>show vxlan tunnel</code> の oper status</li>
+<li>MAC が学習されない → BGP-EVPN session、<code>show evpn mac vni</code>、Type-2 受信</li>
+<li>Type-5 ルートが入らない → L3 VNI ↔ VRF マッピング、<code>show evpn vni detail</code></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- concerns hint:
+- VxlanOrch / VxlanTunnelOrch / VxlanMapOrch の現行実装存在確認
+- CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認
+- FRR BGP-EVPN（bgpd / zebra）と SONiC 連携（fpmsyncd / EvpnRouteOrch）の現行実装確認
+- show evpn / show vxlan CLI の sonic-utilities 取り込み確認
+- Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap）確認
+- multihoming HLD との重複 / 境界整理確認
+-->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/config_reload/config_reload_enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref24:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref25:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref26:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref27:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref28:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref29:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref30:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref31:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref32:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref33:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref34:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vxlan/EVPN/EVPN_VXLAN_HLD.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
