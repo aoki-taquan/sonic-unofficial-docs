@@ -1,0 +1,13 @@
+{
+  "page": "docs/platform/1-sonic-on-multi-asic-platforms.md",
+  "verification": "hld-only",
+  "concerns": [
+    "asic.conf / platform.json の現行 multi-asic platform（Cisco / Mellanox / Broadcom）での記述差分確認",
+    "DEVICE_METADATA.sub_role (FrontEnd/BackEnd) / asic_name / asic_id の現行 sonic-yang-models 値確認",
+    "swss@asicN / syncd@asicN / bgp@asicN instanced systemd unit の現行 sonic-buildimage 経路確認",
+    "BGP_INTERNAL_NEIGHBOR スキーマと FRR config テンプレートの現行値確認",
+    "sonic-utilities の -n / --namespace オプション対応カバレッジの現行確認",
+    "multi-asic warm reboot / multi-asic-single-json config HLD との実装統合状況確認"
+  ],
+  "priority": "high"
+}
