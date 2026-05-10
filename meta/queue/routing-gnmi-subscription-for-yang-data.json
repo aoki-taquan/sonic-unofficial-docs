@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/gnmi-subscription-for-yang-data.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-gnmi server の subscribe ハンドラ実装と現行 master 取り込み確認",
+    "Redis keyspace notification (notify-keyspace-events) の有効化と STATE_DB / COUNTERS_DB 連携の現行実装確認",
+    "ON_CHANGE 対応 path の実装範囲（openconfig interfaces / network-instances 等のサポート）確認",
+    "TARGET_DEFINED の選択ロジック（path 種別 → SAMPLE/ON_CHANGE）が現行実装でどう決まっているか確認",
+    "TLS / client cert 認証と gNSI / gNOI 統合の現行実装確認",
+    "gNMI Master Arbitration / dial-out telemetry / dial-in との実装関係確認"
+  ],
+  "priority": "medium"
+}
