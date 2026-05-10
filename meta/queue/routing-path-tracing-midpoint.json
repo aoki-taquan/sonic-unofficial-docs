@@ -1,0 +1,14 @@
+{
+  "page": "docs/routing/path-tracing-midpoint.md",
+  "issue": 720,
+  "verification": "hld-only",
+  "concerns": [
+    "PortsOrch / portmgrd の Path Tracing 関連 CONFIG_DB 監視 / APPL_DB 反映 / SAI 属性設定実装確認",
+    "PORT.pt_interface_id / PORT.pt_timestamp_template の現行 master CONFIG_DB / sonic-port.yang スキーマ取り込み確認",
+    "config interface pt-interface-id / pt-timestamp-template / show interface path-tracing CLI の sonic-utilities 取り込み確認",
+    "SAI_PORT_ATTR_PATH_TRACING_INTF_ID / SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TEMPLATE の community SAI ベンダ実装確認",
+    "PT Source / Sink 機能の別 HLD 存在と本 Midpoint 実装との整合確認",
+    "HbH-PT オプションの MTU / jumbogram との衝突回避動作確認"
+  ],
+  "priority": "medium"
+}
