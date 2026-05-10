@@ -15081,9 +15081,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>VoQ chassis 機能は実装規模が大きく、関連する distributed VoQ / fabric / counter / BGP の各 HLD と合わせて読む必要がある。本ページは voq_hld.md の主要構造のみを再構成した概略。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（要点裏取り）</p>
+<p><code>DEVICE_METADATA.{switch_type,switch_id,sub_role}</code> は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang</code>、SYSTEM_PORT / VOQ_INBAND_INTERFACE / chassis BGP は同 repo の <code>sonic-system-port.yang</code> / <code>sonic-voq-inband-interface.yang</code> / <code>sonic-bgp-voq-chassis-neighbor.yang</code>、CLI は <code>sonic-utilities/show/{chassis_modules,fabric}.py</code> および <code>chassis_modules.py:system_ports</code>（<code>voqutil</code>）で確認済み。distributed VoQ counter / fabric port などの詳細は派生 HLD ページを参照。</p>
 </div>
 <h1 id="voq-sonicdistributed-voq-chassis-system-port-fabric">VoQ SONiC（distributed VoQ chassis / system-port / fabric）<a class="headerlink" href="#voq-sonicdistributed-voq-chassis-system-port-fabric" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

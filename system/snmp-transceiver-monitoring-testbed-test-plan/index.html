@@ -15204,8 +15204,8 @@
 
 
 <div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only / Test plan</p>
-<p>HLD は test plan であって機能 HLD ではない。検査対象機能（xcvrd → snmp Entity MIB / Entity Sensor MIB）の現行 sonic-snmpagent / sonic-mgmt 実装は本ページから直接検証していない。</p>
+<p class="admonition-title">裏取りステータス: code-verified（test plan）</p>
+<p>検査対象 MIB の sonic-snmpagent 実装（<code>src/sonic_ax_impl/mibs/ietf/rfc2737.py</code> Entity MIB、<code>rfc3433.py</code> Entity Sensor MIB、<code>physical_entity_sub_oid_generator.py</code>、<code>sensor_data.py</code>）の存在を確認。sonic-mgmt 側のテストコードは本サイト裏取り対象外（test plan の網羅性のみ確認）。down/未挿入 port の MIB 出力やセンサ単位（dBm vs uW）は実装/ベンダ依存。</p>
 </div>
 <h1 id="snmp-transceiver-monitoring-entity-mib-entity-sensor-mib">SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）<a class="headerlink" href="#snmp-transceiver-monitoring-entity-mib-entity-sensor-mib" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -15270,8 +15270,8 @@
 
 
 <div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は Rev 1.0。<code>SensorMon</code> daemon の sonic-platform-daemons 取り込み、<code>STATE_DB VOLTAGE_INFO</code> / <code>CURRENT_INFO</code> 系のスキーマ、Entity MIB / Entity Sensor MIB 拡張対応は未確認。</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-daemons/sonic-sensormond/scripts/sensormond</code> で <code>VOLTAGE_INFO</code> / <code>CURRENT_INFO</code> テーブル更新と <code>VoltageSensorFs</code> / <code>CurrentSensorFs</code> の使用を確認。base API は <code>sonic-platform-common/sonic_platform_base/sensor_base.py</code> / <code>sensor_fs.py</code> / <code>chassis_base.py</code>（<code>get_all_voltage_sensors</code> / <code>get_all_current_sensors</code>）、Module も <code>module_base.py</code> 経由で公開。SNMP Entity Sensor MIB 拡張は <code>rfc3433.py</code> 側で対応するセンサ種別を確認。</p>
 </div>
 <h1 id="sensormonpmon-voltage-current">SensorMon（PMON 内の voltage / current センサ監視）<a class="headerlink" href="#sensormonpmon-voltage-current" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

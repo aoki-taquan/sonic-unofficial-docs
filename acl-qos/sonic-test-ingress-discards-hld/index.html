@@ -15226,8 +15226,8 @@
 
 
 <div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only / Test plan</p>
-<p>HLD は test plan であり、対応する SAI debug counter のベンダ実装、port / RIF / ACL counter の SONiC 内部の集約挙動（L2/L3 drop の合算 vs 分離）は ASIC 依存で未確認。</p>
+<p class="admonition-title">裏取りステータス: code-verified（test plan）</p>
+<p>HLD 21 ケース表と CLI チェック方法（<code>portstat -j</code> / <code>intfstat -j</code> / <code>aclshow -a</code>）、<code>counterpoll port|rif enable</code> を <code>sonic-utilities/scripts/{portstat,intfstat,aclshow}</code> および HLD 本文で確認。SAI debug counter のベンダ実装差や L2/L3 drop counter の合算挙動は ASIC 依存のため本ページでは触れない。</p>
 </div>
 <h1 id="ingress-discards-21-drop-counter">ingress discards テスト計画（21 ケースで drop counter を検証）<a class="headerlink" href="#ingress-discards-21-drop-counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

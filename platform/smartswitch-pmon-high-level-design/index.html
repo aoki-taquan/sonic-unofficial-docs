@@ -15081,9 +15081,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>SmartSwitch（NPU+DPU 一体 platform）の pmon 拡張。NPU/DPU 双方の現行実装と CONFIG_DB / STATE_DB スキーマは未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>DPU 監視ループは <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code> および <code>tests/test_dpu_chassisd.py</code>、Module/DPU API は <code>sonic-platform-common/sonic_platform_base/module_base.py</code>（<code>get_dpu_id</code> ほか）、CLI は <code>sonic-utilities/show/chassis_modules.py</code>・<code>sonic-utilities/config/chassis_modules.py</code>（<code>show chassis-modules</code> / <code>config chassis modules startup</code>）で確認済み。</p>
 </div>
 <h1 id="smartswitch-pmonnpu-pmon-dpu">SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）<a class="headerlink" href="#smartswitch-pmonnpu-pmon-dpu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

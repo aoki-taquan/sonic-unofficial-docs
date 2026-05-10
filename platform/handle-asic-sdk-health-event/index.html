@@ -15115,9 +15115,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>SAI notification と orchagent 側ハンドラの現行 master 取り込み、CONFIG_DB スキーマ名称は未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p>orchagent 側 health event handler は <code>sonic-swss/orchagent/switchorch.{h,cpp}</code>、CONFIG_DB suppress スキーマは <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang</code>、CLI は <code>sonic-utilities/{show,config}/main.py</code> および <code>tests/asic_sdk_health_event_test.py</code> で確認済み。SAI 側の各ベンダ実装の充足度は ASIC 依存。</p>
 </div>
 <h1 id="asic-sdk-health-event-sai-notification-state_db-action">ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）<a class="headerlink" href="#asic-sdk-health-event-sai-notification-state_db-action" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

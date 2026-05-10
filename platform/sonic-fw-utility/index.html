@@ -15059,9 +15059,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>実装側（<code>sonic-utilities/fwutil/</code> と各 platform plugin）の現行 master 取り込みは未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/fwutil/{main,lib,log}.py</code> と <code>sonic-platform-common/sonic_platform_base/component_base.py</code>（<code>get_firmware_version</code> / <code>install_firmware</code> 等）の存在を確認。各 platform plugin と <code>platform_components.json</code> の正確な記述差はベンダ依存のため範囲外。</p>
 </div>
 <h1 id="fwutilplatform-component-firmware-install-update-show">fwutil（platform component firmware の install / update / show）<a class="headerlink" href="#fwutilplatform-component-firmware-install-update-show" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

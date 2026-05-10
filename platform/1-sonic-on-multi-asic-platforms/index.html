@@ -15115,9 +15115,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
-<p>HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞り、設定詳細や BGP テンプレートは HLD 本文を参照する形にする。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（大規模 HLD・要点裏取り）</p>
+<p>HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞っており、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang</code>（<code>sub_role</code> / <code>asic_id</code> / <code>switch_id</code> / <code>switch_type</code>）、<code>sonic-bgp-internal-neighbor.yang</code>、<code>sonic-buildimage/files/build_templates/per_namespace/{swss,syncd,bgp}.service.j2</code>（per-ASIC instanced unit）、および <code>sonic-utilities</code> の <code>--namespace</code>/<code>-n</code> オプション（<code>show/main.py</code>）で裏取り済み。設定詳細や BGP テンプレートは HLD 本文を参照。</p>
 </div>
 <h1 id="sonic-on-multi-asic-platformsnamespace-per-asic-redis-sonic-net">SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）<a class="headerlink" href="#sonic-on-multi-asic-platformsnamespace-per-asic-redis-sonic-net" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
