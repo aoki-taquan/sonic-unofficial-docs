@@ -135,3 +135,8 @@ excerpt: |
 [^4]: `network_helper` の `longer-prefixes` 制約は `show/bgp_frr_v4.py` L225-L228。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/bgp_frr_v4.py#L225>
 
 [^5]: chassis supervisor 分岐は `bgp` group 関数（L23-L33）で `rexec` を呼ぶ。
+
+## 関連ページ
+- [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
+- [CLI: config bgp](config-bgp.md)
+- [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)

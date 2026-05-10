@@ -237,3 +237,9 @@ HLD 段階で明示されている制限[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/acl.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 関連ページ
+- [CLI: config acl](../reference/cli/config-acl.md)
+- [CLI: show acl](../reference/cli/show-acl.md)
+- [CONFIG_DB: ACL_TABLE](../reference/config-db/acl-table.md)
+- [CONFIG_DB: ACL_RULE](../reference/config-db/acl-rule.md)

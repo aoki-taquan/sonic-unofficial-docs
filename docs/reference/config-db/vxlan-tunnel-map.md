@@ -57,3 +57,9 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vxlan.yang` 内 `VXLAN_TUNNEL_MAP`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66>
+
+## 関連ページ
+- [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
+- [CLI: config vxlan](../cli/config-vxlan.md)
+- [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
+- [YANG: sonic-vxlan](../yang/sonic-vxlan.md)

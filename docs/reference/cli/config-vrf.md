@@ -110,3 +110,9 @@ excerpt: |
 [^1]: `config vrf` グループの正式な登録は `config/main.py` L7673。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7673>
 
 [^2]: VRF 名のバリデータ `isInterfaceNameValid` と `IFACE_NAME_MAX_LEN` は `config/main.py` 上部のヘルパで定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py>
+
+## 関連ページ
+- [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
+- [CONFIG_DB: VRF](../config-db/vrf.md)
+- [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
+- [YANG: sonic-vrf](../yang/sonic-vrf.md)

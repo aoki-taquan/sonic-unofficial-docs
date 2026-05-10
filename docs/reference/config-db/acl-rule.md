@@ -99,3 +99,9 @@ ACL_RULE|<table_name>|<rule_name>
 ## 引用元
 
 [^1]: match / action のキー名は `sonic-swss/orchagent/aclorch.h` の `MATCH_*` / `ACTION_*` マクロ定義から抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.h>
+
+## 関連ページ
+- [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [CLI: config acl](../cli/config-acl.md)
+- [CLI: show acl](../cli/show-acl.md)
+- [CONFIG_DB: ACL_TABLE](acl-table.md)

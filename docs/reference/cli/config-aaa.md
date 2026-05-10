@@ -163,3 +163,8 @@ excerpt: |
 [^2]: `aaa authentication login` 引数 2 段の組合せロジックは `config/aaa.py` L120-L155。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/aaa.py#L120>
 
 [^3]: RADIUS サーバ数の上限は `RADIUS_MAXSERVERS = 8`。`config/aaa.py` L11 と L537-L538 参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/aaa.py#L11>
+
+## 関連ページ
+- [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
+- [CONFIG_DB: TACPLUS_SERVER](../config-db/tacplus-server.md)
+- [YANG: sonic-system-aaa](../yang/sonic-system-aaa.md)

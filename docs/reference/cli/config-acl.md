@@ -109,3 +109,9 @@ excerpt: |
 ## 引用元
 
 [^1]: `acl` グループ定義は `config/main.py` L7979-L7982。`add table` / `remove table` / `update full|incremental` の 4 コマンドのみで、個別ルール CRUD は `acl-loader` に委譲される設計。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7975>
+
+## 関連ページ
+- [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
+- [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
+- [CLI: show acl](show-acl.md)

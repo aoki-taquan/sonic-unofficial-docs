@@ -166,3 +166,8 @@ CONFIG_DB が persist するため特別な対応は不要[^1]。
 - omfwd address (source IP) と device (VRF) の組み合わせ動作確認
 - v0.2 (2023) で追加された format / filter / protocol / severity の取り込み確認
 -->
+
+## 関連ページ
+- [CLI: config syslog](../reference/cli/config-syslog.md)
+- [CONFIG_DB: SYSLOG_SERVER](../reference/config-db/syslog-server.md)
+- [YANG: sonic-syslog](../reference/yang/sonic-syslog.md)

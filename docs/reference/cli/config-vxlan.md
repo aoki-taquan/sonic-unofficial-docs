@@ -133,3 +133,10 @@ excerpt: |
 [^1]: `vxlan` グループ全体の定義は `config/vxlan.py` L14-L17。`-n` 必須。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py>
 
 [^2]: `map_range del` の VRF 紐付けスキップは L353-L355。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py#L353>
+
+## 関連ページ
+- [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
+- [HLD: EVPN VXLAN](../../routing/evpn-vxlan-hld.md)
+- [CONFIG_DB: VXLAN_TUNNEL](../config-db/vxlan-tunnel.md)
+- [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
+- [YANG: sonic-vxlan](../yang/sonic-vxlan.md)

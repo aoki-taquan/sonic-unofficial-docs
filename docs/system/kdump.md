@@ -137,3 +137,7 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - kernel debug image (linux-image-*-dbg) のビルドターゲット確認
 - secure boot 環境での kexec 二段起動の整合確認
 -->
+
+## 関連ページ
+- [CLI: config kdump](../reference/cli/config-kdump.md)
+- [CONFIG_DB: KDUMP](../reference/config-db/kdump.md)

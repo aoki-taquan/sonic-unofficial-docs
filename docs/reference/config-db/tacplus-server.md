@@ -69,3 +69,8 @@ TACPLUS|global
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-tacacs.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang>
+
+## 関連ページ
+- [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
+- [CLI: config aaa / tacacs](../cli/config-aaa.md)
+- [YANG: sonic-system-aaa](../yang/sonic-system-aaa.md)

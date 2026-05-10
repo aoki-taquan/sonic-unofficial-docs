@@ -136,3 +136,10 @@ DEVICE_METADATA|localhost:
 - 2019-2021 年 HLD のため Management Framework 全体方針との整合性確認（priority=high）
 - frrcfgd と bgpcfgd の切替手順 / 同時起動防止の実装確認
 -->
+
+## 関連ページ
+- [CLI: config bgp](../reference/cli/config-bgp.md)
+- [CLI: show bgp](../reference/cli/show-bgp.md)
+- [CONFIG_DB: BGP_GLOBALS](../reference/config-db/bgp-globals.md)
+- [CONFIG_DB: BGP_NEIGHBOR](../reference/config-db/bgp-neighbor.md)
+- [YANG: sonic-bgp-neighbor](../reference/yang/sonic-bgp-neighbor.md)

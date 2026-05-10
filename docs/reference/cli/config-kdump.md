@@ -89,3 +89,7 @@ related:
 [^2]: `echo_reboot_warning` (`config/kdump.py` L35-L38)。
 
 [^3]: `add_ssh_key` / `add_ssh_path` の `remote` 必須チェックは `config/kdump.py` L171-L174 / L207-L209。
+
+## 関連ページ
+- [HLD: kdump](../../system/kdump.md)
+- [CONFIG_DB: KDUMP](../config-db/kdump.md)

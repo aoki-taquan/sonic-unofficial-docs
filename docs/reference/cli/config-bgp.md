@@ -206,3 +206,9 @@ excerpt: |
 [^3]: TSA / W-ECMP の CONFIG_DB key は `swsscommon.CFG_BGP_DEVICE_GLOBAL_TABLE_NAME = "BGP_DEVICE_GLOBAL"`、key は `STATE`。`utilities_common/bgp.py` L1-L13 を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/utilities_common/bgp.py>
 
 [^4]: prefix-list 名のバリデータは `validate_prefix_list_name` (`config/bgp_cli.py` L215-L226)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/bgp_cli.py#L215>
+
+## 関連ページ
+- [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
+- [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)
+- [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
+- [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)

@@ -62,3 +62,9 @@ related:
 ## 引用元
 
 [^1]: `acl` グループ全体は `show/acl.py` で定義。table / rule の 2 コマンドのみで、本体ロジックは `acl-loader` ユーティリティ（別パッケージ）に委譲。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/acl.py>
+
+## 関連ページ
+- [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [CLI: config acl](config-acl.md)
+- [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
+- [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)

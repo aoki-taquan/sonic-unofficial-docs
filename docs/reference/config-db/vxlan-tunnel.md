@@ -63,3 +63,9 @@ YANG `max-elements 2` 制約により最大 2 トンネルまで（実装的に 
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vxlan.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
+
+## 関連ページ
+- [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
+- [CLI: config vxlan](../cli/config-vxlan.md)
+- [CONFIG_DB: VXLAN_TUNNEL_MAP](vxlan-tunnel-map.md)
+- [YANG: sonic-vxlan](../yang/sonic-vxlan.md)

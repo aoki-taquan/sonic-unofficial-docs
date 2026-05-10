@@ -59,3 +59,9 @@ VRF|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang>
+
+## 関連ページ
+- [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
+- [CLI: config vrf](../cli/config-vrf.md)
+- [CLI: config interface](../cli/config-interface.md)
+- [YANG: sonic-vrf](../yang/sonic-vrf.md)
