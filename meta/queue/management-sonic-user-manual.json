@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/sonic-user-manual.md",
+  "verification": "hld-only",
+  "concerns": [
+    "User Manual の現行版（章構成・記述更新）と当サイト個別 HLD ページ群の整合確認",
+    "sonic-utilities (click) と sonic-cli (KLISH) の現行カバレッジ差分確認",
+    "config save / save-on-set / GCU apply-patch の現行で推奨される使い分け方針の確認",
+    "minigraph.xml の deprecated 状況と現行 master の config load_minigraph 実装確認",
+    "show techsupport の現行収集対象（plugin 機構経由のものを含む）の確認",
+    "application extension が CLI を拡張する entry-point 仕様の現行実装確認"
+  ],
+  "priority": "low"
+}
