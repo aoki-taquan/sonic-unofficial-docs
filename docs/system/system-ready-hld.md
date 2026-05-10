@@ -1,7 +1,7 @@
 ---
 title: System Ready（sysmonitor + per-app closest UP status の event 集約）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
     - sonic-feature
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.4 (2023-06)。`sysmonitor` daemon の sonic-buildimage 取り込み、`STATE_DB SYSTEM_READY` / app 単位の app-ready 通知メカニズム、`show system-health sysready-status [brief|detail]` の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-buildimage/src/system-health/health_checker/sysmonitor.py` に sysmonitor 本体が存在し、`sonic-utilities/scripts/sysreadyshow:30` が `SYSREADY_TABLE = "SYSTEM_READY|SYSTEM_STATE"` を STATE_DB から読む。CLI は `sonic-utilities/show/system_health.py:141 @system_health.group('sysready-status', invoke_without_command=True)` で実装、`brief` / `detail` サブコマンドも `tests/system_health_test.py:329-336` で検証されており、HLD どおり。
 
 # System Ready（sysmonitor + per-app closest UP status の event 集約）
 

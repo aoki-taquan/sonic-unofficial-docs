@@ -64,20 +64,6 @@
       "priority": "high"
     },
     {
-      "page": "docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md",
-      "issue": 675,
-      "verification": "hld-only",
-      "concerns": [
-        "s3ip_sysfs.ko の sonic-platform-common 取り込み有無確認",
-        "sonic-buildimage/platform/s3ip-sysfs/ ディレクトリと build.sh の存在確認",
-        "/sys_switch/ ツリーが現行 master の参照プラットフォームで採用されているか確認",
-        "PMON daemon (thermalctld/psud) の platform API 実装が /sys_switch/ を読むパスを持つか未確認",
-        "HLD は 2022-08 改訂 Initial version。現行 master との大幅な乖離リスクあり",
-        "s3ip-sysfs.service の systemd unit 起動順 (pmon 等との関係) が HLD に未明記"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
       "issue": 332,
       "verification": "discrepancy-found",
@@ -336,20 +322,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/sonictpidsettinghld1.md",
-      "issue": 685,
-      "verification": "hld-only",
-      "concerns": [
-        "PortsOrch / IntfMgr の TPID 設定 code path 実装存在確認",
-        "PORT.tpid / PORTCHANNEL.tpid の現行 master CONFIG_DB スキーマ取り込み確認",
-        "config interface tpid / show interface tpid CLI の sonic-utilities 取り込み確認",
-        "SWITCH_CAPABILITY|switch の PORT_TPID_CAPABLE / LAG_TPID_CAPABLE 取り込みと boot 時 capability query 実装確認",
-        "SAI_PORT_ATTR_TPID / SAI_LAG_ATTR_TPID (SAI PR #1089) の community SAI 取り込み状況確認",
-        "HLD は 2020-07 In Review Rev 0.2 で停滞。現行 master との大幅な乖離リスクあり"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/routing/bfd-hw-offload.md",
       "issue": 91,
       "verification": "code-verified",
@@ -481,49 +453,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/hld-secure-boot.md",
-      "issue": 712,
-      "verification": "hld-only",
-      "concerns": [
-        "signing_secure_boot_dev.py / signing_secure_boot_production.py スクリプトの sonic-buildimage 取り込み確認",
-        "SB_BUILD build flag の Makefile 取り込みと dev/production 切替動作確認",
-        "shim → grub → vmlinuz → KO chain of trust の現行 master kernel config / image build での実装確認",
-        "Aboot 系 platform (Arista 系) での Secure Boot 適用範囲確認 (HLD は GRUB ベース機が主対象)",
-        "Phase 2 (userland binary / container image 署名 IMA 等) の議論状況確認",
-        "HLD は 2022-06 Phase 1 Design のまま停滞。現状 master との乖離リスクあり"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/system/show-techsupport.md",
-      "issue": 708,
-      "verification": "hld-only",
-      "concerns": [
-        "Management Framework Transformer の show techsupport 操作 mapping 実装確認",
-        "sonic-hostservices D-Bus ブリッジの show techsupport ハンドラ実装確認",
-        "REST/gNMI 経由で /restconf/operations/sonic-show-techsupport 等のエンドポイントが現行 master にあるか確認",
-        "--since IETF date-time 形式の parser 実装と既存 show techsupport script への passthrough 確認",
-        "HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 進化との整合性要確認",
-        "tarball 出力パス / 取得方法 (REST レスポンスでの返却 vs 別ファイル取得) 確認"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/system/sonic-configuration-setup-service.md",
-      "issue": 702,
-      "verification": "hld-only",
-      "concerns": [
-        "/usr/bin/config-setup スクリプトの sonic-buildimage への取り込みと サブコマンド体系確認",
-        "config-setup.service systemd unit の存在確認 (boot 時起動順)",
-        "updategraph から config-setup への責務移譲が現行 master でどこまで進んでいるか確認",
-        "frr.conf 等 Config DB 外設定の backup/restore 対象ファイル一覧確認",
-        "warm-boot 時に migration step を skip する判定ロジックの実装確認",
-        "ZTP 動作中の factory default 抑止ロジックの実装確認",
-        "HLD は 2019-07 Rev 0.2 で 5 年以上停滞。現行 master との大幅な乖離リスク"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
       "verification": "discrepancy-found",
       "concerns": [
@@ -581,21 +510,6 @@
       "pr": 146,
       "last_verified": "2026-05-09",
       "notes": "HLD で言及される m_acl_fc_mgr 名は実装上は m_flex_counter_manager (generic) に変更されているが機能は一致。"
-    },
-    {
-      "page": "docs/acl-qos/acl-in-sonic.md",
-      "issue": 718,
-      "verification": "hld-only",
-      "concerns": [
-        "AclOrch クラスの sonic-swss 実装と ACL_TABLE/ACL_RULE の APPL_DB→SAI 翻訳経路確認",
-        "ACL_TABLE.type の現行サポート集合 (L3/L3v6/MIRROR/MIRRORV6/PFCWD/EVERFLOW/DROP/MUX/VXLAN inner src MAC rewrite 等) の網羅確認",
-        "swssconfig の SET/DEL OP フィールドと JSON parser 実装確認",
-        "config acl add/remove table/rule CLI と aclshow の sonic-utilities 取り込み確認",
-        "ACL Flex Counters と AclOrch の counter 連携実装確認",
-        "Rev 1.1 で追加された VXLAN inner src MAC rewrite サポートのベンダ SAI 対応状況確認",
-        "stage=egress での match セット狭まりの実装/SKU 別差異確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/acl-qos/acl-ingress-egress-test-plan.md",
@@ -857,6 +771,19 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/dhcpv4-relay-agent.md",
+      "verification": "hld-only",
+      "concerns": [
+        "dhcrelay / dhcpmon の現行 docker-dhcp-relay 取り込みと supervisor 経路の確認",
+        "CONFIG_DB DHCP_RELAY スキーマ（dhcp_servers / vrfid 等）の現行 sonic-yang-models 取り込み確認",
+        "option-82 circuit-id / remote-id 文字列フォーマット（hostname / MAC / port 名のいずれか）の SONiC 実装値の確認",
+        "config vlan dhcp_relay / show dhcp_relay ipv4 CLI の sonic-utilities への取り込み確認",
+        "dual-ToR active-active 環境での lease 整合ロジックの現行 mux / dhcp-relay 実装確認",
+        "ISC dhcrelay バージョンと SONiC 拡張 patch（option-82 拡張等）の現行差分の確認"
+      ],
+      "priority": "medium"
+    },
+    {
       "page": "docs/architecture/reset-factory-design.md",
       "issue": 137,
       "verification": "code-verified",
@@ -873,16 +800,15 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/architecture/smart-switch-database-design.md",
-      "issue": 673,
+      "page": "docs/architecture/sflow-high-level-design.md",
       "verification": "hld-only",
       "concerns": [
-        "featured daemon が has_per_dpu_scope を解釈し per-DPU の database container を systemctl で起動する実装存在確認",
-        "FEATURE.has_per_dpu_scope の YANG / CONFIG_DB 取り込みが現行 master にあるか未確認",
-        "database_global.json の include/container_name 解決ロジックが multi-ASIC コードパスから流用されているか未確認",
-        "DPU_APPL_DB / DPU_APPL_STATE_DB / DPU_STATE_DB / DPU_COUNTERS_DB (id 15-18) の database_config.json 取り込み確認",
-        "platform_env.conf の NUM_DPU 直読みフォールバックと将来的な platform API 化の進捗確認",
-        "HLD は Revision 0.1 で日付欄空欄。現行 master との乖離リスクあり"
+        "sflowmgrd daemon の現行 master 取り込みと sflow.timer / supervisor 経路の確認",
+        "SflowOrch の SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE 設定経路（orchagent / syncd）が community SAI に取り込まれているか未確認",
+        "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマが現行 sonic-yang-models にあるか未確認",
+        "config sflow CLI の sonic-utilities (sfutil / cli-clients) への取り込み確認",
+        "リンク速度→sample_rate 自動算出ロジックの現行実装値（特に 200G/400G への拡張）確認",
+        "collector 上限 2 件・VRF 越し送信の hsflowd 設定生成が現行で機能するか確認"
       ],
       "priority": "medium"
     },
@@ -927,34 +853,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/architecture/sonic-port-auto-negotiation-design.md",
-      "issue": 681,
-      "verification": "hld-only",
-      "concerns": [
-        "PortsOrch の AN ON/OFF 遷移時の speed/FEC/IT/TX FIR replay/restore 実装存在確認",
-        "PORT.adv_speeds / PORT.adv_interface_types / PORT.interface_type の現行 master CONFIG_DB / sonic-port.yang 取り込み確認",
-        "config interface advertised-speeds / advertised-types / type CLI の sonic-utilities への取り込み確認",
-        "SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE (SAI 1.7.1+) のベンダ SAI 対応状況未確認",
-        "pmon xcvrd が APPL_DB PORT_TABLE.interface_type を媒体種別に応じて動的更新するコードパスの実装確認",
-        "AN 有効時の link-training 自動連動と FEC override の SAI レベル挙動が実装/community SAI で保証されているか未確認"
-      ],
-      "priority": "medium"
-    },
-    {
-      "page": "docs/architecture/sonic-trap-flow-counter-design.md",
-      "issue": 679,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-swss の Flow Counter Handler クラスと Copp Orch の generateHostIfTrapCounterIdList / clearHostIfTrapCounterIdList 実装存在確認",
-        "FLEX_COUNTER_TABLE の FLOW_CNT_TRAP group 取り込み確認",
-        "counterpoll flowcnt-trap CLI の sonic-utilities 取り込み確認",
-        "show flowcnt trap stats CLI の具体的なコマンド体系確認",
-        "COUNTERS_TRAP_NAME_MAP テーブルの CoPP code path 連携確認",
-        "SAI Generic Counter API の community SAI / syncd 取り込み確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
@@ -1047,21 +945,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/management/design-doc.md",
-      "issue": 728,
-      "verification": "hld-only",
-      "concerns": [
-        "ycabled の gRPC client (Python3) 実装の sonic-platform-daemons / sonic-buildimage 取り込み確認",
-        "DualToRActive proto3 service と SoC 上 gRPC server の現行実装確認",
-        "STATE_DB GRPC_CLIENT_TABLE スキーマと channel state (READY/CONNECTING/...) 反映実装確認",
-        "TLS 証明書ロード経路 (sonic-credentials 等) と loopback IP src binding 実装確認",
-        "NIC-simulator 連携の実装方式 (interceptor vs multi-server) の確定状況確認",
-        "async server-streaming notification (SoC→ycabled) 実装と maintenance/shutdown event handling 確認",
-        "gRPC channel keepalive 設定と半 open 検出ロジック確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
@@ -1169,21 +1052,6 @@
         "TLS/StartTLS および SASL サポートの後続 phase 進捗確認 -> 実コードで存在を確認 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/management/model-based-replace-delete-in-mgmt-framework-transformer.md",
-      "issue": 730,
-      "verification": "hld-only",
-      "concerns": [
-        "Mgmt-Framework Transformer の PUT/REPLACE 2 段階処理 (payload-driven Step1.1 + hierarchy-driven Step1.2) 実装確認",
-        "DELETE 時の hierarchy 配下削除と target leaf default リセット既存挙動の整合確認",
-        "validate-xfmr annotation (get-validate からの改名) のサポートと既存 get-validate annotation の後方互換移行確認",
-        "virtual table が削除対象から除外され traversal のみに使われる実装確認",
-        "defaults 適用範囲 (payload 存在 node + 同 table 配下のみ) のロジック実装確認",
-        "アプリ側 post-transformer callback で独自削除していた場合の新挙動との整合状況確認",
-        "OpenConfig YANG 主対象であり SONiC YANG への future 拡張計画確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/management/openconfig-support-for-ethernet-interfaces.md",
@@ -2232,20 +2100,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/system-ready-hld.md",
-      "issue": 714,
-      "verification": "hld-only",
-      "concerns": [
-        "sysmonitor (Python) daemon の sonic-buildimage / system-health 統合での実装存在確認",
-        "FEATURE.check_up_status 追加と sonic-feature.yang への取り込み確認",
-        "STATE_DB FEATURE.up_status / fail_reason の app-ready 通知メカニズム実装確認",
-        "show system-health sysready-status [brief|detail] CLI の sonic-utilities 取り込み確認",
-        "Rev 0.4 で追加された host daemon 監視と admin state の実装確認",
-        "warm-boot 完了との関係 (warm-boot 完了 vs system ready の意味の差) が実装でどう扱われているか確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/twamp-light-hld.md",
       "verification": "discrepancy-found",
       "concerns": [
@@ -2382,6 +2236,22 @@
         "Rust 版 wol CLI が UDP モードを実装しているかは src/wol.rs を直接読む必要がある"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/system/hld-secure-boot.md",
+      "issue": 712,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "Phase 2 (userland binary / container image 署名 IMA 等) の議論状況確認"
+      ],
+      "verified_concerns": [
+        "署名スクリプトは .py ではなく bash 版 (sonic-buildimage/scripts/signing_secure_boot_dev.sh) として取り込まれている",
+        "build flag は SB_BUILD ではなく SECURE_UPGRADE_MODE と SECURE_UPGRADE_DEV_SIGNING_KEY (rules/config:287-294, build_image.sh:264, Makefile.work:366-376)",
+        "Production 用は固定スクリプトではなく SECURE_UPGRADE_PROD_SIGNING_TOOL 変数で外部ツールを差し替える方式 (Makefile.work:376-383)",
+        "shim → grub → vmlinuz → KO chain は scripts/signing_secure_boot_dev.sh と secure_boot_signature_verification.sh で実装"
+      ],
+      "priority": "low",
+      "notes": "discrepancy-found: HLD は signing_secure_boot_dev.py / SB_BUILD と書いているが実装は .sh / SECURE_UPGRADE_MODE。boot chain の verify 思想は HLD どおり。verified 2026-05-10 (verifier batch-23)."
     },
     {
       "page": "docs/system/snmp-transceiver-monitoring-testbed-test-plan.md",

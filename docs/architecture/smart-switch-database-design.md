@@ -1,8 +1,8 @@
 ---
 title: Smart Switch のデータベース構成（NPU 上の DPU overlay DB）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md
@@ -15,8 +15,8 @@ related:
     - sonic-feature
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD のみを根拠にした再構成。`featured` daemon が `has_per_dpu_scope` を解釈して per-DPU の database container を起動する実装、`database_global.json` の include 解決、`platform_env.conf` の `NUM_DPU` 取扱は未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `has_per_dpu_scope` は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:85` で feature leaf として定義され、`sonic-host-services/scripts/featured:86,415` が読んで per-DPU instance を起動する。`database_global.json.j2` (`dockers/docker-database/`) は `NUM_DPU is defined` で DPU 用 redis をテンプレート展開し、`docker-database-init.sh:104` が `NUM_DPU > 1` で global database を使う条件分岐を実装済み。
 
 # Smart Switch のデータベース構成（NPU 上の DPU overlay DB）
 

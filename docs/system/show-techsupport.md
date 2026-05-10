@@ -1,7 +1,7 @@
 ---
 title: Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2019-10 改訂 (Rev 0.1) で 6 年以上停滞。Management Framework 系（mgmt-framework container, REST GW, transformer 経由）の RPC 経由 techsupport 起動経路、`sonic-hostservices` への依存実装は未確認。`verification-queue.priority = high`。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    YANG モデル `sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang` に `rpc sonic-show-techsupport-info` が定義され、annotations `sonic-showtech-annot.yang` で transformer に紐付け済み。tarball 採取本体は `sonic-utilities/scripts/generate_dump` (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。`sonic-buildimage` には `sonic-auto_techsupport.yang` も存在。RPC 起動経路は HLD どおり実装。
 
 # Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）
 

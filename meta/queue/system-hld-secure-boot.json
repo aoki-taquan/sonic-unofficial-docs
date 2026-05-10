@@ -1,14 +1,16 @@
 {
   "page": "docs/system/hld-secure-boot.md",
   "issue": 712,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "signing_secure_boot_dev.py / signing_secure_boot_production.py スクリプトの sonic-buildimage 取り込み確認",
-    "SB_BUILD build flag の Makefile 取り込みと dev/production 切替動作確認",
-    "shim → grub → vmlinuz → KO chain of trust の現行 master kernel config / image build での実装確認",
-    "Aboot 系 platform (Arista 系) での Secure Boot 適用範囲確認 (HLD は GRUB ベース機が主対象)",
-    "Phase 2 (userland binary / container image 署名 IMA 等) の議論状況確認",
-    "HLD は 2022-06 Phase 1 Design のまま停滞。現状 master との乖離リスクあり"
+    "Phase 2 (userland binary / container image 署名 IMA 等) の議論状況確認"
   ],
-  "priority": "high"
+  "verified_concerns": [
+    "署名スクリプトは .py ではなく bash 版 (sonic-buildimage/scripts/signing_secure_boot_dev.sh) として取り込まれている",
+    "build flag は SB_BUILD ではなく SECURE_UPGRADE_MODE と SECURE_UPGRADE_DEV_SIGNING_KEY (rules/config:287-294, build_image.sh:264, Makefile.work:366-376)",
+    "Production 用は固定スクリプトではなく SECURE_UPGRADE_PROD_SIGNING_TOOL 変数で外部ツールを差し替える方式 (Makefile.work:376-383)",
+    "shim → grub → vmlinuz → KO chain は scripts/signing_secure_boot_dev.sh と secure_boot_signature_verification.sh で実装"
+  ],
+  "priority": "low",
+  "notes": "discrepancy-found: HLD は signing_secure_boot_dev.py / SB_BUILD と書いているが実装は .sh / SECURE_UPGRADE_MODE。boot chain の verify 思想は HLD どおり。verified 2026-05-10 (verifier batch-23)."
 }

@@ -1,8 +1,8 @@
 ---
 title: ポート Auto-Negotiation（advertised-speeds / interface-type）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/port_auto_neg/port-auto-negotiation-design.md
@@ -20,8 +20,8 @@ related:
     - sonic-port
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.4。`SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE` (SAI 1.7.1+) のベンダ実装、APPL_DB 経由で xcvrd が interface_type を動的に上書きする経路、portsyncd / portmgrd の autoneg incremental 反映ロジックは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-swss/orchagent/portsorch.cpp:3525 getPortAdvSpeeds` / `:3613 SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE` / `:5080-5108` adv_speeds incremental update が実装。STATE_DB の `rmt_adv_speeds` (peer から学習) も `:4862` で扱う。CLI は `sonic-utilities/config/main.py:5372 def advertised_speeds()` で実装済み。HLD どおり autoneg / advertised-speeds / interface-type の組合せがランタイム反映される。
 
 # ポート Auto-Negotiation（advertised-speeds / interface-type）
 

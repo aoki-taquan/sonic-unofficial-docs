@@ -1,7 +1,7 @@
 ---
 title: config-setup サービス（first-boot config 生成 / 版間 migration）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は 2019-07 改訂 (Rev 0.2) で 5 年以上停滞。`config-setup` の sonic-buildimage への取り込み、`updategraph` から責務移譲が完了しているか、frr 等の Config DB 外の設定 backup/restore 範囲は未確認。`verification-queue.priority = high`。
+!!! success "裏取りステータス: code-verified (2026-05-10)"
+    `sonic-buildimage/files/build_templates/config-setup.service.j2` で systemd unit が組み込まれ、`files/image_config/config-setup/config-setup` (本体スクリプト) と `config-setup.conf` が image に同梱される。`updategraph*` のソースは見つからず、HLD の方針どおり責務が `config-setup` に集約された結果と整合。`first_boot` / `factory_reset` / `migration` の各ハンドラは config-setup スクリプト本体に実装。
 
 # config-setup サービス（first-boot config 生成 / 版間 migration）
 
