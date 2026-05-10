@@ -1,0 +1,13 @@
+{
+  "page": "docs/architecture/sonic-application-extension-infrastructure.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-package-manager (SPM) CLI の sonic-utilities への取り込みと entry-point の確認",
+    "manifest スキーマ（base-os / min-sonic-version / depends / cli / processes 等）の現行実装フィールド名確認",
+    "hostcfgd の FEATURE → systemd unit rendering ロジックの現行 master 確認",
+    "CONFIG_DB FEATURE スキーマと package 由来 feature の処理差分が現行 sonic-yang-models にあるか確認",
+    "warm reboot 非対応 package のフォールバック挙動と warm-reboot manifest フラグの現行値確認",
+    "third-party container hardening との関係（cgroup 制限・privileged 制限）の現行実装確認"
+  ],
+  "priority": "medium"
+}
