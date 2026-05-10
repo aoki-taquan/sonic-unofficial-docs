@@ -1,6 +1,7 @@
 nav:
   - index.md
   - guides
+  - topics
   - architecture
   - routing
   - switching
