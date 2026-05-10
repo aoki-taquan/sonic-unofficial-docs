@@ -1,0 +1,14 @@
+{
+  "page": "docs/acl-qos/sonic-test-ingress-discards-hld.md",
+  "issue": 716,
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt 側の対応テストコード (ingress discards 21 ケース) の存在確認",
+    "counterpoll port / rif の現行 master 取り込みと正確な counter ID マッピング確認",
+    "portstat / intfstat / aclshow CLI の出力フォーマット確認",
+    "ベンダ間 L2/L3 drop counter 合算挙動の differential を SAI capability などで判定する手段の実装確認",
+    "ケース 21 (ERIF disabled で drop なし) の意味と対応 SAI attribute 確認",
+    "ACL DROP ケース 20 で使用される ACL ルールの sonic-mgmt 側設定確認"
+  ],
+  "priority": "low"
+}
