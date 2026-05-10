@@ -1,4 +1,46 @@
 title: プラットフォーム
 nav:
   - index.md
-  - ...
+  - dump-on-sai-failure.md
+  - hld-for-handling-sai-failures.md
+  - query-stats-capability-new-sai-api-indroduction.md
+  - sai-api-version-check.md
+  - sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
+  - 1-6t-support-in-sonic.md
+  - cmis-and-c-cmis-support-for-zr.md
+  - custom-si-settings-for-cmis-modules.md
+  - enhanced-lpo-debug-registers-hld.md
+  - everflow-support-on-voq-chassis.md
+  - fabric-port-support-on-sonic.md
+  - fec-flr-support-in-sonic.md
+  - media-based-port-settings-in-sonic.md
+  - recirculation-port-support-on-voq-chassis.md
+  - sonic-port-fec-ber.md
+  - sonic-port-naming-convention-change.md
+  - support-bmc-flows-in-sonic.md
+  - global-platform-specific-psuutil-class-instance.md
+  - liquid-cooling-leakage-detection-in-sonic.md
+  - smartswitch-pmon-high-level-design.md
+  - sonic-psu-daemon-design.md
+  - sonic-thermal-control-design.md
+  - subnet-decapsulation-with-sonic.md
+  - thermal-control-test-plan.md
+  - automatic-module-provisioning-for-chassis.md
+  - single-asic-voq-fixed-system-sonic.md
+  - voq-sonic.md
+  - smartswitch-dpu-graceful-shutdown.md
+  - 1-sonic-on-multi-asic-platforms.md
+  - db-design-for-multi-asic-scenarios.md
+  - handle-asic-sdk-health-event.md
+  - icmp-hardware-offload.md
+  - multi-asic-single-json-configuration-design.md
+  - pcieinfo-design.md
+  - platform-capability-file-enhancement.md
+  - s3ip-sysfs-specification.md
+  - sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md
+  - sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md
+  - sonic-dynamic-gearbox-tuning-design-plan.md
+  - sonic-fast-link-up.md
+  - sonic-fw-utility.md
+  - sonic-sfp-refactoring.md
+  - sonictpidsettinghld1.md

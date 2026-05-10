@@ -1,4 +1,32 @@
 title: YANG
 nav:
   - index.md
-  - ...
+  - sonic-device_metadata.md
+  - sonic-feature.md
+  - sonic-ntp.md
+  - sonic-syslog.md
+  - sonic-system-aaa.md
+  - sonic-interface.md
+  - sonic-loopback-interface.md
+  - sonic-mclag.md
+  - sonic-port.md
+  - sonic-portchannel.md
+  - sonic-vlan.md
+  - sonic-bgp-global.md
+  - sonic-bgp-neighbor.md
+  - sonic-bgp-peergroup.md
+  - sonic-route-common.md
+  - sonic-route-map.md
+  - sonic-vrf.md
+  - sonic-vxlan.md
+  - sonic-buffer-pg.md
+  - sonic-buffer-pool.md
+  - sonic-buffer-profile.md
+  - sonic-buffer-queue.md
+  - sonic-copp.md
+  - sonic-dscp-tc-map.md
+  - sonic-mirror-session.md
+  - sonic-pfcwd.md
+  - sonic-queue.md
+  - sonic-scheduler.md
+  - sonic-tc-queue-map.md
