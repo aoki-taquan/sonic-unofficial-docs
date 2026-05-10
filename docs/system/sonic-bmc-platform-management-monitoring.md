@@ -1,7 +1,7 @@
 ---
 title: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,11 @@ related:
     - sonic-platform
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-platform-common/sonic_platform_base/bmc_base.py` / `redfish_client.py` / `bmc_fw_update.py` に BMC 抽象化レイヤを確認。`sonic-platform-daemons/sonic-bmcctld/scripts/bmcctld` に BMC controller daemon 実装。HLD の Redfish / IPMI 連携設計は現行 master に取り込まれている。
 
 # SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
 

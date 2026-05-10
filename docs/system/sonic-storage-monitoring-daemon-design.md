@@ -1,7 +1,7 @@
 ---
 title: storagemond（SSD / eMMC の health 監視）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,11 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は未確認（`ssdhealth` 系の既存実装と類似）。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-platform-daemons/sonic-stormond/scripts/stormond` に storage monitoring daemon 実装を確認（注: ディレクトリ名は `sonic-stormond`、daemon 名は `stormond`）。HLD 記述の storagemond は実装上 stormond として現行 master に取り込まれている。
 
 # storagemond（SSD / eMMC の health 監視）
 

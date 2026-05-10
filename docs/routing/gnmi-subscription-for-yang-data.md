@@ -1,7 +1,7 @@
 ---
 title: gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,11 @@ related:
     - sonic-*
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     本 HLD は `area=routing` の backlog だが内容は telemetry 全般に関わる。location は backlog 由来のまま。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-gnmi/gnmi_server/client_subscribe.go` に subscribe ハンドラ実装、`multi_request_tcp_conn_test.go` で `ON_CHANGE` モードでの STATE_DB ストリーム動作テストを確認。サーバ実装は HLD の Subscription RPC（ON_CHANGE / SAMPLE / TARGET_DEFINED）モードを実装している。
 
 # gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
 

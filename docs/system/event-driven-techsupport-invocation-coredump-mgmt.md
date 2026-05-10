@@ -1,7 +1,7 @@
 ---
 title: Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,11 @@ related:
     - sonic-auto-techsupport
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-utilities/scripts/coredump_gen_handler.py` / `utilities_common/auto_techsupport_helper.py` / `show/plugins/auto_techsupport.py` で auto-techsupport 経路を確認。yang は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang` に CONFIG_DB スキーマを確認。
 
 # Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
 area: system
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,11 @@ related:
     - sonic-ntp
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本 HLD は `ntpd` 時代の設計。SONiC は近年 `chrony` への移行 HLD（同 area の別ページ）が並行している。**現行 master が ntpd / chrony どちらを使うかは未確認**。
+!!! warning "裏取りステータス: discrepancy-found"
+    本 HLD は `ntpd` 時代の設計。SONiC は近年 `chrony` への移行が完了している。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: 現行 master では **chrony が採用されている**。`sonic-buildimage/files/image_config/chrony/` に `chrony.conf.j2` / `chrony.keys.j2` / `chronyd-starter.sh` が存在し、`sonic-config-engine/tests/sample_output/` でも chrony.conf が生成テスト対象になっている。yang は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang` に `NTP / NTP_SERVER / NTP_KEY` を確認。本 HLD（`doc/ntp/ntp-design.md`）の `ntpd` / `/etc/ntp.conf` ベース記述は **歴史的設計**として読むべきで、運用コンフィグは chrony に置き換わっている。
 
 # SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
 

@@ -1,7 +1,7 @@
 ---
 title: Local ARS（Adaptive Routing & Switching の local 完結版）
 area: routing
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,11 @@ related:
     - sonic-ars
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    Local ARS は AI/HPC 向けの adaptive routing 機能。SAI 拡張属性が community SAI に取り込まれているか、ARSOrch / ARS profile の現行実装は未確認。
+!!! warning "裏取りステータス: discrepancy-found"
+    Local ARS は AI/HPC 向けの adaptive routing 機能。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: 現行 master の `sonic-swss/orchagent/` には **`ArsOrch` 等の ARS 関連 orch 実装は確認できず**、`sonic-yang-models` にも `sonic-ars.yang` / `ARS_PROFILE` 等のスキーマは存在しない。`sonic-utilities` にも `config ars` / `show ars` は未取り込み。SAI 側は `sonic-sairedis/unittest/meta/TestMeta.cpp` に `SAI_OBJECT_TYPE_ARS` / `SAI_ARS_ATTR_*` の参照があり SAI API 自体は community SAI に取り込まれていることが確認できる。**HLD は提案段階で、SONiC SWSS / yang / utilities への取り込みは未完了**。本ページの記述は仕様意図の理解には有用だが、現行 master では機能として利用できない可能性が高い。
 
 # Local ARS（Adaptive Routing & Switching の local 完結版）
 

@@ -1,7 +1,7 @@
 ---
 title: Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,11 @@ related:
     - sonic-crm
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     CrmOrch / SAI Object availability API の現行 master 取り込み状況、generic-sai-extension HLD（同 area）との関係は未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-swss/orchagent/crmorch.h` / `crmorch.cpp` に CrmOrch 実装、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-crm.yang` に CONFIG_DB CRM スキーマを確認。`fdborch.cpp` / `routeorch.cpp` / `srv6orch.cpp` 等から CRM カウンタ更新が呼ばれていることを grep で確認。
 
 # Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
 

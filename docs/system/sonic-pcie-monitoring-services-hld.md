@@ -1,7 +1,7 @@
 ---
 title: PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -14,8 +14,11 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     pcied / pcieinfo の現行 sonic-platform-daemons 実装状況、AER 取得経路は未確認。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-platform-daemons/sonic-pcied/scripts/pcied` に PCIe monitoring daemon 実装、`pytest.ini` / `setup.py` でパッケージング。STATE_DB の `PCIE_DEVICE` 系テーブルへの書き込みは pcied の本体ロジックで確認できる。
 
 # PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
 

@@ -1,6 +1,6 @@
 {
   "page": "docs/routing/evpn-vxlan-multihoming.md",
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
     "VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4 ハンドリング）の現行実装存在確認",
     "CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認",
@@ -9,5 +9,8 @@
     "show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認",
     "DF election hold timer / mobility extended community の現行既定値と挙動確認"
   ],
-  "priority": "high"
+  "priority": "high",
+  "verified_concerns": [
+    "現行 master に EVPN_ETHERNET_SEGMENT yang / EthernetSegment orch / config evpn ethernet-segment CLI が未取り込みであることを確認。HLD は提案レベル。"
+  ]
 }

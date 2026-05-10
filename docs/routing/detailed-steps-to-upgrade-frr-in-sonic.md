@@ -1,7 +1,7 @@
 ---
 title: SONiC における FRR upgrade の手順とパッチ管理
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,11 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / メタドキュメント"
+!!! warning "裏取りステータス: code-verified / メタドキュメント"
     本ページは「SONiC FRR 保守者向けの作業手順」を再構成したもの。実際の手順は upstream / SONiC 双方の実装事情に依存し、頻繁に変わる。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-buildimage/src/sonic-frr/patch/` に `0001-SONiC-ONLY-*` 系の quilt-like patch（`series` ファイル順適用）を確認。`sonic-frr` は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD 記述と整合する。
 
 # SONiC における FRR upgrade の手順とパッチ管理
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC Warm Reboot（要件・順序・docker 別 warm restart）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,11 @@ related:
     - sonic-warm-restart
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! warning "裏取りステータス: code-verified"
     本 HLD（27KB）は warm reboot の要件記述。詳細な going down / going up の path は `system-wide-warmboot.md`（同 area）を併読。
+
+!!! note "Verifier 注記（2026-05-10）"
+    実コード裏取り: `sonic-utilities/scripts/warm-reboot` に warm reboot script、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang` に CONFIG_DB WARM_RESTART スキーマを確認。HLD の going-down / going-up シーケンスと整合する。
 
 # SONiC Warm Reboot（要件・順序・docker 別 warm restart）
 
