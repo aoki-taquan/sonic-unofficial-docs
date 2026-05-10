@@ -1,7 +1,7 @@
 ---
 title: show techsupport での SFP EEPROM ページダンプ取り込み
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `sfputil show eeprom-hexdump` の `--port` `--page` 拡張、および `generate_dump` 内での自動呼び出しが現行 master の sonic-utilities にあるかは未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/sfputil/main.py` の `eeprom-hexdump` (L731-) で `-p/--port` と `-n/--page` を確認、内部で `eeprom_hexdump_single_port` → `eeprom_hexdump_pages_general` / `_pages_sff8472` 経路を実装。`sonic-utilities/scripts/generate_dump` L2603 で `save_cmd "sfputil show eeprom-hexdump" "interface.xcvrs.eeprom.raw" &` を確認、show techsupport の dump tarball に SFP EEPROM ページが自動的に含まれる。
 
 # show techsupport での SFP EEPROM ページダンプ取り込み
 

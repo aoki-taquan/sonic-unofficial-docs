@@ -1,12 +1,14 @@
 {
   "page": "docs/management/portable-console-device-design.md",
   "issue": 328,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "sonic-platform-common の sonic_console/ パッケージ階層実装の現行確認",
-    "PortableConsoleDeviceBase / factory.py の実装存在確認",
-    "CONSOLE_SWITCH テーブルへの autodetect / vendor_name / model_name フィールド追加の YANG 反映確認",
-    "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例確認"
+    "HLD が提案する sonic_console/<vendor>/console_<model>.py ディレクトリ階層、PortableConsoleDeviceBase 抽象クラス、factory.py は sonic-platform-common master に存在しない（提案のみ）",
+    "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例も無し"
+  ],
+  "verified_concerns": [
+    "2026-05-10 sonic-platform-common master 直読: sonic_platform_base/ 直下に console 系 base クラス無し、sonic_console/ ディレクトリも存在せず",
+    "CONSOLE_SWITCH テーブル自体は sonic-yang-models/yang-models/sonic-console.yang と sonic-utilities/config/console.py で取り込み済み（escape_char 等を含む別 HLD 経由）"
   ],
   "priority": "low"
 }

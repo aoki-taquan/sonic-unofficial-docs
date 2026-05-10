@@ -1,8 +1,8 @@
 ---
 title: SONiC Debian アップグレード方針（base / container / 廃止 cadence）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / プロセス文書"
-    HLD は v0.1 (2024-01)。実コードに対する裏取りは不適切（ガイドライン文書）。実装側の検証ポイントは sonic-buildimage の slave container 追加経緯、`sonic-linux-kernel` 開発ブランチ運用、各 release の commit 履歴に依存する。
+!!! info "裏取りステータス: code-verified（プロセス文書 / ビルド変数で確認）"
+    `sonic-buildimage/Makefile` で `NOSTRETCH ?= 1` / `NOBUSTER ?= 1` / `NOBULLSEYE ?= 1` / `NOBOOKWORM ?= 0` / `NOTRIXIE ?= 0`、それに対応する `BUILD_STRETCH=1` / `BUILD_BUSTER=1` / `BUILD_BULLSEYE` 等の分岐を確認（HLD のリリース cadence 通り Bookworm/Trixie が活きていて Stretch/Buster/Bullseye が deprecated default）。`sonic-buildimage/dockers/` 配下に `docker-config-engine-stretch` / `-buster` / `-bullseye` / `-bookworm` / `-trixie` の 5 系列の Dockerfile.j2 が並列維持されている。プロセス文書だが、ビルド変数定義が HLD 通りに実装されていることを直接確認した。
 
 # SONiC Debian アップグレード方針（base / container / 廃止 cadence）
 

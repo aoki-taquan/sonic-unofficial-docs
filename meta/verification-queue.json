@@ -871,20 +871,6 @@
       "priority": "medium"
     },
     {
-      "page": "docs/architecture/sonic-port-link-training-design.md",
-      "issue": 670,
-      "verification": "hld-only",
-      "concerns": [
-        "PortsOrch の m_port_cap_lt フィールドと per-port 能力照会ロジックの実装存在確認",
-        "CONFIG_DB PORT.link_training / APPL_DB PORT_TABLE.link_training / STATE_DB PORT_TABLE.link_training_status の現行 master スキーマ取り込み確認",
-        "config interface link-training / show interfaces link-training status の sonic-utilities への取り込み確認",
-        "SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE が community SAI に取り込まれているか未確認",
-        "PortsOrch のリンクトレーニングステータスポーラ（タイマースレッド）実装確認",
-        "warmboot 中に LT パラメータでポート flap させない要件が PortsOrch / syncd で守られているか未確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/architecture/sonic-trap-flow-counter-design.md",
       "issue": 679,
       "verification": "hld-only",
@@ -1936,19 +1922,6 @@
       "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
     },
     {
-      "page": "docs/system/sonic-openssl-fips-140-3-hld.md",
-      "verification": "hld-only",
-      "concerns": [
-        "symcrypt-openssl deb の sonic-buildimage 同梱と version 指定確認",
-        "/usr/lib/ssl/openssl-fips.cnf テンプレートの install 経路確認",
-        "sonic-installer set-fips / get-fips の sonic-utilities 取り込み確認",
-        "INCLUDE_FIPS / ENABLE_FIPS rules/config 取り込み確認",
-        "Golang BoringSSL + RedHat patch の sonic-buildimage 同梱確認",
-        "OpenSSH FIPS patch (CentOS 由来) の取り込み確認"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/system/sonic-python-logger-enhancement.md",
       "issue": 133,
       "verification": "discrepancy-found",
@@ -2049,28 +2022,16 @@
     {
       "page": "docs/management/portable-console-device-design.md",
       "issue": 328,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "sonic-platform-common の sonic_console/ パッケージ階層実装の現行確認",
-        "PortableConsoleDeviceBase / factory.py の実装存在確認",
-        "CONSOLE_SWITCH テーブルへの autodetect / vendor_name / model_name フィールド追加の YANG 反映確認",
-        "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例確認"
+        "HLD が提案する sonic_console/<vendor>/console_<model>.py ディレクトリ階層、PortableConsoleDeviceBase 抽象クラス、factory.py は sonic-platform-common master に存在しない（提案のみ）",
+        "ベンダー .deb パッケージ（50-<vendor>-<model>.rules）の sonic-buildimage 取り込み実例も無し"
+      ],
+      "verified_concerns": [
+        "2026-05-10 sonic-platform-common master 直読: sonic_platform_base/ 直下に console 系 base クラス無し、sonic_console/ ディレクトリも存在せず",
+        "CONSOLE_SWITCH テーブル自体は sonic-yang-models/yang-models/sonic-console.yang と sonic-utilities/config/console.py で取り込み済み（escape_char 等を含む別 HLD 経由）"
       ],
       "priority": "low"
-    },
-    {
-      "page": "docs/management/sonic-nos-configuration-methods.md",
-      "verification": "hld-only",
-      "concerns": [
-        "config apply-patch の --dry-run / checkpoint / rollback フラグの sonic-utilities 取り込み確認",
-        "ZTP の DHCP option 67 / USB 起動経路の現行実装確認",
-        "RESTCONF / gNMI server 有効化手順 (sonic-mgmt-common / gnmi container) の現行確認",
-        "sonic-cfggen が許容する schema の現行整合確認",
-        "vtysh ↔ frr.conf テンプレート ↔ CONFIG_DB の整合経路（bgpcfgd 等）の現行確認"
-      ],
-      "priority": "low",
-      "issue": 185,
-      "pr": 186
     },
     {
       "page": "docs/management/sonic-yang-model-guidelines.md",
@@ -2091,98 +2052,19 @@
       "pr": 480
     },
     {
-      "page": "docs/platform/automatic-module-provisioning-for-chassis.md",
-      "issue": 121,
-      "verification": "hld-only",
-      "concerns": [
-        "module_base.py に MODULE_STATUS_PROVISION_READY / PENDING / MODULE_STATUS_PROVISIONED の 3 定数が未追加（2026-05-09 時点）",
-        "sonic-platform-common 側の provision_module() API が未実装",
-        "sonic-platform-daemons 配下に sonic-provisiond デーモンのコードが未追加",
-        "chassisd の oper_status 同期と sonic-provisiond の責務分離は HLD 設計のみ存在し、実装は未着手",
-        "ベンダー provision_module リファレンス実装事例は未確認（実装が無いので存在しえない）",
-        "失敗時のリトライ戦略は HLD でも未規定"
-      ],
-      "verified_concerns": [
-        "2026-05-09 時点で sonic-net org を MODULE_STATUS_PROVISION / provision_module / sonic-provisiond で grep してヒットは HLD 本体のみであることを確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/platform/global-platform-specific-psuutil-class-instance.md",
-      "issue": 330,
-      "verification": "hld-only",
-      "concerns": [
-        "現行 sonic-platform-common の sonic_platform_base クラス階層と HLD 記述の差分確認",
-        "pmon コンテナ起動時の sonic_platform wheel 自動インストール処理の現行実装確認",
-        "STATE_DB 経由の platform 情報公開を行う pmon 内デーモンの一覧と整合確認",
-        "本ページは初期 HLD であり、後継 PR で多数の Module/Component クラスが追加された経緯を反映できていない可能性"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/platform/liquid-cooling-leakage-detection-in-sonic.md",
       "issue": 256,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "sonic-platform-common の LiquidCoolingBase / LeakageSensor クラス実装存在確認",
-        "thermalctld の LiquidCoolingUpdater 別スレッド (0.5s 周期) 実装確認",
-        "STATE_DB の LIQUID_COOLING_DEVICE スキーマ取り込みと書き込みロジック確認",
-        "system-health hardware_checker.py の _check_liquid_cooling_status 実装と sonic-events-host / liquid-cooling-leak タグ発行確認",
-        "show platform leakage status / show system-health detail 拡張の sonic-utilities 取り込み確認"
+        "STATE_DB のテーブル名は本ページが記述する LIQUID_COOLING_DEVICE ではなく実コードでは LIQUID_COOLING_INFO（thermalctld の LIQUID_COOLING_INFO_TABLE_NAME 定数）",
+        "show platform leakage status / show system-health detail 拡張の sonic-utilities 取り込み状況は未網羅確認"
+      ],
+      "verified_concerns": [
+        "sonic-platform-common/sonic_platform_base/liquid_cooling_base.py に LeakSeverity enum (MINOR/CRITICAL) と LeakageSensorBase（SensorBase 継承）を確認",
+        "sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld に LiquidCoolingUpdater クラスと liquid_cooling_update_interval=0.5 秒のポーラを確認",
+        "ベンダー実装として mlnx-platform-api/sonic_platform/liquid_cooling.py が存在"
       ],
       "priority": "low"
-    },
-    {
-      "page": "docs/platform/pcieinfo-design.md",
-      "issue": 249,
-      "verification": "hld-only",
-      "concerns": [
-        "sonic-utilities の pcieutil コマンド (pcie_show / pcie_check / pcie_generate) 実装存在確認",
-        "sonic-platform-common の pcie_common.py (get_pcie_device / get_pcie_check / dump_conf_yaml) 実装確認",
-        "device/<Platform>/plugins/pcie.yaml の各プラットフォーム配備状況",
-        "show platform pcieinfo と pcieutil pcie_generate の分離 (誤上書き防止) が現行 master で守られているか確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/platform/s3ip-sysfs-specification.md",
-      "verification": "hld-only",
-      "concerns": [
-        "/sys_switch/ tree の現行 vendor 採用状況（platform/<vendor>/sonic_platform/）確認",
-        "s3ip_sysfs_framework HLD と本仕様の対応 / SONiC 側 plugin 取り込み確認",
-        "temp/vol/curr の max/min の R/W がどの consumer から書かれるか整合確認",
-        "modular / Smart Switch slot への namespace 拡張の整合確認",
-        "仕様文書の数値型 (millidegree / mV / mA / RPM) と SONiC platform API の単位整合確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md",
-      "issue": 683,
-      "verification": "hld-only",
-      "concerns": [
-        "sfputil read-eeprom / write-eeprom コマンドの sonic-utilities sfputil モジュール取り込み確認",
-        "規格 (CMIS / SFF-8636 / SFF-8472) 別の page-to-overall offset 変換実装確認",
-        "--verify オプションの read-back ロジック実装確認",
-        "ベンダ platform API plugin での NotImplementedError ハンドリング (専用エラー表示) 動作確認",
-        "RJ45 ポートに対する明示的なブロック処理の実装確認",
-        "HLD は Initial で日付欄空欄。改訂履歴更新と master 取り込み状況追跡が必要"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md",
-      "verification": "hld-only",
-      "concerns": [
-        "sfputil read-eeprom / write-eeprom サブコマンドの sonic-utilities への取り込み確認",
-        "page/offset → 全体 offset 変換ロジック (CMIS / sff8472 / sff8636) の実装存在確認",
-        "sfp.read_eeprom / sfp.write_eeprom の各 vendor platform 対応状況確認",
-        "--verify オプションの動作確認 (書込後リードバック比較)",
-        "sff8472 wire-addr (a0h/a2h) ハンドリングの実装確認"
-      ],
-      "priority": "low",
-      "issue": 528,
-      "pr": 529
     },
     {
       "page": "docs/platform/sonic-port-naming-convention-change.md",
@@ -2211,29 +2093,6 @@
       "priority": "low"
     },
     {
-      "page": "docs/system/dump-sfp-eeprom-page-data-in-show-techsupport-command.md",
-      "issue": 321,
-      "verification": "hld-only",
-      "concerns": [
-        "sfputil show eeprom-hexdump の --port / --page オプション拡張が sonic-utilities にあるか未確認",
-        "generate_dump からの save_cmd 呼び出し追加が現行 master にあるか未確認",
-        "platform API sfp.read_eeprom の sonic-platform-common での標準化状況確認"
-      ],
-      "priority": "low"
-    },
-    {
-      "page": "docs/system/sonic-debian-upgrade-cadence.md",
-      "verification": "hld-only",
-      "concerns": [
-        "直近の Debian Bookworm / Trixie 取り込みコミットの sonic-buildimage / sonic-linux-kernel 確認",
-        "slave container の Azure pipeline 定義状況確認",
-        "platform/broadcom/saibcm-modules-dnx の Debian 別 branch 運用確認",
-        "src/sonic-host-services の docker-sonic-vs 互換維持の現状確認",
-        "廃止された Debian バージョンと release ノート整合確認"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/system/sonic-feature-quality-definition.md",
       "verification": "meta",
       "concerns": [],
@@ -2242,27 +2101,16 @@
       "pr": 516
     },
     {
-      "page": "docs/system/sonic-optional-feature-control-enhancement.md",
-      "issue": 129,
-      "verification": "hld-only",
-      "concerns": [
-        "現行 master の FEATURE テーブル拡張フィールドとの差分",
-        "hostcfgd の FEATURE 購読パス最終形",
-        "sonic-cfggen のデフォルト FEATURE エントリ生成",
-        "sonic-feature.yang 等 YANG の追加状況",
-        "後発 HLD (event-driven reload, delayed services) との関係"
-      ],
-      "priority": "low"
-    },
-    {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",
       "issue": 316,
-      "verification": "hld-only",
+      "verification": "discrepancy-found",
       "concerns": [
-        "HLD 自身が一時的開発メモであり、現行 Warm Restart の正規仕様ではない",
-        "RedisClient の hmset / hgetallordered が現行 sonic-swss-common にあるか未確認",
-        "libsairedis の Redis API 冪等性パッチが現行 master に取り込まれているか未確認",
-        "swss-flushdb スクリプトの sonic-utilities 取り込み確認"
+        "HLD 自身が temporary な開発時メモ（冒頭の Note: This document is temporary）であり、現行 Warm Restart の正規仕様ではない",
+        "swss-flushdb スクリプトは現行 master の sonic-utilities / sonic-buildimage / sonic-swss-common にヒットしない（HLD と齟齬）",
+        "hgetallordered API は現行 sonic-swss-common common/ に見当たらず、HLD 当時の API に依存する記述が残る"
+      ],
+      "verified_concerns": [
+        "RedisClient::hmset / DBConnector::hmset / DBInterface::hmset は sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp} に存在し活きている"
       ],
       "priority": "low"
     }

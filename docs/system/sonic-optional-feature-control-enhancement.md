@@ -1,8 +1,8 @@
 ---
 title: FEATURE テーブルによるオプショナル機能の有効/無効制御
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/optional-feature-control/Optional-Feature-Control.md
@@ -13,11 +13,12 @@ related:
   cli:
     - config feature
     - show feature
-  yang: []
+  yang:
+    - sonic-feature
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD（2019 年）"
-    本ページは公式 HLD（Rev 0.1, 2019-10）のみを根拠に書かれている。FEATURE テーブルは 2019 年の本提案以降に大きく拡張され、現行 master では `state` 以外にも `auto_restart` / `delayed` / `has_global_scope` 等の多数フィールドを持つ。本ドキュメントは **オリジナル設計の最小構成** を示すもので、現行実装は別途検証が必要。
+!!! info "裏取りステータス: code-verified / 古い HLD（2019 年）の現行拡張版"
+    `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang` で FEATURE container と `feature-state` / `feature-owner` (kube|local) / `feature-scope-status` / `feature-delay-status` 型を確認。`sonic-host-services/scripts/featured` に `class FeatureHandler` (FEATURE table 購読) と `class FeatureDaemon`、`state` / `auto_restart` / `delayed` / `has_global_scope` / `has_per_asic_scope` 各フィールドの mod_entry 経路を確認。`sonic-utilities/show/feature.py` と `config/feature.py`、`sonic_package_manager/service_creator/feature.py` も実装済み。`sonic-buildimage/files/build_templates/init_cfg.json.j2` に FEATURE / AUTO_TECHSUPPORT_FEATURE / SYSLOG_CONFIG_FEATURE のデフォルト生成。本ページは Rev 0.1 (2019) ベースだが、現行実装は HLD 設計の方向に拡張されており実体と整合。
 
 # FEATURE テーブルによるオプショナル機能の有効/無効制御
 

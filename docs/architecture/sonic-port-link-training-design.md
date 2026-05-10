@@ -1,8 +1,8 @@
 ---
 title: ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/port_link_training/port-link-training-design.md
@@ -17,8 +17,8 @@ related:
     - sonic-port
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD のみを根拠にした再構成。PortsOrch 実装側の `m_port_cap_lt` フィールド存在、CLI と sonic-utilities 取込状況、ベンダ SAI の `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` 対応有無は未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/portsorch.cpp` で `setPortLinkTraining(const Port &port, bool state)` (L3709-)、`link_training_failure_map` / `link_training_rx_status_map` (SAI enum 文字列化マップ)、`SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` の参照コメント (L3199)、`m_lt_cfg` / `m_link_training` フィールド更新ロジック (L4872-4909) を確認。CLI 側は `sonic-utilities/scripts/intfutil` の `PORT_LINK_TRAINING_STATUS = 'link_training_status'`、`display_link_training_status()`、`generate_link_training_status()` を確認、`port/porthlpr.cpp` には `getLinkTrainingStr()` も実装済み。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` L112 に `leaf link_training` を確認。
 
 # ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）
 

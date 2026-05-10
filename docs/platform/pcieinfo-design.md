@@ -1,7 +1,7 @@
 ---
 title: pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
-    HLD は改訂日付が記載されておらず、Open Questions のまま終わっている。`sonic-utilities` の `pcieutil`、`sonic-platform-common` の `pcie_common.py` 実装、各プラットフォームの `pcie.yaml` 配備は要裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-platform-common/sonic_platform_base/sonic_pcie/` に `pcie_base.py`（抽象 `PcieBase`）と `pcie_common.py`（共通実装）を確認。`sonic-platform-daemons/sonic-pcied/` に PCIe 監視デーモン（pcied）も存在。本ページの設計（pcie.yaml をリファレンスとした PCIe デバイス検査と `pcie_generate` で yaml 自動生成）は実装に取り込み済み。HLD は改訂日付が無く Open Questions のまま終わっているが、実コードは安定している。
 
 # pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
 

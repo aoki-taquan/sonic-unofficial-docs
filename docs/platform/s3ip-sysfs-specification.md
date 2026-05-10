@@ -1,7 +1,7 @@
 ---
 title: S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    S3IP 仕様自体は規約文書。`/sys_switch/` 配下を提供する kernel module / driver の現行 vendor 取り込み、`s3ip_sysfs_framework_hld.md` 側の SONiC platform API plugin 統合は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/platform/s3ip-sysfs/` 直下に kernel module フレームワーク (`s3ip_sysfs_frame/`: `cpld_sysfs.c`, `temp_sensor_sysfs.c`, `vol_sensor_sysfs.c`, `curr_sensor_sysfs.c`, `fan_sysfs.c`, `psu_sysfs.c`, `transceiver_sysfs.c`, `sysled_sysfs.c`, `slot_sysfs.c`, `watchdog_sysfs.c`, `fpga_sysfs.c`, `switch.c`)、リファレンス driver (`demo_driver/`)、Makefile、init スクリプト (`scripts/s3ip-sysfs.service`, `s3ip_load.py`, `s3ip_sysfs_conf.json`) を確認。PDDF 経由でも `pddf_s3ip.py` が `/sys_switch/temp_sensor` 等を作成する。S3IP 仕様の `/sys_switch/` ツリー設計は SONiC 側に取り込み済み。
 
 # S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
 

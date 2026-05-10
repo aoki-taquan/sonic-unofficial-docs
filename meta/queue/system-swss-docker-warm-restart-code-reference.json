@@ -1,12 +1,14 @@
 {
   "page": "docs/system/swss-docker-warm-restart-code-reference.md",
   "issue": 316,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "HLD 自身が一時的開発メモであり、現行 Warm Restart の正規仕様ではない",
-    "RedisClient の hmset / hgetallordered が現行 sonic-swss-common にあるか未確認",
-    "libsairedis の Redis API 冪等性パッチが現行 master に取り込まれているか未確認",
-    "swss-flushdb スクリプトの sonic-utilities 取り込み確認"
+    "HLD 自身が temporary な開発時メモ（冒頭の Note: This document is temporary）であり、現行 Warm Restart の正規仕様ではない",
+    "swss-flushdb スクリプトは現行 master の sonic-utilities / sonic-buildimage / sonic-swss-common にヒットしない（HLD と齟齬）",
+    "hgetallordered API は現行 sonic-swss-common common/ に見当たらず、HLD 当時の API に依存する記述が残る"
+  ],
+  "verified_concerns": [
+    "RedisClient::hmset / DBConnector::hmset / DBInterface::hmset は sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp} に存在し活きている"
   ],
   "priority": "low"
 }
