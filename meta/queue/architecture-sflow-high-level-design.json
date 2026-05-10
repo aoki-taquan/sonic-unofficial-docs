@@ -1,13 +1,14 @@
 {
   "page": "docs/architecture/sflow-high-level-design.md",
-  "verification": "hld-only",
-  "concerns": [
-    "sflowmgrd daemon の現行 master 取り込みと sflow.timer / supervisor 経路の確認",
-    "SflowOrch の SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE 設定経路（orchagent / syncd）が community SAI に取り込まれているか未確認",
-    "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマが現行 sonic-yang-models にあるか未確認",
-    "config sflow CLI の sonic-utilities (sfutil / cli-clients) への取り込み確認",
-    "リンク速度→sample_rate 自動算出ロジックの現行実装値（特に 200G/400G への拡張）確認",
-    "collector 上限 2 件・VRF 越し送信の hsflowd 設定生成が現行で機能するか確認"
+  "verification": "discrepancy-found",
+  "concerns": [],
+  "verified_concerns": [
+    "sflowmgrd: sonic-swss/cfgmgr/sflowmgrd.cpp + sflowmgr.cpp (CFG_SFLOW_TABLE / CFG_SFLOW_SESSION_TABLE / STATE_PORT_TABLE 監視) で確認",
+    "SflowOrch SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE: sonic-swss/orchagent/sfloworch.cpp:120,164,227 で確認",
+    "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマ: sonic-yang-models sonic-sflow.yang 取り込み済み",
+    "config sflow CLI: sonic-utilities/config/main.py に取り込み済み",
+    "sflow.service.j2: sonic-buildimage/files/build_templates/sflow.service.j2 取り込み済み",
+    "discrepancy: 既定 sample_rate 表が HLD (ifSpeed/1e6) と乖離。本ページを (1G→1000, 10G→10000, 40G→40000, 50G→50000, 100G→100000, 400G→400000) に訂正"
   ],
   "priority": "medium"
 }

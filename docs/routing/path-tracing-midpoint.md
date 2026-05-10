@@ -1,7 +1,7 @@
 ---
 title: Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -18,8 +18,8 @@ related:
     - sonic-port
 ---
 
-!!! info "裏取りステータス: HLD-only / 比較的新しい (2023-08)"
-    HLD は Rev 0.1 (2023-08)。`SAI_PORT_ATTR_PATH_TRACING_INTF_ID` / `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TEMPLATE` (saiport.h) のベンダ SAI 対応、`PORT.pt_interface_id` / `PORT.pt_timestamp_template` の現行 master CONFIG_DB スキーマ、`portsyncd` / `portmgrd` / `PortsOrch` の Path Tracing コードパスは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。Path Tracing: sonic-swss/doc/swss-schema.md:30,1026 (pt_interface_id, pt_timestamp_template) / sonic-swss/tests/test_port.py:310-412 (test_PortPathTracing, SAI_PORT_ATTR_PATH_TRACING_INTF, SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE, SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19) で確認。
 
 # Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）
 

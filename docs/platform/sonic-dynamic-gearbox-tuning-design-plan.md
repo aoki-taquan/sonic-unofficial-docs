@@ -1,7 +1,7 @@
 ---
 title: Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only / 比較的新しい (2024-12 ～ 2026-02)"
-    HLD は Rev 0.3 (2026-02)。`xcvrd` の media_settings.json gearbox attr 解釈、`orchagent` の `doPortTask` 内 gearbox serdes attr 適用 (`sonic-swss` PR #4113)、SAI レベルでの line-side / system-side serdes 属性は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。gearbox: sonic-swss/orchagent/portsorch.cpp の m_gearboxTable / m_gearboxEnabled 経路 + tests/mock_tests/portsorch_ut.cpp:1711-1721 (gb_line_pre1..3, gb_line_main, gb_line_post1..3, gb_system_*) で 7 種 attr を確認。
 
 # Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
 

@@ -1,7 +1,7 @@
 ---
 title: SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）
 area: routing
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -23,8 +23,8 @@ related:
     - sonic-crm
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 1.0 (2021-12)。`fpmsyncd` の MPLS netlink 解釈、`LABEL_ROUTE_TABLE` の APPL_DB スキーマ、`SAI_INSEG_ENTRY` 系 SAI API のベンダ実装、`config interface mpls` CLI の sonic-utilities 取り込みは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。fpmsyncd MPLS: sonic-swss/fpmsyncd/routesync.cpp:158 (APP_LABEL_ROUTE_TABLE_NAME ProducerStateTable), 2066 (AF_MPLS), 2914 (LWTUNNEL_ENCAP_MPLS), 2936 (RTA_NEWDST = MPLS NH label stack) で確認。
 
 # SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）
 

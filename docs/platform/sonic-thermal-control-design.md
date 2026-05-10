@@ -1,7 +1,7 @@
 ---
 title: Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.3。`thermalctld`（または `thermal_control` 内モジュール）の実装、`STATE_DB TEMPERATURE_INFO` / `FAN_INFO` の現行 master スキーマ、ベンダ別 thermal policy / algorithm の plug-in は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。thermalctld: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld (POLICY_FILE = /usr/share/sonic/platform/thermal_policy.json:1291) / ThermalBase / FanBase: sonic-platform-common/sonic_platform_base/{thermal_base.py,fan_base.py,fan_drawer_base.py,sonic_thermal_control/} で確認。
 
 # Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）
 

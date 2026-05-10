@@ -1,7 +1,7 @@
 ---
 title: Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.3。`sonic-snmpagent` (`sonic_ax_impl`) の Entity MIB 拡張、`entPhysicalContainedIn` による hierarchy 表現、PSU / FAN / sensor の MIB 化が現行 master でどこまで実装されているかは未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。rfc2737 (Entity MIB): sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2737.py:241,672,822,1144 (entPhysicalContainedIn, FAN_INFO map) / rfc3433 (Entity Sensor MIB): rfc3433.py に RFC 3433 link / sub_oid: physical_entity_sub_oid_generator.py で確認。
 
 # Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
 

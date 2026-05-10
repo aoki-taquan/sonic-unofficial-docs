@@ -1,7 +1,7 @@
 ---
 title: SONiC Management Framework（REST / gNMI / Translib / Transformer）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
     - sonic-*
 ---
 
-!!! warning "裏取りステータス: HLD-only / 大規模 HLD"
-    HLD は 170KB 超の包括設計書。ここでは **architecturally distinctive な要素**（北/南境界の責務分担と Translib / Transformer の役割）に絞る。各 transformer・URL マッピング・openconfig モジュール対応など詳細は HLD `doc/mgmt/Management Framework.md` を参照。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。docker-sonic-mgmt-framework: sonic-buildimage/dockers/docker-sonic-mgmt-framework / sonic-mgmt-common/translib/transformer/* (interfaces / portchannel / sflow openconfig + sonic test) で確認。
 
 # SONiC Management Framework（REST / gNMI / Translib / Transformer）
 

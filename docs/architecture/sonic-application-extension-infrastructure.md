@@ -1,7 +1,7 @@
 ---
 title: SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -16,8 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-package-manager` / SPM の現行 master 実装と manifest スキーマは未確認。HLD は機能名が「SPM」「sonic-package-manager」と混在する。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。SPM CLI: sonic-utilities/sonic_package_manager/{main.py,manifest.py,manager.py,database.py,dockerapi.py} で確認。
 
 # SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
 

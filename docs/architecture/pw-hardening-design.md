@@ -1,7 +1,7 @@
 ---
 title: パスワード強化（password hardening / aging / complexity / history）
 area: architecture
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -17,8 +17,8 @@ related:
     - sonic-passw-hardening
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。実装側（hostcfgd の PAM / login.defs / pam_pwquality / pam_pwhistory 連携）の現行 master との一致は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。PASSW_HARDENING: sonic-host-services/scripts/hostcfgd + tests/hostcfgd/hostcfgd_passwh_test.py / sonic-utilities config/plugins/sonic-passwh_yang.py / sonic-yang-models/yang-models/sonic-passwh.yang で確認。
 
 # パスワード強化（password hardening / aging / complexity / history）
 

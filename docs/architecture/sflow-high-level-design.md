@@ -1,7 +1,7 @@
 ---
 title: sFlow（hsflowd / sflowmgrd / SAI sample-packet）
 area: architecture
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
     - sonic-sflow
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。実装側（`sflowmgrd` / `hsflowd` プラグイン / SAI sample-packet API）の現行 master との一致は未確認。
+!!! danger "裏取りステータス: discrepancy-found"
+    実装側裏取り済み（`sonic-swss/cfgmgr/sflowmgr.cpp` の `SflowMgr` および `orchagent/sfloworch.cpp` の `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` 設定経路、`sonic-buildimage/files/build_templates/sflow.service.j2`、`sonic-yang-models/yang-models/sonic-sflow.yang`、`sonic-utilities/config/main.py` の `config sflow`）。ただし下記「sample_rate 既定値」表は HLD と乖離あり: HLD (`sonic-net/SONiC` `doc/sflow/sflow_hld.md` L492-501) は `(ifSpeed / 1e6)` ＝ 1G→1000 / 10G→10000 / 40G→40000 / 50G→50000 / 100G→100000 / 400G→400000 と定義しており、実装も `sflowmgr.cpp::findSamplingRate()` で `oper_speed` (Mbps) を返すだけ。本ページが書いていた「100G→50000 / 50G→30000 / 40G→30000 / 25G→10000」は誤り。
 
 # sFlow（hsflowd / sflowmgrd / SAI sample-packet）
 
@@ -57,16 +57,16 @@ flowchart LR
 
 ## sample_rate 既定値
 
-リンク速度から自動計算する設計（HLD 表記）:
+HLD と実装は揃って `(ifSpeed / 1e6)` を既定値とする（`SflowMgr::findSamplingRate()` は `oper_speed` 文字列を Mbps 単位でそのまま返す）:
 
-- 100G → 50000
-- 50G  → 30000
-- 40G  → 30000
-- 25G  → 10000
-- 10G  → 10000
 - 1G   → 1000
+- 10G  → 10000
+- 40G  → 40000
+- 50G  → 50000
+- 100G → 100000
+- 400G → 400000
 
-明示設定があればそちらを優先。port speed 変更時は `sflowmgrd` が追従して `SFLOW_SESSION_TABLE` を更新する想定。
+明示設定があればそちらを優先。port speed 変更時は `sflowmgrd` が追従して `SFLOW_SESSION_TABLE` を更新する（`sflowProcessOperSpeed()`）。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/sflow/sflow_hld.md#L1-L400 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)

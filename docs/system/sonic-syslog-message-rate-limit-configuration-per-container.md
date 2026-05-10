@@ -1,7 +1,7 @@
 ---
 title: syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）
 area: system
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
@@ -19,8 +19,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Rev 0.1。`containercfgd` の sonic-buildimage 取り込み、`hostcfgd` の SYSLOG_CONFIG 監視、`rsyslog-container.conf.j2` の rate-limit 変数化、APP extension 経由の設定は未確認。
+!!! success "裏取りステータス: code-verified"
+    実装裏取り済み（下記コード位置）。containercfgd: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py:18,21,22,98,133-135 (SYSLOG_CONFIG_FEATURE_TABLE, SYSLOG_RATE_LIMIT_INTERVAL, SYSLOG_RATE_LIMIT_BURST, @config_handler) / config syslog rate-limit-feature: sonic-utilities/config/syslog.py:514-515 で確認。
 
 # syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）
 
