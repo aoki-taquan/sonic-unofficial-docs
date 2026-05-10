@@ -1,0 +1,13 @@
+{
+  "page": "docs/management/sonic-management-framework.md",
+  "verification": "hld-only",
+  "concerns": [
+    "sonic-mgmt-framework / sonic-mgmt-common の現行 master 取り込みと container 構成確認",
+    "Translib / Transformer のモジュール一覧（openconfig 各モジュールへの対応範囲）の現行実装確認",
+    "KLISH CLI と従来 sonic-utilities CLI の共存方針が現行実装でどうなっているか確認",
+    "REST / gNMI 認証（cert + TACACS+ / RADIUS / LDAP）の現行統合状態確認",
+    "HLD が 170KB の包括設計書であるため、章ごと（REST / gNMI / Translib / Transformer 各論）に別ページ化する余地ありの確認",
+    "GCU / JSON Patch ordering との transactional 統合（partial failure 時の rollback）の現行実装確認"
+  ],
+  "priority": "high"
+}
