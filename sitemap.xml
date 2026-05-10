@@ -653,6 +653,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonic-thermal-control-design/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sonictpidsettinghld1/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1570,6 +1574,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/snmp-migration-from-snmp-yml-to-configdb/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/snmp-transceiver-monitoring-testbed-test-plan/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
