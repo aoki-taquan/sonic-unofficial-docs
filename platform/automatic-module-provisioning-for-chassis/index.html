@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8302,6 +8308,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fec-flr-support-in-sonic/" class="md-nav__link">
         
   
@@ -8778,6 +8812,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8926,6 +8988,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14069,9 +14159,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 実装は未着手（提案段階）</p>
-<p>2026-05-09 時点で <code>sonic-net</code> org 全体を <code>MODULE_STATUS_PROVISION</code> / <code>provision_module</code> / <code>sonic-provisiond</code> で grep してもヒットは HLD 本体のみ。<code>sonic-platform-common</code> の <code>sonic_platform_base/module_base.py</code> には HLD 提案の 3 定数 (<code>MODULE_STATUS_PROVISION_READY</code> / <code>_PENDING</code> / <code>MODULE_STATUS_PROVISIONED</code>) も <code>provision_module()</code> API も存在せず、<code>sonic-platform-daemons</code> への <code>sonic-provisiond</code> デーモン追加もまだ無い。HLD は Rev 1.0（2026-03）と比較的新しいが、コード反映はこれからのフェーズ（verified at: 2026-05-09）。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（提案段階・実装未着手であることを再確認）</p>
+<p>2026-05-09 時点で <code>sonic-platform-common/sonic_platform_base/module_base.py</code> を直読し、<code>MODULE_STATUS_EMPTY</code> / <code>_OFFLINE</code> / <code>_POWERED_DOWN</code> / <code>_PRESENT</code> / <code>_FAULT</code> / <code>_ONLINE</code> の 6 定数のみを確認（HLD 提案の <code>MODULE_STATUS_PROVISION_READY</code> / <code>_PENDING</code> / <code>MODULE_STATUS_PROVISIONED</code> は <strong>未追加</strong>）。<code>sonic-platform-daemons</code> 直下にも <code>sonic-provisiond</code> ディレクトリは存在せず、<code>sonic-buildimage</code> で <code>provision_module</code> の文字列もヒットしない。HLD は Rev 1.0 (2026-03) と新しく、<strong>設計通り「提案段階」のままコード未反映</strong> であることを実コードで再確認した。本ページは HLD の設計意図を写したもので、現行 SONiC の実機能ではない。</p>
 </div>
 <h1 id="chassis-line-card-sonic-provisiond-provision_module">Chassis Line Card 自動プロビジョニング（<code>sonic-provisiond</code> / <code>provision_module</code>）<a class="headerlink" href="#chassis-line-card-sonic-provisiond-provision_module" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

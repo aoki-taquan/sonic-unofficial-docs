@@ -8073,6 +8073,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8310,6 +8316,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8806,6 +8840,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8954,6 +9016,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14125,9 +14215,13 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 開発時メモ</p>
-<p>このドキュメントは HLD 自身が冒頭で <strong>"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"</strong> と述べる、warm-restart 機能開発当時のコードリファレンスメモ。<strong>現行 master の Warm Restart の正確な仕様ではない</strong>。具体的な分岐先 PR は当時の開発者個人の fork であり、現行 master では取り込み・改変されている。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（HLD は temporary な開発メモであり一部 API は現行と齟齬）</p>
+<p>HLD 自身が冒頭で <strong>"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"</strong> と述べる、warm-restart 機能開発当時のコードリファレンスメモ。実コードと突き合わせた結果:
+- <code>RedisClient::hmset</code> / <code>DBConnector::hmset</code> は現行 <code>sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp}</code> に <strong>存在し</strong> 実装も活きている（concerns 解消）
+- 一方 <code>swss-flushdb</code> スクリプトは現行 master の <code>sonic-utilities</code> / <code>sonic-buildimage</code> / <code>sonic-swss-common</code> に <strong>ヒットしない</strong> （HLD の記述と齟齬）
+- <code>hgetallordered</code> も現行 sonic-swss-common には見当たらず、HLD 当時の API に依存する記述あり</p>
+<p>本ページは現行 master の正規仕様ではないため、<strong>Warm Restart の挙動を理解する目的では <code>docs/system/sonic-warm-reboot.md</code> 等の正式 HLD ベースのページを参照すべき</strong>。本ページは歴史的開発メモのアーカイブとして残す。</p>
 </div>
 <h1 id="swss-docker-warm-restart">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）<a class="headerlink" href="#swss-docker-warm-restart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

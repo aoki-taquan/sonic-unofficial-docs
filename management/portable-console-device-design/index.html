@@ -8034,6 +8034,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8271,6 +8277,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8767,6 +8801,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8915,6 +8977,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14047,9 +14137,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.1 / 2022-12 改訂。<code>sonic_platform_common/sonic_console/</code> 配下の API クラス階層、<code>CONSOLE_SWITCH</code> テーブルへのフィールド追加、ベンダー .deb パッケージの自動インストール経路が現行 master でこの仕様どおりかは未確認。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（HLD のクラス階層は未実装）</p>
+<p><code>sonic-platform-common</code> master を確認した結果、HLD が提案する <code>sonic_console/&lt;vendor&gt;/console_&lt;model&gt;.py</code> ディレクトリ階層、<code>PortableConsoleDeviceBase</code> 抽象クラス、<code>factory.py</code> は <strong>存在しない</strong>（<code>sonic_platform_base/</code> 直下にも console 系の base クラスは無し）。<code>CONSOLE_SWITCH</code> テーブル自体は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code>（escape_char 等を含む）と <code>sonic-utilities/config/console.py</code> に取り込み済みで、<code>consutil</code> / Console-Monitor HLD 系の機能は別 HLD として実装されているが、本ページが扱う「ポータブル console デバイスの抽象化」HLD は提案のみで実装着手されていない。本文の API/ディレクトリ構造記述は <strong>HLD 提案そのもの</strong> として扱うこと。</p>
 </div>
 <h1 id="portable-console-device-usb-console">Portable Console Device 設計（USB ベンダー console デバイスの抽象化）<a class="headerlink" href="#portable-console-device-usb-console" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

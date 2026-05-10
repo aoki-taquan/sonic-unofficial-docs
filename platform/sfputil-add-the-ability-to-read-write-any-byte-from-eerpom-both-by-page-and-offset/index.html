@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8036,6 +8042,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8673,6 +8707,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8821,6 +8883,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -13859,9 +13949,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>sfputil read-eeprom</code> / <code>write-eeprom</code> の sonic-utilities への取り込み、<code>sfp.read_eeprom</code> / <code>sfp.write_eeprom</code> platform API の各 vendor 対応、CMIS / sff8472 / sff8636 の page/offset 範囲チェックロジックの現行実装は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/sfputil/main.py</code> で <code>read-eeprom</code> (L1812-) / <code>write-eeprom</code> (L1862-) サブコマンドを確認。<code>--page (-n)</code> / <code>--offset (-o)</code> / <code>--size</code> / <code>--no-format</code> / <code>--wire-addr</code>（sff8472 用）/ <code>--verify</code>（write 後リードバック比較）の各オプション、および <code>get_overall_offset_sff8472</code> ヘルパによる sff8472 wire-addr ハンドリング、<code>sfp.read_eeprom(flat_offset, size)</code> / <code>sfp.write_eeprom(overall_offset, len(bytes), bytes)</code> 経路をすべて確認。<code>sfp.read_eeprom() is currently not implemented for this platform</code> の ERROR_NOT_IMPLEMENTED 経路もエラー処理として実装されている。</p>
 </div>
 <h1 id="sfputil-read-eeprom-write-eeprom-sfpqsfp-eeprom"><code>sfputil read-eeprom</code> / <code>write-eeprom</code>（ページ + オフセット指定で SFP/QSFP EEPROM 操作）<a class="headerlink" href="#sfputil-read-eeprom-write-eeprom-sfpqsfp-eeprom" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

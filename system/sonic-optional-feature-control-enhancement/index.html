@@ -8023,6 +8023,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8260,6 +8266,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8756,6 +8790,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8904,6 +8966,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14025,9 +14115,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD（2019 年）</p>
-<p>本ページは公式 HLD（Rev 0.1, 2019-10）のみを根拠に書かれている。FEATURE テーブルは 2019 年の本提案以降に大きく拡張され、現行 master では <code>state</code> 以外にも <code>auto_restart</code> / <code>delayed</code> / <code>has_global_scope</code> 等の多数フィールドを持つ。本ドキュメントは <strong>オリジナル設計の最小構成</strong> を示すもので、現行実装は別途検証が必要。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified / 古い HLD（2019 年）の現行拡張版</p>
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang</code> で FEATURE container と <code>feature-state</code> / <code>feature-owner</code> (kube|local) / <code>feature-scope-status</code> / <code>feature-delay-status</code> 型を確認。<code>sonic-host-services/scripts/featured</code> に <code>class FeatureHandler</code> (FEATURE table 購読) と <code>class FeatureDaemon</code>、<code>state</code> / <code>auto_restart</code> / <code>delayed</code> / <code>has_global_scope</code> / <code>has_per_asic_scope</code> 各フィールドの mod_entry 経路を確認。<code>sonic-utilities/show/feature.py</code> と <code>config/feature.py</code>、<code>sonic_package_manager/service_creator/feature.py</code> も実装済み。<code>sonic-buildimage/files/build_templates/init_cfg.json.j2</code> に FEATURE / AUTO_TECHSUPPORT_FEATURE / SYSLOG_CONFIG_FEATURE のデフォルト生成。本ページは Rev 0.1 (2019) ベースだが、現行実装は HLD 設計の方向に拡張されており実体と整合。</p>
 </div>
 <h1 id="feature">FEATURE テーブルによるオプショナル機能の有効/無効制御<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

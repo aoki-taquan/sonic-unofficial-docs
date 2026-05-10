@@ -8012,6 +8012,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8249,6 +8255,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8745,6 +8779,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8893,6 +8955,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14003,9 +14093,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>sfputil show eeprom-hexdump</code> の <code>--port</code> <code>--page</code> 拡張、および <code>generate_dump</code> 内での自動呼び出しが現行 master の sonic-utilities にあるかは未確認。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-utilities/sfputil/main.py</code> の <code>eeprom-hexdump</code> (L731-) で <code>-p/--port</code> と <code>-n/--page</code> を確認、内部で <code>eeprom_hexdump_single_port</code> → <code>eeprom_hexdump_pages_general</code> / <code>_pages_sff8472</code> 経路を実装。<code>sonic-utilities/scripts/generate_dump</code> L2603 で <code>save_cmd "sfputil show eeprom-hexdump" "interface.xcvrs.eeprom.raw" &amp;</code> を確認、show techsupport の dump tarball に SFP EEPROM ページが自動的に含まれる。</p>
 </div>
 <h1 id="show-techsupport-sfp-eeprom">show techsupport での SFP EEPROM ページダンプ取り込み<a class="headerlink" href="#show-techsupport-sfp-eeprom" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -8006,6 +8006,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8243,6 +8249,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8739,6 +8773,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8887,6 +8949,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -13991,9 +14081,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は v0.2 (2022-07)。<code>symcrypt-openssl</code> deb の sonic-buildimage 同梱、<code>/usr/lib/ssl/openssl-fips.cnf</code> の install、<code>sonic-installer set-fips/get-fips</code> の sonic-utilities 取り込み、<code>INCLUDE_FIPS</code> / <code>ENABLE_FIPS</code> build flag は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/rules/config</code> L370-373 で <code>INCLUDE_FIPS ?= y</code> / <code>ENABLE_FIPS ?= n</code> (amd64/arm64 のみ) を確認。<code>rules/sonic-fips.mk</code> で <code>FIPS_VERSION</code> / <code>FIPS_OPENSSL_VERSION</code> / <code>FIPS_OPENSSH_VERSION</code> / <code>FIPS_PYTHON_VERSION</code> / <code>FIPS_GOLANG_VERSION</code> / <code>FIPS_KRB5_VERSION</code> を BLDENV (trixie / bookworm) ごとに定義（trixie 例: <code>openssl 3.5.4-1+fips</code>、<code>openssh 10.0p1-7+fips</code>、<code>golang 1.24.4-1+fips</code>）。<code>src/sonic-fips/Makefile</code> で Azure/sonic-fips リポを <code>git clone -b $(FIPS_VERSION)</code> する SymCrypt-OpenSSL ビルド経路を確認、<code>files/build/versions-public/host-image/versions-deb-trixie</code> に <code>symcrypt-openssl==0.1</code> を pin。<code>sonic-utilities/sonic_installer/main.py</code> L688-721 で <code>@sonic_installer.command('set-fips')</code> / <code>'get-fips'</code> および <code>bootloader.set_fips/get_fips</code> の呼び出しを確認。<code>src/openssh/</code>（patch 同梱）も存在。</p>
 </div>
 <h1 id="openssl-fips-140-3symcrypt-engine-sonic_fips1">OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）<a class="headerlink" href="#openssl-fips-140-3symcrypt-engine-sonic_fips1" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

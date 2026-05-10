@@ -8095,6 +8095,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8332,6 +8338,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8828,6 +8862,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8976,6 +9038,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14169,9 +14259,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 概観文書</p>
-<p>本 HLD は SONiC の設定手段を <strong>概観する文書</strong> であり、各機構の挙動詳細は別 HLD / 既存実装に依存する。<code>config apply-patch</code> の <code>--dry-run</code> / checkpoint / rollback フラグの現行 sonic-utilities 実装、ZTP の DHCP option 67 / USB 起動経路、RESTCONF / gNMI server 化の有効化方法などは別途裏取りが必要。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified / 概観文書</p>
+<p><code>sonic-utilities/config/main.py</code> で <code>apply-patch</code> / <code>replace</code> / <code>rollback</code> の 3 サブコマンドおよび <code>--dry-run</code> / <code>--ignore-non-yang-tables</code> / <code>--ignore-path</code> オプションを確認（<code>@click.argument('checkpoint-name')</code> を含む rollback 経路）。<code>generic_config_updater/</code> パッケージ（<code>generic_updater.py</code>、<code>patch_sorter.py</code>、<code>change_applier.py</code>、<code>gu_common.py</code>、<code>field_operation_validators.py</code>、<code>gcu_services_validator.conf.json</code>）も実装済み。<code>sonic-buildimage/src/sonic-ztp</code> 配下に ZTP 実装、<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd</code> に BGP 設定エージェントが存在。本 HLD は <strong>設定手段の概観文書</strong> で各機構の詳細は別 HLD に委ねる方針自体は妥当。</p>
 </div>
 <h1 id="sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）<a class="headerlink" href="#sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

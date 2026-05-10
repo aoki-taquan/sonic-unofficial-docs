@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8036,6 +8042,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8756,6 +8790,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8904,6 +8966,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14025,9 +14115,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 旧設計から現行への移行記述</p>
-<p>本ドキュメントは「旧 plugin 形式（<code>psuutil.py</code> 等の独立 plugin）」から「新 <code>sonic_platform</code> パッケージ階層」への移行を述べる、初期段階の HLD。現行 master では新 API がほぼ完全に普及済みだが、HLD の文面（特に "Current Solution" 節）は移行前の状態を述べている点に注意。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified / 旧設計から現行への移行記述</p>
+<p><code>sonic-platform-common/sonic_platform_base/</code> を直読して <code>chassis_base.py</code> (<code>class ChassisBase</code>)、<code>psu_base.py</code> (<code>class PsuBase</code>)、<code>fan_base.py</code> (<code>class FanBase</code>)、<code>sfp_base.py</code> (<code>class SfpBase</code>)、<code>module_base.py</code> (<code>class ModuleBase</code>)、<code>component_base.py</code> (<code>class ComponentBase</code>)、<code>device_base.py</code>、<code>fan_drawer_base.py</code>、<code>platform_base.py</code>、<code>sensor_base.py</code>、<code>bmc_base.py</code>、<code>liquid_cooling_base.py</code> 等の基底クラス階層を確認。HLD の "Current Solution" 節は <strong>旧 plugin 形式から新階層への移行時</strong> の説明であり、現行 master では新 API が普及済み。本ページは HLD の設計意図を中心に書かれている点に注意（移行前の細部記述は現行と異なる）。</p>
 </div>
 <h1 id="platform-apisonic_platform-chassis-psufansfp-python">新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）<a class="headerlink" href="#platform-apisonic_platform-chassis-psufansfp-python" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

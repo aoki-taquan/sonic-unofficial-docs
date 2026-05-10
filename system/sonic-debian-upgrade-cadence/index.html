@@ -7962,6 +7962,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8199,6 +8205,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8695,6 +8729,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8843,6 +8905,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -13903,9 +13993,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / プロセス文書</p>
-<p>HLD は v0.1 (2024-01)。実コードに対する裏取りは不適切（ガイドライン文書）。実装側の検証ポイントは sonic-buildimage の slave container 追加経緯、<code>sonic-linux-kernel</code> 開発ブランチ運用、各 release の commit 履歴に依存する。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified（プロセス文書 / ビルド変数で確認）</p>
+<p><code>sonic-buildimage/Makefile</code> で <code>NOSTRETCH ?= 1</code> / <code>NOBUSTER ?= 1</code> / <code>NOBULLSEYE ?= 1</code> / <code>NOBOOKWORM ?= 0</code> / <code>NOTRIXIE ?= 0</code>、それに対応する <code>BUILD_STRETCH=1</code> / <code>BUILD_BUSTER=1</code> / <code>BUILD_BULLSEYE</code> 等の分岐を確認（HLD のリリース cadence 通り Bookworm/Trixie が活きていて Stretch/Buster/Bullseye が deprecated default）。<code>sonic-buildimage/dockers/</code> 配下に <code>docker-config-engine-stretch</code> / <code>-buster</code> / <code>-bullseye</code> / <code>-bookworm</code> / <code>-trixie</code> の 5 系列の Dockerfile.j2 が並列維持されている。プロセス文書だが、ビルド変数定義が HLD 通りに実装されていることを直接確認した。</p>
 </div>
 <h1 id="sonic-debian-base-container-cadence">SONiC Debian アップグレード方針（base / container / 廃止 cadence）<a class="headerlink" href="#sonic-debian-base-container-cadence" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8036,6 +8042,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8756,6 +8790,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8904,6 +8966,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14025,9 +14115,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は改訂日付が記載されていない。<code>sonic-platform-common</code> の <code>LiquidCoolingBase</code> クラス、<code>thermalctld</code> の <code>LiquidCoolingUpdater</code> 別スレッド、system-health の <code>_check_liquid_cooling_status</code>、CLI 取り込みは要裏取り。</p>
+<div class="admonition danger">
+<p class="admonition-title">裏取りステータス: discrepancy-found（STATE_DB テーブル名が <code>LIQUID_COOLING_DEVICE</code> ではなく <code>LIQUID_COOLING_INFO</code>）</p>
+<p><code>sonic-platform-common/sonic_platform_base/liquid_cooling_base.py</code> に <code>LeakSeverity</code> enum (<code>MINOR</code>/<code>CRITICAL</code>)・<code>LeakageSensorBase</code> (継承元 <code>SensorBase</code>) を確認。<code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld</code> で <code>LiquidCoolingUpdater</code> クラス、<code>liquid_cooling_update_interval=0.5</code> 秒のポーラを確認。<strong>ただし STATE_DB のテーブル名は本ページが記述する <code>LIQUID_COOLING_DEVICE</code> ではなく実コードでは <code>LIQUID_COOLING_INFO</code></strong>（<code>LIQUID_COOLING_INFO_TABLE_NAME = 'LIQUID_COOLING_INFO'</code>）。<code>mlnx-platform-api/sonic_platform/liquid_cooling.py</code> にベンダー実装も存在。本ページのスキーマ記述部分は HLD ベースの記述であり、現行 master のテーブル名と差異がある点に注意。</p>
 </div>
 <h1 id="liquidcoolingbase-thermalctld-system-health-gnmi">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）<a class="headerlink" href="#liquidcoolingbase-thermalctld-system-health-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

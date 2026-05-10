@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8036,6 +8042,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8745,6 +8779,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8893,6 +8955,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14003,9 +14093,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 古い HLD</p>
-<p>HLD は改訂日付が記載されておらず、Open Questions のまま終わっている。<code>sonic-utilities</code> の <code>pcieutil</code>、<code>sonic-platform-common</code> の <code>pcie_common.py</code> 実装、各プラットフォームの <code>pcie.yaml</code> 配備は要裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-platform-common/sonic_platform_base/sonic_pcie/</code> に <code>pcie_base.py</code>（抽象 <code>PcieBase</code>）と <code>pcie_common.py</code>（共通実装）を確認。<code>sonic-platform-daemons/sonic-pcied/</code> に PCIe 監視デーモン（pcied）も存在。本ページの設計（pcie.yaml をリファレンスとした PCIe デバイス検査と <code>pcie_generate</code> で yaml 自動生成）は実装に取り込み済み。HLD は改訂日付が無く Open Questions のまま終わっているが、実コードは安定している。</p>
 </div>
 <h1 id="pcieutil-show-platform-pcieinfopcie-pcieyaml">pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）<a class="headerlink" href="#pcieutil-show-platform-pcieinfopcie-pcieyaml" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

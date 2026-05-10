@@ -7796,6 +7796,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8036,6 +8042,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8706,6 +8740,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8854,6 +8916,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -13925,9 +14015,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>S3IP 仕様自体は規約文書。<code>/sys_switch/</code> 配下を提供する kernel module / driver の現行 vendor 取り込み、<code>s3ip_sysfs_framework_hld.md</code> 側の SONiC platform API plugin 統合は未裏取り。</p>
+<div class="admonition info">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-buildimage/platform/s3ip-sysfs/</code> 直下に kernel module フレームワーク (<code>s3ip_sysfs_frame/</code>: <code>cpld_sysfs.c</code>, <code>temp_sensor_sysfs.c</code>, <code>vol_sensor_sysfs.c</code>, <code>curr_sensor_sysfs.c</code>, <code>fan_sysfs.c</code>, <code>psu_sysfs.c</code>, <code>transceiver_sysfs.c</code>, <code>sysled_sysfs.c</code>, <code>slot_sysfs.c</code>, <code>watchdog_sysfs.c</code>, <code>fpga_sysfs.c</code>, <code>switch.c</code>)、リファレンス driver (<code>demo_driver/</code>)、Makefile、init スクリプト (<code>scripts/s3ip-sysfs.service</code>, <code>s3ip_load.py</code>, <code>s3ip_sysfs_conf.json</code>) を確認。PDDF 経由でも <code>pddf_s3ip.py</code> が <code>/sys_switch/temp_sensor</code> 等を作成する。S3IP 仕様の <code>/sys_switch/</code> ツリー設計は SONiC 側に取り込み済み。</p>
 </div>
 <h1 id="s3ip-sysfs-platform-sys_switch">S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）<a class="headerlink" href="#s3ip-sysfs-platform-sys_switch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

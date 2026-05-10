@@ -8084,6 +8084,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8321,6 +8327,34 @@
     
   
     VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/fabric-port-support-on-sonic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
   
 
     
@@ -8817,6 +8851,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../platform/sonic-dynamic-gearbox-tuning-design-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../platform/sonic-fast-link-up/" class="md-nav__link">
         
   
@@ -8965,6 +9027,34 @@
     
   
     SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sonictpidsettinghld1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
   
 
     
@@ -14148,8 +14238,8 @@
 
 
 <div class="admonition info">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD のみを根拠にした再構成。PortsOrch 実装側の <code>m_port_cap_lt</code> フィールド存在、CLI と sonic-utilities 取込状況、ベンダ SAI の <code>SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE</code> 対応有無は未確認。</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss/orchagent/portsorch.cpp</code> で <code>setPortLinkTraining(const Port &amp;port, bool state)</code> (L3709-)、<code>link_training_failure_map</code> / <code>link_training_rx_status_map</code> (SAI enum 文字列化マップ)、<code>SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE</code> の参照コメント (L3199)、<code>m_lt_cfg</code> / <code>m_link_training</code> フィールド更新ロジック (L4872-4909) を確認。CLI 側は <code>sonic-utilities/scripts/intfutil</code> の <code>PORT_LINK_TRAINING_STATUS = 'link_training_status'</code>、<code>display_link_training_status()</code>、<code>generate_link_training_status()</code> を確認、<code>port/porthlpr.cpp</code> には <code>getLinkTrainingStr()</code> も実装済み。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang</code> L112 に <code>leaf link_training</code> を確認。</p>
 </div>
 <h1 id="ieee-8023-clause-7293-sai-fir">ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）<a class="headerlink" href="#ieee-8023-clause-7293-sai-fir" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
