@@ -1,0 +1,14 @@
+{
+  "page": "docs/system/hld-secure-boot.md",
+  "issue": 712,
+  "verification": "hld-only",
+  "concerns": [
+    "signing_secure_boot_dev.py / signing_secure_boot_production.py スクリプトの sonic-buildimage 取り込み確認",
+    "SB_BUILD build flag の Makefile 取り込みと dev/production 切替動作確認",
+    "shim → grub → vmlinuz → KO chain of trust の現行 master kernel config / image build での実装確認",
+    "Aboot 系 platform (Arista 系) での Secure Boot 適用範囲確認 (HLD は GRUB ベース機が主対象)",
+    "Phase 2 (userland binary / container image 署名 IMA 等) の議論状況確認",
+    "HLD は 2022-06 Phase 1 Design のまま停滞。現状 master との乖離リスクあり"
+  ],
+  "priority": "high"
+}
