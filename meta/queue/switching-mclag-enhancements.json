@@ -1,0 +1,16 @@
+{
+  "page": "docs/switching/mclag-enhancements.md",
+  "issue": 726,
+  "verification": "hld-only",
+  "concerns": [
+    "iccpd と MclagSyncd の現行 master 実装と FDB table 撤廃 (APP_MCLAG_FDB_TABLE 集約) の取り込み確認",
+    "MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブルスキーマ取り込み確認",
+    "STATE_MCLAG_TABLE / STATE_MCLAG_REMOTE_INTF_TABLE / STATE_MCLAG_REMOTE_FDB_TABLE / ISOLATION_GROUP_TABLE / APP_MCLAG_FDB_TABLE の現行 master 取り込み確認",
+    "Static MAC ICCP 同期と FdbOrch の static MAC handling 実装確認",
+    "Unique IP モード (MCLAG VLAN interface) の sonic-swss / portmgrd / OSPF/BGP 連携実装確認",
+    "Isolation group SAI 属性 (SAI_OBJECT_TYPE_ISOLATION_GROUP) の community SAI ベンダ実装確認",
+    "ICCP 学習 MAC の aging disable 実装 (FdbOrch/kernel hint) 確認",
+    "config mclag domain / member / unique-ip / show mclag CLI の sonic-utilities 取り込み確認"
+  ],
+  "priority": "medium"
+}
