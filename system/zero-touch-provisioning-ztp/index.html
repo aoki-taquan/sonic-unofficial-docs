@@ -15460,8 +15460,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p class="admonition-title">裏取りステータス: code-verified / 大規模 HLD</p>
 <p>HLD は 119KB。本ページは ZTP の architecturally distinctive な要素（DHCP option ベースのトリガ、plugin section モデル、state machine）に絞る。各 plugin 仕様の網羅は HLD 本文を参照。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-buildimage/src/sonic-ztp</code> に ZTP daemon 実装が存在することを確認。<code>SONiC/doc/ztp</code> に上流 HLD があり、本ページの DHCP option / plugin / state machine 記述は実装と整合する。</p>
 </div>
 <h1 id="zero-touch-provisioningztpdhcp-option-plugin-state-machine">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）<a class="headerlink" href="#zero-touch-provisioningztpdhcp-option-plugin-state-machine" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

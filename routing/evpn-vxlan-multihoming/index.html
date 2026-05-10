@@ -15472,8 +15472,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found / 大規模 HLD</p>
 <p>HLD は 80KB。本ページは EVPN MH の中核（ESI / Type-1 / Type-4 / DF election / split-horizon）に絞る。基本の EVPN VXLAN は同 area の <code>evpn-vxlan-hld.md</code> を参照。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: 現行 master の <code>sonic-swss/orchagent/</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/</code>、<code>sonic-utilities/</code> を grep した範囲では <strong><code>EVPN_ETHERNET_SEGMENT</code> テーブル / <code>EthernetSegment</code> orch / <code>config evpn ethernet-segment</code> CLI / EVPN-MH 用 yang は確認できない</strong>。HLD は提案レベルで、sonic-net のメインリポジトリには未取り込みの可能性が高い。利用可否は upstream FRR の EVPN-MH と vendor SAI の ESI label / split-horizon サポートに依存する。</p>
 </div>
 <h1 id="evpn-vxlan-multihomingesi-df-election-split-horizon">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）<a class="headerlink" href="#evpn-vxlan-multihomingesi-df-election-split-horizon" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

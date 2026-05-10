@@ -15428,8 +15428,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-buildimage/files/build_templates/default_manifest</code> / <code>manifest.json.j2</code> に application extension 用 <code>privileged</code> フラグや capability 制御の宣言枠を確認。各 docker 個別の cap-add / cap-drop はテンプレ化 PR が進行中で、現行値は <code>sonic-buildimage/dockers/&lt;name&gt;/</code> 配下の Dockerfile / start script に分散している。</p>
 </div>
 <h1 id="sonic-container-hardeningcapability-read-only-privileged">SONiC Container Hardening（capability / read-only / privileged 削減）<a class="headerlink" href="#sonic-container-hardeningcapability-read-only-privileged" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

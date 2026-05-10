@@ -15472,8 +15472,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p class="admonition-title">裏取りステータス: code-verified / 大規模 HLD</p>
 <p>HLD は 97KB。本ページは ZR/ZR+ で SONiC の transceiver 管理（CMIS 状態機械、coherent optics 拡張）にどんな差が出るかに絞る。詳細レジスタ / state machine 完全網羅は HLD 本文を参照。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-platform-daemons/sonic-xcvrd/xcvrd/cmis/</code> に CMIS state machine 実装、<code>xcvrd_utilities/xcvr_table_helper.py</code> で TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS テーブル管理を確認。<code>sonic-utilities/scripts/portconfig</code> に <code>transceiver-frequency</code> 系オプションを確認。C-CMIS の ZR 拡張は xcvrd cmis モジュール内で扱われている。</p>
 </div>
 <h1 id="zr-zr-cmis-c-cmis-xcvrd-dsp-coherent-optics">ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）<a class="headerlink" href="#zr-zr-cmis-c-cmis-xcvrd-dsp-coherent-optics" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -15438,8 +15438,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-platform-common/sonic_platform_base/bmc_base.py</code> / <code>redfish_client.py</code> / <code>bmc_fw_update.py</code> に BMC 抽象化レイヤを確認。<code>sonic-platform-daemons/sonic-bmcctld/scripts/bmcctld</code> に BMC controller daemon 実装。HLD の Redfish / IPMI 連携設計は現行 master に取り込まれている。</p>
 </div>
 <h1 id="sonic-bmc-platform-management-monitoringpmon-bmc">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）<a class="headerlink" href="#sonic-bmc-platform-management-monitoringpmon-bmc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

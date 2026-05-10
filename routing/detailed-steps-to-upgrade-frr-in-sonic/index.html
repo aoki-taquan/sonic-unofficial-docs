@@ -15394,8 +15394,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / メタドキュメント</p>
+<p class="admonition-title">裏取りステータス: code-verified / メタドキュメント</p>
 <p>本ページは「SONiC FRR 保守者向けの作業手順」を再構成したもの。実際の手順は upstream / SONiC 双方の実装事情に依存し、頻繁に変わる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-buildimage/src/sonic-frr/patch/</code> に <code>0001-SONiC-ONLY-*</code> 系の quilt-like patch（<code>series</code> ファイル順適用）を確認。<code>sonic-frr</code> は submodule pin で FRR upstream に SONiC 向け patch を適用するビルド構造であり、HLD 記述と整合する。</p>
 </div>
 <h1 id="sonic-frr-upgrade">SONiC における FRR upgrade の手順とパッチ管理<a class="headerlink" href="#sonic-frr-upgrade" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -15450,8 +15450,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>本 HLD は <code>area=routing</code> の backlog だが内容は telemetry 全般に関わる。location は backlog 由来のまま。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-gnmi/gnmi_server/client_subscribe.go</code> に subscribe ハンドラ実装、<code>multi_request_tcp_conn_test.go</code> で <code>ON_CHANGE</code> モードでの STATE_DB ストリーム動作テストを確認。サーバ実装は HLD の Subscription RPC（ON_CHANGE / SAMPLE / TARGET_DEFINED）モードを実装している。</p>
 </div>
 <h1 id="gnmi-subscription-for-yang-dataon_change-sample-target_defined">gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）<a class="headerlink" href="#gnmi-subscription-for-yang-dataon_change-sample-target_defined" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

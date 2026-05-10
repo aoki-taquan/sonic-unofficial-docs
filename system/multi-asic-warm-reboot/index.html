@@ -15416,8 +15416,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-utilities/scripts/warm-reboot</code> に namespace 横断の <code>execute_in_namespaces</code> ロジック（scope=all で global namespace と各 ASIC namespace に対して並列実行）を確認。multi-asic warm reboot の協調制御は本 script 経由で実装されている。</p>
 </div>
 <h1 id="multi-asic-warm-rebootnamespace-shutdown-boot">Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）<a class="headerlink" href="#multi-asic-warm-rebootnamespace-shutdown-boot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

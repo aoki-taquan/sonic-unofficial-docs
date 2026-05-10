@@ -15438,8 +15438,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は未確認（<code>ssdhealth</code> 系の既存実装と類似）。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-platform-daemons/sonic-stormond/scripts/stormond</code> に storage monitoring daemon 実装を確認（注: ディレクトリ名は <code>sonic-stormond</code>、daemon 名は <code>stormond</code>）。HLD 記述の storagemond は実装上 stormond として現行 master に取り込まれている。</p>
 </div>
 <h1 id="storagemondssd-emmc-health">storagemond（SSD / eMMC の health 監視）<a class="headerlink" href="#storagemondssd-emmc-health" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

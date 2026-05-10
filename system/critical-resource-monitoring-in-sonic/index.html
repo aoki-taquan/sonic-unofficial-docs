@@ -15460,8 +15460,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>CrmOrch / SAI Object availability API の現行 master 取り込み状況、generic-sai-extension HLD（同 area）との関係は未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-swss/orchagent/crmorch.h</code> / <code>crmorch.cpp</code> に CrmOrch 実装、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-crm.yang</code> に CONFIG_DB CRM スキーマを確認。<code>fdborch.cpp</code> / <code>routeorch.cpp</code> / <code>srv6orch.cpp</code> 等から CRM カウンタ更新が呼ばれていることを grep で確認。</p>
 </div>
 <h1 id="critical-resource-monitoringcrmsai">Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）<a class="headerlink" href="#critical-resource-monitoringcrmsai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -15504,8 +15504,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>本 HLD（27KB）は warm reboot の要件記述。詳細な going down / going up の path は <code>system-wide-warmboot.md</code>（同 area）を併読。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-utilities/scripts/warm-reboot</code> に warm reboot script、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang</code> に CONFIG_DB WARM_RESTART スキーマを確認。HLD の going-down / going-up シーケンスと整合する。</p>
 </div>
 <h1 id="sonic-warm-rebootdocker-warm-restart">SONiC Warm Reboot（要件・順序・docker 別 warm restart）<a class="headerlink" href="#sonic-warm-rebootdocker-warm-restart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

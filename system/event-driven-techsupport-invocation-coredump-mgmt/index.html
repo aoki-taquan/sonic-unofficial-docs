@@ -15460,8 +15460,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-utilities/scripts/coredump_gen_handler.py</code> / <code>utilities_common/auto_techsupport_helper.py</code> / <code>show/plugins/auto_techsupport.py</code> で auto-techsupport 経路を確認。yang は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang</code> に CONFIG_DB スキーマを確認。</p>
 </div>
 <h1 id="event-driven-techsupport-coredump-auto-techsupport-rate-limit-quota">Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）<a class="headerlink" href="#event-driven-techsupport-coredump-auto-techsupport-rate-limit-quota" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -15438,8 +15438,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>pcied / pcieinfo の現行 sonic-platform-daemons 実装状況、AER 取得経路は未確認。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-platform-daemons/sonic-pcied/scripts/pcied</code> に PCIe monitoring daemon 実装、<code>pytest.ini</code> / <code>setup.py</code> でパッケージング。STATE_DB の <code>PCIE_DEVICE</code> 系テーブルへの書き込みは pcied の本体ロジックで確認できる。</p>
 </div>
 <h1 id="pcie-monitoring-servicespcied-pcieinfo-lnksta-aer">PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）<a class="headerlink" href="#pcie-monitoring-servicespcied-pcieinfo-lnksta-aer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

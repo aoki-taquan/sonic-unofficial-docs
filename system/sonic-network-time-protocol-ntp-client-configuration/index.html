@@ -15472,8 +15472,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本 HLD は <code>ntpd</code> 時代の設計。SONiC は近年 <code>chrony</code> への移行 HLD（同 area の別ページ）が並行している。<strong>現行 master が ntpd / chrony どちらを使うかは未確認</strong>。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>本 HLD は <code>ntpd</code> 時代の設計。SONiC は近年 <code>chrony</code> への移行が完了している。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: 現行 master では <strong>chrony が採用されている</strong>。<code>sonic-buildimage/files/image_config/chrony/</code> に <code>chrony.conf.j2</code> / <code>chrony.keys.j2</code> / <code>chronyd-starter.sh</code> が存在し、<code>sonic-config-engine/tests/sample_output/</code> でも chrony.conf が生成テスト対象になっている。yang は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang</code> に <code>NTP / NTP_SERVER / NTP_KEY</code> を確認。本 HLD（<code>doc/ntp/ntp-design.md</code>）の <code>ntpd</code> / <code>/etc/ntp.conf</code> ベース記述は <strong>歴史的設計</strong>として読むべきで、運用コンフィグは chrony に置き換わっている。</p>
 </div>
 <h1 id="sonic-ntp-clientchrony-ntp_server-mgmt-vrf">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）<a class="headerlink" href="#sonic-ntp-clientchrony-ntp_server-mgmt-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

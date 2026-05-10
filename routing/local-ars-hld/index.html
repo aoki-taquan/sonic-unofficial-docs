@@ -15450,8 +15450,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>Local ARS は AI/HPC 向けの adaptive routing 機能。SAI 拡張属性が community SAI に取り込まれているか、ARSOrch / ARS profile の現行実装は未確認。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p>Local ARS は AI/HPC 向けの adaptive routing 機能。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: 現行 master の <code>sonic-swss/orchagent/</code> には <strong><code>ArsOrch</code> 等の ARS 関連 orch 実装は確認できず</strong>、<code>sonic-yang-models</code> にも <code>sonic-ars.yang</code> / <code>ARS_PROFILE</code> 等のスキーマは存在しない。<code>sonic-utilities</code> にも <code>config ars</code> / <code>show ars</code> は未取り込み。SAI 側は <code>sonic-sairedis/unittest/meta/TestMeta.cpp</code> に <code>SAI_OBJECT_TYPE_ARS</code> / <code>SAI_ARS_ATTR_*</code> の参照があり SAI API 自体は community SAI に取り込まれていることが確認できる。<strong>HLD は提案段階で、SONiC SWSS / yang / utilities への取り込みは未完了</strong>。本ページの記述は仕様意図の理解には有用だが、現行 master では機能として利用できない可能性が高い。</p>
 </div>
 <h1 id="local-arsadaptive-routing-switching-local">Local ARS（Adaptive Routing &amp; Switching の local 完結版）<a class="headerlink" href="#local-arsadaptive-routing-switching-local" title="Permanent link">&para;</a></h1>
 <h2 id="design">design 意図<a class="headerlink" href="#design" title="Permanent link">&para;</a></h2>

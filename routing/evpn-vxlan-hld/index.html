@@ -15494,8 +15494,12 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / 大規模 HLD</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found / 大規模 HLD</p>
 <p>HLD は 70KB。本ページは EVPN VXLAN の中核（control plane = BGP-EVPN、data plane = VXLAN、Type-2 host route と Type-5 IP prefix の役割境界）に絞る。multihoming は別 HLD（同 area）。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Verifier 注記（2026-05-10）</p>
+<p>実コード裏取り: <code>sonic-swss/orchagent/vxlanorch.cpp</code> に <code>VxlanOrch / VxlanTunnelOrch / VxlanTunnelMapOrch / EvpnNvoOrch</code> 系の実装存在を確認。yang は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang</code> に <code>VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO</code> を確認。CLI は <code>sonic-utilities/show/vxlan.py</code> に存在。<strong>ただし</strong> CONFIG_DB の NVO テーブル名は <code>VXLAN_EVPN_NVO</code>（実装・yang）であり、本ページが冒頭で <code>EVPN_NVO</code> と表記している部分は <code>VXLAN_EVPN_NVO</code> の略記である点に注意。実装で <code>CFG_VXLAN_EVPN_NVO_TABLE_NAME</code> (<code>sonic-swss/cfgmgr/vxlanmgr.cpp:189</code>) を確認。</p>
 </div>
 <h1 id="evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）<a class="headerlink" href="#evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
