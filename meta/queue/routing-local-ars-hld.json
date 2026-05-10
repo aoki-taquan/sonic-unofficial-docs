@@ -1,0 +1,13 @@
+{
+  "page": "docs/routing/local-ars-hld.md",
+  "verification": "hld-only",
+  "concerns": [
+    "SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認",
+    "ARSOrch（または NextHopOrch / NextHopGroupOrch 拡張）の現行実装存在確認",
+    "CONFIG_DB ARS / ARS_PROFILE / ARS_INTERFACE スキーマの現行 sonic-yang-models 取り込み確認",
+    "config ars / show ars CLI の sonic-utilities 取り込み確認",
+    "対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認",
+    "inner packet hashing / policy-based hashing / fine-grained ECMP / weighted ECMP との同居挙動確認"
+  ],
+  "priority": "high"
+}
