@@ -345,6 +345,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/design-doc/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -390,6 +394,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/json-patch-ordering-using-yang-models/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/model-based-replace-delete-in-mgmt-framework-transformer/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
@@ -1317,6 +1325,10 @@
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/mpls-for-sonic-high-level-design-document/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/mpls-tc-to-tc-map/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
@@ -1454,6 +1466,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/switching/macsec-sonic-high-level-design-document/</loc>
+         <lastmod>2026-05-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/switching/mclag-enhancements/</loc>
          <lastmod>2026-05-10</lastmod>
     </url>
     <url>
