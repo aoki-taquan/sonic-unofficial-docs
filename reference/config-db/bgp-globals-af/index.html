@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-dhcp-server/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-globals-af/">
       
       
-        <link rel="prev" href="../sonic-device_metadata/">
+        <link rel="prev" href="../bgp-device-global/">
       
       
-        <link rel="next" href="../sonic-dns/">
+        <link rel="next" href="../bgp-globals/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>sonic-dhcp-server YANG - SONiC 非公式ドキュメント</title>
+        <title>BGP_GLOBALS_AF テーブル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-dhcp-server-yang" class="md-skip">
+        <a href="#bgp_globals_af" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              sonic-dhcp-server YANG
+              BGP_GLOBALS_AF テーブル
             
           </span>
         </div>
@@ -12341,6 +12341,8 @@
                 
   
   
+    
+  
   
   
     
@@ -12426,2048 +12428,6 @@
       
         
       
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../config-db/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CONFIG_DB
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_12_3" id="__nav_12_3_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    CONFIG_DB
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/device-metadata/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DEVICE_METADATA テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/feature/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FEATURE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/kubernetes-master/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    KUBERNETES_MASTER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/system-defaults/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SYSTEM_DEFAULTS テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/auto-techsupport/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AUTO_TECHSUPPORT テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/loopback-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LOOPBACK_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/mgmt-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MGMT_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/mgmt-port/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MGMT_PORT テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/mgmt-vrf-config/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MGMT_VRF_CONFIG テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/port/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORT テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/portchannel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/portchannel-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/portchannel-member/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PORTCHANNEL_MEMBER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vlan/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VLAN テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vlan-interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VLAN_INTERFACE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vlan-member/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VLAN_MEMBER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vrf/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VRF テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/mux-cable/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MUX_CABLE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/peer-switch/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PEER_SWITCH テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/as-path-set/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AS_PATH_SET テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-aggregate-address/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_AGGREGATE_ADDRESS テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-device-global/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_DEVICE_GLOBAL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-globals/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_GLOBALS テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-neighbor/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_NEIGHBOR テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-neighbor-af/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_NEIGHBOR_AF テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-peer-group/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_PEER_GROUP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/bgp-peer-group-af/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BGP_PEER_GROUP_AF テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/community-set/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    COMMUNITY_SET テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/prefix-list/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PREFIX_LIST テーブル (BGP)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/prefix-set/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PREFIX_SET テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/route-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ROUTE_MAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/acl-rule/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL_RULE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/acl-table/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ACL_TABLE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/copp-group/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    COPP_GROUP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/copp-trap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    COPP_TRAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/debug-counter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DEBUG_COUNTER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/mirror-session/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MIRROR_SESSION テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/policer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    POLICER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/buffer-pg/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BUFFER_PG テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/buffer-pool/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BUFFER_POOL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/buffer-profile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BUFFER_PROFILE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/buffer-queue/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BUFFER_QUEUE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/dscp-to-tc-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DSCP_TO_TC_MAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/pfc-wd/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PFC_WD テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/queue/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    QUEUE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/scheduler/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SCHEDULER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/tc-to-queue-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TC_TO_QUEUE_MAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/wred-profile/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    WRED_PROFILE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/tunnel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TUNNEL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/tunnel-decap-table/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TUNNEL_DECAP_TABLE (APPL_DB)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vxlan-tunnel/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VXLAN_TUNNEL テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/vxlan-tunnel-map/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    VXLAN_TUNNEL_MAP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/crm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CRM テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/dhcp-server-ipv4/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCP_SERVER_IPV4 テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/dhcpv4-relay/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DHCPV4_RELAY テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/flex-counter-table/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FLEX_COUNTER_TABLE テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/kdump/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    KDUMP テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/ldap-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LDAP_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/ntp-global/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NTP テーブル (global)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/ntp-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NTP_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/syslog-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SYSLOG_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/tacplus-server/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TACPLUS_SERVER テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/telemetry/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TELEMETRY テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/device-neighbor/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DEVICE_NEIGHBOR テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/device-neighbor-metadata/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    DEVICE_NEIGHBOR_METADATA テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/fg-nhg/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    FG_NHG テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../config-db/sflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SFLOW テーブル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
         
       
         
@@ -14544,11 +12504,2051 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
             <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CONFIG_DB
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_12_3" id="__nav_12_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CONFIG_DB
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEVICE_METADATA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubernetes-master/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KUBERNETES_MASTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-defaults/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSTEM_DEFAULTS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auto-techsupport/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AUTO_TECHSUPPORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loopback-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LOOPBACK_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mgmt-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MGMT_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mgmt-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MGMT_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mgmt-vrf-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MGMT_VRF_CONFIG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-member/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORTCHANNEL_MEMBER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-member/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VLAN_MEMBER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRF テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mux-cable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../peer-switch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PEER_SWITCH テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../as-path-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AS_PATH_SET テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-aggregate-address/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_AGGREGATE_ADDRESS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-device-global/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_DEVICE_GLOBAL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-globals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_GLOBALS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-neighbor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_NEIGHBOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-neighbor-af/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_NEIGHBOR_AF テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-peer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_PEER_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bgp-peer-group-af/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGP_PEER_GROUP_AF テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COMMUNITY_SET テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prefix-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PREFIX_LIST テーブル (BGP)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prefix-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PREFIX_SET テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_RULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-trap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP_TRAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mirror-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIRROR_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../policer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    POLICER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buffer-pg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buffer-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_POOL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buffer-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_PROFILE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buffer-queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUFFER_QUEUE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dscp-to-tc-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_TC_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfc-wd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tc-to-queue-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TC_TO_QUEUE_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wred-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WRED_PROFILE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-decap-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL_DECAP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vxlan-tunnel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN_TUNNEL テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vxlan-tunnel-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN_TUNNEL_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CRM テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dhcp-server-ipv4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP_SERVER_IPV4 テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dhcpv4-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCPV4_RELAY テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flex-counter-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kdump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KDUMP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ldap-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LDAP_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ntp-global/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NTP テーブル (global)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ntp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NTP_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../syslog-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SYSLOG_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tacplus-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TACPLUS_SERVER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../telemetry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-neighbor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEVICE_NEIGHBOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-neighbor-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DEVICE_NEIGHBOR_METADATA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fg-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FG_NHG テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../yang/" class="md-nav__link ">
               
   
   
@@ -14572,7 +14572,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_12_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_12_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -14592,7 +14592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-device_metadata/" class="md-nav__link">
+      <a href="../../yang/sonic-device_metadata/" class="md-nav__link">
         
   
   
@@ -14620,7 +14620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-feature/" class="md-nav__link">
+      <a href="../../yang/sonic-feature/" class="md-nav__link">
         
   
   
@@ -14648,7 +14648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-ntp/" class="md-nav__link">
+      <a href="../../yang/sonic-ntp/" class="md-nav__link">
         
   
   
@@ -14676,7 +14676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-syslog/" class="md-nav__link">
+      <a href="../../yang/sonic-syslog/" class="md-nav__link">
         
   
   
@@ -14704,7 +14704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-system-aaa/" class="md-nav__link">
+      <a href="../../yang/sonic-system-aaa/" class="md-nav__link">
         
   
   
@@ -14732,7 +14732,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-interface/" class="md-nav__link">
+      <a href="../../yang/sonic-interface/" class="md-nav__link">
         
   
   
@@ -14760,7 +14760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-loopback-interface/" class="md-nav__link">
+      <a href="../../yang/sonic-loopback-interface/" class="md-nav__link">
         
   
   
@@ -14788,7 +14788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-mclag/" class="md-nav__link">
+      <a href="../../yang/sonic-mclag/" class="md-nav__link">
         
   
   
@@ -14816,7 +14816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-port/" class="md-nav__link">
+      <a href="../../yang/sonic-port/" class="md-nav__link">
         
   
   
@@ -14844,7 +14844,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-portchannel/" class="md-nav__link">
+      <a href="../../yang/sonic-portchannel/" class="md-nav__link">
         
   
   
@@ -14872,7 +14872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vlan/" class="md-nav__link">
+      <a href="../../yang/sonic-vlan/" class="md-nav__link">
         
   
   
@@ -14900,7 +14900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bgp-global/" class="md-nav__link">
+      <a href="../../yang/sonic-bgp-global/" class="md-nav__link">
         
   
   
@@ -14928,7 +14928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bgp-neighbor/" class="md-nav__link">
+      <a href="../../yang/sonic-bgp-neighbor/" class="md-nav__link">
         
   
   
@@ -14956,7 +14956,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-bgp-peergroup/" class="md-nav__link">
+      <a href="../../yang/sonic-bgp-peergroup/" class="md-nav__link">
         
   
   
@@ -14984,7 +14984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-route-common/" class="md-nav__link">
+      <a href="../../yang/sonic-route-common/" class="md-nav__link">
         
   
   
@@ -15012,7 +15012,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-route-map/" class="md-nav__link">
+      <a href="../../yang/sonic-route-map/" class="md-nav__link">
         
   
   
@@ -15040,7 +15040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vrf/" class="md-nav__link">
+      <a href="../../yang/sonic-vrf/" class="md-nav__link">
         
   
   
@@ -15068,7 +15068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-vxlan/" class="md-nav__link">
+      <a href="../../yang/sonic-vxlan/" class="md-nav__link">
         
   
   
@@ -15096,7 +15096,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-buffer-pg/" class="md-nav__link">
+      <a href="../../yang/sonic-buffer-pg/" class="md-nav__link">
         
   
   
@@ -15124,7 +15124,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-buffer-pool/" class="md-nav__link">
+      <a href="../../yang/sonic-buffer-pool/" class="md-nav__link">
         
   
   
@@ -15152,7 +15152,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-buffer-profile/" class="md-nav__link">
+      <a href="../../yang/sonic-buffer-profile/" class="md-nav__link">
         
   
   
@@ -15180,7 +15180,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-buffer-queue/" class="md-nav__link">
+      <a href="../../yang/sonic-buffer-queue/" class="md-nav__link">
         
   
   
@@ -15208,7 +15208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-copp/" class="md-nav__link">
+      <a href="../../yang/sonic-copp/" class="md-nav__link">
         
   
   
@@ -15236,7 +15236,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-dscp-tc-map/" class="md-nav__link">
+      <a href="../../yang/sonic-dscp-tc-map/" class="md-nav__link">
         
   
   
@@ -15264,7 +15264,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-mirror-session/" class="md-nav__link">
+      <a href="../../yang/sonic-mirror-session/" class="md-nav__link">
         
   
   
@@ -15292,7 +15292,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-pfcwd/" class="md-nav__link">
+      <a href="../../yang/sonic-pfcwd/" class="md-nav__link">
         
   
   
@@ -15320,7 +15320,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-queue/" class="md-nav__link">
+      <a href="../../yang/sonic-queue/" class="md-nav__link">
         
   
   
@@ -15348,7 +15348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-scheduler/" class="md-nav__link">
+      <a href="../../yang/sonic-scheduler/" class="md-nav__link">
         
   
   
@@ -15376,7 +15376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sonic-tc-queue-map/" class="md-nav__link">
+      <a href="../../yang/sonic-tc-queue-map/" class="md-nav__link">
         
   
   
@@ -15824,73 +15824,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        key 構造
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ツリー
+        主要フィールド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要フィールド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals_af_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS_AF
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#container-list" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals_af_aggregate_addr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        container / list 一覧
+        BGP_GLOBALS_AF_AGGREGATE_ADDR
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#leaf" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals_af_network" class="md-nav__link">
     <span class="md-ellipsis">
       
-        leaf 一覧
+        BGP_GLOBALS_AF_NETWORK
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#leafref" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        leafref / 依存
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#augment-deviation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        augment / deviation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config_db-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CONFIG_DB / CLI
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-yang-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / YANG / CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15917,7 +15945,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/yang/sonic-dhcp-server.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/bgp-globals-af.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15925,98 +15953,218 @@
   
 
 
-<h1 id="sonic-dhcp-server-yang">sonic-dhcp-server YANG<a class="headerlink" href="#sonic-dhcp-server-yang" title="Permanent link">&para;</a></h1>
+<h1 id="bgp_globals_af">BGP_GLOBALS_AF テーブル<a class="headerlink" href="#bgp_globals_af" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<ul>
-<li>module: <code>sonic-dhcp-server</code></li>
-<li>namespace: <code>http://github.com/sonic-net/sonic-dhcp-server</code></li>
-<li>revision: <code>2022-09-23</code></li>
-<li>import: <code>ietf-inet-types</code></li>
-<li>top container: <code>sonic-dhcp-server</code></li>
-</ul>
-<p>DHCP SERVER YANG module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
-<h2 id="_2">ツリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-dhcp-server
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-dhcp-server
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw DHCP_SERVER
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        +--rw DHCP_SERVER_LIST* [ip]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>           +--rw ip    inet:ip-address
+<p><code>BGP_GLOBALS_AF</code> は <code>BGP_GLOBALS</code> の VRF ごとに、address-family / subsequent address-family 単位の BGP 設定を保持する CONFIG_DB テーブル。multipath、VRF import、route download filter、distance、route flap dampening、EVPN/VXLAN 関連フラグを扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。派生テーブルとして、aggregate-address を定義する <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と、network statement を定義する <code>BGP_GLOBALS_AF_NETWORK</code> がある。実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_GLOBALS_AF|&lt;vrf_name&gt;|&lt;afi_safi&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP_GLOBALS_AF_AGGREGATE_ADDR|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP_GLOBALS_AF_NETWORK|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
 </span></code></pre></div>
-<h2 id="container-list">container / list 一覧<a class="headerlink" href="#container-list" title="Permanent link">&para;</a></h2>
+<p><code>&lt;vrf_name&gt;</code> は <code>BGP_GLOBALS.vrf_name</code> への leafref。<code>&lt;afi_safi&gt;</code> は address family 名文字列。</p>
+<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="bgp_globals_af_1">BGP_GLOBALS_AF<a class="headerlink" href="#bgp_globals_af_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>種別</th>
-<th>パス</th>
-<th>key</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>container</code></td>
-<td><code>sonic-dhcp-server</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>container</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER</code></td>
-<td></td>
-<td>DHCP server IP addresses used for relay forwarding</td>
-</tr>
-<tr>
-<td><code>list</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER/DHCP_SERVER_LIST</code></td>
-<td><code>ip</code></td>
-<td>List of IPs in DHCP_SERVER Table</td>
-</tr>
-</tbody>
-</table>
-<h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>leaf</th>
-<th>パス</th>
+<th>フィールド</th>
 <th>型</th>
-<th>必須</th>
-<th>デフォルト</th>
-<th>enum / 範囲 / leafref</th>
+<th>既定値</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ip</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER/DHCP_SERVER_LIST/ip</code></td>
-<td><code>inet:ip-address</code></td>
-<td>yes</td>
-<td></td>
-<td></td>
-<td>IP as DHCP_SERVER</td>
+<td><code>max_ebgp_paths</code></td>
+<td>uint16 1..256</td>
+<td><code>1</code></td>
+<td>eBGP multipath 最大数</td>
+</tr>
+<tr>
+<td><code>max_ibgp_paths</code></td>
+<td>uint16 1..256</td>
+<td><code>1</code></td>
+<td>iBGP multipath 最大数</td>
+</tr>
+<tr>
+<td><code>import_vrf</code></td>
+<td><code>default</code> or leafref <code>BGP_GLOBALS.vrf_name</code></td>
+<td>-</td>
+<td>route import 元 VRF</td>
+</tr>
+<tr>
+<td><code>import_vrf_route_map</code></td>
+<td>leafref <code>ROUTE_MAP_SET.name</code></td>
+<td>-</td>
+<td>VRF import 時の route filter</td>
+</tr>
+<tr>
+<td><code>route_download_filter</code></td>
+<td>leafref <code>ROUTE_MAP_SET.name</code></td>
+<td>-</td>
+<td>FIB download を絞る table-map</td>
+</tr>
+<tr>
+<td><code>ebgp_route_distance</code></td>
+<td>uint8 1..255</td>
+<td>-</td>
+<td>eBGP route distance</td>
+</tr>
+<tr>
+<td><code>ibgp_route_distance</code></td>
+<td>uint8 1..255</td>
+<td>-</td>
+<td>iBGP route distance</td>
+</tr>
+<tr>
+<td><code>local_route_distance</code></td>
+<td>uint8 1..255</td>
+<td>-</td>
+<td>local route distance</td>
+</tr>
+<tr>
+<td><code>ibgp_equal_cluster_length</code></td>
+<td>boolean</td>
+<td>-</td>
+<td>iBGP multipath 比較で cluster-list length を揃える</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen</code></td>
+<td>boolean</td>
+<td>-</td>
+<td>route flap dampening 有効化</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen_half_life</code></td>
+<td>uint8 1..45</td>
+<td>-</td>
+<td>dampening half-life</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen_reuse_threshold</code></td>
+<td>uint16 1..20000</td>
+<td>-</td>
+<td>reuse threshold</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen_suppress_threshold</code></td>
+<td>uint16 1..20000</td>
+<td>-</td>
+<td>suppress threshold</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen_max_suppress</code></td>
+<td>uint8 1..255</td>
+<td>-</td>
+<td>max suppress duration</td>
+</tr>
+<tr>
+<td><code>autort</code></td>
+<td>enum <code>rfc8365-compatible</code></td>
+<td>-</td>
+<td>RFC8365 互換 route-target 自動生成</td>
+</tr>
+<tr>
+<td><code>advertise-all-vni</code></td>
+<td>boolean</td>
+<td>-</td>
+<td>L2VPN で全 VNI を advertise</td>
+</tr>
+<tr>
+<td><code>advertise-svi-ip</code></td>
+<td>boolean</td>
+<td>-</td>
+<td>local SVI IP を remote VTEP へ advertise</td>
 </tr>
 </tbody>
 </table>
-<h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
+<h3 id="bgp_globals_af_aggregate_addr">BGP_GLOBALS_AF_AGGREGATE_ADDR<a class="headerlink" href="#bgp_globals_af_aggregate_addr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip_prefix</code></td>
+<td>ip-prefix</td>
+<td>aggregate address</td>
+</tr>
+<tr>
+<td><code>as_set</code></td>
+<td>boolean</td>
+<td>AS set path 情報を生成</td>
+</tr>
+<tr>
+<td><code>summary_only</code></td>
+<td>boolean</td>
+<td>more specific route の update を抑制</td>
+</tr>
+<tr>
+<td><code>policy</code></td>
+<td>leafref <code>ROUTE_MAP_SET.name</code></td>
+<td>aggregate network に適用する route-map</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp_globals_af_network">BGP_GLOBALS_AF_NETWORK<a class="headerlink" href="#bgp_globals_af_network" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip_prefix</code></td>
+<td>ip-prefix</td>
+<td>network statement の prefix</td>
+</tr>
+<tr>
+<td><code>policy</code></td>
+<td>leafref <code>ROUTE_MAP_SET.name</code></td>
+<td>attribute 変更用 route-map</td>
+</tr>
+<tr>
+<td><code>backdoor</code></td>
+<td>boolean</td>
+<td>backdoor route 指定</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>なし</li>
+<li><code>vrf_name</code> は <code>BGP_GLOBALS</code> への leafref。</li>
+<li><code>import_vrf</code> は自分自身の <code>vrf_name</code> と同じ値を禁止する <code>must</code> を持つ。</li>
+<li><code>route_flap_dampen*</code> は <code>afi_safi = 'ipv4_unicast'</code> の場合のみ許可される。</li>
+<li><code>policy</code> / route-map 系 field は <code>ROUTE_MAP_SET</code> への leafref。</li>
 </ul>
-<h2 id="augment-deviation">augment / deviation<a class="headerlink" href="#augment-deviation" title="Permanent link">&para;</a></h2>
+<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>なし</li>
+<li><code>bgpcfgd</code>: CONFIG_DB の BGP global AF 設定を FRR address-family 設定へ変換する。</li>
+<li><code>frr-mgmt-framework</code>: <code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> のときに generic BGP model として処理する。</li>
+<li><code>bgpd</code> (FRR): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。</li>
 </ul>
-<h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
+<h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>DHCP_SERVER</code></li>
-<li>CLI: なし</li>
+<li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code>、<code>ROUTE_MAP_SET</code>、<code>VRF</code></li>
+<li>関連 CLI: <code>config bgp</code></li>
+<li>関連 YANG: <code>sonic-bgp-global</code></li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-dhcp-server.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-bgp-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-dhcp-server/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-dns/">
       
       
-        <link rel="prev" href="../sonic-device_metadata/">
+        <link rel="prev" href="../sonic-dhcp-server/">
       
       
-        <link rel="next" href="../sonic-dns/">
+        <link rel="next" href="../sonic-dscp-tc-map/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>sonic-dhcp-server YANG - SONiC 非公式ドキュメント</title>
+        <title>sonic-dns YANG - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-dhcp-server-yang" class="md-skip">
+        <a href="#sonic-dns-yang" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              sonic-dhcp-server YANG
+              sonic-dns YANG
             
           </span>
         </div>
@@ -15917,7 +15917,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/yang/sonic-dhcp-server.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/yang/sonic-dns.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -15925,22 +15925,27 @@
   
 
 
-<h1 id="sonic-dhcp-server-yang">sonic-dhcp-server YANG<a class="headerlink" href="#sonic-dhcp-server-yang" title="Permanent link">&para;</a></h1>
+<h1 id="sonic-dns-yang">sonic-dns YANG<a class="headerlink" href="#sonic-dns-yang" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>module: <code>sonic-dhcp-server</code></li>
-<li>namespace: <code>http://github.com/sonic-net/sonic-dhcp-server</code></li>
-<li>revision: <code>2022-09-23</code></li>
+<li>module: <code>sonic-dns</code></li>
+<li>namespace: <code>http://github.com/sonic-net/sonic-dns</code></li>
+<li>revision: <code>2023-02-14</code></li>
 <li>import: <code>ietf-inet-types</code></li>
-<li>top container: <code>sonic-dhcp-server</code></li>
+<li>top container: <code>sonic-dns</code></li>
 </ul>
-<p>DHCP SERVER YANG module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Domain Name System (DNS) resolver configuration YANG module for SONiC OS.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <h2 id="_2">ツリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-dhcp-server
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-dhcp-server
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw DHCP_SERVER
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        +--rw DHCP_SERVER_LIST* [ip]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>           +--rw ip    inet:ip-address
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-dns
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-dns
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw DNS_NAMESERVER
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>     |  +--rw DNS_NAMESERVER_LIST* [ip]
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>     |     +--rw ip    inet:ip-address
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>     +--rw DNS_OPTIONS
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        +--rw search*     inet:host
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        +--rw ndots?      uint8
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        +--rw timeout?    uint8
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        +--rw attempts?   uint8
 </span></code></pre></div>
 <h2 id="container-list">container / list 一覧<a class="headerlink" href="#container-list" title="Permanent link">&para;</a></h2>
 <table>
@@ -15955,21 +15960,27 @@
 <tbody>
 <tr>
 <td><code>container</code></td>
-<td><code>sonic-dhcp-server</code></td>
+<td><code>sonic-dns</code></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td><code>container</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER</code></td>
+<td><code>sonic-dns/DNS_NAMESERVER</code></td>
 <td></td>
-<td>DHCP server IP addresses used for relay forwarding</td>
+<td>DNS nameserver addresses for name resolution.</td>
 </tr>
 <tr>
 <td><code>list</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER/DHCP_SERVER_LIST</code></td>
+<td><code>sonic-dns/DNS_NAMESERVER/DNS_NAMESERVER_LIST</code></td>
 <td><code>ip</code></td>
-<td>List of IPs in DHCP_SERVER Table</td>
+<td>Ordered list of DNS nameserver IP addresses.</td>
+</tr>
+<tr>
+<td><code>container</code></td>
+<td><code>sonic-dns/DNS_OPTIONS</code></td>
+<td></td>
+<td>DNS resolver options; requires at least one nameserver to be configured.</td>
 </tr>
 </tbody>
 </table>
@@ -15989,12 +16000,48 @@
 <tbody>
 <tr>
 <td><code>ip</code></td>
-<td><code>sonic-dhcp-server/DHCP_SERVER/DHCP_SERVER_LIST/ip</code></td>
+<td><code>sonic-dns/DNS_NAMESERVER/DNS_NAMESERVER_LIST/ip</code></td>
 <td><code>inet:ip-address</code></td>
 <td>yes</td>
 <td></td>
 <td></td>
-<td>IP as DHCP_SERVER</td>
+<td>IPv4 or IPv6 address of a DNS nameserver.</td>
+</tr>
+<tr>
+<td><code>search[]</code></td>
+<td><code>sonic-dns/DNS_OPTIONS/search</code></td>
+<td><code>inet:host</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Configure the DNS search suffix list</td>
+</tr>
+<tr>
+<td><code>ndots</code></td>
+<td><code>sonic-dns/DNS_OPTIONS/ndots</code></td>
+<td><code>uint8</code></td>
+<td></td>
+<td>1</td>
+<td>range <code>0..15</code></td>
+<td>Sets a threshold for the number of dots which must appear in a name given before an initial absolute query will be made</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>sonic-dns/DNS_OPTIONS/timeout</code></td>
+<td><code>uint8</code></td>
+<td></td>
+<td>5</td>
+<td>range <code>1..30</code></td>
+<td>Sets the amount of time in seconds the resolver will wait for a response from a remote name server before retrying the query via a different name server.</td>
+</tr>
+<tr>
+<td><code>attempts</code></td>
+<td><code>sonic-dns/DNS_OPTIONS/attempts</code></td>
+<td><code>uint8</code></td>
+<td></td>
+<td>2</td>
+<td>range <code>1..5</code></td>
+<td>Sets the number of times the resolver will send a query to its name servers before giving up and returning an error to the calling application.</td>
 </tr>
 </tbody>
 </table>
@@ -16008,15 +16055,16 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>DHCP_SERVER</code></li>
-<li>CLI: なし</li>
+<li>CONFIG_DB: <code>DNS_NAMESERVER</code></li>
+<li>CONFIG_DB: <code>DNS_OPTIONS</code></li>
+<li>CLI: <code>config dns</code></li>
 </ul>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-dhcp-server.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-buildimage</code> <code>src/sonic-yang-models/yang-models/sonic-dns.yang</code> @ <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
