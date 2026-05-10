@@ -1,7 +1,7 @@
 ---
 title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
 area: management
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -20,8 +20,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 概観文書"
-    本 HLD は SONiC の設定手段を **概観する文書** であり、各機構の挙動詳細は別 HLD / 既存実装に依存する。`config apply-patch` の `--dry-run` / checkpoint / rollback フラグの現行 sonic-utilities 実装、ZTP の DHCP option 67 / USB 起動経路、RESTCONF / gNMI server 化の有効化方法などは別途裏取りが必要。
+!!! info "裏取りステータス: code-verified / 概観文書"
+    `sonic-utilities/config/main.py` で `apply-patch` / `replace` / `rollback` の 3 サブコマンドおよび `--dry-run` / `--ignore-non-yang-tables` / `--ignore-path` オプションを確認（`@click.argument('checkpoint-name')` を含む rollback 経路）。`generic_config_updater/` パッケージ（`generic_updater.py`、`patch_sorter.py`、`change_applier.py`、`gu_common.py`、`field_operation_validators.py`、`gcu_services_validator.conf.json`）も実装済み。`sonic-buildimage/src/sonic-ztp` 配下に ZTP 実装、`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd` に BGP 設定エージェントが存在。本 HLD は **設定手段の概観文書** で各機構の詳細は別 HLD に委ねる方針自体は妥当。
 
 # SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
 

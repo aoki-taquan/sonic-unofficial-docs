@@ -1,8 +1,8 @@
 ---
 title: sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）
 area: platform
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/sfputil/read_write_eeprom_by_page.md
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! info "裏取りステータス: HLD-only"
-    HLD は Initial。`sfputil read-eeprom` / `write-eeprom` の sonic-utilities への取り込み、CMIS / SFF-8472 / SFF-8636 ごとの page-to-overall-offset 変換ロジック、ベンダ platform API の `NotImplementedError` ハンドリングは未確認。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/sfputil/main.py` で `read-eeprom` (L1812-) / `write-eeprom` (L1862-) サブコマンドを確認。`-n/--page` (hex) / `-o/--offset` (`click.IntRange(0, MAX_EEPROM_OFFSET)`) / `--size` / `--no-format` / `--wire-addr` (sff8472 用) / `--verify` (write 後リードバック比較) を実装。`get_overall_offset_sff8472` ヘルパで sff8472 wire-addr (a0h/a2h) を解決し、`sfp.read_eeprom(flat_offset, size)` / `sfp.write_eeprom(overall_offset, len(bytes), bytes)` の platform API を呼ぶ。NotImplementedError 経路も `Sfp.read_eeprom() is currently not implemented for this platform` で返却。
 
 # sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）
 

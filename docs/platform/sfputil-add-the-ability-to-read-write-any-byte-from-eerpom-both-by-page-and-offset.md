@@ -1,7 +1,7 @@
 ---
 title: sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `sfputil read-eeprom` / `write-eeprom` の sonic-utilities への取り込み、`sfp.read_eeprom` / `sfp.write_eeprom` platform API の各 vendor 対応、CMIS / sff8472 / sff8636 の page/offset 範囲チェックロジックの現行実装は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-utilities/sfputil/main.py` で `read-eeprom` (L1812-) / `write-eeprom` (L1862-) サブコマンドを確認。`--page (-n)` / `--offset (-o)` / `--size` / `--no-format` / `--wire-addr`（sff8472 用）/ `--verify`（write 後リードバック比較）の各オプション、および `get_overall_offset_sff8472` ヘルパによる sff8472 wire-addr ハンドリング、`sfp.read_eeprom(flat_offset, size)` / `sfp.write_eeprom(overall_offset, len(bytes), bytes)` 経路をすべて確認。`sfp.read_eeprom() is currently not implemented for this platform` の ERROR_NOT_IMPLEMENTED 経路もエラー処理として実装されている。
 
 # `sfputil read-eeprom` / `write-eeprom`（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
 

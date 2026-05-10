@@ -1,7 +1,7 @@
 ---
 title: Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
 area: management
-verification: hld-only
+verification: discrepancy-found
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -11,11 +11,12 @@ related:
   config_db:
     - CONSOLE_SWITCH
   cli: []
-  yang: []
+  yang:
+    - sonic-console
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.1 / 2022-12 改訂。`sonic_platform_common/sonic_console/` 配下の API クラス階層、`CONSOLE_SWITCH` テーブルへのフィールド追加、ベンダー .deb パッケージの自動インストール経路が現行 master でこの仕様どおりかは未確認。
+!!! danger "裏取りステータス: discrepancy-found（HLD のクラス階層は未実装）"
+    `sonic-platform-common` master を確認した結果、HLD が提案する `sonic_console/<vendor>/console_<model>.py` ディレクトリ階層、`PortableConsoleDeviceBase` 抽象クラス、`factory.py` は **存在しない**（`sonic_platform_base/` 直下にも console 系の base クラスは無し）。`CONSOLE_SWITCH` テーブル自体は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang`（escape_char 等を含む）と `sonic-utilities/config/console.py` に取り込み済みで、`consutil` / Console-Monitor HLD 系の機能は別 HLD として実装されているが、本ページが扱う「ポータブル console デバイスの抽象化」HLD は提案のみで実装着手されていない。本文の API/ディレクトリ構造記述は **HLD 提案そのもの** として扱うこと。
 
 # Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
 

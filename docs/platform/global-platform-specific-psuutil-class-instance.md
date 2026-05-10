@@ -1,7 +1,7 @@
 ---
 title: 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 旧設計から現行への移行記述"
-    本ドキュメントは「旧 plugin 形式（`psuutil.py` 等の独立 plugin）」から「新 `sonic_platform` パッケージ階層」への移行を述べる、初期段階の HLD。現行 master では新 API がほぼ完全に普及済みだが、HLD の文面（特に "Current Solution" 節）は移行前の状態を述べている点に注意。
+!!! info "裏取りステータス: code-verified / 旧設計から現行への移行記述"
+    `sonic-platform-common/sonic_platform_base/` を直読して `chassis_base.py` (`class ChassisBase`)、`psu_base.py` (`class PsuBase`)、`fan_base.py` (`class FanBase`)、`sfp_base.py` (`class SfpBase`)、`module_base.py` (`class ModuleBase`)、`component_base.py` (`class ComponentBase`)、`device_base.py`、`fan_drawer_base.py`、`platform_base.py`、`sensor_base.py`、`bmc_base.py`、`liquid_cooling_base.py` 等の基底クラス階層を確認。HLD の "Current Solution" 節は **旧 plugin 形式から新階層への移行時** の説明であり、現行 master では新 API が普及済み。本ページは HLD の設計意図を中心に書かれている点に注意（移行前の細部記述は現行と異なる）。
 
 # 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
 

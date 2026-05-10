@@ -1,13 +1,15 @@
 {
   "page": "docs/platform/liquid-cooling-leakage-detection-in-sonic.md",
   "issue": 256,
-  "verification": "hld-only",
+  "verification": "discrepancy-found",
   "concerns": [
-    "sonic-platform-common の LiquidCoolingBase / LeakageSensor クラス実装存在確認",
-    "thermalctld の LiquidCoolingUpdater 別スレッド (0.5s 周期) 実装確認",
-    "STATE_DB の LIQUID_COOLING_DEVICE スキーマ取り込みと書き込みロジック確認",
-    "system-health hardware_checker.py の _check_liquid_cooling_status 実装と sonic-events-host / liquid-cooling-leak タグ発行確認",
-    "show platform leakage status / show system-health detail 拡張の sonic-utilities 取り込み確認"
+    "STATE_DB のテーブル名は本ページが記述する LIQUID_COOLING_DEVICE ではなく実コードでは LIQUID_COOLING_INFO（thermalctld の LIQUID_COOLING_INFO_TABLE_NAME 定数）",
+    "show platform leakage status / show system-health detail 拡張の sonic-utilities 取り込み状況は未網羅確認"
+  ],
+  "verified_concerns": [
+    "sonic-platform-common/sonic_platform_base/liquid_cooling_base.py に LeakSeverity enum (MINOR/CRITICAL) と LeakageSensorBase（SensorBase 継承）を確認",
+    "sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld に LiquidCoolingUpdater クラスと liquid_cooling_update_interval=0.5 秒のポーラを確認",
+    "ベンダー実装として mlnx-platform-api/sonic_platform/liquid_cooling.py が存在"
   ],
   "priority": "low"
 }

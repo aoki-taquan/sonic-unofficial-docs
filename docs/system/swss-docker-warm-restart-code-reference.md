@@ -1,8 +1,8 @@
 ---
 title: SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/warm-reboot/code_implementation.md
@@ -17,8 +17,13 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 開発時メモ"
-    このドキュメントは HLD 自身が冒頭で **"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"** と述べる、warm-restart 機能開発当時のコードリファレンスメモ。**現行 master の Warm Restart の正確な仕様ではない**。具体的な分岐先 PR は当時の開発者個人の fork であり、現行 master では取り込み・改変されている。
+!!! danger "裏取りステータス: discrepancy-found（HLD は temporary な開発メモであり一部 API は現行と齟齬）"
+    HLD 自身が冒頭で **"Note: This document is temporary. The code implementations are for reference only. Active development and testing is in progress"** と述べる、warm-restart 機能開発当時のコードリファレンスメモ。実コードと突き合わせた結果:
+    - `RedisClient::hmset` / `DBConnector::hmset` は現行 `sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp}` に **存在し** 実装も活きている（concerns 解消）
+    - 一方 `swss-flushdb` スクリプトは現行 master の `sonic-utilities` / `sonic-buildimage` / `sonic-swss-common` に **ヒットしない** （HLD の記述と齟齬）
+    - `hgetallordered` も現行 sonic-swss-common には見当たらず、HLD 当時の API に依存する記述あり
+
+    本ページは現行 master の正規仕様ではないため、**Warm Restart の挙動を理解する目的では `docs/system/sonic-warm-reboot.md` 等の正式 HLD ベースのページを参照すべき**。本ページは歴史的開発メモのアーカイブとして残す。
 
 # SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
 

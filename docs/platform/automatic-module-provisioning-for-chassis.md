@@ -1,7 +1,7 @@
 ---
 title: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
 area: platform
-verification: hld-only
+verification: code-verified
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 実装は未着手（提案段階）"
-    2026-05-09 時点で `sonic-net` org 全体を `MODULE_STATUS_PROVISION` / `provision_module` / `sonic-provisiond` で grep してもヒットは HLD 本体のみ。`sonic-platform-common` の `sonic_platform_base/module_base.py` には HLD 提案の 3 定数 (`MODULE_STATUS_PROVISION_READY` / `_PENDING` / `MODULE_STATUS_PROVISIONED`) も `provision_module()` API も存在せず、`sonic-platform-daemons` への `sonic-provisiond` デーモン追加もまだ無い。HLD は Rev 1.0（2026-03）と比較的新しいが、コード反映はこれからのフェーズ（verified at: 2026-05-09）。
+!!! info "裏取りステータス: code-verified（提案段階・実装未着手であることを再確認）"
+    2026-05-09 時点で `sonic-platform-common/sonic_platform_base/module_base.py` を直読し、`MODULE_STATUS_EMPTY` / `_OFFLINE` / `_POWERED_DOWN` / `_PRESENT` / `_FAULT` / `_ONLINE` の 6 定数のみを確認（HLD 提案の `MODULE_STATUS_PROVISION_READY` / `_PENDING` / `MODULE_STATUS_PROVISIONED` は **未追加**）。`sonic-platform-daemons` 直下にも `sonic-provisiond` ディレクトリは存在せず、`sonic-buildimage` で `provision_module` の文字列もヒットしない。HLD は Rev 1.0 (2026-03) と新しく、**設計通り「提案段階」のままコード未反映** であることを実コードで再確認した。本ページは HLD の設計意図を写したもので、現行 SONiC の実機能ではない。
 
 # Chassis Line Card 自動プロビジョニング（`sonic-provisiond` / `provision_module`）
 

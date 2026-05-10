@@ -1,8 +1,8 @@
 ---
 title: OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
     path: doc/fips/SONiC-OpenSSL-FIPS-140-3.md
@@ -15,8 +15,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は v0.2 (2022-07)。`symcrypt-openssl` deb の sonic-buildimage 同梱、`/usr/lib/ssl/openssl-fips.cnf` の install、`sonic-installer set-fips/get-fips` の sonic-utilities 取り込み、`INCLUDE_FIPS` / `ENABLE_FIPS` build flag は未裏取り。
+!!! info "裏取りステータス: code-verified"
+    `sonic-buildimage/rules/config` L370-373 で `INCLUDE_FIPS ?= y` / `ENABLE_FIPS ?= n` (amd64/arm64 のみ) を確認。`rules/sonic-fips.mk` で `FIPS_VERSION` / `FIPS_OPENSSL_VERSION` / `FIPS_OPENSSH_VERSION` / `FIPS_PYTHON_VERSION` / `FIPS_GOLANG_VERSION` / `FIPS_KRB5_VERSION` を BLDENV (trixie / bookworm) ごとに定義（trixie 例: `openssl 3.5.4-1+fips`、`openssh 10.0p1-7+fips`、`golang 1.24.4-1+fips`）。`src/sonic-fips/Makefile` で Azure/sonic-fips リポを `git clone -b $(FIPS_VERSION)` する SymCrypt-OpenSSL ビルド経路を確認、`files/build/versions-public/host-image/versions-deb-trixie` に `symcrypt-openssl==0.1` を pin。`sonic-utilities/sonic_installer/main.py` L688-721 で `@sonic_installer.command('set-fips')` / `'get-fips'` および `bootloader.set_fips/get_fips` の呼び出しを確認。`src/openssh/`（patch 同梱）も存在。
 
 # OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
 
