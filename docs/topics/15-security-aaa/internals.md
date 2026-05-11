@@ -45,3 +45,78 @@ NPU 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プ
 MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 ACL や CoPP の設計と組み合わせて考えるべきです。CoPP の枠組みは [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照してください。
 
 platform 側の信頼チェーン（OpenSSL FIPS、secure boot、secure upgrade）は [発展トピック](advanced.md) で扱います。
+
+## データフロー（AAA / management security 側）
+
+MACsec 以外の AAA（TACACS+ / RADIUS / PAM / NSS / SSH）の制御パスも合わせて整理します。
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB<br/>TACPLUS/RADIUS/AAA/MGMT_USER)] --> HOSTCFGD[hostcfgd]
+  HOSTCFGD --> PAM[/etc/pam.d/*]
+  HOSTCFGD --> NSS[/etc/nsswitch.conf]
+  HOSTCFGD --> SSHD[/etc/ssh/sshd_config]
+  HOSTCFGD --> TACPLUS[/etc/tacplus_nss.conf]
+  USER[login] --> PAM
+  PAM --> NSS
+  NSS --> SERVER[TACACS+ / RADIUS server]
+```
+
+`hostcfgd` (`src/sonic-host-services/scripts/hostcfgd`) が CONFIG_DB の `TACPLUS`、`RADIUS`、`AAA`、`MGMT_USER` を読み、PAM / NSS / sshd_config を render する Jinja template を持ちます。
+
+## 主要 daemon / コンポーネントの責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `macsecmgr` (`cfgmgr/macsecmgr.cpp`) | `MACsecMgr::doTask` | CONFIG_DB の MACSEC_PROFILE / MACSEC_INTERFACE を読み、wpa_supplicant config を生成 |
+| `MACsecOrch` (`orchagent/macsecorch.cpp`) | `MACsecOrch::doTask` | APPL_DB から SAI MACsec object に展開 |
+| `wpa_supplicant` (MKA mode) | open source wpa_supplicant | MKA peer 探索、SAK 生成・配布 |
+| `hostcfgd` | python | AAA / SSH / SYSLOG 系の host 設定 render |
+| `mgmt-framework` | YANG / REST | management plane 認証統合 |
+
+## SAI 属性使用一覧（MACsec）
+
+| object | 属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_MACSEC` | `SAI_MACSEC_ATTR_DIRECTION = INGRESS/EGRESS` |
+| `SAI_OBJECT_TYPE_MACSEC_PORT` | `SAI_MACSEC_PORT_ATTR_PORT_ID`、`SWITCH_SWITCHING_MODE` |
+| `SAI_OBJECT_TYPE_MACSEC_FLOW` | `SAI_MACSEC_FLOW_ATTR_MACSEC_DIRECTION` |
+| `SAI_OBJECT_TYPE_MACSEC_SC` | `SAI_MACSEC_SC_ATTR_MACSEC_SCI`、`AN`、`CIPHER_SUITE`、`ENCRYPTION_ENABLE`、`REPLAY_PROTECTION_ENABLE`、`REPLAY_PROTECTION_WINDOW` |
+| `SAI_OBJECT_TYPE_MACSEC_SA` | `SAI_MACSEC_SA_ATTR_SAK`、`SALT`、`AUTH_KEY`、`MACSEC_SSCI`、`CONFIGURED_EGRESS_XPN`、`MINIMUM_INGRESS_XPN` |
+| `SAI_OBJECT_TYPE_PORT_SERDES` | MACsec 有効時の SI（Gearbox backend） |
+
+`SAI_MACSEC_SA_ATTR_SAK` の wrap は SAK distribution の最終段で SAI に渡される。鍵生成は wpa_supplicant 側。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  MACSEC_PROFILE, MACSEC_INTERFACE,
+  TACPLUS, TACPLUS_SERVER, RADIUS, RADIUS_SERVER,
+  AAA, MGMT_USER, USER_LIST,
+  PASSWD_HARDENING
+APPL_DB:
+  MACSEC_INGRESS_SA_TABLE, MACSEC_EGRESS_SA_TABLE,
+  MACSEC_INGRESS_SC_TABLE, MACSEC_EGRESS_SC_TABLE, MACSEC_PORT_TABLE
+STATE_DB:
+  MACSEC_INGRESS_SA_TABLE, MACSEC_EGRESS_SA_TABLE (運用状態)
+COUNTERS_DB:
+  COUNTERS:<macsec-sc-oid>, COUNTERS:<macsec-flow-oid>
+ASIC_DB:
+  MACSEC, MACSEC_PORT, MACSEC_FLOW, MACSEC_SC, MACSEC_SA
+```
+
+## ZMQ / Redis pub/sub
+
+- ZMQ は使わない。
+- `wpa_supplicant` と `macsecmgr` は Unix socket（wpa_ctrl）で通信。Redis 経由ではない。
+- AAA 認証（PAM → TACACS+/RADIUS）は同期 RPC で、Redis を経由しない。
+
+## 既知の実装上の制約
+
+- MACsec SAK の rekey 頻度（key lifetime）は wpa_supplicant の設定で、頻度を上げすぎると ASIC 側で `SA install` が間に合わず短時間 drop が発生する。
+- `MACSEC_SA_ATTR_SAK` の wrap キーは平文で SAI まで渡る設計のため、syncd / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。
+- Gearbox backend 選択は装置依存で、deterministic 選択 HLD があっても全ベンダ実装が揃っているとは限らない。
+- SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しない。
+- TACACS+ の `command` authorization は host CLI 経由のみで、`gnmi` / REST API 経路では別途 RBAC 設定が必要。
+- FIPS モードは OpenSSL の library 切替に依存し、libssl のバージョン整合と FIPS module の有無で「FIPS にしたつもりが効いていない」事故が起きやすい。

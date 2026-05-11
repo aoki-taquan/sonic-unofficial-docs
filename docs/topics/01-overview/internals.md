@@ -70,8 +70,58 @@ Single-ASIC では「global が唯一の Redis」と考えれば十分です。M
 | syncd / SAI 近辺で止まる | `ASIC_DB`、syncd log、SAI failure handling 章 |
 | Multi-ASIC で片 ASIC だけ違う | `-n asicX`、per-ASIC `config_db<ns>.json`、`database_global.json` |
 
+## SONiC 全体のデータフロー
+
+01 章の overview として、SONiC の典型的な「設定 → SAI → ASIC」の流れを一枚で示します。
+
+```mermaid
+flowchart LR
+  CLI[CLI / gNMI / minigraph] --> CFG[(CONFIG_DB)]
+  CFG --> MGR[*mgrd<br/>cfgmgr]
+  MGR --> KERNEL[Linux kernel<br/>netlink]
+  MGR --> APPL[(APPL_DB)]
+  KERNEL --> SYNCD_NL[*syncd daemons<br/>portsyncd/fdbsyncd/...]
+  SYNCD_NL --> APPL
+  APPL --> ORCH[orchagent<br/>per-feature Orch]
+  ORCH --> ASIC[(ASIC_DB)]
+  ASIC --> SYNCD[syncd] --> SAI[SAI lib] --> CHIP[(ASIC)]
+  ORCH --> STATE[(STATE_DB)]
+  SYNCD --> COUNT[(COUNTERS_DB)]
+  STATE --> GNMI[gNMI / SNMP / CLI]
+  COUNT --> GNMI
+```
+
+## 主要 Orch / daemon の責務（一覧）
+
+| 種別 | 代表的なプロセス / クラス | 役割 |
+| --- | --- | --- |
+| cfgmgr 層 | `vlanmgrd`、`intfmgrd`、`teammgrd`、`natmgr`、`buffermgrd`、`vrfmgrd` | CONFIG_DB → kernel + APPL_DB |
+| sync 層 | `portsyncd`、`fdbsyncd`、`teamsyncd`、`natsyncd`、`fpmsyncd` | kernel / FRR の netlink/FPM を APPL_DB へ |
+| orchagent 内 Orch | `PortsOrch`、`RouteOrch`、`NeighOrch`、`NhgOrch`、`AclOrch`、`QosOrch`、`BufferOrch`、`VxlanOrch`、`VNetOrch`、`NatOrch`、`FdbOrch`、`MirrorOrch`、`PolicerOrch`、`CrmOrch`、`SwitchOrch` | APPL_DB → SAI |
+| syncd 層 | `syncd`、`sairedis`、`SAIRedis ASIC view` | ASIC_DB ↔ SAI library ↔ ASIC SDK |
+| host services | `hostcfgd`、`sonic-host-service`、`pcied`、`pmon`、`thermalctld`、`psud`、`xcvrd` | host 設定、platform sensor、optic |
+| 管理面 | `telemetry`（gNMI/gNOI）、`snmpd`、`rest-server`、`mgmt-framework` | 北向き API |
+
+## Redis pub/sub の使われ方（一覧）
+
+| 経路 | 用途 |
+| --- | --- |
+| `__keyspace@N__:*` notification | `ConsumerStateTable` / `SubscriberStateTable` が key 変更を待つ |
+| `_NOTIFY:asic_state` 等の notification channel | ASIC_DB 上の FDB / port state 等のイベント |
+| ZMQ producer/consumer | 大量書き込み（VNET route、DASH SDN）で APPL_DB を経由しない直行路 |
+
+ZMQ は SONiC master でも増えつつある経路で、章ごとに使用有無が違います（→ 03、13 章）。
+
+## 既知の実装上の制約（概観）
+
+- **Redis の単一スレッド**：全テーブルが redis-server の単一スレッドに直列化されるため、高 QPS 時には Redis 自体が bottleneck になりやすいです。複数インスタンス化はこのため。
+- **CONFIG_DB ↔ APPL_DB の二段構造**：CLI から CONFIG_DB に書いた直後に APPL_DB に同名 key が無い場合がある（`*mgrd` 経由のため）。SET 直後の STATE/APPL 確認は polling が必要。
+- **ASIC_DB の write は async**：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か COUNTERS_DB 経由でしか観測できない。
+- **Multi-ASIC は namespace で分離**：同名 DB が複数ある。`-n asicX` を忘れた CLI は host 側の DB を読むだけで silent に成功する事故が多発する。
+
 ## 関連ページ
 
 - [config-setup サービス](../../system/sonic-configuration-setup-service.md)
 - [複数 Redis インスタンスのユーザ定義](../../internals/support-multiple-user-defined-redis-database-instances.md)
 - [Multi-ASIC 名前空間の Redis](../../internals/support-redis-databases-in-multiple-namespaces.md)
+- [20 章 SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/internals.md)

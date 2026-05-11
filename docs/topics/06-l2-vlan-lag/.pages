@@ -5,4 +5,5 @@ nav:
   - architecture.md
   - setup.md
   - operations.md
+  - internals.md
   - advanced.md

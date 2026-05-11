@@ -62,6 +62,54 @@ Active-Active では、ToR から SoC NIC へ forwarding state を問い合わ�
 
 Active-Standby の Y-cable 制御では I2C / xcvrd / ycabled の役割が前面に出ます。Active-Active では SoC NIC の状態を含むため、gRPC channel の疎通、TLS、keepalive、Loopback IP を送信元に使う要件が切り分けポイントになります。
 
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `linkmgrd` (`src/linkmgrd/`) | `LinkManagerStateMachineBase`、`ActiveStandbyStateMachine`、`ActiveActiveStateMachine` | LinkProber / LinkState / MuxState を合成し mux 状態決定 |
+| `ycabled` (`sonic-platform-daemons/sonic-ycabled/`) | `y_cable_helper.py` | Y-cable I2C 操作、APP_DB/STATE_DB の mux state 反映 |
+| `MuxOrch` (`orchagent/muxorch.cpp`) | `MuxOrch::doTask`、`MuxCable::stateActive`、`MuxCable::stateStandby` | mux 状態を SAI neighbor / route / tunnel に展開 |
+| `MuxCableOrch` | `MuxCableOrch::updateMuxState` | APPL_DB の `MUX_CABLE_TABLE` を読み、tunnel route の付け替え |
+| `TunnelDecapOrch` | `TunnelDecapOrch::doTask` | active 側のサーバ IP を decap する tunnel term entry |
+| `gRPC client` (Active-Active) | proto generated stub | SoC NIC の forwarding state 取得・設定 |
+
+## SAI 属性使用一覧
+
+| object | 属性 | 用途 |
+| --- | --- | --- |
+| `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `SAI_NEIGHBOR_ENTRY_ATTR_DST_MAC_ADDRESS`、`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | mux 状態でサーバ MAC / placeholder MAC を切替 |
+| `SAI_OBJECT_TYPE_NEXT_HOP` | `SAI_NEXT_HOP_ATTR_TYPE = TUNNEL_ENCAP`、`SAI_NEXT_HOP_ATTR_TUNNEL_ID` | standby 経由のサーバ宛 tunnel encap |
+| `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_DST_IP` | peer ToR からの tunnel を decap |
+| `SAI_OBJECT_TYPE_ROUTE_ENTRY` | `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` | サーバ IP host route の nexthop 切替 |
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  MUX_CABLE, DEVICE_METADATA (peer_switch / subtype)
+APPL_DB:
+  HW_MUX_CABLE_TABLE (state からの fb)
+  MUX_CABLE_TABLE (linkmgrd → MuxCableOrch)
+STATE_DB:
+  MUX_CABLE_TABLE (現状態), MUX_LINKMGR_TABLE, MUX_METRICS_TABLE,
+  HW_MUX_CABLE_TABLE_PEER, FORWARDING_STATE_TABLE (Active-Active)
+ASIC_DB:
+  NEIGHBOR_ENTRY, NEXT_HOP, TUNNEL_TERM_TABLE_ENTRY, ROUTE_ENTRY
+```
+
+## ZMQ / Redis pub/sub
+
+- Dual-ToR は **Redis pub/sub のみ**で ZMQ は使われていません。
+- linkmgrd は `STATE_DB:MUX_CABLE_TABLE` を SubscriberStateTable で監視。
+- Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 SONiC コンテナ内の `linkmgrd` プロセス自体が gRPC client。
+
+## 既知の実装上の制約
+
+- `linkmgrd` の状態機械は **per-port**で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。HLD では individual port basis 設計。
+- `MuxOrch` は active → standby 切替時に neighbor を**削除 → tunnel nexthop へ再作成**する path を取るため、ASIC で neighbor を作り直すコストが大きい場合の path として prefix-based mux neighbors が導入された。
+- Active-Active で SoC NIC が応答しない場合、`linkmgrd` 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。
+- gRPC channel が切断中は `linkmgrd` が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。
+
 ## 関連ページ
 
 - [gRPC client](../../management/design-doc.md)

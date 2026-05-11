@@ -67,6 +67,84 @@ S3IP に準拠した装置では、PSU、fan、temperature、transceiver、CPLD�
 
 BMC 経由のときは、SONiC OS 側の daemon が直接 sensor を叩かないため、障害解析時にどちらの経路を見るべきかを意識する必要があります。
 
+## データフロー（port / optics 全体）
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB<br/>PORT/PORT_TABLE)] --> PORTMGR[portmgrd / intfmgrd]
+  PORTMGR --> KERNEL[kernel netdev]
+  PORTMGR --> APPL[(APPL_DB:PORT_TABLE)]
+  APPL --> PORTSORCH[PortsOrch]
+  PORTSORCH --> ASIC[(ASIC_DB)]
+  XCVRD[xcvrd<br/>sonic-platform plugin] -->|EEPROM read| OPTIC[QSFP/SFP]
+  XCVRD --> STATE[(STATE_DB:TRANSCEIVER_*)]
+  THERM[thermalctld] --> STATE
+  PSU[psud] --> STATE
+  PCIED[pcied] --> STATE
+  PMON[pmon container] -.->|supervisord| XCVRD
+  PMON -.-> THERM
+  PMON -.-> PSU
+  GBS[gbsyncd] --> ASIC
+```
+
+## 主要 daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::doTask`、`initializePort`、`setPortAdminStatus` | port SAI object 作成、speed/FEC/autoneg 設定 |
+| `portsyncd` | netlink listener | kernel link state を APPL_DB へ |
+| `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/`) | `xcvrd.py` | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を STATE_DB に書く |
+| `thermalctld` | platform plugin で温度センサ取得 | thermal policy 反映 |
+| `psud`、`pcied`、`syseepromd`、`ledd` | 各種 sensor / FRU | STATE_DB に状況書き込み |
+| `gbsyncd` | Gearbox 用 syncd | NPU 経由の PHY MDIO |
+| `sfputil` / `sfpshow` | CLI | xcvrd の出力を整形 |
+
+## SAI 属性使用一覧
+
+| object | 主属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_ADMIN_STATE`、`SPEED`、`AUTO_NEG_MODE`、`MEDIA_TYPE`、`INTERFACE_TYPE`、`MTU`、`PORT_VLAN_ID`、`FEC_MODE` |
+| `SAI_OBJECT_TYPE_PORT_SERDES` | `SAI_PORT_SERDES_ATTR_PREEMPHASIS`、`IDRIVER`、`TX_FIR_PRE1/MAIN/POST1/...` |
+| `SAI_OBJECT_TYPE_GEARBOX` 系 | Gearbox model object（experimental） |
+| `SAI_OBJECT_TYPE_HOSTIF` | `SAI_HOSTIF_ATTR_TYPE = NETDEV`、`OPER_STATUS` |
+
+`PORT_SERDES` は media-based port settings の主入口で、media type ごとに `media_settings.json` を読み xcvrd が適用要求を出します。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  PORT, BREAKOUT_CFG, INTERFACE,
+  CABLE_LENGTH, MEDIA_SETTINGS (一部は file)
+APPL_DB:
+  PORT_TABLE, HOSTIF_TABLE
+STATE_DB:
+  TRANSCEIVER_INFO, TRANSCEIVER_DOM_SENSOR, TRANSCEIVER_STATUS, TRANSCEIVER_PM,
+  PORT_TABLE, PORT_OPER_STATUS,
+  FAN_INFO, PSU_INFO, TEMPERATURE_INFO,
+  CHASSIS_INFO, PCIE_DEVICES_INFO
+COUNTERS_DB:
+  COUNTERS_PORT_NAME_MAP, COUNTERS:<port-oid>
+ASIC_DB:
+  PORT, PORT_SERDES, HOSTIF, GEARBOX
+```
+
+## ZMQ / Redis pub/sub
+
+- ZMQ は使わない。
+- `xcvrd` は sonic_platform plugin を直接呼び、結果を Redis に push。
+- PMON 系 daemon は `supervisord` で管理され、互いに Redis 経由でしか通信しない。
+- BMC 経路を持つ場合、`pmon` 配下の daemon が REST/Redfish を直接呼び、結果を STATE_DB に統一形式で書く。
+
+## 既知の実装上の制約
+
+- `xcvrd` の EEPROM polling 周期は default 60s 程度で、optics の即時 plug/unplug 検知は GPIO interrupt 経路（あれば）を `xcvrd` の event API で取り込む実装に依存する。これがベンダ plugin で未実装だと polling 周期分の遅延が出る。
+- media_settings の SI は port speed × media の組み合わせで `media_settings.json` に static に書く設計で、新規 optic 投入時にファイル更新と config reload が必要。
+- Gearbox SI 動的調整は `gbsyncd` の HLD では将来的な拡張で、master ではまだ static 適用のみのケースが多い（discrepancy として記録される）。
+- breakout（4×25G ↔ 100G 等）時の sequence は `PortsOrch` が `removePort` → `createPort` を行うため、kernel netdev が瞬間的に消える。LACP / LLDP / route が影響を受ける。
+- S3IP sysfs を使わないレガシー platform plugin では sysfs パスがベンダ独自で、共通 CLI（`show platform fan` 等）の出力に差が出る。
+- BMC 経由運用では、host OS の sensor 値が BMC の cache に律速され、host OS の `pmon` 周期と BMC polling 周期がずれて oscillation することがある。
+
 ## 関連ページ
 
 - [media-based port settings in SONiC](../../platform/media-based-port-settings-in-sonic.md)

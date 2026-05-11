@@ -55,6 +55,81 @@ OID から Redis path への mapping は subagent 内のクラスに分散して
 
 加えて telemetry-agent には、process / docker 統計、memory 統計、reboot cause のように「Redis に元々無い情報」を取り込んで gNMI で publish する拡張があり、これらは subscribe path として現れます（発展トピックで扱います）。
 
+## データフロー（telemetry / SNMP / counter 全体）
+
+```mermaid
+flowchart LR
+  ASICCHIP[(ASIC)] -->|SAI get_stats / bulk_get_stats| SYNCD[syncd / FlexCounter]
+  SYNCD --> COUNT[(COUNTERS_DB)]
+  ORCH[orchagent] --> STATE[(STATE_DB)]
+  ORCH --> APPL[(APPL_DB)]
+  COUNT --> SNMP[snmp container<br/>sonic_ax_impl]
+  COUNT --> TEL[telemetry container<br/>gNMI server]
+  STATE --> SNMP
+  STATE --> TEL
+  APPL --> TEL
+  SNMP --> NMS[NMS]
+  TEL --> COLLECTOR[gNMI collector]
+  PROC[host process stats] --> TEL
+```
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `FlexCounter` (`syncd/FlexCounter.cpp`) | per-group polling thread | SAI stat の周期取得 |
+| `FlexCounterManager` | group の追加/削除 | group 名から polling thread を解決 |
+| `CounterCheck` / `flex_counter_table_consumer` | orchagent 側 | CONFIG_DB:FLEX_COUNTER_TABLE → ASIC_DB:FLEX_COUNTER_TABLE 反映 |
+| `sonic_ax_impl` (`src/sonic-snmpagent/`) | python AgentX subagent | OID → Redis path の解決 |
+| `snmpd` | net-snmp | AgentX master |
+| `telemetry` (sonic-gnmi) | go | gNMI server（→ 10 章） |
+| `coredump_gen_handler` | python | core 発生 → techsupport 非同期実行 |
+
+## SAI 属性使用一覧
+
+主要な stat ID（FlexCounter が `sai_get_*_stats` / `sai_bulk_get_*_stats` で取得）:
+
+| 対象 | stat ID 群 |
+| --- | --- |
+| port | `SAI_PORT_STAT_IF_IN_OCTETS`、`IF_OUT_OCTETS`、`IF_IN_DISCARDS`、`PFC_*_RX_PKTS`、`IN_DROPPED_PKTS` |
+| queue | `SAI_QUEUE_STAT_PACKETS`、`BYTES`、`DROPPED_PACKETS`、`DROPPED_BYTES`、`WATERMARK_BYTES` |
+| PG | `SAI_INGRESS_PRIORITY_GROUP_STAT_PACKETS`、`DROPPED_PACKETS`、`XOFF_ROOM_WATERMARK_BYTES` |
+| buffer pool | `SAI_BUFFER_POOL_STAT_CURR_OCCUPANCY_BYTES`、`WATERMARK_BYTES` |
+| ACL | counter object 経由（`SAI_ACL_COUNTER_ATTR_PACKETS / BYTES`） |
+| trap (CoPP) | `SAI_HOSTIF_TRAP_GROUP_STAT_PACKETS` |
+
+`sai_query_stats_capability` で「使える stat id」を起動時に問い合わせ、サポート外の id は group から除外する設計（→ 20 章）。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  FLEX_COUNTER_TABLE|<group>  (POLL_INTERVAL / FLEX_COUNTER_STATUS)
+  SYSLOG_SERVER, SYSLOG_CONFIG_FEATURE, AUTO_TECHSUPPORT, AUTO_TECHSUPPORT_FEATURE
+  SNMP_AGENT_ADDRESS_CONFIG, SNMP_COMMUNITY, SNMP_USER
+ASIC_DB:
+  FLEX_COUNTER_TABLE / FLEX_COUNTER_GROUP_TABLE (orchagent → syncd への指示)
+COUNTERS_DB:
+  COUNTERS:<oid>, COUNTERS_PORT_NAME_MAP, COUNTERS_QUEUE_NAME_MAP,
+  COUNTERS_PG_NAME_MAP, COUNTERS_TRAP_NAME_MAP, RATES:*
+STATE_DB:
+  PROCESS_STATS, SYSTEM_*, AUTO_TECHSUPPORT_DUMP_INFO
+```
+
+## ZMQ / Redis pub/sub
+
+- FlexCounter は ASIC からの notification ではなく **polling**。Redis pub/sub も使わず、ASIC_DB ↔ syncd 内通信で完結。
+- gNMI Subscribe は **Redis keyspace notifications** を購読（→ 10 章）。
+- SNMP AgentX は `sonic_ax_impl` が Redis を polling し、AgentX subagent → snmpd（master） → NMS。
+
+## 既知の実装上の制約
+
+- counter の polling interval は group 単位で、CONFIG_DB に書いてから ASIC_DB に反映されるまで一拍ある。高頻度（< 1s）の interval は ASIC 側 SDK の負荷が無視できない。
+- `RATES:` table は `portstat` 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しか無く、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。
+- SNMP subagent は OID から Redis path への mapping を**ハードコード**しており、新 MIB の追加には subagent コード変更が必要。
+- auto-techsupport は dump サイズが /var/dump 上限を超えると古いものから削除し、保存し損ねるケースがある。
+- syslog の container 二段ホップは container 内 rsyslog が停止すると host 側に何も流れない silent 失敗が起きる。
+
 ## 関連ページ
 
 - [FlexCounter refactor](../../internals/sonic-flexcounter-refactor.md)

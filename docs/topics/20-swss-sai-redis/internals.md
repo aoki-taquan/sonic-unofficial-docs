@@ -10,6 +10,53 @@ sources: []
 
 ここでは「SAI / syncd 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex counter が…」「bulk counter が…」「CRM が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。
 
+## SWSS / SAI / Redis のデータフロー
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB)] --> MGR[*mgrd / cfgmgr]
+  MGR --> APPL[(APPL_DB)]
+  MGR --> KERNEL[Linux kernel]
+  KERNEL -->|netlink| SYNCDAEMONS[*syncd<br/>portsyncd / fdbsyncd / fpmsyncd / natsyncd / teamsyncd]
+  SYNCDAEMONS --> APPL
+  APPL --> ORCH[orchagent<br/>per-feature Orch]
+  ORCH --> ASIC[(ASIC_DB)]
+  ASIC --> SAIREDIS[sairedis client<br/>in syncd]
+  SAIREDIS --> SAILIB[SAI library<br/>libsai]
+  SAILIB --> CHIP[(ASIC SDK)]
+  ORCH --> STATE[(STATE_DB)]
+  SAILIB -->|FLEX_COUNTER polling| COUNT[(COUNTERS_DB)]
+  SAILIB -->|notification| ASICNOTIFY[ASIC notification channel]
+  ASICNOTIFY --> ORCH
+```
+
+## 主要 Orch / daemon の責務（早見表）
+
+| 層 | 代表 | 主実体 |
+| --- | --- | --- |
+| cfgmgr | `vlanmgrd`、`intfmgrd`、`teammgrd`、`vrfmgrd`、`buffermgrd`、`natmgr`、`portmgrd`、`vxlanmgrd`、`tunnelmgrd` | `cfgmgr/*.cpp` |
+| sync | `portsyncd`、`fdbsyncd`、`fpmsyncd`、`teamsyncd`、`natsyncd` | `<sync>/<sync>.cpp` |
+| Orch (orchagent process) | `PortsOrch`、`RouteOrch`、`NhgOrch`、`NeighOrch`、`AclOrch`、`QosOrch`、`BufferOrch`、`VxlanOrch`、`VNetOrch`、`NatOrch`、`FdbOrch`、`MirrorOrch`、`PolicerOrch`、`CrmOrch`、`SwitchOrch`、`Srv6Orch`、`MuxOrch`、`MACsecOrch`、`P4Orch`、`DashOrch` 系 | `orchagent/*.cpp` |
+| syncd | `syncd`、`SAIRedis`、`flexcounter`、`SaiAttributeList`、`MetaInit` | `syncd/*.cpp` |
+| sairedis | `RedisClient`、`AsicView`、`SaiRedisServer` | `lib/sai_redis_*.cpp` |
+| swsscommon | `ProducerStateTable`、`ConsumerStateTable`、`SubscriberStateTable`、`NotificationConsumer`、`ZmqClient/Server`、`DBConnector` | `sonic-swss-common/` |
+
+## SAI / Redis pub/sub 概観
+
+| 経路 | 用途 |
+| --- | --- |
+| `__keyspace@N__:*` | CONFIG/APPL/STATE/COUNTERS の各 key 変更通知 |
+| `ASIC_STATE_CHANNEL` | orchagent → syncd への ASIC_DB write 通知 |
+| `ASIC_STATE_NTF_CHANNEL` | syncd → orchagent への notification（FDB / port state / BFD 等） |
+| ZMQ | 大量 push 経路（VNET ZMQ、DASH SWBUS、gnmi-native-write） |
+
+## 既知の実装上の制約（章末でも触れる）
+
+- `redis-server` が単一スレッドで、APPL/CONFIG/STATE/COUNTERS を集約すると hot spot。複数インスタンス化が選択肢。
+- sairedis async モードで「ASIC_DB write 成功」と「SAI 実反映」が分離。確認は notification か COUNTERS_DB で。
+- SAI capability の問い合わせを起動時に行う設計（`sai_query_api_version` / `sai_query_attribute_capability` / `sai_query_stats_capability`）が増えており、起動時間が ASIC capability の数に比例して伸びる。
+- 大量 route loading で `gRingBuffer` + assistant thread が入ったが、orchagent main loop の lock contention は完全には消えていない。
+
 ## SAI / syncd 整合性の三本柱
 
 | 機能 | 改善する問題 | 主な層 | 設定面 |
