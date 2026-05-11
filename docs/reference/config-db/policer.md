@@ -77,6 +77,14 @@ POLICER|<name>
 - 関連 YANG: 直接の YANG モジュールは無し（参照側 YANG が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: policerorch 実装: `policerorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/policerorch.cpp>

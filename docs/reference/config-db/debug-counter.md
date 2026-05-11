@@ -69,6 +69,15 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - 関連 YANG: `sonic-debug-counter`
 - 関連 CLI: `config debug counter` / `show debug counter` 系
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-debug-counter`](../yang/sonic-debug-counter.md)
+- CLI: `config debug counter` / `show debug counter`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-debug-counter.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-debug-counter.yang>

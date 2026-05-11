@@ -64,6 +64,15 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 - 関連 CLI: `config auto-techsupport global`、`config auto-techsupport-feature`
 - 関連 YANG: `sonic-auto_techsupport`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-auto_techsupport`
+- CLI: `config auto-techsupport`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-auto_techsupport.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang>

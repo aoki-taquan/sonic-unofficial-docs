@@ -105,6 +105,15 @@ module: sonic-portchannel
 - CONFIG_DB: `PORTCHANNEL_MEMBER`
 - CLI: `config portchannel`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORTCHANNEL`](../config-db/portchannel.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`PORTCHANNEL_MEMBER`](../config-db/portchannel-member.md)
+- CLI: [`config portchannel`](../cli/config-portchannel.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-portchannel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

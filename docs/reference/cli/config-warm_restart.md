@@ -47,6 +47,14 @@ related:
 - `teamsyncd_timer` は `WARM_RESTART|teamd` の `teamsyncd_timer` を更新する。adhoc validation が有効な場合は 1-3599 秒。
 - `bgp_eoiu` は `WARM_RESTART|bgp` の `bgp_eoiu` を `true` / `false` で更新する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`WARM_RESTART`](../config-db/warm-restart.md) / [`FEATURE`](../config-db/feature.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config warm_restart` グループは CONFIG_DB と STATE_DB connector を namespace ごとに初期化する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940>

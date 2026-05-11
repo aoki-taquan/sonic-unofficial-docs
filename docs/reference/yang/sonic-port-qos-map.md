@@ -89,6 +89,15 @@ module: sonic-port-qos-map
 - CONFIG_DB: `PORT_QOS_MAP`
 - CLI: `config qos`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT_QOS_MAP`](../config-db/port-qos-map.md)
+- CLI: [`config qos`](../cli/config-qos.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-port-qos-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

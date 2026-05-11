@@ -75,6 +75,14 @@ module: sonic-bgp-peerrange
 - CONFIG_DB: `BGP_PEER_RANGE`
 - CLI: なし（`bgpcfgd` が config_db.json から読み取り FRR `bgp listen range` に反映）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_PEER_RANGE`](../config-db/bgp-peer-range.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

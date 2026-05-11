@@ -73,6 +73,15 @@ module: sonic-dns
 - CONFIG_DB: `DNS_OPTIONS`
 - CLI: `config dns`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `DNS_NAMESERVER` / `DNS_OPTIONS`
+- CLI: `config dns`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dns.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

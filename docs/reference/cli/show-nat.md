@@ -76,6 +76,14 @@ related:
 - `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または STATE_DB / CONFIG_DB を直接読むしかない。
 - `show nat translations` は **NAT が実際にハード offload されている前提**。`config nat feature disable` 状態では空表示になる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `nat` グループは `show/nat.py` L9-L12。`config/nat.py` 側は CONFIG_DB を書き、`show/nat.py` は別 binary 経由で読むという分担。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9>

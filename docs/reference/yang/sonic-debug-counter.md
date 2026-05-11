@@ -80,6 +80,15 @@ module: sonic-debug-counter
 - CONFIG_DB: `DEBUG_COUNTER`, `DEBUG_COUNTER_DROP_REASON`, `DEBUG_DROP_MONITOR`
 - CLI: `config debug-counter`, `show debug-counter`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DEBUG_COUNTER`](../config-db/debug-counter.md) / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR`
+- CLI: `config debug-counter` / `show debug-counter`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-debug-counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

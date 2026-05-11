@@ -118,6 +118,14 @@ Package の docker image / systemd unit / 関連リソースを削除。`--keep-
 - 大半のサブコマンドが root 権限必須。
 - `--use-local-manifest` は hidden オプションで、`spm install --name <name> --use-local-manifest` で `manifests create` 経由のローカル manifest を使う。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `get_package_status` は `sonic_package_manager/main.py` L134-L142。`built_in` 属性で Built-In 判定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_package_manager/main.py#L134>

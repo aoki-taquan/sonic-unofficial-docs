@@ -105,6 +105,14 @@ excerpt: |
 - ManagementVRF と Data VRF は内部の格納先テーブルが異なるが、CLI 上では同じ `config vrf add` で透過に扱える。
 - `del` は IP・SYSLOG・DHCPv4 relay から参照されている VRF を拒否する（依存解消が先）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VRF`](../config-db/vrf.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`SYSLOG_SERVER`](../config-db/syslog-server.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config vrf` グループの正式な登録は `config/main.py` L7673。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7673>

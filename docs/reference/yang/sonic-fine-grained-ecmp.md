@@ -78,6 +78,14 @@ module: sonic-fine-grained-ecmp
 - CONFIG_DB: `FG_NHG`, `FG_NHG_PREFIX`, `FG_NHG_MEMBER`
 - CLI: なし（config_db.json で直接設定）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FG_NHG`](../config-db/fg-nhg.md) / `FG_NHG_PREFIX` / `FG_NHG_MEMBER`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

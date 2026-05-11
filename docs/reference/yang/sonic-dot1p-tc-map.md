@@ -59,6 +59,15 @@ module: sonic-dot1p-tc-map
 - CONFIG_DB: `DOT1P_TO_TC_MAP`
 - CLI: `config qos`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DOT1P_TO_TC_MAP`](../config-db/dot1p-to-tc-map.md)
+- CLI: [`config qos`](../cli/config-qos.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

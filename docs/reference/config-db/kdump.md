@@ -50,6 +50,15 @@ KDUMP|config
 - 関連 CLI: `config kdump enable/disable/memory/num_dumps/remote/add ssh_string`、`show kdump`
 - 関連 YANG: `sonic-kdump`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-kdump`](../yang/sonic-kdump.md)
+- CLI: [`config kdump`](../cli/config-kdump.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-kdump.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-kdump.yang>

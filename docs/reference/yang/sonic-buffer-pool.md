@@ -63,6 +63,14 @@ module: sonic-buffer-pool
 
 - CONFIG_DB: `BUFFER_POOL`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BUFFER_POOL`](../config-db/buffer-pool.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-pool.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

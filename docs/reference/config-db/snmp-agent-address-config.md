@@ -56,6 +56,15 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 - 関連 CLI: `config snmp agentaddress { add | del } <ip> [-p <port>] [-v <vrf>]`
 - 関連 YANG: `sonic-snmp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-snmp`](../yang/sonic-snmp.md)
+- CLI: `config snmp agentaddress`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-snmp.yang` (container `SNMP_AGENT_ADDRESS_CONFIG` / list `SNMP_AGENT_ADDRESS_CONFIG_LIST`、key と unique 制約). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang>

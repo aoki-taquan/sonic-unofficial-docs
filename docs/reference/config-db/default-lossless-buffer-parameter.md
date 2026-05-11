@@ -57,6 +57,14 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 - 関連 CONFIG_DB: `BUFFER_POOL`, `BUFFER_PROFILE`, `LOSSLESS_TRAFFIC_PATTERN`, `BUFFER_PG`
 - 関連 YANG: `sonic-default-lossless-buffer-parameter`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-default-lossless-buffer-parameter`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-default-lossless-buffer-parameter.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-default-lossless-buffer-parameter.yang>

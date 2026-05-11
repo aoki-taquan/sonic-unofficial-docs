@@ -71,6 +71,14 @@ module: sonic-buffer-profile
 
 - CONFIG_DB: `BUFFER_PROFILE`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BUFFER_PROFILE`](../config-db/buffer-profile.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

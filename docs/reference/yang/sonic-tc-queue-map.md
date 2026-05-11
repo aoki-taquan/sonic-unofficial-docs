@@ -58,6 +58,14 @@ module: sonic-tc-queue-map
 
 - CONFIG_DB: `TC_TO_QUEUE_MAP`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`TC_TO_QUEUE_MAP`](../config-db/tc-to-queue-map.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

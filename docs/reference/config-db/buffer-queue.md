@@ -70,6 +70,14 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 - 関連 CLI: なし
 - 関連 YANG: `sonic-buffer-queue`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-buffer-queue`](../yang/sonic-buffer-queue.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-buffer-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang>

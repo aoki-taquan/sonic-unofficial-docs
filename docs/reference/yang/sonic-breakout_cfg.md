@@ -56,6 +56,15 @@ module: sonic-breakout_cfg
 - CONFIG_DB: `BREAKOUT_CFG`
 - CLI: `config interface breakout`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
+- CLI: `config interface breakout`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

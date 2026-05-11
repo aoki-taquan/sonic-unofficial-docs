@@ -55,6 +55,14 @@ MUX_CABLE|<ifname>
 - 関連 CLI: `config muxcable mode/active/standby/auto`、`show muxcable`
 - 関連 YANG: `sonic-mux-cable`、`sonic-tunnel`、`sonic-peer-switch`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-mux-cable`](../yang/sonic-mux-cable.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-mux-cable.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mux-cable.yang>

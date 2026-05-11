@@ -60,6 +60,14 @@ module: sonic-bgp-sentinel
 - CONFIG_DB: `BGP_SENTINELS|<sentinel_name>`
 - CLI: なし（CONFIG_DB 直接設定）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `BGP_SENTINELS`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

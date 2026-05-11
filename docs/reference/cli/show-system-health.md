@@ -113,6 +113,14 @@ excerpt: |
 - chassis モジュール (`sonic_platform.chassis.Chassis`) が存在しないプラットフォームでは ImportError になる可能性がある。
 - ユニットテスト用の `UTILITIES_UNIT_TESTING=1` で `MockerManager` / `MockerChassis` に切り替わるパスがある。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `cli.add_command(system_health.system_health)` は `show/main.py` L329。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L329>

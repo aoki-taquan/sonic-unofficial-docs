@@ -86,6 +86,14 @@ config clock date <YYYY-MM-DD> <HH:MM:SS>
 - `date` サブコマンドは NTP 同期が有効な場合、`timedatectl` が "Failed to set time: Automatic time synchronization is enabled" でエラーを返す。先に NTP を停止する必要がある。
 - `timezone` は CONFIG_DB に保存されるため `config save` 後の再起動でも保持される。`date` は OS clock の変更のみで CONFIG_DB に持続化されない。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DEVICE_METADATA`](../config-db/device-metadata.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config clock` グループ定義は `config/main.py` L9758-L9815。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9758>

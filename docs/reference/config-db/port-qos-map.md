@@ -65,6 +65,15 @@ PORT_QOS_MAP|<PORT.name>
 - 関連 CLI: `config qos`
 - 関連 YANG: `sonic-port-qos-map`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-port-qos-map`](../yang/sonic-port-qos-map.md)
+- CLI: [`config qos`](../cli/config-qos.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-port-qos-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang>

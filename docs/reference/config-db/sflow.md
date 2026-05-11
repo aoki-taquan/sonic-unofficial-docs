@@ -74,6 +74,15 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 - 関連 CLI: `config sflow enable/disable/polling-interval/agent-id/collector/interface`
 - 関連 YANG: `sonic-sflow`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-sflow`](../yang/sonic-sflow.md)
+- CLI: [`config sflow`](../cli/config-sflow.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>

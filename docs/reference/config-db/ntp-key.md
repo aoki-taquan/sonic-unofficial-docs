@@ -58,6 +58,15 @@ NTP_KEY|<id>
 - 関連 CLI: `config ntp add key <id> --type ... --value ...` / `config ntp authentication enable`
 - 関連 YANG: `sonic-ntp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-ntp`](../yang/sonic-ntp.md)
+- CLI: [`config ntp`](../cli/config-ntp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-ntp.yang` (container `NTP_KEY` / list `NTP_KEY_LIST`、typedef `key-id`/`key-type`、revision 2025-07-21 で list 名を修正). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ntp.yang>

@@ -72,6 +72,14 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 - CLI: 標準 CLI ラッパなし。CONFIG_DB / init_cfg.json で直接設定
 - 関連 YANG: `sonic-telemetry_client`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-telemetry_client`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-telemetry_client.yang` (container `TELEMETRY_CLIENT` / `Global` / list `TELEMETRY_CLIENT_LIST`、typedef `report-type`/`path_target`/`encoding`/`ipv4-port`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang>

@@ -136,6 +136,14 @@ excerpt: |
 
 ほぼすべてのコマンドが完了直前に `systemctl reset-failed snmp.service` + `systemctl restart snmp.service` を実行する。即座に snmpd 再起動が走るため、本番ではバッチ的にまとめて発行する運用が望ましい。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / `SNMP_COMMUNITY` / `SNMP_USER` / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md) / `SNMP_TRAP_CONFIG` / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config snmp` 系の各コマンドが `clicommon.run_command(['systemctl', 'restart', 'snmp.service'], ...)` を呼ぶ。`config/main.py` L4399-L4403, L4427-L4431 など。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4399>

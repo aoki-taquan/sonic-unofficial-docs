@@ -67,6 +67,14 @@ module: sonic-restapi
 - CONFIG_DB: `RESTAPI`
 - CLI: なし（config_db.json で直接設定）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`RESTAPI`](../config-db/restapi.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-restapi.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

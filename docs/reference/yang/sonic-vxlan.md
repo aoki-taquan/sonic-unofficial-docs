@@ -79,6 +79,15 @@ module: sonic-vxlan
 - CONFIG_DB: `VXLAN_EVPN_NVO`
 - CLI: `config vxlan`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VXLAN_TUNNEL`](../config-db/vxlan-tunnel.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`VXLAN_EVPN_NVO`](../config-db/vxlan-evpn-nvo.md)
+- CLI: [`config vxlan`](../cli/config-vxlan.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vxlan.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

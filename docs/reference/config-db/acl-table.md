@@ -86,6 +86,14 @@ ACL_TABLE|<table_name>
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
 - 関連 YANG: なし（YANG 未定義）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CLI: [`config acl`](../cli/config-acl.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: フィールド名・type 値は `sonic-swss/orchagent/aclorch.{h,cpp}` (sha `43055961`) のマクロ定義と type バリデーションロジックから抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.cpp>

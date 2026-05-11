@@ -119,6 +119,14 @@ module: sonic-pbh
 - CONFIG_DB: `PBH_TABLE`
 - CLI: なし
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `PBH_HASH_FIELD` / `PBH_HASH` / `PBH_RULE` / `PBH_TABLE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pbh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

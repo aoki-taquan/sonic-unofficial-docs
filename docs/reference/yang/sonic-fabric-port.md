@@ -62,6 +62,15 @@ module: sonic-fabric-port
 - CONFIG_DB: `FABRIC_PORT`
 - CLI: `show fabric`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FABRIC_PORT`](../config-db/fabric-port.md)
+- CLI: `show fabric`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

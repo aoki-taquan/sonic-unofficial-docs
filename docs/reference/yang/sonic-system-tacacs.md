@@ -86,6 +86,15 @@ module: sonic-system-tacacs
 - CONFIG_DB: `TACPLUS|global`, `TACPLUS_SERVER|<ipaddress>`
 - CLI: `config tacacs`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md)
+- CLI: `config tacacs`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-tacacs.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

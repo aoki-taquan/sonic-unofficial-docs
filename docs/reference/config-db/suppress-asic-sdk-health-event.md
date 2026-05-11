@@ -48,6 +48,14 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>
 
 - `sonic-suppress-asic-sdk-health-event`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-suppress-asic-sdk-health-event`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-suppress-asic-sdk-health-event.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang>; schema 定義は `sonic-swss-common/common/schema.h` の `CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME = "SUPPRESS_ASIC_SDK_HEALTH_EVENT"`

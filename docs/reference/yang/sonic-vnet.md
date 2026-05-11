@@ -112,6 +112,15 @@ module: sonic-vnet
 - CONFIG_DB: `VNET_ROUTE_TUNNEL`
 - CLI: `config vnet`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VNET`](../config-db/vnet.md) / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL`
+- CLI: [`config vnet`](../cli/config-vnet.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vnet.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -55,6 +55,14 @@ CONSOLE_SWITCH|console_mgmt
 - `consutil` (CLI)
 - console switch を有効化したときの host service
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-console`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-console.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-console.yang>

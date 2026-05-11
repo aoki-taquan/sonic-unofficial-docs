@@ -59,6 +59,14 @@ module: sonic-pfc-priority-queue-map
 - CONFIG_DB: `MAP_PFC_PRIORITY_TO_QUEUE|<name>` でマップ本体、`PORT_QOS_MAP|<port>/pfc_to_queue_map` から参照
 - CLI: マップ名は `config qos reload` / minigraph 経由で投入
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MAP_PFC_PRIORITY_TO_QUEUE`](../config-db/map-pfc-priority-to-queue.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

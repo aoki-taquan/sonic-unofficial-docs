@@ -73,6 +73,14 @@ excerpt: |
 - WM のクリアは `sonic-clear` 系のコマンド (`sonic-clear queuewatermark`、`sonic-clear pgheadroom` など) で個別に行う
 - persistent WM はクリア不可。電源 OFF まで保持される、いわば「歴代最大値」を保存する仕組み
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BUFFER_POOL`](../config-db/buffer-pool.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show/main.py` L1116-L1196。group: `@cli.group(name='buffer_pool', ...)` / `@cli.group(name='headroom-pool', ...)`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1116>

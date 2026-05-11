@@ -51,6 +51,15 @@ KUBERNETES_MASTER|SERVER
 - 関連 CLI: `config kubernetes server ip/port/disable`、`show kubernetes`
 - 関連 YANG: `sonic-kubernetes_master`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-kubernetes_master`
+- CLI: `config kubernetes`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-kubernetes_master.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-kubernetes_master.yang>

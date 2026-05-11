@@ -62,6 +62,15 @@ module: sonic-warm-restart
 - CONFIG_DB: `WARM_RESTART`
 - CLI: `config warm_restart`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`WARM_RESTART`](../config-db/warm-restart.md)
+- CLI: `config warm_restart`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-warm-restart.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

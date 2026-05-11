@@ -65,6 +65,15 @@ MIRROR_SESSION|<name>
 - 関連 CLI: `config mirror_session add/remove`
 - 関連 YANG: `sonic-mirror-session`、`sonic-policer`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-mirror-session`](../yang/sonic-mirror-session.md)
+- CLI: [`config mirror_session`](../cli/config-mirror-session.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-mirror-session.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mirror-session.yang>

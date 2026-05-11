@@ -84,6 +84,15 @@ FLEX_COUNTER_TABLE|<group>
 - 関連 CLI: `counterpoll <group> enable/disable`、`counterpoll <group> interval <ms>`
 - 関連 YANG: `sonic-flex_counter`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-flex_counter`
+- CLI: `counterpoll`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-flex_counter.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-flex_counter.yang>

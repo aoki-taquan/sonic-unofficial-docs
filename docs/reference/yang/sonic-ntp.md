@@ -94,6 +94,15 @@ module: sonic-ntp
 - CONFIG_DB: `NTP_KEY`
 - CLI: `config ntp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `NTP` / [`NTP_SERVER`](../config-db/ntp-server.md) / [`NTP_KEY`](../config-db/ntp-key.md)
+- CLI: [`config ntp`](../cli/config-ntp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ntp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -61,6 +61,14 @@ cmd += ['-d', str(display)]
 
 NDP テーブルは **kernel の IPv6 neighbor table** および swss/neighsyncd で APPL_DB に同期されるもので、CONFIG_DB を読まない。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `ndp` の click 定義と `nbrshow -6` 起動は `show/main.py` L452-L472。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452>

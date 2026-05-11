@@ -70,6 +70,15 @@ module: sonic-mux-cable
 - CONFIG_DB: `MUX_CABLE`
 - CLI: `config mux`, `show mux`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MUX_CABLE`](../config-db/mux-cable.md)
+- CLI: `config mux` / `show mux`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mux-cable.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -116,6 +116,14 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 - 新旧 CLI が同じ Vlan に対して並走する場合、`dhcp_servers` (旧) と `DHCPV4_RELAY` (新) の整合は CLI が保証しない。新環境では `dhcpv4_relay` 系に寄せるのが推奨。
 - DHCPv4 リレーサービス再起動は **`systemctl restart dhcp_relay.service`** で行うので、設定変更時に既存リース解析が一旦止まる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / [`DHCPV4_RELAY`](../config-db/dhcpv4-relay.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: docker-dhcp-relay の CLI plugin は `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py`。`sonic-utilities` の `setup.py` には登録されておらず、buildimage 側でコンテナイメージにインストールされる。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py>

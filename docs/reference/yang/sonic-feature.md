@@ -74,6 +74,15 @@ module: sonic-feature
 - CONFIG_DB: `FEATURE`
 - CLI: `config feature`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FEATURE`](../config-db/feature.md)
+- CLI: `config feature`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

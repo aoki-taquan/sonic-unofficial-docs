@@ -60,6 +60,15 @@ module: sonic-banner
 - CONFIG_DB: `BANNER_MESSAGE|global`
 - CLI: `config banner`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BANNER_MESSAGE`](../config-db/banner-message.md)
+- CLI: [`config banner`](../cli/config-banner.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

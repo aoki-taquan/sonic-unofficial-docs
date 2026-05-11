@@ -66,6 +66,15 @@ module: sonic-system-aaa
 - CONFIG_DB: `RADIUS`
 - CLI: `config aaa`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`RADIUS`](../config-db/radius.md)
+- CLI: [`config aaa`](../cli/config-aaa.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-aaa.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -60,6 +60,15 @@ module: sonic-mgmt_interface
 - CONFIG_DB: `MGMT_INTERFACE|<name>|<ip_prefix>`
 - CLI: `config interface ip add eth0 <addr>`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
+- CLI: `config interface ip`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

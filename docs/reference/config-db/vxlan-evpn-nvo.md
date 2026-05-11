@@ -58,6 +58,15 @@ VXLAN_EVPN_NVO|<name>
 - 関連 YANG: `sonic-vxlan`
 - 関連 CLI: `config vxlan evpn_nvo`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-vxlan`](../yang/sonic-vxlan.md)
+- CLI: [`config vxlan`](../cli/config-vxlan.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vxlan.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang>

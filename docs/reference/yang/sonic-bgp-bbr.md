@@ -54,6 +54,15 @@ module: sonic-bgp-bbr
 - CONFIG_DB: `BGP_BBR|all`
 - CLI: `config bgp bbr`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `BGP_BBR`
+- CLI: `config bgp bbr`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

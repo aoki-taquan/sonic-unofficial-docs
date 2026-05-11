@@ -61,6 +61,15 @@ RADIUS|global
 - 関連 CLI: `config radius { passkey | timeout | retransmit | authtype | nasip | sourceip | statistics }`
 - 関連 YANG: `sonic-system-radius`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-system-radius`](../yang/sonic-system-radius.md)
+- CLI: `config radius`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-system-radius.yang` (container `RADIUS` / `global`、typedef `auth_type_enumeration`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-radius.yang>

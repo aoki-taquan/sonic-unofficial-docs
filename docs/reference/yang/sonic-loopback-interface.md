@@ -70,6 +70,15 @@ module: sonic-loopback-interface
 - CONFIG_DB: `LOOPBACK_INTERFACE`
 - CLI: `config loopback`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md)
+- CLI: `config loopback`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-loopback-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -122,6 +122,14 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 - `all` の出力は **JSON のみ**、テキスト config 形式ではない。
 - `ntp` / `syslog` は CONFIG_DB を見ず、生成済みの conf ファイルを直接 grep する。CONFIG_DB と乖離している場合は乖離が見える。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT`](../config-db/port.md) / [`INTERFACE`](../config-db/interface.md) / [`SNMP`](../config-db/snmp.md) / `SNMP_COMMUNITY` / `SNMP_USER` / [`ACL_RULE`](../config-db/acl-rule.md) / `STP`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `runningconfiguration` group 定義は `show/main.py` L1821-L1824。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1821>

@@ -58,6 +58,14 @@ module: sonic-pfc-priority-priority-group-map
 
 - CONFIG_DB: `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>`、`PORT_QOS_MAP|<port>/pfc_to_pg_map` から参照
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`](../config-db/pfc-priority-to-priority-group-map.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -58,6 +58,15 @@ FABRIC_PORT|<name>
 - 関連 YANG: `sonic-fabric-port`、`sonic-fabric-monitor`
 - 関連 CLI: `config fabric`、`show fabric`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-fabric-port`](../yang/sonic-fabric-port.md)
+- CLI: `config fabric`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-fabric-port.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang>

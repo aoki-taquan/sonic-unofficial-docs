@@ -148,6 +148,14 @@ stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 - `upgrade-docker` の warm 経路は `swss` / `bgp` / `teamd` の 3 つでしか効果が無く、それ以外は `--warm` を渡しても warm-restart aware な前処理が走らない（cold restart になる）。
 - `cleanup` は current / next を保護するが、それ以外（boot 履歴・回復用イメージ）も削除されることに注意。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `WARM_RESTART_ENABLE_TABLE` / `WARM_RESTART_TABLE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `get_bootloader()` は `sonic_installer/bootloader/__init__.py` がプラットフォーム文字列から ABOOT / GRUB / U-Boot 系を選択する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_installer/bootloader>

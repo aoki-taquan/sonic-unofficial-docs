@@ -117,6 +117,15 @@ module: sonic-vlan
 - CONFIG_DB: `VLAN_MEMBER`
 - CLI: `config vlan`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md)
+- CLI: [`config vlan`](../cli/config-vlan.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vlan.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -67,6 +67,15 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove`、`config interface vrf bind/unbind`
 - 関連 YANG: `sonic-interface`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-interface`](../yang/sonic-interface.md)
+- CLI: [`config interface`](../cli/config-interface.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-interface.yang>

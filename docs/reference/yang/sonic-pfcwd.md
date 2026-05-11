@@ -64,6 +64,15 @@ module: sonic-pfcwd
 - CONFIG_DB: `PFC_WD`
 - CLI: `pfcwd`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PFC_WD`](../config-db/pfc-wd.md)
+- CLI: `pfcwd`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfcwd.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

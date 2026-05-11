@@ -61,6 +61,15 @@ LLDP_PORT|<ifname>
 - 関連 CLI: `config lldp interface enable/disable`, `show lldp neighbors`, `show lldp table`
 - 関連 YANG: `sonic-lldp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-lldp`](../yang/sonic-lldp.md)
+- CLI: `config lldp` / [`show lldp`](../cli/show-lldp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-lldp.yang` (revision 2021-07-08). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang>

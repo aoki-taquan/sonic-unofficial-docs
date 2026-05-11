@@ -133,6 +133,14 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 - `fast-reboot` / `warm-reboot` は **data plane traffic loss** をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。`-c` の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。
 - chassis (multi-asic + supervisor + linecard) では `reboot` が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `warm-reboot` は `fast-reboot` への symlink (`scripts/warm-reboot -> fast-reboot`)。スクリプト中で `REBOOT_SCRIPT_NAME=$(basename $0)` を分岐に使う。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/warm-reboot>

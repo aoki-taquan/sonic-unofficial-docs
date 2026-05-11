@@ -49,6 +49,14 @@ show priority-group watermark shared [--namespace <ns>|all] [--json]
 
 `show priority-group drop counters` は `pg-drop -c show` を実行する。namespace 指定時は `-n <namespace>` を追加する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show priority-group` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1003>

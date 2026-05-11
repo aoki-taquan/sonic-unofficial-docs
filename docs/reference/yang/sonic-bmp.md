@@ -58,6 +58,15 @@ module: sonic-bmp
 - CONFIG_DB: `BMP|table`
 - CLI: `config bmp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BMP`](../config-db/bmp.md)
+- CLI: `config bmp`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

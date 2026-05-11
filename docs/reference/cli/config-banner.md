@@ -83,6 +83,14 @@ excerpt: |
 - `state` が `disabled` の場合、`login` / `logout` / `motd` の文字列が設定されていても表示されない（hostcfgd 側のテンプレート分岐）。
 - `<message>` は単一文字列の click argument のため、複数語のメッセージは引用符でくくる必要がある。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BANNER_MESSAGE`](../config-db/banner-message.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config banner` グループ定義は `config/main.py` L10003-L10053。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10003>

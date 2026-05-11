@@ -42,6 +42,14 @@ related:
 - `config interface pfc ...` は設定系で、`show pfc` は表示系。
 - PFC watchdog の永続化や counter の詳細は `pfcwd` 実装側に依存する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show pfc` グループ定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L670>

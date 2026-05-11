@@ -96,6 +96,14 @@ ACL_RULE|<table_name>|<rule_name>
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
 - 関連 YANG: なし
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CLI: [`config acl`](../cli/config-acl.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: match / action のキー名は `sonic-swss/orchagent/aclorch.h` の `MATCH_*` / `ACTION_*` マクロ定義から抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.h>

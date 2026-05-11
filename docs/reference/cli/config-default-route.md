@@ -90,6 +90,15 @@ MGMT_INTERFACE|eth0|10.0.0.0/24
 
 削除は `config route del prefix 0.0.0.0/0 ...` で対象 nexthop を指定する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-static-route`](../yang/sonic-static-route.md)
+- CONFIG_DB: [`STATIC_ROUTE`](../config-db/static-route.md) / [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config route add` の実装は `config/main.py` L7812-L7888。`blackhole` の自動付与は L7858-L7870。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812>

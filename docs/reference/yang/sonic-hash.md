@@ -64,6 +64,15 @@ module: sonic-hash
 - CONFIG_DB: `SWITCH_HASH|GLOBAL`
 - CLI: `config switch-hash`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SWITCH_HASH`](../config-db/switch-hash.md)
+- CLI: `config switch-hash`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-hash.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -64,6 +64,15 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 - 関連 CLI: `config snmp contact { add | modify | del }` / `config snmp location { add | modify | del }`
 - 関連 YANG: `sonic-snmp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-snmp`](../yang/sonic-snmp.md)
+- CLI: [`config snmp`](../cli/config-snmp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-snmp.yang` (container `SNMP` / `CONTACT` / `LOCATION`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang>

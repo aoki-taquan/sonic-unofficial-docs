@@ -92,6 +92,14 @@ excerpt: |
 
 `VlanBrief.register_column(name, callback)` を経由して、外部プラグインが任意の列を追加できる。`callback(ctx, vlan)` の `ctx` には `(vlan_cfg, db)` タプルが渡され、`vlan_cfg = (vlan_data, vlan_ip_data, vlan_ports_data)`、`db` は `ConfigDbWrapper(cfgdb, ns_db)`。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `vlan` グループ全体は `show/vlan.py` で定義。`brief` と `config` の 2 コマンドのみ。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vlan.py>

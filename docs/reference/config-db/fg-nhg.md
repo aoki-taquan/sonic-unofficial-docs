@@ -69,6 +69,14 @@ FG_NHG_MEMBER|<next_hop_ip>      # next-hop → group + bank
 - 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`
 - 関連 YANG: `sonic-fine-grained-ecmp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-fine-grained-ecmp`](../yang/sonic-fine-grained-ecmp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-fine-grained-ecmp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang>

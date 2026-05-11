@@ -156,6 +156,14 @@ excerpt: |
 - `RADIUS_PASSKEY_MAX_LEN = 65`、`RADIUS_MAXSERVERS = 8`。
 - `ADHOC_VALIDATION = True`（デフォルト ON）。CONFIG_DB の YANG 検証側ではなくコマンド側で IP / 文字種チェックを行う。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md) / [`RADIUS`](../config-db/radius.md) / `RADIUS_SERVER`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config/main.py` の L1754-L1756: `config.add_command(aaa.aaa)` / `config.add_command(aaa.tacacs)` / `config.add_command(aaa.radius)`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1754>

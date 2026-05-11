@@ -197,6 +197,14 @@ excerpt: |
 - `shutdown all` / `startup all`: **`front_ns` のみ**（外部 EBGP 隣接側）
 - `shutdown neighbor` / `startup neighbor` / `remove neighbor`: `front_ns` + `back_ns` 両方を走査
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_NEIGHBOR`](../config-db/bgp-neighbor.md) / [`BGP_DEVICE_GLOBAL`](../config-db/bgp-device-global.md) / [`BGP_AGGREGATE_ADDRESS`](../config-db/bgp-aggregate-address.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config bgp` グループ定義は `config/main.py` の L4918-L4921。`@config.group(cls=clicommon.AbbreviationGroup)` で `bgp` が宣言される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4918>

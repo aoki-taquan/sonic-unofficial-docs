@@ -61,6 +61,14 @@ config qos reload [--ports <port[,port...]>]
 | `BUFFER_PORT_EGRESS_PROFILE_LIST` | egress buffer profile list |
 | `BUFFER_PG` / `BUFFER_QUEUE` | port + PG/queue 単位の buffer 設定 |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT_QOS_MAP`](../config-db/port-qos-map.md) / [`BUFFER_PORT_INGRESS_PROFILE_LIST`](../config-db/buffer-port-ingress-profile-list.md) / [`BUFFER_PORT_EGRESS_PROFILE_LIST`](../config-db/buffer-port-egress-profile-list.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`DEVICE_METADATA`](../config-db/device-metadata.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config qos` グループ、`clear`、`reload` 定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3631>

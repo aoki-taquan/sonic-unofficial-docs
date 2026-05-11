@@ -62,6 +62,15 @@ VLAN|<name>
 - 関連 CLI: `config vlan` (add / del / member / dhcp_relay)
 - 関連 YANG: `sonic-vlan`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-vlan`](../yang/sonic-vlan.md)
+- CLI: [`config vlan`](../cli/config-vlan.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang>

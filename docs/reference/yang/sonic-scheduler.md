@@ -68,6 +68,14 @@ module: sonic-scheduler
 
 - CONFIG_DB: `SCHEDULER`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SCHEDULER`](../config-db/scheduler.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-scheduler.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

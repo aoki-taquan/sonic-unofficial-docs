@@ -89,6 +89,14 @@ def queuecounters():
 
 なし。COUNTERS_DB を直接書き換えるのではなく、`/tmp` 配下のスナップショットファイルだけが書き換わる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `counters` / `rifcounters` / `queuecounters` / `pfccounters` / `dropcounters` / `tunnelcounters` / `srv6counters` / `switchcounters` / `fabriccountersqueue` / `fabriccountersport` の定義は `clear/main.py` L167-L235。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py#L167>

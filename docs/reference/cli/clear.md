@@ -161,6 +161,14 @@ CONFIG_DB ではなく **STATE_DB の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを n
 
 それ以外のコマンドは **kernel neighbor table** や **SAI 経由の SDK 状態** を操作するもので CONFIG_DB は触らない。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `cli` グループ全体は `clear/main.py` で定義。`AliasedGroup` の自動補完と `aliases.ini` 読み込みは L39-L75。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py>

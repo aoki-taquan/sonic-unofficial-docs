@@ -87,6 +87,14 @@ related:
 | `MCLAG_INTERFACE` | `<domain_id>\|<portchannel>` | `if_type` | `member add` / `del` |
 | `MCLAG_UNIQUE_IP` | `<vlan_interface>` | `unique_ip` | `unique-ip add` / `del` |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `mclag` グループは `config/mclag.py` L110-L115 で定義、`config/main.py` から `config.add_command(mclag.mclag)` で登録される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/mclag.py#L110>

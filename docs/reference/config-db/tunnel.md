@@ -67,6 +67,14 @@ TUNNEL|<mux_tunnel>
 - 関連 CLI: 直接の CLI は無く `config_db.json` で投入
 - 関連 YANG: `sonic-tunnel`、`sonic-peer-switch`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-tunnel`](../yang/sonic-tunnel.md) / `sonic-peer-switch`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang>; orchagent 側パース: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>

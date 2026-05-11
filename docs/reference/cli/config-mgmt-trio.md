@@ -115,6 +115,14 @@ target file には **完全な config 全体** を渡す必要がある (`**WARN
 - `config replace` の `--format SONICYANG` 指定時は YANG モデルバリデーションが有効で、不適合な値は `--ignore-non-yang-tables` 等で個別に逃がす必要がある。
 - `config load` は merge なので、**削除した設定は CONFIG_DB に残る**。クリーンな状態にしたいなら必ず `config reload` を使う。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DEVICE_METADATA`](../config-db/device-metadata.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config save` (`config/main.py` L1789-L1849)、`config load` (L1851-L1910)、`config reload` (L2108-L2290)、`config replace` (L1981-L2036)、`config qos reload` (L3652-L3740) の各エントリポイント。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py>

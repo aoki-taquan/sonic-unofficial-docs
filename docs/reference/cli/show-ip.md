@@ -145,6 +145,14 @@ CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エ
 | FRR runtime (vtysh) | `route` / `prefix-list` / `protocol` / `bgp ...` |
 | Linux FIB + APPL_DB sync (`fibshow`) | `fib` |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`INTERFACE`](../config-db/interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `ip` グループ定義は `show/main.py` L1386-L1389。BGP の動的アタッチは L1567-L1581。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1387>

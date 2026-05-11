@@ -64,6 +64,14 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 - CLI: 標準 CLI ラッパなし。`config restapi` 系コマンドは未提供 (CONFIG_DB 直接編集または init_cfg 経由)
 - 関連 YANG: `sonic-restapi`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-restapi`](../yang/sonic-restapi.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-restapi.yang` (container `RESTAPI` / `certs` / `config`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-restapi.yang>

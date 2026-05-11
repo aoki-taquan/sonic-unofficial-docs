@@ -233,6 +233,14 @@ if clicommon.get_interface_naming_mode() == "alias":
 
 を実行する。`/etc/sonic/config_db.json` の `DEVICE_METADATA|localhost` の `interface_naming_mode` が `alias` の場合、ユーザは `etp1a` 等のエイリアスを入力でき、内部で `Ethernet0` に変換される。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT`](../config-db/port.md) / [`PORTCHANNEL`](../config-db/portchannel.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md) / [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md) / [`INTERFACE`](../config-db/interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`MGMT_INTERFACE`](../config-db/mgmt-interface.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md) / [`VRF`](../config-db/vrf.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `interface` グループ定義は `config/main.py` L5080-L5092。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L5080>

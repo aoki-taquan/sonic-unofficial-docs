@@ -66,6 +66,14 @@ FRR の `show route-map` 出力をそのまま表示する。フィールド整�
 
 `show route-map` 自体は CONFIG_DB を参照しない。SONiC で route-map を定義するには `ROUTE_MAP` / `ROUTE_MAP_SET` などのテーブルか、または FRR config を直接書く方法のみで、`config route-map` 系の CLI は **コミュニティ版 master には存在しない**（`config/main.py` 上では `route-map` グループは未定義）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show/main.py` L1266-L1274。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1266>

@@ -56,6 +56,15 @@ WRED_PROFILE|<name>
 - 関連 CLI: `config qos clear`、テンプレート起点の生成 (`buffers.json.j2`)
 - 関連 YANG: `sonic-wred-profile`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-wred-profile`](../yang/sonic-wred-profile.md)
+- CLI: [`config qos`](../cli/config-qos.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-wred-profile.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang>
