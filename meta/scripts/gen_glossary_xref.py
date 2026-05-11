@@ -231,8 +231,17 @@ def main() -> int:
         return 0
 
     if args.check:
+        import difflib
+        diff = difflib.unified_diff(
+            original.splitlines(keepends=True),
+            updated.splitlines(keepends=True),
+            fromfile=str(GLOSSARY.relative_to(ROOT)) + " (committed)",
+            tofile=str(GLOSSARY.relative_to(ROOT)) + " (regenerated)",
+            n=2,
+        )
+        sys.stderr.writelines(diff)
         sys.stderr.write(
-            f"drift: {GLOSSARY.relative_to(ROOT)} is out of date. "
+            f"\ndrift: {GLOSSARY.relative_to(ROOT)} is out of date. "
             f"Run `python3 meta/scripts/gen_glossary_xref.py` to regenerate.\n"
         )
         return 1
