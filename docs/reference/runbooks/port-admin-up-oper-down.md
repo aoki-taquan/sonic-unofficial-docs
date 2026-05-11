@@ -2,7 +2,7 @@
 title: Port が admin up なのに oper down のまま
 description: "Runbook: `config interface startup` 済みでも oper down が解けない場合の切り分け"
 area: reference
-verification: hld-only
+verification: runbook-verified
 last_verified: 2026-05-11
 tags: [runbook, port, platform]
 sources:

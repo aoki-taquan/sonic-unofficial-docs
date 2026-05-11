@@ -42,6 +42,9 @@ jobs:
       - name: Run frontmatter linter (v2)
         run: python meta/scripts/frontmatter_lint.py
 
+      - name: Check runbook verification status
+        run: python3 meta/scripts/check_runbook_status.py --check
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4

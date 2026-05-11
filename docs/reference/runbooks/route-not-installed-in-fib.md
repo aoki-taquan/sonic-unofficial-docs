@@ -2,7 +2,7 @@
 title: 経路は RIB にあるが FIB / ASIC に降りない
 description: "Runbook: `show ip route` には出るが ASIC に書き込まれず、転送に使われない経路の切り分け"
 area: reference
-verification: hld-only
+verification: runbook-verified
 last_verified: 2026-05-11
 tags: [runbook, routing, fib, fpm]
 sources:

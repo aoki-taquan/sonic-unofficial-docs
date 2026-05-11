@@ -2,7 +2,7 @@
 title: config reload が完了しない / hang する
 description: "Runbook: `config reload -y` が長時間応答せず終わらない場合の切り分け"
 area: reference
-verification: hld-only
+verification: runbook-verified
 last_verified: 2026-05-11
 tags: [runbook, config, system]
 sources:

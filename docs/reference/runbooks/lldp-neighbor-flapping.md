@@ -2,7 +2,7 @@
 title: LLDP 隣接が頻繁に up/down する
 description: "Runbook: LLDP neighbor が短周期で消える / 再出現する場合の切り分け"
 area: reference
-verification: hld-only
+verification: runbook-verified
 last_verified: 2026-05-11
 tags: [runbook, lldp, platform]
 sources:
