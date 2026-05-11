@@ -14219,6 +14219,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21570,6 +21581,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21758,6 +21780,14 @@ reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachabl
 - 古い HLD（2019-2020）のため AAA Improvements との関係確認（priority=high）
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>RADIUS authentication の PAM/NSS 実装の現行 master 取り込みを <code>hostcfgd</code> で確認した。</p>
+<ul>
+<li><code>PAM_RADIUS_AUTH_CONF_TEMPLATE = "/usr/share/sonic/templates/pam_radius_auth.conf.j2"</code>、<code>RADIUS_PAM_AUTH_CONF_DIR = "/etc/pam_radius_auth.d/"</code>、<code>NSS_RADIUS_CONF = "/etc/radius_nss.conf"</code>: <code>.cache/sonic-sources/sonic-host-services/scripts/hostcfgd</code> L38-L97</li>
+<li><code>AaaCfg.pick_src_intf_ipaddrs()</code> で <code>src_intf</code> 指定時の RADIUS server bind 元 IP を解決 (L444 以降)、<code>src_intf</code> を RADIUS グローバル / per-server から拾う処理 (L497-L501)</li>
+<li>multi server priority / passkey / auth_type / timeout は AaaCfg の RADIUS 部に存在</li>
+</ul>
+<p>HLD が記述する <code>pam_radius</code> + nsswitch RADIUS NSS の二段構成（ssh login → PAM → RADIUS、user lookup → NSS → radius_nss）は実装と一致。後発 AAA Improvements HLD で指摘された多重 role 共有問題は別途残課題で、本ページ自体の主張は実装に追随しているため <code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

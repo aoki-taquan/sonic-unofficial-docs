@@ -12043,6 +12043,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21514,6 +21525,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21633,6 +21655,14 @@
 <li>vendor 実装の <code>should_trigger()</code> の実体 (例: GPIO 経由の long reset 判定) を vendor specific docker または <code>sonic_platform</code> 配下に確認</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
+<ul>
+<li><code>reset-local-users-passwords.service</code> / <code>LOCAL_USERS_PASSWORDS_RESET</code> テーブル / <code>config local-users-passwords-reset</code> CLI / <code>sonic-local-users-passwords-reset.yang</code> / <code>ENABLE_LOCAL_USERS_PASSWORDS_RESET</code> ビルドフラグ: いずれも検出できず</li>
+<li><code>sonic-platform-common</code> 配下に <code>LocalUsersConfigurationResetBase</code> 抽象クラスなし</li>
+<li>一方、reset-factory script (<code>sonic-buildimage/files/image_config/reset-factory/reset-factory</code>) は <strong><code>/etc/sonic/default_users.json</code> 経由でローカルユーザのパスワードを既定値に戻す</strong> 処理を実装しており（L14, L88-L104）、<code>build_debian.sh</code> L579 で <code>default_users.json</code> を j2 テンプレから生成している</li>
+</ul>
+<p>つまり「default_users.json で復元」という基礎部品は採用されたが、HLD が要求する <strong>long reset button トリガ + 専用 systemd service + plat 抽象 + 設定 YANG</strong> の枠組みは取り込まれていない。<code>discrepancy-found</code> を維持。</p>
 <div class="footnote">
 <hr />
 <ol>

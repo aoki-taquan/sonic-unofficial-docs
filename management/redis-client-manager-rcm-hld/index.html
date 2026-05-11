@@ -14639,6 +14639,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21514,6 +21525,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21542,8 +21564,8 @@
 <hr />
 <p>title: Redis Client Manager（RCM: connection pool / transactional client）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/mgmt/redis_client_manager.md
@@ -21669,6 +21691,13 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 - ping ベースの早期 connection 失敗検出ロジックの実装確認
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>RCM 4 関数のうち <code>CloseRedisClient</code> は現行 <code>sonic-mgmt-common</code> で利用されていることを確認した。</p>
+<ul>
+<li><code>CloseRedisClient(rc)</code> 呼び出し: <code>.cache/sonic-sources/sonic-mgmt-common/translib/db/db_redis_opts.go</code> L202、<code>translib/db/db.go</code> L472 / L481 / L515 / L529 / L587</li>
+<li>redis options / pool 設定: <code>db_redis_opts.go</code> の <code>setGoRedisOpts</code> / <code>adjustRedisOpts</code> / <code>initializeRedisOpts</code> / <code>_DBRedisOptsConfig.reconfigure / handleReconfigureSignal / readFromDB / parseRedisOptsConfig</code>（L66-L213）が pool size / read/write timeout / reconfigure 経路を実装</li>
+</ul>
+<p>HLD が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。<code>RedisClient</code> / <code>TransactionalRedisClient</code> / <code>TransactionalRedisClientWithOpts</code> の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

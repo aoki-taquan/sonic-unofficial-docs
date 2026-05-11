@@ -11494,6 +11494,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21536,6 +21547,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21634,6 +21656,14 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 - HLD 実測値（28s/25s）の現行マスターでの再現性確認
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>fast-reboot Flow Improvements の中核 (<code>warmboot-finalizer</code> の fast-reboot 兼用) は master に存在。</p>
+<ul>
+<li><code>warmboot-finalizer.service</code>: <code>.cache/sonic-sources/sonic-buildimage/files/image_config/warmboot-finalizer/warmboot-finalizer.service</code></li>
+<li><code>finalize-warmboot.sh</code>: 同ディレクトリ。fast-reboot / warm-reboot 共通の reconciliation を行うシェルで、<code>sonic-db-cli STATE_DB</code> で各 component の <code>WARM_RESTART_TABLE</code> を監視して <code>reconcile</code> 完了を待つ</li>
+<li><code>restore_neighbors.py</code> 相当の neighbor 復元: <code>sonic-buildimage/files/image_config/</code> 配下に <code>restore_neighbors</code> 系スクリプトが存在（fast-reboot 経路の dataplane downtime 削減のために neighbor を ARP/ND の前に復元）</li>
+</ul>
+<p>HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各 orch から WARM_RESTART_TABLE で reconcile 完了を通知する」構造は現行 master で稼働しているため <code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

@@ -12536,6 +12536,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21548,6 +21559,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21689,6 +21711,14 @@ reasoning: critical service / process 判定の根拠。
 - LED 制御 API（platform_chassis.set_status_led）との結線確認
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>System Health Monitor (<code>healthd</code>) は <code>sonic-buildimage/src/system-health/</code> に実装され、master に取り込み済み。</p>
+<ul>
+<li><code>healthd</code> スクリプト本体: <code>.cache/sonic-sources/sonic-buildimage/src/system-health/scripts/healthd</code></li>
+<li>一連の health checker / external_checker / supervisor 連携は <code>sonic-buildimage/src/system-health/</code> 配下に揃っている</li>
+<li><code>show system-health</code> CLI は sonic-utilities 側の show コマンドツリーに統合</li>
+</ul>
+<p>HLD が定義する「critical service / Monit / peripheral の 3 系統監視 + <code>STATE_DB</code> 経由の <code>system-health</code> 表示」設計は実コードと一致するため <code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

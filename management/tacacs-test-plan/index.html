@@ -14348,6 +14348,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21604,6 +21615,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21778,6 +21800,16 @@
 <li>TACACS+ サーバ側で <code>tac_plus -G</code> の foreground 起動 + tcpdump で UDP/TCP 49 を観測</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>テストプランが前提とする TACACS+ 認証経路の各実装を <code>hostcfgd</code> で確認した。</p>
+<ul>
+<li>TACACS+ 既定値: <code>.cache/sonic-sources/sonic-host-services/scripts/hostcfgd</code> L87-L89 (<code>TACPLUS_SERVER_PASSKEY_DEFAULT=""</code>, <code>TACPLUS_SERVER_TIMEOUT_DEFAULT="5"</code>, <code>TACPLUS_SERVER_AUTH_TYPE_DEFAULT="pap"</code>)</li>
+<li>AaaCfg の TACPLUS server 反映: L367-L369 で <code>auth_type</code> / <code>timeout</code> / <code>passkey</code> のデフォルト適用</li>
+<li><code>failthrough</code> オプション: L422-L423 で <code>if 'failthrough' in data: self.authentication['failthrough'] = is_true(data['failthrough'])</code></li>
+<li>NSS TACACS+ 設定: L34-L35 (<code>NSS_TACPLUS_CONF=/etc/tacplus_nss.conf</code>, <code>NSS_TACPLUS_CONF_TEMPLATE=...j2</code>)、L801-L813 で <code>tacplus_nss.conf</code> をテンプレ生成</li>
+<li><code>/etc/pam.d/common-auth-sonic</code> 経由の include 切替: L748-L752</li>
+</ul>
+<p>テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて hostcfgd で実装済み。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

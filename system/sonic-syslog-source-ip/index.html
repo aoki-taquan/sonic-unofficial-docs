@@ -12300,6 +12300,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21636,6 +21647,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21849,6 +21871,13 @@ reasoning: UDP 限定スコープと omfwd 流用の根拠。
 <li><a href="../../reference/config-db/syslog-server/">CONFIG_DB: SYSLOG_SERVER</a></li>
 <li><a href="../../reference/yang/sonic-syslog/">YANG: sonic-syslog</a></li>
 </ul>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>rsyslog 構成のテンプレ更新と SYSLOG_SERVER / SYSLOG_CONFIG の YANG 取り込みを確認した。</p>
+<ul>
+<li><code>rsyslog-config.service</code> / <code>rsyslog-config.sh</code>: <code>.cache/sonic-sources/sonic-buildimage/files/image_config/rsyslog/rsyslog-config.{service,sh}</code>（CONFIG_DB の SYSLOG_SERVER / SYSLOG_CONFIG を読み rsyslog テンプレを再生成）</li>
+<li>YANG: <code>.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang</code> に SYSLOG_SERVER / SYSLOG_CONFIG が定義済み（source IP / VRF / port / severity / message_format 等のフィールド含む）</li>
+</ul>
+<p>HLD が掲げる「rsyslog omfwd + source IP + VRF binding + IP_FREEBIND」の主要構造は実装側にも反映されており、<code>config syslog</code> / <code>show syslog</code> CLI も sonic-utilities に存在する想定で整合する。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

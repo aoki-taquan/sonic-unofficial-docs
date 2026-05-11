@@ -12390,6 +12390,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21718,6 +21740,14 @@
 <li><strong>SAI DTel object types</strong>: <code>SAI_OBJECT_TYPE_DTEL_*</code> 群</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>DTel の主要 orch 実装は <code>sonic-swss</code> に取り込まれている。</p>
+<ul>
+<li>DTel Orch: <code>.cache/sonic-sources/sonic-swss/orchagent/dtelorch.cpp</code> / <code>dtelorch.h</code>（INT source/sink/transit、Postcard、Drop / Queue Report の SAI_DTEL_* 属性ハンドリング）</li>
+<li>swss-level テスト: <code>.cache/sonic-sources/sonic-swss/tests/test_dtel.py</code></li>
+<li>SAI side: Barefoot 由来の <code>SAI_OBJECT_TYPE_DTEL_*</code> は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）</li>
+</ul>
+<p>テストプランが対象とする CONFIG_DB スキーマ (<code>DTEL_*</code>) と orch 動作は現行 master でカバーされており、Barefoot 系 ASIC 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため <code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

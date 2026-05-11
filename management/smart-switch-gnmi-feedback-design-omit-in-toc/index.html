@@ -14068,6 +14068,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21548,6 +21559,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21741,6 +21763,15 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <li>Subscribe が初回データを返さない: gNMI Server の subscribe 登録時のスナップショット取得処理を確認。</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
+<ul>
+<li><code>version_id</code> フィールドを必須にする gNMI スキーマ拡張: <code>sonic-gnmi</code> 配下に <code>version_id</code> の参照なし</li>
+<li>batch gNMI 操作: <code>BatchGetRequest</code> / <code>BatchSetRequest</code> 系 API が <code>gnmi_server/</code> に存在しない</li>
+<li>DPU <code>APPL_STATE_DB</code> スキーマ: <code>database_config_dpu.json</code> には <code>APPL_DB</code> / <code>ASIC_DB</code> / <code>COUNTERS_DB</code> 等は定義されているが、HLD が要求する <code>APPL_STATE_DB</code> 専用 instance はテストデータレベルでは確認できず</li>
+<li>ZMQ 経由の swss 連携: <code>gnmi_server/</code> 配下に SmartSwitch 専用 ZMQ handler は未検出</li>
+</ul>
+<p>HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため <code>discrepancy-found</code> に変更。</p>
 <div class="footnote">
 <hr />
 <ol>

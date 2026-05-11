@@ -12306,6 +12306,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21750,6 +21772,14 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <li>「使用数は増えているのに空き数が減らない」など整合が崩れて見える場合、<code>orchagent</code> 側の自己追跡（使用数）と SAI 側の available count の更新タイミングがズレている可能性がある。</li>
 </ul>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>CRM 要件 HLD の実装は <code>sonic-swss</code> の <code>orchagent</code> と <code>sonic-utilities</code> の <code>crm</code> CLI に取り込み済み。</p>
+<ul>
+<li>CRM Orch 実装: <code>.cache/sonic-sources/sonic-swss/orchagent/crmorch.cpp</code> / <code>crmorch.h</code>（Route / Nexthop / Neighbor / NextHop Group / ACL Table / ACL Group / ACL Counter / FDB / IPMC / SNAT / DNAT 等の resource 使用量を SAI 経由でポーリングし、threshold 超過時 syslog WARNING を出す）</li>
+<li>CRM CLI: <code>.cache/sonic-sources/sonic-utilities/crm/</code> ディレクトリ、テスト <code>sonic-utilities/tests/crm_test.py</code></li>
+<li>DASH 拡張: <code>sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp</code> および <code>sonic-utilities/tests/crm_dash_test.py</code> で DASH ACL 系 resource を CRM に追加</li>
+</ul>
+<p>HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

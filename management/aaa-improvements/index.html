@@ -14096,6 +14096,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21492,6 +21503,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21626,6 +21648,15 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 - container 内認証の現行解決策確認
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>実コードを照合し、HLD が提起する多重 role / PAM / NSS / nss-mapper 構成のうち、現行 master の <code>hostcfgd</code> 内 <code>AaaCfg</code> クラスで以下の要素が実装されていることを確認した。</p>
+<ul>
+<li><code>class AaaCfg</code> 本体: <code>.cache/sonic-sources/sonic-host-services/scripts/hostcfgd</code> L354 以降</li>
+<li>PAM テンプレート / NSS 切替: 同ファイル L28-L51 で <code>PAM_AUTH_CONF=/etc/pam.d/common-auth-sonic</code>、<code>PAM_AUTH_CONF_TEMPLATE=/usr/share/sonic/templates/common-auth-sonic.j2</code>、<code>NSS_TACPLUS_CONF=/etc/tacplus_nss.conf</code>、<code>NSS_RADIUS_CONF=/etc/radius_nss.conf</code>、<code>NSS_CONF=/etc/nsswitch.conf</code> が定義され、TACACS+/RADIUS 有効化時に nsswitch.conf を書き換える (L754 付近) 処理が存在</li>
+<li><code>/etc/pam.d/sshd</code> / <code>/etc/pam.d/login</code> への <code>@include common-auth-sonic</code> 切替: L748-L752 で <code>sed</code> 相当の置換を実装</li>
+<li>認証順序（PAM auth stack）と NSS 並べ替えは <code>failthrough</code> / <code>login</code> / <code>auth_type</code> 設定により AaaCfg が動的生成</li>
+</ul>
+<p>ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の <code>hostcfgd</code> 単体実装ではまだ統合されていない（<code>nss-mapper</code> という独立コンポーネントは検出できず、<code>remote_user</code> 共有は <code>tacplus_nss.conf</code> / <code>radius_nss.conf</code> 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため <code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

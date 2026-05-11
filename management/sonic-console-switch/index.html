@@ -14622,6 +14622,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21766,6 +21788,14 @@
 - USB serial 挿抜時の TTY 番号安定化機構の現行実装確認
 -->
 
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
+<ul>
+<li><code>consutil</code> CLI: <code>.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}</code> に存在 → 取り込み済み</li>
+<li><code>sonic-console.yang</code> (CONSOLE_PORT / CONSOLE_SWITCH の YANG): <code>.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code> に存在（revision 2026-02-12 <code>escape_char</code> 追加 / 2022-08-22 First Revision）</li>
+<li><code>consoled</code> デーモン本体・<code>ser2net</code> 連携・reverse SSH の port/IP forwarding ロジック: <code>sonic-buildimage</code> / <code>sonic-host-services</code> のいずれにも検出できず</li>
+</ul>
+<p>HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、<code>discrepancy-found</code> を維持。</p>
 <div class="footnote">
 <hr />
 <ol>

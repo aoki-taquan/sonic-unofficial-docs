@@ -13726,6 +13726,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#verifier-batch-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ（Verifier batch 29）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21797,6 +21819,14 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <li>性能劣化が見られる場合、<code>save_on_set</code> を一時的に無効化（telemetry 再起動が必要）して切り分ける。</li>
 </ul>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<p><code>sonic-gnmi</code> の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。</p>
+<ul>
+<li>CLI フラグ <code>--with-save-on-set</code>: <code>.cache/sonic-sources/sonic-gnmi/telemetry/telemetry.go</code> L63 (<code>WithSaveOnSet *bool</code>) / L189 (<code>fs.Bool("with-save-on-set", false, ...)</code>) / L583-L584 で <code>s.SaveStartupConfig = gnmi.SaveOnSetEnabled</code> を結線</li>
+<li><code>SaveOnSetEnabled()</code> 本体: <code>.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go</code> L1051 以降。<code>ssc.NewDbusClient()</code> を作成し、<code>sc.ConfigSave("/etc/sonic/config_db.json")</code> で <strong>ホスト側 DBUS 経由で ConfigDB を /etc/sonic/config_db.json に保存</strong> する</li>
+<li><code>saveOnSetDisabled()</code> (L1068) で既定 (no-op) を実装</li>
+</ul>
+<p>HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、<code>--with-save-on-set</code> で有効化」が実コードと厳密に一致。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>
