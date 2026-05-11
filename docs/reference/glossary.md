@@ -613,7 +613,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (13)
 - [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../switching/brief-introduction-of-iccp-code.md) (11)
 - [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (9)
-- [Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）](../acl-qos/asymmetric-pfc-test-plan.md) (6)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (7)
 
 ### [ASIC_DB](#term-asic_db)
 
@@ -666,7 +666,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (10)
 - [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (9)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
-- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../management/sonic-nos-configuration-methods.md) (6)
+- [config reload が完了しない / hang する](runbooks/config-reload-stuck.md) (7)
 
 ### [config-setup](#term-config-setup)
 
@@ -710,11 +710,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [DHCP Relay](#term-dhcp-relay)
 
+- [変更履歴](../_meta/changelog.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (1)
 - [ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計](../architecture/1-udev-rules-design-for-terminal-server.md) (1)
 - [DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）](../architecture/dhcpv4-relay-agent.md) (1)
-- [DHCPv6 Relay Agent（Option 79 / dual ToR loopback）](../architecture/dhcpv6-relay-agent.md) (1)
 
 ### [DPU](#term-dpu)
 
@@ -870,8 +870,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-lldp YANG](yang/sonic-lldp.md) (27)
 - [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (15)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (10)
+- [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (6)
 - [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../overlay/dash-sonic-kvm.md) (5)
-- [show lldp サブコマンド](cli/show-lldp.md) (5)
 
 ### [MCLAG](#term-mclag)
 
@@ -915,8 +915,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (6)
 - [Reboot / warm restart の設定](../topics/11-reboot/setup.md) (6)
 - [config warm_restart サブコマンド](cli/config-warm_restart.md) (4)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (4)
 - [sonic-warm-restart YANG](yang/sonic-warm-restart.md) (4)
-- [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (3)
 
 ### [Netlink](#term-netlink)
 
