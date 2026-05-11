@@ -224,7 +224,7 @@ sudo config reload -y
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / YANG / Runbook）を以下にまとめる。
 
 ### 関連 CONFIG_DB
 
@@ -240,3 +240,5 @@ sudo config reload -y
 - [config-save-load](../reference/runbooks/config-save-load.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

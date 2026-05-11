@@ -66,7 +66,7 @@ related:
 | Control plane | aclmgrd, AclOrch, CoppOrch, MirrorOrch |
 | Data plane | SAI ACL table / entry, SAI policer, SAI mirror session, hostif trap |
 
-ACL / CoPP / Mirror はいずれも **ASIC の限られたリソース（TCAM、policer、mirror engine）を取り合う** ため、運用上は容量 / 優先度の設計が中心になります。
+ACL / CoPP / Mirror はいずれも **ASIC の限られたリソース（[TCAM](../../reference/glossary.md#term-tcam)、policer、mirror engine）を取り合う** ため、運用上は容量 / 優先度の設計が中心になります。
 
 ## 最初に押さえる用語
 
@@ -238,4 +238,4 @@ ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session att
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: ab534bf19f1d -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

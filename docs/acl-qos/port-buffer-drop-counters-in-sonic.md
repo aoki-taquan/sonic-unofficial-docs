@@ -128,7 +128,7 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 ## 制限事項
 
 - interval は 30s〜5min の範囲外を受け付けない[^1]
-- 対象は port 単位の `IN/OUT_DROPPED_PKTS` のみ。Queue / PG / Buffer Pool 単位は別 FC 系統[^1]
+- 対象は port 単位の `IN/OUT_DROPPED_PKTS` のみ。Queue / PG / [Buffer Pool](../reference/glossary.md#term-buffer-pool) 単位は別 FC 系統[^1]
 - 既定 60s のため、サブ秒のマイクロドロップを瞬時に観測する用途には向かない
 
 ## 干渉する機能
@@ -165,4 +165,4 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f5fa3ea70fda -->
+<!-- glossary-links-injected: f7696bbf835c -->

@@ -114,7 +114,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- BIOS / CPLD / FPGA / SSD の firmware install と確認。
+- BIOS / CPLD / [FPGA](../../reference/glossary.md#term-fpga) / SSD の firmware install と確認。
 - fwutil でのスケジュール更新 (next / boot)。
 
 ### よくある落とし穴
@@ -131,4 +131,4 @@ fwutil show status
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: d12a6eddadee -->

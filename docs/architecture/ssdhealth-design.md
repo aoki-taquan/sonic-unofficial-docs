@@ -303,4 +303,17 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show platform ssdhealth` CLI リファレンス](../reference/cli/show-platform.md)
+- [`show platform` CLI リファレンス](../reference/cli/show-platform.md)
+- [`config snmp` CLI リファレンス](../reference/cli/config-snmp.md)
+- [`show snmpagentaddress` CLI リファレンス](../reference/cli/show-snmpagentaddress.md)
+- [`SNMP` CONFIG_DB スキーマ](../reference/config-db/snmp.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 1d579f83f1e2 -->

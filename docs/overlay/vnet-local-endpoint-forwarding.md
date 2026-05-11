@@ -89,7 +89,7 @@ flowchart LR
     IO[IntfOrch] -->|local endpoint intf alias| VO
 ```
 
-`check_directly_connected=true` のエンドポイントが ARP で確認できる場合のみ ACL を立てる。全シナリオで作ると TCAM を浪費するため **local endpoint と確定したもののみ** に限定する[^1]。
+`check_directly_connected=true` のエンドポイントが ARP で確認できる場合のみ ACL を立てる。全シナリオで作ると [TCAM](../reference/glossary.md#term-tcam) を浪費するため **local endpoint と確定したもののみ** に限定する[^1]。
 
 | モジュール | 役割 |
 |------------|------|
@@ -200,4 +200,4 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 4dc7b054596d -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

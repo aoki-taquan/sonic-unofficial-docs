@@ -54,7 +54,7 @@ related:
 | `show interfaces dhcp-mitigation-rate [<intf>]` | DHCP rate-limit 状態 |
 | `show interfaces fast-linkup status [<intf>]` | fast link-up 状態 |
 | `show interfaces phy-signal <intf>` | PHY 信号品質 |
-| `show interfaces phy-serdes <intf>` | PHY SerDes 情報 |
+| `show interfaces phy-serdes <intf>` | PHY [SerDes](../../reference/glossary.md#term-serdes) 情報 |
 | `show interfaces portchannel` | [LAG](../../reference/glossary.md#term-lag) とメンバ状態（`teamshow`） |
 
 ## 主要コマンドの詳細
@@ -241,4 +241,4 @@ show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a38a035a0c6a -->
+<!-- glossary-links-injected: 710f941d149a -->

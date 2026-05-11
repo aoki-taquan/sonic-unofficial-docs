@@ -119,7 +119,7 @@ OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis �
 | VxLAN | `TUNNEL`、`TUNNEL_MAP`、`TUNNEL_TERM_TABLE_ENTRY` | 03 |
 | [ACL](../../reference/glossary.md#term-acl) | `ACL_TABLE`、`ACL_ENTRY`、`ACL_COUNTER`、`POLICER` | 07 |
 | [QoS](../../reference/glossary.md#term-qos) / buffer | `BUFFER_POOL`、`BUFFER_PROFILE`、`QUEUE`、`SCHEDULER` | 08 |
-| Port / SerDes | `PORT`、`PORT_SERDES`、`MACSEC` | 14 / 15 |
+| Port / [SerDes](../../reference/glossary.md#term-serdes) | `PORT`、`PORT_SERDES`、`MACSEC` | 14 / 15 |
 | [NAT](../../reference/glossary.md#term-nat) | `NAT_ENTRY` | 16 |
 | [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) | `MY_SID_ENTRY`、`INSEG_ENTRY` | 17 |
 
@@ -164,4 +164,4 @@ Indexer は AST 解析（Click は ast.parse、YANG は pyang）を使い、生�
 - [Quality gaps](./quality-gaps.md)
 - [20 章 swss / sai / Redis 内部実装](../20-swss-sai-redis/internals.md)
 
-<!-- glossary-links-injected: 1cbd3e5a6262 -->
+<!-- glossary-links-injected: 710f941d149a -->

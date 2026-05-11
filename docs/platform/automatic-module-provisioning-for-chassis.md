@@ -238,4 +238,15 @@ HLD では新しい [CONFIG_DB](../reference/glossary.md#term-config_db) スキ�
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`VOQ_INBAND_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/voq-inband-interface.md)
+- [platform カテゴリ目次](index.md)
+- [用語集 (Glossary)](../reference/glossary.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 4e4b0dab1086 -->

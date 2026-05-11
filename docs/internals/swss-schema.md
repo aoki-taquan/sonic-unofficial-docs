@@ -66,7 +66,7 @@ hash_key                = name               ; 既存キー名
 
 ファイル冒頭から並ぶ代表テーブル：
 
-- **`PORT_TABLE`**: 物理ポート（CPU / loopback は除外）。`admin_status` / `oper_status` / `lanes` / `mac` / `alias` / `speed` / `mtu` / `fec` / `autoneg` / `preemphasis` / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / [QoS](../reference/glossary.md#term-qos) マッピング reference 等[^1]。
+- **`PORT_TABLE`**: 物理ポート（CPU / loopback は除外）。`admin_status` / `oper_status` / `lanes` / `mac` / `alias` / `speed` / `mtu` / `fec` / `autoneg` / `preemphasis` / FEC・[SerDes](../reference/glossary.md#term-serdes) 用 hex リスト / Path Tracing 用フィールド / [QoS](../reference/glossary.md#term-qos) マッピング reference 等[^1]。
 - **`INTF_TABLE`**: 論理ネットワークインタフェース。`<ifname>:<IPprefix>` 形式キー、`scope` (global/local)、`if_mtu`、`family`。
 - **`VLAN_TABLE` / `VLAN_MEMBER_TABLE`**: [VLAN](../reference/glossary.md#term-vlan) 定義とメンバ。
 - **`LAG_TABLE` / `LAG_MEMBER_TABLE`**: Port-Channel 定義とメンバ。
@@ -160,4 +160,4 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 
 本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。
 
-<!-- glossary-links-injected: fdde38aa50b9 -->
+<!-- glossary-links-injected: 710f941d149a -->

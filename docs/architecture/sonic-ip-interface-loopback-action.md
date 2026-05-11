@@ -240,4 +240,17 @@ show ip interfaces loopback-action
 
 [^1]: `sonic-net/SONiC` `doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config interface loopback-action` CLI リファレンス](../reference/cli/config-interface.md)
+- [`show ip interfaces loopback-action` CLI リファレンス](../reference/cli/show-ip.md)
+- [`INTERFACE` CONFIG_DB スキーマ](../reference/config-db/interface.md)
+- [`VLAN_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/vlan-interface.md)
+- [`PORTCHANNEL_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/portchannel-interface.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: b4f4dca39760 -->

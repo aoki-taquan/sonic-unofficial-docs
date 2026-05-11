@@ -197,4 +197,17 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show muxcable config` CLI リファレンス](../reference/cli/show-muxcable.md)
+- [`show muxcable` CLI リファレンス](../reference/cli/show-muxcable.md)
+- [`show arp` CLI リファレンス](../reference/cli/show-arp.md)
+- [`MUX_CABLE` CONFIG_DB スキーマ](../reference/config-db/mux-cable.md)
+- [`TUNNEL` CONFIG_DB スキーマ](../reference/config-db/tunnel.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 2f9f3ecb28d2 -->

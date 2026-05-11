@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい SerDes レートを足元のコードに通すこと。
+IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい [SerDes](../reference/glossary.md#term-serdes) レートを足元のコードに通すこと。
 
 主要変更点（4 リポジトリ横断）[^1]:
 
@@ -244,4 +244,4 @@ show interfaces status | grep Ethernet0
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c31ca8ad0f8a -->
+<!-- glossary-links-injected: 710f941d149a -->

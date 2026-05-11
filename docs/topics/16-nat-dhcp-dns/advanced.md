@@ -97,7 +97,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## 既知の制約と回避方法
 
-- **NAT セッション TCAM 上限**: NAT セッション数は ASIC TCAM に依存する。`SAI_OBJECT_TYPE_NAT_ENTRY` の capacity を `sai capability` で確認し、aging timer で session 数を制御する。
+- **NAT セッション [TCAM](../../reference/glossary.md#term-tcam) 上限**: NAT セッション数は ASIC TCAM に依存する。`SAI_OBJECT_TYPE_NAT_ENTRY` の capacity を `sai capability` で確認し、aging timer で session 数を制御する。
 - **DHCP DoS 緩和との競合**: 章 07 の DHCP DoS 緩和と DHCP relay の rate-limit が二重にかかると、正規 DHCP も落ちる。レイヤを 1 つに揃える。
 - **chrony の VRF bind**: mgmt VRF を使う場合、chrony 設定の `bindaddress` / `bindacqaddress` を mgmt 側に固定しないと data plane に漏れる。
 - **resolv.conf の container 同期遅延**: `update-containers` 実行が遅れると container 内で古い DNS server が残る。手動 restart の手順を運用 runbook に残す。
@@ -124,4 +124,4 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - NAT 関連は `natorch` / `natsyncd` で aging / counter / scale 改善 PR が散発的に入る。
 - TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。
 
-<!-- glossary-links-injected: 3a5a8be23ca3 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

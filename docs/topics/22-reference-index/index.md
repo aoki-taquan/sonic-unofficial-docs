@@ -93,7 +93,7 @@ related:
 - [概要: リファレンス設計の考え方](concept.md)
 - [内部実装](internals.md)
 
-**関連する HLD 7 件**
+**関連する [HLD](../../reference/glossary.md#term-hld) 7 件**
 
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
@@ -126,4 +126,4 @@ related:
 - [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 167700005048 -->

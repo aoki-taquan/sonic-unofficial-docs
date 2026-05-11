@@ -169,7 +169,7 @@ graph LR
 - **CoppOrch**: user-defined trap + genetlink hostif 生成主体
 - **PortsOrch**: `SEND_TO_INGRESS_PORT` 処理 + CPU port netdev 作成
 - **既存 sFlow / `psample`**: genetlink 仕様を共有
-- **ベンダ ASIC SDK / kernel driver**: receive 経路と CPU port ingress を実装
+- **ベンダ [ASIC SDK](../reference/glossary.md#term-asic-sdk) / kernel driver**: receive 経路と CPU port ingress を実装
 - **既存 [CoPP](../reference/glossary.md#term-copp) (`copp_cfg.j2`)**: trap group / queue マッピングの拡張
 
 ## トラブルシューティング
@@ -208,10 +208,12 @@ graph LR
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CONFIG_DB
 
 - `SEND_TO_INGRESS_PORT`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 80e52dad0ad6 -->

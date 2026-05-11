@@ -127,7 +127,7 @@ flowchart LR
 | cfgmgr 層 | `vlanmgrd`、`intfmgrd`、`teammgrd`、`natmgr`、`buffermgrd`、`vrfmgrd` | CONFIG_DB → kernel + [APPL_DB](../../reference/glossary.md#term-appl_db) |
 | sync 層 | `portsyncd`、`fdbsyncd`、`teamsyncd`、`natsyncd`、`fpmsyncd` | kernel / [FRR](../../reference/glossary.md#term-frr) の netlink/[FPM](../../reference/glossary.md#term-fpm) を APPL_DB へ |
 | orchagent 内 Orch | `PortsOrch`、`RouteOrch`、`NeighOrch`、`NhgOrch`、`AclOrch`、`QosOrch`、`BufferOrch`、`VxlanOrch`、`VNetOrch`、`NatOrch`、`FdbOrch`、`MirrorOrch`、`PolicerOrch`、`CrmOrch`、`SwitchOrch` | APPL_DB → SAI |
-| syncd 層 | `syncd`、`sairedis`、`SAIRedis ASIC view` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ↔ SAI library ↔ ASIC SDK |
+| syncd 層 | `syncd`、`sairedis`、`SAIRedis ASIC view` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ↔ SAI library ↔ [ASIC SDK](../../reference/glossary.md#term-asic-sdk) |
 | host services | `hostcfgd`、`sonic-host-service`、`pcied`、`pmon`、`thermalctld`、`psud`、`xcvrd` | host 設定、platform sensor、optic |
 | 管理面 | `telemetry`（[gNMI](../../reference/glossary.md#term-gnmi)/[gNOI](../../reference/glossary.md#term-gnoi)）、`snmpd`、`rest-server`、`mgmt-framework` | 北向き API |
 
@@ -155,4 +155,4 @@ ZMQ は SONiC master でも増えつつある経路で、章ごとに使用有�
 - [Multi-ASIC 名前空間の Redis](../../internals/support-redis-databases-in-multiple-namespaces.md)
 - [20 章 SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/internals.md)
 
-<!-- glossary-links-injected: d858f0f97b13 -->
+<!-- glossary-links-injected: ad4074e0b684 -->

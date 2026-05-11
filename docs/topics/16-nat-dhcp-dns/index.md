@@ -110,7 +110,7 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [内部実装](internals.md)
 - [発展トピック](advanced.md)
 
-**関連する HLD 7 件**
+**関連する [HLD](../../reference/glossary.md#term-hld) 7 件**
 
 - [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
 - [BUM ストームコントロール（PORT_STORM_CONTROL）](../../switching/sonic-bum-storm-control.md)
@@ -148,4 +148,4 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: d6b580496e1f -->
+<!-- glossary-links-injected: 167700005048 -->

@@ -315,6 +315,17 @@ gnsi_client credentialz rotate-account \
 
 <!-- /next-action -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`TELEMETRY` CONFIG_DB スキーマ](../reference/config-db/telemetry.md)
+- [management カテゴリ目次](index.md)
+- [用語集 (Glossary)](../reference/glossary.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: bd7e9f303d6c -->
 
 <!-- ops-entry -->

@@ -233,7 +233,7 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -247,3 +247,5 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 - `RADIUS_SERVER`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: d5320e852f7a -->
