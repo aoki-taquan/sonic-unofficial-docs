@@ -197,6 +197,13 @@ config clock date 2024-01-01 12:00:00
 - timezone が再起動で戻ってしまう場合、`DEVICE_METADATA|localhost.timezone` が永続化されているか確認
 - ログのタイムスタンプがおかしい場合、`rsyslog` 再起動が走ったかを `journalctl -u rsyslog` で確認
 
+## 関連リファレンス
+
+- CLI: [show clock](../reference/cli/show-clock.md) / [config clock](../reference/cli/config-clock.md) / [config ntp](../reference/cli/config-ntp.md)
+- CONFIG_DB: [DEVICE_METADATA](../reference/config-db/device-metadata.md)
+- YANG: [sonic-device_metadata](../reference/yang/sonic-device_metadata.md)
+- Topic: [プラットフォーム / ポート / 光モジュール](../topics/14-platform-port-optics/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Clock commands/clock_managment_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

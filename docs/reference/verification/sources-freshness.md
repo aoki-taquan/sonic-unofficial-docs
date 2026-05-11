@@ -56,3 +56,11 @@ related:
 - 定期的に **Indexer を再走させて `meta/index/repos.json` を更新する**（四半期サイクル目安）。更新後は本ページを `python3 meta/scripts/check_sources_freshness.py --write` で再生成する。
 - 個別ページの `sources[].ref` は当該ページの裏取り時点で固定する設計であり、サイト全体で一斉に SHA を bump する必要はない。本ページはあくまで「サイト全体としてどの時点の master を見ているか」の俯瞰指標。
 - 詳細手順は `meta/discrepancy-operations.md` の「定期実行」節を参照。
+
+## 関連リファレンス
+
+- [Verification index](index.md)
+- [Discrepancy reports](../../_meta/discrepancies.md)
+- [Coverage](../../_meta/coverage.md)
+- [Changelog](../../_meta/changelog.md)
+- [サイト方針 / README](../../index.md)

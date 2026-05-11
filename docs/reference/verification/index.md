@@ -74,5 +74,9 @@ flowchart LR
 ## 関連ページ
 
 - [HLD と実装の乖離 一覧（discrepancy-index）](discrepancy-index.md): 現時点で `discrepancy-found` が付いている全ページのリスト
+- [sources-freshness](sources-freshness.md): pinned SHA と upstream の差分
+- [カバレッジ](../../_meta/coverage.md): verification ステータス集計
+- [Discrepancy report](../../_meta/discrepancies.md): 乖離ページ一覧
+- [Changelog](../../_meta/changelog.md): 変更履歴
 
 <!-- glossary-links-injected: 167700005048 -->

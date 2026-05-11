@@ -96,10 +96,15 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show feature](show-feature.md) / [show system-health](show-system-health.md) / [show techsupport](show-techsupport.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-feature](../yang/sonic-feature.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [FEATURE](../config-db/feature.md)
+- Topic: [リブート / アップグレード](../../topics/11-reboot/index.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
 [^1]: `services` コマンドは `show/main.py` L2252-L2267。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2252>
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

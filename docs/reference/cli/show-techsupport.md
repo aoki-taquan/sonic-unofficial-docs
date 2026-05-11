@@ -121,7 +121,10 @@ excerpt: |
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show system-health](show-system-health.md) / [show services](show-services.md) / [show feature](show-feature.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [AUTO_TECHSUPPORT](../config-db/auto-techsupport.md) / [AUTO_TECHSUPPORT_FEATURE](../config-db/auto-techsupport-feature.md)
+- Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md)
+- 関連 [HLD](../../reference/glossary.md#term-hld): [event-driven techsupport invocation](../../system/event-driven-techsupport-invocation-coredump-mgmt.md)
 
 <!-- ref-triangle:end -->
 
@@ -186,4 +189,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6ee6deac630a -->
+<!-- glossary-links-injected: c5a6ce567024 -->

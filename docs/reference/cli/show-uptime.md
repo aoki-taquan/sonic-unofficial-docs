@@ -75,7 +75,10 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show version](show-version.md) / [show system-health](show-system-health.md) / [reboot-fast-warm](reboot-fast-warm.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-device_metadata](../yang/sonic-device_metadata.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
+- Topic: [リブート / アップグレード](../../topics/11-reboot/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -106,3 +109,5 @@ show uptime
  10:42:31 up 5 days,  3:21,  1 user,  load average: 0.21, 0.18, 0.15
 ```
 <!-- /usage-example -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

@@ -122,7 +122,14 @@ flowchart LR
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+## 関連リファレンス
+
+- CLI: [show techsupport](../reference/cli/show-techsupport.md) / [show system-health](../reference/cli/show-system-health.md) / [show services](../reference/cli/show-services.md)
+- [CONFIG_DB](../reference/glossary.md#term-config_db): [AUTO_TECHSUPPORT](../reference/config-db/auto-techsupport.md) / [AUTO_TECHSUPPORT_FEATURE](../reference/config-db/auto-techsupport-feature.md)
+- 関連 [HLD](../reference/glossary.md#term-hld): [SONiC System Health Monitor](sonic-system-health-monitor-high-level-design.md) / [kdump](kdump.md) / [analysis of disk writers](analysis-of-disk-writers-in-sonic-devices.md)
+
+<!-- glossary-links-injected: c5a6ce567024 -->
