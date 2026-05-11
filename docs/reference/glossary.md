@@ -834,7 +834,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../switching/sonic-ip-lag-incremental-update.md) (5)
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (4)
 - [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (3)
-- [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (3)
+- [LOOPBACK_INTERFACE テーブル](config-db/loopback-interface.md) (3)
 
 ### [intfsyncd](#term-intfsyncd)
 
@@ -847,7 +847,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](../switching/increasing-lacp-pdu-timeout-during-warm-reboot.md) (10)
 - [PortChannel メンバーで LACP が確立しない](runbooks/portchannel-lacp-not-established.md) (9)
 - [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (9)
-- [Warm-Reboot / Fast-Reboot 関連](../categories/reboot.md) (6)
+- [config portchannel サブコマンド](cli/config-portchannel.md) (7)
 
 ### [LAG](#term-lag)
 
@@ -868,18 +868,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LLDP](#term-lldp)
 
 - [sonic-lldp YANG](yang/sonic-lldp.md) (27)
-- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (15)
+- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (18)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (10)
+- [show lldp サブコマンド](cli/show-lldp.md) (6)
 - [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (6)
-- [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../overlay/dash-sonic-kvm.md) (5)
 
 ### [MCLAG](#term-mclag)
 
 - [sonic-mclag YANG](yang/sonic-mclag.md) (58)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (27)
-- [config mclag サブコマンド](cli/config-mclag.md) (23)
-- [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (15)
-- [show mclag (mclagdctl) コマンド](cli/show-mclag.md) (10)
+- [config mclag サブコマンド](cli/config-mclag.md) (26)
+- [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (18)
+- [show mclag (mclagdctl) コマンド](cli/show-mclag.md) (11)
 
 ### [minigraph.xml](#term-minigraph.xml)
 
@@ -902,8 +902,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-nat YANG](yang/sonic-nat.md) (77)
 - [内部実装](../topics/16-nat-dhcp-dns/internals.md) (58)
 - [NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）](../architecture/nat-in-sonic.md) (44)
-- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (37)
-- [設定](../topics/16-nat-dhcp-dns/setup.md) (32)
+- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (44)
+- [config nat サブコマンド](cli/config-nat.md) (33)
 
 ### [natmgrd / natsyncd](#term-natmgrd-natsyncd)
 
@@ -912,7 +912,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [neighsyncd](#term-neighsyncd)
 
-- [WARM_RESTART テーブル](config-db/warm-restart.md) (6)
+- [WARM_RESTART テーブル](config-db/warm-restart.md) (7)
 - [Reboot / warm restart の設定](../topics/11-reboot/setup.md) (6)
 - [config warm_restart サブコマンド](cli/config-warm_restart.md) (4)
 - [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (4)
@@ -983,9 +983,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [QoS](#term-qos)
 
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
+- [config qos サブコマンド](cli/config-qos.md) (9)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (8)
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (7)
-- [config qos サブコマンド](cli/config-qos.md) (7)
 - [Dual-ToR の発展トピック](../topics/05-dual-tor/advanced.md) (7)
 
 ### [Redis](#term-redis)
@@ -1110,10 +1110,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [tunnelmgrd](#term-tunnelmgrd)
 
+- [TUNNEL テーブル](config-db/tunnel.md) (3)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (2)
-- [TUNNEL テーブル](config-db/tunnel.md) (2)
+- [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (2)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (1)
-- [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (1)
 - [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (1)
 
 ### [VLAN](#term-vlan)
@@ -1122,21 +1122,21 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
 - [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (52)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (49)
-- [config vlan サブコマンド](cli/config-vlan.md) (44)
+- [config vlan サブコマンド](cli/config-vlan.md) (46)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (4)
+- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (3)
 - [VLAN メンバーを追加してもタグが付かない](runbooks/vlan-tagging.md) (3)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (3)
-- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (2)
-- [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (2)
+- [VLAN テーブル](config-db/vlan.md) (2)
 
 ### [VNET](#term-vnet)
 
 - [sonic-vnet YANG](yang/sonic-vnet.md) (82)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
-- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (36)
+- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (40)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (26)
 - [内部実装](../topics/03-vxlan-evpn/internals.md) (22)
 
@@ -1144,8 +1144,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (86)
 - [VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）](../routing/vrf-feature-ansible-test-plan-omit-in-toc.md) (45)
+- [config vrf サブコマンド](cli/config-vrf.md) (43)
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (41)
-- [config vrf サブコマンド](cli/config-vrf.md) (39)
 - [VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）](../routing/sonic-vrf-support-design-spec-draft.md) (38)
 
 ### [vrfmgrd](#term-vrfmgrd)
@@ -1153,8 +1153,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (9)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (5)
 - [VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）](../routing/sonic-vrf-support-design-spec-draft.md) (5)
+- [VRF テーブル](config-db/vrf.md) (3)
 - [ルーティング](../routing/index.md) (3)
-- [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (3)
 
 ### [VXLAN](#term-vxlan)
 
