@@ -115,6 +115,25 @@ module: sonic-sflow
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- sFlow agent / collector 設定。`SFLOW` / `SFLOW_COLLECTOR` / `SFLOW_SESSION` を hsflowd 経由で agent に流す。
+
+### よくある落とし穴
+
+- `agent_id` leafref に loopback を指定する構成では、loopback IP が後付けされるタイミングで sflow agent が起動失敗する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SFLOW*'
+show sflow
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-sflow.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

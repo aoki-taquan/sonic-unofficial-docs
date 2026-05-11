@@ -190,6 +190,25 @@ module: sonic-spanning-tree
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- STP / RSTP / PVST 設定。`STP` / `STP_PORT` / `STP_VLAN*` を stpmgr / stpd が処理。
+
+### よくある落とし穴
+
+- `mode` (`pvst` ↔ `mst`) を runtime で切替えるとポート単位設定が一部リセットされる。事前にバックアップ推奨。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'STP|GLOBAL'
+show spanning_tree
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

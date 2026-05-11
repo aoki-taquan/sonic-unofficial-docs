@@ -138,6 +138,25 @@ module: sonic-portchannel
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- LAG (port-channel) 設定。`PORTCHANNEL` / `PORTCHANNEL_MEMBER` を teammgrd が teamd に反映。
+
+### よくある落とし穴
+
+- `min_links` を member 数より大きく設定すると LAG が常に down 扱いになる。CLI からの値入力ミスで頻発。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PORTCHANNEL*'
+show interfaces portchannel
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-portchannel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

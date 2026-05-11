@@ -102,6 +102,25 @@ module: sonic-mirror-session
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- ERSPAN / SPAN ミラーセッション。`MIRROR_SESSION|<name>` を mirrororch が SAI mirror session に反映。
+
+### よくある落とし穴
+
+- `dst_ip` leafref に loopback IP を入れる構成で、loopback 削除 → mirror session が orphan 化して route lookup 失敗を起こす。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MIRROR_SESSION|*'
+show mirror_session
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mirror-session.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -71,6 +71,25 @@ module: sonic-dhcp-server
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- DHCPv4 server (オンスイッチ DHCP) 設定。`DHCP_SERVER_IPV4*` を dhcp_server_ipv4 コンテナの kea が読む。
+
+### よくある落とし穴
+
+- `gateway` leaf が VLAN interface IP と不一致だと割り当て後の通信が壊れる。VLAN サブネットと整合確認が必須。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DHCP_SERVER_IPV4*'
+show dhcp_server ipv4 lease
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dhcp-server.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

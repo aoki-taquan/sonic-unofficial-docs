@@ -139,6 +139,25 @@ module: sonic-port
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- 物理 port 設定 (admin_status, speed, mtu, autoneg, fec)。`PORT|<port>` を portmgrd が processing。
+
+### よくある落とし穴
+
+- `speed` と `breakout` mode の不整合で SAI が port 作成失敗。breakout 変更直後は xcvrd の安定化を待つ。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PORT|*'
+show interfaces status
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

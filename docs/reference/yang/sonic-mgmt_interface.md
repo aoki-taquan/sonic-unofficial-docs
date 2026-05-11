@@ -70,6 +70,25 @@ module: sonic-mgmt_interface
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Management interface の IP / GW 設定。`MGMT_INTERFACE|eth0|<prefix>` を hostcfgd / networking が処理。
+
+### よくある落とし穴
+
+- `gwaddr` leaf に同一サブネット外の GW を入れると default route が adoption されない。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MGMT_INTERFACE|*'
+show management_interface address
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

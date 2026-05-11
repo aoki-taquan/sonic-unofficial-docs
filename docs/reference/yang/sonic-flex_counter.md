@@ -145,6 +145,25 @@ module: sonic-flex_counter
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Flex counter polling 制御。`FLEX_COUNTER_TABLE|<group>` を flex counter orch が SAI に渡す。
+
+### よくある落とし穴
+
+- `POLL_INTERVAL` を極端に小さく (< 1000ms) すると syncd CPU が張り付き、orchagent の他処理が遅延する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FLEX_COUNTER_TABLE|*'
+counterpoll show
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

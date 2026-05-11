@@ -74,6 +74,25 @@ module: sonic-kdump
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- kernel crash dump (kdump) 設定。`KDUMP|config` を hostcfgd が `kdump-tools` に反映。
+
+### よくある落とし穴
+
+- `memory` 文字列を `0M-2G:256M,2G-:512M` のような range 式で書く必要があり、空白混在で kdump サービスが起動失敗。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'KDUMP|config'
+show kdump status
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-kdump.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

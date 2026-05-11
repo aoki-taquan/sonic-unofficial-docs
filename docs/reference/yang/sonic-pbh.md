@@ -153,6 +153,25 @@ module: sonic-pbh
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Policy Based Hashing。`PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` を pbhorch が SAI に反映。
+
+### よくある落とし穴
+
+- `hash_field_list` leafref の順序が異なると別エントリ扱いになり、SAI 側で hash 計算結果が変わる。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PBH_*'
+show pbh statistics
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pbh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

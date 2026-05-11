@@ -83,6 +83,25 @@ module: sonic-dns
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- DNS resolver / domain 設定。`DNS_NAMESERVER|<ip>` を hostcfgd が `/etc/resolv.conf` に書く。
+
+### よくある落とし穴
+
+- VRF (mgmt) 環境で `mgmt-vrf` 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DNS_NAMESERVER|*'
+show dns nameserver
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dns.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

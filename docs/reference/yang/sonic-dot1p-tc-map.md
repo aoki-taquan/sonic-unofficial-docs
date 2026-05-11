@@ -85,6 +85,25 @@ module: sonic-dot1p-tc-map
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- DOT1P → TC マッピング。`DOT1P_TO_TC_MAP|<name>` を qosorch が SAI qos map に反映、`PORT_QOS_MAP` から参照される。
+
+### よくある落とし穴
+
+- `PORT_QOS_MAP` から leafref されるため、削除前にポート紐付けを外す必要あり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DOT1P_TO_TC_MAP|*'
+show qos map dot1p-tc
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

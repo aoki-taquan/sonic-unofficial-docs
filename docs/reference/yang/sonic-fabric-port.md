@@ -88,6 +88,25 @@ module: sonic-fabric-port
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- VoQ chassis の fabric port 設定。`FABRIC_PORT|<port>` を fabricmgrd が処理。
+
+### よくある落とし穴
+
+- `isolate_status` の手動設定と auto-isolate ロジックが競合してフラップするケースあり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FABRIC_PORT|*'
+show fabric port status
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

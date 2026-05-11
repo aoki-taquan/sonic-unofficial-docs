@@ -88,6 +88,25 @@ module: sonic-buffer-pool
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- buffer pool (ingress/egress, lossless/lossy) のサイズ定義。`BUFFER_POOL|<name>` を bufferorch が処理。
+
+### よくある落とし穴
+
+- `size` を traffic 流入中に縮小すると packet drop が発生する。メンテ窓で `config qos reload` を併用するのが定石。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_POOL|*'
+show buffer pool persistent-watermark
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-pool.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

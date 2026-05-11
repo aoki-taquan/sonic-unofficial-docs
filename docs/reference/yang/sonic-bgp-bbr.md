@@ -87,6 +87,25 @@ docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-add
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- FRR の BGP BBR (Best-path Backup Routing) 機能。sonic-mgmt-framework 経由で `BGP_BBR` テーブルに書かれ、FRR `bgpd` の vtysh コマンドへ変換される。
+
+### よくある落とし穴
+
+- `status` は string enum (`enabled`/`disabled`)。typedef ではなく直書きされているため、CLI から不正値を渡してもバリデーション漏れする例がある。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_BBR|all'
+show runningconfiguration bgp
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -82,6 +82,25 @@ module: sonic-passwh
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- ローカルアカウントのパスワード強度ポリシ。`PASSW_HARDENING|POLICIES` を hostcfgd が PAM に反映。
+
+### よくある落とし穴
+
+- `expiration` を有効化すると admin ユーザの古い hash がいきなり無効化されるリスク。事前にローテーション計画を立てる。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'PASSW_HARDENING|POLICIES'
+show passw-hardening policies
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-passwh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

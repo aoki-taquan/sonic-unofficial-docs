@@ -95,6 +95,25 @@ module: sonic-nvgre-tunnel
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- NVGRE トンネル + マッピング。`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` を tunnel decap orch が処理。
+
+### よくある落とし穴
+
+- VxLAN-VNI と NVGRE-VSID の同時運用は SAI が排他なプラットフォームが多い。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'NVGRE_TUNNEL*'
+show nvgre-tunnel
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -80,6 +80,25 @@ module: sonic-mgmt_vrf
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- management VRF 制御。`MGMT_VRF_CONFIG|vrf_global` を hostcfgd が iproute2 + iptables に反映。
+
+### よくある落とし穴
+
+- mgmt-vrf を有効化すると eth0 が `mgmt` netns 相当のルーティングテーブルに移動。SSH / DNS / NTP 個別に VRF 対応必要。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MGMT_VRF_CONFIG|vrf_global'
+show mgmt-vrf
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -126,6 +126,26 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Critical Resource Monitor の閾値設定。`CRM|Config` を crmorch が読んで SAI カウンタと比較し syslog 警告を出す。
+
+### よくある落とし穴
+
+- `*_threshold_type` を `percentage` に切り替えた直後は閾値判定が再計算されない場合がある。`config save` + reload が安全。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'CRM|Config'
+crm show summary
+crm show thresholds all
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

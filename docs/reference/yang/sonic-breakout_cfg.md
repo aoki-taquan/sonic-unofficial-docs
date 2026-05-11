@@ -66,6 +66,25 @@ module: sonic-breakout_cfg
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を portmgrd / xcvrd が読み、port 再生成のトリガーになる。
+
+### よくある落とし穴
+
+- `brkout_mode` 文字列フォーマットは platform.json と一致が必要。typo すると全 port が default mode に戻る。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BREAKOUT_CFG|Ethernet0'
+show interfaces breakout current-mode
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

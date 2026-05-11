@@ -86,6 +86,25 @@ module: sonic-macsec
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- MACsec profile / port 設定。`MACSEC_PROFILE` / `MACSEC_PORT` を macsecmgrd が wpa_supplicant に渡す。
+
+### よくある落とし穴
+
+- `primary_cak` / `primary_ckn` の鍵長 / hex 形式不整合で wpa_supplicant が静かに落ちる。syslog 監視が必須。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MACSEC_*'
+show macsec
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-macsec.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

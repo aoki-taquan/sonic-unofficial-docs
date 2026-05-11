@@ -90,6 +90,25 @@ module: sonic-fabric-monitor
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- VoQ chassis の fabric リンク監視設定。`FABRIC_MONITOR|FABRIC_MONITOR_DATA` を fabricmgrd が読む。
+
+### よくある落とし穴
+
+- 閾値系 leaf の単位 (cells / packets) が typedef になっていないため CLI 値変換ミスが起こりやすい。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'FABRIC_MONITOR|FABRIC_MONITOR_DATA'
+show fabric reachability
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

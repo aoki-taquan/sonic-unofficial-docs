@@ -187,6 +187,25 @@ module: sonic-device_metadata
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- デバイス全体のメタデータ。`DEVICE_METADATA|localhost` を init / hwsku 判定 / mgmt-framework が広範に参照する。
+
+### よくある落とし穴
+
+- `hwsku` / `platform` を runtime で書き換えると swss / syncd の起動 SKU 判定が破綻する。`config save` 後の再起動で整合させる。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'DEVICE_METADATA|localhost'
+show version
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-device_metadata.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
