@@ -26,6 +26,28 @@ related:
 
 Fine-Grained ECMP (FG_NHG) のグループ・対象プレフィックス・メンバの 3 テーブルを保持する。bucket-size と match_mode により flow-to-nexthop の固定マッピングを記述する[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-fine-grained-ecmp"]
+  C1[("CONFIG_DB<br/>FG_NHG")]
+  Y --> C1
+  D1["FgNhgOrch"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>FG_NHG_PREFIX")]
+  Y --> C2
+  C2 --> D1
+  C3[("CONFIG_DB<br/>FG_NHG_MEMBER")]
+  Y --> C3
+  C3 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

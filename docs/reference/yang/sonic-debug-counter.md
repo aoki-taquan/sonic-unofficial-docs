@@ -26,6 +26,25 @@ related:
 
 パケットドロップ理由ベースのデバッグカウンタ設定と、永続的ドロップモニタの YANG モジュール[^1]。3 つのサブコンテナ `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` を持つ。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-debug-counter"]
+  C1[("CONFIG_DB<br/>DEBUG_COUNTER")]
+  Y --> C1
+  D1["DebugCounterOrch"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>DEBUG_COUNTER_DROP_REASON")]
+  Y --> C2
+  C2 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

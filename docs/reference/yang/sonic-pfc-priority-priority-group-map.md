@@ -26,6 +26,22 @@ related:
 
 PFC_PRIORITY_TO_PRIORITY_GROUP_MAP yang Module for SONiC OS. PFC 優先度 (0-7) を ingress priority group にマップしロスレス転送を制御する。[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-pfc-priority-priority-group-map"]
+  C1[("CONFIG_DB<br/>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP")]
+  Y --> C1
+  D1["QosOrch"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

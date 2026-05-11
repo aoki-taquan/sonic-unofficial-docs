@@ -3,6 +3,7 @@ title: SRv6 / MPLS / Path Tracing
 description: "SRv6 / MPLS / Path Tracing — この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、そして経路観測のための Path Tracing をまとめて読むための入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/routing/segment-routing-over-ipv6-srv6-hld.md

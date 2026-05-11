@@ -26,6 +26,31 @@ related:
 
 PBH YANG Module for SONiC OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-pbh"]
+  C1[("CONFIG_DB<br/>PBH_HASH_FIELD")]
+  Y --> C1
+  D1["PbhOrch"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>PBH_HASH")]
+  Y --> C2
+  C2 --> D1
+  C3[("CONFIG_DB<br/>PBH_RULE")]
+  Y --> C3
+  C3 --> D1
+  C4[("CONFIG_DB<br/>PBH_TABLE")]
+  Y --> C4
+  C4 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

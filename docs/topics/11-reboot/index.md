@@ -3,6 +3,7 @@ title: Reboot / Upgrade / Lifecycle
 description: "Reboot / Upgrade / Lifecycle — この章は、SONiC の reboot family と upgrade lifecycle を「どれを選ぶか」「何が保持されるか」「運用時にどこを見るか」の順で読むための入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/system/sonic-warm-reboot.md

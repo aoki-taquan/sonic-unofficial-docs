@@ -172,6 +172,17 @@ round 12 提言の優先度を上げ、加えて round 13 で新たに浮上し�
 - 章扉 index ページの評価スキーム改訂が新規論点として浮上
 - v1.0 GA 後 2 回目の定点観測として、**ランダム抽出で平均 4.79 / 5 はリリース後の品質として安定**
 
+## Addendum (2026-05-11): page_kind: chapter-index 導入
+
+round 13 で指摘した「章扉 index の評価スキーム改訂」を round 14 に先んじて着手。
+
+- 22 章扉 (`docs/topics/NN-slug/index.md`) に `page_kind: chapter-index` frontmatter フィールドを追加
+- `meta/templates/SCHEMA.md` に `page_kind` 仕様（章扉では完結性 / 裏取り軸を緩和する旨）を追記
+- `meta/scripts/frontmatter_lint.py` は `page_kind` を optional として受理（enum 値のみ検証、hard violation は生成しない）
+- round 14 以降の品質監査は `page_kind: chapter-index` を参照して章扉と通常ページを別軸で評価する
+
+これにより、章扉ページが「本文ボリュームが薄い」だけを理由に低スコアになる構造問題は解消される。
+
 ## 関連ドキュメント
 
 - [監査 round 12（v1.0 GA 後初回ランダム観測）](./quality-audit-12.md)

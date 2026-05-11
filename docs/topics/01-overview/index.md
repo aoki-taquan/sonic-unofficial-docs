@@ -3,6 +3,7 @@ title: SONiC 全体像と設定基盤
 description: "SONiC 全体像と設定基盤 — この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「Redis DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、HLD 単位ではなく読者の質問順に並べ直した入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/guides/beginner.md
