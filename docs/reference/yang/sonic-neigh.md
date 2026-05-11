@@ -1,0 +1,68 @@
+---
+title: sonic-neigh YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-neigh.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [NEIGH]
+  cli: []
+  yang: [sonic-port, sonic-portchannel, sonic-vlan]
+---
+
+# sonic-neigh YANG
+
+## 概要
+
+- module: `sonic-neigh`
+- namespace: `http://github.com/sonic-net/sonic-neigh`
+- revision: `2023-03-31`
+- import: `ietf-inet-types`, `ietf-yang-types`, `sonic-portchannel`, `sonic-port`
+- top container: `sonic-neigh`
+
+静的な隣接 (neighbor) エントリを CONFIG_DB に書き込むための YANG モジュール[^1]。`(port, neighbor_ip) -> MAC, family` のマッピング。Vlan インタフェースは `string` パターン（sonic-vlan import が TODO 状態）として受け入れている。
+
+## ツリー
+
+```
+module: sonic-neigh
+  +--rw sonic-neigh
+     +--rw NEIGH
+        +--rw NEIGH_LIST* [port neighbor]
+           +--rw port       union(leafref PORTCHANNEL, leafref PORT, string "Vlan[0-9]+")
+           +--rw neighbor   inet:ip-address
+           +--rw neigh?     yang:mac-address
+           +--rw family?    string (IPv4|IPV4|IPv6|IPV6)
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `port` | `sonic-neigh/NEIGH/NEIGH_LIST/port` | `union` | yes |  | leafref PORTCHANNEL / leafref PORT / `Vlan[0-9]+` | ネイバーが見えるインタフェース |
+| `neighbor` | `sonic-neigh/NEIGH/NEIGH_LIST/neighbor` | `inet:ip-address` | yes |  |  | ネイバー IP アドレス |
+| `neigh` | `sonic-neigh/NEIGH/NEIGH_LIST/neigh` | `yang:mac-address` |  |  |  | ネイバー MAC アドレス |
+| `family` | `sonic-neigh/NEIGH/NEIGH_LIST/family` | `string` |  |  | `IPv4` / `IPV4` / `IPv6` / `IPV6` | アドレスファミリ |
+
+## leafref / 依存
+
+- `NEIGH_LIST/port` の union 内
+  - `/lag:sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/name`
+  - `/port:sonic-port/PORT/PORT_LIST/name`
+  - 加えて `Vlan[0-9]+` の string パターン（sonic-vlan のインポートはコメントアウト）
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `NEIGH|<port>|<neighbor>`
+- CLI: なし（CONFIG_DB 直接設定 / minigraph）
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-neigh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

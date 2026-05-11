@@ -1,0 +1,81 @@
+---
+title: sonic-macsec YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-macsec.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [MACSEC_PROFILE]
+  cli: ["config macsec"]
+  yang: [sonic-port]
+---
+
+# sonic-macsec YANG
+
+## 概要
+
+- module: `sonic-macsec`
+- namespace: `http://github.com/sonic-net/sonic-macsec`
+- revision: `2022-04-12`
+- import: `sonic-types`
+- top container: `sonic-macsec`
+
+IEEE 802.1AE MACsec のプロファイル（CAK/CKN、cipher、replay protection、rekey 等）を保持する YANG モジュール[^1]。ポートへの紐付けは `sonic-port` の `macsec` リーフ側で行う。
+
+## ツリー
+
+```
+module: sonic-macsec
+  +--rw sonic-macsec
+     +--rw MACSEC_PROFILE
+        +--rw MACSEC_PROFILE_LIST* [name]
+           +--rw name                    string
+           +--rw priority?               uint8
+           +--rw cipher_suite?           string
+           +--rw primary_cak             string
+           +--rw primary_ckn             string
+           +--rw fallback_cak?           string
+           +--rw fallback_ckn?           string
+           +--rw policy?                 string
+           +--rw enable_replay_protect?  stypes:boolean_type
+           +--rw replay_window?          uint32
+           +--rw send_sci?               stypes:boolean_type
+           +--rw rekey_period?           uint32
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `name` | `sonic-macsec/MACSEC_PROFILE/MACSEC_PROFILE_LIST/name` | `string` | yes |  | length 1..128 | プロファイル名 |
+| `priority` | `.../priority` | `uint8` |  | `255` |  | MKA actor priority（小さいほど key server に勝ちやすい） |
+| `cipher_suite` | `.../cipher_suite` | `string` |  | `GCM-AES-128` | `GCM-AES-128` / `GCM-AES-256` / `GCM-AES-XPN-128` / `GCM-AES-XPN-256` | MACsec 暗号スイート |
+| `primary_cak` | `.../primary_cak` | `string` | yes |  | hex 66 桁または 130 桁 | プライマリ CAK（Connectivity Association Key） |
+| `primary_ckn` | `.../primary_ckn` | `string` | yes |  | hex 32 桁または 64 桁 | プライマリ CKN（CAK Name） |
+| `fallback_cak` | `.../fallback_cak` | `string` |  |  | hex 66 桁または 130 桁。must: 長さ 0 または primary_cak と同長 | フォールバック CAK |
+| `fallback_ckn` | `.../fallback_ckn` | `string` |  |  | hex 32 桁または 64 桁。must: 空または primary_ckn と異なる | フォールバック CKN |
+| `policy` | `.../policy` | `string` |  | `security` | `integrity_only` / `security` | MACsec ポリシー（暗号化なしの完全性のみ or 完全暗号化） |
+| `enable_replay_protect` | `.../enable_replay_protect` | `stypes:boolean_type` |  | `false` |  | リプレイ保護の有効/無効 |
+| `replay_window` | `.../replay_window` | `uint32` |  |  | when `enable_replay_protect = 'true'` | リプレイ保護のウィンドウサイズ |
+| `send_sci` | `.../send_sci` | `stypes:boolean_type` |  | `true` |  | 送信フレームに SCI を含めるか |
+| `rekey_period` | `.../rekey_period` | `uint32` |  | `0` | 秒。0 は無効 | プロアクティブな SAK リフレッシュ周期 |
+
+## leafref / 依存
+
+- なし（must 制約のみ）
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `MACSEC_PROFILE|<name>`
+- CLI: `config macsec`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-macsec.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
