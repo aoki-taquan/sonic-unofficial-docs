@@ -127,8 +127,8 @@ module: sonic-spanning-tree
 | `hello_time` | `sonic-spanning-tree/STP/STP_LIST/hello_time` | `uint8` |  | 2 | range 1..10 | Global hello time |
 | `max_age` | `sonic-spanning-tree/STP/STP_LIST/max_age` | `uint8` |  | 20 | range 6..40 | Global max age |
 | `priority` | `sonic-spanning-tree/STP/STP_LIST/priority` | `uint16` |  | 32768 | range 0..61440 (step 4096) | Bridge priority |
-| `name` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/name` | `string` | yes |  | "Vlan&lt;id&gt;" | VLAN identifier in format 'Vlan<id>' |
-| `vlanid` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/vlanid` | `uint16` |  |  | range 1..4094 | VLAN ID |
+| `name` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/name` | `string` | yes |  | "Vlan&lt;id&gt;" | [VLAN](../../reference/glossary.md#term-vlan) identifier in format 'Vlan<id>' |
+| `vlanid` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/vlanid` | `uint16` |  |  | range 1..4094 | [VLAN](../../reference/glossary.md#term-vlan) ID |
 | `enabled` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/enabled` | `boolean` | yes |  |  | Spanning tree enabled on VLAN |
 | `forward_delay` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/forward_delay` | `uint8` |  |  | range 4..30 | Per-VLAN forward delay |
 | `hello_time` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/hello_time` | `uint8` |  |  | range 1..10 | Per-VLAN hello time |
@@ -138,7 +138,7 @@ module: sonic-spanning-tree
 | `ifname` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` | `leafref` | yes |  | ../../../STP_PORT/STP_PORT_LIST/ifname | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
 | `path_cost` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/path_cost` | `uint64` |  |  | range 1..200000000 | Path cost per VLAN per port |
 | `priority` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/priority` | `uint8` |  |  | range 0..240 (step 16) | Port priority per VLAN |
-| `ifname` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/ifname` | `leafref` | yes |  | Ethernet/PortChannel | Reference to Ethernet interface or PortChannel |
+| `ifname` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/ifname` | `leafref` | yes |  | Ethernet/[PortChannel](../../reference/glossary.md#term-portchannel) | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
 | `enabled` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/enabled` | `boolean` | yes |  |  | Spanning tree enabled on interface |
 | `root_guard` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/root_guard` | `boolean` |  |  |  | Root guard on port |
 | `bpdu_guard` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/bpdu_guard` | `boolean` |  |  |  | BPDU guard on port |
@@ -185,7 +185,7 @@ module: sonic-spanning-tree
 
 ## 関連リファレンス
 
-- CONFIG_DB: `STP` / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT` / `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STP` / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT` / `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
 - CLI: `config spanning-tree` / `show spanning-tree`
 
 <!-- ref-triangle:end -->
@@ -213,4 +213,4 @@ show spanning_tree
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 48a4ad682f2a -->
+<!-- glossary-links-injected: 03b498f482eb -->

@@ -178,6 +178,24 @@ def _in_span(pos: int, end: int, spans: list[tuple[int, int]]) -> bool:
     return False
 
 
+# Per-page hard cap on total glossary links (safety: prevents pathological
+# pages from getting hundreds of injections).
+PAGE_CAP_DEFAULT = 30
+PAGE_CAP_REFERENCE = 30
+
+# For Reference-area pages, after the first-occurrence pass, allow up to
+# ``BOOST_PER_TERM`` *additional* occurrences of each already-linked term to
+# improve glossary density (audit-21 finding: many CLI / YANG / Runbook pages
+# only had 1 link). Capped by ``PAGE_CAP_REFERENCE``.
+BOOST_PER_TERM = 2
+REFERENCE_BOOST_PREFIXES = (
+    "reference/cli/",
+    "reference/yang/",
+    "reference/runbooks/",
+    "reference/config-db/",
+)
+
+
 def process_file(
     path: Path,
     terms: list[tuple[str, str]],
@@ -186,6 +204,8 @@ def process_file(
     original = path.read_text(encoding="utf-8")
     fm, body = parse_frontmatter(original)
     rel = path.relative_to(DOCS).as_posix()
+    is_reference_boost = rel.startswith(REFERENCE_BOOST_PREFIXES)
+    page_cap = PAGE_CAP_REFERENCE if is_reference_boost else PAGE_CAP_DEFAULT
 
     # Strip any pre-existing marker line so we can recompute it.
     body_stripped = re.sub(
@@ -281,6 +301,8 @@ def process_file(
     for idx, line in enumerate(new_lines):
         if not eligible[idx]:
             continue
+        if injected_count >= page_cap:
+            break
         if not remaining:
             break
         # Recompute protected spans lazily.
@@ -322,6 +344,76 @@ def process_file(
             del remaining[term]
             if not remaining:
                 break
+            if injected_count >= page_cap:
+                break
+
+    # ---- Reference-area boost pass: link up to BOOST_PER_TERM additional
+    # occurrences of each already-linked term, to raise glossary density on
+    # CLI / YANG / Runbook / CONFIG_DB reference pages.
+    boost_added = 0
+    if is_reference_boost and injected_count < page_cap:
+        # Build (term, anchor) list of terms linked on this page: from this
+        # run's first pass plus from prior runs (re-detected in current text).
+        linked_terms: dict[str, str] = {t: a for t, a in injected_pairs}
+        scan_text = "\n".join(new_lines)
+        for term, anchor in terms:
+            if term in linked_terms:
+                continue
+            pat = re.compile(
+                r"\[" + re.escape(term) + r"\]\([^)]*#" + re.escape(anchor) + r"\)"
+            )
+            if pat.search(scan_text):
+                linked_terms[term] = anchor
+
+        # Only boost ASCII-only "tech" terms (CONFIG_DB, orchagent, BGP, ...).
+        # Skip Japanese / kana terms where multi-link noise is undesirable.
+        boost_targets = [
+            (t, a) for t, a in linked_terms.items()
+            if all(ord(c) < 128 for c in t)
+        ]
+        # Longer first to avoid nested matches.
+        boost_targets.sort(key=lambda x: (-len(x[0]), x[0]))
+
+        for term, anchor in boost_targets:
+            if injected_count >= page_cap:
+                break
+            link = f"[{term}]({rel_glossary_link(rel, anchor)})"
+            # Count existing occurrences of this exact link in current body so
+            # re-runs converge: stop once we have 1 (first-pass) + BOOST_PER_TERM.
+            existing = sum(line.count(link) for line in new_lines)
+            already_extra = max(0, existing - 1)
+            added = already_extra
+            for idx, line in enumerate(new_lines):
+                if added >= BOOST_PER_TERM:
+                    break
+                if injected_count >= page_cap:
+                    break
+                if not eligible[idx]:
+                    continue
+                spans = _mask_protected_spans(line)
+                search_from = 0
+                while added < BOOST_PER_TERM and injected_count < page_cap:
+                    p = line.find(term, search_from)
+                    if p < 0:
+                        break
+                    end = p + len(term)
+                    if _in_span(p, end, spans):
+                        search_from = p + 1
+                        continue
+                    before = line[p - 1] if p > 0 else ""
+                    after = line[end] if end < len(line) else ""
+                    if (before and (before.isalnum() or before == "_")) or \
+                       (after and (after.isalnum() or after == "_")):
+                        search_from = p + 1
+                        continue
+                    line = line[:p] + link + line[end:]
+                    new_lines[idx] = line
+                    spans = _mask_protected_spans(line)
+                    injected_pairs.append((term, anchor))
+                    injected_count += 1
+                    added += 1
+                    boost_added += 1
+                    search_from = p + len(link)
 
     if injected_count == 0:
         # No new injections.  Preserve existing file content verbatim so that

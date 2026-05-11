@@ -56,8 +56,8 @@ reboot [-h|-?] [-v] [-f] [-d <DPU>] [-p] [-b]
 | `-h` / `-?` | ヘルプ表示 |
 | `-v` | verbose (詳細ログ + blocking モードでは進捗ドット出力) |
 | `-f` | 内部 reboot コマンドに `-f` を引き継ぐ (force) |
-| `-d <DPU>` | smart switch の特定 [DPU](../../reference/glossary.md#term-dpu) module 名を指定して DPU だけ reboot |
-| `-p` | DPU 上での pre-shutdown 段階 |
+| `-d <DPU>` | smart switch の特定 [DPU](../../reference/glossary.md#term-dpu) module 名を指定して [DPU](../../reference/glossary.md#term-dpu) だけ reboot |
+| `-p` | [DPU](../../reference/glossary.md#term-dpu) 上での pre-shutdown 段階 |
 | `-b` | blocking モード (タイムアウト 180 秒) |
 
 ### 動作
@@ -101,7 +101,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 ### 動作
 
-`kexec` ベースで kernel を切り替えてダウンタイムを数秒〜十数秒に抑える。warm 系とは異なり data plane / control plane も停止するが、syncd の DB を保存して新カーネル起動後に `wb` 復元する経路を持つ。
+`kexec` ベースで kernel を切り替えてダウンタイムを数秒〜十数秒に抑える。warm 系とは異なり data plane / control plane も停止するが、[syncd](../../reference/glossary.md#term-syncd) の DB を保存して新カーネル起動後に `wb` 復元する経路を持つ。
 
 ## `warm-reboot`
 
@@ -111,7 +111,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 ### warm-reboot で増える動作
 
-- `initialize_pre_shutdown` … syncd / [orchagent](../../reference/glossary.md#term-orchagent) に warm-shutdown 準備を要求。
+- `initialize_pre_shutdown` … [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) に warm-shutdown 準備を要求。
 - `request_pre_shutdown` + `wait_for_pre_shutdown_complete_or_fail` … pre-shutdown ACK を 待つ。
 - `setup_control_plane_assistant` … `-c` で指定された外部 CPA に対して [ARP](../../reference/glossary.md#term-arp)/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。
 - `backup_database` … [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) のスナップショット保存 (warm boot 時の差分 reconcile 用)。
@@ -130,7 +130,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 ## 注意
 
-- `warm-reboot` で BGP セッションを保持するには **GR ([Graceful Restart](../../reference/glossary.md#term-graceful-restart)) が peer 側で有効** なことが前提。
+- `warm-reboot` で [BGP](../../reference/glossary.md#term-bgp) セッションを保持するには **GR ([Graceful Restart](../../reference/glossary.md#term-graceful-restart)) が peer 側で有効** なことが前提。
 - `fast-reboot` / `warm-reboot` は **data plane traffic loss** をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。`-c` の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。
 - chassis (multi-asic + supervisor + linecard) では `reboot` が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。
 
@@ -233,4 +233,4 @@ journalctl -u warm-reboot -b -0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4be05789576d -->
+<!-- glossary-links-injected: c419e969e873 -->

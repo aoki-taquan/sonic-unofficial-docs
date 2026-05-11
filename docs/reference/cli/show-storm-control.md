@@ -123,7 +123,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
 
 <!-- ref-triangle:end -->
 

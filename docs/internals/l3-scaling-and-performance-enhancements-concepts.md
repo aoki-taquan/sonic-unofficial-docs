@@ -22,7 +22,7 @@ related:
 
 ## 1. なぜスケールと性能を別個に扱うか
 
-旧 SONiC は ARP/ND ~2400 entry が上限で、route programming も `1 経路 = 1 sairedis call` でレイテンシが大きかった[^1]。これを改善するには **kernel cache 拡大** と **app→ASIC データパス bulk 化** の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 HLD のスタンス。
+旧 SONiC は [ARP](../reference/glossary.md#term-arp)/ND ~2400 entry が上限で、route programming も `1 経路 = 1 sairedis call` でレイテンシが大きかった[^1]。これを改善するには **kernel cache 拡大** と **app→ASIC データパス bulk 化** の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 [HLD](../reference/glossary.md#term-hld) のスタンス。
 
 ## 2. スケール目標
 
@@ -32,7 +32,7 @@ related:
 | IPv6 ND entry | 16k |
 | IPv4 route | 200k |
 | IPv6 route | 65k |
-| ECMP | 512×32, 256×64, 128×128 |
+| [ECMP](../reference/glossary.md#term-ecmp) | 512×32, 256×64, 128×128 |
 
 > 注: HLD 提案の `gc_thresh` 値は現行 master に取り込まれていないため、これらのスケール値は HLD 上の目標であって実機で kernel cache が自動的に到達する値ではない（[limitations](l3-scaling-and-performance-enhancements-limitations.md) 参照）。
 
@@ -48,17 +48,17 @@ related:
 | 系統 | 対象 | 効果軸 |
 |------|------|--------|
 | kernel ARP/ND gc tuning | `gc_thresh1/2/3` | スケール（entry 上限）|
-| CoPP ARP/ND 上限 | `COPP_TABLE` ARP/ND group | スケール（学習速度）|
-| sairedis bulk route | `RouteOrch` / sairedis meta | 性能（Redis message 数）|
-| fpmsyncd 最適化 | master device lookup スキップ | 性能（APP_DB 投入時間）|
+| [CoPP](../reference/glossary.md#term-copp) ARP/ND 上限 | `COPP_TABLE` ARP/ND group | スケール（学習速度）|
+| sairedis bulk route | `RouteOrch` / sairedis meta | 性能（[Redis](../reference/glossary.md#term-redis) message 数）|
+| [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 最適化 | master device lookup スキップ | 性能（APP_DB 投入時間）|
 | sairedis JSON 更新 | nlohmann/json v2 → v3.6 | 性能（dump 時間）|
-| `show arp/ndp` 個別 FDB lookup | sonic-utilities CLI | UX（応答時間）|
+| `show arp/ndp` 個別 [FDB](../reference/glossary.md#term-fdb) lookup | [sonic-utilities](../reference/glossary.md#term-sonic-utilities) CLI | UX（応答時間）|
 
 詳細な算術と実装ファイル位置は [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md) を参照。
 
 ## 5. 新規 CLI / CONFIG_DB / YANG
 
-**新規 CLI / CONFIG_DB / YANG なし**[^1]。kernel sysctl と `COPP_TABLE` 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（[limitations](l3-scaling-and-performance-enhancements-limitations.md)）。
+**新規 CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) なし**[^1]。kernel sysctl と `COPP_TABLE` 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（[limitations](l3-scaling-and-performance-enhancements-limitations.md)）。
 
 ## 関連ページ
 
@@ -84,3 +84,5 @@ related:
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 2f323c022692 -->

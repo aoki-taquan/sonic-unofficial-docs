@@ -35,14 +35,14 @@ SONiC で「現在の running config」を見るには CLI が **`show runningco
 
 | コマンド | 用途 | 実装 |
 |---------|------|-----|
-| `show runningconfiguration all` | host + 各 namespace の CONFIG_DB JSON ダンプ + bgpraw | `get_config_json_by_namespace` + `vtysh -c "show running-config"` |
+| `show runningconfiguration all` | host + 各 namespace の [CONFIG_DB](../../reference/glossary.md#term-config_db) JSON ダンプ + bgpraw | `get_config_json_by_namespace` + `vtysh -c "show running-config"` |
 | `show runningconfiguration acl` | ACL_RULE のみ | `sonic-cfggen -d --var-json ACL_RULE` |
 | `show runningconfiguration ports [<portname>]` | PORT テーブル | `sonic-cfggen -d --var-json PORT [--key NAME]` |
 | `show runningconfiguration bgp [-n NS]` | [FRR](../../reference/glossary.md#term-frr) の vtysh `show running-config` | `bgp_util.run_bgp_show_command` |
 | `show runningconfiguration interfaces [<ifname>]` | INTERFACE テーブル | `sonic-cfggen -d --var-json INTERFACE [--key NAME]` |
 | `show runningconfiguration ntp` | `/etc/chrony/chrony.conf` を grep | ファイルパース |
 | `show runningconfiguration snmp` | [SNMP](../../reference/glossary.md#term-snmp) / SNMP_COMMUNITY / SNMP_USER 全部 | `show_run_snmp` |
-| `show runningconfiguration snmp community` | community のみテーブル表示 | CONFIG_DB |
+| `show runningconfiguration snmp community` | community のみテーブル表示 | [CONFIG_DB](../../reference/glossary.md#term-config_db) |
 | `show runningconfiguration snmp contact` | contact 表示 | CONFIG_DB |
 | `show runningconfiguration snmp location` | location 表示 | CONFIG_DB |
 | `show runningconfiguration snmp user` | user 一覧 | CONFIG_DB |
@@ -134,7 +134,7 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 | `COPP_GROUP` / `COPP_TRAP` | `show runningconfiguration copp` |
 | `/etc/chrony/chrony.conf`（CONFIG_DB ではない） | `show runningconfiguration ntp` |
 | `/etc/rsyslog.conf`（CONFIG_DB ではない） | `show runningconfiguration syslog` |
-| FRR (`vtysh`) | `show runningconfiguration bgp` / `all`（添付の `bgpraw`） |
+| [FRR](../../reference/glossary.md#term-frr) (`vtysh`) | `show runningconfiguration bgp` / `all`（添付の `bgpraw`） |
 | bgp コンテナ内 config | `show startupconfiguration bgp` |
 
 ## 注意
@@ -224,7 +224,7 @@ show runningconfiguration syslog
 ### よくある落とし穴
 
 - `show runningconfiguration all` は JSON 出力で巨大。区分ごとのサブコマンドが実用的。
-- FRR 側 (bgp / [zebra](../../reference/glossary.md#term-zebra)) は CONFIG_DB に同期されていない部分がある。
+- [FRR](../../reference/glossary.md#term-frr) 側 (bgp / [zebra](../../reference/glossary.md#term-zebra)) は CONFIG_DB に同期されていない部分がある。
 
 ### 関連する show / debug
 
@@ -235,4 +235,4 @@ vtysh -c 'show running-config'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 34d76fce17e7 -->
+<!-- glossary-links-injected: 84ca04c9cab5 -->

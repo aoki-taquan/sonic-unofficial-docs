@@ -84,18 +84,18 @@ MUX_LINKMGR|SERVICE_MGMT
 
 ## 制約
 
-- 全フィールドは YANG 上 mandatory ではなく、未指定なら `linkmgrd` の組み込み既定が使われる
+- 全フィールドは [YANG](../../reference/glossary.md#term-yang) 上 mandatory ではなく、未指定なら `linkmgrd` の組み込み既定が使われる
 - container 名 `MUX_LINKMGR`、内部 container 名は上記 4 つに固定
 
 ## 購読者
 
-- `linkmgrd` (`docker-mux` 内): CONFIG_DB → 起動時 / `notification` 経由で動的反映
+- `linkmgrd` (`docker-mux` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) → 起動時 / `notification` 経由で動的反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`MUX_CABLE`](mux-cable.md), [`PEER_SWITCH`](peer-switch.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MUX_CABLE`](mux-cable.md), [`PEER_SWITCH`](peer-switch.md)
 - 関連 CLI: `config mux` 系 (一部のみ。多くは init_cfg / CONFIG_DB 直接)
-- 関連 YANG: `sonic-mux-linkmgr`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mux-linkmgr`
 
 <!-- ref-triangle:start -->
 
@@ -124,7 +124,7 @@ MUX_LINKMGR|SERVICE_MGMT
 
 ### よくある誤設定
 
-- interval を短くしすぎて linkmgrd が CPU を消費し ToR の Mux state oscillation を誘発する。
+- interval を短くしすぎて [linkmgrd](../../reference/glossary.md#term-linkmgrd) が CPU を消費し ToR の Mux state oscillation を誘発する。
 
 ### 確認コマンド
 
@@ -134,4 +134,4 @@ show mux config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7bd19c5684ed -->
+<!-- glossary-links-injected: be53736dfd16 -->

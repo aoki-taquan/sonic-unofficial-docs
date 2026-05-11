@@ -88,20 +88,20 @@ module: sonic-portchannel
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/name` | `string` | yes |  | pattern `PortChannel[0-9]{1,4}` | PortChannel interface name (e.g. PortChannel0001) |
-| `min_links` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/min_links` | `uint16` |  |  | range 1..1024 | Minimum number of active member links required for the PortChannel to be operationally up |
+| `name` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/name` | `string` | yes |  | pattern `PortChannel[0-9]{1,4}` | [PortChannel](../../reference/glossary.md#term-portchannel) interface name (e.g. PortChannel0001) |
+| `min_links` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/min_links` | `uint16` |  |  | range 1..1024 | Minimum number of active member links required for the [PortChannel](../../reference/glossary.md#term-portchannel) to be operationally up |
 | `mode` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/mode` | `stypes:switchport_mode` |  |  |  | PortChannel SwitchPort Mode possible values are routed\|access\|trunk. Default value for mode is routed. |
 | `description` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/description` | `string` |  |  | length 1..255 | User-defined description for the PortChannel interface |
 | `mtu` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/mtu` | `uint16` |  |  | range 1..9216 | Maximum transmission unit size in bytes |
 | `admin_status` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/admin_status` | `stypes:admin_status` | yes |  |  | Administrative state of the PortChannel interface |
-| `lacp_key` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/lacp_key` | `union` |  |  | union(string, uint16) | LACP aggregation key; 'auto' derives it from the PortChannel name, or specify a value from 1 to 65535 |
+| `lacp_key` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/lacp_key` | `union` |  |  | union(string, uint16) | [LACP](../../reference/glossary.md#term-lacp) aggregation key; 'auto' derives it from the PortChannel name, or specify a value from 1 to 65535 |
 | `tpid` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/tpid` | `stypes:tpid_type` |  |  |  | This leaf describes the possible TPID value that can be configured to the specified portchannel if the HW supports TPID configuration. The possible values are 0x8100, 0x9100, 0x9200, 0x88a8, and 0x... |
-| `fallback` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/fallback` | `stypes:boolean_type` |  |  |  | Enable LACP fallback feature |
+| `fallback` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/fallback` | `stypes:boolean_type` |  |  |  | Enable [LACP](../../reference/glossary.md#term-lacp) fallback feature |
 | `fast_rate` | `sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/fast_rate` | `stypes:boolean_type` |  |  |  | Enable LACP fast rate |
 | `name` | `sonic-portchannel/PORTCHANNEL_MEMBER/PORTCHANNEL_MEMBER_LIST/name` | `leafref` | yes |  | /lag:sonic-portchannel/lag:PORTCHANNEL/lag:PORTCHANNEL_LIST/lag:name | Reference to the parent PortChannel interface |
 | `port` | `sonic-portchannel/PORTCHANNEL_MEMBER/PORTCHANNEL_MEMBER_LIST/port` | `leafref` | yes |  | /port:sonic-port/port:PORT/port:PORT_LIST/port:name | Reference to the physical port that is a member of this PortChannel |
 | `name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/name` | `leafref` | yes |  | /lag:sonic-portchannel/lag:PORTCHANNEL/lag:PORTCHANNEL_LIST/lag:name | Reference to the PortChannel interface |
-| `vrf_name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | VRF instance to which this PortChannel interface is bound |
+| `vrf_name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this PortChannel interface is bound |
 | `loopback_action` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/loopback_action` | `stypes:loopback_action` |  |  |  | Packet action when a packet ingress and gets routed on the same IP interface |
 | `nat_zone` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the portchannel interface |
 | `mpls` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the portchannel interface |
@@ -125,8 +125,8 @@ module: sonic-portchannel
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`
-- CONFIG_DB: `PORTCHANNEL_INTERFACE`
-- CONFIG_DB: `PORTCHANNEL_MEMBER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL_INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL_MEMBER`
 - CLI: `config portchannel`
 
 <!-- ref-triangle:start -->
@@ -143,11 +143,11 @@ module: sonic-portchannel
 
 ### 典型的なデプロイ位置
 
-- LAG (port-channel) 設定。`PORTCHANNEL` / `PORTCHANNEL_MEMBER` を teammgrd が [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) に反映。
+- [LAG](../../reference/glossary.md#term-lag) (port-channel) 設定。`PORTCHANNEL` / `PORTCHANNEL_MEMBER` を teammgrd が [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) に反映。
 
 ### よくある落とし穴
 
-- `min_links` を member 数より大きく設定すると LAG が常に down 扱いになる。CLI からの値入力ミスで頻発。
+- `min_links` を member 数より大きく設定すると [LAG](../../reference/glossary.md#term-lag) が常に down 扱いになる。CLI からの値入力ミスで頻発。
 
 ### 関連する config / show コマンド
 
@@ -169,4 +169,4 @@ show interfaces portchannel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e6e9b89b13b9 -->
+<!-- glossary-links-injected: 1fa299f553b4 -->

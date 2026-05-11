@@ -72,15 +72,15 @@ NTP|global
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`NTP_SERVER`](./ntp-server.md)、`NTP_KEY`、[`MGMT_VRF_CONFIG`](./mgmt-vrf-config.md)
-- 関連 YANG: `sonic-ntp`、`sonic-mgmt_vrf`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NTP_SERVER`](./ntp-server.md)、`NTP_KEY`、[`MGMT_VRF_CONFIG`](./mgmt-vrf-config.md)
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ntp`、`sonic-mgmt_vrf`
 - 関連 CLI: `config ntp` 系（CLI ページは未整備）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-ntp`](../yang/sonic-ntp.md) / [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-ntp`](../yang/sonic-ntp.md) / [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
 - CLI: [`config ntp`](../cli/config-ntp.md)
 
 <!-- ref-triangle:end -->
@@ -116,4 +116,4 @@ show ntp
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 48d5f456ebb6 -->

@@ -36,11 +36,11 @@ SONiC には `show mclag` という Click サブコマンドは存在しない�
 | コマンド | 用途 |
 |---------|------|
 | `mclagdctl -i <domain_id> dump state` | ICCP セッションの現在状態 |
-| `mclagdctl -i <domain_id> dump arp` | MCLAG 同期されている [ARP](../../reference/glossary.md#term-arp) テーブル |
+| `mclagdctl -i <domain_id> dump arp` | [MCLAG](../../reference/glossary.md#term-mclag) 同期されている [ARP](../../reference/glossary.md#term-arp) テーブル |
 | `mclagdctl -i <domain_id> dump nd` | 同 IPv6 neighbor (Neighbor Discovery) |
 | `mclagdctl -i <domain_id> dump mac` | 同 MAC テーブル |
 | `mclagdctl -i <domain_id> dump unique_ip` | unique-ip 機能を有効にした Vlan インタフェースの一覧 |
-| `mclagdctl -i <domain_id> dump portlist local` | ローカル側 MCLAG メンバ port 一覧 |
+| `mclagdctl -i <domain_id> dump portlist local` | ローカル側 [MCLAG](../../reference/glossary.md#term-mclag) メンバ port 一覧 |
 | `mclagdctl -i <domain_id> dump portlist peer` | ピア側 port 一覧 |
 | `mclagdctl -i <domain_id> dump debug counters` | デバッグカウンタ |
 | `mclagdctl -i <domain_id> config loglevel <level>` | iccpd のログレベル変更 |
@@ -59,7 +59,7 @@ local は自ノードの MCLAG メンバ [PortChannel](../../reference/glossary.
 
 ### `mclagdctl dump arp` / `dump nd` / `dump mac`
 
-ICCP 経由でピアと同期しているフォワーディングテーブルのスナップショット。Dual-ToR の片側でしか学習されていない MAC / ARP の検出に有用。
+ICCP 経由でピアと同期しているフォワーディングテーブルのスナップショット。Dual-ToR の片側でしか学習されていない MAC / [ARP](../../reference/glossary.md#term-arp) の検出に有用。
 
 ### `mclagdctl dump unique_ip`
 
@@ -147,13 +147,13 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- MC-[LAG](../../reference/glossary.md#term-lag) のピアリンク・keepalive・メンバ LAG の同期状態を確認する。
-- ARP/ND/MAC の同期 (mclag [syncd](../../reference/glossary.md#term-syncd)) が想定どおり動いているかを判定する。
+- MC-[LAG](../../reference/glossary.md#term-lag) のピアリンク・keepalive・メンバ [LAG](../../reference/glossary.md#term-lag) の同期状態を確認する。
+- [ARP](../../reference/glossary.md#term-arp)/ND/MAC の同期 (mclag [syncd](../../reference/glossary.md#term-syncd)) が想定どおり動いているかを判定する。
 
 ### よくある落とし穴
 
 - `show mclag brief` は mclagdctl 経由で取得するため iccpd が落ちていると応答しない。
-- system MAC が両端で異なると LAG メンバが flap する。`show mclag config` で必ず確認。
+- system MAC が両端で異なると [LAG](../../reference/glossary.md#term-lag) メンバが flap する。`show mclag config` で必ず確認。
 
 ### 関連する show / debug
 
@@ -164,4 +164,4 @@ mclagdctl -i 1000 dump state
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0db2469421e6 -->
+<!-- glossary-links-injected: 1eae39cb7469 -->

@@ -25,17 +25,17 @@ related:
 
 # Active-Standby Dual ToR 設定と運用
 
-このページは [Active-Standby Dual ToR（概要ハブ）](active-standby-dual-tor.md) の派生ページで、**CONFIG_DB / APP_DB / STATE_DB スキーマと CLI、トラブルシューティング** に絞って整理する。概念は [active-standby-dual-tor-concepts.md](active-standby-dual-tor-concepts.md)、内部実装は [active-standby-dual-tor-internals.md](active-standby-dual-tor-internals.md)、制限事項は [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) を参照。
+このページは [Active-Standby Dual ToR（概要ハブ）](active-standby-dual-tor.md) の派生ページで、**[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) スキーマと CLI、トラブルシューティング** に絞って整理する。概念は [active-standby-dual-tor-concepts.md](active-standby-dual-tor-concepts.md)、内部実装は [active-standby-dual-tor-internals.md](active-standby-dual-tor-internals.md)、制限事項は [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) を参照。
 
 ## 1. CONFIG_DB
 
 | Table | Key | フィールド | 説明 |
 |-------|-----|-----------|------|
-| `MUX_LINKMGR` | `LINK_PROBE` | `interval_v4` / `interval_v6` / `timeout` / `suspend_timer` / `positive_signal_count` / `negative_signal_count` | linkmgrd チューニング |
-| `localhost MUX_DRIVER` | - | `i2c_retry_count` | ycabled の MUX 失敗判定回数 |
+| `MUX_LINKMGR` | `LINK_PROBE` | `interval_v4` / `interval_v6` / `timeout` / `suspend_timer` / `positive_signal_count` / `negative_signal_count` | [linkmgrd](../reference/glossary.md#term-linkmgrd) チューニング |
+| `localhost MUX_DRIVER` | - | `i2c_retry_count` | ycabled の [MUX](../reference/glossary.md#term-mux) 失敗判定回数 |
 | `MUX_CABLE` | `<PORT>` | `state ∈ {active, standby, auto, manual}`, `server_ipv4`, `server_ipv6` | port 単位 mux 設定 |
 | `PEER_SWITCH` | `<switchname>` | `address_ipv4` | peer ToR の loopback |
-| `TUNNEL` | `MUX_TUNNEL` | `tunnel_type=IPINIP`, `dst_ip`, `dscp_mode`, `encap_ecn_mode`, `ecn_mode`, `ttl_mode` | IPinIP tunnel 定義 |
+| `TUNNEL` | `MUX_TUNNEL` | `tunnel_type=IPINIP`, `dst_ip`, `dscp_mode`, `encap_ecn_mode`, `ecn_mode`, `ttl_mode` | [IPinIP](../reference/glossary.md#term-ipinip) tunnel 定義 |
 | `DEVICE_METADATA` | `localhost` | `type=ToRRouter`, `peer_switch`, `subtype=DualTor` | dual ToR 識別 |
 
 ## 2. APP_DB / STATE_DB
@@ -43,7 +43,7 @@ related:
 | Table | フィールド | 説明 |
 |-------|-----------|------|
 | `APP_DB.MUX_CABLE` | `state ∈ {active, standby, unknown}` | linkmgrd ↔ swss |
-| `APP_DB.HW_MUX_CABLE` | `state ∈ {active, standby}` | orchagent ↔ ycabled |
+| `APP_DB.HW_MUX_CABLE` | `state ∈ {active, standby}` | [orchagent](../reference/glossary.md#term-orchagent) ↔ ycabled |
 | `APP_DB.MUX_CABLE_COMMAND` | `command ∈ {probe, link_status_peer}` | linkmgrd → ycabled |
 | `APP_DB.MUX_CABLE_RESPONSE` | `response`, `link_status_peer` | ycabled → linkmgrd |
 | `STATE_DB.MUX_CABLE_TABLE` | `state ∈ {active, standby, unknown, error}` | orchagent |
@@ -95,3 +95,5 @@ config muxcable mode auto all
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: d61f8c399306 -->

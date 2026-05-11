@@ -60,19 +60,19 @@ sonic-package-manager
 - `config vlan` ... [VLAN](../../reference/glossary.md#term-vlan) 作成、メンバ追加、DHCP relay
 - `config portchannel` ... [LAG](../../reference/glossary.md#term-lag) ([LACP](../../reference/glossary.md#term-lacp)) 作成・メンバ追加
 - `config acl` ... [ACL](../../reference/glossary.md#term-acl) テーブル更新・ルール削除
-- `config vxlan` ... VTEP / [EVPN](../../reference/glossary.md#term-evpn) / VLAN-VNI マッピング
+- `config vxlan` ... VTEP / [EVPN](../../reference/glossary.md#term-evpn) / [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング
 
 ### show 系
 
 - `show interfaces` ... インターフェイス状態・カウンタ・transceiver 等
-- `show ip` ... IPv4 ルーティング情報（BGP / route / interfaces）
-- `show vlan` ... VLAN ブリッジ表示
+- `show ip` ... IPv4 ルーティング情報（[BGP](../../reference/glossary.md#term-bgp) / route / interfaces）
+- `show vlan` ... [VLAN](../../reference/glossary.md#term-vlan) ブリッジ表示
 - `show platform` ... プラットフォーム情報・PSU・FAN・温度
-- `show acl` ... ACL テーブル・ルール表示
+- `show acl` ... [ACL](../../reference/glossary.md#term-acl) テーブル・ルール表示
 
 ### clear 系
 
-- `clear` ... [ARP](../../reference/glossary.md#term-arp) / [NDP](../../reference/glossary.md#term-ndp) / counters / [FDB](../../reference/glossary.md#term-fdb) / BGP セッション等
+- `clear` ... [ARP](../../reference/glossary.md#term-arp) / [NDP](../../reference/glossary.md#term-ndp) / counters / [FDB](../../reference/glossary.md#term-fdb) / [BGP](../../reference/glossary.md#term-bgp) セッション等
 
 ## 全体的な仕様メモ
 
@@ -112,4 +112,4 @@ config.add_command(vxlan.vxlan)
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a68494c3c083 -->
+<!-- glossary-links-injected: 20b83416e87a -->

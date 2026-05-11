@@ -32,7 +32,7 @@ related:
 
 1. **[orchagent](../../reference/glossary.md#term-orchagent) が特定 task で詰まる**: [ACL](../../reference/glossary.md#term-acl) / Nexthop group 再計算で長時間ロック
 2. **[syncd](../../reference/glossary.md#term-syncd) ↔ [SAI](../../reference/glossary.md#term-sai) 呼び出しでベンダ SDK がブロック**
-3. **[CRM](../../reference/glossary.md#term-crm) 枯渇による SAI 書込失敗**: `SAI_STATUS_TABLE_FULL` で retry ループ
+3. **[CRM](../../reference/glossary.md#term-crm) 枯渇による [SAI](../../reference/glossary.md#term-sai) 書込失敗**: `SAI_STATUS_TABLE_FULL` で retry ループ
 4. **redis broken pipe / slow consumer**: PUB/SUB チャネルで詰まり
 5. **multi-asic namespace の reflection 遅延**
 
@@ -78,8 +78,8 @@ sonic-db-cli APPL_DB info clients | head
 
 ## 対処方法
 
-- CRM 枯渇: 容量再見積もり / route summarization
-- orchagent ハング: まずは原因 task を log から特定。restart は最後の手段（**ロールバック**: `config_db.json` 退避済みなら `config reload`）
+- [CRM](../../reference/glossary.md#term-crm) 枯渇: 容量再見積もり / route summarization
+- [orchagent](../../reference/glossary.md#term-orchagent) ハング: まずは原因 task を log から特定。restart は最後の手段（**ロールバック**: `config_db.json` 退避済みなら `config reload`）
 - ベンダ SDK ブロック: vendor support と stack を共有
 - multi-asic: 該当 namespace で `sudo ip netns exec asic0 docker logs swss`
 
@@ -94,4 +94,4 @@ sonic-db-cli APPL_DB info clients | head
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — orchdaemon.cpp
 [^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ master — Syncd.cpp
 
-<!-- glossary-links-injected: 867f28b4b211 -->
+<!-- glossary-links-injected: 96956d572342 -->

@@ -93,14 +93,14 @@ BGP_NEIGHBOR_AF|<vrf_name>|<neighbor>|<afi_safi>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-neighbor`](../yang/sonic-bgp-neighbor.md) / `sonic-bgp-common`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-neighbor`](../yang/sonic-bgp-neighbor.md) / `sonic-bgp-common`
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_AF` リスト. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang#L112-L131>; AF 共通 leaf 群は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_AF` リスト. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang#L112-L131>; AF 共通 leaf 群は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -122,4 +122,4 @@ vtysh -c 'show bgp neighbor <ip>'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9753c9509bfa -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

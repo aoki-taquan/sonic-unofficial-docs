@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ASIC 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が CONFIG_DB を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
+ASIC 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -71,7 +71,7 @@ BUFFER_POOL|<name>
 ## 購読者
 
 - **traditional buffer model**: `orchagent` の `BufferOrch`
-- **dynamic buffer model**: `buffermgrd` (`docker-swss`) が CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) に展開し、`bufferorch` が SAI 反映
+- **dynamic buffer model**: `buffermgrd` (`docker-swss`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) に展開し、`bufferorch` が [SAI](../../reference/glossary.md#term-sai) 反映
 - ベンダ固有のテンプレ (`buffers_*.json.j2`) でハードウェア依存初期値が生成される
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -84,14 +84,14 @@ BUFFER_POOL|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-buffer-pool`](../yang/sonic-buffer-pool.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-buffer-pool`](../yang/sonic-buffer-pool.md)
 - CLI: [`config buffer`](../cli/config-buffer.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-pool.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-pool.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -123,4 +123,4 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ce2315bef392 -->
+<!-- glossary-links-injected: 44ea702536a5 -->

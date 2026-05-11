@@ -54,7 +54,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 | `name` (key) | leafref `MGMT_PORT.name` | ✅ | 管理ポート名 |
 | `ip_prefix` (key) | `sonic-ip-prefix` | ✅ | IP/プレフィクス |
 | `gwaddr` | ip-address | - | デフォルトゲートウェイ |
-| `forced_mgmt_routes` | leaf-list (prefix or address) | - | mgmt VRF / default VRF に追加する経路 |
+| `forced_mgmt_routes` | leaf-list (prefix or address) | - | mgmt [VRF](../../reference/glossary.md#term-vrf) / default [VRF](../../reference/glossary.md#term-vrf) に追加する経路 |
 
 ## 制約 (must)
 
@@ -75,14 +75,14 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-mgmt_interface`](../yang/sonic-mgmt_interface.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-mgmt_interface`](../yang/sonic-mgmt_interface.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -107,4 +107,4 @@ ip -4 route show vrf mgmt
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: ca16c59f26d9 -->

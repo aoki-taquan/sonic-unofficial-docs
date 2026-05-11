@@ -77,16 +77,16 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 ## 制約
 
 - `tunnel_type` は `IPINIP` のみ受け入れる（`tunneldecaporch.cpp` でハードコード）
-- `ecn_mode` は SAI `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` が create-only のため、生成後の更新はスキップされる旨が WARN ログで残る
+- `ecn_mode` は [SAI](../../reference/glossary.md#term-sai) `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` が create-only のため、生成後の更新はスキップされる旨が WARN ログで残る
 
 ## 購読者
 
-- `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): SAI tunnel / tunnel-term オブジェクト作成
+- `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) tunnel / tunnel-term オブジェクト作成
 - `STATE_DB` 側はモニタリング用ミラー
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`TUNNEL`](./tunnel.md)（CONFIG_DB 側のソース）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL`](./tunnel.md)（[CONFIG_DB](../../reference/glossary.md#term-config_db) 側のソース）
 - 関連 [YANG](../../reference/glossary.md#term-yang): なし
 - 関連 CLI: なし（テーブルは内部）
 
@@ -122,4 +122,4 @@ sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e3a65a1701e9 -->
+<!-- glossary-links-injected: 6f36db8074ad -->

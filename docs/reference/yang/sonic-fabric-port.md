@@ -83,7 +83,7 @@ module: sonic-fabric-port
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FABRIC_PORT`](../config-db/fabric-port.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FABRIC_PORT`](../config-db/fabric-port.md)
 - CLI: `show fabric`
 
 <!-- ref-triangle:end -->
@@ -111,4 +111,4 @@ show fabric port status
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 1016e42925ad -->
+<!-- glossary-links-injected: 896d391185a9 -->

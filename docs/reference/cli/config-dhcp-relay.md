@@ -100,7 +100,7 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 | `--link-selection` | enable / disable | RFC 3527 link selection sub-option (option 82.5) |
 | `--vrf-selection` | enable / disable | [VRF](../../reference/glossary.md#term-vrf) selection sub-option (option 82.151 / VPN-ID) |
 | `--server-id-override` | enable / disable | server-id サブオプションの override |
-| `--server-vrf` | vrf 名 | リレー先サーバ到達用の VRF |
+| `--server-vrf` | vrf 名 | リレー先サーバ到達用の [VRF](../../reference/glossary.md#term-vrf) |
 | `--agent-relay-mode` | discard / append / replace | option 82 を含むリレーパケットの扱い |
 | `--max-hop-count` | int | リレー時に許容する最大 hop |
 
@@ -172,7 +172,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- VLAN に IP が無い状態で relay を入れても client から DISCOVER を受けない。
+- [VLAN](../../reference/glossary.md#term-vlan) に IP が無い状態で relay を入れても client から DISCOVER を受けない。
 - `config dhcp-relay del` で server を全消去すると relay 機能自体が停止する。
 
 ### 関連する show / debug
@@ -184,4 +184,4 @@ docker logs dhcp_relay
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e9f260f92543 -->
+<!-- glossary-links-injected: ad07899a32d7 -->

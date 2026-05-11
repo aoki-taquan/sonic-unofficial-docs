@@ -81,7 +81,7 @@ related:
 ## 注意
 
 - いずれの操作も **`config save` + reboot を経ないと実機には効かない**。`echo_reboot_warning` が enable / disable / memory / num_dumps の各コマンドで明示的に警告を出すのはこのため。
-- `config kdump` は CONFIG_DB しか触らない。`/etc/default/kdump-tools` や initramfs の rebuild は `hostcfgd` が担当する。
+- `config kdump` は [CONFIG_DB](../../reference/glossary.md#term-config_db) しか触らない。`/etc/default/kdump-tools` や initramfs の rebuild は `hostcfgd` が担当する。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -105,7 +105,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`KDUMP`](../config-db/kdump.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`KDUMP`](../config-db/kdump.md)
 
 <!-- ref-triangle:end -->
 
@@ -121,4 +121,4 @@ flowchart LR
 - [HLD: kdump](../../system/kdump.md)
 - [CONFIG_DB: KDUMP](../config-db/kdump.md)
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-wred-profile`
 
-Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 WRED 有効化を保持する[^1]。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 [WRED](../../reference/glossary.md#term-wred) 有効化を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -69,7 +69,7 @@ module: sonic-wred-profile
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/name` | `string` | yes |  |  | WRED profile name |
+| `name` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/name` | `string` | yes |  |  | [WRED](../../reference/glossary.md#term-wred) profile name |
 | `yellow_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping yellow packets |
 | `green_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping green packets |
 | `red_min_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_min_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED begins dropping red packets |
@@ -101,7 +101,7 @@ module: sonic-wred-profile
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`WRED_PROFILE`](../config-db/wred-profile.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`WRED_PROFILE`](../config-db/wred-profile.md)
 - CLI: [`config qos`](../cli/config-qos.md) / `show qos`
 
 <!-- ref-triangle:end -->
@@ -110,4 +110,4 @@ module: sonic-wred-profile
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-wred-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: c2489a894785 -->
+<!-- glossary-links-injected: 3c8bf0c3802e -->

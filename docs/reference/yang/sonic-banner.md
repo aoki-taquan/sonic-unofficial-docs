@@ -81,7 +81,7 @@ module: sonic-banner
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BANNER_MESSAGE`](../config-db/banner-message.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BANNER_MESSAGE`](../config-db/banner-message.md)
 - CLI: [`config banner`](../cli/config-banner.md)
 
 <!-- ref-triangle:end -->
@@ -95,7 +95,7 @@ module: sonic-banner
 
 ### よくある落とし穴
 
-- `motd` は複数行文字列。改行を含む値を CLI から渡す場合の YANG 側 string 制約 (1024 文字) に注意。
+- `motd` は複数行文字列。改行を含む値を CLI から渡す場合の [YANG](../../reference/glossary.md#term-yang) 側 string 制約 (1024 文字) に注意。
 
 ### 関連する config / show コマンド
 
@@ -109,4 +109,4 @@ show banner
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 928d8e8f2278 -->
+<!-- glossary-links-injected: 9dae6d74c08e -->

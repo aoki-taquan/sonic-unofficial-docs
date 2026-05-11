@@ -55,7 +55,7 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `name` | string | map 名。`PORT_QOS_MAP.pfc_to_pg_map` から参照される |
-| `pfc_priority` | string pattern `[0-7]?` | 入力 PFC priority |
+| `pfc_priority` | string pattern `[0-7]?` | 入力 [PFC](../../reference/glossary.md#term-pfc) priority |
 | `pg` | string pattern `[0-7]?` | 対応する ingress priority group |
 
 ## 制約
@@ -66,19 +66,19 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 ## 購読者
 
-- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の QoS map を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) QoS map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成、port QoS binding に利用する（master には独立した `qosmgrd` プロセスは存在しない）。
+- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の [QoS](../../reference/glossary.md#term-qos) map を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成、port QoS binding に利用する（master には独立した `qosmgrd` プロセスは存在しない）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT_QOS_MAP`、`BUFFER_PG`、`PFC_WD`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`、`BUFFER_PG`、`PFC_WD`
 - 関連 CLI: `config qos`
-- 関連 YANG: `sonic-pfc-priority-priority-group-map`、`sonic-port-qos-map`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfc-priority-priority-group-map`、`sonic-port-qos-map`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-pfc-priority-priority-group-map`](../yang/sonic-pfc-priority-priority-group-map.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-pfc-priority-priority-group-map`](../yang/sonic-pfc-priority-priority-group-map.md)
 - CLI: [`config qos`](../cli/config-qos.md)
 
 <!-- ref-triangle:end -->
@@ -105,7 +105,7 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 ### よくある誤設定
 
-- PORT_QOS_MAP に紐付け忘れて PFC が効かず head-of-line blocking が継続する。
+- PORT_QOS_MAP に紐付け忘れて [PFC](../../reference/glossary.md#term-pfc) が効かず head-of-line blocking が継続する。
 
 ### 確認コマンド
 
@@ -115,4 +115,4 @@ show priority-group persistent-watermark
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a142710d04f2 -->
+<!-- glossary-links-injected: c8fc2a4df2a1 -->

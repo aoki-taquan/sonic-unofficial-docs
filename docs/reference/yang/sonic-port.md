@@ -134,7 +134,7 @@ module: sonic-port
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT`](../config-db/port.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PORT`](../config-db/port.md)
 - CLI: [`config interface`](../cli/config-interface.md) / [`show interfaces`](../cli/show-interfaces.md)
 
 <!-- ref-triangle:end -->
@@ -170,4 +170,4 @@ show interfaces status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 75a44208cf9a -->
+<!-- glossary-links-injected: 896d391185a9 -->

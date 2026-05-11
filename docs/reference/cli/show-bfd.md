@@ -20,13 +20,13 @@ related:
 
 ## 概要
 
-`show bfd` は [BFD](../../reference/glossary.md#term-bfd) (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は **[STATE_DB](../../reference/glossary.md#term-state_db)** の `BFD_SESSION_TABLE|<vrf>|<interface>|<peer>` であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) ではない[^1]。BFD セッションは [BGP](../../reference/glossary.md#term-bgp) や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。
+`show bfd` は [BFD](../../reference/glossary.md#term-bfd) (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は **[STATE_DB](../../reference/glossary.md#term-state_db)** の `BFD_SESSION_TABLE|<vrf>|<interface>|<peer>` であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) ではない[^1]。[BFD](../../reference/glossary.md#term-bfd) セッションは [BGP](../../reference/glossary.md#term-bgp) や static route との連動で動的に生成・破棄されるため、状態は [STATE_DB](../../reference/glossary.md#term-state_db) のみが正となる。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `show bfd summary` | 全 BFD セッションの一覧 |
+| `show bfd summary` | 全 [BFD](../../reference/glossary.md#term-bfd) セッションの一覧 |
 | `show bfd peer <peer_ip>` | 指定 peer IP のセッションのみ表示 |
 
 ## 各コマンドの詳細
@@ -44,7 +44,7 @@ show bfd summary [-n|--namespace <ns>]
 - `-n / --namespace` ... multi-ASIC 環境での namespace 指定（`multi_asic_namespace_validation_callback` で検証）
 
 **動作**:
-multi-ASIC 環境では `multi_asic.get_namespace_list()` を全走査、それ以外は `DEFAULT_NAMESPACE` のみ。各 namespace の STATE_DB から `BFD_SESSION_TABLE|*` の全キーを列挙し、`local_discriminator` が無い場合は `NA` を補って表示する[^2]。
+multi-ASIC 環境では `multi_asic.get_namespace_list()` を全走査、それ以外は `DEFAULT_NAMESPACE` のみ。各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から `BFD_SESSION_TABLE|*` の全キーを列挙し、`local_discriminator` が無い場合は `NA` を補って表示する[^2]。
 
 **表示カラム**:
 
@@ -115,7 +115,7 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 
 ## 補足
 
-- BFD セッションの **生成・削除** は `show bfd` のスコープ外。BGP/static route 側の設定や `bfdsyncd` の動作による
+- BFD セッションの **生成・削除** は `show bfd` のスコープ外。[BGP](../../reference/glossary.md#term-bgp)/static route 側の設定や `bfdsyncd` の動作による
 - `local_discriminator` は古い実装では存在しないため `NA` に置換するガードがある
 
 <!-- cli-mermaid -->
@@ -136,7 +136,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: `BFD_SESSION_TABLE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BFD_SESSION_TABLE`
 
 <!-- ref-triangle:end -->
 
@@ -151,12 +151,12 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- BGP/Static の高速断検知で BFD セッションが UP しているかを確認する。
+- [BGP](../../reference/glossary.md#term-bgp)/Static の高速断検知で BFD セッションが UP しているかを確認する。
 - 障害時に session state と TX/RX interval、multiplier を確認して片側設定漏れを検出する。
 
 ### よくある落とし穴
 
-- `show bfd summary` は STATE_DB ベースで、CONFIG_DB に session があっても peer 未到達なら DOWN のまま。
+- `show bfd summary` は STATE_DB ベースで、[CONFIG_DB](../../reference/glossary.md#term-config_db) に session があっても peer 未到達なら DOWN のまま。
 - multi-hop BFD は別グループ。`show bfd peer <ip> multihop` を使う必要がある。
 
 ### 関連する show / debug
@@ -173,4 +173,4 @@ sonic-db-cli STATE_DB keys 'BFD_SESSION_TABLE|*'
 - [reference/CLI: show bgp](show-bgp.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: ad3b2006b1d9 -->
+<!-- glossary-links-injected: ad591bd6c032 -->

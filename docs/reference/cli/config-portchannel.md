@@ -21,19 +21,19 @@ related:
 
 ## 概要
 
-`config portchannel` は [LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation ([LAG](../../reference/glossary.md#term-lag)) を設定する。LAG 本体の作成・削除（`add` / `del`）、メンバー Ethernet ポートの追加・削除、`teamd` の retry-count パラメータ取得・設定の 3 グループ[^1]。
+`config portchannel` は [LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation ([LAG](../../reference/glossary.md#term-lag)) を設定する。[LAG](../../reference/glossary.md#term-lag) 本体の作成・削除（`add` / `del`）、メンバー Ethernet ポートの追加・削除、`teamd` の retry-count パラメータ取得・設定の 3 グループ[^1]。
 
-LACP の実体は **`teamd` (libteam)** で、SONiC の `teammgrd` が `PORTCHANNEL` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) へ反映し、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書き込む役割を担う。
+[LACP](../../reference/glossary.md#term-lacp) の実体は **`teamd` (libteam)** で、SONiC の `teammgrd` が `PORTCHANNEL` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) へ反映し、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書き込む役割を担う。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `config portchannel add <name> [--min-links N] [--fallback true\|false] [--fast-rate true\|false]` | LAG を作成 |
+| `config portchannel add <name> [--min-links N] [--fallback true\|false] [--fast-rate true\|false]` | [LAG](../../reference/glossary.md#term-lag) を作成 |
 | `config portchannel del <name>` | LAG を削除 |
 | `config portchannel member add <portchannel> <ethernet>` | メンバ追加 |
 | `config portchannel member del <portchannel> <ethernet>` | メンバ削除 |
-| `config portchannel retry-count get <name>` | LACP retry-count 取得 (teamdctl) |
+| `config portchannel retry-count get <name>` | [LACP](../../reference/glossary.md#term-lacp) retry-count 取得 (teamdctl) |
 | `config portchannel retry-count set <name> <3-10>` | LACP retry-count 設定 (teamdctl) |
 
 ## 各コマンドの詳細
@@ -142,14 +142,14 @@ excerpt: |
 ### `config portchannel retry-count get <portchannel_name>`
 
 **動作**:
-CONFIG_DB ではなく `teamdctl <portchannel_name> state item get runner.retry_count` を実行する。multi-ASIC 時は `-n asic<N>` を `teamdctl` に転送（`asic` プレフィックスは除去して数値のみを渡す）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく `teamdctl <portchannel_name> state item get runner.retry_count` を実行する。multi-ASIC 時は `-n asic<N>` を `teamdctl` に転送（`asic` プレフィックスは除去して数値のみを渡す）。
 
 `runner.enable_retry_count_feature` が `false` の場合は機能未有効でエラー。
 
 ### `config portchannel retry-count set <portchannel_name> <3-10>`
 
 **動作**:
-`teamdctl <name> state item set runner.retry_count <N>` を実行。範囲は `IntRange(3, 10)` で click が事前検証。CONFIG_DB は更新されず、teamd ランタイム上でのみ適用される（再起動後は config 由来のデフォルトに戻る）[^2]。
+`teamdctl <name> state item set runner.retry_count <N>` を実行。範囲は `IntRange(3, 10)` で click が事前検証。[CONFIG_DB](../../reference/glossary.md#term-config_db) は更新されず、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) ランタイム上でのみ適用される（再起動後は config 由来のデフォルトに戻る）[^2]。
 
 ## 関連する CONFIG_DB
 
@@ -172,7 +172,7 @@ CONFIG_DB ではなく `teamdctl <portchannel_name> state item get runner.retry_
 
 [^1]: `portchannel` グループは `config/main.py` L2817-L2830 で定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817>
 
-[^2]: `retry-count` は teamd ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072>
+[^2]: `retry-count` は [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072>
 
 <!-- usage-example -->
 ## 実行例
@@ -254,4 +254,4 @@ show runningconfiguration | grep -i portchannel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 38d67752c4a9 -->
+<!-- glossary-links-injected: 6e531ba7782c -->

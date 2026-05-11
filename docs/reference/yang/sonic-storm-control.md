@@ -79,7 +79,7 @@ module: sonic-storm-control
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
 - CLI: [`config interface storm-control`](../cli/config-interface.md) / [`show storm-control`](../cli/show-storm-control.md)
 
 <!-- ref-triangle:end -->

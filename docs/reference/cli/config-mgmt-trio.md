@@ -27,8 +27,8 @@ related:
 ここでは SONiC の **config 永続化と全体差し替え** の中核となる以下の 5 コマンドをまとめる:
 
 - `config save` ... 現 [CONFIG_DB](../../reference/glossary.md#term-config_db) を JSON ファイルに dump
-- `config load` ... ファイルを CONFIG_DB に書く (既存の状態を保持しつつ merge)
-- `config reload` ... CONFIG_DB をクリアしてからファイルを再ロード (services 再起動含む)
+- `config load` ... ファイルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く (既存の状態を保持しつつ merge)
+- `config reload` ... [CONFIG_DB](../../reference/glossary.md#term-config_db) をクリアしてからファイルを再ロード (services 再起動含む)
 - `config replace` ... 現在の config と target config の **差分のみ** を当てる minimum-disruption replace
 - `config qos reload` ... [QoS](../../reference/glossary.md#term-qos) 関連 (buffer / scheduler / queue / wred 等) を再生成
 
@@ -94,13 +94,13 @@ target file には **完全な config 全体** を渡す必要がある (`**WARN
 ### `config qos reload [--ports <list>] [--no-dynamic-buffer] [--no-delay] [--dry_run <file>] [--json-data <json>] [--verbose]`
 
 **動作**:
-1. `--ports` 指定時は `_qos_update_ports` が指定 port のみ QoS 設定を再描画 (差分 reload)。
+1. `--ports` 指定時は `_qos_update_ports` が指定 port のみ [QoS](../../reference/glossary.md#term-qos) 設定を再描画 (差分 reload)。
 2. 通常は `_clear_qos` で `BUFFER_*` / `QUEUE` / `SCHEDULER` / `PORT_QOS_MAP` / `WRED_PROFILE` 等を一旦削除。
 3. namespace ごとに `buffers_dynamic.json.j2` / `buffers.json.j2` + `qos.json.j2` を `sonic-cfggen` で render し、CONFIG_DB に書き戻す。
 4. `--no-dynamic-buffer` を付けると mellanox / barefoot 系でも static buffer に固定し、`DEVICE_METADATA.localhost.buffer_model` を `traditional` 相当に書き換える。
 5. `--dry_run <file>` でファイルに書き出して終わり (CONFIG_DB は変更しない)。`--json-data` で render 入力に追加情報を渡せる。
 
-**`config reload` の最後に `config qos reload --no-dynamic-buffer --no-delay` が呼ばれる**ため、`reload` 後は QoS が必ずテンプレートから再生成される。
+**`config reload` の最後に `config qos reload --no-dynamic-buffer --no-delay` が呼ばれる**ため、`reload` 後は [QoS](../../reference/glossary.md#term-qos) が必ずテンプレートから再生成される。
 
 ## 関連する CONFIG_DB
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- Mgmt VRF を有効化すると SSH/[SNMP](../../reference/glossary.md#term-snmp)/NTP も VRF コンテキストへ切り替わる。
+- Mgmt [VRF](../../reference/glossary.md#term-vrf) を有効化すると SSH/[SNMP](../../reference/glossary.md#term-snmp)/NTP も [VRF](../../reference/glossary.md#term-vrf) コンテキストへ切り替わる。
 - Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。
 
 ### 関連する show / debug
@@ -172,4 +172,4 @@ ip -4 route show vrf mgmt
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ea618b0f5027 -->
+<!-- glossary-links-injected: 33504219f563 -->

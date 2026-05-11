@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-Fine-Grained [ECMP](../../reference/glossary.md#term-ecmp) (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する[^1]。`orchagent` の `FgNhgOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する。
+Fine-Grained [ECMP](../../reference/glossary.md#term-ecmp) (FG [ECMP](../../reference/glossary.md#term-ecmp)) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 [ECMP](../../reference/glossary.md#term-ecmp) を提供する[^1]。`orchagent` の `FgNhgOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -83,20 +83,20 @@ FG_NHG_MEMBER|<next_hop_ip>      # next-hop → group + bank
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`PORTCHANNEL`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fine-grained-ecmp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-fine-grained-ecmp`](../yang/sonic-fine-grained-ecmp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-fine-grained-ecmp`](../yang/sonic-fine-grained-ecmp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-fine-grained-ecmp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-fine-grained-ecmp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -122,4 +122,4 @@ show fgnhg active-hops
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3786ca270902 -->
+<!-- glossary-links-injected: 0a0e619e9fbc -->

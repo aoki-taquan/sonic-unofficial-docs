@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[SAI](../../reference/glossary.md#term-sai) debug counter（パケットドロップ要因別の汎用カウンタ）を [CONFIG_DB](../../reference/glossary.md#term-config_db) から定義するテーブル[^1]。`debugcounterorch` ([orchagent](../../reference/glossary.md#term-orchagent)) が消費し、SAI debug counter オブジェクトを作成する。各カウンタには別テーブル `DEBUG_COUNTER_DROP_REASON` でドロップ理由 (`L3_ANY`、`SMAC_EQUALS_DMAC` 等) が紐付く。
+[SAI](../../reference/glossary.md#term-sai) debug counter（パケットドロップ要因別の汎用カウンタ）を [CONFIG_DB](../../reference/glossary.md#term-config_db) から定義するテーブル[^1]。`debugcounterorch` ([orchagent](../../reference/glossary.md#term-orchagent)) が消費し、[SAI](../../reference/glossary.md#term-sai) debug counter オブジェクトを作成する。各カウンタには別テーブル `DEBUG_COUNTER_DROP_REASON` でドロップ理由 (`L3_ANY`、`SMAC_EQUALS_DMAC` 等) が紐付く。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -68,7 +68,7 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 
 - `DEBUG_COUNTER_DROP_REASON_LIST` (key: `name reason`)
   - `name`: 親 `DEBUG_COUNTER_LIST.name` 存在チェック付き (`must` 制約)
-  - `reason`: `stypes:counter_drop_reason` 列挙（SAI のドロップ理由一覧）
+  - `reason`: `stypes:counter_drop_reason` 列挙（[SAI](../../reference/glossary.md#term-sai) のドロップ理由一覧）
 - `DEBUG_DROP_MONITOR/CONFIG/status`: 永続的ドロップ監視機能のグローバル ON/OFF（admin_mode、既定 `disabled`）
 
 ## 制約
@@ -78,19 +78,19 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 
 ## 購読者
 
-- `debugcounterorch` (orchagent): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映
+- `debugcounterorch` ([orchagent](../../reference/glossary.md#term-orchagent)): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `COUNTERS_DEBUG_NAME_MAP` ([COUNTERS_DB](../../reference/glossary.md#term-counters_db) 側)
-- 関連 YANG: `sonic-debug-counter`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `COUNTERS_DEBUG_NAME_MAP` ([COUNTERS_DB](../../reference/glossary.md#term-counters_db) 側)
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-debug-counter`
 - 関連 CLI: `config debug counter` / `show debug counter` 系
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-debug-counter`](../yang/sonic-debug-counter.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-debug-counter`](../yang/sonic-debug-counter.md)
 - CLI: `config debug counter` / `show debug counter`
 
 <!-- ref-triangle:end -->
@@ -119,4 +119,4 @@ show dropcounters configuration
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 447a5e337bb2 -->
+<!-- glossary-links-injected: d2c490dcfe8c -->

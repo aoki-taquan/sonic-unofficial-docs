@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-**DHCPv6 relay agent** の [VLAN](../../reference/glossary.md#term-vlan) インタフェース単位設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`dhcp6relay` プロセス (sonic-dhcp-relay リポ) が CONFIG_DB から読み、IPv6 リレー対象 VLAN と上流サーバを構築する。
+**DHCPv6 relay agent** の [VLAN](../../reference/glossary.md#term-vlan) インタフェース単位設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`dhcp6relay` プロセス (sonic-dhcp-relay リポ) が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、IPv6 リレー対象 [VLAN](../../reference/glossary.md#term-vlan) と上流サーバを構築する。
 
 > 注: 名前は単に `DHCP_RELAY` だが、[YANG](../../reference/glossary.md#term-yang) モジュール名 `sonic-dhcpv6-relay` の通り **IPv6 リレー専用**。IPv4 リレーは `VLAN` テーブルの `dhcp_servers` フィールド（旧仕様）または `DHCP_SERVER_IPV4` (新仕様の DHCP サーバ機能) を参照。
 
@@ -46,7 +46,7 @@ flowchart LR
 DHCP_RELAY|<name>
 ```
 
-- `<name>`: DHCPv6 リレー対象の VLAN インタフェース名 (例: `Vlan100`)。YANG では `type string` だが、実運用上は VLAN 名を入れる。
+- `<name>`: DHCPv6 リレー対象の [VLAN](../../reference/glossary.md#term-vlan) インタフェース名 (例: `Vlan100`)。[YANG](../../reference/glossary.md#term-yang) では `type string` だが、実運用上は VLAN 名を入れる。
 
 ## フィールド
 
@@ -59,7 +59,7 @@ DHCP_RELAY|<name>
 
 `dhcpv6_servers` は `ordered-by user` で **設定順を維持** する。`dhcp6relay` は順序通りに upstream をスキャンする。
 
-`rfc6939_support` / `interface_id` は YANG 上 `pattern "false|true"` の string 型（boolean ではない）。CONFIG_DB の慣習で文字列リテラル。
+`rfc6939_support` / `interface_id` は [YANG](../../reference/glossary.md#term-yang) 上 `pattern "false|true"` の string 型（boolean ではない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の慣習で文字列リテラル。
 
 ## 制約
 
@@ -110,4 +110,4 @@ show dhcprelay_helper ipv4
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 30c76eee774c -->
+<!-- glossary-links-injected: 11715e560dc6 -->

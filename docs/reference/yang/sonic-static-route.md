@@ -87,7 +87,7 @@ module: sonic-static-route
 | `prefix` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/prefix` | `inet:ip-prefix` | yes |  |  | prefix is the destination IP address, as key |
 | `nexthop` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/nexthop` | `string` |  |  |  | The next-hop that is to be used for the static route as IP address. When interface needs to be specified, use 0.0.0.0 as leaf value |
 | `ifname` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/ifname` | `string` |  |  |  | When interface is specified, forwarding happens through it |
-| `advertise` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/advertise` | `string` |  | false | pattern `((true\|false),)*(true\|false)` | Advertise this static route to BGP, comma-separated per nexthop. |
+| `advertise` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/advertise` | `string` |  | false | pattern `((true\|false),)*(true\|false)` | Advertise this static route to [BGP](../../reference/glossary.md#term-bgp), comma-separated per nexthop. |
 | `distance` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/distance` | `string` |  | 0 | pattern `((25[0-5]\|2[0-4][0-9]\|[0-1]?[0-9][0-9]?),)*(25[0-5]\|2[0-4][0-9]\|[0-1]?[0-9][0-9]?)` | Administrative Distance (preference) of the entry. The preference defines the order of selection when multiple sources (protocols, static, etc.) contribute to the same prefix en... |
 | `nexthop-vrf` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/nexthop-vrf` | `string` |  |  | pattern `((((Vrf[a-zA-Z0-9_-]+)\|(default)\|(mgmt)),)*((Vrf[a-zA-Z0-9_-]+)\|(default)\|(mgmt)))?` | [VRF](../../reference/glossary.md#term-vrf) name of the nexthop. This is for vrf leaking |
 | `blackhole` | `sonic-static-route/STATIC_ROUTE/STATIC_ROUTE_LIST/blackhole` | `string` |  | false | pattern `((true\|false),)*(true\|false)` | blackhole refers to a route that, if matched, discards the message silently. |
@@ -109,7 +109,7 @@ module: sonic-static-route
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`STATIC_ROUTE`](../config-db/static-route.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`STATIC_ROUTE`](../config-db/static-route.md)
 - CLI: [`config route`](../cli/config-route.md)
 
 <!-- ref-triangle:end -->
@@ -118,4 +118,4 @@ module: sonic-static-route
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-static-route.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 8f35b0c9afeb -->
+<!-- glossary-links-injected: 2245f24c9805 -->

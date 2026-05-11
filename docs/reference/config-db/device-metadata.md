@@ -57,19 +57,19 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 |-----------|----|-----------|------|
 | `hwsku` | string (`stypes:hwsku`) | - | ハードウェア SKU 識別子。ポートレイアウトと能力を決める |
 | `asic_id` | string (1..16) | - | [SAI](../../reference/glossary.md#term-sai) 初期化に使う ASIC 識別子 |
-| `default_bgp_status` | enum `up` / `down` | `up` | 起動時の BGP daemon 既定状態 |
-| `docker_routing_config_mode` | string `separated`/`unified`/`split`/`split-unified` | `unified` | FRR 設定生成モード |
+| `default_bgp_status` | enum `up` / `down` | `up` | 起動時の [BGP](../../reference/glossary.md#term-bgp) daemon 既定状態 |
+| `docker_routing_config_mode` | string `separated`/`unified`/`split`/`split-unified` | `unified` | [FRR](../../reference/glossary.md#term-frr) 設定生成モード |
 | `hostname` | string (`stypes:hostname`) | - | システムホスト名 |
 | `platform` | string (1..255) | - | プラットフォーム識別子（vendor + model） |
 | `mac` | mac-address | - | システムベース MAC |
 | `default_pfcwd_status` | enum `disable`/`enable` | `disable` | 起動時の [PFC](../../reference/glossary.md#term-pfc) watchdog 既定状態 |
-| `bgp_asn` | as-number | - | BGP 自律システム番号 |
+| `bgp_asn` | as-number | - | [BGP](../../reference/glossary.md#term-bgp) 自律システム番号 |
 | `deployment_id` | uint32 | - | 同一ネットワークセグメントを括る deployment ID |
 | `type` | enum (ToRRouter / LeafRouter / SpineRouter / SmartSwitchDPU / 等) | - | デバイス役割 |
 | `buffer_model` | string `dynamic`/`traditional` | - | バッファ計算モード。Mellanox 等は dynamic |
-| `frr_mgmt_framework_config` | boolean | `false` | true で `sonic-frr-mgmt-framework` が FRR 設定を担当、false で `bgpcfgd` がテンプレ展開 |
+| `frr_mgmt_framework_config` | boolean | `false` | true で `sonic-frr-mgmt-framework` が [FRR](../../reference/glossary.md#term-frr) 設定を担当、false で `bgpcfgd` がテンプレ展開 |
 | `synchronous_mode` | enum `enable`/`disable` | `enable` | [orchagent](../../reference/glossary.md#term-orchagent) ASIC 同期モード |
-| `yang_config_validation` | enum `enable`/`disable` | `disable` | `config_db.json` 直接ロード時の YANG 検証 |
+| `yang_config_validation` | enum `enable`/`disable` | `disable` | `config_db.json` 直接ロード時の [YANG](../../reference/glossary.md#term-yang) 検証 |
 | `cloudtype` | string | - | デプロイ先のクラウドタイプ |
 | `region` | string | - | 地理的リージョン |
 | `sub_role` | string | - | ASIC が FrontEnd か BackEnd かを示す |
@@ -87,10 +87,10 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `dhcp_server` | admin_mode | - | 組み込み DHCP サーバを有効化するか |
 | `bgp_adv_lo_prefix_as_128` | boolean | - | true で Loopback0 IPv6 /128 をそのまま広告（既定は /64 化） |
 | `suppress-fib-pending` | enum `enabled`/`disabled` | `disabled` | BGP suppress-fib-pending。`enabled` には `synchronous_mode = enable` が必須 |
-| `async_swss_rec` | enum `enabled`/`disabled` | `disabled` | orchagent の swss.rec 非同期記録 |
+| `async_swss_rec` | enum `enabled`/`disabled` | `disabled` | [orchagent](../../reference/glossary.md#term-orchagent) の swss.rec 非同期記録 |
 | `rack_mgmt_map` | string (0..128) | - | rack 管理マップ情報 |
 | `timezone` | timezone-name (1..255) | `UTC` | TZ database name (`Europe/Stockholm` 等) |
-| `create_only_config_db_buffers` | boolean | - | true で CONFIG_DB のバッファ設定通り、false で SAI から読んだ最大バッファを生成 |
+| `create_only_config_db_buffers` | boolean | - | true で [CONFIG_DB](../../reference/glossary.md#term-config_db) のバッファ設定通り、false で [SAI](../../reference/glossary.md#term-sai) から読んだ最大バッファを生成 |
 | `supporting_bulk_counter_groups` | leaf-list string | - | バルク操作対応のカウンタグループ名 |
 | `bgp_router_id` | ipv4-address | - | BGP router-id |
 | `chassis_hostname` | hostname | - | このリニアカード／スーパバイザが属するシャーシ名 |
@@ -101,13 +101,13 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `t2_group_asns` | leaf-list as-number | - | 同一グループ内の ASN |
 | `anchor_route_source` | leaf-list string | - | anchor route のソース |
 | `orch_northbond_dash_zmq_enabled` | boolean | `true` | [APPL_DB](../../reference/glossary.md#term-appl_db) [DASH](../../reference/glossary.md#term-dash) テーブル ZMQ |
-| `orch_northbond_route_zmq_enabled` | boolean | `false` | APPL_DB ROUTE テーブル ZMQ |
+| `orch_northbond_route_zmq_enabled` | boolean | `false` | [APPL_DB](../../reference/glossary.md#term-appl_db) ROUTE テーブル ZMQ |
 | `syslog_with_osversion` | boolean | `false` | syslog に OS version を付加 |
 | `syslog_counter` | boolean | `false` | syslog counter |
 | `has_sonic_dhcpv4_relay` | boolean_type | `false` | DHCPv4 relay プロセスを有効化 |
 | `zebra_nexthop` | enum `enabled`/`disabled` | `enabled` | next-hop group サポート。boot 時のみ反映 |
 
-`type` の取りうる値は YANG の正規表現で 30 種以上が列挙されている (`ToRRouter|LeafRouter|SpineChassisFrontendRouter|...|UpperRegionalHub`)。詳細は `sonic-device_metadata.yang` を直接参照[^1]。
+`type` の取りうる値は [YANG](../../reference/glossary.md#term-yang) の正規表現で 30 種以上が列挙されている (`ToRRouter|LeafRouter|SpineChassisFrontendRouter|...|UpperRegionalHub`)。詳細は `sonic-device_metadata.yang` を直接参照[^1]。
 
 ## フィールド一覧 (bmc)
 
@@ -134,7 +134,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_DEVICE_GLOBAL`（`bgp_asn` と独立した装置全体 BGP スイッチ）、`MGMT_PORT`（管理ポート設定）、`FEATURE`（docker on/off）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_DEVICE_GLOBAL`（`bgp_asn` と独立した装置全体 BGP スイッチ）、`MGMT_PORT`（管理ポート設定）、`FEATURE`（docker on/off）
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)、`config hostname`
 - 関連 YANG: `sonic-device_metadata`（`hostname`、`hwsku`、`mode-status` などの typedef を当該モジュール内で定義）
 
@@ -192,7 +192,7 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 
 ### よくある誤設定
 
-- `hwsku` を実機と異なる値にすると [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 起動時に platform plugin が読み込まれず orchagent が起動しない。
+- `hwsku` を実機と異なる値にすると [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 起動時に platform plugin が読み込まれず [orchagent](../../reference/glossary.md#term-orchagent) が起動しない。
 - `type` を誤ると generic_config_updater のチェックや MC-[LAG](../../reference/glossary.md#term-lag) の role 判定で誤動作。
 
 ### 確認コマンド
@@ -203,4 +203,4 @@ show platform summary
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a77174b97b9 -->
+<!-- glossary-links-injected: aa8ce067a4a1 -->

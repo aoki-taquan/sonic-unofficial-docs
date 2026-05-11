@@ -77,7 +77,7 @@ module: sonic-breakout_cfg
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
 - CLI: [`config interface breakout`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
@@ -105,4 +105,4 @@ show interfaces breakout current-mode
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 73d20853b70f -->
+<!-- glossary-links-injected: 896d391185a9 -->

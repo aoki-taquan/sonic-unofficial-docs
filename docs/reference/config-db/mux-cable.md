@@ -59,7 +59,7 @@ MUX_CABLE|<ifname>
 | `server_ipv6` | ipv6-prefix | - | サーバ IPv6 アドレス |
 | `soc_ipv4` | ipv4-prefix | - | SoC IPv4 (active-active 限定) |
 | `soc_ipv6` | ipv6-prefix | - | SoC IPv6 (active-active 限定) |
-| `state` | enum `auto`/`manual`/`detach`/`active`/`standby` | `auto` | MUX 状態。auto は自動 failover |
+| `state` | enum `auto`/`manual`/`detach`/`active`/`standby` | `auto` | [MUX](../../reference/glossary.md#term-mux) 状態。auto は自動 failover |
 
 ## 購読者
 
@@ -68,7 +68,7 @@ MUX_CABLE|<ifname>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PEER_SWITCH`、`TUNNEL` (DualToR の MuxTunnel0)、`PORT`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PEER_SWITCH`、`TUNNEL` (DualToR の MuxTunnel0)、`PORT`
 - 関連 CLI: `config muxcable mode/active/standby/auto`、`show muxcable`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mux-cable`、`sonic-tunnel`、`sonic-peer-switch`
 
@@ -76,13 +76,13 @@ MUX_CABLE|<ifname>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-mux-cable`](../yang/sonic-mux-cable.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-mux-cable`](../yang/sonic-mux-cable.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-mux-cable.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mux-cable.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mux-cable.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mux-cable.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -103,7 +103,7 @@ MUX_CABLE|<ifname>
 
 ### よくある誤設定
 
-- `state: manual` のまま放置すると linkmgrd が自動フェイルオーバしない。
+- `state: manual` のまま放置すると [linkmgrd](../../reference/glossary.md#term-linkmgrd) が自動フェイルオーバしない。
 - ToR 間で `server_ipv4` が不一致だと両 ToR が active になり tunnel ループ。
 
 ### 確認コマンド
@@ -116,4 +116,4 @@ show mux config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d02a52a92b03 -->
+<!-- glossary-links-injected: b8a755597333 -->

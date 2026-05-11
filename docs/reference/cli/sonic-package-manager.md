@@ -110,7 +110,7 @@ Package の docker image / systemd unit / 関連リソースを削除。`--keep-
 | `/var/lib/sonic-package-manager/database.json` | 登録 repository + package 状態の DB |
 | `/var/lib/sonic-package-manager/manifests/<name>` | カスタム manifest 本体 |
 | `/var/lib/sonic-package-manager/manifests/<name>.edit` | `update` で編集中の manifest |
-| `FEATURE` テーブル（CONFIG_DB） | install 時に書かれる feature 登録 |
+| `FEATURE` テーブル（[CONFIG_DB](../../reference/glossary.md#term-config_db)） | install 時に書かれる feature 登録 |
 
 ## 注意 / 癖
 

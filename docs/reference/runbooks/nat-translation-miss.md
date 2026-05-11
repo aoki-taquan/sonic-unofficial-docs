@@ -31,7 +31,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **[NAT](../../reference/glossary.md#term-nat) zone 設定漏れ**: interface に `nat_zone` が未設定 / inside/outside の組合せ不正
-2. **[CRM](../../reference/glossary.md#term-crm) NAT table の枯渇**: dynamic NAT で空きエントリなし
+2. **[CRM](../../reference/glossary.md#term-crm) [NAT](../../reference/glossary.md#term-nat) table の枯渇**: dynamic [NAT](../../reference/glossary.md#term-nat) で空きエントリなし
 3. **timeout 短すぎ**: idle timeout / udp_timeout で先に削除
 4. **protocol 別 binding ない**: TCP のみ pool に bind され UDP / ICMP は通らない
 5. **conntrack 連携の不整合**: `nf_conntrack` が ASIC 側 NAT と乖離
@@ -94,7 +94,7 @@ sudo dmesg | grep -i nf_conntrack | tail -50
 - zone 設定: `sudo config nat add interface <if> -nat_zone <0|1>` （**ロールバック**: 元 zone に同コマンドで戻す）
 - timeout 拡張: `sudo config nat set timeout 600` / `udp-timeout` / `tcp-timeout` 調整
 - protocol binding 追加: `sudo config nat add binding <name> -pool <pool> -acl <acl>`
-- CRM 枯渇: pool 拡張 / static NAT の整理
+- [CRM](../../reference/glossary.md#term-crm) 枯渇: pool 拡張 / static NAT の整理
 - conntrack 不整合: `sudo conntrack -F` は全フロー消失する破壊的操作。実施前に **トラフィック断を許容できるメンテ枠**で実行
 
 ## 関連ページ
@@ -106,6 +106,6 @@ sudo dmesg | grep -i nf_conntrack | tail -50
 ## 引用元
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — natorch.cpp
-[^2]: sonic-net/sonic-swss @ master — natsyncd.cpp
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — natsyncd.cpp
 
-<!-- glossary-links-injected: 6132e8ff8c52 -->
+<!-- glossary-links-injected: 8bdc0c514210 -->

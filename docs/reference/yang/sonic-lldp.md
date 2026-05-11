@@ -82,10 +82,10 @@ module: sonic-lldp
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `hello_time` | `sonic-lldp/LLDP/GLOBAL/hello_time` | `uint8` |  | 30 | range `5..254` | It is the time interval at which periodic hellos are exchanged. Default is 30 seconds |
-| `multiplier` | `sonic-lldp/LLDP/GLOBAL/multiplier` | `uint8` |  | 4 | range `1..10` | This multiplier value is used to determine the timeout interval (i.e. hello-time x multiplier value) after which LLDP neighbor entry is deleted. |
+| `multiplier` | `sonic-lldp/LLDP/GLOBAL/multiplier` | `uint8` |  | 4 | range `1..10` | This multiplier value is used to determine the timeout interval (i.e. hello-time x multiplier value) after which [LLDP](../../reference/glossary.md#term-lldp) neighbor entry is deleted. |
 | `system_name` | `sonic-lldp/LLDP/GLOBAL/system_name` | `string` |  |  |  | System administratively assigned name |
 | `system_description` | `sonic-lldp/LLDP/GLOBAL/system_description` | `string` |  |  |  | System description |
-| `supp_mgmt_address_tlv` | `sonic-lldp/LLDP/GLOBAL/supp_mgmt_address_tlv` | `boolean` |  | false |  | Suppress sending of Management Address TLV in LLDP frames |
+| `supp_mgmt_address_tlv` | `sonic-lldp/LLDP/GLOBAL/supp_mgmt_address_tlv` | `boolean` |  | false |  | Suppress sending of Management Address TLV in [LLDP](../../reference/glossary.md#term-lldp) frames |
 | `supp_system_capabilities_tlv` | `sonic-lldp/LLDP/GLOBAL/supp_system_capabilities_tlv` | `boolean` |  | false |  | Suppress sending of System Capabilities TLV in LLDP frames |
 | `ifname` | `sonic-lldp/LLDP_PORT/LLDP_PORT_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Reference of port on which LLDP to be configured. |
 
@@ -100,14 +100,14 @@ module: sonic-lldp
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `LLDP`
-- CONFIG_DB: `LLDP_PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `LLDP_PORT`
 - CLI: `show lldp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`LLDP`](../config-db/lldp.md) / [`LLDP_PORT`](../config-db/lldp-port.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`LLDP`](../config-db/lldp.md) / [`LLDP_PORT`](../config-db/lldp-port.md)
 - CLI: [`show lldp`](../cli/show-lldp.md)
 
 <!-- ref-triangle:end -->
@@ -135,4 +135,4 @@ show lldp table
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-lldp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 4808f1ebafcd -->
+<!-- glossary-links-injected: aa56ce2e83c3 -->

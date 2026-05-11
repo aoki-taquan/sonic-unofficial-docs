@@ -33,7 +33,7 @@ related:
 | テーブル | 主キー | 主フィールド | 用途 |
 |---------|-------|-------------|------|
 | `DASH_HA_GLOBAL_CONFIG` | `global` | グローバル HA パラメータ | Global Config actor |
-| `DPU` | `<dpu-id>` | DPU 物理情報 | DPU actor の入力 |
+| `DPU` | `<dpu-id>` | [DPU](../reference/glossary.md#term-dpu) 物理情報 | DPU actor の入力 |
 | `VDPU` | `<vdpu-id>` | vDPU 抽象、配下 DPU 一覧 | vDPU actor の入力（schema 層未取り込み） |
 | `DASH_HA_SET_CONFIG_TABLE` | `<set-id>` | vDPU リスト、HA owner | HA Set actor の入力 |
 | `DASH_HA_SCOPE_CONFIG_TABLE` | `<scope-id>` | scope 種別（`dpu`/`eni`）、admin state | HA Scope actor の入力 |
@@ -112,3 +112,5 @@ redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 591a4c409903 -->

@@ -77,12 +77,12 @@ def interface(ctx, namespace):
 |------------|------|
 | `config interface ip` | IP アドレスの追加・削除（`add` / `remove`） |
 | `config interface ipv6` | IPv6 機能 (`enable use-link-local-only` 等) |
-| `config interface vrf` | VRF バインド (`bind` / `unbind`) |
+| `config interface vrf` | [VRF](../../reference/glossary.md#term-vrf) バインド (`bind` / `unbind`) |
 | `config interface mpls` | [MPLS](../../reference/glossary.md#term-mpls) 有効化 (`add` / `remove`) |
 | `config interface buffer` | priority-group / queue のプロファイル割当 |
 | `config interface transceiver` | SFP / トランシーバ制御 (`lpmode` 等) |
 | `config interface vrrp` / `vrrp6` | VRRPv4 / VRRPv6 設定 |
-| `config interface pfc` | PFC 設定 (`asymmetric` / `priority`) |
+| `config interface pfc` | [PFC](../../reference/glossary.md#term-pfc) 設定 (`asymmetric` / `priority`) |
 | `config interface storm-control` | ストーム制御 (`broadcast` / `multicast` / `unknown-unicast`) |
 | `config interface dhcp-mitigation-rate` | DHCP DoS 緩和レート |
 
@@ -163,7 +163,7 @@ excerpt: |
 | `tpid` | `--tpid <tpid>` |
 | `fec` | `-f <fec>` |
 
-`cable-length` はサブプロセスではなく、CONFIG_DB の `CABLE_LENGTH` テーブルを直接書き換える。
+`cable-length` はサブプロセスではなく、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `CABLE_LENGTH` テーブルを直接書き換える。
 
 ### `config interface breakout <interface> <mode>`
 
@@ -186,7 +186,7 @@ excerpt: |
 **特殊扱い**:
 
 - `eth0` は **IPv4 / IPv6 各 1 件のみ**保持。既存の同 family 行は削除して上書き
-- `--secondary` が `True` の場合、CONFIG_DB エントリに `secondary: "true"` が付く
+- `--secondary` が `True` の場合、[CONFIG_DB](../../reference/glossary.md#term-config_db) エントリに `secondary: "true"` が付く
 
 ### `config interface ip remove <interface> <ip_addr>`
 
@@ -194,7 +194,7 @@ excerpt: |
 
 ### `config interface vrf bind <interface> <vrf_name>` / `vrf unbind <interface>`
 
-`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 等のエントリの `vrf_name` フィールドを書き換える。bind 後は当該インタフェイスの IP は VRF にひも付き、`VRF` テーブルが先に存在する必要がある。
+`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 等のエントリの `vrf_name` フィールドを書き換える。bind 後は当該インタフェイスの IP は [VRF](../../reference/glossary.md#term-vrf) にひも付き、`VRF` テーブルが先に存在する必要がある。
 
 ### `config interface ipv6 enable use-link-local-only <interface>` / `disable use-link-local-only <interface>`
 
@@ -202,7 +202,7 @@ excerpt: |
 
 ### `config interface mpls add <interface>` / `remove <interface>`
 
-該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`intfmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。
+該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`intfmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/intfmgr.cpp) が L3 [MPLS](../../reference/glossary.md#term-mpls) を有効化する。
 
 ### `config interface buffer priority-group lossless add/remove/set` 等
 
@@ -367,4 +367,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bb400b8b9471 -->
+<!-- glossary-links-injected: cc62f0a293fd -->

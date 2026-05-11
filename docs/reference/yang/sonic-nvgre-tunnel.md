@@ -71,7 +71,7 @@ module: sonic-nvgre-tunnel
 | `src_ip` | `sonic-nvgre-tunnel/NVGRE_TUNNEL/NVGRE_TUNNEL_LIST/src_ip` | `inet:ip-address` | yes |  |  | トンネル送信元 IP |
 | `tunnel_name` | `sonic-nvgre-tunnel/NVGRE_TUNNEL_MAP/NVGRE_TUNNEL_MAP_LIST/tunnel_name` | `leafref` | yes |  | NVGRE_TUNNEL_LIST/tunnel_name | 紐付けるトンネル名 |
 | `tunnel_map_name` | `.../tunnel_map_name` | `string` | yes |  | length 1..255 | マップ名 |
-| `vlan_id` | `.../vlan_id` | `uint16` | yes |  | range 1..4094 | 対応する VLAN ID |
+| `vlan_id` | `.../vlan_id` | `uint16` | yes |  | range 1..4094 | 対応する [VLAN](../../reference/glossary.md#term-vlan) ID |
 | `vsid` | `.../vsid` | `uint32` | yes |  | range 0..16777214 | Virtual Subnet Identifier |
 
 ## leafref / 依存
@@ -85,13 +85,13 @@ module: sonic-nvgre-tunnel
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NVGRE_TUNNEL`, `NVGRE_TUNNEL_MAP`
-- CLI: なし（CONFIG_DB 直接設定）
+- CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`NVGRE_TUNNEL`](../config-db/nvgre-tunnel.md) / [`NVGRE_TUNNEL_MAP`](../config-db/nvgre-tunnel.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NVGRE_TUNNEL`](../config-db/nvgre-tunnel.md) / [`NVGRE_TUNNEL_MAP`](../config-db/nvgre-tunnel.md)
 
 <!-- ref-triangle:end -->
 
@@ -118,4 +118,4 @@ show nvgre-tunnel
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 900cdc977a64 -->
+<!-- glossary-links-injected: 1be4e3230797 -->

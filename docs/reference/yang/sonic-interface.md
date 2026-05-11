@@ -69,9 +69,9 @@ module: sonic-interface
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-interface/INTERFACE/INTERFACE_LIST/name` | `leafref` | yes |  | /port:sonic-port/port:PORT/port:PORT_LIST/port:name | Reference to a physical Ethernet port |
-| `vrf_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name | VRF instance to which this interface is bound |
-| `vnet_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
-| `nat_zone` | `sonic-interface/INTERFACE/INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | NAT Zone for the interface |
+| `vrf_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this interface is bound |
+| `vnet_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a [VNET](../../reference/glossary.md#term-vnet) in sonic-vnet model |
+| `nat_zone` | `sonic-interface/INTERFACE/INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the interface |
 | `mpls` | `sonic-interface/INTERFACE/INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the interface |
 | `ipv6_use_link_local_only` | `sonic-interface/INTERFACE/INTERFACE_LIST/ipv6_use_link_local_only` | `stypes:mode-status` |  | disable |  | Enable/Disable IPv6 link local address on interface |
 | `mac_addr` | `sonic-interface/INTERFACE/INTERFACE_LIST/mac_addr` | `yang:mac-address` |  |  |  | Assign administrator-provided MAC address to Interface |
@@ -101,7 +101,7 @@ module: sonic-interface
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`INTERFACE`](../config-db/interface.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`INTERFACE`](../config-db/interface.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
@@ -129,4 +129,4 @@ show ip interface
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 498676200d13 -->
+<!-- glossary-links-injected: c32d7f66a1d0 -->

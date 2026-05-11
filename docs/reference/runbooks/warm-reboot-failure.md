@@ -37,7 +37,7 @@ related:
 2. **[BGP](../../reference/glossary.md#term-bgp) graceful restart の対向側未対応 / capability 未交換**: GR helper として動作するために対向 peer も GR 対応が必要
 3. **dataplane object 量が大きすぎて reconciliation が間に合わない** (Route 数十万件 + [ACL](../../reference/glossary.md#term-acl) 大量) → restore_count に至らずタイムアウト
 4. **`pre-shutdown` のチェックで pending operation あり** (`COUNTERS_DB` の queue / port が busy)
-5. **platform / SAI が warm boot 非対応** (Mellanox/Broadcom SDK バージョン依存)
+5. **platform / [SAI](../../reference/glossary.md#term-sai) が warm boot 非対応** (Mellanox/Broadcom SDK バージョン依存)
 
 ## 切り分け手順
 
@@ -104,7 +104,7 @@ sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
 
 - 不足 module の enable: `config warm_restart enable swss`, `bgp`, `teamd`, `nat`, `dhcp_relay` を順に
 - 大量経路で reconciliation がタイムアウトする場合: `WARM_RESTART|<module>` の `bgp_timer` / `neighsyncd_timer` / `fpmsyncd_timer` 等を拡張
-- BGP 側で `bgp graceful-restart` を双方で有効化
+- [BGP](../../reference/glossary.md#term-bgp) 側で `bgp graceful-restart` を双方で有効化
 - それでも warm boot が断続する場合: `fast-reboot` （control plane reset / data plane preserved）にフォールバックする運用へ変更
 
 ## 関連ページ
@@ -118,4 +118,4 @@ sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/warm-reboot`
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — warm_restart helper
 
-<!-- glossary-links-injected: 2c3c04148df7 -->
+<!-- glossary-links-injected: da64d9ca9c4c -->

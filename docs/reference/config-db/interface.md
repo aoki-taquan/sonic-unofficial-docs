@@ -59,10 +59,10 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `name` (key) | leafref `PORT.name` | ✅ | - | 物理ポート名 |
-| `vrf_name` | leafref `VRF.name` | - | - | バインドする VRF |
-| `vnet_name` | leafref `VNET.name` | - | - | バインドする VNET |
-| `nat_zone` | uint8 (0..3) | - | `0` | NAT zone |
-| `mpls` | enum `enable`/`disable` | - | - | MPLS routing |
+| `vrf_name` | leafref `VRF.name` | - | - | バインドする [VRF](../../reference/glossary.md#term-vrf) |
+| `vnet_name` | leafref `VNET.name` | - | - | バインドする [VNET](../../reference/glossary.md#term-vnet) |
+| `nat_zone` | uint8 (0..3) | - | `0` | [NAT](../../reference/glossary.md#term-nat) zone |
+| `mpls` | enum `enable`/`disable` | - | - | [MPLS](../../reference/glossary.md#term-mpls) routing |
 | `ipv6_use_link_local_only` | `mode-status` | - | `disable` | IPv6 link-local のみ |
 | `mac_addr` | mac-address | - | - | 管理者指定 MAC |
 | `loopback_action` | `loopback_action` | - | - | ingress→same-IF routing 動作 |
@@ -78,7 +78,7 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 ## 購読者
 
-- `intfmgrd`: VRF / MAC / MPLS / IPv6 LL を Linux に反映
+- `intfmgrd`: [VRF](../../reference/glossary.md#term-vrf) / MAC / [MPLS](../../reference/glossary.md#term-mpls) / IPv6 LL を Linux に反映
 - `orchagent` `IntfsOrch`: [SAI](../../reference/glossary.md#term-sai) ルータインタフェースを生成
 - `natmgrd`: `nat_zone` を利用
 
@@ -92,14 +92,14 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 ## 関連リファレンス
 
-- YANG: [`sonic-interface`](../yang/sonic-interface.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-interface`](../yang/sonic-interface.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-interface.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-interface.yang>
 
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
@@ -135,4 +135,4 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 057cb9f9a316 -->
+<!-- glossary-links-injected: 8c01908c2492 -->

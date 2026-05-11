@@ -34,7 +34,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **L1 / L2 / L3 の事前条件が満たされていない**: interface oper down、IP 未設定、MTU 不一致、対向側 [ACL](../../reference/glossary.md#term-acl) でブロック
-2. **[CONFIG_DB](../../reference/glossary.md#term-config_db) と FRR の同期失敗**: `bgpcfgd` (= FRR config generator) がテンプレ生成エラーで停止し、`vtysh -c "show run"` に neighbor が出ない
+2. **[CONFIG_DB](../../reference/glossary.md#term-config_db) と [FRR](../../reference/glossary.md#term-frr) の同期失敗**: `bgpcfgd` (= [FRR](../../reference/glossary.md#term-frr) config generator) がテンプレ生成エラーで停止し、`vtysh -c "show run"` に neighbor が出ない
 3. **AS 番号 / router-id の設定誤り**: ローカル AS が `DEVICE_METADATA|localhost` の `bgp_asn` と一致しない
 4. **管理上 disable されている**: `BGP_NEIGHBOR|<ip>` の `admin_status` = `down`
 5. **[BFD](../../reference/glossary.md#term-bfd) セッション断**: `bfdd` が UP しないと [BGP](../../reference/glossary.md#term-bgp) が即 down する構成（bfd hold-down）
@@ -73,7 +73,7 @@ sudo tcpdump -i any -nn host <peer_ip> and port 179
 ```
 
 - 期待: ping 応答あり、TCP SYN / SYN-ACK が双方向に流れる
-- 異常: TCP SYN は出るが SYN-ACK 戻らない → 対向 ACL / firewall を確認
+- 異常: TCP SYN は出るが SYN-ACK 戻らない → 対向 [ACL](../../reference/glossary.md#term-acl) / firewall を確認
 
 ### 3. CONFIG_DB と FRR の整合
 
@@ -84,7 +84,7 @@ docker exec bgp vtysh -c "show running-config" | grep -A5 "router bgp"
 ```
 
 - 期待: `BGP_NEIGHBOR` の `asn` / `local_addr` / `holdtime` が FRR 側 `neighbor` 設定と一致
-- 異常: CONFIG_DB に存在するが FRR に出ない → `docker logs bgp 2>&1 | grep bgpcfgd` で template エラー確認
+- 異常: [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在するが FRR に出ない → `docker logs bgp 2>&1 | grep bgpcfgd` で template エラー確認
 
 ### 4. BGP セッション状態の詳細
 
@@ -92,7 +92,7 @@ docker exec bgp vtysh -c "show running-config" | grep -A5 "router bgp"
 docker exec bgp vtysh -c "show bgp neighbor <peer_ip>"
 ```
 
-- 状態 `Active`: outbound TCP がブロックされている (peer 不在 / ACL)
+- 状態 `Active`: outbound TCP がブロックされている (peer 不在 / [ACL](../../reference/glossary.md#term-acl))
 - 状態 `OpenSent`: AS 番号不一致 (Notification: Bad Peer AS)
 - 状態 `OpenConfirm`: capability 不一致 (4-byte AS、Add-path 等)
 - 状態 `Established` で即 reset: hold-down 不一致 / route-map evaluation エラー
@@ -106,9 +106,9 @@ sudo grep -iE "bgp|bfd" /var/log/syslog | tail -100
 
 ## 対処方法
 
-- 「3.」で CONFIG_DB と FRR が乖離している場合: `sudo systemctl restart bgp` で再生成。これでも反映されないなら `bgpcfgd` テンプレ (`/usr/share/sonic/templates/bgpd/`) を確認
+- 「3.」で [CONFIG_DB](../../reference/glossary.md#term-config_db) と FRR が乖離している場合: `sudo systemctl restart bgp` で再生成。これでも反映されないなら `bgpcfgd` テンプレ (`/usr/share/sonic/templates/bgpd/`) を確認
 - AS / router-id を修正する場合: `sonic-cfggen -j /etc/sonic/config_db.json` での import 後 `config save -y` → `config reload -y`
-- BFD で flap している場合: `BFD_SESSION_TABLE`（[APPL_DB](../../reference/glossary.md#term-appl_db)）で session 状態を確認し、BFD timer を緩める
+- [BFD](../../reference/glossary.md#term-bfd) で flap している場合: `BFD_SESSION_TABLE`（[APPL_DB](../../reference/glossary.md#term-appl_db)）で session 状態を確認し、[BFD](../../reference/glossary.md#term-bfd) timer を緩める
 
 ## 関連ページ
 
@@ -124,4 +124,4 @@ sudo grep -iE "bgp|bfd" /var/log/syslog | tail -100
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bfdorch / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd)
 [^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show bgp 実装
 
-<!-- glossary-links-injected: fa5251a92f24 -->
+<!-- glossary-links-injected: 2e8c9c98e933 -->

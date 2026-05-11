@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。EVPN コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
+`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[EVPN](../../reference/glossary.md#term-evpn) コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ VXLAN_EVPN_NVO|<name>
 
 | キー | 型 | 説明 |
 |------|----|------|
-| `name` | string | EVPN NVO インスタンス名 |
+| `name` | string | [EVPN](../../reference/glossary.md#term-evpn) NVO インスタンス名 |
 
 `max-elements: 1` — システム全体で 1 エントリのみ
 
@@ -73,7 +73,7 @@ VXLAN_EVPN_NVO|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VNET`、`BGP_GLOBALS_AF` (l2vpn evpn)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VNET`、`BGP_GLOBALS_AF` (l2vpn evpn)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 - 関連 CLI: `config vxlan evpn_nvo`
 
@@ -81,14 +81,14 @@ VXLAN_EVPN_NVO|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vxlan`](../yang/sonic-vxlan.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vxlan`](../yang/sonic-vxlan.md)
 - CLI: [`config vxlan`](../cli/config-vxlan.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vxlan.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-vxlan.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
 
 ## 関連ページ
 - [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
@@ -114,4 +114,4 @@ show vxlan tunnel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9d75cd71afa3 -->
+<!-- glossary-links-injected: 5d51c067a00b -->

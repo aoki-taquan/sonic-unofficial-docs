@@ -61,7 +61,7 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 |-----------|----|------|------|
 | `tunnel_name` (key) | leafref → `NVGRE_TUNNEL.tunnel_name` | — | 親トンネル |
 | `tunnel_map_name` (key) | string (1..255) | — | マップエントリ名 |
-| `vlan_id` | uint16 (1..4094) | yes | VLAN ID |
+| `vlan_id` | uint16 (1..4094) | yes | [VLAN](../../reference/glossary.md#term-vlan) ID |
 | `vsid` | uint32 (0..16777214) | yes | NVGRE Virtual Subnet ID (24bit) |
 
 ## 制約
@@ -70,11 +70,11 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 
 ## 購読者
 
-- `orchagent` (vxlanorch / NVGRE 拡張) — SAI tunnel オブジェクト生成
+- `orchagent` (vxlanorch / NVGRE 拡張) — [SAI](../../reference/glossary.md#term-sai) tunnel オブジェクト生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN`、`VXLAN_TUNNEL`（並存可能）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VXLAN_TUNNEL`（並存可能）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-nvgre-tunnel`
 - 関連 CLI: `config nvgre`
 
@@ -82,14 +82,14 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-nvgre-tunnel`](../yang/sonic-nvgre-tunnel.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-nvgre-tunnel`](../yang/sonic-nvgre-tunnel.md)
 - CLI: `config nvgre`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-nvgre-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-nvgre-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang>
 
 ## 関連ページ
 - [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
@@ -117,4 +117,4 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3424113d928a -->
+<!-- glossary-links-injected: 91a36a875109 -->

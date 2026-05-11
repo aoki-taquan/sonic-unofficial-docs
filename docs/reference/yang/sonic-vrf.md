@@ -58,8 +58,8 @@ module: sonic-vrf
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-vrf/VRF/VRF_LIST/name` | `stypes:interface_name` | yes |  | pattern `Vrf[a-zA-Z0-9_-]+` | VRF instance name (e.g. Vrf_blue) |
-| `fallback` | `sonic-vrf/VRF/VRF_LIST/fallback` | `boolean` |  | false |  | Enable/disable fallback feature which is useful for specified VRF user to access internet through global/main route. |
+| `name` | `sonic-vrf/VRF/VRF_LIST/name` | `stypes:interface_name` | yes |  | pattern `Vrf[a-zA-Z0-9_-]+` | [VRF](../../reference/glossary.md#term-vrf) instance name (e.g. Vrf_blue) |
+| `fallback` | `sonic-vrf/VRF/VRF_LIST/fallback` | `boolean` |  | false |  | Enable/disable fallback feature which is useful for specified [VRF](../../reference/glossary.md#term-vrf) user to access internet through global/main route. |
 | `vni` | `sonic-vrf/VRF/VRF_LIST/vni` | `uint32` |  | 0 | range 0..16777215 | VNI mapped to VRF |
 
 ## leafref / 依存
@@ -79,7 +79,7 @@ module: sonic-vrf
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VRF`](../config-db/vrf.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VRF`](../config-db/vrf.md)
 - CLI: [`config vrf`](../cli/config-vrf.md)
 
 <!-- ref-triangle:end -->
@@ -88,4 +88,4 @@ module: sonic-vrf
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 84c52960aadd -->
+<!-- glossary-links-injected: daea650a90b0 -->

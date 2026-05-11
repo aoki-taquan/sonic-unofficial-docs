@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`
 - top container: `sonic-mux-cable`
 
-DualToR 構成における [MUX](../../reference/glossary.md#term-mux) cable のポート別状態（cable type, prober, neighbor, server/SoC IP, MUX state）を保持する[^1]。
+DualToR 構成における [MUX](../../reference/glossary.md#term-mux) cable のポート別状態（cable type, prober, neighbor, server/SoC IP, [MUX](../../reference/glossary.md#term-mux) state）を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -64,7 +64,7 @@ module: sonic-mux-cable
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `ifname` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which MUX cable is configured |
+| `ifname` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which [MUX](../../reference/glossary.md#term-mux) cable is configured |
 | `cable_type` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/cable_type` | `enumeration` |  |  | active-active, active-standby | SONiC DualToR interface cable type |
 | `prober_type` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/prober_type` | `enumeration` |  |  | active, passive | DualToR LinkMgrd ICMP prober mode |
 | `neighbor_mode` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/neighbor_mode` | `enumeration` |  |  |  | DualToR MUX neighbor mode |
@@ -91,7 +91,7 @@ module: sonic-mux-cable
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MUX_CABLE`](../config-db/mux-cable.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MUX_CABLE`](../config-db/mux-cable.md)
 - CLI: `config mux` / `show mux`
 
 <!-- ref-triangle:end -->
@@ -100,4 +100,4 @@ module: sonic-mux-cable
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mux-cable.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 6d86ca6c317c -->
+<!-- glossary-links-injected: 47851ad00b52 -->

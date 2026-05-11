@@ -75,12 +75,12 @@ COPP_GROUP|<name>
 
 ## 購読者
 
-- `coppmgr` (`docker-swss` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_GROUP` / `COPP_TRAP` を結合し APPL_DB `COPP_TABLE` に書き込む
-- `orchagent` の `CoppOrch`: SAI hostif trap group / policer を生成
+- `coppmgr` (`docker-swss` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_GROUP` / `COPP_TRAP` を結合し [APPL_DB](../../reference/glossary.md#term-appl_db) `COPP_TABLE` に書き込む
+- `orchagent` の `CoppOrch`: [SAI](../../reference/glossary.md#term-sai) hostif trap group / policer を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `COPP_TRAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_TRAP`
 - 関連 CLI: `config copp`、`show copp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-copp`
 
@@ -88,14 +88,14 @@ COPP_GROUP|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-copp`](../yang/sonic-copp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-copp`](../yang/sonic-copp.md)
 - CLI: `config copp`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-copp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-copp.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-copp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-copp.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -126,4 +126,4 @@ show copp config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a67fed022497 -->
+<!-- glossary-links-injected: 3ecb83db7603 -->

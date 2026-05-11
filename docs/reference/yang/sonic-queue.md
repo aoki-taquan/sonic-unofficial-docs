@@ -71,7 +71,7 @@ module: sonic-queue
 | `scheduler` | `sonic-queue/QUEUE/QUEUE_LIST/scheduler` | `leafref` |  |  | /sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name | Scheduler for queue. |
 | `wred_profile` | `sonic-queue/QUEUE/QUEUE_LIST/wred_profile` | `leafref` |  |  | /wrd:sonic-wred-profile/wrd:WRED_PROFILE/wrd:WRED_PROFILE_LIST/wrd:name | Wred profile for queue. |
 | `hostname` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/hostname` | `stypes:hostname` | yes |  |  | [VOQ](../../reference/glossary.md#term-voq) chassis hostname owning this port. |
-| `asic_name` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/asic_name` | `stypes:asic_name` | yes |  |  | ASIC instance name within the VOQ chassis. |
+| `asic_name` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/asic_name` | `stypes:asic_name` | yes |  |  | ASIC instance name within the [VOQ](../../reference/glossary.md#term-voq) chassis. |
 | `ifname` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/ifname` | `string` | yes |  | length 1..128 | Interface name. |
 | `qindex` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/qindex` | `string` | yes |  |  | Queue index on the interface. |
 | `scheduler` | `sonic-queue/QUEUE/VOQ_QUEUE_LIST/scheduler` | `leafref` |  |  | /sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name | Scheduler for queue. |
@@ -96,7 +96,7 @@ module: sonic-queue
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`QUEUE`](../config-db/queue.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`QUEUE`](../config-db/queue.md)
 
 <!-- ref-triangle:end -->
 

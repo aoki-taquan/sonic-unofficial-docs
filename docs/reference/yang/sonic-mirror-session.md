@@ -97,7 +97,7 @@ module: sonic-mirror-session
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MIRROR_SESSION`](../config-db/mirror-session.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MIRROR_SESSION`](../config-db/mirror-session.md)
 - CLI: [`config mirror_session`](../cli/config-mirror-session.md)
 
 <!-- ref-triangle:end -->
@@ -133,4 +133,4 @@ show mirror_session
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 96667c52d98d -->
+<!-- glossary-links-injected: 896d391185a9 -->

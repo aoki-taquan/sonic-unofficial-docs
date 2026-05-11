@@ -59,10 +59,10 @@ module: sonic-hash
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `ecmp_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | ECMP 経路選択用のハッシュフィールド集合 |
-| `lag_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | LAG メンバ選択用のハッシュフィールド集合 |
-| `ecmp_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | ECMP ハッシュアルゴリズム |
-| `lag_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | LAG ハッシュアルゴリズム |
+| `ecmp_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | [ECMP](../../reference/glossary.md#term-ecmp) 経路選択用のハッシュフィールド集合 |
+| `lag_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | [LAG](../../reference/glossary.md#term-lag) メンバ選択用のハッシュフィールド集合 |
+| `ecmp_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | [ECMP](../../reference/glossary.md#term-ecmp) ハッシュアルゴリズム |
+| `lag_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | [LAG](../../reference/glossary.md#term-lag) ハッシュアルゴリズム |
 
 ### typedef `hash-field` enum
 
@@ -85,7 +85,7 @@ module: sonic-hash
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SWITCH_HASH`](../config-db/switch-hash.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SWITCH_HASH`](../config-db/switch-hash.md)
 - CLI: `config switch-hash`
 
 <!-- ref-triangle:end -->
@@ -99,7 +99,7 @@ module: sonic-hash
 
 ### よくある落とし穴
 
-- `ecmp_hash` leaf-list の値は SAI hash field enum 文字列と一致が必要。プラットフォーム非対応 field を含めると全体反映が拒否される。
+- `ecmp_hash` leaf-list の値は [SAI](../../reference/glossary.md#term-sai) hash field enum 文字列と一致が必要。プラットフォーム非対応 field を含めると全体反映が拒否される。
 
 ### 関連する config / show コマンド
 
@@ -113,4 +113,4 @@ show switch-hash global
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-hash.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: a4763c04a26b -->
+<!-- glossary-links-injected: 1698e6fc6263 -->

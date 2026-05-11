@@ -136,9 +136,9 @@ module: sonic-bgp-neighbor
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `neighbor` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/neighbor` | `inet:ip-address` | yes |  |  | BGP Neighbor address |
+| `neighbor` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/neighbor` | `inet:ip-address` | yes |  |  | [BGP](../../reference/glossary.md#term-bgp) Neighbor address |
 | `asn` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/asn` | `uint32` |  |  | range 0..4294967295 | Peer AS number. |
-| `holdtime` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/holdtime` | `uint16` |  |  |  | BGP hold time in seconds; session is reset if no keepalive is received within this period. |
+| `holdtime` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/holdtime` | `uint16` |  |  |  | [BGP](../../reference/glossary.md#term-bgp) hold time in seconds; session is reset if no keepalive is received within this period. |
 | `keepalive` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/keepalive` | `uint16` |  |  |  | BGP keepalive interval in seconds. |
 | `local_addr` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/local_addr` | `inet:ip-address` |  |  |  | Local source address to use for the BGP session. |
 | `name` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/name` | `string` |  |  |  | Human-readable description text for this BGP peer. |
@@ -167,7 +167,7 @@ module: sonic-bgp-neighbor
 | `solo_peer` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/solo_peer` | `boolean` |  |  |  | Place this peer in its own update group to prevent route sharing with other peers. |
 | `ttl_security_hops` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/ttl_security_hops` | `uint8` |  |  | range 1..254 | Maximum number of hops expected for the BGP TTL security mechanism (GTSM). |
 | `bfd` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection ([BFD](../../reference/glossary.md#term-bfd)) for rapid link failure detection on this peer. |
-| `bfd_check_ctrl_plane_failure` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a BFD control plane failure is detected. |
+| `bfd_check_ctrl_plane_failure` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a [BFD](../../reference/glossary.md#term-bfd) control plane failure is detected. |
 | `capability_dynamic` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/capability_dynamic` | `boolean` |  |  |  | Advertise dynamic capability |
 | `dont_negotiate_capability` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/dont_negotiate_capability` | `boolean` |  |  |  | Do not perform capability negotiation |
 | `enforce_multihop` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/enforce_multihop` | `boolean` |  |  |  | Enforce EBGP neighbors perform multihop |
@@ -178,7 +178,7 @@ module: sonic-bgp-neighbor
 | `admin_status` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/admin_status` | `stypes:admin_status` |  |  |  | Administrative status to enable or disable this BGP peer. |
 | `local_as_no_prepend` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/local_as_no_prepend` | `boolean` |  |  |  | Do not prepend the local AS number to updates received from eBGP peers. |
 | `local_as_replace_as` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/local_as_replace_as` | `boolean` |  |  |  | Replace the real AS number with the local AS number in outbound updates. |
-| `vrf_name` | `sonic-bgp-neighbor/BGP_NEIGHBOR_AF/BGP_NEIGHBOR_AF_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/VRF name |
+| `vrf_name` | `sonic-bgp-neighbor/BGP_NEIGHBOR_AF/BGP_NEIGHBOR_AF_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/[VRF](../../reference/glossary.md#term-vrf) name |
 | `neighbor` | `sonic-bgp-neighbor/BGP_NEIGHBOR_AF/BGP_NEIGHBOR_AF_LIST/neighbor` | `leafref` | yes |  | ../../../BGP_NEIGHBOR/BGP_NEIGHBOR_LIST[vrf_name=current()/../vrf_name]/neighbor | BGP Neighbor, it will be neighbor address or interface name |
 | `afi_safi` | `sonic-bgp-neighbor/BGP_NEIGHBOR_AF/BGP_NEIGHBOR_AF_LIST/afi_safi` | `string` |  |  |  | Address family |
 | `admin_status` | `sonic-bgp-neighbor/BGP_NEIGHBOR_AF/BGP_NEIGHBOR_AF_LIST/admin_status` | `stypes:admin_status` |  |  |  | Indicates address family active/inactive status |
@@ -237,14 +237,14 @@ module: sonic-bgp-neighbor
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`
-- CONFIG_DB: `BGP_NEIGHBOR_AF`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR_AF`
 - CLI: `config bgp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_NEIGHBOR`](../config-db/bgp-neighbor.md) / [`BGP_NEIGHBOR_AF`](../config-db/bgp-neighbor-af.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_NEIGHBOR`](../config-db/bgp-neighbor.md) / [`BGP_NEIGHBOR_AF`](../config-db/bgp-neighbor-af.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -272,4 +272,4 @@ show ip bgp summary
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 1187f506dd55 -->
+<!-- glossary-links-injected: af6e95ec1543 -->

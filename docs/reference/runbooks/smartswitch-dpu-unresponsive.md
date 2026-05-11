@@ -25,8 +25,8 @@ related:
 ## 症状
 
 - `show chassis modules status` で [DPU](../../reference/glossary.md#term-dpu) の state が `Offline` / `Empty` のまま
-- DPU 上の [DASH](../../reference/glossary.md#term-dash) service にトラフィックが乗らない
-- mid-plane bridge 経由の ping (host → DPU) が落ちる
+- [DPU](../../reference/glossary.md#term-dpu) 上の [DASH](../../reference/glossary.md#term-dash) service にトラフィックが乗らない
+- mid-plane bridge 経由の ping (host → [DPU](../../reference/glossary.md#term-dpu)) が落ちる
 
 ## 想定原因
 
@@ -116,4 +116,4 @@ dmesg | grep -iE "pcie|dpu" | tail
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — chassisd
 [^2]: sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト
 
-<!-- glossary-links-injected: 52050b757b2f -->
+<!-- glossary-links-injected: f4b4be230bca -->

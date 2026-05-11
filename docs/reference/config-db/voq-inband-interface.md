@@ -74,11 +74,11 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 ## 購読者
 
 - `intfmgrd` / `intfsyncd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss))
-- `bgpcfgd` / `bgpd` — BGP internal neighbor のソース interface として使う場合
+- `bgpcfgd` / `bgpd` — [BGP](../../reference/glossary.md#term-bgp) internal neighbor のソース interface として使う場合
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `SYSTEM_PORT`、`BGP_INTERNAL_NEIGHBOR`、`BGP_VOQ_CHASSIS_NEIGHBOR`、`CHASSIS_MODULE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `SYSTEM_PORT`、`BGP_INTERNAL_NEIGHBOR`、`BGP_VOQ_CHASSIS_NEIGHBOR`、`CHASSIS_MODULE`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-voq-inband-interface`、`sonic-bgp-internal-neighbor`、`sonic-bgp-voq-chassis-neighbor`
 - 関連 CLI: `config interface`
 
@@ -86,14 +86,14 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 
 ## 関連リファレンス
 
-- YANG: `sonic-voq-inband-interface`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-voq-inband-interface`
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-voq-inband-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-voq-inband-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang>
 
 ## 関連ページ
 - [CONFIG_DB: INTERFACE](interface.md)
@@ -109,7 +109,7 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 ### よくある誤設定
 
 - `name` が `Ethernet-IB<n>` パターンに一致しない命名で YANG validation エラー。
-- VOQ chassis 以外の単体スイッチで設定して効果が無い (VOQ 専用)。
+- [VOQ](../../reference/glossary.md#term-voq) chassis 以外の単体スイッチで設定して効果が無い ([VOQ](../../reference/glossary.md#term-voq) 専用)。
 
 ### 確認コマンド
 
@@ -120,4 +120,4 @@ show ip interface | grep Ethernet-IB
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5542a4a1928e -->
+<!-- glossary-links-injected: ad5cec746880 -->

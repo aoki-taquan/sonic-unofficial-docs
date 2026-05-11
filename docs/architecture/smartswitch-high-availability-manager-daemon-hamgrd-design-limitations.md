@@ -24,7 +24,7 @@ related:
 
 - v0.1 (2025-02) Initial Proposal。詳細仕様（特に Switch-Driven mode）は未確定
 - vDPU は現状ほぼ 1:1 で運用される拡張ポイント
-- swbus メッセージバスは hamgrd 内部で actor 間通信に閉じる（HLD では外部 IPC 化していない）
+- swbus メッセージバスは hamgrd 内部で actor 間通信に閉じる（[HLD](../reference/glossary.md#term-hld) では外部 IPC 化していない）
 
 ## 2. 実装との乖離
 
@@ -40,20 +40,20 @@ related:
 
 ### 2.2 未取り込み
 
-- **`hamgrd` バイナリそのものが community master に存在しない**。`grep -ri hamgrd .cache/sonic-sources/sonic-swss/ .cache/sonic-sources/sonic-buildimage/` のヒットは `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` の **コメントのみ**。actor framework / NPU actor / DPU actor の C++ 実装は皆無
+- **`hamgrd` バイナリそのものが community master に存在しない**。`grep -ri hamgrd .cache/sonic-sources/sonic-swss/ .cache/sonic-sources/sonic-buildimage/` のヒットは `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` の **コメントのみ**。actor framework / [NPU](../reference/glossary.md#term-npu) actor / [DPU](../reference/glossary.md#term-dpu) actor の C++ 実装は皆無
 - `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` の table 定義は `schema.h` に無い。`VDPU_TABLE` も無し（あるのは `CFG_DPU_TABLE` のみ）。vDPU 抽象は未取り込み
 - **swbus**（actor 間メッセージバス）の文字列は `sonic-swss-common` / `sonic-swss` 双方で 0 件。実装は別リポ（候補: `sonic-dash` / vendor 側）に切り出されている可能性が高い
 - HLD が TBD としていた Switch-Driven mode の実装は別 phase で未着手
 
 ### 2.3 HLD と実装の差分の中身
 
-HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU 側 actor が DASH_HA_SET / SCOPE を駆動、DPU 側 actor が BFD responder を program する」と述べているが、現行 master では **driver にあたる daemon が居ない**。テーブル定義だけが先に入った格好で、テーブルに produce/consume するコードが community master 上に存在しない。Switch-Driven HA mode は仕様自体 TBD。
+HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU 側 actor が DASH_HA_SET / SCOPE を駆動、DPU 側 actor が [BFD](../reference/glossary.md#term-bfd) responder を program する」と述べているが、現行 master では **driver にあたる daemon が居ない**。テーブル定義だけが先に入った格好で、テーブルに produce/consume するコードが community master 上に存在しない。Switch-Driven HA mode は仕様自体 TBD。
 
 ### 2.4 読者への影響
 
-- DASH HA を community SONiC で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない
+- [DASH](../reference/glossary.md#term-dash) HA を community SONiC で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない
 - HLD の運用例（`config dash ha ...` 系コマンド、`show dash ha-set` 等）は community CLI に未追加
-- vendor SmartSwitch 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う
+- vendor [SmartSwitch](../reference/glossary.md#term-smartswitch) 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う
 - 本ページの仕様記述は将来仕様参考であり、現行 community master で動く設定ではない
 
 ### 2.5 回避策 / 対応方法
@@ -66,7 +66,7 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 ## 3. 干渉する機能
 
 - **Smart Switch HA HLD（親 HLD）**: 全体設計
-- **DASH (Disaggregated API for SONiC Hosts)**: ENI / HA Scope の管理対象
+- **DASH (Disaggregated API for SONiC Hosts)**: [ENI](../reference/glossary.md#term-eni) / HA Scope の管理対象
 - **BFD responder**: DPU が最終 state に到達したとき DPU actor が program
 - **dpu-graceful-shutdown / DPU upgrade 系**: DPU actor の state 監視と整合性が必要
 
@@ -100,3 +100,5 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5a327f7b9445 -->

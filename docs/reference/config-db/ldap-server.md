@@ -68,11 +68,11 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 
 ## 購読者
 
-- `hostcfgd` (`docker-config-engine`): CONFIG_DB → `nslcd` / `nss-pam-ldapd` 設定
+- `hostcfgd` (`docker-config-engine`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `nslcd` / `nss-pam-ldapd` 設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `AAA` (login source 順序), `TACPLUS_SERVER`, `RADIUS_SERVER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `AAA` (login source 順序), `TACPLUS_SERVER`, `RADIUS_SERVER`
 - 関連 CLI: `config aaa authentication login`、`config ldap`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-ldap`、`sonic-system-aaa`
 
@@ -80,14 +80,14 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 
 ## 関連リファレンス
 
-- YANG: [`sonic-system-ldap`](../yang/sonic-system-ldap.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-system-ldap`](../yang/sonic-system-ldap.md)
 - CLI: [`config aaa`](../cli/config-aaa.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -120,4 +120,4 @@ sudo cat /etc/nslcd.conf
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 32758c44ab11 -->

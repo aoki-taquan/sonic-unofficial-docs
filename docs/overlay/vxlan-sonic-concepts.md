@@ -24,18 +24,18 @@ related:
 
 ## 1. VTEP と VNet の関係
 
-SONiC の VXLAN は **VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される[^1]。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は **同一 VTEP 内に複数並立する仮想ネットワーク** を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の VRF または BRIDGE として動作する。
+SONiC の [VXLAN](../reference/glossary.md#term-vxlan) は **VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される[^1]。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は **同一 VTEP 内に複数並立する仮想ネットワーク** を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の [VRF](../reference/glossary.md#term-vrf) または BRIDGE として動作する。
 
-HLD のスコープ[^1]:
+[HLD](../reference/glossary.md#term-hld) のスコープ[^1]:
 
 - **Phase 1**: VTEP として動作。顧客 VM ↔ ベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング
-- **Phase 2**: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備
+- **Phase 2**: [BGP](../reference/glossary.md#term-bgp) [EVPN](../reference/glossary.md#term-evpn) 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備
 
 Kernel VRF（L3mdev）の programming は **本 HLD のスコープ外**[^1]。
 
 ## 2. L2 VXLAN と L3 VXLAN の作り分け
 
-`VxlanOrch` は `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` から **L2 VXLAN（VLAN ↔ VNI）** と **L3 VXLAN（VRF ↔ VNI）** を **別トンネル** として作る[^1]。それぞれに encap/decap mapper を attach。
+`VxlanOrch` は `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` から **L2 VXLAN（[VLAN](../reference/glossary.md#term-vlan) ↔ VNI）** と **L3 VXLAN（VRF ↔ VNI）** を **別トンネル** として作る[^1]。それぞれに encap/decap mapper を attach。
 
 | 区分 | mapper | 主用途 |
 |------|--------|--------|
@@ -64,9 +64,11 @@ L3 VXLAN は **`VIRTUAL_ROUTER_ID ↔ VNI` mapper が中核**。VTEP は P2MP �
 
 - [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 HLD ページ
 - [vxlan-sonic-operations.md](vxlan-sonic-operations.md) — 設定 / CLI / 確認手順
-- [vxlan-sonic-internals.md](vxlan-sonic-internals.md) — Orch 内部実装と SAI 属性
+- [vxlan-sonic-internals.md](vxlan-sonic-internals.md) — Orch 内部実装と [SAI](../reference/glossary.md#term-sai) 属性
 - [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) — 制限事項と既知の課題
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: a0525547b964 -->

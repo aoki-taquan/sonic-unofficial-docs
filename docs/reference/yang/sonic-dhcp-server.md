@@ -83,7 +83,7 @@ module: sonic-dhcp-server
 
 ## 関連リファレンス
 
-- CONFIG_DB: `DHCP_SERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DHCP_SERVER`
 
 <!-- ref-triangle:end -->
 
@@ -96,7 +96,7 @@ module: sonic-dhcp-server
 
 ### よくある落とし穴
 
-- `gateway` leaf が [VLAN](../../reference/glossary.md#term-vlan) interface IP と不一致だと割り当て後の通信が壊れる。VLAN サブネットと整合確認が必須。
+- `gateway` leaf が [VLAN](../../reference/glossary.md#term-vlan) interface IP と不一致だと割り当て後の通信が壊れる。[VLAN](../../reference/glossary.md#term-vlan) サブネットと整合確認が必須。
 
 ### 関連する config / show コマンド
 
@@ -117,4 +117,4 @@ show dhcp_server ipv4 lease
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 30c76eee774c -->
+<!-- glossary-links-injected: 92ee934a4cab -->

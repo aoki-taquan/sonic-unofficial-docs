@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`STATIC_ROUTE` は静的経路を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。[YANG](../../reference/glossary.md#term-yang) では template 形式 (`STATIC_ROUTE|<prefix>`) と [VRF](../../reference/glossary.md#term-vrf)-aware 形式 (`STATIC_ROUTE|<vrf_name>|<prefix>`) の 2 つの list が定義されている[^1]。nexthop、出力 interface、[BGP](../../reference/glossary.md#term-bgp) への advertise、[BFD](../../reference/glossary.md#term-bfd)、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は `schema.h` も参照する[^2]。
+`STATIC_ROUTE` は静的経路を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。[YANG](../../reference/glossary.md#term-yang) では template 形式 (`STATIC_ROUTE|<prefix>`) と [VRF](../../reference/glossary.md#term-vrf)-aware 形式 (`STATIC_ROUTE|<vrf_name>|<prefix>`) の 2 つの list が定義されている[^1]。nexthop、出力 interface、[BGP](../../reference/glossary.md#term-bgp) への advertise、[BFD](../../reference/glossary.md#term-bfd)、administrative distance、nexthop [VRF](../../reference/glossary.md#term-vrf)、blackhole 指定を扱う。テーブル名の実装側定数は `schema.h` も参照する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -61,9 +61,9 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 |-----------|----|--------|------|
 | `nexthop` | string | - | nexthop IP。interface route では `0.0.0.0` を指定する想定 |
 | `ifname` | string | - | 出力 interface |
-| `advertise` | comma-separated boolean string | `false` | BGP へ広告するか。nexthop ごとに指定可能 |
-| `bfd` | comma-separated boolean string | `false` | nexthop ごとの BFD 監視有効化。template 形式のみ |
-| `distance` | comma-separated uint8 string | `0` | administrative distance。VRF-aware 形式のみ |
+| `advertise` | comma-separated boolean string | `false` | [BGP](../../reference/glossary.md#term-bgp) へ広告するか。nexthop ごとに指定可能 |
+| `bfd` | comma-separated boolean string | `false` | nexthop ごとの [BFD](../../reference/glossary.md#term-bfd) 監視有効化。template 形式のみ |
+| `distance` | comma-separated uint8 string | `0` | administrative distance。[VRF](../../reference/glossary.md#term-vrf)-aware 形式のみ |
 | `nexthop-vrf` | comma-separated VRF string | - | VRF leaking 用 nexthop VRF。VRF-aware 形式のみ |
 | `blackhole` | comma-separated boolean string | `false` | 一致パケットを破棄する blackhole route。VRF-aware 形式のみ |
 
@@ -72,19 +72,19 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 - `advertise`、`bfd`、`blackhole` は `true` / `false` のカンマ区切り文字列。
 - `distance` は 0..255 のカンマ区切り文字列。
 - `nexthop-vrf` は `default`、`mgmt`、`Vrf...` のカンマ区切り文字列。
-- YANG の VRF-aware key は `vrf_name prefix`。template 形式には `vrf_name` が無い。
+- [YANG](../../reference/glossary.md#term-yang) の VRF-aware key は `vrf_name prefix`。template 形式には `vrf_name` が無い。
 
 ## 購読者
 
-- `staticd` / `zebra` ([FRR](../../reference/glossary.md#term-frr)): SONiC の設定生成パスを通じて static route を FRR に反映する。
-- `bgpcfgd` / routing config パス: `advertise` が有効な static route を BGP 広告対象として扱う。
-- `orchagent` / route orch: kernel / FRR から [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で転送経路を [SAI](../../reference/glossary.md#term-sai) route へ反映する。
+- `staticd` / `zebra` ([FRR](../../reference/glossary.md#term-frr)): SONiC の設定生成パスを通じて static route を [FRR](../../reference/glossary.md#term-frr) に反映する。
+- `bgpcfgd` / routing config パス: `advertise` が有効な static route を [BGP](../../reference/glossary.md#term-bgp) 広告対象として扱う。
+- `orchagent` / route orch: kernel / [FRR](../../reference/glossary.md#term-frr) から [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で転送経路を [SAI](../../reference/glossary.md#term-sai) route へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VRF`、`INTERFACE`、`PORTCHANNEL_INTERFACE`、`VLAN_INTERFACE`、`LOOPBACK_INTERFACE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VRF`、`INTERFACE`、`PORTCHANNEL_INTERFACE`、`VLAN_INTERFACE`、`LOOPBACK_INTERFACE`
 - 関連 CLI: `config route`
-- 関連 YANG: `sonic-static-route`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-static-route`
 
 <!-- ref-triangle:start -->
 
@@ -124,4 +124,4 @@ vtysh -c 'show ip route'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 442d405f5e26 -->
+<!-- glossary-links-injected: 75289c2d3439 -->

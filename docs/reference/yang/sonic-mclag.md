@@ -73,8 +73,8 @@ module: sonic-mclag
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `domain_id` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/domain_id` | `uint16` | yes |  | range 1..4095 | MCLAG Domain ID |
-| `source_ip` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/source_ip` | `inet:ipv4-address` |  |  |  | MCLAG Domain source ip address for session between MCLAG Peers |
+| `domain_id` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/domain_id` | `uint16` | yes |  | range 1..4095 | [MCLAG](../../reference/glossary.md#term-mclag) Domain ID |
+| `source_ip` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/source_ip` | `inet:ipv4-address` |  |  |  | [MCLAG](../../reference/glossary.md#term-mclag) Domain source ip address for session between MCLAG Peers |
 | `peer_ip` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/peer_ip` | `inet:ipv4-address` |  |  |  | MCLAG Domain peer ip address for session between MCLAG Peers |
 | `peer_link` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/peer_link` | `union` |  |  | union(leafref, leafref) | MCLAG Domain peer link, data backup path link between MCLAG peers |
 | `keepalive_interval` | `sonic-mclag/MCLAG_DOMAIN/MCLAG_DOMAIN_LIST/keepalive_interval` | `uint16` |  | 1 | range 1..60 | keepalive interval in seconds for MCLAG session between peers |
@@ -97,8 +97,8 @@ module: sonic-mclag
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MCLAG_DOMAIN`
-- CONFIG_DB: `MCLAG_INTERFACE`
-- CONFIG_DB: `MCLAG_UNIQUE_IP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MCLAG_INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MCLAG_UNIQUE_IP`
 - CLI: `config mclag`
 
 <!-- ref-triangle:start -->
@@ -114,4 +114,4 @@ module: sonic-mclag
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 85453414afcc -->
+<!-- glossary-links-injected: 49f4dbd0861e -->

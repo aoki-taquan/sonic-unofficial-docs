@@ -90,7 +90,7 @@ excerpt: |
 
 ## 補足
 
-- `watermarkstat` は COUNTERS_DB の `USER_WATERMARKS` / `PERSISTENT_WATERMARKS` テーブルを読みに行く。WM の更新周期は `WATERMARK_TABLE|TELEMETRY_INTERVAL` で設定可能（`config watermark telemetry interval`）
+- `watermarkstat` は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `USER_WATERMARKS` / `PERSISTENT_WATERMARKS` テーブルを読みに行く。WM の更新周期は `WATERMARK_TABLE|TELEMETRY_INTERVAL` で設定可能（`config watermark telemetry interval`）
 - WM のクリアは `sonic-clear` 系のコマンド (`sonic-clear queuewatermark`、`sonic-clear pgheadroom` など) で個別に行う
 - persistent WM はクリア不可。電源 OFF まで保持される、いわば「歴代最大値」を保存する仕組み
 
@@ -112,7 +112,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BUFFER_POOL`](../config-db/buffer-pool.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BUFFER_POOL`](../config-db/buffer-pool.md)
 
 <!-- ref-triangle:end -->
 
@@ -126,4 +126,4 @@ flowchart LR
 - [reference/CLI: show pfc](show-pfc.md)
 - [reference/CLI: show priority-group](show-priority-group.md)
 
-<!-- glossary-links-injected: abeaefab6cb2 -->
+<!-- glossary-links-injected: 2fb486a7acc8 -->

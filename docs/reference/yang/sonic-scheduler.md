@@ -89,7 +89,7 @@ module: sonic-scheduler
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SCHEDULER`](../config-db/scheduler.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SCHEDULER`](../config-db/scheduler.md)
 
 <!-- ref-triangle:end -->
 

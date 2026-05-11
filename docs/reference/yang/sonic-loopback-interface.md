@@ -65,7 +65,7 @@ module: sonic-loopback-interface
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/name` | `stypes:interface_name` | yes |  |  | Loopback interface name (e.g. Loopback0) |
-| `vrf_name` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | VRF instance to which this loopback interface is bound |
+| `vrf_name` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this loopback interface is bound |
 | `nat_zone` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the loopback interface |
 | `admin_status` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_LIST/admin_status` | `stypes:admin_status` |  | up |  | Administrative state of the loopback interface |
 | `name` | `sonic-loopback-interface/LOOPBACK_INTERFACE/LOOPBACK_INTERFACE_IPPREFIX_LIST/name` | `leafref` | yes |  | ../../LOOPBACK_INTERFACE_LIST/name | Loopback interface name |
@@ -91,7 +91,7 @@ module: sonic-loopback-interface
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md)
 - CLI: `config loopback`
 
 <!-- ref-triangle:end -->
@@ -100,4 +100,4 @@ module: sonic-loopback-interface
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-loopback-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 08fc261d24cd -->
+<!-- glossary-links-injected: 84c52960aadd -->

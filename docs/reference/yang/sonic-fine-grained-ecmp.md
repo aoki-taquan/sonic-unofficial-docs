@@ -105,7 +105,7 @@ module: sonic-fine-grained-ecmp
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FG_NHG`](../config-db/fg-nhg.md) / [`FG_NHG_PREFIX`](../config-db/fg-nhg.md) / [`FG_NHG_MEMBER`](../config-db/fg-nhg.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FG_NHG`](../config-db/fg-nhg.md) / [`FG_NHG_PREFIX`](../config-db/fg-nhg.md) / [`FG_NHG_MEMBER`](../config-db/fg-nhg.md)
 
 <!-- ref-triangle:end -->
 
@@ -113,4 +113,4 @@ module: sonic-fine-grained-ecmp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 68da9f1d1f8d -->
+<!-- glossary-links-injected: 896d391185a9 -->

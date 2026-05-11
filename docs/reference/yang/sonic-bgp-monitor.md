@@ -64,9 +64,9 @@ module: sonic-bgp-monitor
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `addr` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/addr` | `inet:ip-address` | yes |  |  | BGP monitor peer address |
+| `addr` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/addr` | `inet:ip-address` | yes |  |  | [BGP](../../reference/glossary.md#term-bgp) monitor peer address |
 | `asn` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/asn` | `uint32` |  |  | range 0..4294967295 | Peer AS number |
-| `holdtime` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/holdtime` | `uint16` |  |  |  | BGP hold time in seconds |
+| `holdtime` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/holdtime` | `uint16` |  |  |  | [BGP](../../reference/glossary.md#term-bgp) hold time in seconds |
 | `keepalive` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/keepalive` | `uint16` |  |  |  | BGP keepalive interval in seconds |
 | `local_addr` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/local_addr` | `inet:ip-address` |  |  |  | Local source address for the BGP session |
 | `name` | `sonic-bgp-monitor/BGP_MONITORS/BGP_MONITORS_LIST/name` | `string` |  |  |  | Human-readable peer description |
@@ -91,7 +91,7 @@ module: sonic-bgp-monitor
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_MONITORS`](../config-db/bgp-monitors.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_MONITORS`](../config-db/bgp-monitors.md)
 
 <!-- ref-triangle:end -->
 
@@ -100,7 +100,7 @@ module: sonic-bgp-monitor
 
 ### 典型的なデプロイ位置
 
-- BMP / BGP モニタリング neighbor 設定。`BGP_MONITORS` テーブルが [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 経由で FRR に流し込まれる。
+- BMP / BGP モニタリング neighbor 設定。`BGP_MONITORS` テーブルが [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 経由で [FRR](../../reference/glossary.md#term-frr) に流し込まれる。
 
 ### よくある落とし穴
 
@@ -118,4 +118,4 @@ show bgp summary
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 332ab906917a -->
+<!-- glossary-links-injected: 3c856a00d481 -->

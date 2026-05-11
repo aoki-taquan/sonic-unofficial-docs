@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`config bgp` は [BGP](../../reference/glossary.md#term-bgp) セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-[ECMP](../../reference/glossary.md#term-ecmp)、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は [FRR](../../reference/glossary.md#term-frr) が握っているが、SONiC はその設定状態を **[CONFIG_DB](../../reference/glossary.md#term-config_db)** に保存し、`bgpcfgd` が CONFIG_DB → FRR (vtysh) に反映する。`config bgp` は CONFIG_DB を直接書き換える役割を担う[^1]。
+`config bgp` は [BGP](../../reference/glossary.md#term-bgp) セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-[ECMP](../../reference/glossary.md#term-ecmp)、および aggregate-address (集約広告) の操作を提供する。[BGP](../../reference/glossary.md#term-bgp) データプレーン本体は [FRR](../../reference/glossary.md#term-frr) が握っているが、SONiC はその設定状態を **[CONFIG_DB](../../reference/glossary.md#term-config_db)** に保存し、`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) → [FRR](../../reference/glossary.md#term-frr) (vtysh) に反映する。`config bgp` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書き換える役割を担う[^1]。
 
 `config/main.py` 末尾で `config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)` `add_command(bgp_cli.AGGREGATE_ADDRESS)` の形で `config/bgp_cli.py` のサブグループが追加される構造のため、cli.json (機械抽出) には `device-global` / `aggregate-address` 配下が現れない。本ページでは両方を統合して扱う。
 
@@ -36,15 +36,15 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `config bgp shutdown all` | すべての BGP セッションをダウン |
+| `config bgp shutdown all` | すべての [BGP](../../reference/glossary.md#term-bgp) セッションをダウン |
 | `config bgp shutdown neighbor <ipaddr_or_hostname>` | 指定隣接の BGP セッションをダウン |
 | `config bgp startup all` | すべての BGP セッションをアップ |
 | `config bgp startup neighbor <ipaddr_or_hostname>` | 指定隣接の BGP セッションをアップ |
 | `config bgp remove neighbor <neighbor_ip_or_hostname>` | 隣接設定そのものを削除 |
 | `config bgp device-global tsa enabled` | TSA (Traffic-Shift-Away) を有効化 |
 | `config bgp device-global tsa disabled` | TSA を無効化 |
-| `config bgp device-global w-ecmp enabled` | W-ECMP (Weighted-Cost Multi-Path) を有効化 |
-| `config bgp device-global w-ecmp disabled` | W-ECMP を無効化 |
+| `config bgp device-global w-ecmp enabled` | W-[ECMP](../../reference/glossary.md#term-ecmp) (Weighted-Cost Multi-Path) を有効化 |
+| `config bgp device-global w-ecmp disabled` | W-[ECMP](../../reference/glossary.md#term-ecmp) を無効化 |
 | `config bgp aggregate-address add <address> [options]` | 集約 prefix を追加 |
 | `config bgp aggregate-address remove <address>` | 集約 prefix を削除 |
 
@@ -346,7 +346,7 @@ Starting up BGP session with neighbor 10.0.0.1 .....
 
 ### よくある落とし穴
 
-- `config bgp shutdown neighbor` は FRR には即反映だが CONFIG_DB 上は `admin_status` が変わるのみ。`config save` を忘れると再起動で戻る。
+- `config bgp shutdown neighbor` は [FRR](../../reference/glossary.md#term-frr) には即反映だが CONFIG_DB 上は `admin_status` が変わるのみ。`config save` を忘れると再起動で戻る。
 - TSA は AS-Path prepend で実現するため、対向側の bestpath ロジック次第では退避が遅延する。
 
 ### 関連する show / debug
@@ -364,4 +364,4 @@ show bgp device-global
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)
 
-<!-- glossary-links-injected: 33c50b5734df -->
+<!-- glossary-links-injected: 22dc76970f48 -->

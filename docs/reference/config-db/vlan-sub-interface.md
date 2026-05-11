@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`VLAN_SUB_INTERFACE` は物理 port または [PortChannel](../../reference/glossary.md#term-portchannel) 上の 802.1Q sub-interface を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`Ethernet0.100` や `PortChannel10.100` のような親 interface + [VLAN](../../reference/glossary.md#term-vlan) ID 形式をキーに、admin state、[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding、loopback action、encapsulation VLAN、IP prefix を持つ[^1]。`schema.h` では CONFIG_DB テーブル名として `CFG_VLAN_SUB_INTF_TABLE_NAME` が定義されている[^2]。
+`VLAN_SUB_INTERFACE` は物理 port または [PortChannel](../../reference/glossary.md#term-portchannel) 上の 802.1Q sub-interface を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`Ethernet0.100` や `PortChannel10.100` のような親 interface + [VLAN](../../reference/glossary.md#term-vlan) ID 形式をキーに、admin state、[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding、loopback action、encapsulation [VLAN](../../reference/glossary.md#term-vlan)、IP prefix を持つ[^1]。`schema.h` では [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル名として `CFG_VLAN_SUB_INTF_TABLE_NAME` が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -62,10 +62,10 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `admin_status` | `admin_status` | sub-interface の管理状態 |
-| `vrf_name` | leafref `VRF.name` | binding する VRF |
-| `vnet_name` | leafref `VNET.name` | binding する VNET |
+| `vrf_name` | leafref `VRF.name` | binding する [VRF](../../reference/glossary.md#term-vrf) |
+| `vnet_name` | leafref `VNET.name` | binding する [VNET](../../reference/glossary.md#term-vnet) |
 | `loopback_action` | `loopback_action` | ingress packet が同じ L3 interface へ routed される場合の action |
-| `vlan` | uint16 1..4094 | short-name 形式で明示する encapsulation VLAN |
+| `vlan` | uint16 1..4094 | short-name 形式で明示する encapsulation [VLAN](../../reference/glossary.md#term-vlan) |
 
 ### VLAN_SUB_INTERFACE_IPPREFIX_LIST
 
@@ -83,8 +83,8 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 
 ## 購読者
 
-- `intfmgrd`: CONFIG_DB の sub-interface と IP prefix を [APPL_DB](../../reference/glossary.md#term-appl_db) 側の interface 設定へ展開する。
-- `orchagent` / `intfsorch`: APPL_DB 経由で router interface、IP address、VRF / VNET binding を [SAI](../../reference/glossary.md#term-sai) / kernel へ反映する。
+- `intfmgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の sub-interface と IP prefix を [APPL_DB](../../reference/glossary.md#term-appl_db) 側の interface 設定へ展開する。
+- `orchagent` / `intfsorch`: [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で router interface、IP address、[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding を [SAI](../../reference/glossary.md#term-sai) / kernel へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -96,14 +96,14 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vlan-sub-interface`](../yang/sonic-vlan-sub-interface.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vlan-sub-interface`](../yang/sonic-vlan-sub-interface.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vlan-sub-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-vlan-sub-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
 <!-- topics-back-ref -->
@@ -133,4 +133,4 @@ show subinterface status
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f53f85ca209b -->
+<!-- glossary-links-injected: 8acafc795b83 -->

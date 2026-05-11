@@ -33,7 +33,7 @@ related:
 | `show system-health sysready-status` | `sysreadyshow` 経由のシステム ready 状態 |
 | `show system-health sysready-status brief` | `sysreadyshow --brief` |
 | `show system-health sysready-status detail` | `sysreadyshow --detail` |
-| `show system-health dpu <module_name>` | SmartSwitch 構成での DPU 状態（CHASSIS_STATE_DB.DPU_STATE） |
+| `show system-health dpu <module_name>` | [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成での [DPU](../../reference/glossary.md#term-dpu) 状態（CHASSIS_STATE_DB.DPU_STATE） |
 
 ## 各コマンドの詳細
 

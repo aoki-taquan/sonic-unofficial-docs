@@ -67,8 +67,8 @@ module: sonic-port-qos-map
 | 種別 | パス | key | 説明 |
 |------|------|-----|------|
 | `container` | `sonic-port-qos-map` |  |  |
-| `container` | `sonic-port-qos-map/PORT_QOS_MAP` |  | Configures QoS map bindings, [PFC](../../reference/glossary.md#term-pfc) settings, and scheduler for ports. |
-| `list` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST` | `ifname` | QoS map binding for a port or the global default. |
+| `container` | `sonic-port-qos-map/PORT_QOS_MAP` |  | Configures [QoS](../../reference/glossary.md#term-qos) map bindings, [PFC](../../reference/glossary.md#term-pfc) settings, and scheduler for ports. |
+| `list` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST` | `ifname` | [QoS](../../reference/glossary.md#term-qos) map binding for a port or the global default. |
 
 ## leaf 一覧
 
@@ -77,7 +77,7 @@ module: sonic-port-qos-map
 | `ifname` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/ifname` | `union` | yes |  | union(string: pattern `global`, leafref: /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name) | Reference of port or global on which QOS MAPS to be configured. |
 | `tc_to_pg_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_pg_map` | `leafref` |  |  | /tpgm:sonic-tc-priority-group-map/tpgm:TC_TO_PRIORITY_GROUP_MAP/tpgm:TC_TO_PRIORITY_GROUP_MAP_LIST/tpgm:name | Reference to a traffic class to priority group map. |
 | `tc_to_queue_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_queue_map` | `leafref` |  |  | /tqm:sonic-tc-queue-map/tqm:TC_TO_QUEUE_MAP/tqm:TC_TO_QUEUE_MAP_LIST/tqm:name | Reference to a traffic class to egress queue map. |
-| `pfc_enable` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_enable` | `string` |  |  | pattern `([0-7](,[0-7])*)?` | Specify the queue(s) on which PFC is enabled. Empty string is allowed to disable PFC on all queues. |
+| `pfc_enable` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_enable` | `string` |  |  | pattern `([0-7](,[0-7])*)?` | Specify the queue(s) on which [PFC](../../reference/glossary.md#term-pfc) is enabled. Empty string is allowed to disable [PFC](../../reference/glossary.md#term-pfc) on all queues. |
 | `pfcwd_sw_enable` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfcwd_sw_enable` | `string` |  |  | pattern `([0-7](,[0-7])*)?` | Specify the queue(s) on which software pfc watchdog are enabled. Empty string is allowed to disable watchdog on all queues. |
 | `pfc_to_queue_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_queue_map` | `leafref` |  |  | /ppqm:sonic-pfc-priority-queue-map/ppqm:MAP_PFC_PRIORITY_TO_QUEUE/ppqm:MAP_PFC_PRIORITY_TO_QUEUE_LIST/ppqm:name | Reference to a PFC priority to egress queue map. |
 | `pfc_to_pg_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/pfc_to_pg_map` | `leafref` |  |  | /pppgm:sonic-pfc-priority-priority-group-map/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/pppgm:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/pppgm:name | Reference to a PFC priority to priority group map. |
@@ -110,7 +110,7 @@ module: sonic-port-qos-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT_QOS_MAP`](../config-db/port-qos-map.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PORT_QOS_MAP`](../config-db/port-qos-map.md)
 - CLI: [`config qos`](../cli/config-qos.md)
 
 <!-- ref-triangle:end -->
@@ -126,4 +126,4 @@ module: sonic-port-qos-map
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 98ed0d3e3a01 -->
+<!-- glossary-links-injected: e0f6f792519a -->

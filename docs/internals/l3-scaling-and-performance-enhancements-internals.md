@@ -22,7 +22,7 @@ related:
 
 ## 1. kernel ARP/ND の cache 拡大
 
-旧 SONiC は ~2400 entry が上限だった。kernel ARP cache の garbage collector 閾値を HLD は次のように引き上げる提案[^1]:
+旧 SONiC は ~2400 entry が上限だった。kernel [ARP](../reference/glossary.md#term-arp) cache の garbage collector 閾値を [HLD](../reference/glossary.md#term-hld) は次のように引き上げる提案[^1]:
 
 | パラメータ | 既定 | 提案 (IPv4) | 提案 (IPv6) |
 |-----------|------|------------|------------|
@@ -30,7 +30,7 @@ related:
 | `gc_thresh2` | 512 | 32000 | 16000 |
 | `gc_thresh3` | 1024 | 48000 | 32000 |
 
-burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。CoPP では ARP/ND の最大 600 pps → **8000 pps** に引き上げる提案[^1]。
+burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。[CoPP](../reference/glossary.md#term-copp) では ARP/ND の最大 600 pps → **8000 pps** に引き上げる提案[^1]。
 
 ## 2. Route programming 時間短縮
 
@@ -45,7 +45,7 @@ burst 時の add/remove ループで entry が満杯にならない問題の解�
 
 ### 2.1 sairedis bulk route API の利用
 
-旧: `RouteOrch` は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが **1 経路 = 1 Redis message**[^1]。
+旧: `RouteOrch` は 1 経路ごとに sairedis API を呼ぶ。[Redis](../reference/glossary.md#term-redis) pipelining でいくらかバルク化はされるが **1 経路 = 1 Redis message**[^1]。
 
 新:
 
@@ -76,7 +76,7 @@ sequenceDiagram
 
 旧: 各経路の処理で **`rt_table` 属性から master device 名を kernel から取得**。VNET_ROUTE_TABLE 判定のため[^1]。
 
-問題: VNET が無い環境でも lookup が **常に失敗 → cache 更新を毎経路で行う**。これが route 投入を遅くする。
+問題: [VNET](../reference/glossary.md#term-vnet) が無い環境でも lookup が **常に失敗 → cache 更新を毎経路で行う**。これが route 投入を遅くする。
 
 修正: **`route.rt_table == 0`（global routing table）** なら lookup を **skip**。10k 経路の APP_DB 投入が **7-8s → 4-5s** に短縮[^1]。
 
@@ -90,7 +90,7 @@ sequenceDiagram
 
 ## 3. `show arp` / `show ndp` の高速化
 
-旧: VLAN L3 interface 上の ARP の **outgoing interface を求めるため FDB 全件を fetch**。エントリが大量だと show が秒〜分単位かかる[^1]。
+旧: [VLAN](../reference/glossary.md#term-vlan) L3 interface 上の ARP の **outgoing interface を求めるため [FDB](../reference/glossary.md#term-fdb) 全件を fetch**。エントリが大量だと show が秒〜分単位かかる[^1]。
 
 修正: 該当 ARP/ND **特定エントリだけの FDB lookup** に変更。CLI スクリプト側の改修。
 
@@ -105,7 +105,7 @@ flowchart LR
 | 項目 | ファイル / 行 |
 |------|--------------|
 | RouteOrch bulker | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、L626-1116 で add/remove と flush |
-| fpmsyncd master device lookup skip | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` |
+| [fpmsyncd](../reference/glossary.md#term-fpmsyncd) master device lookup skip | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` |
 | sysctl 適用 | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21-26`（HLD 値ではなく 1024/2048/4096 が現行 default）|
 | CoPP 設定 | `sonic-buildimage/files/image_config/copp/copp_cfg.j2`（ARP は `queue4_group2`、cir/cbs=600）|
 
@@ -135,3 +135,5 @@ flowchart LR
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 992dc79d863a -->

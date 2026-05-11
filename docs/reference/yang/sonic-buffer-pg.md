@@ -78,7 +78,7 @@ module: sonic-buffer-pg
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BUFFER_PG`](../config-db/buffer-pg.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BUFFER_PG`](../config-db/buffer-pg.md)
 
 <!-- ref-triangle:end -->
 
@@ -91,7 +91,7 @@ module: sonic-buffer-pg
 
 ### よくある落とし穴
 
-- `profile` leafref で BUFFER_PROFILE を参照。先に profile を消すと leafref エラーで CONFIG_DB 書き込みが失敗する。
+- `profile` leafref で BUFFER_PROFILE を参照。先に profile を消すと leafref エラーで [CONFIG_DB](../../reference/glossary.md#term-config_db) 書き込みが失敗する。
 
 ### 関連する config / show コマンド
 
@@ -113,4 +113,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ecaa2e5d86b0 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

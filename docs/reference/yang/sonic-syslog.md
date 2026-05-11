@@ -106,14 +106,14 @@ module: sonic-syslog
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `SYSLOG_SERVER`
-- CONFIG_DB: `SYSLOG_CONFIG`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SYSLOG_CONFIG`
 - CLI: `config syslog`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SYSLOG_SERVER`](../config-db/syslog-server.md) / [`SYSLOG_CONFIG`](../config-db/syslog-config.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SYSLOG_SERVER`](../config-db/syslog-server.md) / [`SYSLOG_CONFIG`](../config-db/syslog-config.md)
 - CLI: [`config syslog`](../cli/config-syslog.md)
 
 <!-- ref-triangle:end -->
@@ -149,4 +149,4 @@ show syslog
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0072c8c44112 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

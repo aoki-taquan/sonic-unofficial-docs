@@ -245,7 +245,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- [ACL](../../reference/glossary.md#term-acl) で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。
+- [ACL](../../reference/glossary.md#term-acl) で [SNMP](../../reference/glossary.md#term-snmp) ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE [ACL](../../reference/glossary.md#term-acl)）。
 - `config snmp community add` の type は `RO` / `RW`。RW を不用意に開けない。
 
 ### 関連する show / debug
@@ -257,4 +257,4 @@ show runningconfiguration snmp
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ded79a787b44 -->
+<!-- glossary-links-injected: 44c799d378f8 -->

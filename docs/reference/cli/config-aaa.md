@@ -39,8 +39,8 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `config aaa authentication failthrough <enable\|disable\|default>` | AAA fail-through |
-| `config aaa authentication fallback <enable\|disable\|default>` | AAA fallback |
+| `config aaa authentication failthrough <enable\|disable\|default>` | [AAA](../../reference/glossary.md#term-aaa) fail-through |
+| `config aaa authentication fallback <enable\|disable\|default>` | [AAA](../../reference/glossary.md#term-aaa) fallback |
 | `config aaa authentication debug <enable\|disable\|default>` | AAA debug ログ |
 | `config aaa authentication trace <enable\|disable\|default>` | AAA パケットトレース |
 | `config aaa authentication login <ldap\|radius\|tacacs+\|local\|default> [secondary]` | ログイン認証プロトコル選択（最大 2 段） |
@@ -173,13 +173,13 @@ excerpt: |
 
 - `is_secret` ... `^[^ #,]*$` 正規表現。空白 / `#` / `,` を禁止。
 - `RADIUS_PASSKEY_MAX_LEN = 65`、`RADIUS_MAXSERVERS = 8`。
-- `ADHOC_VALIDATION = True`（デフォルト ON）。CONFIG_DB の YANG 検証側ではなくコマンド側で IP / 文字種チェックを行う。
+- `ADHOC_VALIDATION = True`（デフォルト ON）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の [YANG](../../reference/glossary.md#term-yang) 検証側ではなくコマンド側で IP / 文字種チェックを行う。
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md) / [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md) / [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
 
 <!-- ref-triangle:end -->
 
@@ -233,4 +233,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 8d5a139c8eba -->

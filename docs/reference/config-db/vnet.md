@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-[VNET](../../reference/glossary.md#term-vnet) は [VXLAN](../../reference/glossary.md#term-vxlan) overlay 上の仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル群。`VNET` が VNI と VXLAN tunnel の対応を持ち、`VNET_ROUTE` と `VNET_ROUTE_TUNNEL` が VNET スコープの静的経路を表す[^1]。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` と、CONFIG_DB 側の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 定数が定義されている[^2]。
+[VNET](../../reference/glossary.md#term-vnet) は [VXLAN](../../reference/glossary.md#term-vxlan) overlay 上の仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル群。`VNET` が VNI と [VXLAN](../../reference/glossary.md#term-vxlan) tunnel の対応を持ち、`VNET_ROUTE` と `VNET_ROUTE_TUNNEL` が [VNET](../../reference/glossary.md#term-vnet) スコープの静的経路を表す[^1]。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` と、[CONFIG_DB](../../reference/glossary.md#term-config_db) 側の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 定数が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -64,7 +64,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `vxlan_tunnel` | leafref `VXLAN_TUNNEL.name` | yes | この VNET が使う VXLAN tunnel |
+| `vxlan_tunnel` | leafref `VXLAN_TUNNEL.name` | yes | この [VNET](../../reference/glossary.md#term-vnet) が使う [VXLAN](../../reference/glossary.md#term-vxlan) tunnel |
 | `vni` | `vnid_type` | yes | overlay header に入る VNI |
 | `peer_list` | string | no | peer 情報 |
 | `guid` | string | no | 任意 GUID |
@@ -95,18 +95,18 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 - `VNET.vxlan_tunnel` は `VXLAN_TUNNEL` への leafref。
 - `VNET.vni` と `VNET_ROUTE.nexthop` / `ifname`、`VNET_ROUTE_TUNNEL.endpoint` は mandatory。
 - `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の `vnet_name` は既存 `VNET` への leafref。
-- YANG 上の prefix 型は IPv4 prefix に限定されている。
+- [YANG](../../reference/glossary.md#term-yang) 上の prefix 型は IPv4 prefix に限定されている。
 
 ## 購読者
 
-- `vxlanmgrd` / `vnetorch` 系: CONFIG_DB の VNET 設定を APPL_DB `VNET_TABLE` 系へ投影し、[orchagent](../../reference/glossary.md#term-orchagent) 側で [SAI](../../reference/glossary.md#term-sai) overlay / route に反映する。
-- `orchagent`: APPL_DB `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を消費する。
+- `vxlanmgrd` / `vnetorch` 系: [CONFIG_DB](../../reference/glossary.md#term-config_db) の VNET 設定を [APPL_DB](../../reference/glossary.md#term-appl_db) `VNET_TABLE` 系へ投影し、[orchagent](../../reference/glossary.md#term-orchagent) 側で [SAI](../../reference/glossary.md#term-sai) overlay / route に反映する。
+- `orchagent`: [APPL_DB](../../reference/glossary.md#term-appl_db) `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を消費する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`INTERFACE`、`VLAN_INTERFACE`、`VLAN_SUB_INTERFACE`
 - 関連 CLI: `config vxlan`
-- 関連 YANG: `sonic-vnet`、`sonic-vxlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vnet`、`sonic-vxlan`
 
 <!-- ref-triangle:start -->
 
@@ -136,7 +136,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 ### よくある誤設定
 
 - `vxlan_tunnel` が `VXLAN_TUNNEL` に未存在だと VNet が active にならない。
-- `vni` を同一 device 内で重複させると orchagent が後勝ちで上書きし silent に壊れる。
+- `vni` を同一 device 内で重複させると [orchagent](../../reference/glossary.md#term-orchagent) が後勝ちで上書きし silent に壊れる。
 
 ### 確認コマンド
 
@@ -147,4 +147,4 @@ show vnet routes all
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f21bcbaa368c -->
+<!-- glossary-links-injected: ef122063da90 -->
