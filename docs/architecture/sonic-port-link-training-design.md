@@ -18,201 +18,149 @@ related:
 ---
 
 !!! info "裏取りステータス: code-verified"
-    `sonic-swss/orchagent/portsorch.cpp` で `setPortLinkTraining(const Port &port, bool state)` (L3709-)、`link_training_failure_map` / `link_training_rx_status_map` (SAI enum 文字列化マップ)、`SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` の参照コメント (L3199)、`m_lt_cfg` / `m_link_training` フィールド更新ロジック (L4872-4909) を確認。CLI 側は `sonic-utilities/scripts/intfutil` の `PORT_LINK_TRAINING_STATUS = 'link_training_status'`、`display_link_training_status()`、`generate_link_training_status()` を確認、`port/porthlpr.cpp` には `getLinkTrainingStr()` も実装済み。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` L112 に `leaf link_training` を確認。
+    `sonic-swss/orchagent/portsorch.cpp:3709` の `setPortLinkTraining()`、`link_training_failure_map` / `link_training_rx_status_map`、`SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` 参照 (L3199)、`m_lt_cfg` / `m_link_training` 更新 (L4872-4909) を確認。CLI 側は `sonic-utilities/scripts/intfutil` の `display_link_training_status()` / `generate_link_training_status()`、`port/porthlpr.cpp` の `getLinkTrainingStr()` を確認。`sonic-yang-models/yang-models/sonic-port.yang:112` に `leaf link_training` を確認。
 
 # ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）
 
-## 概要
+## 読み手が知りたいこと
 
-リンクトレーニングは、高速シリアルリンクの送受信端が互いに通信して FIR フィルタの等化係数（pre-emphasis）を自動調整するプロトコル。これにより目標 BER を達成する。SONiC では従来、ベンダ依存の `media_settings.json` で TX FIR を **静的** に書き込む方式しかなかったが、CR/KR 系のトランシーバでは ODM ベンダがプリキャリブレーション値を提供しないことが多く、リンク信頼性の問題があった[^1]。
+- リンクトレーニング（LT）とは何で、なぜ必要なのか
+- `media_settings.json` の静的 FIR とどう違うのか
+- どの port で使えるか（ASIC 制約）
+- auto-negotiation と一緒に有効化していいのか
+- LT が trained にならない時の見方
 
-この機能は IEEE 802.3 の **clause 72（CR）** と **clause 93（KR/backplane）** に基づく動的なリンクトレーニングを SAI 経由で有効化する。auto-negotiation との併用は ASIC 制約に依存して可否が分かれる。
+## 結論
+
+LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。SONiC は既存 SAI 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を CONFIG_DB / STATE_DB に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
 
 ## 動作仕様
 
-### SAI レベルのインタフェース
-
-SONiC は既存の SAI port attribute をそのまま利用する[^1]:
+### SAI 属性
 
 | 属性 | 種別 | 用途 |
 |------|------|------|
 | `SAI_PORT_ATTR_LINK_TRAINING_ENABLE` | CREATE_AND_SET, bool | LT 有効化 |
-| `SAI_PORT_ATTR_LINK_TRAINING_FAILURE_STATUS` | READ_ONLY, enum | 失敗要因コード |
-| `SAI_PORT_ATTR_LINK_TRAINING_RX_STATUS` | READ_ONLY, enum | 受信側 trained/not trained |
+| `SAI_PORT_ATTR_LINK_TRAINING_FAILURE_STATUS` | READ_ONLY, enum | 失敗要因 |
+| `SAI_PORT_ATTR_LINK_TRAINING_RX_STATUS` | READ_ONLY, enum | trained/not trained |
+| `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | READ_ONLY, bool | per-port サポート |
 
-加えて、ポートごとに LT サポートを問い合わせるための新属性 `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（READ_ONLY, bool）が導入される。スイッチ silicon の中でも uplink/管理ポートなど LT を持たない物理ポートが混在しうるため、per-port での照会が必須[^1]。
-
-ベンダ SAI の最低要件は次のとおり[^1]:
-
-- swss は syncd への LT 設定要求の前に必ず能力を確認する
-- 未対応属性へのアクセスはエラー返却で済ませ、swss/syncd を crash させない
-- LT のデフォルトは disabled（後方互換）
+ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/syncd を crash させない、デフォルトは disabled[^1]。
 
 ### スキーマ
 
-#### CONFIG_DB `PORT` テーブル拡張
-
 ```
-key   = PORT|<port_name>
-field = link_training
-value = "on" | "off"
+CONFIG_DB: PORT|<port>  link_training = "on"|"off"
+APPL_DB:   PORT_TABLE   link_training を伝搬
+STATE_DB:  PORT_TABLE   link_training_status を 7 値で公開
 ```
 
-未設定なら disabled として扱われ、既存設定との互換が保たれる[^1]。
-
-#### APPL_DB `PORT_TABLE`
-
-`link_training` フィールドを追加。CONFIG_DB の admin 値を APPL_DB 経由で PortsOrch に伝搬する。
-
-#### STATE_DB `PORT_TABLE`
-
-`link_training_status` フィールドを追加し、運用状態を 7 値で表現する[^1]:
+`link_training_status` の値[^1]:
 
 | 値 | 意味 |
 |------|------|
 | `off` | 無効 |
-| `on` | 有効。詳細状態は未取得 |
-| `trained` | pre-emphasis 調整成功 |
-| `not_trained` | 有効だが未調整、エラーコードは未取得 |
-| `frame_lock` | training frame の同期検出 |
-| `snr_low` | SNR 低下しきい値検出 |
-| `timeout` | training 過程がタイムアウト |
+| `on` | 有効。詳細未取得 |
+| `trained` | 調整成功 |
+| `not_trained` | 有効だが未調整 |
+| `frame_lock` | training frame の同期 |
+| `snr_low` | SNR 低下しきい値 |
+| `timeout` | 過程タイムアウト |
 
-### CLI
-
-設定[^1]:
-
-```bash
-config interface link-training <interface_name> on|off
-```
-
-状態確認[^1]（STATE_DB から取得）:
-
-```bash
-show interfaces link-training status [<interface_name>]
-```
-
-出力例:
-
-```
-Interface      LT Oper    LT Admin    Oper    Admin
------------  -----------  ----------  ------  -------
-Ethernet0      trained          on      up       up
-Ethernet8          off           -    down       up
-Ethernet32  not trained          on    down       up
-```
-
-`LT Oper` 列は STATE_DB の `link_training_status`、`LT Admin` 列は CONFIG_DB の `link_training` に対応する。
-
-### YANG
-
-`sonic-port.yang` に次の leaf を追加[^1]:
-
-```yang
-leaf link_training {
-  type string {
-    pattern "on|off";
-  }
-}
-```
-
-### PortsOrch の処理フロー
+### PortsOrch のフロー
 
 ```mermaid
 flowchart TB
-    BOOT[起動] --> Q[per-port<br/>SAI_PORT_ATTR_SUPPORTED_<br/>LINK_TRAINING_MODE 照会]
-    Q --> CAP[Port::m_port_cap_lt<br/>に保存]
-    CAP --> CFG[CONFIG_DB の<br/>link_training 受信]
-    CFG --> CHK{m_port_cap_lt?}
-    CHK -- false --> SKIP[要求拒否 / ログ]
-    CHK -- true --> AN{auto-neg<br/>有効?}
-    AN -- yes --> ANRULE[ASIC ルール依存で<br/>LT を抑止 or 併用]
-    AN -- no --> SET[SAI_PORT_ATTR_LINK_TRAINING_ENABLE<br/>を syncd へ]
+    BOOT[起動] --> Q[per-port<br/>SUPPORTED_LINK_TRAINING_MODE]
+    Q --> CAP[Port::m_port_cap_lt]
+    CAP --> CFG[CONFIG_DB link_training 受信]
+    CFG --> CHK{cap=true?}
+    CHK -- false --> SKIP[拒否 / ログ]
+    CHK -- true --> AN{auto-neg?}
+    AN -- yes --> ANRULE[ASIC ルール依存]
+    AN -- no --> SET[SAI に反映]
     ANRULE --> SET
-    SET --> SAVE[pre-emphasis 設定要求は<br/>保存して LT 更新時に replay]
+    SET --> SAVE[pre-emphasis 要求は replay]
 ```
 
-起動時に PortsOrch が syncd に対して per-port の LT 能力を問い合わせ、`Port` オブジェクト内の `m_port_cap_lt = bool` に保持する[^1]。auto-negotiation との同時利用可否は ASIC ごとの SAI 実装に委ねられる。
+起動時に PortsOrch が syncd に per-port LT 能力を問い合わせ `Port::m_port_cap_lt` に保持する。AN との共存可否は ASIC 実装次第[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
   During system startup, PortsOrch should query for the per-port link-training abilities from syncd, and have these per-port flags maintained in the m_port_cap_lt field of Port object.
-  the link-training may or may not be disabled when auto-negotiation is activated, it depends on the switch ASIC limitations in the individual SAI implementation, and the pre-emphasis configuration request should be saved and replayed upon link-training configuration updates
-reasoning: PortsOrch のフィールドと AN 共存ルール、pre-emphasis replay 仕様の根拠。
+reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 -->
 
 ### ステータスポーラ
 
-PortsOrch にタイマースレッドを追加し、シングルスレッドで全ポートを順に巡回する。発火 / 停止条件[^1]:
+PortsOrch のタイマースレッドが全 port を順に巡回。発火/停止条件[^1]:
 
-- LT 有効化遷移 → ポーラ起動
-- LT 有効ポートでリンクダウン → ポーラ起動
-- LT 無効化遷移 → ポーラ停止
-- LT 有効ポートでリンクアップ → ポーラ停止
+- LT 有効化 / LT 有効ポートのリンクダウン → 起動
+- LT 無効化 / LT 有効ポートのリンクアップ → 停止
 
-つまり「リンクが立っている間は STATE_DB を頻繁に更新せず、確立直後と障害時だけ集中的にポーリングする」設計。
+リンクが立ってる間は STATE_DB を頻繁に更新せず、確立直後と障害時だけ集中ポーリングする設計。
 
-### media_settings.json との関係
+### `media_settings.json` との関係
 
-従来の `media_settings.json` は media（光モジュールの種別）に応じた **静的な** TX FIR 値の塊だった。LT は **動的** な等化調整なので、両者は補完関係にある[^1]:
+媒体ごとの **静的 TX FIR** を書き込む従来方式は補完関係[^1]:
 
-- LT 非対応 silicon / ポート: 従来どおり media_settings.json の静的 FIR
-- LT 対応 silicon の CR/KR: LT を有効化して動的に最適化
+- LT 非対応 / silicon・port: 静的 FIR を使う
+- LT 対応 (CR/KR): LT で動的に調整、pre-emphasis 要求は LT 更新時に replay
 
 ## 設定
 
-### 関連する CONFIG_DB
-
 | Table | Key | フィールド |
 |-------|-----|------------|
-| `PORT` | `<port_name>` | `link_training` (`on` / `off`) |
-
-### 関連する CLI
-
-| Command | 用途 |
-|---------|------|
-| `config interface link-training <if> <on\|off>` | LT モード設定 |
-| `show interfaces link-training status [<if>]` | LT 運用状態の表示 |
-
-### 設定例
+| `PORT` | `<port>` | `link_training` (`on` / `off`) |
 
 ```bash
 config interface link-training Ethernet0 on
 show interfaces link-training status Ethernet0
 ```
 
+出力例:
+
+```
+Interface      LT Oper      LT Admin    Oper    Admin
+-----------  -----------    ----------  ------  -------
+Ethernet0      trained          on      up      up
+Ethernet32   not trained        on      down    up
+```
+
 ## 制限事項
 
-HLD の `Limitations` セクションは `N/A` のみ[^1]。実運用上の留意点として:
+HLD の `Limitations` は `N/A` のみ[^1]。実運用上:
 
-- LT は IEEE 802.3 clause 72/93 が対象であり、すべての media で動くわけではない（CR / KR backplane / SFP copper が主対象）
-- LT 対応は per-port で異なる。`m_port_cap_lt` が false のポートでは設定要求は実行されない
-- auto-negotiation との同時利用可否は ASIC 制約に依存
+- 対象 media は CR / KR backplane / SFP copper が主。すべての media で動くわけではない
+- LT 対応は per-port。`m_port_cap_lt=false` の port は要求が実行されない
+- auto-negotiation との同時利用は ASIC 制約に依存
 
 ## 干渉する機能
 
-- **auto-negotiation**: ASIC によっては LT と排他、もしくは併用可。`config interface autoneg` の挙動と組合せ次第で `LT Oper` が `not_trained` のままになることがある
-- **media_settings.json**: 静的 FIR 設定。LT 有効ポートでは LT 側の調整結果が優先されるが、pre-emphasis 設定要求は `replay` 対象として PortsOrch に保持される[^1]
-- **warmboot**: SAI および下位レイヤは warmboot 中、LT パラメータの値に関わらずポートを flap させてはならない[^1]
-- **gearbox（PHY 経由ポート）**: HLD の scope 外。Gearbox 配下の port については本機能の動作保証は別途検討
+- **auto-negotiation**: ASIC によって排他 / 併用可。`LT Oper=not_trained` のままになる場合あり
+- **`media_settings.json`**: 静的 FIR。LT 有効 port では LT が優先、要求は replay 対象として保持
+- **warmboot**: SAI / 下位 layer は warmboot 中 LT 値に関わらず port を flap させてはならない[^1]
+- **gearbox**: 本 HLD scope 外
 
 ## トラブルシューティング
 
 ```bash
-# LT が有効なはずなのに up しない
+# LT が trained にならない
 show interfaces link-training status Ethernet0
-# LT Oper が "not_trained" / "snr_low" / "timeout" → 物理レイヤ問題（ケーブル品質 / 距離）
-# LT Oper が "off" のまま → m_port_cap_lt が false の可能性。ASIC のサポート確認
+# not_trained / snr_low / timeout → 物理問題（ケーブル品質 / 距離）
+# off のまま → m_port_cap_lt が false。ASIC サポート要確認
 
-# LT を有効化しても ASIC_DB に反映されない
-redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_PORT:*" | head
-# SAI_PORT_ATTR_LINK_TRAINING_ENABLE が含まれているか確認
-
-# auto-neg と同時有効でリンクが立たない
-# config interface autoneg <if> off で AN を切ってから LT 単独で再評価
+# AN と同時有効でリンクが立たない
+config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評価
 ```
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_link_training/port-link-training-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 関連ページ
+
+- [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: config-interface](../reference/cli/config-interface.md)
+- [CLI: show-interfaces](../reference/cli/show-interfaces.md)
