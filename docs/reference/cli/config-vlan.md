@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-`config vlan` は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。`config/vlan.py` に実装が分離されており、`config/main.py` 末尾の `config.add_command(vlan.vlan)` で登録される構造[^1]。
+`config vlan` は [VLAN](../../reference/glossary.md#term-vlan) の作成・削除、メンバ追加・削除、Proxy-[ARP](../../reference/glossary.md#term-arp) のオン／オフを担当する。`config/vlan.py` に実装が分離されており、`config/main.py` 末尾の `config.add_command(vlan.vlan)` で登録される構造[^1]。
 
 新規 VLAN 作成時は `VLAN` テーブルだけでなく **`DHCP_RELAY` テーブルにも空エントリを書き込む**仕様。これは `dhcp_relay` の対象 VLAN が `VLAN` テーブルではなく `DHCP_RELAY` テーブルから引かれるための互換的な設計。
 
@@ -146,7 +146,7 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VLAN`](../config-db/vlan.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT`
 
 <!-- ref-triangle:end -->
 
@@ -162,7 +162,7 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 ### 典型的な利用シーン
 
 - VLAN 新設・メンバ追加・IP 付与の典型フロー。
-- DHCP relay や VRF 紐付けの前段としての VLAN セットアップ。
+- DHCP relay や [VRF](../../reference/glossary.md#term-vrf) 紐付けの前段としての VLAN セットアップ。
 
 ### よくある落とし穴
 
@@ -251,3 +251,5 @@ flowchart LR
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d992aca97f65 -->

@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される DPU 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
+SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される [DPU](../../reference/glossary.md#term-dpu) 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,14 +57,14 @@ KUBERNETES_MASTER|SERVER
 
 ## 購読者
 
-- `ctrmgrd` (`docker-config-engine`): CONFIG_DB を購読し、対象 feature の K8s モード切替・kubelet 設定を実施
+- `ctrmgrd` (`docker-config-engine`): [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、対象 feature の K8s モード切替・kubelet 設定を実施
 - `FEATURE` テーブルの `set_owner = kube` を持つコンテナが K8s からデプロイされる
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `FEATURE` (`set_owner`、`state`、`auto_restart`)
 - 関連 CLI: `config kubernetes server ip/port/disable`、`show kubernetes`
-- 関連 YANG: `sonic-kubernetes_master`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-kubernetes_master`
 
 <!-- ref-triangle:start -->
 
@@ -98,3 +98,5 @@ sonic-db-cli CONFIG_DB hgetall 'KUBERNETES_MASTER|SERVER'
 show kube server config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c8088b9a65fe -->

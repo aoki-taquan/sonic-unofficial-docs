@@ -78,7 +78,7 @@ module: sonic-kdump
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `KDUMP|config`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `KDUMP|config`
 - CLI: `config kdump`
 
 <!-- ref-triangle:start -->
@@ -95,7 +95,7 @@ module: sonic-kdump
 
 ### 典型的なデプロイ位置
 
-- kernel crash dump (kdump) 設定。`KDUMP|config` を hostcfgd が `kdump-tools` に反映。
+- kernel crash dump (kdump) 設定。`KDUMP|config` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `kdump-tools` に反映。
 
 ### よくある落とし穴
 
@@ -112,3 +112,5 @@ show kdump status
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-kdump.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: a31aab569e22 -->

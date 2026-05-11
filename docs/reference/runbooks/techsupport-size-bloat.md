@@ -33,7 +33,7 @@ related:
 1. **`/var/log/syslog*` の長期保持**: rotate されず数 GB 蓄積
 2. **core dump の同梱**: `/var/core/` に過去の crash dump が大量
 3. **特定 daemon が DEBUG ログを吐き続けている**
-4. **BGP / FRR の log volume 過大**（debug bgp updates 等が有効のまま）
+4. **[BGP](../../reference/glossary.md#term-bgp) / [FRR](../../reference/glossary.md#term-frr) の log volume 過大**（debug bgp updates 等が有効のまま）
 5. **counters CSV / dump の冗長収集**: cumulative ログ
 
 ## 切り分け手順
@@ -91,5 +91,7 @@ sudo logrotate -d /etc/logrotate.conf 2>&1 | head -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ master — generate_dump
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — generate_dump
 [^2]: sonic-net/sonic-utilities @ master — show/main.py
+
+<!-- glossary-links-injected: fb213a7a73e6 -->

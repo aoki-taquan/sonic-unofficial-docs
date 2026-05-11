@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-CLI / REST / gNMI から **non-management な static route** を SONiC 管理フレームワーク経由で投入する設計。CONFIG_DB の `STATIC_ROUTE` テーブルに書き込み、`frrcfgd` がそれを vtysh 経由で FRR に流し込む形を取る[^1]。VRF 間の route leak（`nexthop-vrf`）と blackhole route も同じテーブルで表現する。
+CLI / REST / [gNMI](../reference/glossary.md#term-gnmi) から **non-management な static route** を SONiC 管理フレームワーク経由で投入する設計。[CONFIG_DB](../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに書き込み、`frrcfgd` がそれを vtysh 経由で [FRR](../reference/glossary.md#term-frr) に流し込む形を取る[^1]。[VRF](../reference/glossary.md#term-vrf) 間の route leak（`nexthop-vrf`）と blackhole route も同じテーブルで表現する。
 
 ## 動作仕様
 
@@ -82,7 +82,7 @@ blackhole = false,    true
 
 ### NEIGH_RESOLVE_TABLE（APPL_DB）
 
-next-hop が ARP/ND 未解決の場合、orchagent の router/neighbor モジュールが APPL_DB の `NEIGH_RESOLVE_TABLE` に書き、`nbrmgrd` が解決を起こす[^1]。
+next-hop が [ARP](../reference/glossary.md#term-arp)/ND 未解決の場合、[orchagent](../reference/glossary.md#term-orchagent) の router/neighbor モジュールが [APPL_DB](../reference/glossary.md#term-appl_db) の `NEIGH_RESOLVE_TABLE` に書き、`nbrmgrd` が解決を起こす[^1]。
 
 ### VRF 間の挙動
 
@@ -141,13 +141,13 @@ sonic-cfggen -a '{
 - next-hop の AF は prefix と同じである必要がある（IPv4 prefix に IPv6 next-hop は不可）。
 - インタフェース VRF 移動時の inactive 経路の自動 cleanup は無し（ユーザ責任）[^1]。
 - `nexthop` / `ifname` / `distance` / `nexthop-vrf` / `blackhole` のリスト長は同一インデックスで対応関係を持つため、揃える必要がある。
-- Warm boot 時の静的経路保持は HLD で要件として明記されている[^1]。
+- Warm boot 時の静的経路保持は [HLD](../reference/glossary.md#term-hld) で要件として明記されている[^1]。
 
 ## 干渉する機能
 
 - **frrcfgd / FRR staticd**: 本機能の出力先。FRR 側で `staticd` daemon が動いている必要がある。
 - **VRF**: route leak 機能はターゲット VRF が事前定義されている必要がある。
-- **fpmsyncd / RouteOrch**: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / SAI 側の特別処理は不要。
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / RouteOrch**: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / [SAI](../reference/glossary.md#term-sai) 側の特別処理は不要。
 
 ## トラブルシューティング
 
@@ -165,3 +165,5 @@ sonic-cfggen -a '{
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 33284a13dfdc -->

@@ -103,7 +103,7 @@ module: sonic-sflow
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SFLOW|global`, `SFLOW_COLLECTOR|<name>`, `SFLOW_SESSION|<port>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SFLOW|global`, `SFLOW_COLLECTOR|<name>`, `SFLOW_SESSION|<port>`
 - CLI: `config sflow`
 
 <!-- ref-triangle:start -->
@@ -137,3 +137,5 @@ show sflow
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-sflow.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 896d391185a9 -->

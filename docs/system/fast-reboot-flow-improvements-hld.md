@@ -27,10 +27,10 @@ related:
 
 ## 概要
 
-SONiC fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 HLD[^1]。中身は次の 2 軸:
+SONiC fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 [HLD](../reference/glossary.md#term-hld)[^1]。中身は次の 2 軸:
 
 1. **fast-reboot の終了を示す flag を導入**（warmboot-finalizer を流用）。これにより flex counter 有効化など「init 完了後に走らせたい処理」を遅延起動できる
-2. **異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂**。dump file（default gateway / neighbor / FDB）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）[^1]
+2. **異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂**。dump file（default gateway / neighbor / [FDB](../reference/glossary.md#term-fdb)）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）[^1]
 
 実測（202111 + Nvidia SN2700）: dump あり 28.07s / なし 25.11s と HLD 内に記載[^1]。
 
@@ -54,19 +54,19 @@ flowchart TB
 
 ### syncd: INIT view → APPLY view
 
-syncd は再起動時に **INIT view**（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
+[syncd](../reference/glossary.md#term-syncd) は再起動時に **INIT view**（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
 
 ### neighsyncd: restore_neighbors.py
 
-旧 image 終了直前に保存した既知 neighbor 一覧に対し、起動後に ARP/NDP を打って現実の MAC / 状態を取り戻す[^1]。これがないと neighbor は learning 待ちで slow。
+旧 image 終了直前に保存した既知 neighbor 一覧に対し、起動後に [ARP](../reference/glossary.md#term-arp)/[NDP](../reference/glossary.md#term-ndp) を打って現実の MAC / 状態を取り戻す[^1]。これがないと neighbor は learning 待ちで slow。
 
 ### fpmsyncd: route 復元
 
-旧 APPDB の `ROUTE_TABLE` をそのまま温存し、bgpd 起動完了後に diff を流し込む。fpmsyncd は新規 zebra と同期。
+旧 APPDB の `ROUTE_TABLE` をそのまま温存し、bgpd 起動完了後に diff を流し込む。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) は新規 [zebra](../reference/glossary.md#term-zebra) と同期。
 
 ### Reboot finalizer
 
-`finalize-warmboot.sh` を fast-reboot 兼用にして、終了 flag を Redis から外すタイミングを統一。これを起点に `enable_counters.py` などの後続スクリプトが走る[^1]。
+`finalize-warmboot.sh` を fast-reboot 兼用にして、終了 flag を [Redis](../reference/glossary.md#term-redis) から外すタイミングを統一。これを起点に `enable_counters.py` などの後続スクリプトが走る[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -114,7 +114,7 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 
 - **system-wide warmboot**: 同じスクリプト基盤と finalizer を共有
 - **flex counter / enable_counters.py**: finalizer flag 待ちで起動
-- **SAI Application Extension Infrastructure**: HLD 末尾に integration 章あり[^1]
+- **[SAI](../reference/glossary.md#term-sai) Application Extension Infrastructure**: HLD 末尾に integration 章あり[^1]
 
 ## トラブルシューティング
 
@@ -150,3 +150,5 @@ HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2d5a5a93f3a3 -->

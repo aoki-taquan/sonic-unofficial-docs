@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-SONiC の QoS には **scheduling** と **shaping** の 2 軸がある[^1]:
+SONiC の [QoS](../reference/glossary.md#term-qos) には **scheduling** と **shaping** の 2 軸がある[^1]:
 
 - **Scheduling**: egress queue への帯域配分。SP / WRR / DWRR の 3 方式
 - **Shaping**: queue / port 単位の最大帯域（および queue では最小帯域）制限
 
-scheduler オブジェクトは **profile** 単位で定義し、queue または port にバインドする。SAI レイヤでは `saischeduler.h` の `create_scheduler` / `set_scheduler_group_attribute` / `set_port_attribute` を使う[^1]。
+scheduler オブジェクトは **profile** 単位で定義し、queue または port にバインドする。[SAI](../reference/glossary.md#term-sai) レイヤでは `saischeduler.h` の `create_scheduler` / `set_scheduler_group_attribute` / `set_port_attribute` を使う[^1]。
 
 要件[^1]:
 
@@ -139,8 +139,8 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 
 ## 制限事項
 
-- 物理ポートおよびその egress queue にのみ適用可能。**VLAN / PortChannel インタフェースでは設定不可**[^1]
-- scheduler profile 上限は ASIC 依存。HLD 上の参考値は **128**[^1]
+- 物理ポートおよびその egress queue にのみ適用可能。**[VLAN](../reference/glossary.md#term-vlan) / [PortChannel](../reference/glossary.md#term-portchannel) インタフェースでは設定不可**[^1]
+- scheduler profile 上限は ASIC 依存。[HLD](../reference/glossary.md#term-hld) 上の参考値は **128**[^1]
 - 専用の `show scheduler` 等の CLI は無く、queue 統計で間接的に観測する
 
 ## 干渉する機能
@@ -164,3 +164,5 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 19aae067fe9e -->

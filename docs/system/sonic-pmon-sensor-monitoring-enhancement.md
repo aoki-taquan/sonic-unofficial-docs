@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の **環境センサ** が多数ある。Linux の `lm-sensors` / `hwmon` でも一部読めるが、HLD は次の限界を指摘[^1]:
+ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の **環境センサ** が多数ある。Linux の `lm-sensors` / `hwmon` でも一部読めるが、[HLD](../reference/glossary.md#term-hld) は次の限界を指摘[^1]:
 
 - hwmon が対応していないデバイスは見えない
 - 内蔵 monitoring が無い simple device の **alarm** が上がらない
@@ -81,7 +81,7 @@ flowchart LR
 
 ### Entity MIB 連携
 
-新規センサ群は **Entity MIB / Entity Sensor MIB** にも晒される[^1]。これにより SNMP 経由のモニタリングシステムから、温度と同じインタフェースで電圧・電流が見える。
+新規センサ群は **Entity MIB / Entity Sensor MIB** にも晒される[^1]。これにより [SNMP](../reference/glossary.md#term-snmp) 経由のモニタリングシステムから、温度と同じインタフェースで電圧・電流が見える。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/pmon/pmon-sensormon.md#L34-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -121,7 +121,7 @@ reasoning: SensorMon を新設する根本動機の根拠。
 
 ### 関連する CONFIG_DB
 
-該当なし（HLD では明示的な CONFIG_DB 利用無し）。しきい値は platform API 提供。
+該当なし（HLD では明示的な [CONFIG_DB](../reference/glossary.md#term-config_db) 利用無し）。しきい値は platform API 提供。
 
 ### 関連する CLI
 
@@ -174,3 +174,5 @@ journalctl --since "1 hour ago" | grep -iE "voltage|current.*alarm"
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-sensormon.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: a6c84020c43e -->

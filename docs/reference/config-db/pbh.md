@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。`PBH_TABLE` が適用 interface の集合を定義し、`PBH_RULE` が table 内の match 条件、priority、適用する `PBH_HASH` を持つ[^1]。hash profile と hash field は同じ YANG モジュールの `PBH_HASH` / `PBH_HASH_FIELD` で定義され、実装側のテーブル名定数は `schema.h` も参照する[^2]。
+Policy Based Hashing (PBH) は、packet match 条件ごとに [ECMP](../../reference/glossary.md#term-ecmp) / [LAG](../../reference/glossary.md#term-lag) hash profile を切り替えるための [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル群。`PBH_TABLE` が適用 interface の集合を定義し、`PBH_RULE` が table 内の match 条件、priority、適用する `PBH_HASH` を持つ[^1]。hash profile と hash field は同じ [YANG](../../reference/glossary.md#term-yang) モジュールの `PBH_HASH` / `PBH_HASH_FIELD` で定義され、実装側のテーブル名定数は `schema.h` も参照する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -90,7 +90,7 @@ PBH_HASH_FIELD|<hash_field_name>
 ## 購読者
 
 - `sonic-utilities/scripts/pbh`（CLI 側スクリプト）: CONFIG_DB の PBH table / rule / hash / hash-field を読み取り、ユーザ向け CLI を提供する（独立した `pbhmgrd` プロセスは master には存在しない）。
-- `orchagent` の `PbhOrch` (`sonic-swss/orchagent/pbhorch.cpp`): CONFIG_DB の PBH 設定を直接 subscribe して SAI hash / ACL 相当のオブジェクトへ反映する。
+- `orchagent` の `PbhOrch` (`sonic-swss/orchagent/pbhorch.cpp`): CONFIG_DB の PBH 設定を直接 subscribe して [SAI](../../reference/glossary.md#term-sai) hash / [ACL](../../reference/glossary.md#term-acl) 相当のオブジェクトへ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -136,3 +136,5 @@ show pbh rule
 show pbh statistics
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: df88c1264148 -->

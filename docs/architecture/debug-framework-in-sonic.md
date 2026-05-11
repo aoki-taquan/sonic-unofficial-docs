@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC コンポーネント（特に OrchAgent モジュール）が **内部状態のスナップショットダンプ** を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み[^1]。Redis チャネル経由でトリガを配り、SwSS 共有ライブラリの `SWSS_DEBUG_PRINT` マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。
+SONiC コンポーネント（特に OrchAgent モジュール）が **内部状態のスナップショットダンプ** を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み[^1]。[Redis](../reference/glossary.md#term-redis) チャネル経由でトリガを配り、SwSS 共有ライブラリの `SWSS_DEBUG_PRINT` マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。
 
 ## 動作仕様
 
@@ -71,7 +71,7 @@ public:
 
 | API | FW がやること | コンポーネント側 |
 |-----|---------------|------------------|
-| `linkWithFramework` | Selectable + 受信スレッド + APPL_DB sub を作成、callback 起動 | DumpInfoFunc 登録のみ |
+| `linkWithFramework` | Selectable + 受信スレッド + [APPL_DB](../reference/glossary.md#term-appl_db) sub を作成、callback 起動 | DumpInfoFunc 登録のみ |
 | `linkWithFrameworkNoThread` | 登録のみ。post-action は実施 | 自前で sub / event ループ / callback 呼び |
 
 OrchAgent では既存の Redis event ループに乗せるため `linkWithFrameworkNoThread` を採用する[^1]。`DebugDumpOrch` という派生 Orch を 1 つ立て、`addDbgCompMap()` で RouteOrch / NeighborOrch 等が自分のダンプ関数を登録する。
@@ -104,7 +104,7 @@ DAEMON:<daemon_name>:           ; 完了応答
 | `show debug actions` | 設定済みの FW action を表示 |
 | `show interfaces pktdrop` | drop / error counter を全 if で表示 |
 
-OrchAgent 例（HLD 抜粋）[^1]:
+OrchAgent 例（[HLD](../reference/glossary.md#term-hld) 抜粋）[^1]:
 
 ```
 show debug routeorch routes -v VrfRED -p 100.100.4.0/24
@@ -113,7 +113,7 @@ show debug neighorch nhops
 show debug neighorch neigh
 ```
 
-出力にはプレフィックス、ネクストホップ、SAI OID、ECMP グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。
+出力にはプレフィックス、ネクストホップ、[SAI](../reference/glossary.md#term-sai) OID、[ECMP](../reference/glossary.md#term-ecmp) グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。
 
 ### Configuration Defaults
 
@@ -174,7 +174,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 
 ## tech-support 拡張・補助スクリプト
 
-`show techsupport` は本 HLD の延長で **STATE_DB dump、ASIC 固有 dump、critical log の persistent log 切り出し** を追加[^1]。さらに次のヘルパーが付随する:
+`show techsupport` は本 HLD の延長で **[STATE_DB](../reference/glossary.md#term-state_db) dump、ASIC 固有 dump、critical log の persistent log 切り出し** を追加[^1]。さらに次のヘルパーが付随する:
 
 - "headline" 系の summary 印字スクリプト
 - 収集情報の upload を非破壊的に行う helper
@@ -236,7 +236,7 @@ HLD は「コンポーネントが `linkWithFramework` で自身の dump callbac
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-utilities #1669: \[debug dump util\] Techsupport addition (merged)](https://github.com/sonic-net/sonic-utilities/pull/1669) — `debug dump` ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、`show techsupport` 連携部分はここに収束した。
+- [[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #1669: \[debug dump util\] Techsupport addition (merged)](https://github.com/sonic-net/sonic-utilities/pull/1669) — `debug dump` ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、`show techsupport` 連携部分はここに収束した。
 - HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は **未確認**。実装は機能ごとの個別 PR に分散している。
 
 ## 引用元
@@ -256,3 +256,5 @@ HLD は「コンポーネントが `linkWithFramework` で自身の dump callbac
 - show debug / show interfaces pktdrop CLI の sonic-utilities 取り込み確認
 - 2019-07 v0.3 から 6 年以上経過しており現行実装との乖離可能性 高
 -->
+
+<!-- glossary-links-injected: ab467fd16eb5 -->

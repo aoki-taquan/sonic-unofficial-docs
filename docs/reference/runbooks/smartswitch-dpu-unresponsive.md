@@ -24,14 +24,14 @@ related:
 
 ## 症状
 
-- `show chassis modules status` で DPU の state が `Offline` / `Empty` のまま
-- DPU 上の DASH service にトラフィックが乗らない
+- `show chassis modules status` で [DPU](../../reference/glossary.md#term-dpu) の state が `Offline` / `Empty` のまま
+- DPU 上の [DASH](../../reference/glossary.md#term-dash) service にトラフィックが乗らない
 - mid-plane bridge 経由の ping (host → DPU) が落ちる
 
 ## 想定原因
 
 1. **DPU electrical power が startup-pending**: `chassisd` から起動命令が出ていない / DPU が応答しない
-2. **mid-plane bridge IP の設計不整合**: NPU 側と DPU 側で同一 subnet 期待だが片側のみ設定
+2. **mid-plane bridge IP の設計不整合**: [NPU](../../reference/glossary.md#term-npu) 側と DPU 側で同一 subnet 期待だが片側のみ設定
 3. **PCIe / management link の障害**: HW 側
 4. **DPU OS イメージが boot 不能**: DPU 内 SONiC が起動途中で stuck
 5. **`CHASSIS_MODULE|DPU0` の admin_status が `down`**
@@ -89,8 +89,8 @@ dmesg | grep -iE "pcie|dpu" | tail
 
 - ソフト reset: `sudo config chassis modules shutdown DPU0` → `startup DPU0`
 - chassisd 再起動: `sudo systemctl restart pmon`
-- mid-plane bridge を再構成 (CONFIG_DB の `MID_PLANE_BRIDGE` を minigraph 由来で再生成)
-- DPU OS image を再 install（ベンダー手順に従う。SONiC SmartSwitch では `dpu-installer` 系コマンド）
+- mid-plane bridge を再構成 ([CONFIG_DB](../../reference/glossary.md#term-config_db) の `MID_PLANE_BRIDGE` を minigraph 由来で再生成)
+- DPU OS image を再 install（ベンダー手順に従う。SONiC [SmartSwitch](../../reference/glossary.md#term-smartswitch) では `dpu-installer` 系コマンド）
 - HW 障害が疑われる場合は techsupport で chassis 全体を取得し保守依頼
 
 ## 関連ページ
@@ -103,3 +103,5 @@ dmesg | grep -iE "pcie|dpu" | tail
 
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — chassisd
 [^2]: sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト
+
+<!-- glossary-links-injected: 52050b757b2f -->

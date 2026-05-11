@@ -17,18 +17,18 @@ keywords:
 
 # 概要
 
-SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
+SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを [Redis](../../reference/glossary.md#term-redis) 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
 
 ## この章は何のためにあるか
 
-機能章（BGP / ACL / VRF / VXLAN など）を読み進めると、必ず次の用語に出会う: `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`COUNTERS_DB`、`ASIC_DB`、`ERROR_DB`、`orchagent`、`sub-Orch`、`syncd`、`sairedis`、`SAI`、`ProducerStateTable`、`bulk counter`。これらを **どの章でも同じ意味で使えるように一度地ならしする** のが本章の目的である。
+機能章（[BGP](../../reference/glossary.md#term-bgp) / [ACL](../../reference/glossary.md#term-acl) / [VRF](../../reference/glossary.md#term-vrf) / [VXLAN](../../reference/glossary.md#term-vxlan) など）を読み進めると、必ず次の用語に出会う: `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`COUNTERS_DB`、`ASIC_DB`、`ERROR_DB`、`orchagent`、`sub-Orch`、`syncd`、`sairedis`、`SAI`、`ProducerStateTable`、`bulk counter`。これらを **どの章でも同じ意味で使えるように一度地ならしする** のが本章の目的である。
 
 具体的には、読み手の以下の疑問に章全体で答える。
 
 1. なぜ DB がこれほど多いのか（CONFIG / APPL / STATE / ASIC / ERROR / COUNTERS の理由）
-2. APPL_DB と CONFIG_DB はどう違うのか（CONFIG_DB に直接書いてはいけないのか）
-3. orchagent と syncd の責務はどこで切れるのか
-4. SAI の失敗（attribute not supported、status returned）はどう報告されるのか
+2. [APPL_DB](../../reference/glossary.md#term-appl_db) と [CONFIG_DB](../../reference/glossary.md#term-config_db) はどう違うのか（CONFIG_DB に直接書いてはいけないのか）
+3. [orchagent](../../reference/glossary.md#term-orchagent) と [syncd](../../reference/glossary.md#term-syncd) の責務はどこで切れるのか
+4. [SAI](../../reference/glossary.md#term-sai) の失敗（attribute not supported、status returned）はどう報告されるのか
 5. counter / debug / dump の話が他の章に出てきたとき、どの仕組みを呼んでいるのか
 
 ## 何を解決するか
@@ -56,18 +56,18 @@ flowchart LR
   ERR --> ORCH
 ```
 
-機能章で「APPL_DB に書く」「STATE_DB を見て確認」と書かれていたら、必ずこの図のどこかの矢印を辿っているはずである。本章はこの図を、機能を持たない素の地図として扱う。
+機能章で「APPL_DB に書く」「[STATE_DB](../../reference/glossary.md#term-state_db) を見て確認」と書かれていたら、必ずこの図のどこかの矢印を辿っているはずである。本章はこの図を、機能を持たない素の地図として扱う。
 
 ## 用語の整理
 
 | 用語 | 意味 | 補足 |
 | --- | --- | --- |
 | Redis DB | 名前付きの key-value 空間。番号で識別される | `database_config.json` で定義 |
-| ProducerStateTable | 書き手用の async API | APPL_DB の追記に使う |
-| ConsumerStateTable | 読み手用の async API | orchagent の sub-Orch が購読 |
+| [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) | 書き手用の async API | APPL_DB の追記に使う |
+| [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | 読み手用の async API | orchagent の sub-Orch が購読 |
 | Bulk API | 複数 SAI 呼び出しをまとめる | route / neighbor の大量更新 |
 | Flex counter | 周期的に SAI から counter を引く仕組み | counter group で頻度を設定 |
-| sairedis | SAI 呼び出しを Redis ASIC_DB 経由で記録／再生するライブラリ | orchagent ↔ syncd 間の本体 |
+| sairedis | SAI 呼び出しを Redis [ASIC_DB](../../reference/glossary.md#term-asic_db) 経由で記録／再生するライブラリ | orchagent ↔ syncd 間の本体 |
 | view switching | warm boot 時に古い APPL_DB から新しい APPL_DB へ切り替える操作 | warm reboot で必須 |
 | handleSai\*Status | SAI 呼び出し失敗を分類するハンドラ | retriable / fatal / ignore に振り分け |
 
@@ -123,21 +123,21 @@ sequenceDiagram
 | SAI | ベンダ間の差異吸収 | バージョン整合、capability 問い合わせ、失敗ハンドリング |
 | Counter / Debug | telemetry、observability、ASIC 計数 | bulk/flex counter、dump、ERROR_DB |
 
-機能章で個別に出てきた話を「内部実装側の共通テーマ」に揃え直すための章である。スキーマの全カラム表や CLI の細則は [`docs/reference/`](../../reference/index.md) が引き受け、個別 HLD は `docs/internals/` / `docs/architecture/` / `docs/platform/` / `docs/system/` 配下に残す。
+機能章で個別に出てきた話を「内部実装側の共通テーマ」に揃え直すための章である。スキーマの全カラム表や CLI の細則は [`docs/reference/`](../../reference/index.md) が引き受け、個別 [HLD](../../reference/glossary.md#term-hld) は `docs/internals/` / `docs/architecture/` / `docs/platform/` / `docs/system/` 配下に残す。
 
 ## 機能章との重複を避けるための切り分け
 
 機能章は「特定機能を運用するためにどの DB を見て、どの daemon を疑うか」を読み手の目的順で書く。この章は「DB と daemon そのものがどう設計されているか」を書く。
 
-- 例: BGP route が ASIC に入るまでの経路は [BGP アーキテクチャ](../02-bgp/architecture.md) で読む。一方、ROUTE_TABLE 全般がどう APPL_DB と ASIC_DB に流れるか、ProducerStateTable とは何か、view switching とは何か、はここで読む。
+- 例: BGP route が ASIC に入るまでの経路は [BGP アーキテクチャ](../02-bgp/architecture.md) で読む。一方、[ROUTE_TABLE](../../reference/glossary.md#term-route_table) 全般がどう APPL_DB と ASIC_DB に流れるか、ProducerStateTable とは何か、view switching とは何か、はここで読む。
 - 例: ACL の SAI 呼び出し失敗を切り分けるときは [ACL 運用](../07-acl-copp-mirror/operations.md) で読む。一方、SAI 失敗そのものの ERROR_DB / handleSai*Status 設計はここで読む。
 
 ## DB の責務（早見表）
 
 | DB | 役割 | 主な書き手 | 主な読み手 |
 | --- | --- | --- | --- |
-| `CONFIG_DB` | 永続化された設定 | CLI、gNMI、Mgmt Framework、bgpcfgd | 各 *cfgd、orchagent、起動スクリプト |
-| `APPL_DB` | 制御プレーンが望む状態（intent） | bgpcfgd、fpmsyncd、portsyncd、teamsyncd、各 *mgrd | orchagent の各 sub-Orch |
+| `CONFIG_DB` | 永続化された設定 | CLI、[gNMI](../../reference/glossary.md#term-gnmi)、Mgmt Framework、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | 各 *cfgd、orchagent、起動スクリプト |
+| `APPL_DB` | 制御プレーンが望む状態（intent） | bgpcfgd、[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)、[portsyncd](../../reference/glossary.md#term-portsyncd)、teamsyncd、各 *mgrd | orchagent の各 sub-Orch |
 | `STATE_DB` | 実際の状態と監視のヒント | 各 daemon、syncd | CLI（show）、監視 |
 | `COUNTERS_DB` | ASIC からの counter 集計 | flexcounter / bulk counter | telemetry、show CLI |
 | `ASIC_DB` | SAI 呼び出し直前の object 表現 | orchagent | syncd（sairedis 経由） |
@@ -171,3 +171,4 @@ DB と daemon の地図がほしい人は [アーキテクチャ](architecture.m
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
+<!-- glossary-links-injected: 22f1eb196c54 -->

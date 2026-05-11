@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-Azure Netscan は **IPinIP プローブ**（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。従来は host node 上の VLAN subnet IP までは可視化できなかった[^1]。
+Azure Netscan は **[IPinIP](../reference/glossary.md#term-ipinip) プローブ**（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。従来は host node 上の [VLAN](../reference/glossary.md#term-vlan) subnet IP までは可視化できなかった[^1]。
 
-本 HLD は T0 SONiC に **VLAN subnet 全体**を IPinIP decap 対象にする `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで **VLAN subnet IP の経路 blackhole を検知できる** ようにする。
+本 [HLD](../reference/glossary.md#term-hld) は T0 SONiC に **VLAN subnet 全体**を IPinIP decap 対象にする `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで **VLAN subnet IP の経路 blackhole を検知できる** ようにする。
 
 ## 動作仕様
 
@@ -101,11 +101,11 @@ flowchart TD
 
 ### Dual-ToR 考慮[^1]
 
-両 ToR は同じ VLAN/decap 設定。T1 → ToR は ECMP なのでどちらの ToR が受けても decap → Netscan へ戻せる。
+両 ToR は同じ VLAN/decap 設定。T1 → ToR は [ECMP](../reference/glossary.md#term-ecmp) なのでどちらの ToR が受けても decap → Netscan へ戻せる。
 
 ### Warm-reboot
 
-現状 SONiC は warm-reboot 後に `ipinip.json` を再 load しない。本機能で追加した 2 tunnel (`IPINIP_SUBNET` / `IPINIP_V6_SUBNET`) のみ warm 後に APPL_DB へ書く処理を **`swssconfig.sh` に拡張** する必要がある[^1]。既存 tunnel の重複書込は避ける。
+現状 SONiC は warm-reboot 後に `ipinip.json` を再 load しない。本機能で追加した 2 tunnel (`IPINIP_SUBNET` / `IPINIP_V6_SUBNET`) のみ warm 後に [APPL_DB](../reference/glossary.md#term-appl_db) へ書く処理を **`swssconfig.sh` に拡張** する必要がある[^1]。既存 tunnel の重複書込は避ける。
 
 ### CLI[^1]
 
@@ -134,7 +134,7 @@ Dst IP         Src IP         Tunnel Name    Decap Term Type
 
 - **既存 IPINIP_TUNNEL / IPINIP_V6_TUNNEL**: 共存。本機能は別の 2 tunnel を追加
 - **TunnelDecapOrch**: 既存処理を拡張。`SUBNET_DECAP` テーブル subscribe を追加
-- **swssconfig**: warm-reboot 後の選択的書込
+- **[swssconfig](../reference/glossary.md#term-swssconfig)**: warm-reboot 後の選択的書込
 
 ## 引用元
 
@@ -145,7 +145,7 @@ Dst IP         Src IP         Tunnel Name    Decap Term Type
 `sonic-swss/orchagent/tunneldecaporch.cpp` を確認:
 
 - `CFG_SUBNET_DECAP_TABLE_NAME` を SubscriberStateTable として登録するロジックが `tunneldecaporch.cpp:39, 48, 69` に存在。
-- `TUNNEL_TERM_TYPE_MP2MP` の文字列マッピングと SAI 対応が `tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546` に実装され、`MP2MP` term の SAI 設定 (`SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP`) や src/dst IP mask の制御も含まれる。
+- `TUNNEL_TERM_TYPE_MP2MP` の文字列マッピングと [SAI](../reference/glossary.md#term-sai) 対応が `tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546` に実装され、`MP2MP` term の SAI 設定 (`SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP`) や src/dst IP mask の制御も含まれる。
 - `is_subnet_decap_term` フラグで「subnet decap tunnel に紐づく term は MP2MP のみ許容」のバリデーション (line 446-453) が入っており、HLD の「`IPINIP_SUBNET` / `IPINIP_V6_SUBNET` 自動生成は MP2MP 形式」と整合。
 - `sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2` / `swssconfig.sh` と `sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json` に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。
 
@@ -157,3 +157,5 @@ HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成さ�
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 302763aa20ce -->

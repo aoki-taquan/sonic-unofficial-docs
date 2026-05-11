@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`config route` は CONFIG_DB の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。FRR の Zebra に対しては `bgpcfgd` 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
+`config route` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。[FRR](../../reference/glossary.md#term-frr) の Zebra に対しては `bgpcfgd` 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
 
 multi-ASIC 対応として `-n / --namespace` を持ち、対象 namespace の CONFIG_DB に書く。
 
@@ -47,8 +47,8 @@ prefix [vrf <vrf_name>] <A.B.C.D/M>
        nexthop [vrf <vrf_name>] <A.B.C.D> dev <dev_name>
 ```
 
-- `vrf` の省略は `default` VRF を意味する。
-- ECMP は **`,` 区切り** で複数の nexthop / ifname を 1 文字列に並べることで表現する（CLI 1 回の呼び出しで複数 nexthop を入れる）。
+- `vrf` の省略は `default` [VRF](../../reference/glossary.md#term-vrf) を意味する。
+- [ECMP](../../reference/glossary.md#term-ecmp) は **`,` 区切り** で複数の nexthop / ifname を 1 文字列に並べることで表現する（CLI 1 回の呼び出しで複数 nexthop を入れる）。
 - `dev null` を渡すと `blackhole=true` の経路として登録される（discard route）。
 
 ## 各コマンドの詳細
@@ -172,7 +172,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- `config route add` は CONFIG_DB の STATIC_ROUTE に書く。FRR の zebra に渡るまで 1〜2 秒遅延あり。
+- `config route add` は CONFIG_DB の STATIC_ROUTE に書く。FRR の [zebra](../../reference/glossary.md#term-zebra) に渡るまで 1〜2 秒遅延あり。
 - nexthop が unreachable な route は kernel route table に出ない。
 
 ### 関連する show / debug
@@ -183,3 +183,5 @@ sonic-db-cli CONFIG_DB keys 'STATIC_ROUTE|*'
 vtysh -c 'show ip route static'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7581dd9b8477 -->

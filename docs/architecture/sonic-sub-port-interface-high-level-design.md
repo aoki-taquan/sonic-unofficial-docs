@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-物理 port または PortChannel に **`.<vlan-id>` 付きの 802.1Q encap sub-interface** を作成し、VRF binding した L3 router interface（RIF）として使う設計[^1]。
+物理 port または [PortChannel](../reference/glossary.md#term-portchannel) に **`.<vlan-id>` 付きの 802.1Q encap sub-interface** を作成し、[VRF](../reference/glossary.md#term-vrf) binding した L3 router interface（[RIF](../reference/glossary.md#term-rif)）として使う設計[^1]。
 
 スコープ:
 
 - 物理 port または PortChannel 上の sub-port を **VRF RIF** として使う（一般的な L3 用途）
-- L3 forwarding / BGP / VRRP / static / ACL redirect / counter 等の通常 L3 機能をサポート
+- L3 forwarding / [BGP](../reference/glossary.md#term-bgp) / VRRP / static / [ACL](../reference/glossary.md#term-acl) redirect / counter 等の通常 L3 機能をサポート
 
 スコープ外:
 
@@ -53,7 +53,7 @@ v0.2（2020-12, Broadcom）で命名規則が整備[^1]:
 | 親 | sub-interface 例 | 備考 |
 |----|------------------|------|
 | `Ethernet0` | `Eth0.10` | 短縮形 |
-| `PortChannel100` | `Po100.20` | LAG 上 |
+| `PortChannel100` | `Po100.20` | [LAG](../reference/glossary.md#term-lag) 上 |
 
 dot1q vlan id は 1〜4094。同一親 port 上で重複不可。異親なら同 id 可（互いに別 bridge domain）[^1]。
 
@@ -87,7 +87,7 @@ VLAN_SUB_INTERFACE|<subif>|<prefix>:
 
 ### SAI
 
-SAI Router Interface に **port + vlan** の組合せで 1 つの RIF を作成[^1]。
+[SAI](../reference/glossary.md#term-sai) Router Interface に **port + vlan** の組合せで 1 つの RIF を作成[^1]。
 
 | SAI 属性 | 値 |
 |---------|---|
@@ -102,11 +102,11 @@ intfsmgrd は kernel host 側に **vlan device**（`ip link add link Ethernet0 n
 
 ### Runtime admin status / MTU
 
-サブセットの SAI 属性のみ runtime 変更可（admin status, MTU）[^1]。VLAN id 変更は不可（削除→再作成）。
+サブセットの SAI 属性のみ runtime 変更可（admin status, MTU）[^1]。[VLAN](../reference/glossary.md#term-vlan) id 変更は不可（削除→再作成）。
 
 ### Warm reboot
 
-CONFIG_DB persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -173,7 +173,7 @@ show subinterface status
 - MTU 連携: 同 L407-L446 `updateSubIntfMtu()` / `setHostSubIntfMtu()`
 - admin status 連携: 同 L464-L532 `updateSubIntfAdminStatus()` / `setHostSubIntfAdminStatus()`
 - STATE 管理: 同 L542 `setSubIntfStateOk()`, L557 `removeSubIntfState()`
-- orchagent 側: `sonic-swss/orchagent/intfsorch.cpp` / `portsorch.cpp` も sub-port (`SAI_ROUTER_INTERFACE_TYPE_SUB_PORT`) を取り込み済み
+- [orchagent](../reference/glossary.md#term-orchagent) 側: `sonic-swss/orchagent/intfsorch.cpp` / `portsorch.cpp` も sub-port (`SAI_ROUTER_INTERFACE_TYPE_SUB_PORT`) を取り込み済み
 
 ## 引用元
 
@@ -194,3 +194,5 @@ show subinterface status
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f9ab983695cb -->

@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`FABRIC_MONITOR` テーブルは VOQ chassis のファブリックリンク監視 (`FABRIC_PORT` の自動 isolate/include) 用パラメータを CONFIG_DB に保持する[^1]。単一エントリ `FABRIC_MONITOR_DATA` を持ち、CRC エラー閾値や検出/復旧ポーリング数を定義する。
+`FABRIC_MONITOR` テーブルは [VOQ](../../reference/glossary.md#term-voq) chassis のファブリックリンク監視 (`FABRIC_PORT` の自動 isolate/include) 用パラメータを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。単一エントリ `FABRIC_MONITOR_DATA` を持ち、CRC エラー閾値や検出/復旧ポーリング数を定義する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -48,7 +48,7 @@ flowchart LR
 FABRIC_MONITOR|FABRIC_MONITOR_DATA
 ```
 
-YANG では `container FABRIC_MONITOR_DATA` の直下にスカラー leaf が並ぶ単一インスタンス構造。
+[YANG](../../reference/glossary.md#term-yang) では `container FABRIC_MONITOR_DATA` の直下にスカラー leaf が並ぶ単一インスタンス構造。
 
 ## フィールド
 
@@ -69,7 +69,7 @@ YANG では `container FABRIC_MONITOR_DATA` の直下にスカラー leaf が並
 
 ## 購読者
 
-- ファブリックモニタ daemon（プラットフォーム / orchagent の FabricPortOrch 拡張）
+- ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -114,3 +114,5 @@ show fabric counters
 show fabric isolation
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: aa7ef688df3b -->

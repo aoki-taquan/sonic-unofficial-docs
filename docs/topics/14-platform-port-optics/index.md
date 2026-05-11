@@ -62,7 +62,7 @@ keywords:
 
 # Platform / Port / Optics / PHY
 
-この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 HLD に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。
+この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 [HLD](../../reference/glossary.md#term-hld) に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。
 
 既存ページは platform / architecture / system / management の各 area に散らばっています。ここでは HLD の境界ではなく、port lifecycle と platform health monitoring の 2 軸に並べ直し、詳細は元ページへ誘導します。
 
@@ -71,8 +71,8 @@ keywords:
 - `PORT` テーブル、`port_config.ini`、dynamic breakout、auto-neg、FEC はどう関係するのか。
 - CMIS / C-CMIS / SFP EEPROM / Gearbox / MDIO はそれぞれどの層の話か。
 - thermal、PSU、BMC、PCIe、storage health は platform 章でどう束ねるのか。
-- port add / delete、breakout、speed 変更は buffer / QoS / ACL 章とどこで噛み合うのか。
-- 装置メトリクスは pmon / S3IP / Redfish / SNMP のどの経路で出るのか。
+- port add / delete、breakout、speed 変更は buffer / [QoS](../../reference/glossary.md#term-qos) / [ACL](../../reference/glossary.md#term-acl) 章とどこで噛み合うのか。
+- 装置メトリクスは pmon / S3IP / Redfish / [SNMP](../../reference/glossary.md#term-snmp) のどの経路で出るのか。
 
 ## 読み進め方
 
@@ -113,3 +113,4 @@ keywords:
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: cacbed1e1322 -->

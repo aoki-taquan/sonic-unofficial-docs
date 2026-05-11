@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-SONiC の gNMI 実装は、`gNMI.Set()` で受け取った設定変更を **メモリ上の `CONFIG_DB`** にしか反映しない。リブートを跨いで設定を残すには別途 `config save` 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。
+SONiC の [gNMI](../reference/glossary.md#term-gnmi) 実装は、`gNMI.Set()` で受け取った設定変更を **メモリ上の `CONFIG_DB`** にしか反映しない。リブートを跨いで設定を残すには別途 `config save` 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。
 
 Save-On-Set は **`gNMI.Set()` の各呼び出しの末尾で ConfigDB をファイルに保存する** 機能を `sonic-gnmi` に追加するもの。後方互換のため **既定では無効** で、`telemetry` バイナリのコマンドラインフラグ `--with-save-on-set` で有効化する。永続化操作自体は telemetry コンテナ内では完結できないため、**ホスト側 (`sonic-host-services`) の DBUS 経由** で実行される設計になっている[^1]。
 
@@ -35,7 +35,7 @@ Save-On-Set は **`gNMI.Set()` の各呼び出しの末尾で ConfigDB をファ
 
 ### スコープと前提
 
-- 対象は `sonic-gnmi` のみ。SAI / SWSS / Syncd / アーキテクチャ全体には変更を入れない。
+- 対象は `sonic-gnmi` のみ。[SAI](../reference/glossary.md#term-sai) / SWSS / Syncd / アーキテクチャ全体には変更を入れない。
 - 既存の運用フィールド機器を壊さないよう、本機能は **デフォルト OFF**。
 - 起動時の `TELEMETRY|gnmi|save_on_set` を `telemetry.sh` が読んで `telemetry` バイナリへ引数として渡す。**値の変更は telemetry の再起動でのみ反映** される。
 
@@ -65,7 +65,7 @@ sequenceDiagram
 
 ### 実装スケッチ（HLD 抜粋）
 
-HLD は Go の擬似コードで実装方針を示している。要点は **フラグで関数ポインタを差し替える** という単純な構造である[^1]。
+[HLD](../reference/glossary.md#term-hld) は Go の擬似コードで実装方針を示している。要点は **フラグで関数ポインタを差し替える** という単純な構造である[^1]。
 
 ```go
 // 起動時のフラグ読み取り
@@ -152,7 +152,7 @@ v0.3 の追加（呼び出し失敗時にどう振る舞うか）は実装上重
 | 項目             | 状態                                                          |
 |------------------|---------------------------------------------------------------|
 | SAI API          | 変更なし                                                      |
-| CLI / YANG       | 変更なし                                                      |
+| CLI / [YANG](../reference/glossary.md#term-yang)       | 変更なし                                                      |
 | アプリ拡張       | 該当しない（ビルトイン機能）                                  |
 | プラットフォーム | 任意のプラットフォームで動作（プラットフォーム固有の対応不要）|
 
@@ -168,7 +168,7 @@ v0.3 の追加（呼び出し失敗時にどう振る舞うか）は実装上重
 
 ### 関連する CLI
 
-HLD は CLI / YANG の変更を **明示的に拒否** している（"No changes to CLI or YANG"）。設定は CONFIG_DB を直接書き換えるか、既存の telemetry 設定経路で行う前提。
+HLD は CLI / YANG の変更を **明示的に拒否** している（"No changes to CLI or YANG"）。設定は [CONFIG_DB](../reference/glossary.md#term-config_db) を直接書き換えるか、既存の telemetry 設定経路で行う前提。
 
 ### 設定例
 
@@ -203,7 +203,9 @@ sudo systemctl restart telemetry
 `sonic-gnmi` の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。
 
 - CLI フラグ `--with-save-on-set`: `.cache/sonic-sources/sonic-gnmi/telemetry/telemetry.go` L63 (`WithSaveOnSet *bool`) / L189 (`fs.Bool("with-save-on-set", false, ...)`) / L583-L584 で `s.SaveStartupConfig = gnmi.SaveOnSetEnabled` を結線
-- `SaveOnSetEnabled()` 本体: `.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go` L1051 以降。`ssc.NewDbusClient()` を作成し、`sc.ConfigSave("/etc/sonic/config_db.json")` で **ホスト側 DBUS 経由で ConfigDB を /etc/sonic/config_db.json に保存** する
+- `SaveOnSetEnabled()` 本体: `.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go` L1051 以降。`ssc.NewDbusClient()` を作成し、`sc.ConfigSave("/etc/sonic/config_db.json")` で **ホスト側 DBUS 経由で ConfigDB を /etc/sonic/[config_db.json](../reference/glossary.md#term-config_db.json) に保存** する
 - `saveOnSetDisabled()` (L1068) で既定 (no-op) を実装
 
 HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、`--with-save-on-set` で有効化」が実コードと厳密に一致。`code-verified` に昇格。
+
+<!-- glossary-links-injected: 36c0149d5a9b -->

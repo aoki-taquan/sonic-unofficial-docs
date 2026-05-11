@@ -17,14 +17,14 @@ sources:
 
 ## FlexCounter Group の仕事分担
 
-syncd 内部に flex counter infrastructure があり、group ごとに次の項目を持ちます。
+[syncd](../../reference/glossary.md#term-syncd) 内部に flex counter infrastructure があり、group ごとに次の項目を持ちます。
 
-- 対象 SAI object（port、queue、PG、buffer pool、ACL counter、route flow、trap flow など）
+- 対象 [SAI](../../reference/glossary.md#term-sai) object（port、queue、PG、buffer pool、[ACL](../../reference/glossary.md#term-acl) counter、route flow、trap flow など）
 - polling interval
 - 対象 stat ID のリスト
 - 有効化フラグ
 
-`FLEX_COUNTER_TABLE|PORT` のような CONFIG_DB entry がこれらを制御します。group をまたぐ counter は同じ thread に乗らないため、port counter の interval を短くしても queue counter には影響しません。Refactor 以前は orchagent main loop に counter polling を抱えていたため、ACL や route 操作との競合がありました。
+`FLEX_COUNTER_TABLE|PORT` のような [CONFIG_DB](../../reference/glossary.md#term-config_db) entry がこれらを制御します。group をまたぐ counter は同じ thread に乗らないため、port counter の interval を短くしても queue counter には影響しません。Refactor 以前は [orchagent](../../reference/glossary.md#term-orchagent) main loop に counter polling を抱えていたため、ACL や route 操作との競合がありました。
 
 ## Counter Initialization の bulk 化
 
@@ -34,7 +34,7 @@ Bulk 化の前後で外向きの API は変わりませんが、起動直後の 
 
 ## Byte / Packet Rate の出どころ
 
-ポート利用率を出す `show interfaces counters --rates` は、COUNTERS_DB の累積値そのものではなく、`portstat` ユーティリティが直前のスナップショットと現在値の差分を計算しています。一方、`RATES:` 系の table を期待するクエリは flex counter group `RATES` の更新に依存します。
+ポート利用率を出す `show interfaces counters --rates` は、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の累積値そのものではなく、`portstat` ユーティリティが直前のスナップショットと現在値の差分を計算しています。一方、`RATES:` 系の table を期待するクエリは flex counter group `RATES` の更新に依存します。
 
 「使用率の表示が止まる」原因は、累積値ではなく rate 計算側の polling、または `portstat` の cache `/tmp/portstat-*` の rotate です。累積 counter が動いているのに rate が出ないときは、まず group `RATES` の state を見ます。
 
@@ -46,13 +46,13 @@ Auto-techsupport は、`coredump_gen_handler` が core 生成イベントを受�
 
 ## SNMP Subagent の構造
 
-SONiC SNMP は `snmp` container 内で snmpd と Python 実装の AgentX subagent (`sonic_ax_impl`) が動きます。subagent は Redis を購読し、IF-MIB / IF-X-TABLE / Entity MIB / RFC1213 / SONIC-LLDP 系などの OID 群を Redis の値から組み立てます。
+SONiC [SNMP](../../reference/glossary.md#term-snmp) は `snmp` container 内で snmpd と Python 実装の AgentX subagent (`sonic_ax_impl`) が動きます。subagent は [Redis](../../reference/glossary.md#term-redis) を購読し、IF-MIB / IF-X-TABLE / Entity MIB / RFC1213 / SONIC-[LLDP](../../reference/glossary.md#term-lldp) 系などの OID 群を Redis の値から組み立てます。
 
 OID から Redis path への mapping は subagent 内のクラスに分散しており、新しい MIB を増やすには subagent 側に MIB-specific クラスを書く必要があります。MIB を新設しない範囲では、Redis 側の table 構造を変えると subagent が古い key を見ようとして空値を返す挙動になる点に注意します。
 
 ## Telemetry Agent の subscribe path
 
-`telemetry` / `gnmi` container は SONiC native YANG / OpenConfig を Redis path にマップし、gNMI Subscribe を CDB / SDB / APPL_DB の event listener に変換します。`ON_CHANGE` は Redis keyspace notifications に依存し、`SAMPLE` は内部の polling timer で current value を返します。
+`telemetry` / `gnmi` container は SONiC native [YANG](../../reference/glossary.md#term-yang) / OpenConfig を Redis path にマップし、[gNMI](../../reference/glossary.md#term-gnmi) Subscribe を CDB / SDB / [APPL_DB](../../reference/glossary.md#term-appl_db) の event listener に変換します。`ON_CHANGE` は Redis keyspace notifications に依存し、`SAMPLE` は内部の polling timer で current value を返します。
 
 加えて telemetry-agent には、process / docker 統計、memory 統計、reboot cause のように「Redis に元々無い情報」を取り込んで gNMI で publish する拡張があり、これらは subscribe path として現れます（発展トピックで扱います）。
 
@@ -80,7 +80,7 @@ flowchart LR
 | --- | --- | --- |
 | `FlexCounter` (`syncd/FlexCounter.cpp`) | per-group polling thread | SAI stat の周期取得 |
 | `FlexCounterManager` | group の追加/削除 | group 名から polling thread を解決 |
-| `CounterCheck` / `flex_counter_table_consumer` | orchagent 側 | CONFIG_DB:FLEX_COUNTER_TABLE → ASIC_DB:FLEX_COUNTER_TABLE 反映 |
+| `CounterCheck` / `flex_counter_table_consumer` | orchagent 側 | CONFIG_DB:FLEX_COUNTER_TABLE → [ASIC_DB](../../reference/glossary.md#term-asic_db):FLEX_COUNTER_TABLE 反映 |
 | `sonic_ax_impl` (`src/sonic-snmpagent/`) | python AgentX subagent | OID → Redis path の解決 |
 | `snmpd` | net-snmp | AgentX master |
 | `telemetry` (sonic-gnmi) | go | gNMI server（→ 10 章） |
@@ -88,7 +88,7 @@ flowchart LR
 
 ## SAI 属性使用一覧
 
-主要な stat ID（FlexCounter が `sai_get_*_stats` / `sai_bulk_get_*_stats` で取得）:
+主要な stat ID（[FlexCounter](../../reference/glossary.md#term-flexcounter) が `sai_get_*_stats` / `sai_bulk_get_*_stats` で取得）:
 
 | 対象 | stat ID 群 |
 | --- | --- |
@@ -97,7 +97,7 @@ flowchart LR
 | PG | `SAI_INGRESS_PRIORITY_GROUP_STAT_PACKETS`、`DROPPED_PACKETS`、`XOFF_ROOM_WATERMARK_BYTES` |
 | buffer pool | `SAI_BUFFER_POOL_STAT_CURR_OCCUPANCY_BYTES`、`WATERMARK_BYTES` |
 | ACL | counter object 経由（`SAI_ACL_COUNTER_ATTR_PACKETS / BYTES`） |
-| trap (CoPP) | `SAI_HOSTIF_TRAP_GROUP_STAT_PACKETS` |
+| trap ([CoPP](../../reference/glossary.md#term-copp)) | `SAI_HOSTIF_TRAP_GROUP_STAT_PACKETS` |
 
 `sai_query_stats_capability` で「使える stat id」を起動時に問い合わせ、サポート外の id は group から除外する設計（→ 20 章）。
 
@@ -137,3 +137,5 @@ STATE_DB:
 - [Counter initialization optimization](../../internals/sonic-counter-initialization-optimization.md)
 - [Byte / packet rate と port utilization](../../internals/byte-packet-rates-port-utilization-in-sonic.md)
 - [Logging と system dump 仕様](../../system/sonic-logging-system-dumps-arch-spec.md)
+
+<!-- glossary-links-injected: c7066d08df4e -->

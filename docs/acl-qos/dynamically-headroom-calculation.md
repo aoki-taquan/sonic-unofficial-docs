@@ -34,7 +34,7 @@ related:
 
 # Dynamic Headroom Calculation（buffer_model = dynamic）
 
-PFC headroom（lossless 用 PG の `xon` / `xoff` / `size`）を **`pg_profile_lookup.ini` のテーブル lookup ではなく式から動的計算** するモード。読み手の関心は「**traditional から何が変わるのか**」「**何が再計算の trigger なのか**」「**vendor 依存をどう吸収しているのか**」の 3 点。順に答える。
+[PFC](../reference/glossary.md#term-pfc) headroom（lossless 用 PG の `xon` / `xoff` / `size`）を **`pg_profile_lookup.ini` のテーブル lookup ではなく式から動的計算** するモード。読み手の関心は「**traditional から何が変わるのか**」「**何が再計算の trigger なのか**」「**vendor 依存をどう吸収しているのか**」の 3 点。順に答える。
 
 ## traditional から何が変わるのか
 
@@ -42,7 +42,7 @@ PFC headroom（lossless 用 PG の `xon` / `xoff` / `size`）を **`pg_profile_l
 |----|-------------|---------|
 | headroom 算出 | `pg_profile_lookup.ini` の表 lookup | cell size / IPG / MTU / cable / gearbox 等から式で計算 |
 | 任意 cable length | 表に無いと対応不可 | 連続的に対応 |
-| 静的 → 動的 変換 | なし（CONFIG_DB → APPL_DB 素通し） | `BufferManager` が CONFIG_DB → APPL_DB で動的計算 |
+| 静的 → 動的 変換 | なし（[CONFIG_DB](../reference/glossary.md#term-config_db) → [APPL_DB](../reference/glossary.md#term-appl_db) 素通し） | `BufferManager` が CONFIG_DB → APPL_DB で動的計算 |
 | 起動 | `buffermgrd -l pg_profile_lookup.ini` | `buffermgrd -a asic_table.json -p peripheral_table.json` |
 
 切替は `DEVICE_METADATA.localhost.buffer_model`（既定 `traditional`）[^1]:
@@ -94,7 +94,7 @@ PORT_PERIPHERAL_TABLE|<port>: peripheral = <model>
 BUFFER_MAX_PARAM:           （SAI から取得した max headroom など）
 ```
 
-SAI 側は新 port attribute `SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE` を読んで legality check に使う[^1]。
+[SAI](../reference/glossary.md#term-sai) 側は新 port attribute `SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE` を読んで legality check に使う[^1]。
 
 ## buffer model の違い（独立 vs shared headroom pool）
 
@@ -194,3 +194,5 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ccd0ef97afd6 -->

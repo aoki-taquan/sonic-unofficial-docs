@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`show muxcable` は Dual-ToR Y-Cable の運用情報を確認する CLI で、`show/muxcable.py` の `@click.group(name='muxcable')` がエントリポイントとなる[^1]。`config muxcable` 同様、xcvrd / linkmgrd への async RPC (CMD/RSP テーブル) を多用するコマンドが多く、CONFIG_DB / STATE_DB の単純な dump ではない。
+`show muxcable` は Dual-ToR Y-Cable の運用情報を確認する CLI で、`show/muxcable.py` の `@click.group(name='muxcable')` がエントリポイントとなる[^1]。`config muxcable` 同様、xcvrd / [linkmgrd](../../reference/glossary.md#term-linkmgrd) への async RPC (CMD/RSP テーブル) を多用するコマンドが多く、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) の単純な dump ではない。
 
 ほぼすべてのサブコマンドが `--json` で機械可読出力に切替できる。
 
@@ -31,7 +31,7 @@ related:
 | コマンド | 用途 |
 |---------|------|
 | `show muxcable status [<port>] [--json]` | mux 状態 (active/standby/auto/...) サマリ |
-| `show muxcable config [<port>] [--json]` | CONFIG_DB の MUX 設定一覧 |
+| `show muxcable config [<port>] [--json]` | CONFIG_DB の [MUX](../../reference/glossary.md#term-mux) 設定一覧 |
 | `show muxcable berinfo <port> <target> [--json]` | BER 情報 (lane 単位) |
 | `show muxcable eyeinfo <port> <target> [--json]` | eye margin 情報 |
 | `show muxcable fecstatistics <port> <target> [--json]` | FEC 統計 |
@@ -77,7 +77,7 @@ xcvrd 経由で Y-Cable の HW state を直接読む。CONFIG_DB の `MUX_CABLE.
 
 ### `show muxcable grpc muxdirection [<port>]`
 
-gNMI 経由で server (NIC) 側からキャッシュされた状態を読む経路。Active-Active トポロジで使う。
+[gNMI](../../reference/glossary.md#term-gnmi) 経由で server (NIC) 側からキャッシュされた状態を読む経路。Active-Active トポロジで使う。
 
 ## 関連する CONFIG_DB / STATE_DB
 
@@ -158,3 +158,5 @@ flowchart LR
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: eab46fcbaad8 -->

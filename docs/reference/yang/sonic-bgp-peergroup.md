@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-bgp-common`, `sonic-bgp-global`
 - top container: `sonic-bgp-peergroup`
 
-SONIC BGP Peer Group YANG[^1]
+SONIC [BGP](../../reference/glossary.md#term-bgp) Peer Group [YANG](../../reference/glossary.md#term-yang)[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -130,7 +130,7 @@ module: sonic-bgp-peergroup
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `vrf_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/VRF name |
+| `vrf_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/[VRF](../../reference/glossary.md#term-vrf) name |
 | `peer_group_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/peer_group_name` | `string` | yes |  |  | Peer group name |
 | `local_asn` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local AS number |
 | `name` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/name` | `string` |  |  |  | Peer description |
@@ -150,7 +150,7 @@ module: sonic-bgp-peergroup
 | `enforce_first_as` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/enforce_first_as` | `boolean` |  |  |  | Require the first AS in the AS path to be the peer's AS number for eBGP sessions. |
 | `solo_peer` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/solo_peer` | `boolean` |  |  |  | Place this peer in its own update group to prevent route sharing with other peers. |
 | `ttl_security_hops` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/ttl_security_hops` | `uint8` |  |  | range 1..254 | Maximum number of hops expected for the BGP TTL security mechanism (GTSM). |
-| `bfd` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection (BFD) for rapid link failure detection on this peer. |
+| `bfd` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection ([BFD](../../reference/glossary.md#term-bfd)) for rapid link failure detection on this peer. |
 | `bfd_check_ctrl_plane_failure` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a BFD control plane failure is detected. |
 | `capability_dynamic` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/capability_dynamic` | `boolean` |  |  |  | Advertise dynamic capability |
 | `dont_negotiate_capability` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/dont_negotiate_capability` | `boolean` |  |  |  | Do not perform capability negotiation |
@@ -224,7 +224,7 @@ module: sonic-bgp-peergroup
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_PEER_GROUP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_PEER_GROUP`
 - CONFIG_DB: `BGP_PEER_GROUP_AF`
 - CLI: `config bgp`
 
@@ -242,7 +242,7 @@ module: sonic-bgp-peergroup
 
 ### 典型的なデプロイ位置
 
-- BGP peer-group 設定。`BGP_PEER_GROUP|<name>` を bgpcfgd が FRR `neighbor <pg> peer-group` に展開。
+- BGP peer-group 設定。`BGP_PEER_GROUP|<name>` を [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [FRR](../../reference/glossary.md#term-frr) `neighbor <pg> peer-group` に展開。
 
 ### よくある落とし穴
 
@@ -260,3 +260,4 @@ vtysh -c 'show bgp peer-group'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 5cfccd293bbb -->

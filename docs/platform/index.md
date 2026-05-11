@@ -5,9 +5,9 @@ verification: stub
 ---
 
 # プラットフォーム
-SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。
+[SAI](../reference/glossary.md#term-sai)、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 43
 - 分布: Code-verified: 33 / Discrepancy-found: 6 / HLD-only: 4
@@ -73,3 +73,5 @@ SAI、PMON、センサー、トランシーバ、プラットフォーム API、
 | [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](enhanced-lpo-debug-registers-hld.md) | HLD-only |
 | [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](global-platform-specific-psuutil-class-instance.md) | Code-verified |
 | [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](liquid-cooling-leakage-detection-in-sonic.md) | Discrepancy-found |
+
+<!-- glossary-links-injected: 0d05a4178472 -->

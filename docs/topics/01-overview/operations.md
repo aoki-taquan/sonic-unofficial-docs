@@ -23,7 +23,7 @@ bgp、telemetry、snmp、lldp などの feature service は [FEATURE テーブ�
 運用では次の順に見ます。
 
 1. [show feature](../../reference/cli/show-feature.md) で状態、設定、自動再起動を確認する。
-2. `config feature` で変更する場合、対象 feature が必須 service か、遅延起動対象か、Multi-ASIC / DPU scope を持つか確認する。
+2. `config feature` で変更する場合、対象 feature が必須 service か、遅延起動対象か、Multi-ASIC / [DPU](../../reference/glossary.md#term-dpu) scope を持つか確認する。
 3. 永続化が必要なら `config save` の要否を運用ルールに従って確認する。
 4. service 起動に失敗した場合は `hostcfgd`、systemd unit、feature container のログを見る。
 
@@ -35,12 +35,12 @@ bgp、telemetry、snmp、lldp などの feature service は [FEATURE テーブ�
 
 ## reload と restart の影響を読む
 
-`config reload` は、設定ファイルの再ロードと service restart を伴う大きな操作です。一方で、feature の enable / disable は `hostcfgd` と systemd unit 操作で局所的に完結する場合があります。GCU / `replace` はその中間で、差分だけを当てつつ必要な service だけを検証・再起動する設計です。
+`config reload` は、設定ファイルの再ロードと service restart を伴う大きな操作です。一方で、feature の enable / disable は `hostcfgd` と systemd unit 操作で局所的に完結する場合があります。[GCU](../../reference/glossary.md#term-gcu) / `replace` はその中間で、差分だけを当てつつ必要な service だけを検証・再起動する設計です。
 
 | 操作 | 影響範囲 | 事前確認 |
 | --- | --- | --- |
 | `config feature ...` | 対象 feature service | feature の scope、依存 service、auto_restart |
-| `config apply-patch` | patch が触る CONFIG_DB テーブル | YANG validation、checkpoint、rollback |
+| `config apply-patch` | patch が触る [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル | [YANG](../../reference/glossary.md#term-yang) validation、checkpoint、rollback |
 | `config replace` | target config との差分 | target が完全 config か、dry-run 結果 |
 | `config reload` | CONFIG_DB 全体と service 起動順 | maintenance window、保存済み config、reload lock |
 | reboot / warm reboot | OS / container 全体 | reboot 章、warm restart 対応、traffic 影響 |
@@ -53,7 +53,7 @@ bgp、telemetry、snmp、lldp などの feature service は [FEATURE テーブ�
 
 ## show feature の出力サンプル
 
-実装上、`show feature status` は CONFIG_DB の `FEATURE` テーブルと STATE_DB の `FEATURE|<name>` を結合して表示します。標準構成では次の通り、`State`、`AutoRestart`、`SetOwner` の 3 カラムが出ます。
+実装上、`show feature status` は CONFIG_DB の `FEATURE` テーブルと [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を結合して表示します。標準構成では次の通り、`State`、`AutoRestart`、`SetOwner` の 3 カラムが出ます。
 
 ```text
 Feature     State           AutoRestart     SetOwner
@@ -119,7 +119,7 @@ Stopped BGP container.
 bgp.service: Scheduled restart job, restart counter is at 5.
 ```
 
-`docker logs bgp` で container 側の zebra/bgpd 立ち上げに失敗している場合は別途 BGP 章を参照します。
+`docker logs bgp` で container 側の [zebra](../../reference/glossary.md#term-zebra)/bgpd 立ち上げに失敗している場合は別途 [BGP](../../reference/glossary.md#term-bgp) 章を参照します。
 
 ## 対応コマンド早見表
 
@@ -148,10 +148,10 @@ bgp.service: Scheduled restart job, restart counter is at 5.
 
 ## 横断参照
 
-- BGP service が起動しない場合: [BGP 章 運用](../02-bgp/operations.md) の neighbor / orchagent 切り分け。
-- VXLAN / VNET 関連 service の前提: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
-- L2 service（teamd、swss）の連動失敗: [L2 章 運用](../06-l2-vlan-lag/operations.md)。
-- Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
+- BGP service が起動しない場合: [BGP 章 運用](../02-bgp/operations.md) の neighbor / [orchagent](../../reference/glossary.md#term-orchagent) 切り分け。
+- [VXLAN](../../reference/glossary.md#term-vxlan) / [VNET](../../reference/glossary.md#term-vnet) 関連 service の前提: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
+- L2 service（[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、swss）の連動失敗: [L2 章 運用](../06-l2-vlan-lag/operations.md)。
+- Dual-ToR 構成での feature 順序（mux、[linkmgrd](../../reference/glossary.md#term-linkmgrd)、telemetry）: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
 
 ## 追加の show 出力例
 
@@ -190,3 +190,5 @@ Mon 2026-05-11 12:08:00 UTC   4min     n/a   n/a     dhcp_relay-delayed.timer  d
 - [SYSTEM_DEFAULTS テーブル](../../reference/config-db/system-defaults.md)
 - [SYSTEM_DEFAULTS HLD](../../switching/control-sonic-behaviors-with-system-defaults-table.md)
 - [reset-factory](../../architecture/reset-factory-design.md)
+
+<!-- glossary-links-injected: c7663e102d50 -->

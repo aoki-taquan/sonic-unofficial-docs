@@ -33,12 +33,12 @@ related:
 
 ## 概要
 
-「SmartSwitch」は **同一筐体内に Network ASIC（NPU）と DPU（Data Processing Unit）を持つ platform**。pmon HLD は **NPU 側で動く `pmon` daemon が、複数 DPU の health / inventory / firmware を観測する** 拡張[^1]を扱う。
+「[SmartSwitch](../reference/glossary.md#term-smartswitch)」は **同一筐体内に Network ASIC（[NPU](../reference/glossary.md#term-npu)）と [DPU](../reference/glossary.md#term-dpu)（Data Processing Unit）を持つ platform**。pmon [HLD](../reference/glossary.md#term-hld) は **NPU 側で動く `pmon` daemon が、複数 DPU の health / inventory / firmware を観測する** 拡張[^1]を扱う。
 
 主目的:
 
 - DPU を chassis-module の延長として **`show platform`** 系で一貫表示する
-- DPU の電源状態・温度・FW version・boot 状況を NPU 側 STATE_DB に集約
+- DPU の電源状態・温度・FW version・boot 状況を NPU 側 [STATE_DB](../reference/glossary.md#term-state_db) に集約
 - DPU graceful shutdown / reboot 等の制御 hook を pmon 経由で発火可能にする
 
 ## 動作仕様
@@ -59,8 +59,8 @@ flowchart LR
 - **`Chassis.get_module_list()` 拡張**: DPU を Module subclass として返す
 - **DPU Module API**: `get_oper_status` / `reboot` / `set_admin_state` / `get_firmware_version` / `get_temperature_info` 等
 - **STATE_DB**: `DPU_STATE` / `CHASSIS_MODULE_TABLE` に DPU ごとの up/down、reboot reason、boot progress
-- **CONFIG_DB**: `DPU` テーブルで admin state / management IP / role を保持
-- **inband mgmt**: NPU↔DPU 間は専用の管理 link / Ethernet を介する想定。SAI と分離
+- **[CONFIG_DB](../reference/glossary.md#term-config_db)**: `DPU` テーブルで admin state / management IP / role を保持
+- **inband mgmt**: NPU↔DPU 間は専用の管理 link / Ethernet を介する想定。[SAI](../reference/glossary.md#term-sai) と分離
 
 ## 設定
 
@@ -119,3 +119,5 @@ flowchart LR
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d344f8b88dd9 -->

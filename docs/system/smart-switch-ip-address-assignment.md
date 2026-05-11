@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-DASH SmartSwitch では NPU と各 DPU が **PCIe ベースの control plane interface (netdev)** で繋がる[^1]。本 HLD は DPU 側の IP アドレス割当を **NPU 側の DHCP server + midplane bridge** で行い、DPU は**ステートレスに DHCP client として起動するだけ**にする設計を提案する。割当 deterministic（DPU id ベース）、port-based（同 DPU はいつも同 IP）、PXE boot 互換、を満たす。`169.254.0.0/16` 系 link-local subnet を使うことで他ネットワークとの衝突を回避する。
+[DASH](../reference/glossary.md#term-dash) [SmartSwitch](../reference/glossary.md#term-smartswitch) では [NPU](../reference/glossary.md#term-npu) と各 [DPU](../reference/glossary.md#term-dpu) が **PCIe ベースの control plane interface (netdev)** で繋がる[^1]。本 [HLD](../reference/glossary.md#term-hld) は DPU 側の IP アドレス割当を **NPU 側の DHCP server + midplane bridge** で行い、DPU は**ステートレスに DHCP client として起動するだけ**にする設計を提案する。割当 deterministic（DPU id ベース）、port-based（同 DPU はいつも同 IP）、PXE boot 互換、を満たす。`169.254.0.0/16` 系 link-local subnet を使うことで他ネットワークとの衝突を回避する。
 
 ## 動作仕様
 
@@ -130,9 +130,9 @@ DPU では DHCP client (`midplane-network-dpu.service` 経由) を **PCIe netdev
 
 ### 構成生成タイミング
 
-- 初回起動で CONFIG_DB が空の場合
+- 初回起動で [CONFIG_DB](../reference/glossary.md#term-config_db) が空の場合
 - `config-setup.service` 再起動による recovery
-- いずれも sonic-cfggen が `t1-smartswitch` テンプレートと `platform.json` から生成
+- いずれも [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) が `t1-smartswitch` テンプレートと `platform.json` から生成
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md#L80-L104 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -171,7 +171,7 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 
 ## 干渉する機能
 
-- **DPU graceful shutdown / DPU upgrade**: midplane network が落ちると gNOI 経路も使えない
+- **DPU graceful shutdown / DPU upgrade**: midplane network が落ちると [gNOI](../reference/glossary.md#term-gnoi) 経路も使えない
 - **DHCP server container**: 既存実装をそのまま再利用
 - **systemd-networkd**: bridge / network 設定の生成基盤
 - **`config-setup` / sonic-cfggen**: `t1-smartswitch` テンプレ
@@ -196,3 +196,5 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5c254bd30f13 -->

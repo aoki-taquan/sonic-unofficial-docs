@@ -29,10 +29,10 @@ related:
 
 ## 概要
 
-SONiC は upstream `frrouting/frr` を **branch スナップショット + per-release patch 集** という形で取り込んでいる[^1]。FRR を新しい upstream version に上げる際は次の点を整える必要がある:
+SONiC は upstream `frrouting/frr` を **branch スナップショット + per-release patch 集** という形で取り込んでいる[^1]。[FRR](../reference/glossary.md#term-frr) を新しい upstream version に上げる際は次の点を整える必要がある:
 
 - どの upstream tag / commit を base にするか
-- SONiC 固有 patch（FPM 拡張、SAI と整合させる修正、SONiC ビルド適合）の rebase
+- SONiC 固有 patch（[FPM](../reference/glossary.md#term-fpm) 拡張、[SAI](../reference/glossary.md#term-sai) と整合させる修正、SONiC ビルド適合）の rebase
 - ビルド成果物（`docker-fpm-frr` 等）の入れ替え
 - 既存テスト（PR テスト・mgmt-vrf・graceful restart 等）の通過確認
 
@@ -53,8 +53,8 @@ flowchart LR
 
 - **patch 集の管理**: `src/sonic-frr/patches/` のような場所に SONiC 固有 patch を `.patch` ファイルで保持し、`quilt` 系で順次適用する設計
 - **submodule pin**: `sonic-buildimage` の `src/sonic-frr` submodule が SONiC 側 fork branch を指す
-- **互換性**: SONiC 側 `bgpcfgd` / `fpmsyncd` / `frrcfgd` が FRR の vty フォーマットや FPM zebra route 表現に依存している。version up でフォーマットが変わる箇所は patch / SONiC 側コードの両側で対処
-- **テスト**: PR テスト・既存 dual-tor / VRF / GR / BMP / SRv6 の sonic-mgmt テストを通過させる
+- **互換性**: SONiC 側 `bgpcfgd` / `fpmsyncd` / `frrcfgd` が FRR の vty フォーマットや FPM [zebra](../reference/glossary.md#term-zebra) route 表現に依存している。version up でフォーマットが変わる箇所は patch / SONiC 側コードの両側で対処
+- **テスト**: PR テスト・既存 dual-tor / [VRF](../reference/glossary.md#term-vrf) / GR / BMP / [SRv6](../reference/glossary.md#term-srv6) の [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) テストを通過させる
 
 ## 注意点
 
@@ -65,7 +65,7 @@ flowchart LR
 
 ## 干渉する機能
 
-- **bgpcfgd / fpmsyncd / frrcfgd / new-frr-sonic-communication-channel**: FRR と SONiC を繋ぐ周辺コード
+- **[bgpcfgd](../reference/glossary.md#term-bgpcfgd) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) / frrcfgd / new-frr-sonic-communication-channel**: FRR と SONiC を繋ぐ周辺コード
 - **graceful restart / warm reboot**: GR タイマと convergence の整合
 - **management VRF / VRF design**: VRF 周りは upstream 側変更の影響を受けやすい
 - **BMP / FRR ext config**: `sonic-frr-bgp-extended-unified-configuration-management-framework` 等の SONiC 拡張
@@ -73,7 +73,7 @@ flowchart LR
 ## トラブルシューティング
 
 - 新版 FRR で起動しない → patch 適用順、`vtysh` config 互換性、`config db` 由来 template との差分
-- BGP routes がインストールされない → `fpmsyncd` の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分
+- [BGP](../reference/glossary.md#term-bgp) routes がインストールされない → `fpmsyncd` の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分
 - GR 効かない → `bgpd` GR タイマ、SONiC 側の warm-restart 連動、log の `BGP gr` メッセージ
 
 ## 引用元
@@ -88,3 +88,5 @@ flowchart LR
 - BMP / SRv6 / VRF / unnumbered 関連 patch の upstream 化進捗確認
 - 文書自体（HLD）の改訂日・現行 master FRR version との乖離リスク確認
 -->
+
+<!-- glossary-links-injected: 66eae89ad3e6 -->

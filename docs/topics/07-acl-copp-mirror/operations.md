@@ -15,11 +15,11 @@ sources:
 
 # 運用
 
-ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CONFIG_DB に見えていることと、実際に hardware に作られていることは同じではありません。
+[ACL](../../reference/glossary.md#term-acl) / [CoPP](../../reference/glossary.md#term-copp) / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。[CONFIG_DB](../../reference/glossary.md#term-config_db) に見えていることと、実際に hardware に作られていることは同じではありません。
 
 ## ACL の状態確認
 
-最初に `show acl table` と `show acl rule` で table / rule の存在と status を見ます。show ACL 強化により、`AclOrch` が STATE_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` に Active / Inactive を出すため、リソース不足や SAI 失敗で作成できなかった場合を CLI 側から判別できます。
+最初に `show acl table` と `show acl rule` で table / rule の存在と status を見ます。show ACL 強化により、`AclOrch` が [STATE_DB](../../reference/glossary.md#term-state_db) の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` に Active / Inactive を出すため、リソース不足や [SAI](../../reference/glossary.md#term-sai) 失敗で作成できなかった場合を CLI 側から判別できます。
 
 ```text
 admin@sonic:~$ show acl table
@@ -48,7 +48,7 @@ DENY_RULE_1    DATAACL         9999    12345            1518000
 PERMIT_ANY     DATAACL         1       0                0
 ```
 
-counter polling が止まっているかは `counterpoll show` で `ACL_STAT` group の状態を確認します。`disable` なら `counterpoll acl enable` で復活させます。STATE_DB / COUNTERS_DB の対応は以下のとおりです。
+counter polling が止まっているかは `counterpoll show` で `ACL_STAT` group の状態を確認します。`disable` なら `counterpoll acl enable` で復活させます。STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の対応は以下のとおりです。
 
 | DB | Key 例 | 用途 |
 |----|--------|------|
@@ -57,7 +57,7 @@ counter polling が止まっているかは `counterpoll show` で `ACL_STAT` gr
 | `COUNTERS_DB` | `COUNTERS:oid:0x...` / `ACL_COUNTER_RULE_MAP` | rule 単位 counter |
 | `ASIC_DB` | `ASIC_STATE:SAI_OBJECT_TYPE_ACL_TABLE:oid:...` | SAI 反映 |
 
-設定が CONFIG_DB に入っているのに ASIC_DB に出ていない場合は orchagent が握っているので syslog を見ます。
+設定が CONFIG_DB に入っているのに [ASIC_DB](../../reference/glossary.md#term-asic_db) に出ていない場合は [orchagent](../../reference/glossary.md#term-orchagent) が握っているので syslog を見ます。
 
 ## Mirror の確認
 
@@ -87,7 +87,7 @@ admin@sonic:~$ redis-cli -n 6 hgetall "MIRROR_SESSION_TABLE|everflow0"
 10) "10.0.0.1@PortChannel0"
 ```
 
-Everflow では LAG、ECMP、neighbor MAC 変更、IPv6、egress ACL などが絡みます。mirror packet が出ない場合、ACL の match 失敗だけでなく、collector 経路や egress mirror capability も疑います。Everflow テストプランの観点に従い、collector route が ECMP の場合は member すべての MAC が STATE_DB に解決されているかを `show ip route` と `show arp` で揃えます。
+Everflow では [LAG](../../reference/glossary.md#term-lag)、[ECMP](../../reference/glossary.md#term-ecmp)、neighbor MAC 変更、IPv6、egress ACL などが絡みます。mirror packet が出ない場合、ACL の match 失敗だけでなく、collector 経路や egress mirror capability も疑います。Everflow テストプランの観点に従い、collector route が ECMP の場合は member すべての MAC が STATE_DB に解決されているかを `show ip route` と `show arp` で揃えます。
 
 ## Drop 調査の入口
 
@@ -97,7 +97,7 @@ drop 調査では、何を落としているかで見る counter が変わりま
 |------------|----------|-------------------|
 | ACL rule で drop したか | ACL counter | `aclshow` |
 | port ingress discard | port counter | `portstat` |
-| RIF / L3 error | interface counter | `intfstat` |
+| [RIF](../../reference/glossary.md#term-rif) / L3 error | interface counter | `intfstat` |
 | drop reason 別の ASIC drop | debug counter | `show dropcounters counts` |
 | CPU punt の量 | trap flow counter | `show flowcnt trap` |
 
@@ -144,7 +144,7 @@ drop counter は「なぜ落ちたか」を見る道具です。ACL counter は�
 
 ## SNMP / MIB から見る場合
 
-port illegal packets drop design は、RIF / VLAN など L3 側の SAI counter を Interface MIB へどう集約するかを扱います。SNMP で `ifInErrors` や `ifOutErrors` を監視している環境では、L2 port counter と RIF counter の集約方針がトラブルシュート結果に影響します。
+port illegal packets drop design は、RIF / [VLAN](../../reference/glossary.md#term-vlan) など L3 側の SAI counter を Interface MIB へどう集約するかを扱います。[SNMP](../../reference/glossary.md#term-snmp) で `ifInErrors` や `ifOutErrors` を監視している環境では、L2 port counter と RIF counter の集約方針がトラブルシュート結果に影響します。
 
 snmpwalk で `IF-MIB::ifInErrors` が振り切れているのに `portstat` の RX_ERR が静かな場合、RIF 側の counter が SNMP 集約されている可能性があります。逆もまた然りで、SNMP モニタと CLI counter の数字が違っても整合は取れているケースが多いです。
 
@@ -163,7 +163,7 @@ lacp                   100       12000     1       bgp_lacp
 ip2me                   50        4000     0       default
 ```
 
-該当 trap が想定 PPS を超えると policer で drop され、対応プロトコル (BGP / LACP / ARP) が落ち始めます。`COPP_TABLE` の `cir` / `cbs` と `red_action: drop` を確認し、必要なら trap group ごとに緩めます。
+該当 trap が想定 PPS を超えると policer で drop され、対応プロトコル ([BGP](../../reference/glossary.md#term-bgp) / [LACP](../../reference/glossary.md#term-lacp) / [ARP](../../reference/glossary.md#term-arp)) が落ち始めます。`COPP_TABLE` の `cir` / `cbs` と `red_action: drop` を確認し、必要なら trap group ごとに緩めます。
 
 | 観点 | 入口 | DB |
 |------|------|-----|
@@ -191,8 +191,10 @@ ip2me                   50        4000     0       default
 - [設定可能な Drop Counter](../../acl-qos/configurable-drop-counters-in-sonic.md)
 - [ingress discards テスト計画](../../acl-qos/sonic-test-ingress-discards-hld.md)
 - [ポート不正パケットドロップ設計](../../architecture/port-illegal-packets-drop-design.md)
-- 章 [08 QoS / Buffer](../08-qos-buffer/operations.md) — queue / PG drop と PFC
+- 章 [08 QoS / Buffer](../08-qos-buffer/operations.md) — queue / PG drop と [PFC](../../reference/glossary.md#term-pfc)
 - 章 [09 telemetry / SNMP / observability](../09-telemetry-snmp/operations.md) — techsupport と system health
-- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — ACL / mirror を gNMI で設定する場合
+- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — ACL / mirror を [gNMI](../../reference/glossary.md#term-gnmi) で設定する場合
 - [CoPP neighbor-miss trap と強化](../../acl-qos/copp-neighbor-miss-trap-and-enhancements.md) — CoPP の trap group 設計
 - [CoPP manager リデザイン テストプラン](../../acl-qos/copp-manager-redesign-test-plan.md) — trap 別の挙動確認の観点
+
+<!-- glossary-links-injected: 02ec46afe5a7 -->

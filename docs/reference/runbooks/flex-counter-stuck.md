@@ -36,8 +36,8 @@ related:
 1. **`FLEX_COUNTER_TABLE` で該当 group が `disable`**: counterpoll 自体が止まっている
 2. **`FLEX_COUNTER_DELAY_STATUS` が `system_ready` 待ち**: 起動直後で polling が始まっていない
 3. **polling interval が長過ぎ / 0** で実用上更新されない
-4. **syncd の counter thread が hang / CPU 飽和**
-5. **COUNTERS_DB の対応 key 欠落**: object が後から作られたが counter 登録が漏れている
+4. **[syncd](../../reference/glossary.md#term-syncd) の counter thread が hang / CPU 飽和**
+5. **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の対応 key 欠落**: object が後から作られたが counter 登録が漏れている
 
 ## 切り分け手順
 
@@ -61,7 +61,7 @@ sonic-db-cli STATE_DB hget "FLEX_COUNTER_DELAY_STATUS|PORT" status
 ```
 
 - 期待: `system_ready` または該当無し
-- 異常: 長時間 delay → 上位 orchagent が ready 状態を出していない
+- 異常: 長時間 delay → 上位 [orchagent](../../reference/glossary.md#term-orchagent) が ready 状態を出していない
 
 ### 3. COUNTERS_DB の生死
 
@@ -101,5 +101,7 @@ docker logs swss 2>&1 | grep -iE "flexcounter|FLEX_COUNTER" | tail -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — flexcounterorch
-[^2]: sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — flexcounterorch
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — counterpoll CLI
+
+<!-- glossary-links-injected: ce96ade25a61 -->

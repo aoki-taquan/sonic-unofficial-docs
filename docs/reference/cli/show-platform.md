@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show platform` はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する[^1]。**ほとんどのコマンドが `psushow` / `fanshow` / `tempershow` / `sensorshow` / `pcieutil` / `decode-syseeprom` / `ssdutil` / `fwutil` / `leakageshow` などの外部コマンドラッパ**で、CONFIG_DB は読まない。`sonic-platform` API から取得するのは `summary` と `bmc` 系のみ。
+`show platform` はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する[^1]。**ほとんどのコマンドが `psushow` / `fanshow` / `tempershow` / `sensorshow` / `pcieutil` / `decode-syseeprom` / `ssdutil` / `fwutil` / `leakageshow` などの外部コマンドラッパ**で、[CONFIG_DB](../../reference/glossary.md#term-config_db) は読まない。`sonic-platform` API から取得するのは `summary` と `bmc` 系のみ。
 
 ## コマンド一覧
 
@@ -59,7 +59,7 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 ### `show platform psustatus [-i <index>] [--json]`
 
 **動作**:
-`psushow -s [-i <index>] [-j]` を実行。pmon コンテナの psud daemon が STATE_DB に書き込んだ `PSU_INFO|PSU<N>` を整形表示する（実際のクエリは psushow 側）。
+`psushow -s [-i <index>] [-j]` を実行。pmon コンテナの psud daemon が [STATE_DB](../../reference/glossary.md#term-state_db) に書き込んだ `PSU_INFO|PSU<N>` を整形表示する（実際のクエリは psushow 側）。
 
 ### `show platform ssdhealth [<device>] [--verbose] [--vendor]`
 
@@ -152,3 +152,5 @@ ASIC: broadcom
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 881c373e11ef -->

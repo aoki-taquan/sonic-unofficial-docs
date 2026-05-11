@@ -18,11 +18,11 @@ keywords:
 
 # 概念
 
-PINS は SONiC に「外部の SDN コントローラが **P4Runtime gRPC** を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。BGP や orchagent といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、`APPL_DB` の従来テーブル群と並んで `P4RT_TABLE` 系が増えると考えると掴みやすくなります。
+[PINS](../../reference/glossary.md#term-pins) は SONiC に「外部の SDN コントローラが **P4Runtime gRPC** を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。[BGP](../../reference/glossary.md#term-bgp) や [orchagent](../../reference/glossary.md#term-orchagent) といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、`APPL_DB` の従来テーブル群と並んで `P4RT_TABLE` 系が増えると考えると掴みやすくなります。
 
 ## この章は何のためにあるか
 
-通常の SONiC ではコントロールプレーンは「switch 内部の daemon が CONFIG_DB / APPL_DB を埋める」前提です。PINS はその前提を一部だけひっくり返し、「外部コントローラが P4Runtime で直接エントリを書く」面を opt-in で追加します。本章は、その違いがどこで効くのか、既存 SONiC とどう同居するのか、どこで責任分界線が引かれるのかを読み解くために用意しています。
+通常の SONiC ではコントロールプレーンは「switch 内部の daemon が [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) を埋める」前提です。PINS はその前提を一部だけひっくり返し、「外部コントローラが P4Runtime で直接エントリを書く」面を opt-in で追加します。本章は、その違いがどこで効くのか、既存 SONiC とどう同居するのか、どこで責任分界線が引かれるのかを読み解くために用意しています。
 
 読み手が最初に持つ疑問は次の 5 つです。本章はこの順で答えます。
 
@@ -34,7 +34,7 @@ PINS は SONiC に「外部の SDN コントローラが **P4Runtime gRPC** を�
 
 ## 何を解決するか
 
-- **SAI 実装差の縮小**: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。
+- **[SAI](../../reference/glossary.md#term-sai) 実装差の縮小**: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。
 - **コントローラ駆動の forwarding**: hyperscaler の SDN コントローラ（例: ONF SD-Fabric、Google 内部コントローラ）が SONiC を SAI ASIC の汎用 backend として扱えるようにする。
 - **CRUD の確実性**: P4Runtime は CRUD を同期 API として規定する。orchagent の非同期書き込みでは応答に乗らなかった「ASIC に書き込まれた／失敗した」が、`APPL_STATE_DB` 経由でコントローラに正しく返る。
 
@@ -97,7 +97,7 @@ sequenceDiagram
 | 比較 | 共通点 | 違い |
 | --- | --- | --- |
 | OpenFlow との違い | controller -> switch のフロー書き込み | OpenFlow は fixed pipeline。P4Runtime は P4Info で pipeline 自体を表現できる。 |
-| gNMI / OpenConfig との違い | gRPC で switch を制御 | gNMI は **設定 / 状態 / telemetry**、P4Runtime は **forwarding テーブルそのもの**。 |
+| [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig との違い | gRPC で switch を制御 | gNMI は **設定 / 状態 / telemetry**、P4Runtime は **forwarding テーブルそのもの**。 |
 | 通常 orchagent との違い | APPL_DB を読んで SAI を呼ぶ | orchagent は非同期、P4Orch は同期で `APPL_STATE_DB` に結果を書く。 |
 | sFlow / Everflow との違い | パケットを CPU に上げる | sFlow はサンプリング、PacketIO は controller との **双方向** punt/inject。 |
 
@@ -120,14 +120,14 @@ PINS は SONiC の動作モードを切り替えるものではなく、**コン
 ## Send to Ingress と PacketIO の違い
 
 - **PacketIO**: controller が install した punt flow にマッチしたパケットを **generic netlink** 経由でコントローラに届け、また controller から ASIC への送信も受ける機構。Receive と Transmit の両方を扱う。
-- **Send to Ingress**: PacketIO の Transmit のうち、**ASIC の ingress pipeline にパケットを再注入する** モード。ECMP / WCMP の判定を ASIC に任せたいケースで使う。専用の `SEND_TO_INGRESS_PORT` テーブルと SAI hostif で実現する。
+- **Send to Ingress**: PacketIO の Transmit のうち、**ASIC の ingress pipeline にパケットを再注入する** モード。[ECMP](../../reference/glossary.md#term-ecmp) / WCMP の判定を ASIC に任せたいケースで使う。専用の `SEND_TO_INGRESS_PORT` テーブルと SAI hostif で実現する。
 
 詳細は [PacketIO HLD](../../management/packetio.md) と [Send to Ingress HLD](../../management/send-to-ingress-hld.md) を参照してください。
 
 ## 他章との境界
 
 - BGP / 静的 route の通常パスは [02 BGP](../02-bgp/index.md) と [04 VRF / ECMP](../04-vrf-ecmp/index.md) で扱います。本章は同じ宛先を P4Runtime で上書きする場合の責務分界線を示すに留めます。
-- ACL / mirror の SONiC ネイティブ実装は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照してください。PINS では `ACL_TABLE_DEFINITION` を P4Info から派生させますが、本章は API 面の違いに集中します。
+- [ACL](../../reference/glossary.md#term-acl) / mirror の SONiC ネイティブ実装は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照してください。PINS では `ACL_TABLE_DEFINITION` を P4Info から派生させますが、本章は API 面の違いに集中します。
 - gNMI / OpenConfig は [10 gNMI / OpenConfig](../10-gnmi-openconfig/index.md) の章に置きます。「PINS は forwarding テーブル」「gNMI は config/state/telemetry」と覚えると棲み分けが明確です。
 - orchagent や SAI の共通設計は [20 SWSS / SAI / Redis](../20-swss-sai-redis/index.md) に集めています。`APPL_STATE_DB` の位置づけはそちらと合わせて読むと立体的になります。
 
@@ -156,3 +156,4 @@ PINS は SONiC の動作モードを切り替えるものではなく、**コン
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 - [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
 
+<!-- glossary-links-injected: e366b49e1b86 -->

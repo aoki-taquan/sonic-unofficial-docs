@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-従来の SONiC は **単一の Redis インスタンス** に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると **この 1 インスタンスがホットスポット** になる。HLD の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで **20〜30% の性能改善** が得られた[^1]。
+従来の SONiC は **単一の [Redis](../reference/glossary.md#term-redis) インスタンス** に [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると **この 1 インスタンスがホットスポット** になる。[HLD](../reference/glossary.md#term-hld) の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで **20〜30% の性能改善** が得られた[^1]。
 
 本機能は[^1]:
 
@@ -172,7 +172,7 @@ sudo systemctl restart database
 
 ## 干渉する機能
 
-- **[Multi-namespace Redis](support-redis-databases-in-multiple-namespaces.md)**: 本 HLD の上位拡張。NPU 別 namespace で本 JSON フォーマットを **複数枚** 持つ構造になる。
+- **[Multi-namespace Redis](support-redis-databases-in-multiple-namespaces.md)**: 本 HLD の上位拡張。[NPU](../reference/glossary.md#term-npu) 別 namespace で本 JSON フォーマットを **複数枚** 持つ構造になる。
 - **`ping_pong_db_insts`**: 起動シーケンスで全 redis の生存確認に使う健全性チェッカ。
 - **`/etc/sonic/old_config`** バックアップ経路: イメージ更新時の `/etc/sonic/` バックアップ・リストアを通る。`database_config.json` もユーザ配置なら同じ経路で保全[^1]。
 
@@ -185,3 +185,5 @@ sudo systemctl restart database
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/database/multi_database_instances.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 97b2a564f840 -->

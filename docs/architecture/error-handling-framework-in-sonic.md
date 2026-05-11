@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた[^1]。これを廃し、**ERROR_DB 経由で app（特に BGP）に失敗を通知する** 汎用フレームワークが提案された。BGP は `ROUTE_TABLE` 失敗を受け取り、announce 済み route を withdraw する等のリカバリを app 側で実施できる。framework 自体は **報告のみ**で retry/rollback は行わない。
+従来 [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) CREATE/SET 失敗を一律 fatal 扱いし [orchagent](../reference/glossary.md#term-orchagent) に shutdown を要求していた[^1]。これを廃し、**ERROR_DB 経由で app（特に [BGP](../reference/glossary.md#term-bgp)）に失敗を通知する** 汎用フレームワークが提案された。BGP は `ROUTE_TABLE` 失敗を受け取り、announce 済み route を withdraw する等のリカバリを app 側で実施できる。framework 自体は **報告のみ**で retry/rollback は行わない。
 
 ## 動作仕様
 
@@ -173,7 +173,7 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 ## 干渉する機能
 
 - **OrchAgent (RouteOrch / NeighOrch)**: ERROR_DB の producer
-- **fpmsyncd / bgpcfgd**: route 失敗の receiver 候補
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / [bgpcfgd](../reference/glossary.md#term-bgpcfgd)**: route 失敗の receiver 候補
 - **debug-framework**: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）
 
 ## 実装との乖離
@@ -183,7 +183,7 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 ### 1. どこで乖離が確認されたか
 
 - **取り込み済み**:
-  - `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。HLD の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
+  - `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
 - **未取り込み**:
   - `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のテーブル名 define は `sonic-swss-common/common/schema.h` に**存在しない**（`grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h` 0 件。`lagid.h:16` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は別物の戻り値定数）。
   - `sonic-swss/orchagent/` 配下に `ErrorListener` / `ErrorReporter` クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。
@@ -202,7 +202,7 @@ HLD は「OrchAgent が SAI から失敗を受け取る → `ERROR_DB` の `ERRO
 ### 4. 回避策 / 対応方法
 
 - **SAI 失敗の発見**: syslog の `SAI_STATUS_*` を grep するか、`swssloglevel -l NOTICE -c <orch>` で OrchAgent のログを上げる。`ASIC_DB` の `ERROR` 状態を `redis-cli -n 1 keys` で覗くしかない。
-- **RIB/FIB 乖離検知**: `show ip route` と `show ip fib` の突合スクリプトを別途運用ツール側で実装。FRR の `show bgp ipv4 unicast detail` と `sonic-cli show ip route` を突合する。
+- **RIB/FIB 乖離検知**: `show ip route` と `show ip fib` の突合スクリプトを別途運用ツール側で実装。[FRR](../reference/glossary.md#term-frr) の `show bgp ipv4 unicast detail` と `sonic-cli show ip route` を突合する。
 - 上流取り込みを望む場合は HLD 自体を現行 master 構造（`Producer/ConsumerStateTable`、`status_code_util.h` の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。
 
 ## 引用元
@@ -294,8 +294,10 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
 #### 関連 GitHub Issue / PR
 
 - 本 HLD（2019-05 v0.1）の実装着手 PR は **見つからない**。`SWSS_RC_*` enum を導入した PR (`sonic-swss-common` 経由) のみが部分採用の痕跡。
-- 代替の retry/recovery 機構は CRM (Critical Resource Monitor: `sonic-swss/orchagent/crmorch.cpp`) で部分的にカバーされており、こちらは production で稼働中。`show crm resources` / `CRM_TABLE` 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。
+- 代替の retry/recovery 機構は [CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor: `sonic-swss/orchagent/crmorch.cpp`) で部分的にカバーされており、こちらは production で稼働中。`show crm resources` / `CRM_TABLE` 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。
 
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: b264acb6675e -->

@@ -30,11 +30,11 @@ related:
 
 ## 概要
 
-SONiC の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの `dhcrelay` プロセスで実装されている。本 HLD は **同じ `dhcp-relay` docker に IPv6 用の `dhcrelay -6` を並走させる** 形で DHCPv6 リレー機能を追加する設計を定義する[^1]。
+SONiC の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの `dhcrelay` プロセスで実装されている。本 [HLD](../reference/glossary.md#term-hld) は **同じ `dhcp-relay` docker に IPv6 用の `dhcrelay -6` を並走させる** 形で DHCPv6 リレー機能を追加する設計を定義する[^1]。
 
 主な機能要件[^1]:
 
-- 下流（VLAN 側）から上流への DHCPv6 パケットの中継。
+- 下流（[VLAN](../reference/glossary.md#term-vlan) 側）から上流への DHCPv6 パケットの中継。
 - `dhcp-relay` コンテナ内に **IPv4 とは別プロセス** として動かす。
 - 上流の **複数の unicast / multicast 宛先** へのリレーをサポート。
 
@@ -43,7 +43,7 @@ SONiC の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの
 ### 構成と前提
 
 - 下流（downstream）は VLAN インターフェース。**Global IPv6 アドレスがその interface に設定されていること** が前提[^1]。
-- DHCPv6 のリレー機能を有効にすると、**CoPP マネージャから DHCPv6 trap を有効化** する。逆に無効化したら trap も外す。両者は連動する[^1]。
+- DHCPv6 のリレー機能を有効にすると、**[CoPP](../reference/glossary.md#term-copp) マネージャから DHCPv6 trap を有効化** する。逆に無効化したら trap も外す。両者は連動する[^1]。
 - `dhcp-relay` コンテナの依存は IPv4 と同じく **`isc-dhcp`** プロジェクト。`dhcrelay` バイナリの `-6` オプションを使う[^1]。
 
 ### CONFIG_DB スキーマ
@@ -111,7 +111,7 @@ IPv4 と IPv6 は **同一コンテナ内の別プロセス**。両方有効で�
 
 ### 初期化フロー
 
-HLD には init フロー図（`init.svg`）が貼られているが文章での詳細はない。一般的な依存関係として、CONFIG_DB の VLAN にエントリが入った段階で `dhcp-relay` コンテナが起動 / 再起動して `dhcrelay -6` プロセスを立てる、という流れになる。
+HLD には init フロー図（`init.svg`）が貼られているが文章での詳細はない。一般的な依存関係として、[CONFIG_DB](../reference/glossary.md#term-config_db) の VLAN にエントリが入った段階で `dhcp-relay` コンテナが起動 / 再起動して `dhcrelay -6` プロセスを立てる、という流れになる。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -213,3 +213,5 @@ CLI 操作後は `Restarting DHCP relay service...` と表示され、コンテ�
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8edad9eaadfa -->

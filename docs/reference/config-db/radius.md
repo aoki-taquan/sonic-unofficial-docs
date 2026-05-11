@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-RADIUS クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の AAA ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
+RADIUS クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
 
 ## key 構造
 
@@ -53,12 +53,12 @@ RADIUS|global
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): CONFIG_DB → PAM / nsswitch / pam_radius 設定の再生成
+- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → PAM / nsswitch / pam_radius 設定の再生成
 - `AAA.authentication.login` が `radius` を含むとき、PAM 経由でログイン認証時に参照される
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `RADIUS_SERVER` (※サーバごとのエントリ、YANG: `sonic-system-radius` の同名 list), [`AAA`](aaa.md)
+- 関連 CONFIG_DB: `RADIUS_SERVER` (※サーバごとのエントリ、[YANG](../../reference/glossary.md#term-yang): `sonic-system-radius` の同名 list), [`AAA`](aaa.md)
 - 関連 CLI: `config radius { passkey | timeout | retransmit | authtype | nasip | sourceip | statistics }`
 - 関連 YANG: `sonic-system-radius`
 
@@ -97,3 +97,5 @@ sonic-db-cli CONFIG_DB keys 'RADIUS*'
 show radius
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->

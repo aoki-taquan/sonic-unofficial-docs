@@ -21,9 +21,9 @@ related:
 
 ## 概要
 
-SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (CRM) は、こうしたリソースの **使用量と空き容量を SAI 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
+SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / [ACL](../reference/glossary.md#term-acl) TCAM / [FDB](../reference/glossary.md#term-fdb) といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring ([CRM](../reference/glossary.md#term-crm)) は、こうしたリソースの **使用量と空き容量を [SAI](../reference/glossary.md#term-sai) 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
 
-本ページの一次情報は **要件定義 (`CRM_requirements.md`)** であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は HLD 内で「設計会議で詰める」と注記されている段階のものである点に注意する[^1]。
+本ページの一次情報は **要件定義 (`CRM_requirements.md`)** であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は [HLD](../reference/glossary.md#term-hld) 内で「設計会議で詰める」と注記されている段階のものである点に注意する[^1]。
 
 ## 動作仕様
 
@@ -59,7 +59,7 @@ ACL TCAM は単一の値ではなく Table / Group / Entries / Counters の 4 �
 2. 実使用カウント（actual used count）
 3. 実空きカウント（actual free count）
 
-ユーザ設定値は CONFIG_DB に記録される（テーブル名は本 HLD では明示されていない）。**ユーザ未設定時のデフォルト** は次のとおり一般的な値で固定される[^1]。
+ユーザ設定値は [CONFIG_DB](../reference/glossary.md#term-config_db) に記録される（テーブル名は本 HLD では明示されていない）。**ユーザ未設定時のデフォルト** は次のとおり一般的な値で固定される[^1]。
 
 | しきい値                | デフォルト |
 |-------------------------|------------|
@@ -166,7 +166,7 @@ CRM 要件 HLD の実装は `sonic-swss` の `orchagent` と `sonic-utilities` �
 
 - CRM Orch 実装: `.cache/sonic-sources/sonic-swss/orchagent/crmorch.cpp` / `crmorch.h`（Route / Nexthop / Neighbor / NextHop Group / ACL Table / ACL Group / ACL Counter / FDB / IPMC / SNAT / DNAT 等の resource 使用量を SAI 経由でポーリングし、threshold 超過時 syslog WARNING を出す）
 - CRM CLI: `.cache/sonic-sources/sonic-utilities/crm/` ディレクトリ、テスト `sonic-utilities/tests/crm_test.py`
-- DASH 拡張: `sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp` および `sonic-utilities/tests/crm_dash_test.py` で DASH ACL 系 resource を CRM に追加
+- [DASH](../reference/glossary.md#term-dash) 拡張: `sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp` および `sonic-utilities/tests/crm_dash_test.py` で DASH ACL 系 resource を CRM に追加
 
 HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。`code-verified` に昇格。
 
@@ -176,3 +176,5 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 421df673b3f7 -->

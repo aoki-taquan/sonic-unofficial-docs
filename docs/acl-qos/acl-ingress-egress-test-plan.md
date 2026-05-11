@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-既存 ACL テストは ingress 側のみ・FORWARD 偏重・カウンタ未確認・ルール衝突（RULE_12/13 が RULE_1 にマッチして hit しない）等の問題があった[^1]。本テストプランは以下を目的とする[^1]:
+既存 [ACL](../reference/glossary.md#term-acl) テストは ingress 側のみ・FORWARD 偏重・カウンタ未確認・ルール衝突（RULE_12/13 が RULE_1 にマッチして hit しない）等の問題があった[^1]。本テストプランは以下を目的とする[^1]:
 
 - **egress ACL テスト** を追加（`stage = egress` の `DATAEGRESS` テーブルを新設）
 - DROP / FORWARD の網羅、ルール衝突を回避した SRC_IP 設計
@@ -43,10 +43,10 @@ related:
 
 | Table | Type | Bind | Stage |
 |-------|------|------|-------|
-| `DATAINGRESS` | L3 | 全ポート（lag トポロジでは PortChannel） | ingress |
+| `DATAINGRESS` | L3 | 全ポート（lag トポロジでは [PortChannel](../reference/glossary.md#term-portchannel)） | ingress |
 | `DATAEGRESS` | L3 | 同上 | egress |
 
-両者で同じ 28 ルールセットを使う。BGP 維持のため `RULE_27 = L4_SRC_PORT 179 FORWARD`、`RULE_28 = L4_DST_PORT 179 FORWARD` を末尾近くに置き、`DEFAULT_RULE = ETHER_TYPE 2048 DROP` で他を落とす[^1]。
+両者で同じ 28 ルールセットを使う。[BGP](../reference/glossary.md#term-bgp) 維持のため `RULE_27 = L4_SRC_PORT 179 FORWARD`、`RULE_28 = L4_DST_PORT 179 FORWARD` を末尾近くに置き、`DEFAULT_RULE = ETHER_TYPE 2048 DROP` で他を落とす[^1]。
 
 旧バージョンとの差分:
 - `RULE_1` の SRC_IP を `10.0.0.2/32` → `20.0.0.2/32` に変更（ホスト IP との衝突回避）
@@ -123,3 +123,5 @@ flowchart LR
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8e5e2390c13a -->

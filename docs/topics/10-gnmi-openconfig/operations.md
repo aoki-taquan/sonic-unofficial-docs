@@ -9,7 +9,7 @@ sources: []
 
 # 運用
 
-gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれ HLD が別々に存在するため、ここで一望できるようにまとめる。
+[gNMI](../../reference/glossary.md#term-gnmi) を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれ [HLD](../../reference/glossary.md#term-hld) が別々に存在するため、ここで一望できるようにまとめる。
 
 ## Master arbitration
 
@@ -33,7 +33,7 @@ INFO master_arbitration: master changed: old_id=10 new_id=12 client=10.1.2.3:543
 
 ## Save-on-set による永続化
 
-gNMI Set は CONFIG_DB を更新するが、CONFIG_DB は memory 上の Redis のため、再起動を跨ぐと失われる可能性がある。SONiC では `config save` 相当の処理を gNMI Set のたびに自動で走らせる save-on-set モードを持つ。
+gNMI Set は [CONFIG_DB](../../reference/glossary.md#term-config_db) を更新するが、CONFIG_DB は memory 上の [Redis](../../reference/glossary.md#term-redis) のため、再起動を跨ぐと失われる可能性がある。SONiC では `config save` 相当の処理を gNMI Set のたびに自動で走らせる save-on-set モードを持つ。
 
 - 有効化すると、Set 完了後に `/etc/sonic/config_db.json` への書き出しが行われる。
 - 大量の Set を高頻度で打つ用途では、write amplification によりディスクへの負担が増えるため、明示的な save を使うパターンと使い分ける。
@@ -44,7 +44,7 @@ gNMI Set は CONFIG_DB を更新するが、CONFIG_DB は memory 上の Redis �
 
 ## Telemetry: dial-in と dial-out
 
-SONiC telemetry は、collector 側が gNMI Subscribe で switch から pull する **dial-in** が標準だが、firewall / NAT 越しなどで collector へ switch から push する **dial-out** モードも持つ。
+SONiC telemetry は、collector 側が gNMI Subscribe で switch から pull する **dial-in** が標準だが、firewall / [NAT](../../reference/glossary.md#term-nat) 越しなどで collector へ switch から push する **dial-out** モードも持つ。
 
 | 観点 | Dial-in (subscribe) | Dial-out |
 | --- | --- | --- |
@@ -62,9 +62,9 @@ gnmic -a sw01:8080 --skip-verify subscribe \
   --mode stream --stream-mode sample --sample-interval 10s
 ```
 
-応答 JSON の主要キーは `in-octets`、`out-octets`、`in-errors`、`out-errors` などで、内部的に COUNTERS_DB から拾われる。`counterpoll show` で PORT_STAT が enable でないとカウンタが進まないため、Subscribe が空応答ばかりになる場合はまず polling を疑う。
+応答 JSON の主要キーは `in-octets`、`out-octets`、`in-errors`、`out-errors` などで、内部的に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から拾われる。`counterpoll show` で PORT_STAT が enable でないとカウンタが進まないため、Subscribe が空応答ばかりになる場合はまず polling を疑う。
 
-dial-out 側は `/etc/sonic/telemetry/dialout.cfg` 相当の設定を CONFIG_DB の `TELEMETRY_CLIENT` に書く。状態は STATE_DB の `TELEMETRY_CLIENT_STATE` を確認する。
+dial-out 側は `/etc/sonic/telemetry/dialout.cfg` 相当の設定を CONFIG_DB の `TELEMETRY_CLIENT` に書く。状態は [STATE_DB](../../reference/glossary.md#term-state_db) の `TELEMETRY_CLIENT_STATE` を確認する。
 
 ## クライアントツールでの確認
 
@@ -90,7 +90,7 @@ CONFIG_DB を直接弄りたいときは SONiC 拡張の `sonic-*` model (例: `
 
 ## Subscription の使い方と注意
 
-YANG path に対する Subscribe は SAMPLE / ON_CHANGE / TARGET_DEFINED の 3 モードがある。SONiC では COUNTERS_DB ベースの数値系メトリクスは SAMPLE 向き、CONFIG_DB ベースの状態は ON_CHANGE 向きである。BGP RIB のように規模が大きいデータを subscribe するときの注意は [gNMI subscription for YANG data](../../routing/gnmi-subscription-for-yang-data.md) にまとまっている。
+[YANG](../../reference/glossary.md#term-yang) path に対する Subscribe は SAMPLE / ON_CHANGE / TARGET_DEFINED の 3 モードがある。SONiC では COUNTERS_DB ベースの数値系メトリクスは SAMPLE 向き、CONFIG_DB ベースの状態は ON_CHANGE 向きである。[BGP](../../reference/glossary.md#term-bgp) RIB のように規模が大きいデータを subscribe するときの注意は [gNMI subscription for YANG data](../../routing/gnmi-subscription-for-yang-data.md) にまとまっている。
 
 実運用では次の点を抑える。
 
@@ -127,7 +127,7 @@ gNMI の問題は、layer ごとに切り分ける。
 1. **接続**: TLS handshake、認証、ポート開放を確認する。telemetry container のログを最初に見る。
 2. **Get / Set の echo**: `gnmi_get` で簡単な OpenConfig path を引き、応答があるかを確認する。
 3. **Translib / Transformer**: 期待した YANG path が CONFIG_DB のどのテーブルに落ちるかを Transformer の対応で確認する。詳細は [アーキテクチャ](architecture.md) を参照する。
-4. **Validation**: YANG validation エラーが返るときは、依存テーブル (たとえば PORT が存在しない VLAN member) を疑う。
+4. **Validation**: YANG validation エラーが返るときは、依存テーブル (たとえば PORT が存在しない [VLAN](../../reference/glossary.md#term-vlan) member) を疑う。
 5. **永続化**: 再起動後に消える場合は save-on-set が有効か、または明示的に `config save` を打ったかを確認する。
 
 ### 典型ログ
@@ -139,7 +139,7 @@ ERROR translib: validation failed: dependent key PORT|Ethernet0 not found
 WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platform:components)
 ```
 
-`validation failed: dependent key ... not found` は典型的な「親が無いところに子を作ろうとした」ケース。VLAN を作る前に member を入れた、PortChannel を作る前に member を入れた、などが該当する。
+`validation failed: dependent key ... not found` は典型的な「親が無いところに子を作ろうとした」ケース。VLAN を作る前に member を入れた、[PortChannel](../../reference/glossary.md#term-portchannel) を作る前に member を入れた、などが該当する。
 
 ## 対応コマンド早見表
 
@@ -163,8 +163,8 @@ WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platfo
 
 ## 関連章
 
-- 章 [07 ACL / CoPP / mirror](../07-acl-copp-mirror/operations.md) — gNMI で ACL を投入する場合の確認
-- 章 [08 QoS / Buffer](../08-qos-buffer/operations.md) — QoS の宣言的設定
+- 章 [07 ACL / CoPP / mirror](../07-acl-copp-mirror/operations.md) — gNMI で [ACL](../../reference/glossary.md#term-acl) を投入する場合の確認
+- 章 [08 QoS / Buffer](../08-qos-buffer/operations.md) — [QoS](../../reference/glossary.md#term-qos) の宣言的設定
 - 章 [09 telemetry / SNMP / observability](../09-telemetry-snmp/operations.md) — system-health / techsupport
 
 ## 関連ページ
@@ -174,3 +174,5 @@ WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platfo
 - [Telemetry dial-out mode](../../system/sonic-telemetry-in-dial-out-mode.md)
 - [Telemetry dial-out mode 2](../../system/sonic-telemetry-in-dial-out-mode-2.md)
 - [gNMI subscription for YANG data](../../routing/gnmi-subscription-for-yang-data.md)
+
+<!-- glossary-links-injected: 3cdf5e8a0b59 -->

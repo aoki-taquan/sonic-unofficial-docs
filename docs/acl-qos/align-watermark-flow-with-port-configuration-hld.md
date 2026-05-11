@@ -30,7 +30,7 @@ related:
 
 SONiC の flex counter には **queue counter / PG-drop counter / watermark counter (queue / PG / buffer-pool)** が並列に存在する。これらは `counterpoll` CLI で個別に enable / disable される。一方、各 counter は **`COUNTERS_DB.COUNTERS_QUEUE_*_MAP`** や **`COUNTERS_DB.COUNTERS_PG_*_MAP`** といった「OID とポート / queue index / PG index の対応マップ」を必要とする。
 
-本 HLD は **「watermark を有効化したのに queue map が生成されない」** などの整合性バグを直すための修正設計を定める[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **「watermark を有効化したのに queue map が生成されない」** などの整合性バグを直すための修正設計を定める[^1]。
 
 問題の整理（修正前の挙動）[^1]:
 
@@ -220,7 +220,7 @@ counterpoll watermark enable
 ## 干渉する機能
 
 - **`PortsOrch`**: map 生成と stat 登録の主体。本 HLD で関数群が分離される
-- **`flexcounter` (orchagent 内 / syncd 内)**: counter polling 本体
+- **`flexcounter` ([orchagent](../reference/glossary.md#term-orchagent) 内 / [syncd](../reference/glossary.md#term-syncd) 内)**: counter polling 本体
 - **`counterpoll` CLI**: ユーザ操作の起点
 - **`BufferOrch` / buffer pool watermark**: watermark enable 時に同時に生成される group の 1 つ
 - **port の dynamic add**: watermark enable 状態での新規 port 追加経路に依存
@@ -249,3 +249,5 @@ counterpoll watermark enable
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: af011099fbeb -->

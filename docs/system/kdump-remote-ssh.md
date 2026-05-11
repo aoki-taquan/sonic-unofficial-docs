@@ -96,11 +96,11 @@ show kdump config
 - crash kernel 内で **DHCP 取得が前提**。静的 IP 環境は `network_setup.sh` の改造必須
 - パスワード認証は **範囲外**（鍵のみ）
 - 鍵 rotate の自動更新は範囲外（`ssh_path` を手動更新）
-- **SAI API 変更なし**[^1]
+- **[SAI](../reference/glossary.md#term-sai) API 変更なし**[^1]
 
 ## 干渉する機能
 
-`hostcfgd`（CONFIG_DB → kdump-tools 反映）/ `kdump-tools` (Debian) / `kexec` / initramfs `network_setup` / 既存 `KDUMP.enabled / memory / num_dumps`。
+`hostcfgd`（[CONFIG_DB](../reference/glossary.md#term-config_db) → kdump-tools 反映）/ `kdump-tools` (Debian) / `kexec` / initramfs `network_setup` / 既存 `KDUMP.enabled / memory / num_dumps`。
 
 ## トラブルシューティング
 
@@ -123,3 +123,5 @@ show kdump config
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 96667c52d98d -->

@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-CRM（Critical Resource Monitoring）は SONiC で **ASIC リソースの利用状況** を COUNTERS_DB に publish する仕組みで、ACL / FDB / IP route / nexthop など主要リソースに対しては既に実装されている。
+[CRM](../reference/glossary.md#term-crm)（Critical Resource Monitoring）は SONiC で **ASIC リソースの利用状況** を [COUNTERS_DB](../reference/glossary.md#term-counters_db) に publish する仕組みで、[ACL](../reference/glossary.md#term-acl) / [FDB](../reference/glossary.md#term-fdb) / IP route / nexthop など主要リソースに対しては既に実装されている。
 
-本 HLD は **Generic SAI Extension（汎用拡張）テーブル** に対しても CRM をサポートするための設計を定義する[^1]。Generic SAI Extension は **`SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE`** という抽象を介して、P4 由来の追加テーブル（例: `EXT_VIPV4_TABLE` など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **Generic [SAI](../reference/glossary.md#term-sai) Extension（汎用拡張）テーブル** に対しても CRM をサポートするための設計を定義する[^1]。Generic SAI Extension は **`SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE`** という抽象を介して、P4 由来の追加テーブル（例: `EXT_VIPV4_TABLE` など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある[^1]。
 
 スコープは「**used / available の COUNTERS_DB への publish と既存 CRM の watermark チェックの活用**」のみ。新たなユーザ向け設定パラメータは追加しない[^1]。
 
@@ -153,7 +153,7 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 
 ### 関連する CONFIG_DB
 
-該当する CONFIG_DB エントリは無い。CRM 側の既存設定（`CRM` テーブルの polling interval や watermark threshold）が新 resource type にも効く前提[^1]。
+該当する [CONFIG_DB](../reference/glossary.md#term-config_db) エントリは無い。CRM 側の既存設定（`CRM` テーブルの polling interval や watermark threshold）が新 resource type にも効く前提[^1]。
 
 ### 関連する CLI
 
@@ -167,7 +167,7 @@ redis-cli -n 2 KEYS '*EXT_TABLE_STATS*'
 redis-cli -n 2 HGETALL CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 ```
 
-`crm show resources` 系のサブコマンドが extension table を扱えるかどうかは sonic-utilities の実装に依存する（裏取り課題）。
+`crm show resources` 系のサブコマンドが extension table を扱えるかどうかは [sonic-utilities](../reference/glossary.md#term-sonic-utilities) の実装に依存する（裏取り課題）。
 
 ## 制限事項
 
@@ -181,14 +181,14 @@ redis-cli -n 2 HGETALL CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 - **CrmOrch（既存）**: 新 resource type の登録だけが追加の変更。polling / watermark check の枠組みはそのまま使える[^1]。
 - **P4Orch (extension table manager)**: used カウンタの増減を呼ぶ責任を負う。新規 extension table を追加した際にも本機構に追従する必要がある[^1]。
 - **`SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE`**: SAI 拡張の根幹オブジェクト。available 取得経路として `OBJECT_NAME` 属性が利用される[^1]。
-- **テレメトリ / dial-out**: COUNTERS_DB の `CRM:EXT_TABLE_STATS:*` がそのままテレメトリ系の購読対象になりうる。命名規則 `EXT_TABLE_STATS` を前提にした gNMI path 等の設計とリンクしうる。
+- **テレメトリ / dial-out**: COUNTERS_DB の `CRM:EXT_TABLE_STATS:*` がそのままテレメトリ系の購読対象になりうる。命名規則 `EXT_TABLE_STATS` を前提にした [gNMI](../reference/glossary.md#term-gnmi) path 等の設計とリンクしうる。
 - **ACL / FDB 等の既存 CRM**: 同じ enum 機構の延長線上にある。新規追加が他リソースに副作用を与えない構造（`m_resourcesMap` の独立エントリ）[^1]。
 
 ## トラブルシューティング
 
 - `CRM:EXT_TABLE_STATS:*` キーが redis に出ない: P4Orch 側で extension table エントリが 1 件も登録されていない、または CrmOrch のポーリングがまだ走っていない可能性。`crm config polling interval` の値を確認[^1]。
 - `available` が 0 のまま: SAI 実装が `sai_object_type_get_availability(GENERIC_PROGRAMMABLE, OBJECT_NAME)` を実装していない可能性[^1]。`syncd` のログに該当エラーが出ているか確認。
-- `used` の値が実体とずれる: P4Orch の `inc/dec` 呼び出しが add/del の成功パスから外れている可能性。orchagent ログで該当 entry の操作結果を追う[^1]。
+- `used` の値が実体とずれる: P4Orch の `inc/dec` 呼び出しが add/del の成功パスから外れている可能性。[orchagent](../reference/glossary.md#term-orchagent) ログで該当 entry の操作結果を追う[^1]。
 - watermark アラートが上がらない: 既存 CRM の閾値設定（`crm config thresholds`）を本テーブル用にも適用しているか確認。HLD は **既存設定の継承** を前提にしている[^1]。
 
 ## 引用元
@@ -207,3 +207,5 @@ redis-cli -n 2 HGETALL CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7546137af680 -->

@@ -63,18 +63,18 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 ## 制約
 
-- 同名の `DEVICE_NEIGHBOR_LIST.name` と運用上揃える前提（YANG では leafref 化されていない）
+- 同名の `DEVICE_NEIGHBOR_LIST.name` と運用上揃える前提（[YANG](../../reference/glossary.md#term-yang) では leafref 化されていない）
 - 各 IP 系 leaf は `union` でアドレス／プレフィクス両形式を許容
 
 ## 購読者
 
-- minigraph パーサ (sonic-cfggen): minigraph から生成
+- minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
 - 一部監視・トポロジ可視化スクリプトが参照
-- BGP テンプレート生成 (`bgpcfgd` テンプレート) で hwsku/type を参照することがある
+- [BGP](../../reference/glossary.md#term-bgp) テンプレート生成 (`bgpcfgd` テンプレート) で hwsku/type を参照することがある
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`DEVICE_NEIGHBOR`](./device-neighbor.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_NEIGHBOR`](./device-neighbor.md)
 - 関連 YANG: `sonic-device_neighbor_metadata`
 - 関連 CLI: なし
 
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB keys 'DEVICE_NEIGHBOR_METADATA|*'
 show lldp table
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2948ac8427b0 -->

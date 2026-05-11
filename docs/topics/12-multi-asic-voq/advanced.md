@@ -14,7 +14,7 @@ sources:
 
 # 発展トピック
 
-VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。
+[VOQ](../../reference/glossary.md#term-voq) chassis 固有の機能は、[BGP](../../reference/glossary.md#term-bgp)・[LAG](../../reference/glossary.md#term-lag)・Everflow・TSA・warm reboot のような既存機能領域ごとに別 [HLD](../../reference/glossary.md#term-hld) として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。
 
 ## VOQ Chassis での BGP
 
@@ -35,7 +35,7 @@ BGP の章本文での読み順は [02 BGP](../02-bgp/index.md) を参照し、V
 
 - LAG メンバーは複数 line card の system port にまたがれる。
 - hash 結果に応じて egress system port が選ばれ、ingress 側 VOQ が宛先を切り替える。
-- LACP は line card 側の teamd が動かし、chassis 全体としての membership は Chassis DB と協調する。
+- [LACP](../../reference/glossary.md#term-lacp) は line card 側の [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) が動かし、chassis 全体としての membership は Chassis DB と協調する。
 
 L2 / LAG の章本文は [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md) を参照し、VOQ 視点では「メンバーが line card 跨ぎになる可能性」「fabric を経由する hash 分散」を押さえます。
 
@@ -48,7 +48,7 @@ L2 / LAG の章本文は [06 L2 / VLAN / LAG](../06-l2-vlan-lag/index.md) を参
 
 - mirror 元と mirror 宛先（collector）が別 line card にいる場合、cell スイッチングで fabric を経由する。
 - ingress mirror と egress mirror は line card ごとに発生する。
-- ACL bind 先や session 識別は ASIC namespace 単位で持つが、collector resolution は chassis 全体で一意。
+- [ACL](../../reference/glossary.md#term-acl) bind 先や session 識別は ASIC namespace 単位で持つが、collector resolution は chassis 全体で一意。
 
 mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照し、VOQ 視点では「mirror traffic も fabric を流れる」「per-line-card session が増える」点を押さえます。
 
@@ -72,7 +72,7 @@ mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/inde
 
 `multi-asic-warm-reboot` は、Multi-ASIC SONiC の warm reboot 設計を扱います。VOQ chassis では line card 単位 / chassis 単位の両方が議論されます。
 
-- 各 ASIC namespace の syncd / orchagent / bgpd は ASIC ごとに warm restart する。
+- 各 ASIC namespace の [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / bgpd は ASIC ごとに warm restart する。
 - supervisor 側は Chassis DB を温存したまま再起動する。
 - line card 単独 warm reboot 中、他 line card と fabric の状態を維持する。
 
@@ -88,8 +88,8 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 ## 発展トピック
 
 - **Fabric link telemetry**: VOQ chassis では fabric link 自体が監視対象。`FABRIC_PORT_TABLE` の counter / error / link state を telemetry agent から export し、cell drop の兆候を早期検出する。
-- **VOQ scheduling と credit loop**: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。SAI 側 `SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE` などで dead-lock 検出と復旧を行う。
-- **Chassis DB の scale**: line card / port / nexthop が増えると Chassis DB の Redis サイズが伸びる。memory pressure と replication 遅延が運用課題になる。
+- **VOQ scheduling と credit loop**: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。[SAI](../../reference/glossary.md#term-sai) 側 `SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE` などで dead-lock 検出と復旧を行う。
+- **Chassis DB の scale**: line card / port / nexthop が増えると Chassis DB の [Redis](../../reference/glossary.md#term-redis) サイズが伸びる。memory pressure と replication 遅延が運用課題になる。
 - **packet trim (truncate)**: drop されるパケットの header だけ collector に送って visibility を確保する手法。chassis 級 drop 解析で有効。
 - **Multi-ASIC host のテスト**: VS テストで multi-ASIC を再現する場合 ([21 Lab](../21-lab-vs-developer/index.md))、namespace ごとの sonic-vs を立ち上げる手順がある。
 
@@ -104,11 +104,11 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 
 - VOQ chassis の disaggregated software model (Supervisor と Line card の独立バージョン) が中長期テーマ。
 - Multi-ASIC 単一 host (pizza box の multi-ASIC switch) と分散 chassis を同じ orchestration で扱う統一が進行中。
-- DASH / SmartSwitch 構成と VOQ chassis を組合せる構成 ([13 DASH](../13-dash-smartswitch/index.md)) の議論が早期段階で進む。
+- [DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成と VOQ chassis を組合せる構成 ([13 DASH](../13-dash-smartswitch/index.md)) の議論が早期段階で進む。
 
 ## 関連 RFC / 仕様書
 
-- [IEEE 802.1Qcz](https://1.ieee802.org/dcb/) — Congestion Isolation (fabric 内 PFC のヒント)
+- [IEEE 802.1Qcz](https://1.ieee802.org/dcb/) — Congestion Isolation (fabric 内 [PFC](../../reference/glossary.md#term-pfc) のヒント)
 - [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — AQM (VOQ credit と組合せ参考)
 - VOQ アーキテクチャは商用 ASIC ベンダー仕様書に依存し、IETF/IEEE 標準は限定的。
 
@@ -116,4 +116,6 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 
 - `sonic-buildimage` で `chassis_db` / `database-chassis` 関連の修正が継続。replication 安定性とスキーマ拡張が主軸。
 - `sonic-swss` の `vrforch` / `routeorch` / `lagorch` で system port / system LAG 周りの race fix が散発的に入る。
-- VOQ chassis のテスト基盤 (sonic-mgmt) で multi-DUT scenario の coverage 拡張 PR が定期的にある。
+- VOQ chassis のテスト基盤 ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)) で multi-DUT scenario の coverage 拡張 PR が定期的にある。
+
+<!-- glossary-links-injected: 841aa1b3e937 -->

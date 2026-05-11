@@ -31,13 +31,13 @@ related:
 
 ## 概要
 
-ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み[^1]。SONiC は ISC 由来の `dhcrelay` を VLAN 単位で起動し、付随する `dhcpmon` で監視・統計収集する。
+ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み[^1]。SONiC は ISC 由来の `dhcrelay` を [VLAN](../reference/glossary.md#term-vlan) 単位で起動し、付随する `dhcpmon` で監視・統計収集する。
 
 主な責務:
 
 - VLAN broadcast → upstream へ relay（複数 server に対する parallel forwarding）
 - option-82（Relay Agent Information）に **circuit-id** / **remote-id** を埋め込む
-- dual ToR / MC-LAG 環境で 1 client の DHCPLEASE が双方の ToR から重複して返らないように調整
+- dual ToR / MC-[LAG](../reference/glossary.md#term-lag) 環境で 1 client の DHCPLEASE が双方の ToR から重複して返らないように調整
 - counter / リーク検知のための状態を `STATE_DB` / log に出す
 
 ## 動作仕様
@@ -57,14 +57,14 @@ flowchart LR
 
 ポイント[^1]:
 
-- `dhcrelay` は CONFIG_DB の `DHCP_RELAY|<VLAN>` から `dhcp_servers` リストを読み、VLAN 単位に起動。VLAN を VRF にバインドしている場合は VRF コンテキスト指定で動かす
+- `dhcrelay` は [CONFIG_DB](../reference/glossary.md#term-config_db) の `DHCP_RELAY|<VLAN>` から `dhcp_servers` リストを読み、VLAN 単位に起動。VLAN を [VRF](../reference/glossary.md#term-vrf) にバインドしている場合は VRF コンテキスト指定で動かす
 - option-82 の **circuit-id** はデフォルトで client 側 interface 名相当（実装によっては VLAN + port）、**remote-id** は switch hostname or MAC ベース
 - `dhcpmon` は `dhcrelay` の入出力を観測してドロップ / カウンタを `STATE_DB` に出す。dual-ToR / active-active 構成で peer 側との整合性を見る運用に用いる
 
 ### dual ToR / MC-LAG での挙動
 
 - 両 ToR で `dhcrelay` を起動する設計だが、リース重複や ToR 切替えで lease の移行が発生し得る
-- 詳細はこの HLD では概要のみ。dual-ToR の active-active / standby ページを参照する
+- 詳細はこの [HLD](../reference/glossary.md#term-hld) では概要のみ。dual-ToR の active-active / standby ページを参照する
 
 ## 設定
 
@@ -103,7 +103,7 @@ show dhcp_relay ipv4
 - **dual ToR active-active / standby**: lease 整合と repaire の挙動が ToR モードで変わる
 - **VRF**: server 到達経路の VRF 指定が必要。`mgmt` VRF か data VRF か明確化が要件
 - **ipv4-port-based-dhcp-server**: SONiC 側で local DHCP server を立てる場合との排他関係（用途が違う）
-- **DHCP DoS mitigation / dhcp-mac-move-test**: ACL / 監視系がパケットドロップの原因になり得る
+- **DHCP DoS mitigation / dhcp-mac-move-test**: [ACL](../reference/glossary.md#term-acl) / 監視系がパケットドロップの原因になり得る
 
 ## トラブルシューティング
 
@@ -130,3 +130,5 @@ show dhcp_relay ipv4
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a4ef6587dfc6 -->

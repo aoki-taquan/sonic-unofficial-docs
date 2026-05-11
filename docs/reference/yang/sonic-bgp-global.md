@@ -24,7 +24,7 @@ related:
 - import: `sonic-vrf`, `ietf-inet-types`, `sonic-route-map`, `sonic-extension`
 - top container: `sonic-bgp-global`
 
-SONIC BGP Global YANG[^1]
+SONIC [BGP](../../reference/glossary.md#term-bgp) Global [YANG](../../reference/glossary.md#term-yang)[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -138,13 +138,13 @@ module: sonic-bgp-global
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `vrf_name` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/vrf_name` | `union` | yes |  | union(string, leafref) | VRF name |
+| `vrf_name` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/vrf_name` | `union` | yes |  | union(string, leafref) | [VRF](../../reference/glossary.md#term-vrf) name |
 | `router_id` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/router_id` | `inet:ipv4-address` |  |  |  | BGP router identifier in IPv4 address format. |
 | `local_asn` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local autonomous system number for this BGP instance. |
 | `always_compare_med` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/always_compare_med` | `boolean` |  |  |  | Allow comparing MED from different neighbors |
 | `load_balance_mp_relax` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/load_balance_mp_relax` | `boolean` |  |  |  | Allow load sharing across routes that have different AS paths (but same length) |
 | `graceful_restart_enable` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/graceful_restart_enable` | `boolean` |  |  |  | Enable graceful restart |
-| `gr_preserve_fw_state` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/gr_preserve_fw_state` | `boolean` |  |  |  | Set F-bit indication that FIB is preserved while doing Graceful Restart. |
+| `gr_preserve_fw_state` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/gr_preserve_fw_state` | `boolean` |  |  |  | Set F-bit indication that FIB is preserved while doing [Graceful Restart](../../reference/glossary.md#term-graceful-restart). |
 | `gr_restart_time` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/gr_restart_time` | `uint16` |  |  | range 1..3600 | Set the time to wait to delete stale routes before a BGP open message is received |
 | `gr_stale_routes_time` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/gr_stale_routes_time` | `uint16` |  |  | range 1..3600 | Set the max time to hold onto restarting peer's stale paths |
 | `external_compare_router_id` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/external_compare_router_id` | `boolean` |  |  |  | Compare router-id for identical EBGP paths |
@@ -229,7 +229,7 @@ module: sonic-bgp-global
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_GLOBALS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`
 - CONFIG_DB: `BGP_GLOBALS_AF`
 - CLI: `config bgp`
 
@@ -247,7 +247,7 @@ module: sonic-bgp-global
 
 ### 典型的なデプロイ位置
 
-- BGP グローバル / AF 設定。`BGP_GLOBALS` `BGP_GLOBALS_AF` を bgpcfgd が FRR テンプレに流し込む。
+- BGP グローバル / AF 設定。`BGP_GLOBALS` `BGP_GLOBALS_AF` を [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [FRR](../../reference/glossary.md#term-frr) テンプレに流し込む。
 
 ### よくある落とし穴
 
@@ -265,3 +265,4 @@ vtysh -c 'show bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: c1ba91027e65 -->

@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-DASH（**Disaggregated APIs for SONiC Hosts**）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の **ENI (Elastic Network Interface)** を扱い、各 ENI に対する VNet / ACL / metering / Service Tunnel / Private Link 等のデータプレーン処理を行うための仕組み[^1]。本ファイルは DASH を SONiC 内に乗せるための実装側 HLD（API / Orch / Config DB / APP DB スキーマ）を扱う。一般 DASH 概念は [DASH 高位 HLD](https://github.com/sonic-net/DASH/tree/main/documentation/general/dash-high-level-design.md) を参照。
+[DASH](../reference/glossary.md#term-dash)（**Disaggregated APIs for SONiC Hosts**）は、[SmartSwitch](../reference/glossary.md#term-smartswitch) [DPU](../reference/glossary.md#term-dpu) や appliance card 上で SONiC スタックが多数の **[ENI](../reference/glossary.md#term-eni) (Elastic Network Interface)** を扱い、各 ENI に対する VNet / [ACL](../reference/glossary.md#term-acl) / metering / Service Tunnel / Private Link 等のデータプレーン処理を行うための仕組み[^1]。本ファイルは DASH を SONiC 内に乗せるための実装側 [HLD](../reference/glossary.md#term-hld)（API / Orch / Config DB / APP DB スキーマ）を扱う。一般 DASH 概念は [DASH 高位 HLD](https://github.com/sonic-net/DASH/tree/main/documentation/general/dash-high-level-design.md) を参照。
 
 ## 動作仕様
 
@@ -83,7 +83,7 @@ flowchart LR
     DO -->|SAI DASH APIs| DPU[(DPU / appliance ASIC)]
 ```
 
-DPU 上の DASH SAI 実装が、ENI に対する **outbound routing → ACL → metering** や **inbound PA validation → ACL → routing** のパイプラインを実行する。詳細は HLD §2 のパケットフロー図を参照[^1]。
+DPU 上の DASH [SAI](../reference/glossary.md#term-sai) 実装が、ENI に対する **outbound routing → ACL → metering** や **inbound PA validation → ACL → routing** のパイプラインを実行する。詳細は HLD §2 のパケットフロー図を参照[^1]。
 
 ### 主要シナリオ（HLD §1.1 抜粋）
 
@@ -108,7 +108,7 @@ DPU 上の DASH SAI 実装が、ENI に対する **outbound routing → ACL → 
 |--------|------|
 | `DASH_*` | 上記テーブル群すべて |
 
-ユーザはコントローラ／gNMI 経由で投入。手書き想定なし。
+ユーザはコントローラ／[gNMI](../reference/glossary.md#term-gnmi) 経由で投入。手書き想定なし。
 
 ### 関連する CLI
 
@@ -116,7 +116,7 @@ HLD には CLI 体系の正式定義は無く、gNMI / RestAPI 経由の設定�
 
 ### 関連する YANG
 
-DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反映は HLD で詳細規定なし。
+DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の [YANG](../reference/glossary.md#term-yang) 反映は HLD で詳細規定なし。
 
 ### 設定例
 
@@ -125,13 +125,13 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反�
 ## 制限事項
 
 - HLD 全体は 118KB 超で、本ページは中核オブジェクトと参照リンクに留める。**詳細仕様は必ず HLD `doc/dash/dash-sonic-hld.md` を参照すること**。
-- DASH は DPU / SmartSwitch 専用機能で、通常の SONiC NPU 上では動かない。
+- DASH は DPU / SmartSwitch 専用機能で、通常の SONiC [NPU](../reference/glossary.md#term-npu) 上では動かない。
 - 各オブジェクトのフィールドは v2.0 以降頻繁に更新（v2.4 で `DASH_TUNNEL` / FNIC、v2.5 で PL redirect map、v2.6 で route rule priority のキー化、v2.6.1 で `trusted_vnis` → `trusted_vnis_list` 改名）[^1]。
 - SAI DASH API は OCP SAI とは別ツリーで開発されており、community SAI への取り込み状況は時期によって異なる。
 
 ## 干渉する機能
 
-- **VxLAN / VNet (既存 SONiC NPU 機能)**: DASH の VNet と既存 NPU 上の VNET は概念的には同様だが、実装パスは独立（DASH は DPU 側 SAI で完結）。
+- **VxLAN / VNet (既存 SONiC NPU 機能)**: DASH の VNet と既存 NPU 上の [VNET](../reference/glossary.md#term-vnet) は概念的には同様だが、実装パスは独立（DASH は DPU 側 SAI で完結）。
 - **ACL / Metering**: DASH のものは ENI 単位で独立。NPU 側 ACL とは別。
 - **SmartSwitch HA**: ハイアベイラビリティペア DPU 間で DASH 状態を同期する設計が別 HLD（`smart-switch-ha-hld.md`）で扱われ、`pinned_state` 等で本ページの後発機能と連動する。
 - **Floating NIC (FNIC)**: VM ライブマイグレーション時の ENI 追従。複雑な状態機械を持つ。
@@ -152,3 +152,5 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反�
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7eb91d359acf -->

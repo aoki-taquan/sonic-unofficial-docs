@@ -9,7 +9,7 @@ last_verified: 2026-05-11
 
 このページは、`verification: discrepancy-found` が付いた全ページを自動収集して並べたものです。`meta/scripts/gen_discrepancy_index.py` で生成されます。
 
-SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装が取り込まれなかったもの、(2) 取り込まれた後に別設計へ置き換えられたもの、(3) 部分的に取り込まれて HLD の記述と乖離しているもの、が混在しています。本プロジェクトでは該当ページに `verification: discrepancy-found` を付け、frontmatter `monitor:` で次のように分類しています。
+SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) には、(1) 設計提案のみで実装が取り込まれなかったもの、(2) 取り込まれた後に別設計へ置き換えられたもの、(3) 部分的に取り込まれて HLD の記述と乖離しているもの、が混在しています。本プロジェクトでは該当ページに `verification: discrepancy-found` を付け、frontmatter `monitor:` で次のように分類しています。
 
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
@@ -73,7 +73,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [SAG（Static Anycast Gateway）for SONiC](../../architecture/sag-high-level-design-for-sonic.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  2026-05 時点で **SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階**。
+  2026-05 時点で **SAG コード / [YANG](../../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
 
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../../architecture/ssdhealth-design.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -117,7 +117,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [Portable Console Device 設計（USB ベンダー console デバイスの抽象化）](../../management/portable-console-device-design.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / CONFIG_DB スキーマのいずれにも入っていない。
+  2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -193,7 +193,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../../routing/bgp-route-install-error-handling.md)  
   monitor: `deprecated` / last_verified: `2026-05-09`
   
-  2026-05-09 時点の現行 master を裏取り。**本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている**。
+  2026-05-09 時点の現行 master を裏取り。**本 HLD は採用されず、後発の [BGP](../../reference/glossary.md#term-bgp) Suppress FIB Pending に置き換えられている**。
 
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../../routing/bfd-hw-offload-for-bgp-session.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
@@ -203,7 +203,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../../routing/evpn-vxlan-multihoming.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-10`
   
-  2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
+  2026-05-10 時点の現行 master を裏取り。**[EVPN](../../reference/glossary.md#term-evpn) Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
@@ -290,3 +290,5 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 ## 監査基準の取り扱い
 
 本ページ群（`verification: discrepancy-found` のページ）は、「機能としては完結していなくても、代わりに HLD と実装の差分を整理して読み手に渡す」ことを目的としています。品質監査 (`meta/quality-audit-*.md`) における **軸 6 (完結性)** は、本ページ群では「乖離説明の整理度」（monitor タグ妥当性 / 「実装との乖離」セクションの構造化 / 裏取り evidence / 読み手への next-action）に読み替えて評価します。詳細は `meta/templates/SCHEMA.md` の 「`discrepancy-found` ページの軸 6 評価基準」セクション、および `meta/quality-audit-guide.md` を参照してください。
+
+<!-- glossary-links-injected: 2c50e311bc81 -->

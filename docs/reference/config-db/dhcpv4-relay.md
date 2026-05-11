@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-DHCPv4 relay agent の VLAN 単位設定を保持する[^1]。`DEVICE_METADATA.has_sonic_dhcpv4_relay = true` のとき `sonic-dhcpv4-relay` (新実装) が読み出し、relay agent を構成する。link-selection、server-id-override、VRF selection、source interface 指定をサポートする。
+DHCPv4 relay agent の [VLAN](../../reference/glossary.md#term-vlan) 単位設定を保持する[^1]。`DEVICE_METADATA.has_sonic_dhcpv4_relay = true` のとき `sonic-dhcpv4-relay` (新実装) が読み出し、relay agent を構成する。link-selection、server-id-override、[VRF](../../reference/glossary.md#term-vrf) selection、source interface 指定をサポートする。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ DHCPV4_RELAY|<name>
 | `link_selection` | `mode-status` | - | `disable` | RFC 3527 Link selection sub-option |
 | `server_id_override` | `mode-status` | - | `disable` | RFC 5107 server-id override |
 | `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 VRF selection |
-| その他 | - | - | - | （詳細は YANG 直参照） |
+| その他 | - | - | - | （詳細は [YANG](../../reference/glossary.md#term-yang) 直参照） |
 
 ## 制約 (must)
 
@@ -73,7 +73,7 @@ DHCPV4_RELAY|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN`、`VLAN_INTERFACE`、`VRF`、`LOOPBACK_INTERFACE`、`DEVICE_METADATA` (`has_sonic_dhcpv4_relay`)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_INTERFACE`、`VRF`、`LOOPBACK_INTERFACE`、`DEVICE_METADATA` (`has_sonic_dhcpv4_relay`)
 - 関連 CLI: `config dhcp_relay ipv4 add/del`
 - 関連 YANG: `sonic-dhcpv4-relay`
 
@@ -116,3 +116,5 @@ sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
 show dhcprelay_helper ipv4
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: cbb901eb2b24 -->

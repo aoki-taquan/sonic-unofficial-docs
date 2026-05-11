@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`config vxlan` は VXLAN VTEP (`VXLAN_TUNNEL`)、EVPN NVO (`VXLAN_EVPN_NVO`)、および VLAN-VNI マッピング (`VXLAN_TUNNEL_MAP`) を管理する。`config/vxlan.py` に分離されており、`config/main.py` 末尾の `config.add_command(vxlan.vxlan)` で登録される構造[^1]。
+`config vxlan` は [VXLAN](../../reference/glossary.md#term-vxlan) VTEP (`VXLAN_TUNNEL`)、[EVPN](../../reference/glossary.md#term-evpn) NVO (`VXLAN_EVPN_NVO`)、および [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング (`VXLAN_TUNNEL_MAP`) を管理する。`config/vxlan.py` に分離されており、`config/main.py` 末尾の `config.add_command(vxlan.vxlan)` で登録される構造[^1]。
 
 VTEP **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時に既存件数 > 0 でエラー）。EVPN NVO も 1 つだけ。
 
@@ -120,7 +120,7 @@ excerpt: |
 
 **動作**:
 
-- `<vni>` が `VRF` テーブルから参照されていればエラー（先に VRF VNI 関連付けを外す必要あり）
+- `<vni>` が `VRF` テーブルから参照されていればエラー（先に [VRF](../../reference/glossary.md#term-vrf) VNI 関連付けを外す必要あり）
 - key を **2 つのフォーマットで削除**を試みる: `map_<vni>_<vlan_id>` および `map_<vni>_Vlan<vlan_id>`（実装上は両方とも `set_entry(..., None)` で安全側）
 
 ### `config vxlan map_range add <vxlan_name> <vlan_start> <vlan_end> <vni_start>`
@@ -181,7 +181,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VXLAN_TUNNEL`](../config-db/vxlan-tunnel.md) / [`VXLAN_EVPN_NVO`](../config-db/vxlan-evpn-nvo.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`VLAN`](../config-db/vlan.md) / [`VNET`](../config-db/vnet.md) / [`VRF`](../config-db/vrf.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](../config-db/vxlan-tunnel.md) / [`VXLAN_EVPN_NVO`](../config-db/vxlan-evpn-nvo.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`VLAN`](../config-db/vlan.md) / [`VNET`](../config-db/vnet.md) / [`VRF`](../config-db/vrf.md)
 
 <!-- ref-triangle:end -->
 
@@ -223,12 +223,12 @@ VxLAN tunnel vtep1 added.
 ### 典型的な利用シーン
 
 - VxLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
-- VNET (asymmetric IRB) のセットアップ起点。
+- [VNET](../../reference/glossary.md#term-vnet) (asymmetric IRB) のセットアップ起点。
 
 ### よくある落とし穴
 
-- source IP に Loopback を指定しないと FRR/EVPN 経路が広告されない。
-- `config vxlan map add` の VNI は uint24 上限。`vlan` を消す前に map を外さないと残骸が STATE_DB に残る。
+- source IP に Loopback を指定しないと [FRR](../../reference/glossary.md#term-frr)/EVPN 経路が広告されない。
+- `config vxlan map add` の VNI は uint24 上限。`vlan` を消す前に map を外さないと残骸が [STATE_DB](../../reference/glossary.md#term-state_db) に残る。
 
 ### 関連する show / debug
 
@@ -245,3 +245,5 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL](../config-db/vxlan-tunnel.md)
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
+
+<!-- glossary-links-injected: 4459c49968d1 -->

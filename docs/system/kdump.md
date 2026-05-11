@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-Linux kernel の **kexec** を使い、kernel panic 直後に **予約された別メモリ領域に展開済みの capture kernel** を起動して crash dump を `/var/crash/<timestamp>/` に保存する標準仕組みを SONiC に統合する HLD[^1]。Debian の `kdump-tools` を SONiC host に同梱し、`makedumpfile` で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。
+Linux kernel の **kexec** を使い、kernel panic 直後に **予約された別メモリ領域に展開済みの capture kernel** を起動して crash dump を `/var/crash/<timestamp>/` に保存する標準仕組みを SONiC に統合する [HLD](../reference/glossary.md#term-hld)[^1]。Debian の `kdump-tools` を SONiC host に同梱し、`makedumpfile` で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。
 
 ## 動作仕様
 
@@ -172,3 +172,5 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->

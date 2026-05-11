@@ -32,10 +32,10 @@ related:
 
 ## 読者が知りたいこと
 
-- 通常 ECMP と何が違うのか、**いつ FG ECMP を選ぶ** べきか
+- 通常 [ECMP](../reference/glossary.md#term-ecmp) と何が違うのか、**いつ FG ECMP を選ぶ** べきか
 - **3 つの match_mode**（route-based / nexthop-based / prefix-based）の違い
-- **CONFIG_DB のキー** と **bucket_size の決め方**
-- 内部で **どの orch / SAI 属性** が動くか、warm boot で何が残るか
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) のキー** と **bucket_size の決め方**
+- 内部で **どの orch / [SAI](../reference/glossary.md#term-sai) 属性** が動くか、warm boot で何が残るか
 - スケールと既知の落とし穴
 
 ## 1. いつ FG ECMP を使うか
@@ -118,7 +118,7 @@ flowchart LR
 
 - **next-hop down**: 同 bank 内の生存 NH に「down した NH のバケットだけ」を均等再配布。bank 内ゼロのときのみ対向 bank に流す（"entire VM set down" シナリオ）[^1]
 - **next-hop add**: bank 内に生存 NH があれば新規 NH に均等にバケットを返す。ゼロ → 1 復活時は対向 bank から戻す
-- **prefix-based**: BGP 学習で動的に取得した NH のうち先着 `max_next_hops` までを対象[^1]
+- **prefix-based**: [BGP](../reference/glossary.md#term-bgp) 学習で動的に取得した NH のうち先着 `max_next_hops` までを対象[^1]
 
 ## 5. SAI とのインタフェース
 
@@ -139,7 +139,7 @@ SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX     # bucket index
 ## 7. 制限事項
 
 - スケール: グループ数 8、bucket size は HW 依存（最大 4k）[^1]
-- 全 prefix に consistent ECMP を効かせる「動的有効化」は HLD スコープ外[^1]
+- 全 prefix に consistent ECMP を効かせる「動的有効化」は [HLD](../reference/glossary.md#term-hld) スコープ外[^1]
 - route/nexthop モードでは `FG_NHG_MEMBER` 未定義の NH は **黙って ASIC に伝播されない**（syslog エラーのみ）[^1]
 
 ## 8. 干渉する機能
@@ -205,3 +205,5 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4d2766506160 -->

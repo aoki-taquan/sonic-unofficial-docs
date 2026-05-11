@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show lldp` は LLDP (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は `lldpd` プロセスが収集した隣接情報を、SONiC 同梱の `lldpshow` スクリプト経由でフォーマットして出力する薄いラッパである[^1]。CONFIG_DB は触らず、`run_command(['sudo', 'lldpshow', ...])` を呼ぶだけ。
+`show lldp` は [LLDP](../../reference/glossary.md#term-lldp) (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は `lldpd` プロセスが収集した隣接情報を、SONiC 同梱の `lldpshow` スクリプト経由でフォーマットして出力する薄いラッパである[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、`run_command(['sudo', 'lldpshow', ...])` を呼ぶだけ。
 
 ## コマンド一覧
 
@@ -181,3 +181,5 @@ docker exec lldp lldpcli show neighbors
 
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show ip](show-ip.md)
+
+<!-- glossary-links-injected: 4808f1ebafcd -->

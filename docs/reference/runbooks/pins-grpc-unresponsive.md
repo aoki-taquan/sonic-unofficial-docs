@@ -31,9 +31,9 @@ related:
 ## 想定原因（優先度順）
 
 1. **p4rt container が未起動 / crash loop**
-2. **`PORT_ID` 未割当**: PINS は port_id を持たない interface に対して write を拒否
+2. **`PORT_ID` 未割当**: [PINS](../../reference/glossary.md#term-pins) は port_id を持たない interface に対して write を拒否
 3. **primary election ID 衝突**: 複数 controller が同 election_id で接続
-4. **APPL_DB → ASIC_DB pipeline が詰まる**: orchagent / syncd 滞留
+4. **[APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) pipeline が詰まる**: [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 滞留
 5. **TLS / mTLS 証明書失敗**
 
 ## 切り分け手順
@@ -93,3 +93,5 @@ openssl x509 -in /etc/sonic/credentials/ca.crt -noout -dates
 
 [^1]: sonic-net/sonic-pins @ master — p4runtime_impl.cc
 [^2]: sonic-net/sonic-pins @ master — app_db_manager.cc
+
+<!-- glossary-links-injected: 2dcef9a41725 -->

@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-`config reload` で全コンテナを restart せずに、**実行中の CONFIG_DB に増分パッチを安全適用** するための仕組み[^1]。
+`config reload` で全コンテナを restart せずに、**実行中の [CONFIG_DB](../reference/glossary.md#term-config_db) に増分パッチを安全適用** するための仕組み[^1]。
 
 特徴:
 
 - **入力は RFC 6902 JSON Patch**（`add` / `remove` / `replace` の op 列）
-- 適用前に **YANG ベースで validation** し、整合性違反は reject
+- 適用前に **[YANG](../reference/glossary.md#term-yang) ベースで validation** し、整合性違反は reject
 - 内部で **依存解析** して安全な適用順を決め、可能ならフィールド単位で増分書き込み
 - 失敗時は **自動 rollback**、成功後も任意時点に **checkpoint** を残せる
 
@@ -90,15 +90,15 @@ config rollback pre-change
 
 - **すべての CONFIG_DB テーブルに依存解析が定義されているわけではない**: 新しいテーブルを追加した場合は sorter / YANG モデル側で対応が必要
 - **特定の op は破壊的**: `replace` で大規模置換すると内部的に巨大 patch になり、依存解析が遅延・失敗する場合あり
-- **checkpoint は CONFIG_DB のみ**: STATE_DB / APP_DB / kernel state は対象外
-- **multi-asic 対応**: namespace ごとに patch を生成・適用する想定。multi-asic への一括 apply は HLD 後に拡張されている可能性あり
+- **checkpoint は CONFIG_DB のみ**: [STATE_DB](../reference/glossary.md#term-state_db) / APP_DB / kernel state は対象外
+- **multi-asic 対応**: namespace ごとに patch を生成・適用する想定。multi-asic への一括 apply は [HLD](../reference/glossary.md#term-hld) 後に拡張されている可能性あり
 
 ## 干渉する機能
 
-- **`config reload`**: GCU は reload を避けるための仕組み。両者を混在させると意図しないリセットを誘発し得る
+- **`config reload`**: [GCU](../reference/glossary.md#term-gcu) は reload を避けるための仕組み。両者を混在させると意図しないリセットを誘発し得る
 - **JSON Patch ordering（YANG-based）**: 同 area の別 HLD（`json-patch-ordering-using-yang-models`）が並べ替え戦略を扱う
 - **save-on-set / config save**: GCU 適用後に persistent 化したいなら明示的に `config save` する
-- **mgmt-framework / gNMI**: external API から GCU を呼ぶ経路。gNMI Set はこの基盤を利用するケースがある
+- **mgmt-framework / [gNMI](../reference/glossary.md#term-gnmi)**: external API から GCU を呼ぶ経路。gNMI Set はこの基盤を利用するケースがある
 
 ## トラブルシューティング
 
@@ -118,3 +118,5 @@ config rollback pre-change
 - multi-asic 環境での namespace ごと apply の現行サポート状況確認
 - gNMI / mgmt-framework から GCU を呼ぶ経路の現行実装確認
 -->
+
+<!-- glossary-links-injected: 0566ccbe2f14 -->

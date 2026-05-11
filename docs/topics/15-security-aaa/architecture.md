@@ -40,7 +40,7 @@ flowchart LR
 
 ## hostcfgd と CONFIG_DB から /etc への反映
 
-SSH の global config、serial console、banner、AAA の設定は、ユーザーが直接 `/etc/ssh/sshd_config` などを編集する設計にはなっていません。`hostcfgd` が `CONFIG_DB` の該当テーブル（`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`、`AAA`、`TACPLUS`、`RADIUS`、`LDAP` など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。
+SSH の global config、serial console、banner、[AAA](../../reference/glossary.md#term-aaa) の設定は、ユーザーが直接 `/etc/ssh/sshd_config` などを編集する設計にはなっていません。`hostcfgd` が `CONFIG_DB` の該当テーブル（`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`、`AAA`、`TACPLUS`、`RADIUS`、`LDAP` など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。
 
 ```mermaid
 flowchart LR
@@ -62,4 +62,6 @@ SONiC の TACACS+ 統合は PAM と NSS の二段で実装されています。P
 
 ## Data plane と platform 側の参照
 
-本ページは control plane のフローに限定しています。MACsec と MKA のホスト・SAI 経路は [内部実装](internals.md) で、OpenSSL FIPS / secure boot / secure upgrade / container hardening は [発展トピック](advanced.md) で扱います。
+本ページは control plane のフローに限定しています。MACsec と MKA のホスト・[SAI](../../reference/glossary.md#term-sai) 経路は [内部実装](internals.md) で、OpenSSL FIPS / secure boot / secure upgrade / container hardening は [発展トピック](advanced.md) で扱います。
+
+<!-- glossary-links-injected: e22f66406f50 -->

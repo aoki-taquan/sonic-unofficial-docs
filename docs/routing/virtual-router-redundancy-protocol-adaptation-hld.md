@@ -32,26 +32,26 @@ related:
 
 ## なぜ必要か
 
-VRRP (RFC 5798) は **複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ**、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。FRR には `vrrpd` 実装があり、本 HLD はそれを SONiC に取り込む方法を定める[^1]。
+VRRP (RFC 5798) は **複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ**、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。[FRR](../reference/glossary.md#term-frr) には `vrrpd` 実装があり、本 [HLD](../reference/glossary.md#term-hld) はそれを SONiC に取り込む方法を定める[^1]。
 
 主な要件[^1]:
 
 1. **VRRPv2 (IPv4) / VRRPv3 (IPv4, IPv6)**
-2. Ethernet / VLAN / sub-interface / PortChannel 上で動作
+2. Ethernet / [VLAN](../reference/glossary.md#term-vlan) / sub-interface / [PortChannel](../reference/glossary.md#term-portchannel) 上で動作
 3. interface あたり複数 instance（VRID 違い）
 4. priority / preempt 設定可能
 5. **uplink interface tracking**（uplink down で priority 降下）
-6. **non-default VRF** で動作
+6. **non-default [VRF](../reference/glossary.md#term-vrf)** で動作
 
 ## どう動くか
 
 ### コンテナ配置
 
-`vrrpd` は **VRRP container**（FRR 系 daemon 同居）または **BGP container** 同居の設計が選択肢[^1]。最終案は Rev 0.2 で固まる傾向、実装側で要確認。
+`vrrpd` は **VRRP container**（FRR 系 daemon 同居）または **[BGP](../reference/glossary.md#term-bgp) container** 同居の設計が選択肢[^1]。最終案は Rev 0.2 で固まる傾向、実装側で要確認。
 
 ### CoPP trap
 
-VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを CPU に punt するため **CoPP trap** が必要[^1]: `vrrp` (IPv4)、`vrrp6` (IPv6)。
+VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを CPU に punt するため **[CoPP](../reference/glossary.md#term-copp) trap** が必要[^1]: `vrrp` (IPv4)、`vrrp6` (IPv6)。
 
 ### CONFIG_DB スキーマ
 
@@ -182,9 +182,9 @@ show vrrp
 
 - **FRR / BGP**: 同/別 container かで起動順影響
 - **CoPP**: `vrrp` / `vrrp6` trap 必須
-- **portmgrd / VlanMgrd**: interface state 変化に追従
-- **MCLAG / dual-ToR**: VMAC の MAC 学習との相互作用
-- **gNMI / openconfig-vrrp**: 標準モデルへの mapping は本 HLD では未詳述
+- **[portmgrd](../reference/glossary.md#term-portmgrd) / VlanMgrd**: interface state 変化に追従
+- **[MCLAG](../reference/glossary.md#term-mclag) / dual-ToR**: VMAC の MAC 学習との相互作用
+- **[gNMI](../reference/glossary.md#term-gnmi) / openconfig-vrrp**: 標準モデルへの mapping は本 HLD では未詳述
 
 ## トラブルシューティング
 
@@ -207,3 +207,5 @@ bridge fdb show | grep -i 5e:00:01
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vrrp/VRRP_Adaptation_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 461c54e12955 -->

@@ -43,7 +43,7 @@ switch を適温に保つために cooling device（主に fan）を制御する
 | `get_high_threshold()` / `get_critical_high_threshold()` | 高温側 |
 | `get_low_threshold()` / `get_critical_low_threshold()` | 低温側 |
 
-しきい値超過 → `warning_status=true` を STATE_DB に書き syslog 出力[^1]。
+しきい値超過 → `warning_status=true` を [STATE_DB](../reference/glossary.md#term-state_db) に書き syslog 出力[^1]。
 
 ### `FanBase`（fan 抽象）
 
@@ -77,7 +77,7 @@ FAN_INFO|<fan_name>
 
 ## ポリシーの例
 
-HLD で例示されている代表ケース[^1]:
+[HLD](../reference/glossary.md#term-hld) で例示されている代表ケース[^1]:
 
 - PSU 1 個が未挿入 → PWM 100%
 - FAN drawer 未挿入 / tachometer 故障 → PWM 100%
@@ -142,7 +142,7 @@ reasoning: ベンダ実装と SONiC 共通実装の境界、ポリシー例の�
 
 ## 設定 / CLI
 
-CONFIG_DB スキーマは無し。policy はベンダの `/usr/share/sonic/device/$PLATFORM/thermal_policy.json` 等で配布される。CLI は HLD で明示されないが、典型的には `show platform temperature` / `show platform fan` で STATE_DB 値を取り出す。
+[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは無し。policy はベンダの `/usr/share/sonic/device/$PLATFORM/thermal_policy.json` 等で配布される。CLI は HLD で明示されないが、典型的には `show platform temperature` / `show platform fan` で STATE_DB 値を取り出す。
 
 ```bash
 redis-cli -n 6 KEYS "TEMPERATURE_INFO|*"
@@ -196,3 +196,5 @@ ls /usr/share/sonic/device/$PLATFORM/thermal_policy.json 2>/dev/null
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0823a263c666 -->

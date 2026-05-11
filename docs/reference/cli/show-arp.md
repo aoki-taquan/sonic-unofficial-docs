@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`show arp` は IPv4 の **隣接テーブル（ARP テーブル）**を表示する click コマンド。実装は単なる薄いラッパで、内部では `scripts/nbrshow` を `-4` 付きで起動する[^1]。`nbrshow` 側が APPL_DB の `NEIGH_TABLE` と kernel の `ip neigh` 出力を突き合わせて表形式に整形する。
+`show arp` は IPv4 の **隣接テーブル（[ARP](../../reference/glossary.md#term-arp) テーブル）**を表示する click コマンド。実装は単なる薄いラッパで、内部では `scripts/nbrshow` を `-4` 付きで起動する[^1]。`nbrshow` 側が [APPL_DB](../../reference/glossary.md#term-appl_db) の `NEIGH_TABLE` と kernel の `ip neigh` 出力を突き合わせて表形式に整形する。
 
 ## シグネチャ
 
@@ -60,7 +60,7 @@ cmd += ['-d', str(display)]
 
 ## CONFIG_DB との接点
 
-ARP テーブルは **kernel の neighbor table**（および swss/neighsyncd 経由で APPL_DB の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は CONFIG_DB を読まない。
+ARP テーブルは **kernel の neighbor table**（および swss/[neighsyncd](../../reference/glossary.md#term-neighsyncd) 経由で APPL_DB の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を読まない。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -125,12 +125,12 @@ Total number of entries 2
 ### 典型的な利用シーン
 
 - L3 隣接の MAC 解決状況、aging 状態の確認。
-- MC-LAG / VRRP 構成での ARP 同期検証。
+- MC-[LAG](../../reference/glossary.md#term-lag) / VRRP 構成での ARP 同期検証。
 
 ### よくある落とし穴
 
-- `show arp` は default VRF。VRF 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
-- STATE_DB の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
+- `show arp` は default [VRF](../../reference/glossary.md#term-vrf)。VRF 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
+- [STATE_DB](../../reference/glossary.md#term-state_db) の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
 
 ### 関連する show / debug
 
@@ -140,3 +140,5 @@ ip neigh show
 sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 5edea368a8c3 -->

@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC に **組み込み IPv4 DHCP Server** を持つ。MAC でも DHCP option でもなく **入ってきた物理 / LAG ポート** で IP を割り当てる "port-based" モード[^1]。利点は[^1]:
+SONiC に **組み込み IPv4 DHCP Server** を持つ。MAC でも DHCP option でもなく **入ってきた物理 / [LAG](../reference/glossary.md#term-lag) ポート** で IP を割り当てる "port-based" モード[^1]。利点は[^1]:
 
 - 設定外のポートからの request には IP を払い出さないため安全
 - 外部ホスト情報を仕込まず、ポート単位で予約 IP / 範囲だけ書けば自走する小規模 NW 構築に向く
@@ -73,7 +73,7 @@ flowchart LR
   dhcprelayd -->|kill/start/restart| dhcrelay
 ```
 
-`dhcprelayd` は `VLAN` / `VLAN_MEMBER` / `DHCP_SERVER_IPV4*` を CONFIG_DB から subscribe し、関連変更や `dhcp_relay` container 起動時に `dhcrelay` プロセスを起動・再起動する[^1]。
+`dhcprelayd` は `VLAN` / `VLAN_MEMBER` / `DHCP_SERVER_IPV4*` を [CONFIG_DB](../reference/glossary.md#term-config_db) から subscribe し、関連変更や `dhcp_relay` container 起動時に `dhcrelay` プロセスを起動・再起動する[^1]。
 
 ### kea-dhcp-server の設定（dhcpservd が生成）
 
@@ -138,7 +138,7 @@ option 60 等を per-DHCP-interface で配るテーブル `DHCP_SERVER_IPV4_CUST
 | `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` | `<name>` | `id` / `type` / `value` |
 | `FEATURE.dhcp_server` | - | `state: enabled\|disabled` |
 
-YANG `must` 制約で **`ips` と `ranges` を同時指定不可**、`ranges` 配列は 1〜2 要素[^1]。
+[YANG](../reference/glossary.md#term-yang) `must` 制約で **`ips` と `ranges` を同時指定不可**、`ranges` 配列は 1〜2 要素[^1]。
 
 ### CLI
 
@@ -164,14 +164,14 @@ config dhcp_server ipv4 enable Vlan1000
 
 - **モードは `PORT` のみ**。`DYNAMIC` 等は将来予定[^1]
 - dhcp_server enable 中は dhcp_relay と同一スイッチで併用不可。CLI 側で拒否される[^1]
-- ポート移動時の lease 振替は無く、**lease 期限切れまで旧ポートからの新規割当が止まる**ケースあり（FDB 連動の release は将来）[^1]
+- ポート移動時の lease 振替は無く、**lease 期限切れまで旧ポートからの新規割当が止まる**ケースあり（[FDB](../reference/glossary.md#term-fdb) 連動の release は将来）[^1]
 - `ranges` は 1〜2 要素 (start[, end])
 - option 1/3/51/53/54 は customized で上書き不可
 
 ## 干渉する機能
 
 - **dhcp_relay**: 同時 enable 不可。CLI 拒否
-- **VLAN / PortChannel / Port**: `DHCP_SERVER_IPV4_PORT` の参照先で leafref。VLAN 削除には連動チェックが必要
+- **[VLAN](../reference/glossary.md#term-vlan) / [PortChannel](../reference/glossary.md#term-portchannel) / Port**: `DHCP_SERVER_IPV4_PORT` の参照先で leafref。VLAN 削除には連動チェックが必要
 
 ## トラブルシューティング
 
@@ -190,3 +190,5 @@ config dhcp_server ipv4 enable Vlan1000
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 987cec9fd0c5 -->

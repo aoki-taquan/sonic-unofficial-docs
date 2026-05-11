@@ -30,14 +30,14 @@ related:
 
 ## 概要
 
-IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した HLD[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい SerDes レートを足元のコードに通すこと。
+IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい SerDes レートを足元のコードに通すこと。
 
 主要変更点（4 リポジトリ横断）[^1]:
 
 1. **SFF-8024**: 新しい host electrical / MMF / SMF interface ID の追加
 2. **sonic-platform-daemons / xcvrd**: `1.6T` スピード認識
-3. **sonic-utilities**: `show interfaces status` / `config interface speed` の表示・受理
-4. **sonic-swss / orchagent**: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）
+3. **[sonic-utilities](../reference/glossary.md#term-sonic-utilities)**: `show interfaces status` / `config interface speed` の表示・受理
+4. **[sonic-swss](../reference/glossary.md#term-sonic-swss) / [orchagent](../reference/glossary.md#term-orchagent)**: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）
 
 ## 動作仕様
 
@@ -106,7 +106,7 @@ static const std::uint32_t minPortSpeed = 1;
 + static const std::uint32_t maxPortSpeed = 1600000;
 ```
 
-CONFIG_DB の `PORT.speed` 値検証で 1600000 を許容するための変更。
+[CONFIG_DB](../reference/glossary.md#term-config_db) の `PORT.speed` 値検証で 1600000 を許容するための変更。
 
 #### FLR 計算 (`port_rates.lua`)
 
@@ -214,9 +214,9 @@ show interfaces status | grep Ethernet0
 ## 干渉する機能
 
 - **既存 800G 関連の入り口**: PortsOrch / xcvrd / port_rates.lua の同じパスに追加するため、800G 既存機能の regression に注意
-- **CONFIG_DB validation**: `sonic-port` YANG / `port_config.ini` などで speed 値の上限が別箇所に出ている場合、それぞれ更新が必要
+- **CONFIG_DB validation**: `sonic-port` [YANG](../reference/glossary.md#term-yang) / `port_config.ini` などで speed 値の上限が別箇所に出ている場合、それぞれ更新が必要
 - **CMIS / xcvrd 上の transceiver 種別判定**: SFF-8024 ID の新規追加は xcvrd の transceiver 情報パーサにも波及
-- **link FLR 系の機能（DPB / fec mode 設定）**: lane 200000 のレートが他箇所の lane speed テーブルにも必要
+- **link FLR 系の機能（[DPB](../reference/glossary.md#term-dpb) / fec mode 設定）**: lane 200000 のレートが他箇所の lane speed テーブルにも必要
 
 ## トラブルシューティング
 
@@ -243,3 +243,5 @@ show interfaces status | grep Ethernet0
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c31ca8ad0f8a -->

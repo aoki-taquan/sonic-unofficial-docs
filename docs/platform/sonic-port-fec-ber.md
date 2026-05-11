@@ -27,7 +27,7 @@ related:
 
 ## なぜこの機能が必要か
 
-ポートの **FEC（Forward Error Correction）統計** から **Pre / Post FEC BER** を計算し、`show interface counter fec-stat` に列を 2 つ追加するとともに、COUNTER_DB の `RATES` テーブルにも書き込んでテレメトリで取れるようにする[^1]。SAI 側修正は **不要**（既存 `SAI_PORT_STAT_IF_IN_FEC_*` を利用）。
+ポートの **FEC（Forward Error Correction）統計** から **Pre / Post FEC BER** を計算し、`show interface counter fec-stat` に列を 2 つ追加するとともに、COUNTER_DB の `RATES` テーブルにも書き込んでテレメトリで取れるようにする[^1]。[SAI](../reference/glossary.md#term-sai) 側修正は **不要**（既存 `SAI_PORT_STAT_IF_IN_FEC_*` を利用）。
 
 - **Pre FEC BER**: FEC が訂正できた bit のレート
 - **Post FEC BER**: FEC が訂正失敗したフレームの worst-case BER 推定
@@ -62,15 +62,15 @@ Post BER は「フレーム内全 bit 誤り」最悪ケース + 1e-8 の統計�
 
 ### 関連 SAI カウンタ
 
-| Redis | Table | Field |
+| [Redis](../reference/glossary.md#term-redis) | Table | Field |
 |-------|-------|-------|
 | COUNTER_DB | COUNTERS | `SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS` / `..._NOT_CORRECTABLE_FRAMES` |
 | COUNTER_DB | RATES | `*_last`、`FEC_PRE_BER`、`FEC_POST_BER`（新規） |
-| APPL_DB | PORT_TABLE | `lanes`、`speed` |
+| [APPL_DB](../reference/glossary.md#term-appl_db) | PORT_TABLE | `lanes`、`speed` |
 
 ## CLI / 設定例
 
-CONFIG_DB / YANG への変更なし。CLI は既存表示の列追加:
+[CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への変更なし。CLI は既存表示の列追加:
 
 ```bash
 show interface counter fec-stat
@@ -82,15 +82,15 @@ portstat -f          # 上記と同等のエイリアス
 
 ## 制限事項
 
-- SAI 側で対応カウンタが未実装の platform では値が空（HLD で「return not support」と明記）[^1]
+- SAI 側で対応カウンタが未実装の platform では値が空（[HLD](../reference/glossary.md#term-hld) で「return not support」と明記）[^1]
 - Post FEC BER は worst-case 推定。**絶対値比較ではなく時系列トレンド** に使う
 - serdes lookup は限定セット（1G/10G/25G/50G/100G）。範囲外 data rate は `serdes=0` で計算が壊れる[^1]
 
 ## 干渉する機能
 
-- **port_rates.lua / FlexCounter**: 同 lua に乗るためポーリング負荷は他レート計算と共有
+- **port_rates.lua / [FlexCounter](../reference/glossary.md#term-flexcounter)**: 同 lua に乗るためポーリング負荷は他レート計算と共有
 - **xcvrd / pmon**: 物理層異常との相関に有用
-- **テレメトリ**: `RATES` 経由で gNMI 公開可能
+- **テレメトリ**: `RATES` 経由で [gNMI](../reference/glossary.md#term-gnmi) 公開可能
 
 ## トラブルシューティング
 
@@ -118,3 +118,5 @@ show interface counter fec-stat
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: eebc53211c97 -->

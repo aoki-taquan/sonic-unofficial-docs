@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-Packet Trimming（PT）はバッファ枯渇で **drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（受信側）に届ける** SAI 機能。受信側 NIC が再送依頼を高速に出せるため、congestion 復帰が早い[^1]。Nazarii Hnydyn、2024-11 初版。
+Packet Trimming（PT）はバッファ枯渇で **drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（受信側）に届ける** [SAI](../reference/glossary.md#term-sai) 機能。受信側 NIC が再送依頼を高速に出せるため、congestion 復帰が早い[^1]。Nazarii Hnydyn、2024-11 初版。
 
 スコープ:
 
 - global PT 設定 + per-buffer-profile での enable/disable
-- ACL の **disable trimming action** で fine-grained 除外（v0.1 から）
+- [ACL](../reference/glossary.md#term-acl) の **disable trimming action** で fine-grained 除外（v0.1 から）
 - v0.2: **Asymmetric DSCP**（trim 後 packet に異なる DSCP を打つ）
 - v0.3: **Drop counters**（trim 数の可視化）
 
@@ -159,7 +159,7 @@ show switch-trimming counters
 
 ## 干渉する機能
 
-- **Buffer / PFC**: profile ごとに trim を切り替える設計のため、PFC lossless profile では disable が定石
+- **Buffer / [PFC](../reference/glossary.md#term-pfc)**: profile ごとに trim を切り替える設計のため、PFC lossless profile では disable が定石
 - **ACL**: `DISABLE_TRIMMING` を使う rule は AclOrch / capabilities と整合が必要
 - **Flex Counter**: drop counter を polling
 
@@ -176,7 +176,7 @@ show switch-trimming counters
 - Queue resolution / index: 同 L1048 (`PACKET_TRIM_QUEUE_RESOLUTION_MODE`), L1059 (`PACKET_TRIM_QUEUE_INDEX`)
 - capability チェック＆エラーログ: 同 L1083, L1093-L1260 全体（`Switch trimming configuration is not supported: skipping ...` ほか）
 
-> BufferOrch 側の per-profile trimming と ACL `DISABLE_TRIMMING` action、`SWITCH_TRIMMING_CAPABILITY` の STATE_DB 公開は別バッチで深掘り予定。
+> BufferOrch 側の per-profile trimming と ACL `DISABLE_TRIMMING` action、`SWITCH_TRIMMING_CAPABILITY` の [STATE_DB](../reference/glossary.md#term-state_db) 公開は別バッチで深掘り予定。
 
 ## 引用元
 
@@ -197,3 +197,5 @@ show switch-trimming counters
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d3de20f7e1ff -->

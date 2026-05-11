@@ -64,7 +64,7 @@ flowchart LR
 
 ### 使う SAI counter
 
-すべて既存の SAI port counter[^1]:
+すべて既存の [SAI](../reference/glossary.md#term-sai) port counter[^1]:
 
 - `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES`
 - `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES`
@@ -84,7 +84,7 @@ flowchart LR
 | `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES_last` | 直前値 |
 | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si_last` | 直前値（i=0..15） |
 
-CONFIG_DB / SAI API / sonic-platform-common には変更なし[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) / SAI API / sonic-platform-common には変更なし[^1]。
 
 ### Observed FEC FLR
 
@@ -197,7 +197,7 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 
 | Table | Key | フィールド |
 |-------|-----|-----------|
-| `FLEX_COUNTER_TABLE` | `PORT` | `FLR_INTERVAL_FACTOR`（FlexCounterOrch が CONFIG_DB → FLEX_COUNTER_DB に伝搬） |
+| `FLEX_COUNTER_TABLE` | `PORT` | `FLR_INTERVAL_FACTOR`（FlexCounterOrch が CONFIG_DB → [FLEX_COUNTER_DB](../reference/glossary.md#term-flex_counter_db) に伝搬） |
 
 ### 関連する CLI
 
@@ -240,8 +240,8 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 - **既存 `port_rates.lua`**: 同じ `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` プラグイン。両方が同じ COUNTER_DB を参照
 - **FlexCounterOrch / counterpoll**: poll 周期を共有。`counterpoll port disable` するとこの計算も止まる
 - **show interfaces counters fec-stats**: FEC pre/post BER 計算と並行して FLR を載せる
-- **telemetry**: `COUNTER_DB:RATES` の `FEC_FLR` / `FEC_FLR_PREDICTED` を gNMI で配信できる
-- **port speed 変更（DPB / breakout）**: interleaving factor X が再評価される
+- **telemetry**: `COUNTER_DB:RATES` の `FEC_FLR` / `FEC_FLR_PREDICTED` を [gNMI](../reference/glossary.md#term-gnmi) で配信できる
+- **port speed 変更（[DPB](../reference/glossary.md#term-dpb) / breakout）**: interleaving factor X が再評価される
 
 ## トラブルシューティング
 
@@ -252,7 +252,7 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 
 ## 実装との乖離
 
-2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**HLD で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。
+2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**[HLD](../reference/glossary.md#term-hld) で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。
 
 | 項目 | HLD | 現行 master | 結果 |
 |------|-----|------|------|
@@ -318,3 +318,5 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 14f8bd377123 -->

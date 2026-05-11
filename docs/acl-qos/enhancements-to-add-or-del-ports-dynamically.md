@@ -35,13 +35,13 @@ related:
 
 ## 概要
 
-SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに **post-init で動的に CONFIG_DB の `PORT` テーブルに add/del** することでポート追加・削除を可能にする[^1]:
+SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに **post-init で動的に [CONFIG_DB](../reference/glossary.md#term-config_db) の `PORT` テーブルに add/del** することでポート追加・削除を可能にする[^1]:
 
 - 全ポートを `config_db` に持って起動
 - 一部ポートだけ持って起動
 - **ゼロポート** で起動（line-card manager がプロビジョニング時に追加する想定）
 
-ポート削除前にユーザは ACL / VLAN / LAG / Buffer PG など **全依存設定を先に削除する責任** を負う[^1]。
+ポート削除前にユーザは [ACL](../reference/glossary.md#term-acl) / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / Buffer PG など **全依存設定を先に削除する責任** を負う[^1]。
 
 ## 動作仕様
 
@@ -60,7 +60,7 @@ flowchart TD
   PSYNC -->|全 host i/f 完了| FLAG2[PortInitDone]
 ```
 
-- **`PortConfigDone`**: portsyncd がポート設定を APP_DB に反映完了。orchagent は **これを待ってから** SAI ポート作成を始める[^1]。
+- **`PortConfigDone`**: [portsyncd](../reference/glossary.md#term-portsyncd) がポート設定を APP_DB に反映完了。[orchagent](../reference/glossary.md#term-orchagent) は **これを待ってから** [SAI](../reference/glossary.md#term-sai) ポート作成を始める[^1]。
 - **`PortInitDone`**: 全 host interface が作成完了。`xcvrd` / `buffermgrd` / `natmgr` / `natsync` は **これを待つ**[^1]。
 
 ### ゼロポート起動
@@ -75,8 +75,8 @@ flowchart TD
 
 | PR | 内容 |
 |----|------|
-| sonic-buildimage #7999 | `cfggen` を port 無しで動かす |
-| sonic-swss #1808 | `portsyncd` を port 無しで動かす |
+| [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #7999 | `cfggen` を port 無しで動かす |
+| [sonic-swss](../reference/glossary.md#term-sonic-swss) #1808 | `portsyncd` を port 無しで動かす |
 | sonic-swss #1860 | port 削除時の buffer drop counter 削除 |
 
 ### Post-init: ポート追加
@@ -129,7 +129,7 @@ sequenceDiagram
 - Queue port counters（queue / queue watermark）— **追加要**
 - PG counters — **追加要**
 - Debug counters: port ingress / egress drops（`DEBUG_COUNTER` table）— **追加要**
-- PFC watchdog counters — **追加要**
+- [PFC](../reference/glossary.md#term-pfc) watchdog counters — **追加要**
 
 これら counter は従来 init 完了後に **全ポートまとめて作成** されていた。動的化すれば未存在ポートに対する誤登録が消える[^1]。実装は sonic-swss #2019 で対応中。
 
@@ -141,7 +141,7 @@ sequenceDiagram
 
 #### 削除時 race（深刻）
 
-依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。HLD の解決策[^1]:
+依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。[HLD](../reference/glossary.md#term-hld) の解決策[^1]:
 
 - buffer cfg にも **per-port reference counter** を持たせる（既存の ACL/VLAN/INTERFACE と同じ仕組み）
 - ref-count > 0 の port は portsorch が削除を拒否する
@@ -158,7 +158,7 @@ sequenceDiagram
 
 #### 提案
 
-- `lldpcli` 実行前に **STATE_DB の port エントリ（=host i/f 存在）を確認**
+- `lldpcli` 実行前に **[STATE_DB](../reference/glossary.md#term-state_db) の port エントリ（=host i/f 存在）を確認**
 - APP_DB の del イベント受信時に `pending_cmds` から該当を **除去**
 - CONFIG_DB と APP_DB の両方を見る既存ロジックは整理する
 
@@ -233,7 +233,7 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
 
 - ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。orchagent 連動が止まっている可能性。
 - ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
-- LLDP が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
+- [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
 
 ## 実装との乖離
@@ -288,7 +288,7 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 - `sudo config interface shutdown EthernetX` 後に CONFIG_DB から直接 `PORT|EthernetX` を消すと、orchagent が以下を順次出す:
   - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / BUFFER_PG が参照中）
   - `SAI_STATUS_INVALID_OBJECT_ID`（既に部分削除された下流 SAI オブジェクト）
-  - 最悪は orchagent 自体が `abort()` し syncd / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
+  - 最悪は orchagent 自体が `abort()` し [syncd](../reference/glossary.md#term-syncd) / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
 - chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で `pending_cmds` が滞留し、lldp neighbor 表に古い情報が残る。
 - HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。
 
@@ -338,7 +338,7 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-swss #1112: \[DPB portsyncd/portmgrd/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/sonic-swss/pull/1112) — 動的 port add/del のコア実装（DPB: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
+- [sonic-swss #1112: \[DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/sonic-swss/pull/1112) — 動的 port add/del のコア実装（[DPB](../reference/glossary.md#term-dpb): Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
 - HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。
 
 #### 検証日
@@ -352,3 +352,5 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7d213842fcc9 -->

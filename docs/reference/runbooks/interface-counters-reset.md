@@ -26,14 +26,14 @@ related:
 
 - 観測中 counter が 0 にリセットされ trend グラフが切れる
 - 別 admin が clear した形跡なし
-- syncd / orchagent 再起動の直後に発生
+- [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) 再起動の直後に発生
 
 ## 想定原因（優先度順）
 
 1. **`sonic-clear counters` の意図しない実行**: cron / Ansible / 監視スクリプト
 2. **portstat の clear ファイル (`/tmp/portstat-*.cnt`) が削除された**: `/tmp` cleanup
 3. **syncd 再起動で ASIC counter 自体リセット**
-4. **container 再起動で COUNTERS_DB が初期化**: redis ephemeral
+4. **container 再起動で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) が初期化**: redis ephemeral
 
 ## 切り分け手順
 
@@ -67,7 +67,7 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 ## 対処方法
 
 - 監視は `COUNTERS_DB` の raw 値を直接 poll（portstat 差分 cache に依存しない）
-- gNMI / telemetry で counters subscribe する方式に切り替え
+- [gNMI](../../reference/glossary.md#term-gnmi) / telemetry で counters subscribe する方式に切り替え
 - portstat 用 cache を別場所へ: 環境変数 `PORTSTAT_CACHE_FILE` を設定（実装次第）
 
 ## 関連ページ
@@ -78,5 +78,7 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — scripts/portstat
-[^2]: sonic-net/sonic-swss @ 4305596 — orchagent/flexcounterorch.cpp
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — scripts/portstat
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — orchagent/flexcounterorch.cpp
+
+<!-- glossary-links-injected: 033180826ac9 -->

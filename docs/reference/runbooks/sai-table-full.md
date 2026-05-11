@@ -25,15 +25,15 @@ related:
 ## 症状
 
 - syslog に `SAI_STATUS_TABLE_FULL` / `SAI_STATUS_INSUFFICIENT_RESOURCES`
-- 新規 BGP route が `Inactive` のまま
+- 新規 [BGP](../../reference/glossary.md#term-bgp) route が `Inactive` のまま
 - `crm show resources` で `used / available` 比が 95%+
 
 ## 想定原因（優先度順）
 
 1. **route prefix の過剰投入**: peer から default + specific の二重広告
-2. **next-hop group の枯渇**: ECMP メンバー組み合わせが爆発
-3. **FDB age out 不足**: aging 0 で MAC が滞留
-4. **ACL TCAM 競合**: 同 stage の table が ACL リソースを奪い合う
+2. **next-hop group の枯渇**: [ECMP](../../reference/glossary.md#term-ecmp) メンバー組み合わせが爆発
+3. **[FDB](../../reference/glossary.md#term-fdb) age out 不足**: aging 0 で MAC が滞留
+4. **[ACL](../../reference/glossary.md#term-acl) TCAM 競合**: 同 stage の table が ACL リソースを奪い合う
 
 ## 切り分け手順
 
@@ -80,5 +80,7 @@ show mac | wc -l
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp
-[^2]: sonic-net/sonic-sairedis @ 4305596 — syncd/Syncd.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/crmorch.cpp
+[^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 4305596 — [syncd](../../reference/glossary.md#term-syncd)/Syncd.cpp
+
+<!-- glossary-links-injected: 4d8e499d7d85 -->

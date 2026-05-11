@@ -43,7 +43,7 @@ related:
 | `--page <h>`            | 全ポートに対し指定 page をダンプ。`page` は 0–255。存在確認は呼び出し側責任 |
 | 引数なし                | 全ポートに対し **ケーブル種別ごとの代表 page** をダンプ |
 
-引数なしのときの page セット（HLD 表より）[^1]：
+引数なしのときの page セット（[HLD](../reference/glossary.md#term-hld) 表より）[^1]：
 
 | Cable type | Pages |
 |------------|-------|
@@ -93,7 +93,7 @@ EEPROM hexdump for module 2
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述は無い。
+HLD には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述は無い。
 
 ### 関連する CLI
 
@@ -105,7 +105,7 @@ HLD には CONFIG_DB エントリの記述は無い。
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -145,3 +145,5 @@ sfputil show eeprom-hexdump --port Ethernet0 --page 1
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

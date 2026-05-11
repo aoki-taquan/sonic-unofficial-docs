@@ -10,7 +10,7 @@ last_verified: 2026-05-10
 
 ## 想定シナリオ
 
-既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。
+既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、[CONFIG_DB](../reference/glossary.md#term-config_db) の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。
 
 ## 推奨 reading path
 
@@ -37,7 +37,7 @@ last_verified: 2026-05-10
 
 ## 不足コンテンツ注記
 
-- 障害別の逆引き導線が不足しています。例: 「BGP が上がらない」「ポートが down」「VLAN に疎通しない」「CPU / memory / disk を見たい」から CLI、CONFIG_DB、関連 HLD に飛ぶページが必要です。
+- 障害別の逆引き導線が不足しています。例: 「[BGP](../reference/glossary.md#term-bgp) が上がらない」「ポートが down」「[VLAN](../reference/glossary.md#term-vlan) に疎通しない」「CPU / memory / disk を見たい」から CLI、CONFIG_DB、関連 [HLD](../reference/glossary.md#term-hld) に飛ぶページが必要です。
 - CLI と CONFIG_DB の相互参照は各リファレンスで整備されつつありますが、運用手順として「確認、変更、保存、rollback、再起動影響」をまとめた runbook 形式のページがありません。
 - `show techsupport`、system health、ログ、カウンタ、platform health をまとめたトラブルシュート入口が必要です。
 
@@ -48,3 +48,5 @@ last_verified: 2026-05-10
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 12f8ddbcfb3b -->

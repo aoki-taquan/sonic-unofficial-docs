@@ -64,12 +64,12 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 
 ## 制約
 
-- range `[-8, 7]` を超える `default_dynamic_th` は YANG validator で拒否
+- range `[-8, 7]` を超える `default_dynamic_th` は [YANG](../../reference/glossary.md#term-yang) validator で拒否
 - `over_subscribe_ratio > 0` のとき `BUFFER_POOL` の `xoff` (shared headroom pool size) を別途設定する必要がある
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_POOL`, `BUFFER_PROFILE`, `LOSSLESS_TRAFFIC_PATTERN`, `BUFFER_PG`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_POOL`, `BUFFER_PROFILE`, `LOSSLESS_TRAFFIC_PATTERN`, `BUFFER_PG`
 - 関連 YANG: `sonic-default-lossless-buffer-parameter`
 
 <!-- ref-triangle:start -->
@@ -111,3 +111,5 @@ sonic-db-cli CONFIG_DB hget 'DEVICE_METADATA|localhost' buffer_model
 show buffer profile
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

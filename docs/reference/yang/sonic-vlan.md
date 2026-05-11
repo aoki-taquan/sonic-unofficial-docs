@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `ietf-yang-types`, `sonic-types`, `sonic-port`, `sonic-portchannel`, `sonic-vrf`, `sonic-mirror-session`, `sonic-interface`, `sonic-vnet`
 - top container: `sonic-vlan`
 
-VLAN yang Module for SONiC OS[^1]
+[VLAN](../../reference/glossary.md#term-vlan) yang Module for SONiC OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -95,11 +95,11 @@ module: sonic-vlan
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/name` | `leafref` | yes |  | /vlan:sonic-vlan/vlan:VLAN/vlan:VLAN_LIST/vlan:name | VLAN interface name (e.g., Vlan100) |
-| `vrf_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name | VRF instance this VLAN interface belongs to |
-| `vnet_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
-| `nat_zone` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | NAT Zone for the vlan interface |
-| `mpls` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable MPLS routing for the vlan interface |
-| `grat_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/grat_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable gratuitous ARP on the VLAN interface |
+| `vrf_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | VRF instance this VLAN interface belongs to |
+| `vnet_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
+| `nat_zone` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the vlan interface |
+| `mpls` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the vlan interface |
+| `grat_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/grat_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable gratuitous [ARP](../../reference/glossary.md#term-arp) on the VLAN interface |
 | `proxy_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/proxy_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable proxy ARP on the VLAN interface |
 | `ipv6_use_link_local_only` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/ipv6_use_link_local_only` | `stypes:mode-status` |  | disable |  | Enable/Disable IPv6 link local address on vlan interface |
 | `mac_addr` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/mac_addr` | `yang:mac-address` |  |  |  | Assign administrator-provided MAC address to Interface |
@@ -136,7 +136,7 @@ module: sonic-vlan
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `VLAN`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`
 - CONFIG_DB: `VLAN_INTERFACE`
 - CONFIG_DB: `VLAN_MEMBER`
 - CLI: `config vlan`
@@ -161,3 +161,5 @@ module: sonic-vlan
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e65c0c2c3d25 -->

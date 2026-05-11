@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-NAT / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は SAI で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。
+[NAT](../../reference/glossary.md#term-nat) / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は [SAI](../../reference/glossary.md#term-sai) で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。
 
 ## データフロー
 
@@ -42,17 +42,17 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `natmgrd` (`cfgmgr/natmgr.cpp`) | `NatMgr::doTask` | `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` を `iptables` と APPL_DB に展開 |
+| `natmgrd` (`cfgmgr/natmgr.cpp`) | `NatMgr::doTask` | `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` を `iptables` と [APPL_DB](../../reference/glossary.md#term-appl_db) に展開 |
 | `NatOrch` (`orchagent/natorch.cpp`) | `NatOrch::doTask`、`addNatEntry`、`removeNatEntry` | APPL_DB を読み SAI NAT entry に投入 |
 | `natsyncd` (`natsyncd/natsync.cpp`) | conntrack netlink listener | kernel conntrack イベントを `APPL_DB:NAT_TABLE` に sync（ダイナミック NAT の hardware offload） |
-| `iptables` rules (NAT/MANGLE) | natmgrd が生成 | 初回パケットを kernel で NAT してから ASIC に load する |
+| `iptables` rules (NAT/MANGLE) | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が生成 | 初回パケットを kernel で NAT してから ASIC に load する |
 
 ### DHCP
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
 | `dhcprelay` (`dockers/docker-dhcp-relay`) | `isc-dhcp-relay` + `dhcpmon` | DHCPv4 / DHCPv6 relay。`dhcpmon` がカウンタを `STATE_DB` に書く |
-| `dhcp_server_ipv4` (`src/sonic-dhcp-server`) | `kea-dhcp4` based | フル DHCP server。`DHCP_SERVER_IPV4*` 系テーブルから設定生成、lease を Redis に書く |
+| `dhcp_server_ipv4` (`src/sonic-dhcp-server`) | `kea-dhcp4` based | フル DHCP server。`DHCP_SERVER_IPV4*` 系テーブルから設定生成、lease を [Redis](../../reference/glossary.md#term-redis) に書く |
 | `dhcp6relay` | isc-dhcp-relay -6 | DHCPv6 relay |
 
 ### DNS
@@ -92,9 +92,9 @@ ASIC_DB:
 
 ## ZMQ / Redis pub/sub
 
-- NAT: 通常の ProducerStateTable / SubscriberStateTable のみ。
+- NAT: 通常の [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / SubscriberStateTable のみ。
 - `natsyncd` は `conntrack-tools` の netlink を直接 listen し、Redis に書く片方向経路。conntrack 自体が pub/sub ではない点に注意。
-- DHCP: `dhcpmon` が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を STATE_DB に書く。
+- DHCP: `dhcpmon` が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を [STATE_DB](../../reference/glossary.md#term-state_db) に書く。
 - DNS: pub/sub 経路はありません。
 
 ## 既知の実装上の制約
@@ -104,11 +104,11 @@ ASIC_DB:
 - DHCP server (`kea-dhcp4`) はまだ全機能を網羅しておらず、特に option 82 周辺と高可用構成は限定的です。
 - DHCP relay の counter は `dhcpmon` が pcap-based で kernel iptables NFLOG を見ている実装で、高負荷時にパケットを取りこぼします。「relay packets <count>」を SLA に使うのは避けてください。
 - DNS は SONiC で独自設定はなく、`hostcfgd` が `/etc/resolv.conf` を上書きする単純な実装。DNS-over-TLS や split-DNS は未対応。
-- IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC orchagent の対応が partial で、HLD と実装の discrepancy が出やすい部分です。
+- IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC [orchagent](../../reference/glossary.md#term-orchagent) の対応が partial で、[HLD](../../reference/glossary.md#term-hld) と実装の discrepancy が出やすい部分です。
 
 ## DHCP relay の packet path
 
-DHCP relay (`dhcprelayd` および `kea-dhcp4`/`kea-dhcp6` relay モード) は CoPP 経由で trap された DHCP パケットを処理します。
+DHCP relay (`dhcprelayd` および `kea-dhcp4`/`kea-dhcp6` relay モード) は [CoPP](../../reference/glossary.md#term-copp) 経由で trap された DHCP パケットを処理します。
 
 ```mermaid
 flowchart LR
@@ -131,3 +131,5 @@ flowchart LR
 - [IPv4 port-based DHCP server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
 - [DHCP relay for IPv6 HLD](../../routing/dhcp-relay-for-ipv6-hld.md)
 - [DHCP relay per-interface counter](../../routing/dhcp-relay-per-interface-counter.md)
+
+<!-- glossary-links-injected: 88eb10d428e5 -->

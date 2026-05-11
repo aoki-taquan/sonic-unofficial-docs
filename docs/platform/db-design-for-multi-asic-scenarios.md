@@ -33,7 +33,7 @@ related:
 
 SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも **1 ファイルの minigraph** を解釈してホスト + 各 ASIC の `CONFIG_DB` を生成していた。将来的に minigraph は廃止され、Network Device Management (NDM) チームが生成する **Golden Config** が新しい真実の相となる予定[^1]。
 
-問題: 単一 ASIC 機の Golden Config 流通 workflow は確立しているが、multi-ASIC 用の **「1 ファイルでホスト + 全 ASIC を表現するフォーマット」** が未定義であった。本 HLD は **既存 minigraph と同じ「1 ファイル投入」運用を Golden Config でも踏襲** するため、JSON スキーマと関連 CLI の挙動を定義する[^1]。
+問題: 単一 ASIC 機の Golden Config 流通 workflow は確立しているが、multi-ASIC 用の **「1 ファイルでホスト + 全 ASIC を表現するフォーマット」** が未定義であった。本 [HLD](../reference/glossary.md#term-hld) は **既存 minigraph と同じ「1 ファイル投入」運用を Golden Config でも踏襲** するため、JSON スキーマと関連 CLI の挙動を定義する[^1]。
 
 ## 動作仕様
 
@@ -85,7 +85,7 @@ flowchart LR
 
 ### `config override`
 
-`config override-config-table` の multi-ASIC 対応[^1]（PR: sonic-utilities#2738）。例: `MACSEC_PROFILE` を `localhost` で空 `{}`、`asic0` / `asic1` で値ありとした Golden Config:
+`config override-config-table` の multi-ASIC 対応[^1]（PR: [sonic-utilities](../reference/glossary.md#term-sonic-utilities)#2738）。例: `MACSEC_PROFILE` を `localhost` で空 `{}`、`asic0` / `asic1` で値ありとした Golden Config:
 
 ```json
 {
@@ -95,7 +95,7 @@ flowchart LR
 }
 ```
 
-override 後の各 CONFIG_DB[^1]:
+override 後の各 [CONFIG_DB](../reference/glossary.md#term-config_db)[^1]:
 
 | ノード | `MACSEC_PROFILE` の状態 |
 |--------|------------------------|
@@ -148,7 +148,7 @@ sequenceDiagram
 
 ### 関連する CONFIG_DB
 
-スキーマ自体には変更なし。各 ASIC / host の **既存 CONFIG_DB を 1 階層上で集約** するのは **ファイル形式上の表現** であり、Redis インスタンス自体は別物（host 側の DB と各 ASIC namespace 側の DB）として残る[^1]。
+スキーマ自体には変更なし。各 ASIC / host の **既存 CONFIG_DB を 1 階層上で集約** するのは **ファイル形式上の表現** であり、[Redis](../reference/glossary.md#term-redis) インスタンス自体は別物（host 側の DB と各 ASIC namespace 側の DB）として残る[^1]。
 
 ### 関連する CLI
 
@@ -182,7 +182,7 @@ config save /tmp/all_config.json
 ## 制限事項
 
 - 旧来の **N 個のファイル運用と Golden Config 1 ファイル運用の併存** は CLI 側で受理形式を判別して処理する設計（境界条件のテストが必要）
-- **YANG モデルには変更を加えない**[^1]。1 階層上の `localhost` / `asicN` はファイル表現のみ、YANG 検証は各 ASIC / host 単位で行う
+- **[YANG](../reference/glossary.md#term-yang) モデルには変更を加えない**[^1]。1 階層上の `localhost` / `asicN` はファイル表現のみ、YANG 検証は各 ASIC / host 単位で行う
 - `config override` で **空 JSON `{}` は table 削除** を意味する仕様[^1]。誤って空にすると意図せぬ削除が起きる
 - minigraph 廃止が前提だが、過渡期は両立する。minigraph と Golden Config が混在した場合の優先順位は別途設計
 - 各 ASIC の CONFIG_DB は **namespace 内 redis インスタンス**。Golden Config からの分配は CLI 側で各 namespace に対応する Redis を切り替える必要
@@ -221,3 +221,5 @@ config save /tmp/all_config.json
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8104c301a725 -->

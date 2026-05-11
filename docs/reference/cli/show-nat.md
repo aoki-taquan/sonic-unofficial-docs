@@ -25,9 +25,9 @@ related:
 
 ## 概要
 
-`show nat` は SONiC の NAT 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
+`show nat` は SONiC の [NAT](../../reference/glossary.md#term-nat) 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
 
-実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は ASIC_DB / COUNTERS_DB を参照し、`natconfig` は CONFIG_DB を整形して出すように分業されている。
+実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を参照し、`natconfig` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を整形して出すように分業されている。
 
 ## コマンド一覧
 
@@ -74,7 +74,7 @@ related:
 
 ## 注意
 
-- `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または STATE_DB / CONFIG_DB を直接読むしかない。
+- `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または [STATE_DB](../../reference/glossary.md#term-state_db) / CONFIG_DB を直接読むしかない。
 - `show nat translations` は **NAT が実際にハード offload されている前提**。`config nat feature disable` 状態では空表示になる。
 
 <!-- ref-triangle:start -->
@@ -168,3 +168,5 @@ show nat statistics
 show nat config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 59e493d94ec9 -->

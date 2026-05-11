@@ -27,11 +27,11 @@ related:
 
 ## 概要
 
-gNOI Healthz は **コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する** ためのサービスである[^1]。OpenConfig の `components` モデルと連携し、telemetry で「unhealthy」を検知したコンポーネントの追加調査を行う想定。
+[gNOI](../reference/glossary.md#term-gnoi) Healthz は **コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する** ためのサービスである[^1]。OpenConfig の `components` モデルと連携し、telemetry で「unhealthy」を検知したコンポーネントの追加調査を行う想定。
 
-SONiC では既存の gNMI/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は **SONiC Host Service** の `debug_info` モジュールに DBUS 経由で委譲する[^1]。
+SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は **SONiC Host Service** の `debug_info` モジュールに DBUS 経由で委譲する[^1]。
 
-本 HLD は OpenConfig [`Healthz` proto](https://github.com/openconfig/gnoi/blob/main/healthz/healthz.proto) のうち以下 3 つの RPC を **初期サポート対象** と定める[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は OpenConfig [`Healthz` proto](https://github.com/openconfig/gnoi/blob/main/healthz/healthz.proto) のうち以下 3 つの RPC を **初期サポート対象** と定める[^1]:
 
 - `Get`: 指定 path のヘルス event 一覧（`ComponentStatus`）を返す
 - `Artifact`: event に紐付いた artifact ファイル/proto を **stream** で返す
@@ -161,7 +161,7 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 
 ### 関連する CONFIG_DB
 
-専用 CONFIG_DB スキーマは無い。telemetry の認証認可（`TELEMETRY` 等）と RBAC 設定を再利用する。
+専用 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは無い。telemetry の認証認可（`TELEMETRY` 等）と RBAC 設定を再利用する。
 
 ### 関連する CLI
 
@@ -173,7 +173,7 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 
 ### 関連する YANG
 
-OpenConfig `components` モデルが対応する想定。SONiC YANG 拡張は HLD で言及無し。
+OpenConfig `components` モデルが対応する想定。SONiC [YANG](../reference/glossary.md#term-yang) 拡張は HLD で言及無し。
 
 ### 設定例
 
@@ -223,3 +223,5 @@ gnoi_client healthz acknowledge \
 - artifact GC ポリシーの現行実装
 - HLD 2025-06 v0.1 と現行 master の差分有無
 -->
+
+<!-- glossary-links-injected: c671e32e187d -->

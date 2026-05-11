@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-CPU 宛トラフィックをレート制限する Control Plane Policing (CoPP) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、`COPP_TRAP` の `trap_group` から参照される[^1]。`copp.json` テンプレ → `coppmgr` → APPL_DB → `orchagent` (`CoppOrch`) → SAI HOSTIF_TRAP_GROUP / POLICER の流れで反映される。
+CPU 宛トラフィックをレート制限する Control Plane Policing ([CoPP](../../reference/glossary.md#term-copp)) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、`COPP_TRAP` の `trap_group` から参照される[^1]。`copp.json` テンプレ → `coppmgr` → [APPL_DB](../../reference/glossary.md#term-appl_db) → `orchagent` (`CoppOrch`) → [SAI](../../reference/glossary.md#term-sai) HOSTIF_TRAP_GROUP / POLICER の流れで反映される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -75,14 +75,14 @@ COPP_GROUP|<name>
 
 ## 購読者
 
-- `coppmgr` (`docker-swss` 内): CONFIG_DB の `COPP_GROUP` / `COPP_TRAP` を結合し APPL_DB `COPP_TABLE` に書き込む
+- `coppmgr` (`docker-swss` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_GROUP` / `COPP_TRAP` を結合し APPL_DB `COPP_TABLE` に書き込む
 - `orchagent` の `CoppOrch`: SAI hostif trap group / policer を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `COPP_TRAP`
 - 関連 CLI: `config copp`、`show copp`
-- 関連 YANG: `sonic-copp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-copp`
 
 <!-- ref-triangle:start -->
 
@@ -116,7 +116,7 @@ COPP_GROUP|<name>
 
 ### よくある誤設定
 
-- `cir` を過小に設定すると BGP keepalive がドロップされて peer が落ちる。
+- `cir` を過小に設定すると [BGP](../../reference/glossary.md#term-bgp) keepalive がドロップされて peer が落ちる。
 
 ### 確認コマンド
 
@@ -125,3 +125,5 @@ sonic-db-cli CONFIG_DB hgetall 'COPP_GROUP|queue4_group1'
 show copp config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a67fed022497 -->

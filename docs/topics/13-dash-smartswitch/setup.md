@@ -13,17 +13,17 @@ sources:
 
 # DPU の IP 割当・gNMI 連携・KVM 検証
 
-SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DASH](../../reference/glossary.md#term-dash) の設定は「[DPU](../../reference/glossary.md#term-dpu) の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。
 
 ## このページの読み方: DASH は controller-driven 系
 
-DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ ENI / VNET / Route を投入する」プロダクトではありません。**人手で `config dash ...` のような CLI を打つことはほぼ無く**、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が gNMI / gRPC で `DASH_*` テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。
+DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ [ENI](../../reference/glossary.md#term-eni) / [VNET](../../reference/glossary.md#term-vnet) / Route を投入する」プロダクトではありません。**人手で `config dash ...` のような CLI を打つことはほぼ無く**、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が [gNMI](../../reference/glossary.md#term-gnmi) / gRPC で `DASH_*` テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。
 
 代表的な設定経路は次の通りです。
 
 | 経路 | 用途 | 投入先 |
 |---|---|---|
-| DASH appliance controller (gNMI / gRPC) | 本番。ENI / VNET / Route / ACL を大量 push | `APPL_DB` の `DASH_*_TABLE`（NPU 側 gNMI server 経由） |
+| DASH appliance controller (gNMI / gRPC) | 本番。ENI / VNET / Route / [ACL](../../reference/glossary.md#term-acl) を大量 push | `APPL_DB` の `DASH_*_TABLE`（[NPU](../../reference/glossary.md#term-npu) 側 gNMI server 経由） |
 | `swssconfig` で JSON 流し込み | lab / CI、controller 不在時のスモークテスト | `APPL_DB` の `DASH_*_TABLE`（直接） |
 | `redis-cli` / `sonic-db-cli` 手打ち | 障害切り分け、1 件だけ試す | 同上 |
 | `config dash ...` CLI | **基本存在しない**。show 系は一部あり | — |
@@ -53,8 +53,8 @@ CLI を打たない運用では、エラーは大きく分けて次の 3 層で�
 | 層 | 代表的な症状 | 一次切り分け |
 |---|---|---|
 | gRPC / gNMI トランスポート | `UNAVAILABLE`、`UNAUTHENTICATED`、`DEADLINE_EXCEEDED` | NPU 側 gNMI server の起動 (`show feature status gnmi`)、TLS 証明書、ファイアウォール |
-| スキーマ / バリデーション | gNMI `SetResponse` で `INVALID_ARGUMENT`、`NOT_FOUND` | path が `/sonic-db:APPL_DB/DASH_*` の規約通りか、YANG 定義との突き合わせ |
-| 反映遅延 / 不一致 | `version_id` が `APPL_STATE_DB` に降りない、controller subscribe が古い version で stuck | `dashorch` ログ、`sairedis.rec` の SAI status、DPU 側 `database-dpu.service` 生死 |
+| スキーマ / バリデーション | gNMI `SetResponse` で `INVALID_ARGUMENT`、`NOT_FOUND` | path が `/sonic-db:APPL_DB/DASH_*` の規約通りか、[YANG](../../reference/glossary.md#term-yang) 定義との突き合わせ |
+| 反映遅延 / 不一致 | `version_id` が `APPL_STATE_DB` に降りない、controller subscribe が古い version で stuck | `dashorch` ログ、`sairedis.rec` の [SAI](../../reference/glossary.md#term-sai) status、DPU 側 `database-dpu.service` 生死 |
 
 ```bash
 # controller 視点で「どの version まで適用済みか」を見る (NPU 上で代替確認)
@@ -77,7 +77,7 @@ SmartSwitch を立ち上げて DASH を回すまでに必要な操作は次の 5
 1. **platform 認識**: `platform.json` / `platform_components.json` で DPU が module として宣言されており、`pmon` が pick up していることを確認。
 2. **midplane**: NPU 上で midplane bridge と DHCP server が起動し、DPU の管理 IP が決定論的に払い出される。
 3. **DPU Online**: NPU から `redisdpuN` に到達でき、`CHASSIS_STATE_DB` で DPU が Online。
-4. **DASH 制御**: コントローラから gNMI ないし `swssconfig` で `DASH_*` テーブルを APPL_DB に投入し、`dashorch` 経由で SAI / DPU データプレーンへ。
+4. **DASH 制御**: コントローラから gNMI ないし `swssconfig` で `DASH_*` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) に投入し、`dashorch` 経由で SAI / DPU データプレーンへ。
 5. **検証**: 物理機がなければ `dash-sonic-kvm` で同じ流れを KVM + BMv2 で再現。
 
 以降のシナリオはこの順番に沿って書きます。
@@ -102,11 +102,11 @@ DASH のコントローラは設定をプッシュした後、「DPU が実際�
 ポイントは次の通りです。
 
 - コントローラは `version_id` を付けて設定を送る。
-- DPU 側 orchagent は SAI 反映後、その `version_id` を `APPL_STATE_DB` に書く。
+- DPU 側 [orchagent](../../reference/glossary.md#term-orchagent) は SAI 反映後、その `version_id` を `APPL_STATE_DB` に書く。
 - NPU 側 gNMI server がそれを集約し、subscribe しているコントローラへ返す。
 - これによりコントローラは「どの version までが DPU で active か」を確認できる。
 
-この経路は HLD 範囲では `hld-only` の項目もあるため、最新の実装差分は [SmartSwitch gNMI フィードバック設計](../../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) で確認してください。
+この経路は [HLD](../../reference/glossary.md#term-hld) 範囲では `hld-only` の項目もあるため、最新の実装差分は [SmartSwitch gNMI フィードバック設計](../../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) で確認してください。
 
 ## DASH SONiC KVM での検証
 
@@ -144,11 +144,11 @@ DPU0      Pensando DPU    N/A             Online         up
 DPU1      Pensando DPU    N/A             Online         up
 ```
 
-`redis-cli` 側は `PONG` が返れば NPU から DPU の Redis インスタンスへ到達できています。Online にならない場合は、まず midplane bridge の link、次に DHCP リース、最後に DPU 側の `database-dpu.service` の起動順で切り分けます。
+`redis-cli` 側は `PONG` が返れば NPU から DPU の [Redis](../../reference/glossary.md#term-redis) インスタンスへ到達できています。Online にならない場合は、まず midplane bridge の link、次に DHCP リース、最後に DPU 側の `database-dpu.service` の起動順で切り分けます。
 
 ## 設定シナリオ 2: DASH ENI と VNET の最小投入
 
-DPU が Online になったら、コントローラなしでも CONFIG_DB に直接書いて DASH のスモークテストができます。`APPL_DB` の `DASH_*` テーブルへ `swssconfig` で投入する形式を取ります。
+DPU が Online になったら、コントローラなしでも [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書いて DASH のスモークテストができます。`APPL_DB` の `DASH_*` テーブルへ `swssconfig` で投入する形式を取ります。
 
 ```json
 {
@@ -276,3 +276,5 @@ DPU 1 台が単独で稼働する形では HA の検証ができないため、�
 - [SmartSwitch gNMI フィードバック設計](../../management/smart-switch-gnmi-feedback-design-omit-in-toc.md)
 - [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
+
+<!-- glossary-links-injected: d50204739097 -->

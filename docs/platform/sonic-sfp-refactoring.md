@@ -143,7 +143,7 @@ reasoning: identifier-based spec 判定への切替の根拠。
 ## 制限事項
 
 - 1 port 1 xcvr 前提
-- xcvrd / sfpshow 自体の刷新は別 HLD 待ち
+- xcvrd / sfpshow 自体の刷新は別 [HLD](../reference/glossary.md#term-hld) 待ち
 - 既存 vendor は `SfpBase` を直接派生しており、移行期は新旧 API が並走
 
 ## 干渉する機能
@@ -177,3 +177,5 @@ reasoning: identifier-based spec 判定への切替の根拠。
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->

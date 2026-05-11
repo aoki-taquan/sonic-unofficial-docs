@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-mgmt_vrf`
 
-マネジメント VRF (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する YANG モジュール[^1]。
+マネジメント [VRF](../../reference/glossary.md#term-vrf) (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -68,7 +68,7 @@ module: sonic-mgmt_vrf
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MGMT_VRF_CONFIG|vrf_global`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_VRF_CONFIG|vrf_global`
 - CLI: `config vrf add mgmt`
 
 <!-- ref-triangle:start -->
@@ -85,7 +85,7 @@ module: sonic-mgmt_vrf
 
 ### 典型的なデプロイ位置
 
-- management VRF 制御。`MGMT_VRF_CONFIG|vrf_global` を hostcfgd が iproute2 + iptables に反映。
+- management VRF 制御。`MGMT_VRF_CONFIG|vrf_global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が iproute2 + iptables に反映。
 
 ### よくある落とし穴
 
@@ -102,3 +102,5 @@ show mgmt-vrf
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 0072c8c44112 -->

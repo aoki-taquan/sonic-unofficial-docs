@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-peer-switch`
 - top container: `sonic-tunnel`
 
-DualToR 構成における MuxTunnel (IPinIP encap/decap) のパラメータを保持する。DSCP / ECN / TTL の handling mode、 encap/decap QoS map などを定義する[^1]。
+DualToR 構成における MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip) encap/decap) のパラメータを保持する。DSCP / ECN / TTL の handling mode、 encap/decap [QoS](../../reference/glossary.md#term-qos) map などを定義する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -90,8 +90,8 @@ module: sonic-tunnel
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `TUNNEL`
-- CLI: なし（DualToR 構築時に config_db.json で直接設定）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TUNNEL`
+- CLI: なし（DualToR 構築時に [config_db.json](../../reference/glossary.md#term-config_db.json) で直接設定）
 
 <!-- ref-triangle:start -->
 
@@ -104,3 +104,5 @@ module: sonic-tunnel
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 3b3f7a595239 -->

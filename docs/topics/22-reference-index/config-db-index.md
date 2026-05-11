@@ -8,7 +8,7 @@ last_verified: 2026-05-10
 
 # CONFIG_DB 横断索引
 
-`docs/reference/config-db/` 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。CONFIG_DB は SONiC の構成入力点であり、CLI / YANG / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
+`docs/reference/config-db/` 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。[CONFIG_DB](../../reference/glossary.md#term-config_db) は SONiC の構成入力点であり、CLI / [YANG](../../reference/glossary.md#term-yang) / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
 
 ## 機能章別 table family
 
@@ -119,8 +119,10 @@ last_verified: 2026-05-10
 
 | Table | 主入口 | 関連参照 |
 |---|---|---|
-| INTERFACE | 06 章 (port 設定) | 04 章 (VRF binding) |
+| INTERFACE | 06 章 (port 設定) | 04 章 ([VRF](../../reference/glossary.md#term-vrf) binding) |
 | VLAN_INTERFACE | 06 章 | 04 章 (VRF binding) |
-| CRM | 07 章 | 09 章 (resource 監視) |
+| [CRM](../../reference/glossary.md#term-crm) | 07 章 | 09 章 (resource 監視) |
 | FLEX_COUNTER_TABLE | 01 章 | 07 / 09 章 (counter 種別ごと) |
 | KDUMP | 01 章 | 11 章 (reboot lifecycle) |
+
+<!-- glossary-links-injected: 126b7f748e8f -->

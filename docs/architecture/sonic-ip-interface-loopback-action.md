@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-ルータが受信したパケットをルーティングテーブルに従って転送した結果、**同じ RIF (Router Interface) から出ていく** ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる *ASIC ループバック* / *bounce* 現象。SAI のデフォルト挙動はそのまま **forward** で、これによってループや帯域の浪費が起こり得る[^1]。
+ルータが受信したパケットをルーティングテーブルに従って転送した結果、**同じ [RIF](../reference/glossary.md#term-rif) (Router Interface) から出ていく** ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる *ASIC ループバック* / *bounce* 現象。[SAI](../reference/glossary.md#term-sai) のデフォルト挙動はそのまま **forward** で、これによってループや帯域の浪費が起こり得る[^1]。
 
 本機能は IP インタフェース単位で **`drop` / `forward`** を選択できるようにし、`drop` 設定時は ASIC レベルで出戻りパケットをハードウェアドロップする。`drop` でドロップされたパケットは **RIF カウンタの `TX_ERR`** に計上される[^1]。設定を持たない既存インタフェースは従来どおり SAI 既定の `forward` で振る舞う。
 
@@ -60,7 +60,7 @@ flowchart LR
     ORCH -->|set_router_interface_attribute\nLOOPBACK_PACKET_ACTION| SAI[SAI / NPU]
 ```
 
-`intfmgrd` は CONFIG_DB の各 L3 インタフェーステーブルを購読し、`loopback_action` を含む属性集合を APP_DB の `INTF_TABLE` に転記する。`intfsorch` が `INTF_TABLE` を購読して SAI 属性を設定する設計で、これは既存 IP インタフェース管理経路の延長である[^1]。
+`intfmgrd` は [CONFIG_DB](../reference/glossary.md#term-config_db) の各 L3 インタフェーステーブルを購読し、`loopback_action` を含む属性集合を APP_DB の `INTF_TABLE` に転記する。`intfsorch` が `INTF_TABLE` を購読して SAI 属性を設定する設計で、これは既存 IP インタフェース管理経路の延長である[^1]。
 
 ### SAI 属性
 
@@ -225,17 +225,19 @@ show ip interfaces loopback-action
 
 - **RIF カウンタ (`router-interface-counters-in-sonic`)**: ループバックアクションによる drop は `TX_ERR` (具体的には `SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS`) に出る。これは ASIC で観測される他の egress エラーと混在するため、原因特定には別途注意が必要。
 - **subinterface**: VLAN_SUB_INTERFACE 上にも設定可能。ただし subinterface はそもそも親 Ethernet ポートと VLAN tag の組合せで定義されるため、ループバック判定の解釈が ASIC 実装に依存する可能性。
-- **dual-ToR / mux**: 物理的にはサーバ向けの兼用ポートで、対向 ToR との bounce 経路と loopback action がどう作用するかは HLD 範囲外。
+- **dual-ToR / mux**: 物理的にはサーバ向けの兼用ポートで、対向 ToR との bounce 経路と loopback action がどう作用するかは [HLD](../reference/glossary.md#term-hld) 範囲外。
 - **アップグレード/ダウングレード**: 設定が未定義のインタフェースは `forward` で従来挙動。アップグレード後に意図的に `drop` を設定するときは、トラフィック影響を本番投入前に確認する。
 
 ## トラブルシューティング
 
 - `drop` を設定したのに通り抜ける: `redis-cli -n 4 hgetall 'INTERFACE|EthernetN'` で `loopback_action` が入っているか、APP_DB の `INTF_TABLE` まで反映されているか、`ASIC_DB` の `SAI_OBJECT_TYPE_ROUTER_INTERFACE` 属性に `LOOPBACK_PACKET_ACTION=DROP` が出ているかを順に確認する。
 - 期待しない drop が起きている: `show interfaces counters rif` の `TX_ERR` を観測。`drop` 設定したインタフェースで増えている / いないかでトポロジ問題か判断できる。
-- L2 ポートに設定して拒否される: 対象を L3 にする (`config interface ip add ...`) か、subinterface / VLAN にする。
+- L2 ポートに設定して拒否される: 対象を L3 にする (`config interface ip add ...`) か、subinterface / [VLAN](../reference/glossary.md#term-vlan) にする。
 - 設定が再起動で消える: `config save` 漏れ。CONFIG_DB は永続化していないと cold/fast boot で揮発する。
 - SAI 側未対応: ベンダー SAI 実装で `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` をサポートしていないと `set_router_interface_attribute` が失敗する。`syslog` の SWSS / SAI ログを確認。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: b4f4dca39760 -->

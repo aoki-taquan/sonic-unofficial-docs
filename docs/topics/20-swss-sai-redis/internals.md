@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-ここでは「SAI / syncd 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex counter が…」「bulk counter が…」「CRM が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。
+ここでは「[SAI](../../reference/glossary.md#term-sai) / [syncd](../../reference/glossary.md#term-syncd) 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex counter が…」「bulk counter が…」「[CRM](../../reference/glossary.md#term-crm) が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。
 
 ## SWSS / SAI / Redis のデータフロー
 
@@ -37,7 +37,7 @@ flowchart LR
 | --- | --- | --- |
 | cfgmgr | `vlanmgrd`、`intfmgrd`、`teammgrd`、`vrfmgrd`、`buffermgrd`、`natmgr`、`portmgrd`、`vxlanmgrd`、`tunnelmgrd` | `cfgmgr/*.cpp` |
 | sync | `portsyncd`、`fdbsyncd`、`fpmsyncd`、`teamsyncd`、`natsyncd` | `<sync>/<sync>.cpp` |
-| Orch (orchagent process) | `PortsOrch`、`RouteOrch`、`NhgOrch`、`NeighOrch`、`AclOrch`、`QosOrch`、`BufferOrch`、`VxlanOrch`、`VNetOrch`、`NatOrch`、`FdbOrch`、`MirrorOrch`、`PolicerOrch`、`CrmOrch`、`SwitchOrch`、`Srv6Orch`、`MuxOrch`、`MACsecOrch`、`P4Orch`、`DashOrch` 系 | `orchagent/*.cpp` |
+| Orch ([orchagent](../../reference/glossary.md#term-orchagent) process) | `PortsOrch`、`RouteOrch`、`NhgOrch`、`NeighOrch`、`AclOrch`、`QosOrch`、`BufferOrch`、`VxlanOrch`、`VNetOrch`、`NatOrch`、`FdbOrch`、`MirrorOrch`、`PolicerOrch`、`CrmOrch`、`SwitchOrch`、`Srv6Orch`、`MuxOrch`、`MACsecOrch`、`P4Orch`、`DashOrch` 系 | `orchagent/*.cpp` |
 | syncd | `syncd`、`SAIRedis`、`flexcounter`、`SaiAttributeList`、`MetaInit` | `syncd/*.cpp` |
 | sairedis | `RedisClient`、`AsicView`、`SaiRedisServer` | `lib/sai_redis_*.cpp` |
 | swsscommon | `ProducerStateTable`、`ConsumerStateTable`、`SubscriberStateTable`、`NotificationConsumer`、`ZmqClient/Server`、`DBConnector` | `sonic-swss-common/` |
@@ -47,14 +47,14 @@ flowchart LR
 | 経路 | 用途 |
 | --- | --- |
 | `__keyspace@N__:*` | CONFIG/APPL/STATE/COUNTERS の各 key 変更通知 |
-| `ASIC_STATE_CHANNEL` | orchagent → syncd への ASIC_DB write 通知 |
-| `ASIC_STATE_NTF_CHANNEL` | syncd → orchagent への notification（FDB / port state / BFD 等） |
-| ZMQ | 大量 push 経路（VNET ZMQ、DASH SWBUS、gnmi-native-write） |
+| `ASIC_STATE_CHANNEL` | orchagent → syncd への [ASIC_DB](../../reference/glossary.md#term-asic_db) write 通知 |
+| `ASIC_STATE_NTF_CHANNEL` | syncd → orchagent への notification（[FDB](../../reference/glossary.md#term-fdb) / port state / [BFD](../../reference/glossary.md#term-bfd) 等） |
+| ZMQ | 大量 push 経路（[VNET](../../reference/glossary.md#term-vnet) ZMQ、[DASH](../../reference/glossary.md#term-dash) SWBUS、gnmi-native-write） |
 
 ## 既知の実装上の制約（章末でも触れる）
 
 - `redis-server` が単一スレッドで、APPL/CONFIG/STATE/COUNTERS を集約すると hot spot。複数インスタンス化が選択肢。
-- sairedis async モードで「ASIC_DB write 成功」と「SAI 実反映」が分離。確認は notification か COUNTERS_DB で。
+- sairedis async モードで「ASIC_DB write 成功」と「SAI 実反映」が分離。確認は notification か [COUNTERS_DB](../../reference/glossary.md#term-counters_db) で。
 - SAI capability の問い合わせを起動時に行う設計（`sai_query_api_version` / `sai_query_attribute_capability` / `sai_query_stats_capability`）が増えており、起動時間が ASIC capability の数に比例して伸びる。
 - 大量 route loading で `gRingBuffer` + assistant thread が入ったが、orchagent main loop の lock contention は完全には消えていない。
 
@@ -76,14 +76,14 @@ counter のサポートはベンダ・ASIC・SAI バージョンで違う。す�
 
 ### CRM の拡張テーブル
 
-CRM はもともと SONiC 知識のあるリソース（route、neighbor、nexthop、ACL 等）を監視する。ベンダ拡張のテーブルが増えると、これに同じ仕組みで乗せたい。`CRM_EXT_TABLE` を `STATE_DB` 系に置き、ベンダから渡される resource キーを汎用に扱う設計が入っている。詳細は [Generic SAI Extension テーブルの CRM](../../system/generic-sai-extension-critical-resource-monitoring-crm.md) を読む。
+CRM はもともと SONiC 知識のあるリソース（route、neighbor、nexthop、[ACL](../../reference/glossary.md#term-acl) 等）を監視する。ベンダ拡張のテーブルが増えると、これに同じ仕組みで乗せたい。`CRM_EXT_TABLE` を `STATE_DB` 系に置き、ベンダから渡される resource キーを汎用に扱う設計が入っている。詳細は [Generic SAI Extension テーブルの CRM](../../system/generic-sai-extension-critical-resource-monitoring-crm.md) を読む。
 
 ## counter の改善
 
 | 機能 | 改善する問題 | 主な層 | 設定面 |
 | --- | --- | --- | --- |
 | Bulk Counter | port 数 N に比例した個別 SAI 呼び出しの遅さ | syncd / sairedis | chunk size のみ |
-| FlexCounter Refactor | counter group 増加に伴うコード重複と性能ばらつき | syncd / flexcounter | 既存 API 維持 |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) Refactor | counter group 増加に伴うコード重複と性能ばらつき | syncd / flexcounter | 既存 API 維持 |
 | Counter 初期化最適化 | 起動直後の counter 一斉登録による spike | syncd / flexcounter | 既存 API 維持 |
 
 Bulk Counter は `sai_bulk_object_get_stats` により、1 回の SAI 呼び出しで複数 object の counter を取得し、chunk size を運用条件で調整する設計である。詳細は [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../../architecture/sonic-bulk-counter-design.md) を読む。
@@ -111,7 +111,7 @@ Debug Framework と dump utility はオペレータ目線、SAI failure dump は
 | スレッド | 役割 |
 | --- | --- |
 | main | `ASIC_DB` の `_temp` key を読み、SAI API 呼び出しを順序通り発行 |
-| notification | SAI からの notification（fdb_event、port_state_change、switch_shutdown）を Redis pub/sub に転送 |
+| notification | SAI からの notification（fdb_event、port_state_change、switch_shutdown）を [Redis](../../reference/glossary.md#term-redis) pub/sub に転送 |
 | flexcounter | counter group ごとに polling し、`COUNTERS_DB` に書き込む（→ 09 章） |
 | dump | `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 受信時に SAI / ASIC_DB を snapshot |
 
@@ -128,3 +128,5 @@ sairedis library 側で async / sync モードが選べ、SONiC master はデフ
 - [Debug Framework（コンポーネント dump 登録 / assert 拡張）](../../architecture/debug-framework-in-sonic.md)
 - [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)
+
+<!-- glossary-links-injected: 242280e0a265 -->

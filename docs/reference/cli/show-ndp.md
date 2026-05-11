@@ -60,7 +60,7 @@ cmd += ['-d', str(display)]
 
 ## CONFIG_DB との接点
 
-NDP テーブルは **kernel の IPv6 neighbor table** および swss/neighsyncd で APPL_DB に同期されるもので、CONFIG_DB を読まない。
+[NDP](../../reference/glossary.md#term-ndp) テーブルは **kernel の IPv6 neighbor table** および swss/[neighsyncd](../../reference/glossary.md#term-neighsyncd) で [APPL_DB](../../reference/glossary.md#term-appl_db) に同期されるもので、[CONFIG_DB](../../reference/glossary.md#term-config_db) を読まない。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -109,3 +109,5 @@ ip -6 neigh show
 sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9b9dce032e0d -->

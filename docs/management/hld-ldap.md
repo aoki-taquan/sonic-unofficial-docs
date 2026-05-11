@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC スイッチの SSH / シリアルログインを **外部 LDAP サーバで認証** できるようにする Phase 1 設計[^1]。Debian の `libnss-ldapd` / `libpam-ldapd` / `ldap-utils` パッケージを取り込み、`nslcd` デーモンで LDAP との通信を担当する。`hostcfgd` が CONFIG_DB の LDAP 関連テーブルを監視し、`/etc/ldap/ldap.conf` / `/etc/nslcd.conf` / `/etc/nsswitch.conf` / `/etc/pam.d/common-auth-sonic` を再生成する。
+SONiC スイッチの SSH / シリアルログインを **外部 LDAP サーバで認証** できるようにする Phase 1 設計[^1]。Debian の `libnss-ldapd` / `libpam-ldapd` / `ldap-utils` パッケージを取り込み、`nslcd` デーモンで LDAP との通信を担当する。`hostcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の LDAP 関連テーブルを監視し、`/etc/ldap/ldap.conf` / `/etc/nslcd.conf` / `/etc/nsswitch.conf` / `/etc/pam.d/common-auth-sonic` を再生成する。
 
 ローカル認証フォールバックと、LDAP サーバの優先度に基づく順序的フォールバックをサポート。**REST API（nginx）への適用は TODO**[^1]。
 
@@ -74,7 +74,7 @@ AAA
 
 ### Init / 設定変更フロー
 
-`hostcfgd` の AAA クラスは `LDAP_TABLE` / `LDAP_SERVER` / `AAA` 変更を購読し、jinja2 テンプレートから設定ファイルを再生成して `nslcd` を再起動する。LDAP 無効時は `nslcd` を停止し、PAM/NSS から LDAP モジュールを外す[^1]。
+`hostcfgd` の [AAA](../reference/glossary.md#term-aaa) クラスは `LDAP_TABLE` / `LDAP_SERVER` / `AAA` 変更を購読し、jinja2 テンプレートから設定ファイルを再生成して `nslcd` を再起動する。LDAP 無効時は `nslcd` を停止し、PAM/NSS から LDAP モジュールを外す[^1]。
 
 ### パッケージ
 
@@ -106,7 +106,7 @@ AAA
 
 ### 関連する CLI
 
-HLD には CLI コマンド名の正式な体系は明記されていないが、既存の `config aaa authentication ...` を拡張する形で `ldap` メソッドを追加すると示唆されている。LDAP 固有設定用の `config ldap` 系コマンドが追加される想定。
+[HLD](../reference/glossary.md#term-hld) には CLI コマンド名の正式な体系は明記されていないが、既存の `config aaa authentication ...` を拡張する形で `ldap` メソッドを追加すると示唆されている。LDAP 固有設定用の `config ldap` 系コマンドが追加される想定。
 
 ### 関連する YANG
 
@@ -146,7 +146,7 @@ sudo config aaa authentication login ldap local
 - **TACACS+ / RADIUS（既存 AAA）**: 同じ AAA テーブルの authentication.login で並列指定可。順序フォールバックで連動する。
 - **`hostcfgd` AAA クラス**: tacacs / radius / ldap いずれの設定変更も同クラスで処理される。
 - **NSS**: `getent passwd` 等のシステムコールも LDAP を見るようになる（`/etc/nsswitch.conf` 経由）。
-- **REST / gNMI**: REST API 認証は本機能のスコープ外（TODO）。
+- **REST / [gNMI](../reference/glossary.md#term-gnmi)**: REST API 認証は本機能のスコープ外（TODO）。
 
 ## トラブルシューティング
 
@@ -165,3 +165,5 @@ sudo config aaa authentication login ldap local
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6674ed3c9f67 -->

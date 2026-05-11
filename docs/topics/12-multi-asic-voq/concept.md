@@ -22,31 +22,31 @@ keywords:
 
 # 概念
 
-Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
+Multi-ASIC と [VOQ](../../reference/glossary.md#term-voq) chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
 
 ## Multi-ASIC / VOQ は何を解決するか
 
 1 ASIC の pizza-box では足りない radix（ポート数 × 帯域）が必要になったとき、ハードウェア側は「1 筐体に複数 ASIC を載せる」「複数 line card を fabric でつなぐ」という拡張を取ります。ところが NOS から見ると、ASIC が複数あるだけで以下が一気に難しくなります。
 
 - ポート命名空間: `Ethernet0` が複数 ASIC の片方にあるのか、どちらにあるのか
-- routing daemon: 同じ BGP プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか
-- 設定永続化: CONFIG_DB は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか
+- routing daemon: 同じ [BGP](../../reference/glossary.md#term-bgp) プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか
+- 設定永続化: [CONFIG_DB](../../reference/glossary.md#term-config_db) は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか
 - counter / show: `show interfaces counters` は ASIC を跨ぐのか、まとめるのか
 - fabric / chassis: line card を跨いだ system port は単一 switch に見えるのか
 
-Multi-ASIC SONiC と VOQ SONiC が解決しているのは、**「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる**ことです。具体的な手段が、namespace 分離、Redis インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。
+Multi-ASIC SONiC と VOQ SONiC が解決しているのは、**「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる**ことです。具体的な手段が、namespace 分離、[Redis](../../reference/glossary.md#term-redis) インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。
 
 ## SONiC 内での位置
 
 Multi-ASIC / VOQ は data plane の構造を反映した **全層横断のアーキテクチャ変更** で、特定 1 機能ではなく次の各層に変更が入ります。
 
-- **Linux**: ASIC ごとに `asic0`、`asic1` ... の network namespace を作り、portmgmtd / orchagent / syncd / bgpd を namespace 内で複数起動
-- **Redis / DB**: ASIC ごとに `redis<N>.sock` を立て、CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ
-- **Routing**: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。FRR の `vrf` ではなく namespace で分離
+- **Linux**: ASIC ごとに `asic0`、`asic1` ... の network namespace を作り、portmgmtd / [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / bgpd を namespace 内で複数起動
+- **Redis / DB**: ASIC ごとに `redis<N>.sock` を立て、CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ
+- **Routing**: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。[FRR](../../reference/glossary.md#term-frr) の `vrf` ではなく namespace で分離
 - **Forwarding plane**: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成
 - **CLI**: `show` 系コマンドが `--namespace` を取り、引数なしのときは全 namespace を集約。`sonic-utilities` が namespace 一覧を `/usr/share/sonic/device/.../asic.conf` から読む
 
-つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / VXLAN / QoS / Reboot...）が**「1 ASIC の前提」で書かれている内容に対する例外条項集**でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。
+つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / [VXLAN](../../reference/glossary.md#term-vxlan) / [QoS](../../reference/glossary.md#term-qos) / Reboot...）が**「1 ASIC の前提」で書かれている内容に対する例外条項集**でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。
 
 ## 用語の定義
 
@@ -70,7 +70,7 @@ Multi-ASIC / VOQ は data plane の構造を反映した **全層横断のアー
 - **Multi-ASIC (1 筐体・複数 ASIC)**: 1 つの NOS インスタンスの中で、ASIC ごとに独立した network namespace (`asic0`, `asic1`, ...) と独立した Redis インスタンスを持ちます。host namespace は外向きの CLI / management、ASIC namespace は実際の port / route を持ちます。
 - **VOQ Chassis (複数 line card + supervisor)**: 各 line card が Multi-ASIC SONiC として動き、supervisor 上の **Chassis DB** と fabric ASIC が、複数 line card の system port を 1 つの論理スイッチとして束ねます。
 
-つまり VOQ chassis は Multi-ASIC を内包しつつ、さらに「複数 line card を 1 つの switch に見せる」層を持ちます。Multi-ASIC platforms HLD が namespace の枠組みを定義し、VOQ SONiC HLD がその上に Chassis DB / system port / distributed VOQ を載せる構造です。
+つまり VOQ chassis は Multi-ASIC を内包しつつ、さらに「複数 line card を 1 つの switch に見せる」層を持ちます。Multi-ASIC platforms [HLD](../../reference/glossary.md#term-hld) が namespace の枠組みを定義し、VOQ SONiC HLD がその上に Chassis DB / system port / distributed VOQ を載せる構造です。
 
 ## Namespace と Redis インスタンス
 
@@ -90,7 +90,7 @@ VOQ chassis で重要なのが **system port** という概念です。
 ## Fabric Port と Recirculation Port
 
 - **fabric port**: line card と fabric card を結ぶ内部 port です。fabric ASIC は L2 / L3 forwarding をせず、cell ベースで line card 間をつなぐスイッチング機構を提供します。
-- **recirculation port**: 1 つの ASIC の中で「もう一度パイプラインを通したい」ときに使う内部ループ用 port です。VOQ 系では特に MPLS / GRE / IP-in-IP のような multi-pass 処理で利用されます。
+- **recirculation port**: 1 つの ASIC の中で「もう一度パイプラインを通したい」ときに使う内部ループ用 port です。VOQ 系では特に [MPLS](../../reference/glossary.md#term-mpls) / GRE / IP-in-IP のような multi-pass 処理で利用されます。
 
 front-panel port は運用者が触る port、fabric port は normally hidden、recirculation port は ASIC capability に応じて自動確保されるリソース、と覚えると見分けがつきやすいです。
 
@@ -136,11 +136,11 @@ sequenceDiagram
 
 | 比較対象 | 共通点 | 違い |
 |---|---|---|
-| MLAG (MCLAG) | 複数装置を 1 つに見せたい | MLAG は別筐体 2 台を LACP 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散 |
+| MLAG ([MCLAG](../../reference/glossary.md#term-mclag)) | 複数装置を 1 つに見せたい | MLAG は別筐体 2 台を [LACP](../../reference/glossary.md#term-lacp) 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散 |
 | Stack switch | 1 system に統合 | stack は management の統合が主、forwarding は stack link 経由。VOQ chassis のような cell-based fabric ではない |
-| VRF | namespace に似て見える | VRF は L3 route table の論理分離。Multi-ASIC namespace は OS レベルの完全分離 |
+| [VRF](../../reference/glossary.md#term-vrf) | namespace に似て見える | VRF は L3 route table の論理分離。Multi-ASIC namespace は OS レベルの完全分離 |
 | Docker container | プロセス分離 | container は process / mount / network の分離。namespace 分離は network 軸のみ |
-| SmartSwitch (DPU) | 複数 ASIC 的に見える | SmartSwitch は switch ASIC + DPU の組合せで、Multi-ASIC とは構造が違う。詳細は dash-smartswitch 章 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([DPU](../../reference/glossary.md#term-dpu)) | 複数 ASIC 的に見える | SmartSwitch は switch ASIC + DPU の組合せで、Multi-ASIC とは構造が違う。詳細は dash-smartswitch 章 |
 
 特に **「VOQ chassis ≒ stack」 と思うのは誤読** で、VOQ chassis はハードウェアレベルで全 line card が cell-based fabric で 1 つの switch を構成するのに対し、stack は別装置の管理統合という質的に違うものです。
 
@@ -169,3 +169,4 @@ sequenceDiagram
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 
+<!-- glossary-links-injected: b6a1be57dc45 -->

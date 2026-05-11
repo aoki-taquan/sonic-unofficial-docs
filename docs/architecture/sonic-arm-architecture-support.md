@@ -26,7 +26,7 @@ related:
 
 ## なぜ必要か
 
-SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 HLD は **ARM32 (armhf) / ARM64 サポート** のため変更対象を整理する[^1]。
+SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 [HLD](../reference/glossary.md#term-hld) は **ARM32 (armhf) / ARM64 サポート** のため変更対象を整理する[^1]。
 
 変更対象: `sonic-slave`（ビルド環境 docker）、`dockers/`（base / ptf 等）、`rules/` / `Makefile` / build script、`apt` repo list、ONIE image / installer。
 
@@ -181,3 +181,5 @@ file target/sonic-marvell-armhf/...        # 出力 binary の arch 確認
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-multi-architecture/sonic_arm_support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 167700005048 -->

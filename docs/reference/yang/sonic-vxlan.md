@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-vxlan`
 
-VXLAN tunnel and EVPN NVO configuration for SONiC.[^1]
+[VXLAN](../../reference/glossary.md#term-vxlan) tunnel and [EVPN](../../reference/glossary.md#term-evpn) NVO configuration for SONiC.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -80,7 +80,7 @@ module: sonic-vxlan
 | `dst_ip` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/dst_ip` | `inet:ip-address` |  |  |  | Destination VTEP IP address for point-to-point tunnels. |
 | `ttl_mode` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/ttl_mode` | `string` |  |  | pattern `uniform|pipe` | Decap TTL mode |
 | `name` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/name` | `leafref` | yes |  | /svxlan:sonic-vxlan/svxlan:VXLAN_TUNNEL/svxlan:VXLAN_TUNNEL_LIST/svxlan:name | Reference to the parent VXLAN tunnel. |
-| `mapname` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/mapname` | `string` | yes |  |  | Name of the VLAN-to-VNI mapping entry. |
+| `mapname` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/mapname` | `string` | yes |  |  | Name of the [VLAN](../../reference/glossary.md#term-vlan)-to-VNI mapping entry. |
 | `vlan` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vlan` | `string` | yes |  | pattern `Vlan([0-9]{1,3}|[1-3][0-9]{3}|[4][0][0-8][0-9]|[4][0][9][...` | VLAN associated with this mapping. |
 | `vni` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vni` | `stypes:vnid_type` | yes |  |  | VXLAN Network Identifier mapped to the VLAN. |
 | `name` | `sonic-vxlan/VXLAN_EVPN_NVO/VXLAN_EVPN_NVO_LIST/name` | `string` | yes |  |  | EVPN NVO instance name. |
@@ -97,7 +97,7 @@ module: sonic-vxlan
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `VXLAN_TUNNEL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL`
 - CONFIG_DB: `VXLAN_TUNNEL_MAP`
 - CONFIG_DB: `VXLAN_EVPN_NVO`
 - CLI: `config vxlan`
@@ -115,3 +115,4 @@ module: sonic-vxlan
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vxlan.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: fb9ac39b72cb -->

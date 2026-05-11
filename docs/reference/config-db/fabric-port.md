@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`FABRIC_PORT` テーブルは VOQ chassis におけるラインカード間ファブリックリンクの設定を CONFIG_DB に保持する[^1]。`portsyncd` / `orchagent` がファブリックポートの isolate / unisolate 状態を SAI 側に反映する。
+`FABRIC_PORT` テーブルは [VOQ](../../reference/glossary.md#term-voq) chassis におけるラインカード間ファブリックリンクの設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。`portsyncd` / `orchagent` がファブリックポートの isolate / unisolate 状態を [SAI](../../reference/glossary.md#term-sai) 側に反映する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ FABRIC_PORT|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `FABRIC_MONITOR`、`SYSTEM_PORT`、`CHASSIS_MODULE`
-- 関連 YANG: `sonic-fabric-port`、`sonic-fabric-monitor`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fabric-port`、`sonic-fabric-monitor`
 - 関連 CLI: `config fabric`、`show fabric`
 
 <!-- ref-triangle:start -->
@@ -112,3 +112,5 @@ sonic-db-cli CONFIG_DB keys 'FABRIC_PORT|*'
 show fabric counters port
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d9fa2505af9c -->

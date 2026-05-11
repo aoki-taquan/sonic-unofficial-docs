@@ -28,7 +28,7 @@ related:
 ## 症状
 
 - `show interfaces counters errors` で `RX_ERR` / `SYMBOL_ERR` が継続的に増加
-- リンク自体は UP するが、BER が高く上位プロトコル（BGP / LACP）が flap
+- リンク自体は UP するが、BER が高く上位プロトコル（[BGP](../../reference/glossary.md#term-bgp) / [LACP](../../reference/glossary.md#term-lacp)）が flap
 - `show interfaces fec stats` で `FEC_PRE / FEC_POST` のカウンタが急増
 
 ## 想定原因
@@ -108,4 +108,6 @@ sudo cat /usr/share/sonic/device/*/*/platform.json | jq '.interfaces["Ethernet0"
 ## 引用元
 
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — xcvrd / DOM 監視
-[^2]: sonic-net/sonic-swss @ 4305596 — portsorch
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch
+
+<!-- glossary-links-injected: ffe7f349ef8a -->

@@ -63,7 +63,7 @@ HEARTBEAT|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-heartbeat`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-heartbeat`
 
 <!-- ref-triangle:end -->
 
@@ -92,3 +92,5 @@ HEARTBEAT|<name>
 sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d5320e852f7a -->

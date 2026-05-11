@@ -28,7 +28,7 @@ related:
 
 ## なぜ必要か
 
-同じ宛先に対して **Forwarding Class (FC) ごとに異なるパス** を取らせる traffic engineering。FC は Traffic Class（QoS キュー）とは別概念で、入力時に DSCP / MPLS EXP から決まる "どのパスを通すか" のラベル[^1]。
+同じ宛先に対して **Forwarding Class (FC) ごとに異なるパス** を取らせる traffic engineering。FC は Traffic Class（[QoS](../reference/glossary.md#term-qos) キュー）とは別概念で、入力時に DSCP / [MPLS](../reference/glossary.md#term-mpls) EXP から決まる "どのパスを通すか" のラベル[^1]。
 
 典型例は「foreground は最短路、background は長尺路」のように分離転送する設計。QoS キューでバックグラウンドを絞ると帯域が消えてしまう問題を、CBF は別パスで回避する。実装は OpenCompute [SAI #1193](https://github.com/opencomputeproject/SAI/pull/1193) の `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` と NHG 入れ子モデルを前提とする[^1]。
 
@@ -74,13 +74,13 @@ APPL_DB:
   LABEL_ROUTE_TABLE.nexthop_group
 ```
 
-CLI は **意図的に追加されない**（HLD §3.6）[^1]。`config_db.json` 直編集または gNMI 経由で設定する。
+CLI は **意図的に追加されない**（[HLD](../reference/glossary.md#term-hld) §3.6）[^1]。`config_db.json` 直編集または [gNMI](../reference/glossary.md#term-gnmi) 経由で設定する。
 
 ## Orchestration
 
 - **共通 NHG エージェント**: 通常 NHG / CBF NHG 双方を扱い、RouteOrch から同 API で参照可能
 - **NHG map エージェント**: `FC_TO_NHG_INDEX_MAP_TABLE` → `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP`。capability 不足時は task をキュー残し
-- 子 NHG が **暫定 (temporary)** 状態のとき SAI ID が後で変わるので、CBF NHG 側で監視し確定したら `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` を差し替え
+- 子 NHG が **暫定 (temporary)** 状態のとき [SAI](../reference/glossary.md#term-sai) ID が後で変わるので、CBF NHG 側で監視し確定したら `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` を差し替え
 - 更新時は `INDEX` が CREATE_ONLY のため **全メンバを remove → add で再構築**[^1]
 
 ## 設定例
@@ -94,7 +94,7 @@ CLI は **意図的に追加されない**（HLD §3.6）[^1]。`config_db.json`
 
 ## 制限事項
 
-- **fpmsyncd 非対応**: 標準版は使えず、改造 fpmsyncd または APP_DB 直書きが必要[^1]
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) 非対応**: 標準版は使えず、改造 fpmsyncd または APP_DB 直書きが必要[^1]
 - `NEXT_HOP_GROUP_TABLE` と `CLASS_BASED_NEXT_HOP_GROUP_TABLE` でキー衝突時は **非 CBF 側優先**[^1]
 - **CLI 無し**: 監視・デバッグは redis / `saidump` 依存
 - **依存 SAI #1193**: 古い SAI ヘッダではビルド不可
@@ -117,10 +117,12 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*'
 
 ## 関連 Topics
 
-- [04-vrf-ecmp/advanced](../topics/04-vrf-ecmp/advanced.md): ECMP / NHG 全般
+- [04-vrf-ecmp/advanced](../topics/04-vrf-ecmp/advanced.md): [ECMP](../reference/glossary.md#term-ecmp) / NHG 全般
 - [08-qos-buffer/concept](../topics/08-qos-buffer/concept.md): DSCP マップと FC / TC の違い
 - [17-srv6-mpls/advanced](../topics/17-srv6-mpls/advanced.md): MPLS EXP との連携
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/cbf/cbf_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 76b5994c62b3 -->

@@ -27,13 +27,13 @@ related:
 
 # ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
 
-ポート単位の SAI バッファドロップカウンタは「**なぜ専用 FC グループにしたか**」「**何を取るのか**」「**CLI でどう操作するか**」の 3 点が分かれば全体像はつかめる。順に答える。
+ポート単位の [SAI](../reference/glossary.md#term-sai) バッファドロップカウンタは「**なぜ専用 FC グループにしたか**」「**何を取るのか**」「**CLI でどう操作するか**」の 3 点が分かれば全体像はつかめる。順に答える。
 
 ## なぜ専用 FC グループに分けたのか
 
 過去に普通の `PORT_STAT` と同じ FC グループに混ぜて 1 秒間隔でポーリングしたところ、性能影響と衝突を起こし master から外された経緯がある[^1]。
 
-> "These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308
+> "These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — [sonic-swss](../reference/glossary.md#term-sonic-swss) PR 1308
 
 そこで **専用 FC グループ `PORT_BUFFER_DROP` を新設し、既定 60 秒** というゆったりした間隔で取る設計に切り替えた。CLI でも短すぎる interval を弾くバリデーションを入れている[^1]。
 
@@ -54,7 +54,7 @@ flowchart LR
     FC2 --> CDB
 ```
 
-既存 `PORT_STAT` から本 2 カウンタを切り出して別 FC グループにするだけ。保管先は同じ COUNTERS_DB。
+既存 `PORT_STAT` から本 2 カウンタを切り出して別 FC グループにするだけ。保管先は同じ [COUNTERS_DB](../reference/glossary.md#term-counters_db)。
 
 ## CLI でどう操作するか
 
@@ -117,11 +117,11 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 - **`PORT_STAT` FC group**: 元々まとまっていた drop 系が分離。`PORT_STAT` を 1s のまま運用しても drop 系は 60s 側で安全
 - **`show interfaces counters`**: `COUNTERS_DB` 経由で読むため、disable 時は値が固まる
 - **マイクロバースト解析**: サブ秒精度が要るなら watermark / テレメトリ系を併用
-- **WRED 統計**: WRED 由来の早期ドロップを区別したいなら WRED 統計側を使う
+- **[WRED](../reference/glossary.md#term-wred) 統計**: WRED 由来の早期ドロップを区別したいなら WRED 統計側を使う
 
 ## トラブルシューティング
 
-- `PORT_BUFFER_DROP` 行が出ない: sonic-utilities が未取り込み。`FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` を redis で確認
+- `PORT_BUFFER_DROP` 行が出ない: [sonic-utilities](../reference/glossary.md#term-sonic-utilities) が未取り込み。`FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` を redis で確認
 - `interval 1000` で error: 仕様。30000〜300000 を指定
 - drop count が 0 のまま: `counterpoll show` で enable 状態か確認
 - 値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮
@@ -145,3 +145,5 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5fa3ea70fda -->

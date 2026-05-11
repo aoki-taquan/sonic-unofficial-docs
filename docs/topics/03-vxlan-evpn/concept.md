@@ -22,25 +22,25 @@ keywords:
 
 # VXLAN / VNET / EVPN の概要
 
-SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。
+SONiC の overlay 周りは、「[VXLAN](../../reference/glossary.md#term-vxlan)」「[VNET](../../reference/glossary.md#term-vnet)」「[EVPN](../../reference/glossary.md#term-evpn)」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。
 
 ## SONiC overlay は何の問題を解決するか
 
 データセンタや CSP は、物理ネットワークの上に **テナントごとの仮想ネットワーク** を載せたい、L3 fabric の上で **L2 が必要なホストを越境させたい**、という要件を抱えます。SONiC overlay はこれを以下の道具で解きます。
 
 - **VXLAN**: L2 / L3 トラフィックを UDP/IP に encapsulate して L3 fabric 上を運ぶ。
-- **VNET**: SONiC が tenant / VRF / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。
-- **EVPN**: BGP の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。
+- **VNET**: SONiC が tenant / [VRF](../../reference/glossary.md#term-vrf) / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。
+- **EVPN**: [BGP](../../reference/glossary.md#term-bgp) の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。
 
-「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、VLAN-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
+「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、[VLAN](../../reference/glossary.md#term-vlan)-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
 
 ## SONiC の中での位置
 
 | 軸 | 担当 |
 | --- | --- |
-| Management plane | `config vxlan`, `config vnet`, FRR vty, `VXLAN_*` / `VNET_*` CONFIG_DB |
-| Control plane | FRR bgpd (l2vpn evpn AFI)、vxlanmgrd、VNetOrch、VNetRouteOrch |
-| Data plane | orchagent (TunnelOrch / VxlanTunnelOrch)、syncd、SAI tunnel / bridge-port |
+| Management plane | `config vxlan`, `config vnet`, [FRR](../../reference/glossary.md#term-frr) vty, `VXLAN_*` / `VNET_*` [CONFIG_DB](../../reference/glossary.md#term-config_db) |
+| Control plane | FRR bgpd (l2vpn evpn AFI)、[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd)、VNetOrch、VNetRouteOrch |
+| Data plane | [orchagent](../../reference/glossary.md#term-orchagent) (TunnelOrch / VxlanTunnelOrch)、[syncd](../../reference/glossary.md#term-syncd)、[SAI](../../reference/glossary.md#term-sai) tunnel / bridge-port |
 
 VXLAN は data plane、EVPN は control plane、VNET は management/control の境界にいる、という整理が役に立ちます。
 
@@ -111,10 +111,10 @@ VNET は SONiC の configuration / orchestration 単位です。`VNET` は `vxla
 
 | 比較対象 | 違い |
 | --- | --- |
-| NVGRE | encapsulation が GRE + VSID。SONiC NVGRE HLD は decap 受信側中心で、EVPN control plane を持たない |
-| Subnet decap | VLAN subnet 宛 IPinIP を T0 が decap して Netscan へ戻す platform 機能。tenant overlay ではない |
+| NVGRE | encapsulation が GRE + VSID。SONiC NVGRE [HLD](../../reference/glossary.md#term-hld) は decap 受信側中心で、EVPN control plane を持たない |
+| Subnet decap | VLAN subnet 宛 [IPinIP](../../reference/glossary.md#term-ipinip) を T0 が decap して Netscan へ戻す platform 機能。tenant overlay ではない |
 | GENEVE | SONiC では encapsulation 対象として一般には扱っていない |
-| MPLS L3VPN | control plane に BGP-VPNv4/v6、data plane に MPLS label を使う。SONiC では限定的 |
+| [MPLS](../../reference/glossary.md#term-mpls) L3VPN | control plane に BGP-VPNv4/v6、data plane に MPLS label を使う。SONiC では限定的 |
 | VLAN trunk のみ | L2 を物理リンクで運ぶ。fabric を越えられない |
 
 NVGRE は VXLAN と同じ「L2 over L3」系の overlay ですが、カプセル化に GRE と VSID を使います。詳細は [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md) を参照してください。
@@ -141,7 +141,7 @@ VXLAN / VNET / EVPN まわりで把握しておくべき CONFIG_DB は次のと�
 | `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` | VNET の local / remote endpoint route |
 | `EVPN_NVO` / `EVPN_RT_TBL` 等 | EVPN 系の補助 table（FRR との接続側） |
 
-`vxlanmgrd` は CONFIG_DB と Linux netlink を仲立ちし、`VNetOrch` / `VxlanTunnelOrch` / `TunnelDecapOrch` が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が APPL_DB / VNET_ROUTE_TUNNEL に降りてきます。
+`vxlanmgrd` は CONFIG_DB と Linux netlink を仲立ちし、`VNetOrch` / `VxlanTunnelOrch` / `TunnelDecapOrch` が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が [APPL_DB](../../reference/glossary.md#term-appl_db) / VNET_ROUTE_TUNNEL に降りてきます。
 
 ## EVPN と VNET 直書きのデータパスは同じ
 
@@ -157,13 +157,13 @@ flowchart LR
   ASIC --> SAI[SAI tunnel / bridge-port]
 ```
 
-control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「ASIC_DB に tunnel object が居るか」を順に追います。
+control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「[ASIC_DB](../../reference/glossary.md#term-asic_db) に tunnel object が居るか」を順に追います。
 
 ## EVPN Type と SONiC 側の受け口
 
 | Type | 意味 | SONiC で書き込まれる先 |
 | --- | --- | --- |
-| Type-2 | MAC / MAC+IP 到達性 | bridge-port / FDB / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け） |
+| Type-2 | MAC / MAC+IP 到達性 | bridge-port / [FDB](../../reference/glossary.md#term-fdb) / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け） |
 | Type-3 | inclusive multicast tunnel endpoint | head-end replication 用 tunnel member |
 | Type-5 | IP prefix | VNET_ROUTE_TUNNEL / VRF route |
 
@@ -171,7 +171,7 @@ Type-2 が来ても bridge-port が作られていない場合は **vlan-vni map
 
 ## SmartSwitch / DASH の VNET との関係
 
-DASH / SmartSwitch の SDN data path は VNET スキーマを再利用し、ENI 単位の policy（ACL / mapping）と組み合わせて DPU 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は [13 章 DASH / SmartSwitch](../13-dash-smartswitch/concept.md) を参照してください。
+[DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) の SDN data path は VNET スキーマを再利用し、[ENI](../../reference/glossary.md#term-eni) 単位の policy（[ACL](../../reference/glossary.md#term-acl) / mapping）と組み合わせて [DPU](../../reference/glossary.md#term-dpu) 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は [13 章 DASH / SmartSwitch](../13-dash-smartswitch/concept.md) を参照してください。
 
 ## 関連ページ
 
@@ -191,3 +191,4 @@ DASH / SmartSwitch の SDN data path は VNET スキーマを再利用し、ENI 
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
+<!-- glossary-links-injected: 63ba01f3c414 -->

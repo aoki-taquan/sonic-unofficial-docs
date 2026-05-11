@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-L3 トラフィック分離のための Virtual Routing and Forwarding インスタンスを定義する[^1]。`vrfmgrd` がこのテーブルを購読し、Linux VRF (`ip vrf` / `cgroup`) を作成する。各種 `*_INTERFACE` テーブルから `vrf_name` で leafref 参照される。EVPN VXLAN では `vni` を介して L3 VNI と紐付く。
+L3 トラフィック分離のための Virtual Routing and Forwarding インスタンスを定義する[^1]。`vrfmgrd` がこのテーブルを購読し、Linux [VRF](../../reference/glossary.md#term-vrf) (`ip vrf` / `cgroup`) を作成する。各種 `*_INTERFACE` テーブルから `vrf_name` で leafref 参照される。[EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) では `vni` を介して L3 VNI と紐付く。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -68,14 +68,14 @@ VRF|<name>
 
 - `vrfmgrd`: Linux VRF / cgroup を作成・破棄
 - `intfmgrd`: 各 `*_INTERFACE` の `vrf_name` 参照を反映
-- `bgpcfgd` / `frr-mgmt-framework`: `BGP_GLOBALS|<vrf>` と組合わせて FRR `vrf <name>` 設定生成
-- `orchagent` `VRFOrch`: SAI VR (Virtual Router) を生成
+- `bgpcfgd` / `frr-mgmt-framework`: `BGP_GLOBALS|<vrf>` と組合わせて [FRR](../../reference/glossary.md#term-frr) `vrf <name>` 設定生成
+- `orchagent` `VRFOrch`: [SAI](../../reference/glossary.md#term-sai) VR (Virtual Router) を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `INTERFACE`、`VLAN_INTERFACE`、`PORTCHANNEL_INTERFACE`、`LOOPBACK_INTERFACE`、`BGP_GLOBALS`、`MGMT_VRF_CONFIG`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `INTERFACE`、`VLAN_INTERFACE`、`PORTCHANNEL_INTERFACE`、`LOOPBACK_INTERFACE`、`BGP_GLOBALS`、`MGMT_VRF_CONFIG`
 - 関連 CLI: `config vrf add/del`
-- 関連 YANG: `sonic-vrf`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vrf`
 
 <!-- ref-triangle:start -->
 
@@ -107,7 +107,7 @@ VRF|<name>
 
 ### よくある誤設定
 
-- VRF 名が `Vrf` で始まらないと sonic-cfggen / orchagent が認識しない。
+- VRF 名が `Vrf` で始まらないと [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / [orchagent](../../reference/glossary.md#term-orchagent) が認識しない。
 - `vni` を tenant 間で重複させると EVPN route が混線する。
 
 ### 確認コマンド
@@ -118,3 +118,5 @@ show vrf
 ip vrf show
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9ad2e5233a04 -->

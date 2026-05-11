@@ -36,11 +36,11 @@ related:
 役割[^1]:
 
 - **PT Source**: probe 生成
-- **PT Midpoint**: 通常の IPv6 forwarding / SRv6 endpoint 処理に加え、自分の **MCD** を HbH-PT に書き足す
+- **PT Midpoint**: 通常の IPv6 forwarding / [SRv6](../reference/glossary.md#term-srv6) endpoint 処理に加え、自分の **MCD** を HbH-PT に書き足す
 - **PT Sink**: SRC からの probe を集めて Regional Collector へ
 - **RC (Regional Collector)**: probe を Time Series DB に保存し path / 時刻系列を再構築
 
-本 HLD は **Midpoint** の SONiC 実装を扱う。Source / Sink の HLD は別[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **Midpoint** の SONiC 実装を扱う。Source / Sink の HLD は別[^1]。
 
 ## 動作仕様
 
@@ -86,7 +86,7 @@ CONFIG_DB PORT|<port_name>
   pt_timestamp_template  = "template1" | "template2" | "template3" | "template4"
 ```
 
-APPL_DB の `PORT_TABLE` にも対応 field が伝搬する（portmgrd 経由）[^1]。
+[APPL_DB](../reference/glossary.md#term-appl_db) の `PORT_TABLE` にも対応 field が伝搬する（[portmgrd](../reference/glossary.md#term-portmgrd) 経由）[^1]。
 
 ### CLI（追加）
 
@@ -206,3 +206,5 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_PORT:*" | head
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 024b36777c6d -->

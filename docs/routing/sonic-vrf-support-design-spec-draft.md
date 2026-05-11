@@ -37,11 +37,11 @@ related:
 
 ## なぜこの構成なのか
 
-SONiC の VRF サポートは、Linux kernel の **VRF master device** を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に **vrfmgrd / vrforch** を新設して L3 interface・static route・BGP セッション・ACL redirect の VRF binding を一気通貫で扱えるようにしている[^1]。
+SONiC の [VRF](../reference/glossary.md#term-vrf) サポートは、Linux kernel の **VRF master device** を基盤に、[FRR](../reference/glossary.md#term-frr) ([zebra](../reference/glossary.md#term-zebra) / bgpd) を vrf-aware 化し、SONiC 側に **[vrfmgrd](../reference/glossary.md#term-vrfmgrd) / vrforch** を新設して L3 interface・static route・[BGP](../reference/glossary.md#term-bgp) セッション・[ACL](../reference/glossary.md#term-acl) redirect の VRF binding を一気通貫で扱えるようにしている[^1]。
 
 スコープ:
 
-- VRF instance の add/del、L3 interface（physical / VLAN / LAG / Loopback）の bind/unbind
+- VRF instance の add/del、L3 interface（physical / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / Loopback）の bind/unbind
 - VRF aware static route / BGP / ACL redirect
 - v1.1: **route leak**（static のみ）
 - v1.2: **Loopback per-VRF**（BGP multihop の source IP に使用、interface oper 非依存）
@@ -70,9 +70,9 @@ flowchart TB
 | `vrfmgrd` | `CONFIG_DB.VRF` 購読 → Linux VRF master device 作成 / 削除 |
 | `intfsmgrd` | interface を VRF master に enslave（IP 一旦剥がして再付与）。Loopback も対象 |
 | `nbrmgrd` | neighbor 学習を vrf-scope で APP_DB へ |
-| `fpmsyncd` | FPM 経由 route を `ROUTE_TABLE:<vrf>:<prefix>` で書く |
+| `fpmsyncd` | [FPM](../reference/glossary.md#term-fpm) 経由 route を `ROUTE_TABLE:<vrf>:<prefix>` で書く |
 | `bgpcfgd` (`frrcfgd`) | `BGP_NEIGHBOR.vrf` から FRR 設定生成 |
-| `vrforch` | `APP_DB.VRF_TABLE` を SAI Virtual Router に mapping、OID 払い出し |
+| `vrforch` | `APP_DB.VRF_TABLE` を [SAI](../reference/glossary.md#term-sai) Virtual Router に mapping、OID 払い出し |
 | `intfsorch` / `routeorch` / `neighorch` / `aclorch` | OID 引いて vrf-scope で SAI 設定 |
 
 ## CONFIG_DB / APPL_DB スキーマ要点
@@ -96,7 +96,7 @@ APPL_DB:
 
 ### Route leak / Loopback per-VRF
 
-- **Route leak**（v1.1）: `STATIC_ROUTE.nexthop-vrf` で `vrf A` の prefix を `vrf B` の next-hop で解決[^1]。動的（BGP）leak は本 HLD 対象外
+- **Route leak**（v1.1）: `STATIC_ROUTE.nexthop-vrf` で `vrf A` の prefix を `vrf B` の next-hop で解決[^1]。動的（BGP）leak は本 [HLD](../reference/glossary.md#term-hld) 対象外
 - **Loopback per-VRF**（v1.2）: `LOOPBACK_INTERFACE` の VRF binding。BGP multihop の source IP に使うと interface oper に左右されない[^1]
 
 ## CLI / 設定例
@@ -115,7 +115,7 @@ config interface ip add Ethernet0 10.0.0.1/24
 config bgp neighbor add Vrf-Red 10.0.0.2 65001
 ```
 
-CLI 文法は HLD 記載ベース。現行 sonic-utilities では細部が違う可能性あり。
+CLI 文法は HLD 記載ベース。現行 [sonic-utilities](../reference/glossary.md#term-sonic-utilities) では細部が違う可能性あり。
 
 ## 制限事項
 
@@ -127,8 +127,8 @@ CLI 文法は HLD 記載ベース。現行 sonic-utilities では細部が違う
 ## 干渉する機能
 
 - **FRR**: `bgpd` / `zebra` 双方が vrf-aware 必須（SONiC では template + `frrcfgd` で生成）
-- **fpmsyncd / orchagent**: `ROUTE_TABLE` キーが `<vrf>:<prefix>` 拡張のため消費側全部に影響
-- **EVPN / VXLAN**: tenant VRF との組合せは別 HLD（evpn-vxlan-hld）
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / [orchagent](../reference/glossary.md#term-orchagent)**: `ROUTE_TABLE` キーが `<vrf>:<prefix>` 拡張のため消費側全部に影響
+- **[EVPN](../reference/glossary.md#term-evpn) / [VXLAN](../reference/glossary.md#term-vxlan)**: tenant VRF との組合せは別 HLD（evpn-vxlan-hld）
 
 ## トラブルシューティング
 
@@ -144,7 +144,7 @@ show vrf
 
 ## 関連 Topics
 
-- [04-vrf-ecmp](../topics/04-vrf-ecmp/index.md): VRF / ECMP / FRR vrf-aware
+- [04-vrf-ecmp](../topics/04-vrf-ecmp/index.md): VRF / [ECMP](../reference/glossary.md#term-ecmp) / FRR vrf-aware
 - [02-bgp](../topics/02-bgp/index.md): BGP vrf-aware
 
 ## 引用元
@@ -164,3 +164,5 @@ show vrf
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 67a4f3bdb972 -->

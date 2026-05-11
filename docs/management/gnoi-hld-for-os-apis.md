@@ -31,13 +31,13 @@ related:
 
 ## 概要
 
-gNOI OS は **スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する** ための API である[^1]。3 つの RPC で構成される:
+[gNOI](../reference/glossary.md#term-gnoi) OS は **スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する** ための API である[^1]。3 つの RPC で構成される:
 
 - `Install`: イメージを target へ **streaming** で転送（クライアント・サーバ双方向 stream）
 - `Activate`: 転送済みのバージョンを **次回起動イメージとして設定**（オプションで即時 reboot）
 - `Verify`: 現行稼働中のバージョンを返す。デュアル SUP 構成では standby 側のステータスも返す
 
-SONiC では既存の gNMI/UMF サーバ（telemetry, TCP 9339）に gNOI をマウントし、バックエンドは **SONiC Host Service** の `image_service` モジュール（python、`sonic-installer` を内部呼び出し）を DBUS 経由で叩く[^1][^2]。
+SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry, TCP 9339）に gNOI をマウントし、バックエンドは **SONiC Host Service** の `image_service` モジュール（python、`sonic-installer` を内部呼び出し）を DBUS 経由で叩く[^1][^2]。
 
 ## 動作仕様
 
@@ -61,7 +61,7 @@ func ActivateOS(reqStr string) (string, error) { return HostQuery("image_service
 func VerifyOS(reqStr string)   (string, error) { return HostQuery("image_service.verify",   reqStr) }
 ```
 
-`image_service` モジュールは [sonic-host-services/host_modules/image_service.py](https://github.com/sonic-net/sonic-host-services/blob/master/host_modules/image_service.py) に既存。HLD はこれを **OS 操作の集約点として再利用** する方針[^1][^2]。
+`image_service` モジュールは [sonic-host-services/host_modules/image_service.py](https://github.com/sonic-net/sonic-host-services/blob/master/host_modules/image_service.py) に既存。[HLD](../reference/glossary.md#term-hld) はこれを **OS 操作の集約点として再利用** する方針[^1][^2]。
 
 ### Install RPC（双方向 stream）
 
@@ -158,7 +158,7 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 
 ### 関連する CONFIG_DB
 
-専用 CONFIG_DB スキーマ無し。telemetry 認証認可と RBAC を再利用。
+専用 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ無し。telemetry 認証認可と RBAC を再利用。
 
 ### 関連する CLI
 
@@ -171,7 +171,7 @@ reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根�
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及無し（OS 操作は OpenConfig 側の `system` / `components` モデル流用想定）。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及無し（OS 操作は OpenConfig 側の `system` / `components` モデル流用想定）。
 
 ### 設定例
 
@@ -231,3 +231,5 @@ gnoi_client os verify
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c671e32e187d -->

@@ -30,9 +30,9 @@ related:
 
 ## 概要
 
-SONiC では `swssloglevel` コマンドで `orchagent` / `syncd` / 各種 `*mgrd` / `*syncd` / SAI API ごとに動的にログ深さを変えられる。しかし設定先が **LOGLEVEL_DB (#3)** に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 `NOTICE` に戻ってしまっていた[^1]。デバッグ目的で `DEBUG` を出していても、再起動を挟むと忘れられる運用上の不便があった。
+SONiC では `swssloglevel` コマンドで `orchagent` / `syncd` / 各種 `*mgrd` / `*syncd` / [SAI](../reference/glossary.md#term-sai) API ごとに動的にログ深さを変えられる。しかし設定先が **[LOGLEVEL_DB](../reference/glossary.md#term-loglevel_db) (#3)** に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 `NOTICE` に戻ってしまっていた[^1]。デバッグ目的で `DEBUG` を出していても、再起動を挟むと忘れられる運用上の不便があった。
 
-本機能はログレベルテーブルを **CONFIG_DB (#4) の `LOGGER` テーブル** に移し、`config save` の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と `JINJA2_CACHE` を完全削除する設計である[^1]。
+本機能はログレベルテーブルを **[CONFIG_DB](../reference/glossary.md#term-config_db) (#4) の `LOGGER` テーブル** に移し、`config save` の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と `JINJA2_CACHE` を完全削除する設計である[^1]。
 
 ## 動作仕様
 
@@ -100,7 +100,7 @@ swssloglevel -d                           # 全コンポーネント既定値に
 
 ### Warm upgrade の移行ロジック
 
-旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。HLD は **`db_migrator` を拡張** して以下を行うと明記する[^1]。
+旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。[HLD](../reference/glossary.md#term-hld) は **`db_migrator` を拡張** して以下を行うと明記する[^1]。
 
 1. `db_migrator` に LOGLEVEL_DB コネクタを追加。
 2. LOGLEVEL_DB の Logger テーブルを CONFIG_DB に移し（キー名を変換）、LOGLEVEL_DB を消す。
@@ -231,3 +231,5 @@ swssloglevel -d
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/logging/persistent_logger/persistent_loglevel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: d59e75d0b079 -->

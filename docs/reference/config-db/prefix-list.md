@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-BGP のルートフィルタ用 prefix リストを CONFIG_DB に持たせるための簡易テーブル[^1]。`bgpcfgd` テンプレートで FRR の `ip prefix-list` / `ipv6 prefix-list` に展開される。共通ルーティングポリシ用の汎用 [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。
+[BGP](../../reference/glossary.md#term-bgp) のルートフィルタ用 prefix リストを [CONFIG_DB](../../reference/glossary.md#term-config_db) に持たせるための簡易テーブル[^1]。`bgpcfgd` テンプレートで [FRR](../../reference/glossary.md#term-frr) の `ip prefix-list` / `ipv6 prefix-list` に展開される。共通ルーティングポリシ用の汎用 [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 
 ## 制約
 
-- YANG `must`: `family` が `IPv6` のとき `ip-prefix` に `:` を含むこと、`IPv4` のとき `.` を含むこと
+- [YANG](../../reference/glossary.md#term-yang) `must`: `family` が `IPv6` のとき `ip-prefix` に `:` を含むこと、`IPv4` のとき `.` を含むこと
 - 簡易テーブルのため、シーケンス番号や action (permit/deny) は持たない。順序付き / アクション付きが必要なら `PREFIX_SET` + `PREFIX` (sonic-routing-policy-sets) を使う
 
 ## 購読者
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB keys 'PREFIX_LIST|*'
 vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->

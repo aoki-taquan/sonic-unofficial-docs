@@ -85,7 +85,7 @@ prefix slot番号  front panel   breakout
 
 提案文書時点で未解決として明示されているもの[^1]:
 
-- **PortChannel（LAG）の命名規則**: `et[sX]pY[abcd]` のような枠組みに乗せるか、別系統で持つか未定
+- **[PortChannel](../reference/glossary.md#term-portchannel)（[LAG](../reference/glossary.md#term-lag)）の命名規則**: `et[sX]pY[abcd]` のような枠組みに乗せるか、別系統で持つか未定
 
 ### 移行ステージ
 
@@ -105,7 +105,7 @@ flowchart LR
 | 3 | テスト（DVS / pytest など）から `Ethernet` プレフィクス・`Ethernet0` ハードコードを除去 |
 | 4 | 内部ポート名と Linux IF 名の両方を新命名に切替 |
 
-Stage 1 の段階で **alias は新命名、内部名は EthernetN のまま** という共存状態が続く。CLI 表示・SNMP・LLDP などユーザ視認領域は alias を出すことで命名移行を先行できる構成。
+Stage 1 の段階で **alias は新命名、内部名は EthernetN のまま** という共存状態が続く。CLI 表示・[SNMP](../reference/glossary.md#term-snmp)・[LLDP](../reference/glossary.md#term-lldp) などユーザ視認領域は alias を出すことで命名移行を先行できる構成。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -143,7 +143,7 @@ reasoning: 4 段階移行プランの根拠。
 
 ### 関連する CONFIG_DB
 
-本提案は CONFIG_DB のスキーマを直接変えるのではなく、`port_config.ini` の `alias` 列をまず新命名にする運用面の提案[^1]。`PORT|alias` の値が変わる。
+本提案は [CONFIG_DB](../reference/glossary.md#term-config_db) のスキーマを直接変えるのではなく、`port_config.ini` の `alias` 列をまず新命名にする運用面の提案[^1]。`PORT|alias` の値が変わる。
 
 ### 関連する CLI
 
@@ -151,7 +151,7 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは [HLD](../reference/glossary.md#term-hld) で言及されていない。
 
 ## 制限事項
 
@@ -164,7 +164,7 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
 - **`port_config.ini` / hwsku パッケージング**: alias 列の更新
 - **CLI / `show interface` / SNMP / LLDP**: alias がユーザ可視領域に出るので、運用ドキュメントとの整合
-- **テスト基盤（DVS / pytest / sonic-mgmt）**: `Ethernet0` 等のハードコード除去が必要
+- **テスト基盤（DVS / pytest / [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)）**: `Ethernet0` 等のハードコード除去が必要
 - **chassis HLD**: slot 番号 (`sX`) を意識した命名は chassis ユースケースが主動機
 
 ## トラブルシューティング
@@ -227,7 +227,7 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
 - [sonic-buildimage #22955: sonic-buildimage: update quicksilver-p port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22955) — 新命名規則 (et[sX]pY[abcd] 系) の実プラットフォーム適用 PR の代表例。
 - [sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22577) — 同上、512 ポート版。
-- 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の port_config.ini 更新で部分採用。
+- 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の [port_config.ini](../reference/glossary.md#term-port-config-ini) 更新で部分採用。
 
 ## 引用元
 
@@ -247,3 +247,5 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fbe81f6f4471 -->

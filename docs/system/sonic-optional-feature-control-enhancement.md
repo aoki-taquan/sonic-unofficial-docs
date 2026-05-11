@@ -25,11 +25,11 @@ related:
 
 ## 概要
 
-SONiC には telemetry agent 等、デバイスによっては不要な **オプショナルなコンテナ/サービス** がある。本 HLD（2019 年の初期提案）はこれらを `CONFIG_DB.FEATURE` テーブルで一括制御する仕組みを定義した[^1]。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の **基盤となる初版設計** である。
+SONiC には telemetry agent 等、デバイスによっては不要な **オプショナルなコンテナ/サービス** がある。本 [HLD](../reference/glossary.md#term-hld)（2019 年の初期提案）はこれらを `CONFIG_DB.FEATURE` テーブルで一括制御する仕組みを定義した[^1]。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の **基盤となる初版設計** である。
 
 本提案の要点は次の 3 つ:
 
-1. CONFIG_DB に **`FEATURE`** テーブルを追加し、機能名 → `status: enabled/disabled` を持つ
+1. [CONFIG_DB](../reference/glossary.md#term-config_db) に **`FEATURE`** テーブルを追加し、機能名 → `status: enabled/disabled` を持つ
 2. CLI `config feature enable|disable <feature_name>` および対応 `show` を追加
 3. `hostcfgd` が FEATURE テーブルを購読し、対応 service を **systemd で start+enable または stop+disable** する
 
@@ -128,7 +128,7 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 
 ### 関連する YANG
 
-該当 YANG モジュールは初版 HLD で言及されていない（後発の拡張で `sonic-feature.yang` 等が追加されている）。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは初版 HLD で言及されていない（後発の拡張で `sonic-feature.yang` 等が追加されている）。
 
 ### 設定例
 
@@ -151,7 +151,7 @@ config feature disable telemetry
 
 ## 干渉する機能
 
-- **`hostcfgd`**: FEATURE 購読の主担当。AAA / TACACS / Banner など他の hostcfgd 機能と並列に動く
+- **`hostcfgd`**: FEATURE 購読の主担当。[AAA](../reference/glossary.md#term-aaa) / TACACS / Banner など他の [hostcfgd](../reference/glossary.md#term-hostcfgd) 機能と並列に動く
 - **`sonic-cfggen`**: デフォルト FEATURE エントリ生成
 - **後発の HLD（auto_restart / delayed / FEATURE.event-driven 起動）**: 本 HLD の上に積み重なっている
 - **`config save` / `config reload`**: FEATURE 変更が永続化されるか・reload で reapply されるかは hostcfgd の処理に依存
@@ -173,3 +173,5 @@ config feature disable telemetry
 - sonic-feature.yang 等 YANG モジュールの追加状況
 - 後発 HLD (event-driven config reload, delayed services) との重なり
 -->
+
+<!-- glossary-links-injected: 5491cc477cce -->

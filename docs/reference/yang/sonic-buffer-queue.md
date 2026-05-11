@@ -67,7 +67,7 @@ module: sonic-buffer-queue
 | `port` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/port` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which the egress queue buffer is configured. |
 | `qindex` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/qindex` | `string` | yes |  | pattern `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` | Egress queue index or range (e.g. 0-3) on the port. |
 | `profile` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/profile` | `leafref` |  | 0 | /bpf:sonic-buffer-profile/bpf:BUFFER_PROFILE/bpf:BUFFER_PROFILE_LIST/bpf:name | Buffer profile applied to this egress queue. |
-| `hostname` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/hostname` | `stypes:hostname` | yes |  |  | VOQ chassis hostname owning this port. |
+| `hostname` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/hostname` | `stypes:hostname` | yes |  |  | [VOQ](../../reference/glossary.md#term-voq) chassis hostname owning this port. |
 | `asic_name` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/asic_name` | `stypes:asic_name` | yes |  |  | ASIC instance name within the VOQ chassis. |
 | `port` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/port` | `string` | yes |  | length 1..128 | Port name on the VOQ chassis linecard. |
 | `qindex` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/qindex` | `string` | yes |  | pattern `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` | Egress queue index or range (e.g. 0-3) on the port. |
@@ -85,7 +85,7 @@ module: sonic-buffer-queue
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BUFFER_QUEUE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_QUEUE`
 
 <!-- ref-triangle:start -->
 
@@ -100,7 +100,7 @@ module: sonic-buffer-queue
 
 ### 典型的なデプロイ位置
 
-- QoS queue のバッファ割り当て。`BUFFER_QUEUE|<port>|<queue-range>` を bufferorch が処理する。
+- [QoS](../../reference/glossary.md#term-qos) queue のバッファ割り当て。`BUFFER_QUEUE|<port>|<queue-range>` を bufferorch が処理する。
 
 ### よくある落とし穴
 
@@ -125,3 +125,5 @@ show queue persistent-watermark unicast
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b180ea4e9fff -->

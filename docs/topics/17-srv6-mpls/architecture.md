@@ -16,7 +16,7 @@ sources:
 
 # アーキテクチャ
 
-SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。
+[SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing は別機能ですが、SONiC 内部では「[CONFIG_DB](../../reference/glossary.md#term-config_db) → [orchagent](../../reference/glossary.md#term-orchagent) → [SAI](../../reference/glossary.md#term-sai) → ASIC」「[FRR](../../reference/glossary.md#term-frr)/netlink → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。
 
 ## SRv6 の object flow
 
@@ -34,7 +34,7 @@ flowchart LR
   SAI --> ASIC[ASIC]
 ```
 
-`srv6orch` の `end_behavior_map` には `end` / `end.dt46` / `end.dt4` / `end.dt6` / `un` / `ua` / `udt4` / `udt6` / `udt46` / `udx4` / `udx6` などが登録されており、それぞれ `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` にマップされます。Phase 1 では `END` / `END.DT46` / `H.Encaps.Red`、uSID HLD で `uN` / `uA` / `uDT*` / `uDX*` が追加され、L3Adj HLD で `uA` / `End.X` 系の出口 nexthop 処理が完成しました。
+`srv6orch` の `end_behavior_map` には `end` / `end.dt46` / `end.dt4` / `end.dt6` / `un` / `ua` / `udt4` / `udt6` / `udt46` / `udx4` / `udx6` などが登録されており、それぞれ `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` にマップされます。Phase 1 では `END` / `END.DT46` / `H.Encaps.Red`、uSID [HLD](../../reference/glossary.md#term-hld) で `uN` / `uA` / `uDT*` / `uDX*` が追加され、L3Adj HLD で `uA` / `End.X` 系の出口 nexthop 処理が完成しました。
 
 ## L3 隣接の解決
 
@@ -70,8 +70,8 @@ SRv6 endpoint 処理は HbH-PT の有無に関わらず動くため、Path Traci
 ## 共通する topic
 
 - **counter** — SRv6 の MySID counter（後続 phase）、MPLS の in-segment 統計、router interface counter は同じ flex counter / counterd 系基盤に乗ります。[02 BGP の運用](../02-bgp/operations.md) で扱う FRR 経路と区別するには、APP_DB / netlink どちらから入った route かを見ます。
-- **CRM** — MPLS は `CRM` テーブルに in-segment / nexthop の使用量を加えています。SRv6 系は HLD 時点で CRM 統合がはっきり書かれていない領域があり、今後拡張される想定です。
-- **YANG** — `sonic-srv6` が SRV6_MY_LOCATORS / SRV6_MY_SIDS を、`sonic-interface` 等が `mpls` 属性を、`sonic-port` が PT 関連属性を持ちます。設定ページからの逆引きはこの章で集約します。
+- **[CRM](../../reference/glossary.md#term-crm)** — MPLS は `CRM` テーブルに in-segment / nexthop の使用量を加えています。SRv6 系は HLD 時点で CRM 統合がはっきり書かれていない領域があり、今後拡張される想定です。
+- **[YANG](../../reference/glossary.md#term-yang)** — `sonic-srv6` が SRV6_MY_LOCATORS / SRV6_MY_SIDS を、`sonic-interface` 等が `mpls` 属性を、`sonic-port` が PT 関連属性を持ちます。設定ページからの逆引きはこの章で集約します。
 
 ## 関連ページ
 
@@ -81,3 +81,5 @@ SRv6 endpoint 処理は HbH-PT の有無に関わらず動くため、Path Traci
 - [SRv6 Static SID / Locator 設定](../../routing/static-configuration-of-srv6-in-sonic-hld.md)
 - [SONiC の MPLS 基盤](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
+
+<!-- glossary-links-injected: 825df0651edd -->

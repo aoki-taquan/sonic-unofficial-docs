@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`config bgp` は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は FRR が握っているが、SONiC はその設定状態を **CONFIG_DB** に保存し、`bgpcfgd` が CONFIG_DB → FRR (vtysh) に反映する。`config bgp` は CONFIG_DB を直接書き換える役割を担う[^1]。
+`config bgp` は [BGP](../../reference/glossary.md#term-bgp) セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-[ECMP](../../reference/glossary.md#term-ecmp)、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は [FRR](../../reference/glossary.md#term-frr) が握っているが、SONiC はその設定状態を **[CONFIG_DB](../../reference/glossary.md#term-config_db)** に保存し、`bgpcfgd` が CONFIG_DB → FRR (vtysh) に反映する。`config bgp` は CONFIG_DB を直接書き換える役割を担う[^1]。
 
 `config/main.py` 末尾で `config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)` `add_command(bgp_cli.AGGREGATE_ADDRESS)` の形で `config/bgp_cli.py` のサブグループが追加される構造のため、cli.json (機械抽出) には `device-global` / `aggregate-address` 配下が現れない。本ページでは両方を統合して扱う。
 
@@ -197,7 +197,7 @@ config bgp aggregate-address add <address>
 - `--aggregate-address-prefix-list <name>` ... 集約 prefix を追加する prefix list 名
 - `--contributing-address-prefix-list <name>` ... contributing prefix の選別に使う prefix list 名
 
-prefix-list 名は YANG 由来の制約 `[0-9a-zA-Z_-]*`、最大 128 文字でバリデートされる[^4]。
+prefix-list 名は [YANG](../../reference/glossary.md#term-yang) 由来の制約 `[0-9a-zA-Z_-]*`、最大 128 文字でバリデートされる[^4]。
 
 **動作**:
 CONFIG_DB の `BGP_AGGREGATE_ADDRESS|<address>` を `set_entry` で作成。同じ key が既存ならエラーで終了する（idempotent ではない）。
@@ -363,3 +363,5 @@ show bgp device-global
 - [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)
+
+<!-- glossary-links-injected: 33c50b5734df -->

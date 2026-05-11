@@ -44,7 +44,7 @@ flowchart LR
     DP -- KNE links --> Other[他 ALViS / Host]
 ```
 
-`SwitchStack Container` は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く[^1]。`syncd` は **gRPC ベースの SAI クライアント** (`libsai-grpc`) で別 container の dataplane と通信する。CPU port の packet in/out は **UPM (Userspace Packet Module)** が担う。
+`SwitchStack Container` は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く[^1]。`syncd` は **gRPC ベースの [SAI](../reference/glossary.md#term-sai) クライアント** (`libsai-grpc`) で別 container の dataplane と通信する。CPU port の packet in/out は **UPM (Userspace Packet Module)** が担う。
 
 `ASIC Simulation Container` がソフトウェア dataplane。デフォルトは OpenConfig 由来の **Lucius** (lemming プロジェクト)[^1]。vendor は (1) ASIC sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。
 
@@ -179,3 +179,5 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

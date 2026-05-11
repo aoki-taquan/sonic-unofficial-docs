@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。Linux カーネルの sysctl は **forwarding 有効化、ARP 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など** を細かく制御でき、FRR の挙動を大きく左右する[^1]。
+SONiC の制御プレーンでは [FRR](../reference/glossary.md#term-frr) を使ってルーティングプロトコル（[BGP](../reference/glossary.md#term-bgp) / OSPF / 等）を回す。Linux カーネルの sysctl は **forwarding 有効化、[ARP](../reference/glossary.md#term-arp) 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など** を細かく制御でき、FRR の挙動を大きく左右する[^1]。
 
 このページは sonic-frr 同梱の `doc/user/Useful_Sysctl_Settings.md` が示す **「論理的なデフォルト set」** を整理したもの。BGP unnumbered や OSPF を素直に動かすのに有用な値が並ぶ[^1]。
 
@@ -117,7 +117,7 @@ net.ipv6.neigh.default.base_reachable_time_ms = 14400000
 net.ipv4.fib_multipath_use_neigh = 1
 ```
 
-multipath ECMP の nexthop 選択に **neighbor 情報を使う**[^1]。
+multipath [ECMP](../reference/glossary.md#term-ecmp) の nexthop 選択に **neighbor 情報を使う**[^1]。
 
 ### VRF と TCP
 
@@ -125,7 +125,7 @@ multipath ECMP の nexthop 選択に **neighbor 情報を使う**[^1]。
 net.ipv4.tcp_l3mdev_accept = 1
 ```
 
-VRF（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする[^1]。SONiC で management VRF を使う場合などに有用。
+[VRF](../reference/glossary.md#term-vrf)（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする[^1]。SONiC で management VRF を使う場合などに有用。
 
 ### 適用方法
 
@@ -182,7 +182,7 @@ reasoning: 推奨デフォルト群の出典・キー名の根拠。
 
 ### 関連する CONFIG_DB
 
-該当なし。sysctl は Linux カーネルの設定で、SONiC の CONFIG_DB は通らない。
+該当なし。sysctl は Linux カーネルの設定で、SONiC の [CONFIG_DB](../reference/glossary.md#term-config_db) は通らない。
 
 ### 関連する CLI
 
@@ -226,3 +226,5 @@ sysctl net.ipv4.tcp_l3mdev_accept
 ## 引用元
 
 [^1]: `sonic-net/sonic-frr` `doc/user/Useful_Sysctl_Settings.md` @ `799f47f215e4266063c4ebde0041a0c7dd2d11d0`
+
+<!-- glossary-links-injected: 3ded3a99de10 -->

@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`config buffer` は dynamic buffer が有効なシステムで、CONFIG_DB の `BUFFER_PROFILE` を追加・更新する CLI グループ。グループ入口で `DEVICE_METADATA|localhost` の `buffer_model` を確認し、dynamic 以外では実行を拒否する[^1]。
+`config buffer` は dynamic buffer が有効なシステムで、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_PROFILE` を追加・更新する CLI グループ。グループ入口で `DEVICE_METADATA|localhost` の `buffer_model` を確認し、dynamic 以外では実行を拒否する[^1]。
 
 ## コマンド一覧
 
@@ -138,7 +138,7 @@ flowchart LR
 ### よくある落とし穴
 
 - switchmode 変更は `config save` + reload 必須。即時切替不可。
-- PG/queue から profile を外す前に profile を削除すると orchagent が拒否する。
+- PG/queue から profile を外す前に profile を削除すると [orchagent](../../reference/glossary.md#term-orchagent) が拒否する。
 
 ### 関連する show / debug
 
@@ -148,3 +148,5 @@ show priority-group persistent-watermark headroom
 show buffer pool
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f6aa270ee665 -->

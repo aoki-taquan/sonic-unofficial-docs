@@ -5,9 +5,9 @@ verification: stub
 ---
 
 # オーバーレイ
-VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を扱う章。
+[VXLAN](../reference/glossary.md#term-vxlan) / VNet、[DASH](../reference/glossary.md#term-dash)、Dual ToR、NVGRE など overlay と [SmartSwitch](../reference/glossary.md#term-smartswitch) 周辺を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 9
 - 分布: Code-verified: 8 / Discrepancy-found: 1
@@ -28,3 +28,5 @@ VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を�
 | [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](vnet-local-endpoint-forwarding.md) | Code-verified |
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | Code-verified |
 | [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md) | Discrepancy-found |
+
+<!-- glossary-links-injected: 9751825192ec -->

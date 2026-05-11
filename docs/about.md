@@ -14,9 +14,9 @@ verification: meta
 
 SONiC の公式ドキュメントには以下のような構造的な課題があります。
 
-- HLD（High-Level Design）が複数のリポジトリ（[SONiC](https://github.com/sonic-net/SONiC), [sonic-buildimage](https://github.com/sonic-net/sonic-buildimage), [sonic-swss](https://github.com/sonic-net/sonic-swss) など）に散在している。
+- [HLD](./reference/glossary.md#term-hld)（High-Level Design）が複数のリポジトリ（[SONiC](https://github.com/sonic-net/SONiC), [sonic-buildimage](https://github.com/sonic-net/sonic-buildimage), [sonic-swss](https://github.com/sonic-net/sonic-swss) など）に散在している。
 - HLD と実装の更新タイミングが乖離しており、HLD に書かれていない仕様が実コードや GitHub Issue にしか存在しないケースが多い。
-- 設定（CONFIG_DB）、CLI、YANG、daemon／orch 実装の対応関係を機械的に追える資料がない。
+- 設定（[CONFIG_DB](./reference/glossary.md#term-config_db)）、CLI、[YANG](./reference/glossary.md#term-yang)、daemon／orch 実装の対応関係を機械的に追える資料がない。
 
 本プロジェクトは公式 HLD の翻訳ではなく、**HLD・実コード・YANG・CLI・Issue を横断して再構成**することにより、読み手が「探す単位」でページを引けるドキュメントを目指しています。
 
@@ -24,7 +24,7 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 
 | 項目 | 対象 | 対象外 |
 |------|------|--------|
-| ディストリビューション | コミュニティ版 SONiC（[sonic-net 配下](https://github.com/sonic-net)） | ベンダー版 SONiC（NVIDIA / Edgecore / Cisco / AsterNOS など） |
+| ディストリビューション | コミュニティ版 SONiC（[sonic-net 配下](https://github.com/sonic-net)） | ベンダー版 SONiC（NVIDIA / Edgecore / Cisco / [AsterNOS](./reference/glossary.md#term-asternos) など） |
 | ブランチ | `master` のみ | リリースブランチ・古いブランチ |
 | 言語 | 日本語のみ | 多言語化（英語版は公式リポジトリを参照） |
 | 形式 | HLD・実コード・YANG・CLI を横断した再構成 | HLD の直訳・スクリーンショット集 |
@@ -109,3 +109,5 @@ AI 駆動の運用パイプライン（Indexer → Backlog Generator → Writer 
 - [評価者向けガイド](guides/evaluator.md)
 - [カバレッジ状況 (_meta/coverage)](_meta/coverage.md)
 - [HLD と実装の乖離一覧 (_meta/discrepancies)](_meta/discrepancies.md)
+
+<!-- glossary-links-injected: ac66cb8fa7e1 -->

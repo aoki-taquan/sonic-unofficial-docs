@@ -31,14 +31,14 @@ sources:
 
 ## VLAN access port を作る
 
-基本形は VLAN を作り、物理ポートを untagged member として入れます。
+基本形は [VLAN](../../reference/glossary.md#term-vlan) を作り、物理ポートを untagged member として入れます。
 
 ```bash
 config vlan add 100
 config vlan member add 100 Ethernet0 -u
 ```
 
-CONFIG_DB では次の関係になります。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) では次の関係になります。
 
 ```text
 VLAN|Vlan100
@@ -48,7 +48,7 @@ VLAN_MEMBER|Vlan100|Ethernet0
   tagging_mode: untagged
 ```
 
-注意点は、同じ物理ポートを L3 `INTERFACE`、PortChannel member、別 VLAN の untagged member として同時に使えないことです。`config vlan member add` は既存の `PORT` / `PORTCHANNEL`、mirror destination、routed mode、PortChannel 所属などを確認します。
+注意点は、同じ物理ポートを L3 `INTERFACE`、[PortChannel](../../reference/glossary.md#term-portchannel) member、別 VLAN の untagged member として同時に使えないことです。`config vlan member add` は既存の `PORT` / `PORTCHANNEL`、mirror destination、routed mode、PortChannel 所属などを確認します。
 
 ## VLAN trunk を作る
 
@@ -73,11 +73,11 @@ config vlan member add 100 Ethernet0 -u
 config interface ip add Vlan100 192.0.2.1/24
 ```
 
-`VLAN_INTERFACE` は属性ロウと IP prefix ロウを持ちます。proxy ARP は `config vlan proxy_arp <vid> enabled|disabled` で `VLAN_INTERFACE|Vlan<vid>` の `proxy_arp` を切り替えます。
+`VLAN_INTERFACE` は属性ロウと IP prefix ロウを持ちます。proxy [ARP](../../reference/glossary.md#term-arp) は `config vlan proxy_arp <vid> enabled|disabled` で `VLAN_INTERFACE|Vlan<vid>` の `proxy_arp` を切り替えます。
 
 ## PortChannel を L2 trunk にする
 
-PortChannel は先に LAG 本体を作り、物理メンバを入れ、その PortChannel を VLAN member にします。
+PortChannel は先に [LAG](../../reference/glossary.md#term-lag) 本体を作り、物理メンバを入れ、その PortChannel を VLAN member にします。
 
 ```bash
 config portchannel add PortChannel10 --min-links 1 --fast-rate false
@@ -99,7 +99,7 @@ config portchannel member add PortChannel10 Ethernet0
 config interface ip add PortChannel10 192.0.2.0/31
 ```
 
-`PORTCHANNEL` の `min_links` は operational up の判定に影響します。`fallback` は LACP PDU 不達時の扱いに関わるため、相手装置との設計を合わせてから使います。
+`PORTCHANNEL` の `min_links` は operational up の判定に影響します。`fallback` は [LACP](../../reference/glossary.md#term-lacp) PDU 不達時の扱いに関わるため、相手装置との設計を合わせてから使います。
 
 ## Sub-port を作る
 
@@ -242,7 +242,7 @@ show vlan brief
 
 ## sonic-cfggen で部分パッチを当てる
 
-deployment template ではなく、運用中に config_db.json の小規模変更を行うときの典型パタン:
+deployment template ではなく、運用中に [config_db.json](../../reference/glossary.md#term-config_db.json) の小規模変更を行うときの典型パタン:
 
 ```bash
 cat > /tmp/vlan_patch.json <<'EOF'
@@ -294,3 +294,5 @@ LAG 削除順序: `VLAN_MEMBER (LAG)` → `PORTCHANNEL_MEMBER` → `PORTCHANNEL`
 - [CONFIG_DB: PORTCHANNEL_MEMBER](../../reference/config-db/portchannel-member.md)
 - [CONFIG_DB: PORTCHANNEL_INTERFACE](../../reference/config-db/portchannel-interface.md)
 - [TPID 設定 HLD](../../platform/sonictpidsettinghld1.md)
+
+<!-- glossary-links-injected: 5d1a738969d8 -->

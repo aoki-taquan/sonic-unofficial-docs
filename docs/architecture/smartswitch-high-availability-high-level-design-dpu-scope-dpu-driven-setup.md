@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SmartSwitch の HA はもともと **ENI-Scope-NPU-Driven**（NPU 上の `hamgrd` が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた[^1]。本 HLD はその拡張として **DPU-Scope-DPU-Driven** という別形態を定義する。
+[SmartSwitch](../reference/glossary.md#term-smartswitch) の HA はもともと **[ENI](../reference/glossary.md#term-eni)-Scope-[NPU](../reference/glossary.md#term-npu)-Driven**（NPU 上の `hamgrd` が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた[^1]。本 [HLD](../reference/glossary.md#term-hld) はその拡張として **[DPU](../reference/glossary.md#term-dpu)-Scope-DPU-Driven** という別形態を定義する。
 
 主 HLD との差分の本質は 4 軸[^1]:
 
@@ -49,7 +49,7 @@ DPU-level scope なので forwarding も DPU 単位[^1]:
 
 - 各 DPU pair に対して **HA scope ごとの専用 VIP** を割当
 - すべての DPU の VIP を SmartSwitch 全体で 1 つの VIP range（subnet）として広告
-- NPU は **destination VIP に対する route で振り分け**（ENI-Scope のような VIP + inner MAC の ACL マッチは不要）
+- NPU は **destination VIP に対する route で振り分け**（ENI-Scope のような VIP + inner MAC の [ACL](../reference/glossary.md#term-acl) マッチは不要）
 
 これにより NPU 上の forwarding entry 数が DPU 数オーダーに抑えられる。
 
@@ -59,7 +59,7 @@ DPU-level scope なので forwarding も DPU 単位[^1]:
 
 #### Card level NPU-to-DPU BFD probe
 
-NPU が IPv4/IPv6 両方で両 DPU を BFD で叩く。DPU は active/standby に関わらず BFD に応答する。BFD は **NPU 側の forwarding 先選択にのみ** 使い、DPU 内の failover trigger には使わない。
+NPU が IPv4/IPv6 両方で両 DPU を [BFD](../reference/glossary.md#term-bfd) で叩く。DPU は active/standby に関わらず BFD に応答する。BFD は **NPU 側の forwarding 先選択にのみ** 使い、DPU 内の failover trigger には使わない。
 
 `HA set` の `preferred DPU` 設定との組合せで next hop が決まる:
 
@@ -117,7 +117,7 @@ stateDiagram-v2
 bulk sync は flow table を揃えるが、**ENI / policy が同期されている保証はない**。これを橋渡しするのが role activation[^1]:
 
 1. DPU は bulk sync 完了後 `PendingActive/StandbyActivation` に入る（BFD 応答せず traffic 流れない）
-2. DPU は **HA scope に対して SAI notification** を発行 → `hamgrd` 経由で SDN コントローラに role activation request が伝わる
+2. DPU は **HA scope に対して [SAI](../reference/glossary.md#term-sai) notification** を発行 → `hamgrd` 経由で SDN コントローラに role activation request が伝わる
 3. SDN コントローラが両カードの policy が同一であることを確認した上で **承認**
 4. DPU が承認を受信して `Active` / `Standby` / `Standalone` に遷移
 
@@ -169,7 +169,7 @@ DPU-to-DPU probe で active が失われたら、standby 側 DPU が **自分で
 
 ### 関連する CONFIG_DB
 
-HLD は CONFIG_DB ではなく **DASH SDN config 経由**（`HA_SET`, `HA_SCOPE`）でモデル化される。具体的なテーブル名は本 HLD だけでは確定できないため列挙しない。
+HLD は [CONFIG_DB](../reference/glossary.md#term-config_db) ではなく **[DASH](../reference/glossary.md#term-dash) SDN config 経由**（`HA_SET`, `HA_SCOPE`）でモデル化される。具体的なテーブル名は本 HLD だけでは確定できないため列挙しない。
 
 ### 関連する CLI
 
@@ -227,3 +227,5 @@ show bfd sessions
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2d313c43ee0f -->

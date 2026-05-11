@@ -40,15 +40,15 @@ related:
 
 ## 読者が知りたいこと
 
-- EVPN VXLAN の **control plane / data plane の分業** はどうなっているか
+- [EVPN](../reference/glossary.md#term-evpn) [VXLAN](../reference/glossary.md#term-vxlan) の **control plane / data plane の分業** はどうなっているか
 - **Type-2 / Type-3 / Type-5** をどう使い分けるか
-- **CONFIG_DB のテーブルと CLI** で最小限の設定をどう書くか
-- 実装と HLD が食い違っているのは具体的にどこか（`EVPN_NVO` vs `VXLAN_EVPN_NVO` ほか）
-- multihoming や MC-LAG とどう干渉するか
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) のテーブルと CLI** で最小限の設定をどう書くか
+- 実装と [HLD](../reference/glossary.md#term-hld) が食い違っているのは具体的にどこか（`EVPN_NVO` vs `VXLAN_EVPN_NVO` ほか）
+- multihoming や MC-[LAG](../reference/glossary.md#term-lag) とどう干渉するか
 
 ## 1. 役割分担と全体像
 
-EVPN は **MAC / IP の到達情報を BGP で広告** し、VXLAN は **L2 over L3 のデータプレーン** として traffic を運ぶ。SONiC は FRR の BGP-EVPN を control plane、SAI VXLAN を data plane に使う[^1]。
+EVPN は **MAC / IP の到達情報を [BGP](../reference/glossary.md#term-bgp) で広告** し、VXLAN は **L2 over L3 のデータプレーン** として traffic を運ぶ。SONiC は [FRR](../reference/glossary.md#term-frr) の BGP-EVPN を control plane、[SAI](../reference/glossary.md#term-sai) VXLAN を data plane に使う[^1]。
 
 ```mermaid
 flowchart LR
@@ -75,7 +75,7 @@ Symmetric IRB（route-then-bridge）+ Anycast Gateway（VTEP 全台で MAC/IP �
 主要 CONFIG_DB[^1]:
 
 - **`VXLAN_TUNNEL|<name>`**: source IP（自身の VTEP loopback）を持つトンネル
-- **`VXLAN_TUNNEL_MAP|<tunnel>|<map>`**: VLAN ↔ VNI、VRF ↔ VNI のマッピング
+- **`VXLAN_TUNNEL_MAP|<tunnel>|<map>`**: [VLAN](../reference/glossary.md#term-vlan) ↔ VNI、[VRF](../reference/glossary.md#term-vrf) ↔ VNI のマッピング
 - **`VXLAN_EVPN_NVO|<nvo>`**: NVO 対象 tunnel 指定（HLD の `EVPN_NVO` は略記。後述の差分参照）
 - **`VRF`**: L3 VNI 用 VRF
 - **`VLAN`**: L2 VNI と紐づく VLAN
@@ -126,15 +126,15 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 ### 4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由
 
 - **HLD 記述**: FRR の BGP-EVPN は frr.conf / template 経由
-- **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2`、および `sonic-frr/bgpd/bgp_evpn.c`。Type-5/Type-2 受け取りは fpmsyncd 経由 netlink + 専用 FPM channel
+- **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2`、および `sonic-frr/bgpd/bgp_evpn.c`。Type-5/Type-2 受け取りは [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由 netlink + 専用 [FPM](../reference/glossary.md#term-fpm) channel
 - **読者への影響**: SONiC CLI だけで EVPN 設定が完結すると誤解しやすい
 - **回避**: 実運用では `frr.conf` template 差し替え、または `vtysh` で `address-family l2vpn evpn` を直接設定する
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-swss #2181: Missing ARP and ND Suppression implementation (open)](https://github.com/sonic-net/sonic-swss/issues/2181) — EVPN VXLAN HLD が前提とする ARP/ND suppression が未実装である旨の long-open issue。
+- [sonic-swss #2181: Missing ARP and ND Suppression implementation (open)](https://github.com/sonic-net/sonic-swss/issues/2181) — EVPN VXLAN HLD が前提とする [ARP](../reference/glossary.md#term-arp)/ND suppression が未実装である旨の long-open issue。
 - [sonic-swss #3384: NEIGH_TABLE not populated with VXLAN routes (closed)](https://github.com/sonic-net/sonic-swss/issues/3384) — Type-2 neighbor 学習の不整合事例。
-- [sonic-swss #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。
+- [[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: \[[EVPN-MH](../reference/glossary.md#term-evpn-mh)\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。
 
 ## 5. 制限事項
 
@@ -181,3 +181,5 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f55535219856 -->

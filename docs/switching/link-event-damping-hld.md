@@ -34,12 +34,12 @@ related:
 ### 1. ファイル + 行番号
 
 - **取り込み済み（SwSS）**: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L3736-L3760（`setPortLinkEventDampingAlgorithm` / `setPortLinkEventDampingAlgoAiedConfig`）、`orchagent/portsorch.cpp` L4939-L4941（差分検出）、`orchagent/port/porthlpr.cpp` L24, L133, L899-L900, L1345-L1373（`PortConfig` への 6 フィールドのパース）。
-- **取り込み済み（YANG）**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` に `link_event_damping_algorithm` 系 leaf あり。
+- **取り込み済み（[YANG](../reference/glossary.md#term-yang)）**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` に `link_event_damping_algorithm` 系 leaf あり。
 - **未取り込み**: `sonic-utilities/config/main.py` および周辺に `link_event_damping_algorithm` の CLI ハンドラは無し（grep で `link_event_damping` のヒットは `sonic-swss` 配下のみ）。
 
 ### 2. 差分の中身
 
-HLD は `config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>` の click サブコマンド追加と、`config interface link_event_damping_algorithm <if> disabled` を要求している。`sonic-utilities` 側の取り込みが無いため、ユーザ経路は **CONFIG_DB の直接編集（`sonic-db-cli` / `redis-cli`）** または `config_db.json` への記述のみ。一方 SwSS 側は `PORT` テーブルからフィールドを読み取り、SAI redis 属性 `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM` と `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG` に変換するパスは完成している。
+[HLD](../reference/glossary.md#term-hld) は `config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>` の click サブコマンド追加と、`config interface link_event_damping_algorithm <if> disabled` を要求している。`sonic-utilities` 側の取り込みが無いため、ユーザ経路は **[CONFIG_DB](../reference/glossary.md#term-config_db) の直接編集（`sonic-db-cli` / `redis-cli`）** または `config_db.json` への記述のみ。一方 SwSS 側は `PORT` テーブルからフィールドを読み取り、[SAI](../reference/glossary.md#term-sai) redis 属性 `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM` と `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG` に変換するパスは完成している。
 
 ### 3. 読者への影響
 
@@ -68,7 +68,7 @@ sonic-db-cli CONFIG_DB hmset 'PORT|Ethernet0' \
 
 ## 概要
 
-光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。
+光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → [ASIC_DB](../reference/glossary.md#term-asic_db) → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。
 
 本機能は **インタフェース単位で link up / down イベントを抑制（damping）** する仕組みを SONiC に追加する。多くの NOS で標準的な慣習で、SONiC では SyncD で intercept する形で実装される[^1]。
 
@@ -272,7 +272,7 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 
 ## 干渉する機能
 
-- **WCMP / ECMP 系**: 本機能の主要恩恵元。post-damping だけが PortsOrch → ルーティング層に届く。
+- **WCMP / [ECMP](../reference/glossary.md#term-ecmp) 系**: 本機能の主要恩恵元。post-damping だけが PortsOrch → ルーティング層に届く。
 - **PortsOrch / hostif**: OA が `SAI_HOSTIF_ATTR_OPER_STATUS` で netdev oper-state を post-damping に揃える[^1]。netdev 状態を見る他コードパスにも影響。
 - **port flap counter / 既存 stats**: pre / post damping を別カウンタで持つので分析時に区別が必要[^1]。
 - **Warm/Fast boot**: HLD 内に Warmboot 影響セクションあり（本ページでは省略、原文参照）。
@@ -293,3 +293,5 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bbeca8ace23b -->

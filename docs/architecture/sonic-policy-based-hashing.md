@@ -33,12 +33,12 @@ related:
 
 ## 概要
 
-NVGRE / VxLAN のような encapsulated トラフィックでは、ECMP / LAG ハッシュが outer ヘッダだけを見ると **flow が偏る**。PBH は **ACL でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる** 機能[^1]。Nazarii Hnydyn（2021）作。
+NVGRE / VxLAN のような encapsulated トラフィックでは、[ECMP](../reference/glossary.md#term-ecmp) / [LAG](../reference/glossary.md#term-lag) ハッシュが outer ヘッダだけを見ると **flow が偏る**。PBH は **[ACL](../reference/glossary.md#term-acl) でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる** 機能[^1]。Nazarii Hnydyn（2021）作。
 
 スコープ:
 
 - In: NVGRE / VxLAN inner 5-tuple ベースの PBH
-- Out: PBH FG hash リソースの CRM 監視[^1]
+- Out: PBH FG hash リソースの [CRM](../reference/glossary.md#term-crm) 監視[^1]
 
 ## 動作仕様
 
@@ -96,7 +96,7 @@ key（hash 構成）の変更は in-place できず、PBH rule を削除→再�
 
 ### Warm / Fast boot
 
-PBH は CONFIG_DB に persist。warm/fast boot 越しに継続。SAI 側 hash オブジェクト OID は再生成される。
+PBH は [CONFIG_DB](../reference/glossary.md#term-config_db) に persist。warm/fast boot 越しに継続。[SAI](../reference/glossary.md#term-sai) 側 hash オブジェクト OID は再生成される。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -146,7 +146,7 @@ show pbh table / rule / hash / hash-field
 ## 干渉する機能
 
 - **ACL Orch / AclOrch**: PBH rule は ACL rule に紐付くため AclOrch との連携が必須
-- **Dynamic Port Breakout (DPB)**: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要
+- **Dynamic Port Breakout ([DPB](../reference/glossary.md#term-dpb))**: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要
 - **CRM**: 現状監視外（追加検討）
 
 ## トラブルシューティング
@@ -174,3 +174,5 @@ show pbh table / rule / hash / hash-field
 - v0.3 (2021-11) で追加された field set/del modification flow の取り込み確認
 - CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
 -->
+
+<!-- glossary-links-injected: a95185444a35 -->

@@ -32,13 +32,13 @@ related:
 
 ## 概要
 
-multi-ASIC platform では各 ASIC が **独自の swss / syncd / FRR インスタンス** を持つ。warm reboot を成立させるには、**namespace を跨いだ協調 shutdown / boot** が必要[^1]。
+multi-ASIC platform では各 ASIC が **独自の swss / [syncd](../reference/glossary.md#term-syncd) / [FRR](../reference/glossary.md#term-frr) インスタンス** を持つ。warm reboot を成立させるには、**namespace を跨いだ協調 shutdown / boot** が必要[^1]。
 
 ポイント:
 
 - すべての namespace で **同時に** GR を有効化、`WARM_RESTART_TABLE` を更新する
 - syncd warm shutdown は **per-namespace** に走り、`/host/warmboot/sai-warmboot.bin` 系のファイルも namespace ごとに分離する
-- BGP は host namespace の `bgpcfgd` / FRR と各 asic namespace の FRR の両方で GR
+- [BGP](../reference/glossary.md#term-bgp) は host namespace の `bgpcfgd` / FRR と各 asic namespace の FRR の両方で GR
 - internal BGP（`BGP_INTERNAL_NEIGHBOR`）の hold time にも warm reboot を完走させるマージンを持たせる
 
 ## 動作仕様（going down 順序）
@@ -53,13 +53,13 @@ flowchart LR
     DB --> KEXEC[kexec\nSONIC_BOOT_TYPE=warm]
 ```
 
-going up は逆順を namespace ごとに走らせ、orchagent compare 完了後に bgp / teamd を起動する。
+going up は逆順を namespace ごとに走らせ、[orchagent](../reference/glossary.md#term-orchagent) compare 完了後に bgp / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) を起動する。
 
 ## 制約と注意点[^1]
 
 - **per-namespace の同期**: ある namespace だけ早く落ちると ASIC 間 internal BGP がフラップする
-- **CPU / disk の負荷スパイク**: namespace 数 × Redis dump / syncd shutdown が同時に走るためリソースに余裕が必要
-- **internal link**: shutdown 中も internal link は up のままにする（forwarding は SAI state に従う）
+- **CPU / disk の負荷スパイク**: namespace 数 × [Redis](../reference/glossary.md#term-redis) dump / syncd shutdown が同時に走るためリソースに余裕が必要
+- **internal link**: shutdown 中も internal link は up のままにする（forwarding は [SAI](../reference/glossary.md#term-sai) state に従う）
 - **ファイル配置**: `/host/warmboot/<ns>/dump.rdb` のように namespace 識別子で分離する設計
 
 ## 関連 CLI
@@ -102,3 +102,5 @@ going up は逆順を namespace ごとに走らせ、orchagent compare 完了後
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3cf123812bf9 -->

@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は **PCIe** で NPU 側 CPU に接続される（front panel は NPU のみ）。各 DPU は内部管理 IP を持ち Redis / ZMQ / gNMI を提供する。本 HLD は次の 3 通りの **cold-reboot** 順序を定める[^1]:
+[SmartSwitch](../reference/glossary.md#term-smartswitch) は [NPU](../reference/glossary.md#term-npu) 1 個 + 複数 [DPU](../reference/glossary.md#term-dpu) から成り、DPU は **PCIe** で NPU 側 CPU に接続される（front panel は NPU のみ）。各 DPU は内部管理 IP を持ち [Redis](../reference/glossary.md#term-redis) / ZMQ / [gNMI](../reference/glossary.md#term-gnmi) を提供する。本 [HLD](../reference/glossary.md#term-hld) は次の 3 通りの **cold-reboot** 順序を定める[^1]:
 
 1. **DPU 単独 reboot**（特定の DPU だけ再起動）
 2. **SmartSwitch 全体 reboot**（NPU + 全 DPU）
@@ -39,7 +39,7 @@ SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は **PCIe** で NPU �
 
 ### 前提
 
-- NPU 上で **gNOI client**、各 DPU 上で **gNOI server**[^1]
+- NPU 上で **[gNOI](../reference/glossary.md#term-gnoi) client**、各 DPU 上で **gNOI server**[^1]
 - NPU と DPU 間は内部管理 IP（midplane bridge）で通信
 - NPU / DPU の SONiC host service は graceful shutdown を行う
 
@@ -166,7 +166,7 @@ DPU stuck の場合、vendor reboot API が **cold boot / power cycle** にフ�
 
 ### 関連する CONFIG_DB
 
-該当なし。本機能はランタイムの reboot 制御で、CONFIG_DB は持たない。
+該当なし。本機能はランタイムの reboot 制御で、[CONFIG_DB](../reference/glossary.md#term-config_db) は持たない。
 
 ### 関連する CLI
 
@@ -187,7 +187,7 @@ sudo reboot --dpu 0    # 例。実際の flag 名は確認のこと
 - **warm-reboot は scope 外 / 非対応**[^1]
 - vendor API（`pci_detach` / `pci_reattach` / `dpu_reboot`）が無いと sysfs フォールバックが必須
 - DPU stuck からの復旧は vendor の power cycle 機構に依存（実装差あり）
-- DPU の reboot 中は対応 ENI への traffic は止まる（HA を組んでいなければ）
+- DPU の reboot 中は対応 [ENI](../reference/glossary.md#term-eni) への traffic は止まる（HA を組んでいなければ）
 - HLD は 2024-05 〜 11 で改訂中。詳細フローは HLD `doc/smart-switch/reboot/reboot-hld.md` を参照
 
 ## 干渉する機能
@@ -225,3 +225,5 @@ python3 -c "from sonic_platform.module import Module; m = Module(0); print(m.pci
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 70472401098e -->

@@ -38,7 +38,7 @@ related:
 
 ## 結論
 
-LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。SONiC は既存 SAI 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を CONFIG_DB / STATE_DB に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
+LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。SONiC は既存 [SAI](../reference/glossary.md#term-sai) 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
 
 ## 動作仕様
 
@@ -51,7 +51,7 @@ LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わ�
 | `SAI_PORT_ATTR_LINK_TRAINING_RX_STATUS` | READ_ONLY, enum | trained/not trained |
 | `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | READ_ONLY, bool | per-port サポート |
 
-ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/syncd を crash させない、デフォルトは disabled[^1]。
+ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/[syncd](../reference/glossary.md#term-syncd) を crash させない、デフォルトは disabled[^1]。
 
 ### スキーマ
 
@@ -153,7 +153,7 @@ Ethernet32   not trained        on      down    up
 
 ## 制限事項
 
-HLD の `Limitations` は `N/A` のみ[^1]。実運用上:
+[HLD](../reference/glossary.md#term-hld) の `Limitations` は `N/A` のみ[^1]。実運用上:
 
 - 対象 media は CR / KR backplane / SFP copper が主。すべての media で動くわけではない
 - LT 対応は per-port。`m_port_cap_lt=false` の port は要求が実行されない
@@ -194,3 +194,5 @@ config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 03fb69fa3601 -->

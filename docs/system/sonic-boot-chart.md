@@ -33,7 +33,7 @@ related:
 
 SONiC は **モジュール構成** で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい[^1]。
 
-本 HLD は `systemd-bootchart` を SONiC に統合し、**boot プロセスの sampling profiling** を行う仕組みを定義する。出力は SVG で可視化される。
+本 [HLD](../reference/glossary.md#term-hld) は `systemd-bootchart` を SONiC に統合し、**boot プロセスの sampling profiling** を行う仕組みを定義する。出力は SVG で可視化される。
 
 要件[^1]:
 
@@ -157,7 +157,7 @@ sequenceDiagram
 
 ### CLI / YANG / CONFIG_DB
 
-本機能は **YANG / CONFIG_DB に変更なし**[^1]。`/etc/systemd/bootchart.conf` の直接書き換えで設定する独立ユーティリティ。
+本機能は **[YANG](../reference/glossary.md#term-yang) / [CONFIG_DB](../reference/glossary.md#term-config_db) に変更なし**[^1]。`/etc/systemd/bootchart.conf` の直接書き換えで設定する独立ユーティリティ。
 
 | Command | 用途 |
 |---------|------|
@@ -217,3 +217,5 @@ sudo sonic-bootchart show
 - /run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認
 - sonic-installer に bootchart 設定 migration が取り込まれたか（HLD Open Item）の現状確認
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

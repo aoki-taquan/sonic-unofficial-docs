@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`VXLAN_EVPN_NVO` テーブルは EVPN ベースの Network Virtualization Overlay (NVO) インスタンスを CONFIG_DB に定義する[^1]。EVPN コントロールプレーン (FRR + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
+`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。EVPN コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -68,13 +68,13 @@ VXLAN_EVPN_NVO|<name>
 
 ## 購読者
 
-- `vxlanorch` (sonic-swss)
+- `vxlanorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss))
 - `bgpcfgd` / `bgpd` — EVPN address-family の起動条件
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VNET`、`BGP_GLOBALS_AF` (l2vpn evpn)
-- 関連 YANG: `sonic-vxlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 - 関連 CLI: `config vxlan evpn_nvo`
 
 <!-- ref-triangle:start -->
@@ -113,3 +113,5 @@ sonic-db-cli CONFIG_DB hgetall 'VXLAN_EVPN_NVO|nvo1'
 show vxlan tunnel
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9d75cd71afa3 -->

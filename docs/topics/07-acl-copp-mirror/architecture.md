@@ -13,7 +13,7 @@ sources:
 
 # アーキテクチャ
 
-ACL の中心は `AclOrch` です。設定は CONFIG_DB から入り、APPL_DB を経由して `AclOrch` が SAI ACL table、entry、counter に変換します。運用上の見え方は `show acl` や `aclshow` ですが、失敗や capability は STATE_DB / COUNTERS_DB 側にも分かれます。
+[ACL](../../reference/glossary.md#term-acl) の中心は `AclOrch` です。設定は [CONFIG_DB](../../reference/glossary.md#term-config_db) から入り、[APPL_DB](../../reference/glossary.md#term-appl_db) を経由して `AclOrch` が [SAI](../../reference/glossary.md#term-sai) ACL table、entry、counter に変換します。運用上の見え方は `show acl` や `aclshow` ですが、失敗や capability は [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 側にも分かれます。
 
 ## Table / Rule / Counter の流れ
 
@@ -36,19 +36,19 @@ table は bind 先と stage を決め、rule は priority と action を決め�
 
 ## 組み込み Type と拡張 Type
 
-古い ACL は `L3`、`L3V6`、`MIRROR` などを `AclOrch` 内部の組み込み type として持ちます。新しい要求が増えると orchagent 改修と TCAM 消費が増えるため、ユーザ定義 table type では `ACL_TABLE_TYPE` に match、action、bind point を宣言します。
+古い ACL は `L3`、`L3V6`、`MIRROR` などを `AclOrch` 内部の組み込み type として持ちます。新しい要求が増えると [orchagent](../../reference/glossary.md#term-orchagent) 改修と TCAM 消費が増えるため、ユーザ定義 table type では `ACL_TABLE_TYPE` に match、action、bind point を宣言します。
 
 一方、`MIRROR` / `MIRRORV6` のように特別な内部処理が必要な type は組み込みに残ります。`L3V4V6` も組み込み type で、IPv4 と IPv6 rule を 1 つの SAI ACL table に同居させ、ASIC が対応する場合に TCAM 消費を抑える狙いがあります。
 
 ## Flex Counter 化
 
-ACL counter は rule ごとの packet / byte count を持ちます。以前は orchagent が固定周期で polling する設計でしたが、rule 数が増えると orchagent main loop を圧迫します。ACL flex counter 化により、polling は syncd 側の flex counter infrastructure に寄せられ、`COUNTERS_ACL_COUNTER_RULE_MAP` で rule 名から counter OID を引けるようになります。
+ACL counter は rule ごとの packet / byte count を持ちます。以前は orchagent が固定周期で polling する設計でしたが、rule 数が増えると orchagent main loop を圧迫します。ACL flex counter 化により、polling は [syncd](../../reference/glossary.md#term-syncd) 側の flex counter infrastructure に寄せられ、`COUNTERS_ACL_COUNTER_RULE_MAP` で rule 名から counter OID を引けるようになります。
 
 運用者にとっての意味は、`counterpoll acl` の状態と interval が counter 表示の鮮度に影響することです。ACL 設定だけを見ていても counter が更新されない場合、flex counter 側を確認します。
 
 ## CoPP Trap と Trap Flow Counter
 
-CoPP は `COPP_TRAP` と `COPP_GROUP` を組み合わせ、trap ID 群を CPU queue / policer に割り当てます。Trap flow counter は hostif trap ごとに generic counter を bind し、trap 種別単位の packet / byte / PPS を観測します。
+[CoPP](../../reference/glossary.md#term-copp) は `COPP_TRAP` と `COPP_GROUP` を組み合わせ、trap ID 群を CPU queue / policer に割り当てます。Trap flow counter は hostif trap ごとに generic counter を bind し、trap 種別単位の packet / byte / PPS を観測します。
 
 ```mermaid
 flowchart LR
@@ -72,3 +72,5 @@ ACL counter が rule hit を見るのに対し、trap flow counter は CPU bound
 - [L3V4V6 ACL テーブル型](../../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md)
 - [ACL カウンタの flex counter 化](../../acl-qos/acl-flex-counters-support.md)
 - [Trap Flow Counter](../../architecture/sonic-trap-flow-counter-design.md)
+
+<!-- glossary-links-injected: fe65670c8aa9 -->

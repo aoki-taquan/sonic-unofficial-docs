@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-bmp`
 
-BGP Monitoring Protocol (BMP) によるテーブルダンプ送信の有効/無効を制御する YANG モジュール[^1]。
+[BGP](../../reference/glossary.md#term-bgp) Monitoring Protocol (BMP) によるテーブルダンプ送信の有効/無効を制御する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -72,7 +72,7 @@ module: sonic-bmp
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BMP|table`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BMP|table`
 - CLI: `config bmp`
 
 <!-- ref-triangle:start -->
@@ -106,3 +106,5 @@ docker logs bmp
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 5d521d465b91 -->

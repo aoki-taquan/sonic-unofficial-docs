@@ -26,14 +26,14 @@ related:
 
 - 大きい packet (>1500B) のみ落ちる
 - `ping -s 1472 -M do` が通り、`ping -s 8000 -M do` が通らない
-- BGP UPDATE が大きい場合のみ session reset
+- [BGP](../../reference/glossary.md#term-bgp) UPDATE が大きい場合のみ session reset
 
 ## 想定原因（優先度順）
 
 1. **両端 MTU 不一致**: ローカル 9100、対向 1500 等
-2. **VLAN / PortChannel の MTU が member より小さい**: 上位論理 IF が L1 を絞る
-3. **MPLS / VXLAN encapsulation オーバーヘッド未考慮**: VTEP で +50B 越え
-4. **PMTUD ブラックホール**: 中間 ACL が ICMP `frag-needed` を破棄
+2. **[VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) の MTU が member より小さい**: 上位論理 IF が L1 を絞る
+3. **[MPLS](../../reference/glossary.md#term-mpls) / [VXLAN](../../reference/glossary.md#term-vxlan) encapsulation オーバーヘッド未考慮**: VTEP で +50B 越え
+4. **PMTUD ブラックホール**: 中間 [ACL](../../reference/glossary.md#term-acl) が ICMP `frag-needed` を破棄
 
 ## 切り分け手順
 
@@ -83,5 +83,7 @@ portstat -c
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — portsorch.cpp の MTU 反映
-[^2]: sonic-net/sonic-utilities @ 39732bceb — config interface mtu
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch.cpp の MTU 反映
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config interface mtu
+
+<!-- glossary-links-injected: 58e771fab653 -->

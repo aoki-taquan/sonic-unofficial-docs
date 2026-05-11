@@ -34,7 +34,7 @@ Thermal Control 機能（FAN status / thermal status / thermal policy）に対�
 
 | 機能 | 説明 |
 |------|------|
-| FAN status monitor | platform API を 60 秒周期で読み Redis に保存。`show platform fanstatus` で表示[^1] |
+| FAN status monitor | platform API を 60 秒周期で読み [Redis](../reference/glossary.md#term-redis) に保存。`show platform fanstatus` で表示[^1] |
 | Thermal status monitor | 60 秒周期。`show platform temperature` |
 | Thermal policy management | JSON で記述した policy を pmon docker の daemon が読み、条件一致でアクション実行 |
 
@@ -83,7 +83,7 @@ JSON 形式は正しいが意味的に誤った値（不明な condition / actio
 }
 ```
 
-(HLD には "any PSU absence" / "any FAN absence" / "all FAN and PSU presence" の 3 policy 例が示される[^1])
+([HLD](../reference/glossary.md#term-hld) には "any PSU absence" / "any FAN absence" / "all FAN and PSU presence" の 3 policy 例が示される[^1])
 
 ### Policy DSL
 
@@ -171,3 +171,5 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: da7e5aaf4d2c -->

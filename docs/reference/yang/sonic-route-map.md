@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`, `sonic-routing-policy-sets`, `sonic-vrf`, `sonic-loopback-interface`
 - top container: `sonic-route-map`
 
-SONIC Route map YANG[^1]
+SONIC Route map [YANG](../../reference/glossary.md#term-yang)[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -104,11 +104,11 @@ module: sonic-route-map
 | `match_ipv6_prefix_set` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_ipv6_prefix_set` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:PREFIX_SET/rpolsets:PREFIX_SET_LIST/rpolsets:name | Match a prefix list name that contains IPv6 prefixes. |
 | `match_protocol` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_protocol` | `string` |  |  |  | Match based on IP protocols bgp, connected, ospf, ospf3 and static |
 | `match_next_hop_set` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_next_hop_set` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:PREFIX_SET/rpolsets:PREFIX_SET_LIST/rpolsets:name | Match based on nexthop |
-| `match_src_vrf` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_src_vrf` | `union` |  |  | union(string, leafref) | Match based on source VRF |
+| `match_src_vrf` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_src_vrf` | `union` |  |  | union(string, leafref) | Match based on source [VRF](../../reference/glossary.md#term-vrf) |
 | `match_neighbor` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_neighbor` | `union` |  |  | union(inet:ip-address, leafref, leafref, string) | IP addresse or interface for match operation. |
 | `match_tag` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_tag` | `uint32` |  |  |  | Value of the tag match member |
 | `match_med` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_med` | `uint32` |  |  |  | Match based on MED value |
-| `match_origin` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_origin` | `string` |  |  |  | Match based on BGP route origin egp, igp and incomplete |
+| `match_origin` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_origin` | `string` |  |  |  | Match based on [BGP](../../reference/glossary.md#term-bgp) route origin egp, igp and incomplete |
 | `match_local_pref` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_local_pref` | `uint32` |  |  |  | Match based on BGP local preference value |
 | `match_community` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_community` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:COMMUNITY_SET/rpolsets:COMMUNITY_SET_LIST/rpolsets:name | Match based on community value |
 | `match_ext_community` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_ext_community` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:EXTENDED_COMMUNITY_SET/rpolsets:EXTENDED_COMMUNITY_SET_LIST/rpolsets:name | Match based on extended community value |
@@ -149,7 +149,7 @@ module: sonic-route-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `ROUTE_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `ROUTE_MAP`
 - CONFIG_DB: `ROUTE_MAP_SET`
 
 <!-- ref-triangle:start -->
@@ -164,3 +164,4 @@ module: sonic-route-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-route-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 3f1a66b76c8d -->

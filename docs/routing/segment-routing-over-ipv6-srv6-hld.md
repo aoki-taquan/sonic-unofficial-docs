@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を SONiC に実装する HLD[^1]。SRv6 は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / EVPN 等を実現する。Phase 1 では SONiC を **headend / endpoint** 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。FRR 側 SRv6 が成熟するまでは **静的 SID と policy を CONFIG_DB に直接書く**運用。
+IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を SONiC に実装する [HLD](../reference/glossary.md#term-hld)[^1]。[SRv6](../reference/glossary.md#term-srv6) は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / [EVPN](../reference/glossary.md#term-evpn) 等を実現する。Phase 1 では SONiC を **headend / endpoint** 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。[FRR](../reference/glossary.md#term-frr) 側 SRv6 が成熟するまでは **静的 SID と policy を [CONFIG_DB](../reference/glossary.md#term-config_db) に直接書く**運用。
 
 ## 動作仕様
 
@@ -39,7 +39,7 @@ IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を SONiC 
 | Behavior | 用途 | RFC |
 |----------|------|-----|
 | `END` | prefix SID の SRv6 instantiation | 8986 |
-| `END.DT46` | endpoint with decap + VRF lookup（IP L3VPN）| 8986 |
+| `END.DT46` | endpoint with decap + [VRF](../reference/glossary.md#term-vrf) lookup（IP L3VPN）| 8986 |
 | `H.Encaps.Red` | headend with reduced SRH encap | 8986 |
 | traffic steering by SID list | TE policy 適用 | - |
 
@@ -96,11 +96,11 @@ flowchart LR
   ASIC --> SAI[SAI SRv6 attributes]
 ```
 
-Phase 1 では **controller / swss スクリプトが Translib 経由で APPL_DB 直接更新**[^1]。FRR が SRv6 を full サポートしたら fpmsyncd 経由に切替。
+Phase 1 では **controller / swss スクリプトが Translib 経由で [APPL_DB](../reference/glossary.md#term-appl_db) 直接更新**[^1]。FRR が SRv6 を full サポートしたら [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由に切替。
 
 ### Counter（v0.5 で追加）
 
-各 MySID 単位の **packet/byte counter** を SAI に問い合わせる機能を追加[^1]。CLI で:
+各 MySID 単位の **packet/byte counter** を [SAI](../reference/glossary.md#term-sai) に問い合わせる機能を追加[^1]。CLI で:
 
 - `config srv6 counter <enable|disable>`
 - `config srv6 counter polling-interval <sec>`
@@ -109,7 +109,7 @@ Phase 1 では **controller / swss スクリプトが Translib 経由で APPL_DB
 
 ### Warm boot
 
-planned 系 / swss / BGP warm reboot で対応想定[^1]。MySID と SID list は CONFIG_DB から再復元、`Srv6Orch` が再 program。
+planned 系 / swss / [BGP](../reference/glossary.md#term-bgp) warm reboot で対応想定[^1]。MySID と SID list は CONFIG_DB から再復元、`Srv6Orch` が再 program。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/srv6/srv6_hld.md#L78-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -154,8 +154,8 @@ reasoning: Phase 1 のサポート機能の根拠。
 
 ## 干渉する機能
 
-- **既存 routing (BGP / VRF / ROUTE_TABLE)**: ROUTE_TABLE の拡張で共存
-- **MPLS L3VPN**: 等価機能の置き換え候補
+- **既存 routing (BGP / VRF / [ROUTE_TABLE](../reference/glossary.md#term-route_table))**: ROUTE_TABLE の拡張で共存
+- **[MPLS](../reference/glossary.md#term-mpls) L3VPN**: 等価機能の置き換え候補
 - **EVPN over SRv6**: 後段の利用形
 - **PIC / wcmp / ARS**: NHG / multipath との関係
 - **FRR / fpmsyncd**: 将来の入力経路
@@ -179,3 +179,5 @@ reasoning: Phase 1 のサポート機能の根拠。
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ed6625c06753 -->

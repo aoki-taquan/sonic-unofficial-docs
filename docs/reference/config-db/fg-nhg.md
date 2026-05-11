@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-Fine-Grained ECMP (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する[^1]。`orchagent` の `FgNhgOrch` が CONFIG_DB を購読する。
+Fine-Grained [ECMP](../../reference/glossary.md#term-ecmp) (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する[^1]。`orchagent` の `FgNhgOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -79,12 +79,12 @@ FG_NHG_MEMBER|<next_hop_ip>      # next-hop → group + bank
 
 ## 購読者
 
-- `orchagent` の `FgNhgOrch`: SAI で固定サイズの NEXT_HOP_GROUP を生成し、メンバ追加/削除でハッシュバケット位置を維持
+- `orchagent` の `FgNhgOrch`: [SAI](../../reference/glossary.md#term-sai) で固定サイズの NEXT_HOP_GROUP を生成し、メンバ追加/削除でハッシュバケット位置を維持
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`
-- 関連 YANG: `sonic-fine-grained-ecmp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fine-grained-ecmp`
 
 <!-- ref-triangle:start -->
 
@@ -121,3 +121,5 @@ sonic-db-cli APPL_DB keys 'FG_ROUTE_TABLE:*'
 show fgnhg active-hops
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3786ca270902 -->

@@ -31,7 +31,7 @@ related:
 
 ## これは何か（一行で）
 
-ACL ルール per packet/byte counter の polling を **orchagent から syncd の flex counter へ移譲** し、polling 間隔を `counterpoll` CLI で制御できるようにする[^1]。
+[ACL](../reference/glossary.md#term-acl) ルール per packet/byte counter の polling を **[orchagent](../reference/glossary.md#term-orchagent) から [syncd](../reference/glossary.md#term-syncd) の flex counter へ移譲** し、polling 間隔を `counterpoll` CLI で制御できるようにする[^1]。
 
 ## なぜ移譲したか
 
@@ -47,7 +47,7 @@ ACL counter は当初 orchagent が 10 秒固定間隔で polling していた�
 
 ACL counter は `SAI_OBJECT_TYPE_ACL_COUNTER` という独立オブジェクトで、`SAI_OBJECT_TYPE_ACL_ENTRY` に bind される[^1]:
 
-| SAI 属性 | 用途 |
+| [SAI](../reference/glossary.md#term-sai) 属性 | 用途 |
 |----------|------|
 | `SAI_ACL_COUNTER_ATTR_PACKETS` | packet 数 |
 | `SAI_ACL_COUNTER_ATTR_BYTES` | byte 数 |
@@ -56,7 +56,7 @@ ACL rule が動的に生成・削除されるため、flex counter manager は *
 
 ## orchagent
 
-`AclOrch` に `FlexCounterManager`（HLD では `m_acl_fc_mgr`、実装は generic な `m_flex_counter_manager`）を持つ。`StatsMode::READ`、初期 polling 間隔 10 秒、default enable[^1]。`flex_counter_manager.h` に `CounterType::ACL_COUNTER` を新設[^1]。
+`AclOrch` に `FlexCounterManager`（[HLD](../reference/glossary.md#term-hld) では `m_acl_fc_mgr`、実装は generic な `m_flex_counter_manager`）を持つ。`StatsMode::READ`、初期 polling 間隔 10 秒、default enable[^1]。`flex_counter_manager.h` に `CounterType::ACL_COUNTER` を新設[^1]。
 
 ## COUNTERS_DB
 
@@ -136,7 +136,7 @@ session フラップ間で counter 値が保たれる。
 `aclshow` の例外処理[^1]:
 
 - map に entry なし → `N/A`（counter 未作成 / map 未書込）
-- map に VID あるが COUNTERS_DB に値なし → `N/A`（polling 無効 / syncd 未書込）
+- map に VID あるが [COUNTERS_DB](../reference/glossary.md#term-counters_db) に値なし → `N/A`（polling 無効 / syncd 未書込）
 
 `sonic-clear acl` は `/home/admin` 配下にダンプを書き、次回 `aclshow` 実行時にダンプ差分を表示する **ユーザごとの clear 状態** 方式（他 counter group と共通）[^1]。
 
@@ -175,7 +175,7 @@ container ACL {
 }
 ```
 
-HLD 当時 **YANG に `POLL_INTERVAL` 未定義**[^1]。
+HLD 当時 **[YANG](../reference/glossary.md#term-yang) に `POLL_INTERVAL` 未定義**[^1]。
 
 ### syncd
 
@@ -240,3 +240,5 @@ sonic-clear acl
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d36474e99740 -->

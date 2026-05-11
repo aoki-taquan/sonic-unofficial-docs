@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-MC-LAG (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を CONFIG_DB に保持する 3 テーブル[^1]。`iccpd` (`docker-iccpd`) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。
+MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する 3 テーブル[^1]。`iccpd` (`docker-iccpd`) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。
 
 - `MCLAG_DOMAIN` — 1 ドメインの基本パラメータ（最大 1 エントリ）
-- `MCLAG_INTERFACE` — ドメインに紐づく MC-LAG メンバー PortChannel
-- `MCLAG_UNIQUE_IP` — MC-LAG ピア間で VLAN インターフェースに **異なる IP** を持たせる対象 VLAN
+- `MCLAG_INTERFACE` — ドメインに紐づく MC-LAG メンバー [PortChannel](../../reference/glossary.md#term-portchannel)
+- `MCLAG_UNIQUE_IP` — MC-LAG ピア間で [VLAN](../../reference/glossary.md#term-vlan) インターフェースに **異なる IP** を持たせる対象 VLAN
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -86,7 +86,7 @@ MCLAG_UNIQUE_IP|<if_name>
 
 **must 制約**: `MCLAG_DOMAIN_LIST` が少なくとも 1 つ存在すること
 
-YANG コメントによれば、本来 `MCLAG_UNIQUE_IP.if_name` は `VLAN.name` への leafref にしたいが libyang back-links の制約で plain string になっている。
+[YANG](../../reference/glossary.md#term-yang) コメントによれば、本来 `MCLAG_UNIQUE_IP.if_name` は `VLAN.name` への leafref にしたいが libyang back-links の制約で plain string になっている。
 
 ## 購読者
 
@@ -128,7 +128,7 @@ YANG コメントによれば、本来 `MCLAG_UNIQUE_IP.if_name` は `VLAN.name`
 
 ### よくある誤設定
 
-- `mclag_system_mac` を両 ToR で別値にすると LACP system-id が異なり MC-LAG が組まれない。
+- `mclag_system_mac` を両 ToR で別値にすると [LACP](../../reference/glossary.md#term-lacp) system-id が異なり MC-LAG が組まれない。
 - `peer_link` を VLAN trunk にしないと peer 間の MAC 同期が動かない。
 
 ### 確認コマンド
@@ -139,3 +139,5 @@ mclagdctl -i 1 dump state
 show mclag brief
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3bd44109ce5a -->

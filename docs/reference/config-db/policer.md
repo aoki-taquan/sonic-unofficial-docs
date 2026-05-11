@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SAI policer (sai_policer) を CONFIG_DB から作成・更新するためのテーブル。`policerorch` (orchagent) が CONFIG_DB の `POLICER` を読み出し、CIR/PIR の更新は SET、その他属性は create-only として扱う[^1]。実利用は ACL ルール、COPP、ストーム制御、ミラーセッション、ポートスケジューラ等の指し先として参照される。
+[SAI](../../reference/glossary.md#term-sai) policer (sai_policer) を [CONFIG_DB](../../reference/glossary.md#term-config_db) から作成・更新するためのテーブル。`policerorch` ([orchagent](../../reference/glossary.md#term-orchagent)) が CONFIG_DB の `POLICER` を読み出し、CIR/PIR の更新は SET、その他属性は create-only として扱う[^1]。実利用は [ACL](../../reference/glossary.md#term-acl) ルール、COPP、ストーム制御、ミラーセッション、ポートスケジューラ等の指し先として参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -91,7 +91,7 @@ POLICER|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `ACL_RULE`、`COPP_GROUP`、`PORT_STORM_CONTROL`、`MIRROR_SESSION`
-- 関連 YANG: 直接の YANG モジュールは無し（参照側 YANG が個別フィールドを持つ）
+- 関連 [YANG](../../reference/glossary.md#term-yang): 直接の YANG モジュールは無し（参照側 YANG が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
 <!-- ref-triangle:start -->
@@ -134,3 +134,5 @@ sonic-db-cli CONFIG_DB keys 'POLICER|*'
 show policer
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 279debef0278 -->

@@ -23,16 +23,16 @@ related:
 
 ## 概要
 
-SWSS container（orchagent + 周辺 syncd 連携）を再起動・上げ替える際にデータプレーンを乱さないため、**control plane state を complete に復元 → 復元中に流れた変動を sync up する** 仕組み[^1]。
+SWSS container（[orchagent](../reference/glossary.md#term-orchagent) + 周辺 [syncd](../reference/glossary.md#term-syncd) 連携）を再起動・上げ替える際にデータプレーンを乱さないため、**control plane state を complete に復元 → 復元中に流れた変動を sync up する** 仕組み[^1]。
 
 state は複数ソースから来る:
 
-- `CONFIG_DB` + `port_config.ini` / `pg_lookup.ini`: ポート / VLAN / interface / buffer / QoS / CRM / PFC WD / ACL の基本情報
-- Linux kernel: portsyncd / intfsyncd / neighsyncd が netlink から拾う
-- teamd: LAG state（teamsyncd）
-- bgp / fpmsyncd: ROUTE_TABLE
+- `CONFIG_DB` + `port_config.ini` / `pg_lookup.ini`: ポート / [VLAN](../reference/glossary.md#term-vlan) / interface / buffer / [QoS](../reference/glossary.md#term-qos) / [CRM](../reference/glossary.md#term-crm) / [PFC](../reference/glossary.md#term-pfc) WD / [ACL](../reference/glossary.md#term-acl) の基本情報
+- Linux kernel: [portsyncd](../reference/glossary.md#term-portsyncd) / [intfsyncd](../reference/glossary.md#term-intfsyncd) / [neighsyncd](../reference/glossary.md#term-neighsyncd) が netlink から拾う
+- [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd): [LAG](../reference/glossary.md#term-lag) state（teamsyncd）
+- bgp / [fpmsyncd](../reference/glossary.md#term-fpmsyncd): [ROUTE_TABLE](../reference/glossary.md#term-route_table)
 - json: COPP / Tunnel / Mirror
-- syncd: FDB / port state（ASIC 由来）
+- syncd: [FDB](../reference/glossary.md#term-fdb) / port state（ASIC 由来）
 
 ## 動作仕様
 
@@ -41,11 +41,11 @@ state は複数ソースから来る:
 | Data | Restore source |
 |------|---------------|
 | Port / VLAN / INTF | port config + Linux `RTM_GETLINK` dump（APPDB から直接ではない）[^1] |
-| ARP / LAG / route | APPDB から orchagent が直接復元 |
-| QoS / Buffer / CRM / PFC WD / ACL | CONFIG_DB から起動時に再読込 |
+| [ARP](../reference/glossary.md#term-arp) / LAG / route | APPDB から orchagent が直接復元 |
+| QoS / Buffer / CRM / PFC WD / ACL | [CONFIG_DB](../reference/glossary.md#term-config_db) から起動時に再読込 |
 | COPP / Tunnel / Mirror | JSON 経由で APPDB へ再ロード |
 | FDB / port state | APPDB（事前に syncd が反映） |
-| Switch default OID | SAI `get` で syncd から取得 |
+| Switch default OID | [SAI](../reference/glossary.md#term-sai) `get` で syncd から取得 |
 
 ### Pre / Post 検証
 
@@ -84,7 +84,7 @@ warm start が失敗したら **automatic fallback to system cold restart**（�
 
 ## 制限事項
 
-- **CONFIG_DB は restart window 中に変えない**前提（HLD 明記）[^1]
+- **CONFIG_DB は restart window 中に変えない**前提（[HLD](../reference/glossary.md#term-hld) 明記）[^1]
 - `STATE_DB` flush の是非は HLD 内で open issue
 - swss に依存する他 docker（systemd 上）の扱いも open issue
 
@@ -92,7 +92,7 @@ warm start が失敗したら **automatic fallback to system cold restart**（�
 
 - **system-wide warmboot**: SWSS warm restart は単 container 版、system-wide はその上位
 - **PFC / FDB / route / ARP**: 各 sync up ロジックが個別に実装される
-- **ProducerStateTable / ConsumerStateTable**: 改修の影響が共通基盤に及ぶ
+- **[ProducerStateTable](../reference/glossary.md#term-producerstatetable) / [ConsumerStateTable](../reference/glossary.md#term-consumerstatetable)**: 改修の影響が共通基盤に及ぶ
 
 ## トラブルシューティング
 
@@ -111,3 +111,5 @@ warm start が失敗したら **automatic fallback to system cold restart**（�
 - 失敗時 cold restart 自動 fallback の現行実装確認
 - 古い HLD（priority=high）のため Warmboot Manager との置換確認
 -->
+
+<!-- glossary-links-injected: 28bb2aad52a3 -->

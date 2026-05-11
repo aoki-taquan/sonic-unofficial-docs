@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`show buffer_pool` および `show headroom-pool` は QoS バッファプール / ヘッドルームプールの **watermark 統計** を表示するためのコマンドグループ。両グループは構造が完全に対称で、それぞれ `watermarkstat -t buffer_pool` / `watermarkstat -t headroom_pool` を呼び出す薄いラッパとして実装されている[^1]。CONFIG_DB は読まず、COUNTERS_DB の watermark カウンタを `watermarkstat` 経由で取得する。
+`show buffer_pool` および `show headroom-pool` は [QoS](../../reference/glossary.md#term-qos) バッファプール / ヘッドルームプールの **watermark 統計** を表示するためのコマンドグループ。両グループは構造が完全に対称で、それぞれ `watermarkstat -t buffer_pool` / `watermarkstat -t headroom_pool` を呼び出す薄いラッパとして実装されている[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) は読まず、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の watermark カウンタを `watermarkstat` 経由で取得する。
 
 `show buffer` (= `show-buffer.md` で扱う `buffer_pool` 設定の表示) とは別の系統である点に注意。
 
@@ -86,7 +86,7 @@ excerpt: |
 ### `show headroom-pool watermark` / `persistent-watermark`
 
 **動作**:
-`watermarkstat -t headroom_pool` / `watermarkstat -p -t headroom_pool` を実行。ヘッドルームプール（PFC 用ロスレストラフィックの予約バッファ）専用の WM 集計。
+`watermarkstat -t headroom_pool` / `watermarkstat -p -t headroom_pool` を実行。ヘッドルームプール（[PFC](../../reference/glossary.md#term-pfc) 用ロスレストラフィックの予約バッファ）専用の WM 集計。
 
 ## 補足
 
@@ -125,3 +125,5 @@ flowchart LR
 - [reference/CLI: show buffer](show-buffer.md)
 - [reference/CLI: show pfc](show-pfc.md)
 - [reference/CLI: show priority-group](show-priority-group.md)
+
+<!-- glossary-links-injected: abeaefab6cb2 -->

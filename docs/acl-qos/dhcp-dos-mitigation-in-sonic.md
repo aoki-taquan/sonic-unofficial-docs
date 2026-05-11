@@ -29,15 +29,15 @@ related:
 
 # DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
 
-「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。順に答える。**結論を先に**: 仕様は揃ったが portmgrd の TC 投入が未実装なので、CLI で値を入れても効かない（後述「実装との乖離」を参照）。
+「なぜ [CoPP](../reference/glossary.md#term-copp) 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。順に答える。**結論を先に**: 仕様は揃ったが [portmgrd](../reference/glossary.md#term-portmgrd) の TC 投入が未実装なので、CLI で値を入れても効かない（後述「実装との乖離」を参照）。
 
 ## なぜ CoPP 全体ではダメなのか
 
-SONiC の従来挙動は **CoPP で DHCP をシステム全体 300 pps に絞る**。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 VLAN の正規クライアントの DISCOVER までドロップされる[^1]。被害ドメインを局所化するため **ポート単位** に切り替える必要がある。
+SONiC の従来挙動は **CoPP で DHCP をシステム全体 300 pps に絞る**。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 [VLAN](../reference/glossary.md#term-vlan) の正規クライアントの DISCOVER までドロップされる[^1]。被害ドメインを局所化するため **ポート単位** に切り替える必要がある。
 
 ## 何を投入すれば効くのか
 
-SAI / ASIC オフロードではなく **Linux Traffic Control (tc) の ingress qdisc + filter** をホスト側で使う。`portmgrd` が `PORT.dhcp_rate_limit` を subscribe し、対応する `tc` コマンドをカーネルに投入する。SAI API の追加・変更は無い[^1]。
+[SAI](../reference/glossary.md#term-sai) / ASIC オフロードではなく **Linux Traffic Control (tc) の ingress qdisc + filter** をホスト側で使う。`portmgrd` が `PORT.dhcp_rate_limit` を subscribe し、対応する `tc` コマンドをカーネルに投入する。SAI API の追加・変更は無い[^1]。
 
 ```mermaid
 flowchart LR
@@ -68,7 +68,7 @@ sudo tc filter add dev <interface> protocol ip parent ffff: prio 1 u32 \
 sudo tc -s qdisc show dev <interface> handle ffff:
 ```
 
-CONFIG_DB の値は **pps**。`tc` は bps しか受けないので **1 DHCP DISCOVER = 406 バイト** で換算[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) の値は **pps**。`tc` は bps しか受けないので **1 DHCP DISCOVER = 406 バイト** で換算[^1]。
 
 別途 **ドロップ監視デーモン** が全ポートの `tc qdisc` ドロップ数を周期的に確認し、増加でログに警告を書く[^1]。
 
@@ -80,7 +80,7 @@ CONFIG_DB の値は **pps**。`tc` は bps しか受けないので **1 DHCP DIS
 "PORT": { "Ethernet0": { "...": "...", "dhcp_rate_limit": "300" } }
 ```
 
-YANG: `uint32 { range 0..8000; }`[^1]。
+[YANG](../reference/glossary.md#term-yang): `uint32 { range 0..8000; }`[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -147,7 +147,7 @@ CLI ルール[^1]:
 
 ### 回避策
 
-- **HLD の効果を得たい場合**: 外部スクリプトで `tc qdisc add ... ingress` + `tc filter add ... police rate=<pps*406>bps` を投入。一括投入例:
+- **[HLD](../reference/glossary.md#term-hld) の効果を得たい場合**: 外部スクリプトで `tc qdisc add ... ingress` + `tc filter add ... police rate=<pps*406>bps` を投入。一括投入例:
 
   ```bash
   for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do
@@ -204,3 +204,5 @@ CLI ルール[^1]:
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d898453d360 -->

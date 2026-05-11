@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **default 値の auto-fill**: minigraph / hostcfgd が起動時に default を埋める
+1. **default 値の auto-fill**: minigraph / [hostcfgd](../../reference/glossary.md#term-hostcfgd) が起動時に default を埋める
 2. **runtime-only key の永続化**: `BUFFER_PG` 等 dynamic computed が save に乗る
 3. **multi-asic の `config save` で namespace 不整合**
 4. **手動で `sonic-db-cli SET` した値が runtime のみ反映**
@@ -70,7 +70,7 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 
 - 一旦 `sudo config save -y` を再実行して安定化
 - multi-asic: `sudo config save -y` （新しい multi-asic 対応版で各 namespace 同時 save）
-- runtime のみで良い key は CONFIG_DB から削除し save し直す: `sudo sonic-db-cli CONFIG_DB del "<key>"`
+- runtime のみで良い key は [CONFIG_DB](../../reference/glossary.md#term-config_db) から削除し save し直す: `sudo sonic-db-cli CONFIG_DB del "<key>"`
 
 ## 関連ページ
 
@@ -80,5 +80,7 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — config save
-[^2]: sonic-net/sonic-swss-common @ 4305596 — configdb get/set
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save
+[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb get/set
+
+<!-- glossary-links-injected: 21eb656ce66c -->

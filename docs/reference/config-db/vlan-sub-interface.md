@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`VLAN_SUB_INTERFACE` は物理 port または PortChannel 上の 802.1Q sub-interface を定義する CONFIG_DB テーブル。`Ethernet0.100` や `PortChannel10.100` のような親 interface + VLAN ID 形式をキーに、admin state、VRF / VNET binding、loopback action、encapsulation VLAN、IP prefix を持つ[^1]。`schema.h` では CONFIG_DB テーブル名として `CFG_VLAN_SUB_INTF_TABLE_NAME` が定義されている[^2]。
+`VLAN_SUB_INTERFACE` は物理 port または [PortChannel](../../reference/glossary.md#term-portchannel) 上の 802.1Q sub-interface を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`Ethernet0.100` や `PortChannel10.100` のような親 interface + [VLAN](../../reference/glossary.md#term-vlan) ID 形式をキーに、admin state、[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding、loopback action、encapsulation VLAN、IP prefix を持つ[^1]。`schema.h` では CONFIG_DB テーブル名として `CFG_VLAN_SUB_INTF_TABLE_NAME` が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -83,14 +83,14 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 
 ## 購読者
 
-- `intfmgrd`: CONFIG_DB の sub-interface と IP prefix を APPL_DB 側の interface 設定へ展開する。
-- `orchagent` / `intfsorch`: APPL_DB 経由で router interface、IP address、VRF / VNET binding を SAI / kernel へ反映する。
+- `intfmgrd`: CONFIG_DB の sub-interface と IP prefix を [APPL_DB](../../reference/glossary.md#term-appl_db) 側の interface 設定へ展開する。
+- `orchagent` / `intfsorch`: APPL_DB 経由で router interface、IP address、VRF / VNET binding を [SAI](../../reference/glossary.md#term-sai) / kernel へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`、`VRF`、`VNET`
 - 関連 CLI: `config interface`
-- 関連 YANG: `sonic-vlan-sub-interface`、`sonic-port`、`sonic-portchannel`、`sonic-vrf`、`sonic-vnet`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan-sub-interface`、`sonic-port`、`sonic-portchannel`、`sonic-vrf`、`sonic-vnet`
 
 <!-- ref-triangle:start -->
 
@@ -132,3 +132,5 @@ sonic-db-cli CONFIG_DB keys 'VLAN_SUB_INTERFACE|*'
 show subinterface status
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f53f85ca209b -->

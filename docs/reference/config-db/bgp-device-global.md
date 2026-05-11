@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。`BGP_GLOBALS` が VRF 単位なのに対し、`BGP_DEVICE_GLOBAL` は装置全体スコープ。TSA (Traffic-Shift-Away)、W-ECMP (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ[^1]。
+スイッチ全体（[VRF](../../reference/glossary.md#term-vrf) 横断）の [BGP](../../reference/glossary.md#term-bgp) 動作スイッチを保持する。`BGP_GLOBALS` が VRF 単位なのに対し、`BGP_DEVICE_GLOBAL` は装置全体スコープ。TSA (Traffic-Shift-Away)、W-[ECMP](../../reference/glossary.md#term-ecmp) (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -72,9 +72,9 @@ BGP_DEVICE_GLOBAL|CONFED
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`、`DEVICE_METADATA`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`、`DEVICE_METADATA`
 - 関連 CLI: [`config bgp device-global tsa`](../cli/config-bgp.md)、`config bgp device-global w-ecmp`
-- 関連 YANG: `sonic-bgp-device-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-device-global`
 
 <!-- ref-triangle:start -->
 
@@ -111,3 +111,5 @@ TSA -s   # TSA 状態確認
 vtysh -c "show running-config bgpd" | grep -i ecmp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: aeea2bd728de -->

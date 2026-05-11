@@ -27,7 +27,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- gNOI とは何で、なぜ gNMI と同じポートで受けるのか
+- [gNOI](../reference/glossary.md#term-gnoi) とは何で、なぜ [gNMI](../reference/glossary.md#term-gnmi) と同じポートで受けるのか
 - なぜ container（telemetry）の中で実行せず **DBUS で host** に投げる必要があるのか
 - `File.Remove` は何を消せて、何を消せないのか（path traversal は防げているか）
 - `FactoryReset.Start` の **3 フラグ**（`factory_os` / `zero_fill` / `retain_certs`）は何を意味するか
@@ -35,7 +35,7 @@ related:
 
 ## なぜこの拡張が必要か
 
-gNOI（gRPC Network Operations Interface）は CLI 代替として **gRPC で運用コマンドを実行** する仕様で、protobuf は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も **同じ TCP 9339** で受け、認証認可後にバックエンドへ振り分ける[^1]。本 HLD は以下 2 つの RPC を実装[^1]:
+gNOI（gRPC Network Operations Interface）は CLI 代替として **gRPC で運用コマンドを実行** する仕様で、protobuf は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も **同じ TCP 9339** で受け、認証認可後にバックエンドへ振り分ける[^1]。本 [HLD](../reference/glossary.md#term-hld) は以下 2 つの RPC を実装[^1]:
 
 - `gnoi.file.File.Remove`: target ファイル削除（**現状は `config_db.json` 限定**）
 - `gnoi.factory_reset.FactoryReset.Start`: 工場出荷状態に戻す
@@ -142,7 +142,7 @@ gnoi_client file remove --remote_file /etc/sonic/config_db.json
 gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_certs=true
 ```
 
-専用 CONFIG_DB / YANG は無く、gNMI 認証認可・証明書配置などの既存 telemetry 経路を再利用する。SAI / Warmboot / Fastboot への影響なし[^1]。
+専用 [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) は無く、gNMI 認証認可・証明書配置などの既存 telemetry 経路を再利用する。[SAI](../reference/glossary.md#term-sai) / Warmboot / Fastboot への影響なし[^1]。
 
 ## 制限事項
 
@@ -176,3 +176,5 @@ gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_ce
 - [HLD: gNOI OS APIs](gnoi-hld-for-os-apis.md)
 - [HLD: gNOI healthz API](gnoi-hld-for-healthz-api.md)
 - [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
+
+<!-- glossary-links-injected: b4b6b56d361a -->

@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-gNMI Master Arbitration は **複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、`Set` RPC を出せるのは唯一のマスタだけにする** ための調停機構である[^1]。
+[gNMI](../reference/glossary.md#term-gnmi) Master Arbitration は **複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、`Set` RPC を出せるのは唯一のマスタだけにする** ための調停機構である[^1]。
 
 仕様は openconfig 側の [gnmi-master-arbitration](https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-master-arbitration.md) に準じ、SONiC では `sonic-gnmi` の telemetry サーバ側に組み込む形で実装する。コアは以下のシンプルなルールである[^1]:
 
@@ -37,7 +37,7 @@ gNMI Master Arbitration は **複数の SDN コントローラ（gNMI クライ�
 - ターゲット（gNMI server）は **過去に見た中で最大の EID** を保存し、それ未満／未指定の `Set` を `PermissionDenied` で拒否する
 - `Get` などの read RPC には影響しない[^1]
 
-SONiC では既定で **オフ**。コマンドラインフラグ `--with-master-arbitration` が指定された時のみ有効で、SWSS / syncd / SAI には変更を加えない[^1]。
+SONiC では既定で **オフ**。コマンドラインフラグ `--with-master-arbitration` が指定された時のみ有効で、SWSS / [syncd](../reference/glossary.md#term-syncd) / [SAI](../reference/glossary.md#term-sai) には変更を加えない[^1]。
 
 ## 動作仕様
 
@@ -64,7 +64,7 @@ sequenceDiagram
 
 ### protobuf 拡張
 
-`MasterArbitration` は gNMI の汎用拡張領域に乗る。HLD は `gnmi_ext.proto` の `Extension` の `oneof ext` の 1 つとして定義する[^1]:
+`MasterArbitration` は gNMI の汎用拡張領域に乗る。[HLD](../reference/glossary.md#term-hld) は `gnmi_ext.proto` の `Extension` の `oneof ext` の 1 つとして定義する[^1]:
 
 ```proto
 message MasterArbitration {
@@ -178,7 +178,7 @@ HLD はサービサビリティのため次のログを要求する[^1]:
 |-------|-----|------|
 | `TELEMETRY` | `gnmi:master_arbitration_enabled` | `"true"` で機能を ON にすることが提案されている[^1] |
 
-ただし HLD 本文側では起動方法として **`--with-master-arbitration` コマンドラインフラグ** を採用している。CONFIG_DB スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。
+ただし HLD 本文側では起動方法として **`--with-master-arbitration` コマンドラインフラグ** を採用している。[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。
 
 ### 関連する CLI
 
@@ -186,7 +186,7 @@ HLD はサービサビリティのため次のログを要求する[^1]:
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）[^1]。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）[^1]。
 
 ### 設定例（HLD 記述ベース）
 
@@ -277,3 +277,5 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - HLD は 2023 年 v0.1 Initial で 2 年超経過、現行 master との乖離可能性
 - openconfig 上流仕様 (gnmi-master-arbitration.md) との差分有無
 -->
+
+<!-- glossary-links-injected: edc6102d5d8f -->

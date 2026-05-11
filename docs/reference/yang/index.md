@@ -16,14 +16,14 @@ related:
 
 # YANG リファレンス
 
-`sonic-yang-models` (sonic-buildimage repo の `src/sonic-yang-models/yang-models/`) に同梱される SONiC YANG モデルのリファレンス。
+`sonic-yang-models` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) repo の `src/sonic-yang-models/yang-models/`) に同梱される SONiC [YANG](../../reference/glossary.md#term-yang) モデルのリファレンス。
 
 ## SONiC YANG の位置付け
 
-SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能する。具体的には:
+SONiC の YANG モデルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマの正本**として機能する。具体的には:
 
 - **CLI 経由 (`config` / `sonic-cfggen` / minigraph)** で書き込まれた CONFIG_DB の値は、`sonic-yang-mgmt` (`sonic-buildimage/src/sonic-yang-mgmt/`) によって YANG モデルに対してバリデーションされる
-- **gNMI / REST 経由**の管理アクセスは `sonic-mgmt-common` の **translib / transformer** レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の `sonic-*` YANG（= CONFIG_DB スキーマ）に変換する
+- **[gNMI](../../reference/glossary.md#term-gnmi) / REST 経由**の管理アクセスは `sonic-mgmt-common` の **translib / transformer** レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の `sonic-*` YANG（= CONFIG_DB スキーマ）に変換する
 - 一部のテーブルは YANG が無いか中途半端な状態。新規テーブルは原則 YANG 必須だが、歴史的経緯で未追従のものもある
 
 つまり「SONiC YANG ＝ CONFIG_DB の型定義 + 整合性制約」と理解して良い。CONFIG_DB リファレンス（`docs/reference/config-db/`）と相互参照する。
@@ -72,7 +72,7 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 
 ### ACL / QoS / バッファ
 
-注: SONiC YANG には現状 `sonic-acl` モジュールは存在しない（CONFIG_DB 側の `ACL_TABLE` / `ACL_RULE` はある）。代わりに COPP / mirror / PFC watchdog をここに置く。
+注: SONiC YANG には現状 `sonic-acl` モジュールは存在しない（CONFIG_DB 側の `ACL_TABLE` / `ACL_RULE` はある）。代わりに COPP / mirror / [PFC](../../reference/glossary.md#term-pfc) watchdog をここに置く。
 
 - [sonic-copp](sonic-copp.md)
 - [sonic-mirror-session](sonic-mirror-session.md)
@@ -123,3 +123,5 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 - [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6396c716f97e -->

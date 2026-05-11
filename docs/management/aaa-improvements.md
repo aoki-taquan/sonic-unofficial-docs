@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案[^1]:
+SONiC の [AAA](../reference/glossary.md#term-aaa)（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案[^1]:
 
 1. **多重ロール（RBAC）非対応**: RADIUS / TACACS+ から学習した role を Primary GID 1 つに突っ込んでいる
 2. **RADIUS user は 2 回ログインしないと role が反映されない**: 1 回目で `getpwnam()` 失敗 → PAM 認証中に local account を生成 → 2 回目で動く、という workaround
@@ -63,7 +63,7 @@ sequenceDiagram
     SD->>SH: fork → drop privs → initgroups → exec shell
 ```
 
-`getpwnam()` が **PAM 認証より先**に走るため、RADIUS から role を取って Primary GID にしようとすると鶏卵問題が起きる。これが本 HLD の出発点[^1]。
+`getpwnam()` が **PAM 認証より先**に走るため、RADIUS から role を取って Primary GID にしようとすると鶏卵問題が起きる。これが本 [HLD](../reference/glossary.md#term-hld) の出発点[^1]。
 
 ### 提案の核
 
@@ -114,7 +114,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 
 ## 設定
 
-HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されていない。`AAA` / `RADIUS` / `RADIUS_SERVER` / `TACPLUS` / `TACPLUS_SERVER` 既存テーブルは前提として継続利用する想定。
+HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI の最終形は具体化されていない。`AAA` / `RADIUS` / `RADIUS_SERVER` / `TACPLUS` / `TACPLUS_SERVER` 既存テーブルは前提として継続利用する想定。
 
 ## 制限事項
 
@@ -164,3 +164,5 @@ HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されて
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->

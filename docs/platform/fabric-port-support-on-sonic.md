@@ -30,7 +30,7 @@ related:
 
 ## 何のための仕組みか
 
-VOQ シャーシは **forwarding ASIC**（front panel を持つ NPU）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する。本 HLD は **fabric ASIC を forwarding ASIC と同様に syncd / sairedis で管理**し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み[^1]。
+[VOQ](../reference/glossary.md#term-voq) シャーシは **forwarding ASIC**（front panel を持つ [NPU](../reference/glossary.md#term-npu)）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する。本 [HLD](../reference/glossary.md#term-hld) は **fabric ASIC を forwarding ASIC と同様に [syncd](../reference/glossary.md#term-syncd) / sairedis で管理**し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み[^1]。
 
 > 詳細は HLD `doc/voq/fabric.md` および `doc/voq/architecture.md` を参照。
 
@@ -48,7 +48,7 @@ DEVICE_METADATA|localhost
   switch_id   = <一意の番号>
 ```
 
-SAI VOQ 仕様の推奨: fabric ASIC の `switch_id` は forwarding ASIC と重複させない[^1]。
+[SAI](../reference/glossary.md#term-sai) VOQ 仕様の推奨: fabric ASIC の `switch_id` は forwarding ASIC と重複させない[^1]。
 
 ### 全体構造
 
@@ -106,7 +106,7 @@ Rev 3 以降、fabric link 単位で **エラー率しきい値による自動 i
 
 - `IN_FEC_NOT_CORRECTABLE_FRAMES` 等を周期チェック
 - しきい値超過 → リンクを論理的に isolate（fabric から外す）
-- リンクダウン時はダウン理由（CRC / misaligned）も STATE_DB に表記
+- リンクダウン時はダウン理由（CRC / misaligned）も [STATE_DB](../reference/glossary.md#term-state_db) に表記
 - Rev 3.6 で **persistent link flap** 検出が追加（short up/down 繰り返しも isolate）
 
 しきい値の具体値・判定窓は HLD で完全固定されておらず、実装側のチューニング余地あり。
@@ -158,7 +158,7 @@ reasoning: 継続的に改訂されている fabric link 監視機能の設計�
 ## 制限事項
 
 - VOQ chassis 構成専用。pizza-box には無関係
-- fabric ASIC は front-panel を持たないため LLDP / BGP 等は disable 強制
+- fabric ASIC は front-panel を持たないため [LLDP](../reference/glossary.md#term-lldp) / [BGP](../reference/glossary.md#term-bgp) 等は disable 強制
 - 自動 isolation のしきい値設計は HLD で完全固定されていない
 - HLD は 25KB+ で改訂多数。フローや edge case は本文を参照
 
@@ -196,3 +196,5 @@ docker logs swss-fabric0 2>&1 | grep -i isolate    # 自動 isolate されたか
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c96384f4952f -->

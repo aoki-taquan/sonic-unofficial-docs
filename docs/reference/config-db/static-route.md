@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`STATIC_ROUTE` は静的経路を CONFIG_DB に保持するテーブル。YANG では template 形式 (`STATIC_ROUTE|<prefix>`) と VRF-aware 形式 (`STATIC_ROUTE|<vrf_name>|<prefix>`) の 2 つの list が定義されている[^1]。nexthop、出力 interface、BGP への advertise、BFD、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は `schema.h` も参照する[^2]。
+`STATIC_ROUTE` は静的経路を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。[YANG](../../reference/glossary.md#term-yang) では template 形式 (`STATIC_ROUTE|<prefix>`) と [VRF](../../reference/glossary.md#term-vrf)-aware 形式 (`STATIC_ROUTE|<vrf_name>|<prefix>`) の 2 つの list が定義されている[^1]。nexthop、出力 interface、[BGP](../../reference/glossary.md#term-bgp) への advertise、[BFD](../../reference/glossary.md#term-bfd)、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は `schema.h` も参照する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -76,9 +76,9 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 
 ## 購読者
 
-- `staticd` / `zebra` (FRR): SONiC の設定生成パスを通じて static route を FRR に反映する。
+- `staticd` / `zebra` ([FRR](../../reference/glossary.md#term-frr)): SONiC の設定生成パスを通じて static route を FRR に反映する。
 - `bgpcfgd` / routing config パス: `advertise` が有効な static route を BGP 広告対象として扱う。
-- `orchagent` / route orch: kernel / FRR から APPL_DB 経由で転送経路を SAI route へ反映する。
+- `orchagent` / route orch: kernel / FRR から [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で転送経路を [SAI](../../reference/glossary.md#term-sai) route へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -106,7 +106,7 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 ### 典型値
 
 - key 形式: `STATIC_ROUTE|<vrf>|<prefix>` (例 `STATIC_ROUTE|default|10.0.0.0/24`)。
-- `nexthop`: カンマ区切り（ECMP 可）。
+- `nexthop`: カンマ区切り（[ECMP](../../reference/glossary.md#term-ecmp) 可）。
 - `distance`: 1（規定）。
 - `ifname`: 出力 IF（直接接続経路向け）。
 
@@ -123,3 +123,5 @@ show ip route static
 vtysh -c 'show ip route'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 442d405f5e26 -->

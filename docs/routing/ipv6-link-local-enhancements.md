@@ -30,13 +30,13 @@ related:
 
 ## なぜ必要か
 
-IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。中核ユースケースは **BGP unnumbered**（インタフェース指定で対向 link-local を ND 検出）。IPv4 経路の next-hop に IPv6 link-local を入れる **RFC 5549** もサポート[^1]。
+IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。中核ユースケースは **[BGP](../reference/glossary.md#term-bgp) unnumbered**（インタフェース指定で対向 link-local を ND 検出）。IPv4 経路の next-hop に IPv6 link-local を入れる **RFC 5549** もサポート[^1]。
 
 主要要素は 3 つ。
 
-1. **インタフェース単位の `use-link-local-only`**: 手動 IPv6 アドレスが無くても link-local だけで L3 RIF を有効化
+1. **インタフェース単位の `use-link-local-only`**: 手動 IPv6 アドレスが無くても link-local だけで L3 [RIF](../reference/glossary.md#term-rif) を有効化
 2. **グローバル一括 enable/disable**: 該当条件を満たす全インタフェースをアクション操作
-3. **link-local next-hop ECMP**: 同じ `fe80::xxxx` でも所属インタフェースが異なれば独立 next-hop として扱えるよう `NeighOrch` の key にインタフェースを含める
+3. **link-local next-hop [ECMP](../reference/glossary.md#term-ecmp)**: 同じ `fe80::xxxx` でも所属インタフェースが異なれば独立 next-hop として扱えるよう `NeighOrch` の key にインタフェースを含める
 
 ## どう動くか
 
@@ -45,7 +45,7 @@ IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱�
 次のいずれかで IPv6 モードが有効化される[^1]：
 
 - グローバル / link-local いずれかの IPv6 アドレスが手動設定
-- `use-link-local-only` が enable で Ethernet / VLAN / Port-Channel / Loopback のいずれか
+- `use-link-local-only` が enable で Ethernet / [VLAN](../reference/glossary.md#term-vlan) / Port-Channel / Loopback のいずれか
 
 両方無いと IPv6 モード自体が無効。デフォルトは disable（`eth0` / `lo` は例外的に常時有効）。
 
@@ -62,8 +62,8 @@ IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱�
 
 `IntfOrch` は link-local 有効時に 2 つを ASIC に program[^1]:
 
-- インタフェース link-local への **/128 IP2ME**（CPU パント、同 link-local 複数 IF でも SAI 上は 1 つ）
-- VRF ごとの **`fe80::/10` サブネットルート**（CPU コピー、個別 prefix 大量積み防止）
+- インタフェース link-local への **/128 IP2ME**（CPU パント、同 link-local 複数 IF でも [SAI](../reference/glossary.md#term-sai) 上は 1 つ）
+- [VRF](../reference/glossary.md#term-vrf) ごとの **`fe80::/10` サブネットルート**（CPU コピー、個別 prefix 大量積み防止）
 
 ### NeighOrch: next-hop key にインタフェース
 
@@ -136,7 +136,7 @@ APP_DB 側は `INTF_TABLE` に同フィールド伝搬、`NEIGH_TABLE` に `<ifn
 | `config ipv6 disable link-local` | 該当全 IF を一括無効化 |
 | `show ipv6 link-local-mode`      | 状態表示 |
 
-FRR 側（BGP unnumbered）は新規 CLI なし。既存 `neighbor <ifname> interface remote-as` で動作する[^1]。
+[FRR](../reference/glossary.md#term-frr) 側（BGP unnumbered）は新規 CLI なし。既存 `neighbor <ifname> interface remote-as` で動作する[^1]。
 
 ### 設定例
 
@@ -157,13 +157,13 @@ router bgp 65001
 - ループバックには link-local アドレスは付かない
 - link-local 宛/送信元 IPv6 パケットはルーティング不可（trace route 不可、ping は直接接続のみ）[^1]
 - グローバル `config ipv6 enable link-local` は VLAN/Port-Channel メンバには適用されない
-- 上限は ASIC の L3 RIF / Neighbor 容量に依存（HLD で数値未規定）
+- 上限は ASIC の L3 RIF / Neighbor 容量に依存（[HLD](../reference/glossary.md#term-hld) で数値未規定）
 
 ## 干渉する機能
 
 - **VRF**: 本拡張は元々 VRF 実装で導入されたもの。next-hop key にインタフェースを含める変更を共有[^1]
 - **BGP unnumbered (RFC 5549)**: 主要ユースケース
-- **Warm reboot**: 手動 link-local は CONFIG_DB から復元、自動生成は kernel が再生成[^1]
+- **Warm reboot**: 手動 link-local は [CONFIG_DB](../reference/glossary.md#term-config_db) から復元、自動生成は kernel が再生成[^1]
 - **VLAN/Port-Channel メンバシップ**: `use-link-local-only` 有効中は member 化不可
 
 ## トラブルシューティング
@@ -182,3 +182,5 @@ router bgp 65001
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ipv6/ipv6_link_local.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 3935300e9c2a -->

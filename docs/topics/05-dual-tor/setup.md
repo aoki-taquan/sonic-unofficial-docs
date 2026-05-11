@@ -13,7 +13,7 @@ sources:
 
 # Dual-ToR の設定
 
-Dual-ToR の設定は、port ごとの `MUX_CABLE` と peer ToR を表す `PEER_SWITCH` を起点に読みます。CLI の `config muxcable` は便利ですが、何が CONFIG_DB に残る設定で、何が xcvrd / ycabled への一時的な低レイヤ操作なのかを分けておくと運用しやすくなります。
+Dual-ToR の設定は、port ごとの `MUX_CABLE` と peer ToR を表す `PEER_SWITCH` を起点に読みます。CLI の `config muxcable` は便利ですが、何が [CONFIG_DB](../../reference/glossary.md#term-config_db) に残る設定で、何が xcvrd / ycabled への一時的な低レイヤ操作なのかを分けておくと運用しやすくなります。
 
 ## 最小単位は server-facing port
 
@@ -92,7 +92,7 @@ Active-Standby の最小例:
 }
 ```
 
-`DEVICE_METADATA.subtype = DualToR` は linkmgrd / mux-related orchestration の有効化フラグです。これが無いと MUX_CABLE row があっても `linkmgrd` は起動しない実装になっています。
+`DEVICE_METADATA.subtype = DualToR` は [linkmgrd](../../reference/glossary.md#term-linkmgrd) / mux-related orchestration の有効化フラグです。これが無いと MUX_CABLE row があっても `linkmgrd` は起動しない実装になっています。
 
 `state: auto` により `linkmgrd` が状態遷移を管理します。`neighbor_mode: prefix-route` にすると、サーバ向け neighbor を残したまま route の nexthop を直接 neighbor / tunnel 間で切り替える設計になります。
 
@@ -205,7 +205,7 @@ show muxcable grpc muxdirection Ethernet0
 
 ## sonic-cfggen で部分パッチを当てる
 
-deployment template (`minigraph.xml` → `sonic-cfggen` 経路) ではなく、運用中に Dual-ToR 関連の row を追加・削除したいときは sonic-cfggen の部分パッチを使います。
+deployment template (`minigraph.xml` → `sonic-cfggen` 経路) ではなく、運用中に Dual-ToR 関連の row を追加・削除したいときは [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) の部分パッチを使います。
 
 ```bash
 cat > /tmp/mux_patch.json <<'EOF'
@@ -235,15 +235,15 @@ sudo config save -y
 | 配置 | テーブル | 内容 |
 |---|---|---|
 | CONFIG_DB | `MUX_CABLE` | 静的設定 (cable_type, state, server_ip 等) |
-| APPL_DB | `MUX_CABLE_TABLE` | linkmgrd が反映した動的設定 |
-| STATE_DB | `MUX_CABLE_TABLE` | 現在状態 (active/standby, link prober 状態) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `MUX_CABLE_TABLE` | linkmgrd が反映した動的設定 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_CABLE_TABLE` | 現在状態 (active/standby, link prober 状態) |
 | STATE_DB | `HW_MUX_CABLE_TABLE` | ycabled が報告する hardware 上の mux 方向 |
 
 `show muxcable status` が混乱した出力をするときは、STATE_DB の `MUX_CABLE_TABLE` と `HW_MUX_CABLE_TABLE` の不一致を `redis-cli -n 6 keys 'MUX*'` で確認します。CONFIG_DB の `state` を変えても hardware が追従していないケース (cable firmware ハング、ycabled デッドロック) はこの 2 table の差分で判別できます。
 
 ## YANG を見る場面
 
-Dual-ToR 関連の YANG モジュールは `sonic-mux-cable` (`MUX_CABLE` の型)、`sonic-peer-switch` (`PEER_SWITCH`)、`sonic-tunnel` (`TUNNEL`) の 3 つに分かれます。`cable_type` の enum (`active-standby` / `active-active`) や `state` の許容値はここに定義されています。外部から gNMI で設定する場合は値の正規化を YANG 側で確認します。
+Dual-ToR 関連の [YANG](../../reference/glossary.md#term-yang) モジュールは `sonic-mux-cable` (`MUX_CABLE` の型)、`sonic-peer-switch` (`PEER_SWITCH`)、`sonic-tunnel` (`TUNNEL`) の 3 つに分かれます。`cable_type` の enum (`active-standby` / `active-active`) や `state` の許容値はここに定義されています。外部から [gNMI](../../reference/glossary.md#term-gnmi) で設定する場合は値の正規化を YANG 側で確認します。
 
 ## 関連ページ
 
@@ -252,3 +252,5 @@ Dual-ToR 関連の YANG モジュールは `sonic-mux-cable` (`MUX_CABLE` の型
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)
 - [show muxcable サブコマンド](../../reference/cli/show-muxcable.md)
 - [TUNNEL テーブル](../../reference/config-db/tunnel.md)
+
+<!-- glossary-links-injected: d2689548bde0 -->

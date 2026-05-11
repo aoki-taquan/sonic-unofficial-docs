@@ -87,17 +87,17 @@ BGP_PEER_GROUP_AF|<vrf_name>|<peer_group_name>|<afi_safi>
 ## 制約
 
 - `vrf_name` / `peer_group_name` はそれぞれ leafref。存在しない peer-group 名はバリデーション失敗
-- key の `peer_group_name` leafref は `[vrf_name=current()/../vrf_name]` のスコープ式で同一 VRF に縛られる
+- key の `peer_group_name` leafref は `[vrf_name=current()/../vrf_name]` のスコープ式で同一 [VRF](../../reference/glossary.md#term-vrf) に縛られる
 
 ## 購読者
 
-- `frr-mgmt-framework`: FRR (bgpd) の `address-family ... / neighbor PG ...` 配下コマンドへ変換
+- `frr-mgmt-framework`: [FRR](../../reference/glossary.md#term-frr) (bgpd) の `address-family ... / neighbor PG ...` 配下コマンドへ変換
 - `bgpcfgd` テンプレ系: 主に neighbor 単位処理が中心で、AF 別設定はテンプレ展開で間接反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`BGP_PEER_GROUP`](./bgp-peer-group.md)、[`BGP_NEIGHBOR_AF`](./bgp-neighbor-af.md)、`PREFIX_LIST`、`ROUTE_MAP`
-- 関連 YANG: `sonic-bgp-peergroup`、`sonic-bgp-common`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_PEER_GROUP`](./bgp-peer-group.md)、[`BGP_NEIGHBOR_AF`](./bgp-neighbor-af.md)、`PREFIX_LIST`、`ROUTE_MAP`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-peergroup`、`sonic-bgp-common`
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:start -->
@@ -124,7 +124,7 @@ BGP_PEER_GROUP_AF|<vrf_name>|<peer_group_name>|<afi_safi>
 ### よくある誤設定
 
 - peer-group を作成した直後に AF 設定を行わず、neighbor が activate されない (アドレスファミリ未投入)。
-- `max_prefix_limit` を運用ピーク以下に設定して BGP セッションが reset する。
+- `max_prefix_limit` を運用ピーク以下に設定して [BGP](../../reference/glossary.md#term-bgp) セッションが reset する。
 
 ### 確認コマンド
 
@@ -134,3 +134,5 @@ vtysh -c "show ip bgp summary"
 vtysh -c "show running-config bgpd"
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->

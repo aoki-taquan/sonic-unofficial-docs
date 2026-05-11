@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-gNSI（gRPC Network Security Interface）は、ネットワーク機器の **セキュリティクレデンシャルを gRPC 経由で安全にローテーションする** ためのマイクロサービス群である[^1]。SONiC では gNMI/UMF サーバ（`sonic-gnmi`）と `sonic-mgmt-common` に組み込み、対応する OpenConfig YANG モデルを公開する設計[^1]。
+gNSI（gRPC Network Security Interface）は、ネットワーク機器の **セキュリティクレデンシャルを gRPC 経由で安全にローテーションする** ためのマイクロサービス群である[^1]。SONiC では [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（`sonic-gnmi`）と `sonic-mgmt-common` に組み込み、対応する OpenConfig [YANG](../reference/glossary.md#term-yang) モデルを公開する設計[^1]。
 
 主要 4 サービス[^1]:
 
@@ -78,7 +78,7 @@ sequenceDiagram
 
 #### Profile
 
-PKI 群を **SSL profile** 単位で束ねる。デフォルトは `gnxi` プロファイル（gNMI / gNOI / gNSI 自身が使う）[^1]:
+PKI 群を **SSL profile** 単位で束ねる。デフォルトは `gnxi` プロファイル（gNMI / [gNOI](../reference/glossary.md#term-gnoi) / gNSI 自身が使う）[^1]:
 
 | RPC | 用途 |
 |-----|------|
@@ -180,7 +180,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 
 ### gNMI / sonic-gnmi 側のフラグ追加
 
-HLD は gNMI server に以下のフラグを追加する想定[^1]:
+[HLD](../reference/glossary.md#term-hld) は gNMI server に以下のフラグを追加する想定[^1]:
 
 | フラグ | 用途 |
 |-------|------|
@@ -197,7 +197,7 @@ state の保管先として **`STATE_DB`** にプロファイルの freshness / 
 
 ### 関連する CONFIG_DB
 
-CONFIG_DB スキーマの追加は HLD 上「None」[^1]。状態は STATE_DB のみ。
+[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマの追加は HLD 上「None」[^1]。状態は [STATE_DB](../reference/glossary.md#term-state_db) のみ。
 
 ### 関連する CLI
 
@@ -296,3 +296,5 @@ gnsi_client credentialz rotate-account \
 - HLD は 2023-11 v0.1 で 2 年超 Initial、現行 master との大幅乖離リスク
 - openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況
 -->
+
+<!-- glossary-links-injected: bd7e9f303d6c -->

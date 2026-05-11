@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-Traffic Class (TC) を egress queue インデックスへマップする[^1]。`DSCP_TO_TC_MAP` で TC 化された値が、このマップで物理キューに振り分けられる。`qosorch` が SAI map (`SAI_QOS_MAP_TYPE_TC_TO_QUEUE`) を生成し、`PORT_QOS_MAP.tc_to_queue_map` で各ポートに適用する。
+Traffic Class (TC) を egress queue インデックスへマップする[^1]。`DSCP_TO_TC_MAP` で TC 化された値が、このマップで物理キューに振り分けられる。`qosorch` が [SAI](../../reference/glossary.md#term-sai) map (`SAI_QOS_MAP_TYPE_TC_TO_QUEUE`) を生成し、`PORT_QOS_MAP.tc_to_queue_map` で各ポートに適用する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,13 +58,13 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 
 ## 購読者
 
-- `qosorch`: SAI QoS map 生成
+- `qosorch`: SAI [QoS](../../reference/glossary.md#term-qos) map 生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT_QOS_MAP`、`QUEUE`、`DSCP_TO_TC_MAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`、`QUEUE`、`DSCP_TO_TC_MAP`
 - 関連 CLI: なし
-- 関連 YANG: `sonic-tc-queue-map`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-tc-queue-map`
 
 <!-- ref-triangle:start -->
 
@@ -104,3 +104,5 @@ sonic-db-cli CONFIG_DB hgetall 'TC_TO_QUEUE_MAP|AZURE'
 show qos map tc-queue
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 75132586f6c7 -->

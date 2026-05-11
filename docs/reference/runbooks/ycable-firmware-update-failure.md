@@ -34,7 +34,7 @@ related:
 2. **I2C bus 競合**: 同時に複数ポートで download 実行 / pmon が同 I2C を占有
 3. **mux state が `standby` でない**: 一部ベンダは standby 側でのみ activate 可
 4. **電源 / power budget 不足**: download 中の追加電流で reset
-5. **`ycabled` daemon 異常**: STATE_DB `MUX_CABLE_INFO` が更新されない
+5. **`ycabled` daemon 異常**: [STATE_DB](../../reference/glossary.md#term-state_db) `MUX_CABLE_INFO` が更新されない
 
 ## 切り分け手順
 
@@ -91,3 +91,5 @@ docker exec pmon i2cdetect -y <bus>
 
 [^1]: sonic-net/sonic-platform-common @ master — y_cable_base.py
 [^2]: sonic-net/sonic-platform-daemons @ master — ycable.py
+
+<!-- glossary-links-injected: 6981be1a469d -->

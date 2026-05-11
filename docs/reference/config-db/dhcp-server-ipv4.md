@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-組み込み DHCPv4 サーバ機能の VLAN/IF 単位設定を保持する[^1]。`dhcpservd`（`sonic-dhcp-server` パッケージ）が `kea-dhcp4` の設定を生成、起動する。`DEVICE_METADATA.localhost.dhcp_server` で全体有効化が制御される。
+組み込み DHCPv4 サーバ機能の [VLAN](../../reference/glossary.md#term-vlan)/IF 単位設定を保持する[^1]。`dhcpservd`（`sonic-dhcp-server` パッケージ）が `kea-dhcp4` の設定を生成、起動する。`DEVICE_METADATA.localhost.dhcp_server` で全体有効化が制御される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -45,7 +45,7 @@ flowchart LR
 DHCP_SERVER_IPV4|<name>
 ```
 
-`<name>` は VLAN 名 (`Vlan<id>`) または SmartSwitch の bridge 参照 (`MID_PLANE_BRIDGE.GLOBAL.bridge`) の union。
+`<name>` は VLAN 名 (`Vlan<id>`) または [SmartSwitch](../../reference/glossary.md#term-smartswitch) の bridge 参照 (`MID_PLANE_BRIDGE.GLOBAL.bridge`) の union。
 
 ## フィールド一覧
 
@@ -66,7 +66,7 @@ DHCP_SERVER_IPV4|<name>
 - `DHCP_SERVER_IPV4_RANGE|<name>`: アドレスレンジ
 - `DHCP_SERVER_IPV4_IP|<vlan>|<port>`: 静的予約
 
-詳細は YANG モジュール `sonic-dhcp-server-ipv4` を直参照。
+詳細は [YANG](../../reference/glossary.md#term-yang) モジュール `sonic-dhcp-server-ipv4` を直参照。
 
 ## 購読者
 
@@ -75,7 +75,7 @@ DHCP_SERVER_IPV4|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN`、`VLAN_INTERFACE`、`DEVICE_METADATA` (`dhcp_server`)、`DHCP_RELAY` 系
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_INTERFACE`、`DEVICE_METADATA` (`dhcp_server`)、`DHCP_RELAY` 系
 - 関連 CLI: `config dhcp_server ipv4 add/del/range/port`
 - 関連 YANG: `sonic-dhcp-server-ipv4`
 
@@ -118,3 +118,5 @@ sonic-db-cli CONFIG_DB keys 'DHCP_SERVER_IPV4|*'
 show dhcp_server ipv4 info
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 998984a93e58 -->

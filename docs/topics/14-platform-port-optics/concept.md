@@ -21,7 +21,7 @@ keywords:
 
 # 概要
 
-SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。HLD 単位では別物に見えても、CONFIG_DB の `PORT` や `DEVICE_METADATA`、pmon コンテナ内の各 daemon といった共通点があります。
+SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。[HLD](../../reference/glossary.md#term-hld) 単位では別物に見えても、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` や `DEVICE_METADATA`、pmon コンテナ内の各 daemon といった共通点があります。
 
 ## Platform abstraction の層
 
@@ -43,7 +43,7 @@ flowchart LR
   X --> A[APP_DB / STATE_DB]
 ```
 
-ここで重要なのは、port 設定が `PORT` テーブル → PortMgr → orchagent → SAI と一方向に流れる一方で、optics 側の検出や DOM 値は逆向きに STATE_DB へ反映される点です。port 設定の再構成は [port configuration refactor design](../../architecture/sonic-port-configuration-refactor-design.md) にまとまっています。
+ここで重要なのは、port 設定が `PORT` テーブル → PortMgr → [orchagent](../../reference/glossary.md#term-orchagent) → [SAI](../../reference/glossary.md#term-sai) と一方向に流れる一方で、optics 側の検出や DOM 値は逆向きに [STATE_DB](../../reference/glossary.md#term-state_db) へ反映される点です。port 設定の再構成は [port configuration refactor design](../../architecture/sonic-port-configuration-refactor-design.md) にまとまっています。
 
 ## 「ポート」とは何のことか
 
@@ -52,13 +52,13 @@ SONiC で「ポート」と言ったとき、対象は文脈で変わります�
 - `PORT` テーブルの行: 名前 (`Ethernet0` など)、speed、lanes、auto-neg、FEC、admin/oper status を持つ論理単位。
 - 物理ケージ / モジュール: SFP / QSFP / OSFP のスロット。breakout で 1 ケージから複数 `PORT` が生える。
 - SAI port object: ASIC 側の port object ID。
-- PHY / Gearbox port: NPU と optics の間に挟まる PHY デバイスのチャネル。
+- PHY / Gearbox port: [NPU](../../reference/glossary.md#term-npu) と optics の間に挟まる PHY デバイスのチャネル。
 
 スキーマ詳細は [PORT テーブル](../../reference/config-db/port.md) と [sonic-port YANG](../../reference/yang/sonic-port.md) が一次資料です。
 
 ## 装置 health の系統
 
-ポートの上下とは独立に、装置側の状態 (thermal、PSU、fan、SSD、PCIe、BMC) も常時監視されます。これらは pmon コンテナ内の各 daemon が STATE_DB を更新し、CLI / SNMP / Redfish が同じ DB を見ます。port 章と切り離しても良いように見えますが、thermal shutdown は port を強制 down させるため、運用上は同じ章で読むのが楽です。
+ポートの上下とは独立に、装置側の状態 (thermal、PSU、fan、SSD、PCIe、BMC) も常時監視されます。これらは pmon コンテナ内の各 daemon が STATE_DB を更新し、CLI / [SNMP](../../reference/glossary.md#term-snmp) / Redfish が同じ DB を見ます。port 章と切り離しても良いように見えますが、thermal shutdown は port を強制 down させるため、運用上は同じ章で読むのが楽です。
 
 ## まず読み手の質問に答える
 
@@ -122,7 +122,7 @@ flowchart TB
 - **`xcvrd`**: Transceiver daemon。SFP/QSFP/OSFP の EEPROM 読み出し、CMIS state machine、DOM 監視、PM（performance monitoring）を STATE_DB に書く。
 - **PortMgr / `portsyncd`**: CONFIG_DB の `PORT` を読んで APP_DB に流す側と、Linux netdev 状態を APP_DB に同期する側。
 - **PortOrch**: orchagent 内の port object responsible。SAI port を生成 / 設定する。
-- **port_config.ini**: HwSKU ごとの port lane / speed の初期マップ。CONFIG_DB が無い起動初期に PortMgr が参照する。
+- **[port_config.ini](../../reference/glossary.md#term-port-config-ini)**: HwSKU ごとの port lane / speed の初期マップ。CONFIG_DB が無い起動初期に PortMgr が参照する。
 - **breakout**: 1 物理ケージから複数 `PORT` を生やす機能（例 400G OSFP → 4×100G）。
 - **CMIS**: Common Management Interface Specification（OIF）。400G/800G 世代の optics 標準。state machine を `xcvrd` が回す。
 - **DOM**: Digital Optical Monitoring。Tx/Rx power、温度、Vcc、bias current。
@@ -159,8 +159,8 @@ sequenceDiagram
 
 | 比較対象 | この章との違い |
 | --- | --- |
-| [QoS / Buffer](../08-qos-buffer/index.md) | ポート上のキュー・バッファ・FEC は QoS 章。物理層の存在そのものはこの章 |
-| [ACL / CoPP](../07-acl-copp-mirror/index.md) | ACL は port を入力として参照するが、port 定義そのものはこの章 |
+| [QoS / Buffer](../08-qos-buffer/index.md) | ポート上のキュー・バッファ・FEC は [QoS](../../reference/glossary.md#term-qos) 章。物理層の存在そのものはこの章 |
+| [ACL / CoPP](../07-acl-copp-mirror/index.md) | [ACL](../../reference/glossary.md#term-acl) は port を入力として参照するが、port 定義そのものはこの章 |
 | [Dual-ToR](../05-dual-tor/index.md) | Y-Cable の状態管理は xcvrd 側だがロジックは Dual-ToR で、ここでは「Y-Cable はそういうモジュールがある」までを扱う |
 | [Reboot / Lifecycle](../11-reboot/index.md) | warm reboot 時の port flap 回避は reboot 章。port のフロー定義はこの章 |
 | [SWSS / SAI / Redis](../20-swss-sai-redis/index.md) | SAI そのものの抽象は 20 章。ここでは port object 周りの SAI 属性に絞る |
@@ -187,3 +187,4 @@ sequenceDiagram
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
+<!-- glossary-links-injected: d1d326fff20e -->

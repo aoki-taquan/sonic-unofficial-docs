@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-VLAN とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で `vlanmgrd` が Linux bridge にメンバを add し、`orchagent` が SAI VLAN member を生成する[^1]。
+[VLAN](../../reference/glossary.md#term-vlan) とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で `vlanmgrd` が Linux bridge にメンバを add し、`orchagent` が [SAI](../../reference/glossary.md#term-sai) VLAN member を生成する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `name` (key) | leafref `VLAN.name` | ✅ | - | 親 VLAN |
-| `port` (key) | leafref `PORT.name` \| `PORTCHANNEL.name` | ✅ | - | メンバポート / LAG |
+| `port` (key) | leafref `PORT.name` \| `PORTCHANNEL.name` | ✅ | - | メンバポート / [LAG](../../reference/glossary.md#term-lag) |
 | `tagging_mode` | `vlan_tagging_mode` (`tagged`/`untagged`/`priority_tagged`) | ✅ | - | タグ付与モード |
 
 ## 制約 (must)
@@ -76,9 +76,9 @@ VLAN_MEMBER|<vlan_name>|<port>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN`、`PORT`、`PORTCHANNEL`、`PORTCHANNEL_MEMBER`、`INTERFACE`、`MIRROR_SESSION`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`PORT`、`PORTCHANNEL`、`PORTCHANNEL_MEMBER`、`INTERFACE`、`MIRROR_SESSION`
 - 関連 CLI: `config vlan member add/del`
-- 関連 YANG: `sonic-vlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
 <!-- ref-triangle:start -->
 
@@ -117,7 +117,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 ### よくある誤設定
 
 - `tagging_mode: untagged` を 1 ポート上の複数 VLAN に重複指定すると先勝ちで残りが silently 反映されない。
-- PortChannel メンバを VLAN_MEMBER に直付けすると L2 が壊れる。LAG 親 (`PortChannelN`) を入れる。
+- [PortChannel](../../reference/glossary.md#term-portchannel) メンバを VLAN_MEMBER に直付けすると L2 が壊れる。LAG 親 (`PortChannelN`) を入れる。
 
 ### 確認コマンド
 
@@ -126,3 +126,5 @@ sonic-db-cli CONFIG_DB hgetall 'VLAN_MEMBER|Vlan100|Ethernet0'
 show vlan brief
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 55a84469f079 -->

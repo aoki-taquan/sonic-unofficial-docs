@@ -29,16 +29,16 @@ related:
 
 ## 読み手が知りたいこと
 
-- 通常 ECMP では何が問題で、なぜリンク帯域に応じた重み付けが要るのか
+- 通常 [ECMP](../reference/glossary.md#term-ecmp) では何が問題で、なぜリンク帯域に応じた重み付けが要るのか
 - WCMP の重みは何で運ばれ、どこで NHG member weight に変換されるか
-- SONiC 側で増えるのは CONFIG_DB のどのキーか、SWSS/SAI に変更があるか
-- EVPN Type-5 や warm-boot の扱い
+- SONiC 側で増えるのは [CONFIG_DB](../reference/glossary.md#term-config_db) のどのキーか、SWSS/[SAI](../reference/glossary.md#term-sai) に変更があるか
+- [EVPN](../reference/glossary.md#term-evpn) Type-5 や warm-boot の扱い
 
 ## なぜ通常 ECMP では足りないか
 
-各 ToR-Spine リンクが部分故障した際、通常 ECMP は **生存リンクの容量差を反映できず** 均等分散して輻輳する。**WCMP** は **BGP link bandwidth 拡張コミュニティ** で各 path の利用可能帯域を運び、FRR / Zebra が 1〜255 に正規化した weight で NHG member を作る[^1]。
+各 ToR-Spine リンクが部分故障した際、通常 ECMP は **生存リンクの容量差を反映できず** 均等分散して輻輳する。**WCMP** は **[BGP](../reference/glossary.md#term-bgp) link bandwidth 拡張コミュニティ** で各 path の利用可能帯域を運び、[FRR](../reference/glossary.md#term-frr) / Zebra が 1〜255 に正規化した weight で NHG member を作る[^1]。
 
-本 HLD のスコープは **L3 用途のみ**。EVPN Type-5 は **Out of scope**[^1]。SWSS / SAI は既に NHG member weight をサポートしているので **SWSS OA は変更不要**[^1]。
+本 [HLD](../reference/glossary.md#term-hld) のスコープは **L3 用途のみ**。EVPN Type-5 は **Out of scope**[^1]。SWSS / SAI は既に NHG member weight をサポートしているので **SWSS OA は変更不要**[^1]。
 
 ## データフロー
 
@@ -56,7 +56,7 @@ flowchart LR
 
 - 入口 ToR が `route-map` で `set extcommunity bandwidth num-multipaths` を付与[^1]
 - 受信 BGP は default で **link bandwidth ext community を weight に変換**。一部 path が community を持たないと **通常 ECMP に fallback**
-- Zebra が NHG 再計算 → fpmsyncd → Route OA → SAI
+- Zebra が NHG 再計算 → [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → Route OA → SAI
 
 ### Weight 正規化
 
@@ -162,3 +162,5 @@ Disabled   Enabled
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 29ef3e805678 -->

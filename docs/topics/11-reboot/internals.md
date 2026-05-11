@@ -37,11 +37,11 @@ flowchart TB
 | `scripts/fast-reboot` / `scripts/warm-reboot` | bash + python | reboot 種別ごとの前準備、kexec / BMC reboot / 通常 reboot の選択 |
 | `warmboot-finalizer` (`scripts/warmboot-finalizer`) | service | 各コンポーネント reconcile 完了通知を集約し、warm-reboot を最終確定 |
 | `config-setup` | systemd service | 起動時の `factory` / `migrate` / `boot` を mode 切替で処理（→ 01 章） |
-| `db_migrator` (`fast-reboot-dump.py` ではなく `db_migrator.py`) | python | CONFIG_DB の schema migration（古い key を新形式へ） |
+| `db_migrator` (`fast-reboot-dump.py` ではなく `db_migrator.py`) | python | [CONFIG_DB](../../reference/glossary.md#term-config_db) の schema migration（古い key を新形式へ） |
 | `swss` warm-restart | `orchagent::warm-start` framework | `WarmStart::isWarmStart()`、`WarmStart::setWarmStartState()` で状態管理 |
-| `syncd` warm-restart | `syncd/syncd.cpp` の WARM モード | ASIC 状態は触らず、`ASIC_DB` の view と SAI obj を再同期 |
-| `bgp` warm-restart | FRR (`bgpd` の graceful restart) | helper / restarter で advertise を維持 |
-| `teamd` warm-restart | teamd graceful | LACP セッションを切らずに保持 |
+| `syncd` warm-restart | `syncd/syncd.cpp` の WARM モード | ASIC 状態は触らず、`ASIC_DB` の view と [SAI](../../reference/glossary.md#term-sai) obj を再同期 |
+| `bgp` warm-restart | [FRR](../../reference/glossary.md#term-frr) (`bgpd` の graceful restart) | helper / restarter で advertise を維持 |
+| `teamd` warm-restart | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) graceful | [LACP](../../reference/glossary.md#term-lacp) セッションを切らずに保持 |
 
 ## STATE_DB の warm-restart テーブル
 
@@ -70,17 +70,17 @@ STATE_DB:WARM_RESTART_TABLE|<comp>
 
 ## ZMQ / Redis pub/sub
 
-- warm-restart の進捗通知は **STATE_DB の通常 key + Redis pub/sub** で実装され、ZMQ は使いません。
+- warm-restart の進捗通知は **[STATE_DB](../../reference/glossary.md#term-state_db) の通常 key + [Redis](../../reference/glossary.md#term-redis) pub/sub** で実装され、ZMQ は使いません。
 - `warmboot-finalizer` は `STATE_DB:WARM_RESTART_TABLE|*` を subscribe して全件 reconciled を検知します。
-- BGP は FRR 内で graceful restart の制御を行い、SONiC 側は `WARM_RESTART_TABLE|bgp` の状態だけを更新します。
+- [BGP](../../reference/glossary.md#term-bgp) は FRR 内で graceful restart の制御を行い、SONiC 側は `WARM_RESTART_TABLE|bgp` の状態だけを更新します。
 
 ## 既知の実装上の制約
 
 - **warm-reboot は ASIC の SDK が warm boot をサポートしている前提**で、Edgecore / NVIDIA Mellanox / Broadcom SAI で動作する一方、新しい SoC 上の port speed 変化や FW upgrade を含む変更は warm でカバーできません。fast-reboot にフォールバックする選択肢を運用で持つ必要があります。
 - `db_migrator` の migration は前進方向のみで、新版 → 旧版の downgrade migration は基本サポートされません（image rollback 時は startup config を別途準備する運用です）。
-- warmboot 中の **`CONFIG_DB` への書き込み禁止**は厳密で、`gnmi SET` や `config` CLI が走ると orchagent 復元中に整合性が崩れます。warm-reboot 中の write は管理側でブロックしてください。
+- warmboot 中の **`CONFIG_DB` への書き込み禁止**は厳密で、`gnmi SET` や `config` CLI が走ると [orchagent](../../reference/glossary.md#term-orchagent) 復元中に整合性が崩れます。warm-reboot 中の write は管理側でブロックしてください。
 - `fast-reboot` は data plane が ~30s 切れる前提で設計されており、warm-reboot より要求 SAI 機能が少なく対応 ASIC が広い一方、BGP の収束待ちが入ります。
-- ONIE / image install 系（`sonic-installer`）は SONiC の docker image を持ち回るためサイズが大きく、`/host` パーティションの空き容量が問題になりやすいです。HLD の `image dir 構造`を運用で意識する必要があります。
+- ONIE / image install 系（`sonic-installer`）は SONiC の docker image を持ち回るためサイズが大きく、`/host` パーティションの空き容量が問題になりやすいです。[HLD](../../reference/glossary.md#term-hld) の `image dir 構造`を運用で意識する必要があります。
 
 ## fast-reboot タイムライン
 
@@ -102,7 +102,7 @@ sequenceDiagram
   BGP->>BGP: graceful restart (re-establish peers)
 ```
 
-`scripts/fast-reboot-dump.py` が ASIC/FDB の dump を取り、`/host/fast-reboot/` に保存します。新 image 起動後の `fast-reboot-finalizer` が dump と比較して route / neighbor の差分を打ち消します。
+`scripts/fast-reboot-dump.py` が ASIC/[FDB](../../reference/glossary.md#term-fdb) の dump を取り、`/host/fast-reboot/` に保存します。新 image 起動後の `fast-reboot-finalizer` が dump と比較して route / neighbor の差分を打ち消します。
 
 ## sonic-installer の内部
 
@@ -125,3 +125,5 @@ sequenceDiagram
 - [SWSS docker warm restart](../../system/sonic-swss-docker-warm-restart.md)
 - [Config setup](../../system/sonic-configuration-setup-service.md)
 - [SONiC upgrade](./upgrade.md)
+
+<!-- glossary-links-injected: f2120391923d -->

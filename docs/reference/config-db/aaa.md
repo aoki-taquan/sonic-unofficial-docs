@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を CONFIG_DB に保持するテーブル[^1]。`hostcfgd` の AAA ハンドラが読み出し、Linux PAM (`/etc/pam.d/common-auth`, `/etc/pam.d/sshd` 等) と nsswitch / sshd 設定を再生成する。
+ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み出し、Linux PAM (`/etc/pam.d/common-auth`, `/etc/pam.d/sshd` 等) と nsswitch / sshd 設定を再生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -73,7 +73,7 @@ AAA|<type>
 
 - 関連 CONFIG_DB: [`TACPLUS_SERVER`](tacplus-server.md), [`RADIUS`](radius.md), [`LDAP_SERVER`](ldap-server.md)
 - 関連 CLI: `config aaa authentication { login | failthrough | fallback | debug | trace }`
-- 関連 YANG: `sonic-system-aaa`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-aaa`
 
 <!-- ref-triangle:start -->
 
@@ -112,3 +112,5 @@ sonic-db-cli CONFIG_DB hgetall 'AAA|authentication'
 show aaa
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->

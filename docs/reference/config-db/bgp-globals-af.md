@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`BGP_GLOBALS_AF` は `BGP_GLOBALS` の VRF ごとに、address-family / subsequent address-family 単位の BGP 設定を保持する CONFIG_DB テーブル。multipath、VRF import、route download filter、distance、route flap dampening、EVPN/VXLAN 関連フラグを扱う[^1]。派生テーブルとして、aggregate-address を定義する `BGP_GLOBALS_AF_AGGREGATE_ADDR` と、network statement を定義する `BGP_GLOBALS_AF_NETWORK` がある。実装側のテーブル名定数は `schema.h` も参照する[^2]。
+`BGP_GLOBALS_AF` は `BGP_GLOBALS` の [VRF](../../reference/glossary.md#term-vrf) ごとに、address-family / subsequent address-family 単位の [BGP](../../reference/glossary.md#term-bgp) 設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。multipath、VRF import、route download filter、distance、route flap dampening、[EVPN](../../reference/glossary.md#term-evpn)/[VXLAN](../../reference/glossary.md#term-vxlan) 関連フラグを扱う[^1]。派生テーブルとして、aggregate-address を定義する `BGP_GLOBALS_AF_AGGREGATE_ADDR` と、network statement を定義する `BGP_GLOBALS_AF_NETWORK` がある。実装側のテーブル名定数は `schema.h` も参照する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -102,7 +102,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 購読者
 
-- `bgpcfgd`: CONFIG_DB の BGP global AF 設定を FRR address-family 設定へ変換する。
+- `bgpcfgd`: CONFIG_DB の BGP global AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する。
 - `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに generic BGP model として処理する。
 - `bgpd` (FRR): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。
 
@@ -110,7 +110,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 - 関連 CONFIG_DB: `BGP_GLOBALS`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`、`ROUTE_MAP_SET`、`VRF`
 - 関連 CLI: `config bgp`
-- 関連 YANG: `sonic-bgp-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
@@ -132,7 +132,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 ### 典型値
 
 - key 形式: `BGP_GLOBALS_AF|<vrf>|<af>` (af = `ipv4_unicast` / `ipv6_unicast` / `l2vpn_evpn` 等)`。
-- `max_ebgp_paths` / `max_ibgp_paths`: 64（ECMP 上限）。`network_import_check`: `true`。
+- `max_ebgp_paths` / `max_ibgp_paths`: 64（[ECMP](../../reference/glossary.md#term-ecmp) 上限）。`network_import_check`: `true`。
 
 ### よくある誤設定
 
@@ -145,3 +145,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF|*'
 vtysh -c 'show bgp l2vpn evpn summary'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a2e09729dbfd -->

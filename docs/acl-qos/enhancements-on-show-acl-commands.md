@@ -30,14 +30,14 @@ related:
 
 ## これは何か（一行で）
 
-ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを `show acl table` / `show acl rule` の **`Status` 列**（Active / Inactive）で見えるようにする[^1]。
+[ACL](../reference/glossary.md#term-acl) 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを `show acl table` / `show acl rule` の **`Status` 列**（Active / Inactive）で見えるようにする[^1]。
 
 ## どんなときに使うか
 
 - 投入は通っているのに、`acl` が効いてない（trap されない / hit カウンタが上がらない）ときの一次切り分け
 - 大量 ACL を入れた直後に「どこまで反映されたか」を一目で見たい
 
-本機能は **データプレーン ACL 専用**。コントロールプレーン ACL は別 HLD[^1]。
+本機能は **データプレーン ACL 専用**。コントロールプレーン ACL は別 [HLD](../reference/glossary.md#term-hld)[^1]。
 
 ## 旧フロー vs 新フロー
 
@@ -58,7 +58,7 @@ flowchart TB
     end
 ```
 
-設定経路（add/update/delete）は変えず、`aclorch` が SAI 戻り値で STATE_DB を Active / Inactive に更新する。`show` 側は CONFIG_DB と STATE_DB を join する[^1]。
+設定経路（add/update/delete）は変えず、`aclorch` が [SAI](../reference/glossary.md#term-sai) 戻り値で [STATE_DB](../reference/glossary.md#term-state_db) を Active / Inactive に更新する。`show` 側は [CONFIG_DB](../reference/glossary.md#term-config_db) と STATE_DB を join する[^1]。
 
 ## STATE_DB スキーマ
 
@@ -133,7 +133,7 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 ## 対象外・制限
 
 - **データプレーン ACL のみ**。コントロールプレーン ACL は別 HLD[^1]
-- **PFC / dual-ToR Mux handler が内部生成する ACL は対象外**（CONFIG_DB に対応行が無いため join できない）[^1]
+- **[PFC](../reference/glossary.md#term-pfc) / dual-ToR Mux handler が内部生成する ACL は対象外**（CONFIG_DB に対応行が無いため join できない）[^1]
 - `Status` 値は `Active` / `Inactive` の 2 値のみ。失敗理由の詳細は syslog 参照
 - **warm/fast boot を跨いで保持しない**。boot 後に `aclorch` が再書きするため追加の影響は無い[^1]
 
@@ -142,7 +142,7 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 - **`aclorch`**: 主要変更箇所。SAI 戻り値の解釈と STATE_DB 反映が追加
 - **`acl-loader`**: 投入後の確認が CLI ベースになり、自動化が書きやすい
 - **PFC / dual-ToR Mux**: 内部生成 ACL は出ない（運用上の混乱要注意）
-- **sonic-mgmt 既存テスト**: syslog 監視ベースから新 CLI ベースへ移行可能[^1]
+- **[sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) 既存テスト**: syslog 監視ベースから新 CLI ベースへ移行可能[^1]
 
 ## トラブルシューティング
 
@@ -177,3 +177,5 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 25f52bcfe718 -->

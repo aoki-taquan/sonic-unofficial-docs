@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-T0 上で SONiC sFlow 機能を機能検証するテスト[^1]。4 PortChannel から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。`sflowtool` を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。
+T0 上で SONiC sFlow 機能を機能検証するテスト[^1]。4 [PortChannel](../reference/glossary.md#term-portchannel) から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。`sflowtool` を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。
 
 ## 動作仕様
 
@@ -107,7 +107,7 @@ show sflow interface
 ## 干渉する機能
 
 - **`hsflowd` ホストデーモン**: `SFLOW*` テーブルを実装する中核
-- **CONFIG_DB / sonic-utilities**: テスト対象 CLI が依存
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) / [sonic-utilities](../reference/glossary.md#term-sonic-utilities)**: テスト対象 CLI が依存
 - **fast/warm-reboot**: 永続化テストが対象
 
 ## 引用元
@@ -120,3 +120,5 @@ show sflow interface
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 88356dc40f25 -->

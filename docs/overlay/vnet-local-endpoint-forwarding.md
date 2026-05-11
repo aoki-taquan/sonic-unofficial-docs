@@ -29,10 +29,10 @@ related:
 
 ## なぜ必要か
 
-Smart Switch（NPU + 複数 DPU）の HA では NPU から **local DPU** / **remote DPU** へパケットを送り分ける。全体像は `smart-switch-ha-hld.md` の 4.2 節（data path HA）が担い、本ページはその上で 2 つの最適化を定義する小さな拡張[^1]:
+Smart Switch（[NPU](../reference/glossary.md#term-npu) + 複数 [DPU](../reference/glossary.md#term-dpu)）の HA では NPU から **local DPU** / **remote DPU** へパケットを送り分ける。全体像は `smart-switch-ha-hld.md` の 4.2 節（data path HA）が担い、本ページはその上で 2 つの最適化を定義する小さな拡張[^1]:
 
-1. **directly connected nexthop**: local DPU が NPU から直結（ARP で見える）なら tunnel route ではなく **通常の ECMP route** で扱う。
-2. **failover transient state のドロップ防止**: failover の瞬間に **high-priority ACL** で `TUNNEL_TERM` を見て必ず **local nexthop** にリダイレクトする。
+1. **directly connected nexthop**: local DPU が NPU から直結（[ARP](../reference/glossary.md#term-arp) で見える）なら tunnel route ではなく **通常の [ECMP](../reference/glossary.md#term-ecmp) route** で扱う。
+2. **failover transient state のドロップ防止**: failover の瞬間に **high-priority [ACL](../reference/glossary.md#term-acl)** で `TUNNEL_TERM` を見て必ず **local nexthop** にリダイレクトする。
 
 ## どう動くか
 
@@ -47,7 +47,7 @@ field = check_directly_connected = BOOLEAN  (optional)
 
 `true` の場合、`VnetOrch` は ARP テーブルを引いて directly connected か確認する:
 
-- 直結なら tunnel route ではなく **通常 ECMP route**（VxLAN ECMP と同じく BFD liveness に追従[^1]）
+- 直結なら tunnel route ではなく **通常 ECMP route**（VxLAN ECMP と同じく [BFD](../reference/glossary.md#term-bfd) liveness に追従[^1]）
 - そうでなければ従来どおり tunnel route
 
 ```mermaid
@@ -83,7 +83,7 @@ flowchart LR
 |------------|------|
 | `hamgrd` | HA 状態管理。`VNET_ROUTE_TUNNEL_TABLE` 書き込み源 |
 | `VnetOrch` | tunnel nexthop 作成、ARP 確認、ACL 投入の起点 |
-| `VxlanTunnelOrch` | tunnel nexthop の SAI 投入 |
+| `VxlanTunnelOrch` | tunnel nexthop の [SAI](../reference/glossary.md#term-sai) 投入 |
 | `IntfOrch` | local endpoint interface alias の解決 |
 | `AclOrch` | ACL を SAI に降ろす |
 
@@ -153,7 +153,7 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 
 ### CLI / YANG
 
-直接の CLI / YANG は HLD 内に定義なし。Smart Switch / HA 管理 CLI 経由で `VNET_ROUTE_TUNNEL_TABLE` が更新される運用前提。
+直接の CLI / [YANG](../reference/glossary.md#term-yang) は [HLD](../reference/glossary.md#term-hld) 内に定義なし。Smart Switch / HA 管理 CLI 経由で `VNET_ROUTE_TUNNEL_TABLE` が更新される運用前提。
 
 ## 制限事項
 
@@ -187,3 +187,5 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 4dc7b054596d -->

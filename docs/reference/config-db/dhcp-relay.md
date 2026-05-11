@@ -22,9 +22,9 @@ related:
 
 ## 概要
 
-**DHCPv6 relay agent** の VLAN インタフェース単位設定を保持する CONFIG_DB テーブル[^1]。`dhcp6relay` プロセス (sonic-dhcp-relay リポ) が CONFIG_DB から読み、IPv6 リレー対象 VLAN と上流サーバを構築する。
+**DHCPv6 relay agent** の [VLAN](../../reference/glossary.md#term-vlan) インタフェース単位設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`dhcp6relay` プロセス (sonic-dhcp-relay リポ) が CONFIG_DB から読み、IPv6 リレー対象 VLAN と上流サーバを構築する。
 
-> 注: 名前は単に `DHCP_RELAY` だが、YANG モジュール名 `sonic-dhcpv6-relay` の通り **IPv6 リレー専用**。IPv4 リレーは `VLAN` テーブルの `dhcp_servers` フィールド（旧仕様）または `DHCP_SERVER_IPV4` (新仕様の DHCP サーバ機能) を参照。
+> 注: 名前は単に `DHCP_RELAY` だが、[YANG](../../reference/glossary.md#term-yang) モジュール名 `sonic-dhcpv6-relay` の通り **IPv6 リレー専用**。IPv4 リレーは `VLAN` テーブルの `dhcp_servers` フィールド（旧仕様）または `DHCP_SERVER_IPV4` (新仕様の DHCP サーバ機能) を参照。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
 show dhcprelay_helper ipv4
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 30c76eee774c -->

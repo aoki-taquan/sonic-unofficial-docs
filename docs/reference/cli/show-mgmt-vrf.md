@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`show mgmt-vrf` は管理 VRF (`mgmt`) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。`invoke_without_command=True` の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている[^1]。
+`show mgmt-vrf` は管理 [VRF](../../reference/glossary.md#term-vrf) (`mgmt`) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。`invoke_without_command=True` の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている[^1]。
 
 ## コマンド一覧
 
@@ -46,7 +46,7 @@ show mgmt-vrf [routes]
 
 **動作**:
 
-1. `is_mgmt_vrf_enabled(ctx)` で CONFIG_DB の `MGMT_VRF_CONFIG` を参照し、`mgmtVrfEnabled` が false の場合は `ManagementVRF : Disabled` を表示して終了
+1. `is_mgmt_vrf_enabled(ctx)` で [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MGMT_VRF_CONFIG` を参照し、`mgmtVrfEnabled` が false の場合は `ManagementVRF : Disabled` を表示して終了
 2. `routes` 引数なしで有効な場合: `ManagementVRF : Enabled` を表示し、`ip -d link show mgmt` と `ip link show vrf mgmt` を続けて実行
 3. `routes` 引数ありで有効な場合: `ip route show table 6000` を実行（管理 VRF 専用 routing table の固定 ID）
 
@@ -119,7 +119,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- YANG: `sonic-mgmt-vrf`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-mgmt-vrf`
 - CONFIG_DB: [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
 
 <!-- ref-triangle:end -->
@@ -132,3 +132,5 @@ flowchart LR
 
 - [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
 - [reference/CLI: show ip](show-ip.md)
+
+<!-- glossary-links-injected: a6c6612be307 -->

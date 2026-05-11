@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-VRF 単位の BGP 全体パラメータ（router-id、local AS、graceful restart、route reflector、bestpath 比較ルール、confederation、keepalive/holdtime、max-med、max delay 等）を保持する[^1]。`bgpcfgd` または `frr-mgmt-framework` が読み出し、FRR の `router bgp <asn> vrf <vrf>` ブロックに反映する。`BGP_GLOBALS_AF` / `BGP_GLOBALS_AF_AGGREGATE_ADDR` / `BGP_GLOBALS_AF_NETWORK` がアドレスファミリ依存の設定を持つ。
+[VRF](../../reference/glossary.md#term-vrf) 単位の [BGP](../../reference/glossary.md#term-bgp) 全体パラメータ（router-id、local AS、graceful restart、route reflector、bestpath 比較ルール、confederation、keepalive/holdtime、max-med、max delay 等）を保持する[^1]。`bgpcfgd` または `frr-mgmt-framework` が読み出し、[FRR](../../reference/glossary.md#term-frr) の `router bgp <asn> vrf <vrf>` ブロックに反映する。`BGP_GLOBALS_AF` / `BGP_GLOBALS_AF_AGGREGATE_ADDR` / `BGP_GLOBALS_AF_NETWORK` がアドレスファミリ依存の設定を持つ。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,7 +55,7 @@ BGP_GLOBALS|<vrf_name>
 | `router_id` | ipv4-address | - | BGP router-id |
 | `local_asn` | uint32 (1..2^32-1) | - | local AS |
 | `always_compare_med` | boolean | - | 異なる隣接からの MED を比較 |
-| `load_balance_mp_relax` | boolean | - | multipath-relax (AS path 異なる ECMP 許容) |
+| `load_balance_mp_relax` | boolean | - | multipath-relax (AS path 異なる [ECMP](../../reference/glossary.md#term-ecmp) 許容) |
 | `graceful_restart_enable` | boolean | - | GR 有効化 |
 | `gr_preserve_fw_state` | boolean | - | F-bit 設定 |
 | `gr_restart_time` | uint16 (1..3600) | - | restart timer |
@@ -109,14 +109,14 @@ BGP_GLOBALS|<vrf_name>
 
 ## 購読者
 
-- `bgpcfgd` / `frr-mgmt-framework`: CONFIG_DB → vtysh / FRR config に変換
+- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh / FRR config に変換
 - `bgpd` (FRR)
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_NEIGHBOR`、`BGP_DEVICE_GLOBAL`、`BGP_AGGREGATE_ADDRESS`、`VRF`、`ROUTE_MAP_SET`
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)
-- 関連 YANG: `sonic-bgp-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
@@ -159,3 +159,5 @@ show ip bgp summary
 vtysh -c 'show running-config bgpd'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 35efc0f6df25 -->

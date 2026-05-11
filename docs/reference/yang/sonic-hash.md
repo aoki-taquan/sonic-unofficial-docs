@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-hash`
 
-ECMP および LAG パケットハッシングに使用するフィールドとアルゴリズムをグローバルに指定する YANG モジュール[^1]。
+[ECMP](../../reference/glossary.md#term-ecmp) および [LAG](../../reference/glossary.md#term-lag) パケットハッシングに使用するフィールドとアルゴリズムをグローバルに指定する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -78,7 +78,7 @@ module: sonic-hash
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SWITCH_HASH|GLOBAL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SWITCH_HASH|GLOBAL`
 - CLI: `config switch-hash`
 
 <!-- ref-triangle:start -->
@@ -95,7 +95,7 @@ module: sonic-hash
 
 ### 典型的なデプロイ位置
 
-- ECMP / LAG hash 設定。`SWITCH_HASH|GLOBAL` を switchorch が SAI hash 属性へ反映。
+- ECMP / LAG hash 設定。`SWITCH_HASH|GLOBAL` を switchorch が [SAI](../../reference/glossary.md#term-sai) hash 属性へ反映。
 
 ### よくある落とし穴
 
@@ -112,3 +112,5 @@ show switch-hash global
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-hash.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: a4763c04a26b -->

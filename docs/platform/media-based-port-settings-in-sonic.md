@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-vendor / media type / cable length ごとに **異なる SerDes 設定**（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、**`media_settings.json`** を vendor が提供し xcvrd 経由で APPL_DB → PortsOrch → SAI に橋渡しする仕組み[^1]。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため **opt-in**。
+vendor / media type / cable length ごとに **異なる SerDes 設定**（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、**`media_settings.json`** を vendor が提供し xcvrd 経由で [APPL_DB](../reference/glossary.md#term-appl_db) → PortsOrch → [SAI](../reference/glossary.md#term-sai) に橋渡しする仕組み[^1]。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため **opt-in**。
 
 ## 動作仕様
 
@@ -43,7 +43,7 @@ flowchart LR
   SAI --> HW[(ASIC SerDes)]
 ```
 
-xcvrd が media insert event で **(media key, vendor key, lane)** を構成し、`media_settings.json` を検索 → 一致した key/value を APPL_DB の `PORT_TABLE:<port>` に書き込む[^1]。PortsOrch が SAI 属性に変換して syncd 経由で HW に program。
+xcvrd が media insert event で **(media key, vendor key, lane)** を構成し、`media_settings.json` を検索 → 一致した key/value を APPL_DB の `PORT_TABLE:<port>` に書き込む[^1]。PortsOrch が SAI 属性に変換して [syncd](../reference/glossary.md#term-syncd) 経由で HW に program。
 
 ### File の所在と必要性
 
@@ -152,7 +152,7 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 
 ## CLI / CONFIG_DB / YANG
 
-CLI / CONFIG_DB / YANG への追加は無し[^1]。`media_settings.json` は image build 時に platform tree に同梱される静的 file。
+CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への追加は無し[^1]。`media_settings.json` は image build 時に platform tree に同梱される静的 file。
 
 ## 制限事項
 
@@ -163,7 +163,7 @@ CLI / CONFIG_DB / YANG への追加は無し[^1]。`media_settings.json` は ima
 
 ## 干渉する機能
 
-- **xcvrd**（platform monitor / pmon enhancement HLD と密接連携）
+- **xcvrd**（platform monitor / pmon enhancement [HLD](../reference/glossary.md#term-hld) と密接連携）
 - **PortsOrch**（`SAI_PORT_SERDES_*` 属性 set）
 - **Dynamic Port Breakout**: 通常 reboot シーケンス相当として処理
 - **gearbox / port-link-training**: 同じく serdes 系設定との潜在競合
@@ -193,3 +193,5 @@ CLI / CONFIG_DB / YANG への追加は無し[^1]。`media_settings.json` は ima
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5e92b35b3616 -->

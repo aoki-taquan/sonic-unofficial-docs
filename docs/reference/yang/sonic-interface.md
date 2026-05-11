@@ -24,7 +24,7 @@ related:
 - import: `ietf-yang-types`, `sonic-types`, `sonic-port`, `sonic-vrf`, `sonic-vnet`
 - top container: `sonic-interface`
 
-Physical Ethernet interface L3 configuration including IP addressing, VRF binding, and NAT zones[^1]
+Physical Ethernet interface L3 configuration including IP addressing, [VRF](../../reference/glossary.md#term-vrf) binding, and [NAT](../../reference/glossary.md#term-nat) zones[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -70,9 +70,9 @@ module: sonic-interface
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-interface/INTERFACE/INTERFACE_LIST/name` | `leafref` | yes |  | /port:sonic-port/port:PORT/port:PORT_LIST/port:name | Reference to a physical Ethernet port |
 | `vrf_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name | VRF instance to which this interface is bound |
-| `vnet_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
+| `vnet_name` | `sonic-interface/INTERFACE/INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
 | `nat_zone` | `sonic-interface/INTERFACE/INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | NAT Zone for the interface |
-| `mpls` | `sonic-interface/INTERFACE/INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable MPLS routing for the interface |
+| `mpls` | `sonic-interface/INTERFACE/INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the interface |
 | `ipv6_use_link_local_only` | `sonic-interface/INTERFACE/INTERFACE_LIST/ipv6_use_link_local_only` | `stypes:mode-status` |  | disable |  | Enable/Disable IPv6 link local address on interface |
 | `mac_addr` | `sonic-interface/INTERFACE/INTERFACE_LIST/mac_addr` | `yang:mac-address` |  |  |  | Assign administrator-provided MAC address to Interface |
 | `loopback_action` | `sonic-interface/INTERFACE/INTERFACE_LIST/loopback_action` | `stypes:loopback_action` |  |  |  | Packet action when a packet ingress and gets routed on the same IP interface |
@@ -94,7 +94,7 @@ module: sonic-interface
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `INTERFACE`
 - CLI: `config interface`
 
 <!-- ref-triangle:start -->
@@ -111,7 +111,7 @@ module: sonic-interface
 
 ### 典型的なデプロイ位置
 
-- L3 interface (sub-IP) 設定。`INTERFACE|<port>` / `INTERFACE|<port>|<prefix>` を intfmgrd が処理。
+- L3 interface (sub-IP) 設定。`INTERFACE|<port>` / `INTERFACE|<port>|<prefix>` を [intfmgrd](../../reference/glossary.md#term-intfmgrd) が処理。
 
 ### よくある落とし穴
 
@@ -129,3 +129,4 @@ show ip interface
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 498676200d13 -->

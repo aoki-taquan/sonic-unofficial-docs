@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 RIF）や VLAN インタフェース、LAG などの L3 オブジェクトに対しても SAI 経由で独立したカウンタを保持している。本 HLD は、SNMP から見える `ifInOctets` などの値に **L3 で観測される drop / error / 通過パケットを取り込み**、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。
+[SNMP](../reference/glossary.md#term-snmp) の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 [RIF](../reference/glossary.md#term-rif)）や [VLAN](../reference/glossary.md#term-vlan) インタフェース、[LAG](../reference/glossary.md#term-lag) などの L3 オブジェクトに対しても [SAI](../reference/glossary.md#term-sai) 経由で独立したカウンタを保持している。本 [HLD](../reference/glossary.md#term-hld) は、SNMP から見える `ifInOctets` などの値に **L3 で観測される drop / error / 通過パケットを取り込み**、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。
 
 主眼は次の 2 点に置かれている。
 
@@ -142,7 +142,7 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 
 ## 設定
 
-本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する CONFIG_DB エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。
+本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する [CONFIG_DB](../reference/glossary.md#term-config_db) エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。
 
 ### 関連する CONFIG_DB
 
@@ -189,3 +189,5 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21d98f8b47d2 -->

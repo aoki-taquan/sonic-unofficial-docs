@@ -25,8 +25,8 @@ related:
 ## 症状
 
 - `show mclag brief` で `Keepalive` が `Down` または `peer status` が `inconsistent`
-- 片側 PortChannel が `up` だが peer 側で `not-syncd`
-- MAC が peer 間で同期されない（片側だけ FDB に出る）
+- 片側 [PortChannel](../../reference/glossary.md#term-portchannel) が `up` だが peer 側で `not-syncd`
+- MAC が peer 間で同期されない（片側だけ [FDB](../../reference/glossary.md#term-fdb) に出る）
 
 ## 想定原因（優先度順）
 
@@ -34,7 +34,7 @@ related:
 2. **system mac 衝突 / 設定ミス**
 3. **iccpd プロセス未起動 / crash loop**
 4. **domain ID / peer IP 不整合**
-5. **MCLAG interface 設定漏れ**: PortChannel が `MCLAG_INTERFACE` に登録されていない
+5. **[MCLAG](../../reference/glossary.md#term-mclag) interface 設定漏れ**: PortChannel が `MCLAG_INTERFACE` に登録されていない
 
 ## 切り分け手順
 
@@ -77,7 +77,7 @@ sonic-db-cli CONFIG_DB hgetall "DEVICE_METADATA|localhost" | grep -i mac
 
 ## 対処方法
 
-- keepalive 経路修正: routing / VLAN を確認
+- keepalive 経路修正: routing / [VLAN](../../reference/glossary.md#term-vlan) を確認
 - iccpd 再起動: `docker restart iccpd` （**注意**: 片系のみ。**ロールバック**: peer 側との設定整合性は `config_db.json` 退避から復元）
 - MCLAG interface 追加: `sudo config mclag member add <domain_id> <PortChannelN>`（**ロールバック**: `config mclag member del`）
 - system_mac 設定: `DEVICE_METADATA|localhost` の `mac` を peer と一致させる（注意: 通常変更不要）
@@ -89,5 +89,7 @@ sonic-db-cli CONFIG_DB hgetall "DEVICE_METADATA|localhost" | grep -i mac
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — mclagsyncd.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — mclagsyncd.cpp
 [^2]: sonic-net/sonic-iccpd @ master — iccpd_main.c
+
+<!-- glossary-links-injected: 0fb60525e68d -->

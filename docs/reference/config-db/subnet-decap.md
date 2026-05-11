@@ -21,9 +21,9 @@ related:
 
 ## 概要
 
-IPinIP トンネルの **サブネット単位の decapsulation ルール** を定義する CONFIG_DB テーブル[^1]。`TUNNEL_DECAP_TABLE` が個別の outer IP を起点とした decap を扱うのに対し、`SUBNET_DECAP` は **outer source IP がプレフィックス内に該当する場合に decap を行う** という、より広範な一致条件を表す。SmartSwitch / DASH や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。
+[IPinIP](../../reference/glossary.md#term-ipinip) トンネルの **サブネット単位の decapsulation ルール** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`TUNNEL_DECAP_TABLE` が個別の outer IP を起点とした decap を扱うのに対し、`SUBNET_DECAP` は **outer source IP がプレフィックス内に該当する場合に decap を行う** という、より広範な一致条件を表す。[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DASH](../../reference/glossary.md#term-dash) や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。
 
-YANG リビジョン 2024-12-19 で追加された比較的新しいテーブル。
+[YANG](../../reference/glossary.md#term-yang) リビジョン 2024-12-19 で追加された比較的新しいテーブル。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -73,7 +73,7 @@ SUBNET_DECAP|<name>
 
 ## 購読者
 
-- `swss` の tunnel-decap オーチェストレータが `SUBNET_DECAP` を読み、SAI の tunnel term entry を生成する（subnet ベースの match）。
+- `swss` の tunnel-decap オーチェストレータが `SUBNET_DECAP` を読み、[SAI](../../reference/glossary.md#term-sai) の tunnel term entry を生成する（subnet ベースの match）。
 - DualToR / DASH のサブシステムが補助的に参照する。
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -112,3 +112,5 @@ SUBNET_DECAP|<name>
 sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: de257f859a08 -->

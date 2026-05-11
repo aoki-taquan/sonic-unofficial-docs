@@ -104,7 +104,7 @@ module: sonic-port
 | `subport` | `sonic-port/PORT/PORT_LIST/subport` | `uint8` |  |  | range 0..8 | Logical subport(s) for physical port breakout |
 | `index` | `sonic-port/PORT/PORT_LIST/index` | `uint16` |  |  |  | Front-panel port index. |
 | `asic_port_name` | `sonic-port/PORT/PORT_LIST/asic_port_name` | `string` |  |  |  | port name in asic and asic name, e.g Eth0-ASIC1 |
-| `role` | `sonic-port/PORT/PORT_LIST/role` | `string` |  | Ext | pattern `Ext|Int|Inb|Rec|Dpc` | Internal port or External port for multi-asic or SmartSwitch platform |
+| `role` | `sonic-port/PORT/PORT_LIST/role` | `string` |  | Ext | pattern `Ext|Int|Inb|Rec|Dpc` | Internal port or External port for multi-asic or [SmartSwitch](../../reference/glossary.md#term-smartswitch) platform |
 | `admin_status` | `sonic-port/PORT/PORT_LIST/admin_status` | `stypes:admin_status` |  | down |  | Administrative up or down state of the port. |
 | `fec` | `sonic-port/PORT/PORT_LIST/fec` | `string` |  |  | pattern `rs|fc|none|auto` | Forward error correction mode for the port. |
 | `dom_polling` | `sonic-port/PORT/PORT_LIST/dom_polling` | `stypes:admin_mode` |  |  |  | Enable or disable digital optical monitoring polling. |
@@ -126,7 +126,7 @@ module: sonic-port
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`
 - CLI: `config interface`
 - CLI: `show interfaces`
 
@@ -144,11 +144,11 @@ module: sonic-port
 
 ### 典型的なデプロイ位置
 
-- 物理 port 設定 (admin_status, speed, mtu, autoneg, fec)。`PORT|<port>` を portmgrd が processing。
+- 物理 port 設定 (admin_status, speed, mtu, autoneg, fec)。`PORT|<port>` を [portmgrd](../../reference/glossary.md#term-portmgrd) が processing。
 
 ### よくある落とし穴
 
-- `speed` と `breakout` mode の不整合で SAI が port 作成失敗。breakout 変更直後は xcvrd の安定化を待つ。
+- `speed` と `breakout` mode の不整合で [SAI](../../reference/glossary.md#term-sai) が port 作成失敗。breakout 変更直後は xcvrd の安定化を待つ。
 
 ### 関連する config / show コマンド
 
@@ -169,3 +169,5 @@ show interfaces status
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 75a44208cf9a -->

@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`config mirror_session` はポートミラー / ERSPAN セッションを CONFIG_DB の `MIRROR_SESSION` テーブルに登録・削除する。タイプは 2 種類:
+`config mirror_session` はポートミラー / ERSPAN セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MIRROR_SESSION` テーブルに登録・削除する。タイプは 2 種類:
 
 - **ERSPAN** ... GRE カプセル化して remote analyzer に転送
 - **SPAN** ... 同一スイッチ内の特定ポートに複製出力
@@ -197,7 +197,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- YANG: [`sonic-mirror-session`](../yang/sonic-mirror-session.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-mirror-session`](../yang/sonic-mirror-session.md)
 - CONFIG_DB: [`MIRROR_SESSION`](../config-db/mirror-session.md)
 
 <!-- ref-triangle:end -->
@@ -242,7 +242,7 @@ Mirror session mirror1 added.
 ### 典型的な利用シーン
 
 - 障害解析 / セキュリティ用途で ERSPAN / SPAN セッションを設定する。
-- EVERFLOW ACL とセットでミラー先を変える。
+- EVERFLOW [ACL](../../reference/glossary.md#term-acl) とセットでミラー先を変える。
 
 ### よくある落とし穴
 
@@ -262,3 +262,5 @@ show acl rule | grep MIRROR
 
 - [reference/CLI: config acl](config-acl.md)
 - [reference/CLI: show acl](show-acl.md)
+
+<!-- glossary-links-injected: 1a8357632541 -->

@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-SONiC 201908 リリース時に行われた **L3 のスケール拡大と性能改善** をまとめた HLD[^1]。スケールでは **ARP/ND エントリ数** と **route 数 / ECMP 構成** を引き上げ、性能では **route programming 時間** と **show コマンド応答時間** を短縮する。CLI / CONFIG_DB / YANG への新規追加は **無し**[^1]。
+SONiC 201908 リリース時に行われた **L3 のスケール拡大と性能改善** をまとめた [HLD](../reference/glossary.md#term-hld)[^1]。スケールでは **[ARP](../reference/glossary.md#term-arp)/ND エントリ数** と **route 数 / [ECMP](../reference/glossary.md#term-ecmp) 構成** を引き上げ、性能では **route programming 時間** と **show コマンド応答時間** を短縮する。CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への新規追加は **無し**[^1]。
 
 スケール目標[^1]:
 
@@ -89,7 +89,7 @@ burst 時の add/remove ループで entry が満杯にならない問題を解�
 
 #### 2.1 sairedis bulk route API の利用
 
-旧: `RouteOrch` は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが **1 経路 = 1 Redis message**[^1]。
+旧: `RouteOrch` は 1 経路ごとに sairedis API を呼ぶ。[Redis](../reference/glossary.md#term-redis) pipelining でいくらかバルク化はされるが **1 経路 = 1 Redis message**[^1]。
 
 新: **sairedis の bulk API** を使う:
 
@@ -120,7 +120,7 @@ sequenceDiagram
 
 旧: 各経路の処理で **`rt_table` 属性から master device 名を kernel から取得** する。これは VNET_ROUTE_TABLE 判定のため[^1]。
 
-問題: VNET が無い環境でも lookup が **常に失敗 → cache 更新を毎経路で行う**。これが route 投入を遅くする。
+問題: [VNET](../reference/glossary.md#term-vnet) が無い環境でも lookup が **常に失敗 → cache 更新を毎経路で行う**。これが route 投入を遅くする。
 
 修正: **`route.rt_table == 0`（global routing table）** なら lookup を **skip**。10k 経路の APP_DB 投入が **7-8s → 4-5s** に短縮[^1]。
 
@@ -134,7 +134,7 @@ sequenceDiagram
 
 ### 3. `show arp` / `show ndp` の高速化
 
-旧: VLAN L3 interface 上の ARP の **outgoing interface を求めるため FDB 全件を fetch**。エントリが大量だと show が秒〜分単位かかる[^1]。
+旧: [VLAN](../reference/glossary.md#term-vlan) L3 interface 上の ARP の **outgoing interface を求めるため [FDB](../reference/glossary.md#term-fdb) 全件を fetch**。エントリが大量だと show が秒〜分単位かかる[^1]。
 
 修正: 該当 ARP/ND **特定エントリだけの FDB lookup** に変更。CLI スクリプト側の改修。
 
@@ -172,10 +172,10 @@ show ndp
 
 ## 制限事項
 
-- **HLD は 2019 年改訂**。kernel sysctl 値や CoPP 値は **その後の SONiC で更に調整** されている可能性[^1]
+- **HLD は 2019 年改訂**。kernel sysctl 値や [CoPP](../reference/glossary.md#term-copp) 値は **その後の SONiC で更に調整** されている可能性[^1]
 - `gc_thresh3` を上げると **kernel メモリ使用量** が増える。低スペック CPU 機では注意
 - CoPP の ARP/ND 上限を 8000 pps に上げると **CPU 負荷増**。他の trap との合算で CPU 飽和に注意
-- sairedis bulk API は **ASIC 側 bulk 未対応の場合 syncd 内で逐次処理** されるため、改善幅は Redis message 削減分に留まる
+- sairedis bulk API は **ASIC 側 bulk 未対応の場合 [syncd](../reference/glossary.md#term-syncd) 内で逐次処理** されるため、改善幅は Redis message 削減分に留まる
 - `RouteOrch` の 1 秒 timer flush は **大量経路投入時のみ効果**。少量更新では遅延がむしろ増える可能性
 - `fpmsyncd` の VNET 判定スキップは **VNET 利用時の挙動変更ではない**（`rt_table != 0` の経路には従来通り lookup）
 - HLD は AS7712 (Tomahawk) で測定。他 ASIC では **異なる timing** になる
@@ -314,3 +314,5 @@ sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: 7570ef7216f8 -->

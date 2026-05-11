@@ -71,7 +71,7 @@ flowchart LR
 - ベンダーは build 時に `sonic_platform` パッケージを wheel にコンパイル。
 - 初回ブート時、対応プラットフォーム用 wheel を `/usr/share/sonic/device/<PLATFORM>/` にコピー。
 - pmon コンテナ起動時、`sonic_platform` が未インストールなら wheel をインストール。
-- `pmon` 内の各デーモンが Platform API 経由でハードを読み、結果を STATE_DB に書く。
+- `pmon` 内の各デーモンが Platform API 経由でハードを読み、結果を [STATE_DB](../reference/glossary.md#term-state_db) に書く。
 - ホスト側 CLI は STATE_DB を引いて表示。
 - リアルタイム値（光モジュール光信号など）は CLI が DB に「読め」と書いて pmon デーモンが読み直す[^1]。
 
@@ -100,7 +100,7 @@ print(psu1.get_presence())
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述は無い。
+[HLD](../reference/glossary.md#term-hld) には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述は無い。
 
 ### 関連する CLI
 
@@ -108,7 +108,7 @@ HLD には CONFIG_DB エントリの記述は無い。
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -153,3 +153,5 @@ class Chassis(ChassisBase):
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e4b0dab1086 -->

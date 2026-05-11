@@ -38,11 +38,11 @@ related:
 
 ## 概要
 
-SONiC のレガシー VLAN CLI は `config vlan add 10` / `config vlan member add 10 Ethernet0 -u` のように **VLAN ID 単発操作** を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような **意味的なモード**は CLI に明示されておらず、運用者の認知コストが高かった[^1]。
+SONiC のレガシー [VLAN](../reference/glossary.md#term-vlan) CLI は `config vlan add 10` / `config vlan member add 10 Ethernet0 -u` のように **VLAN ID 単発操作** を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような **意味的なモード**は CLI に明示されておらず、運用者の認知コストが高かった[^1]。
 
 本機能は次の 2 つを導入する[^1]:
 
-1. **Switchport mode**: ポート（`PORT`）と LAG（`PORTCHANNEL`）に対して `routed` / `access` / `trunk` のモード概念を CONFIG_DB に持ち、CLI から切替可能にする
+1. **Switchport mode**: ポート（`PORT`）と [LAG](../reference/glossary.md#term-lag)（`PORTCHANNEL`）に対して `routed` / `access` / `trunk` のモード概念を [CONFIG_DB](../reference/glossary.md#term-config_db) に持ち、CLI から切替可能にする
 2. **複数 VLAN 一括 CLI**: 範囲指定（`10-20`）またはカンマ区切り（`10,15,20`）で複数 VLAN を 1 コマンドで add / del
 
 アーキテクチャは大きく変わらず、変更は **CLI コンテナと CONFIG_DB に閉じる**[^1]。
@@ -57,7 +57,7 @@ SONiC のレガシー VLAN CLI は `config vlan add 10` / `config vlan member ad
 | `access` | 単一 VLAN の **untagged** 受信・送信のみ |
 | `trunk`  | 1 つの untagged VLAN（native）+ 複数 VLAN の **tagged** 受信・送信 |
 
-物理ポート / PortChannel いずれも同じ 3 モードをサポートする[^1]。
+物理ポート / [PortChannel](../reference/glossary.md#term-portchannel) いずれも同じ 3 モードをサポートする[^1]。
 
 ### 状態遷移（Port / PortChannel）
 
@@ -225,9 +225,9 @@ sudo config switchport mode routed Ethernet0
 
 ## 制限事項
 
-- **モード切替は VLAN 整合が前提**: `routed` に戻すには既存 VLAN メンバを先に外す必要がある（HLD 例参照）[^1]。
+- **モード切替は VLAN 整合が前提**: `routed` に戻すには既存 VLAN メンバを先に外す必要がある（[HLD](../reference/glossary.md#term-hld) 例参照）[^1]。
 - **truncate ポリシー**: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意[^1]。
-- **アーキテクチャ拡張なし**: orchagent / SAI / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。
+- **アーキテクチャ拡張なし**: [orchagent](../reference/glossary.md#term-orchagent) / [SAI](../reference/glossary.md#term-sai) / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。
 - **詳細仕様は原文必読**: 本ページは概要のみ。state diagram・sequence diagram・コーナーケース例は原文 HLD §High-level Design / §Examples を参照[^1]。
 
 ## 干渉する機能
@@ -363,3 +363,5 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4da1da4a7ec6 -->

@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`config pfcwd` は PFC watchdog の設定操作を `pfcwd` 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は `pfcwd` 側が担う[^1]。
+`config pfcwd` は [PFC](../../reference/glossary.md#term-pfc) watchdog の設定操作を `pfcwd` 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の [CONFIG_DB](../../reference/glossary.md#term-config_db) 更新や daemon 連携は `pfcwd` 側が担う[^1]。
 
 ## コマンド一覧
 
@@ -104,3 +104,5 @@ show pfcwd stats
 show pfc counters
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 97e8f7840821 -->

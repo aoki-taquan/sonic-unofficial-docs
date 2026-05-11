@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-portchannel`, `sonic-port`, `sonic-types`
 - top container: `sonic-fine-grained-ecmp`
 
-Fine-Grained ECMP (FG_NHG) のグループ・対象プレフィックス・メンバの 3 テーブルを保持する。bucket-size と match_mode により flow-to-nexthop の固定マッピングを記述する[^1]。
+Fine-Grained [ECMP](../../reference/glossary.md#term-ecmp) (FG_NHG) のグループ・対象プレフィックス・メンバの 3 テーブルを保持する。bucket-size と match_mode により flow-to-nexthop の固定マッピングを記述する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -98,8 +98,8 @@ module: sonic-fine-grained-ecmp
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FG_NHG`, `FG_NHG_PREFIX`, `FG_NHG_MEMBER`
-- CLI: なし（config_db.json で直接設定）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FG_NHG`, `FG_NHG_PREFIX`, `FG_NHG_MEMBER`
+- CLI: なし（[config_db.json](../../reference/glossary.md#term-config_db.json) で直接設定）
 
 <!-- ref-triangle:start -->
 
@@ -112,3 +112,5 @@ module: sonic-fine-grained-ecmp
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 68da9f1d1f8d -->

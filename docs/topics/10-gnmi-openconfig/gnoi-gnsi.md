@@ -9,13 +9,13 @@ sources: []
 
 # gNOI / gNSI
 
-gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を担当する。reboot、OS install、file transfer、factory reset、health check のような operational action を、ベンダー非依存の API として呼べるようにする。gNSI (gRPC Network Security Interface) は、その隣で証明書配布、認証ポリシー、attestation のような security action を担当する。
+[gNOI](../../reference/glossary.md#term-gnoi) (gRPC Network Operations Interface) は、設定読み書き ([gNMI](../../reference/glossary.md#term-gnmi)) の隣で「操作」を担当する。reboot、OS install、file transfer、factory reset、health check のような operational action を、ベンダー非依存の API として呼べるようにする。gNSI (gRPC Network Security Interface) は、その隣で証明書配布、認証ポリシー、attestation のような security action を担当する。
 
 SONiC の gNOI / gNSI 実装は、telemetry container 内の同じプロセスで gNMI と一緒に動く。API ごとに SONiC のどの service / script を呼んでいるかを押さえると、障害時の切り分けが速い。
 
 ## API と SONiC service の対応
 
-| gNOI service | 主な API | SONiC 側の到達点 | 参照 HLD |
+| gNOI service | 主な API | SONiC 側の到達点 | 参照 [HLD](../../reference/glossary.md#term-hld) |
 | --- | --- | --- | --- |
 | System | Reboot, RebootStatus, CancelReboot, Time, Ping, Traceroute, SetPackage, SwitchControlProcessor | `reboot`、reboot-cause、`sonic-installer` | [gNOI System](../../management/gnoi-hld-for-system-apis.md) |
 | OS | Install, Activate, Verify | `sonic-installer` で image インストール | [gNOI OS](../../management/gnoi-hld-for-os-apis.md) |
@@ -57,3 +57,5 @@ Factory reset の SONiC 実装 (`reset-factory` design) は章 11 や reset-fact
 - [gNOI File and Factory Reset APIs](../../management/gnoi-hld-for-file-and-factory-reset-apis.md)
 - [gNOI Healthz API](../../management/gnoi-hld-for-healthz-api.md)
 - [gNSI HLD](../../management/gnsi-hld.md)
+
+<!-- glossary-links-injected: f5d0d14cf73e -->

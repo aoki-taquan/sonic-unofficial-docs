@@ -29,12 +29,12 @@ related:
 
 ## なぜ必要か
 
-BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は **物理ポート単位で 3 タイプを個別に kbps レート制限** し、SAI policer をポート入力段に紐付ける[^1]:
+BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は **物理ポート単位で 3 タイプを個別に kbps レート制限** し、[SAI](../reference/glossary.md#term-sai) policer をポート入力段に紐付ける[^1]:
 
 - レンジ 0 kbps 〜 100 Gbps（10^8 kbps）
-- 物理ポート専用（VLAN / PortChannel には直接設定不可、メンバ port で設定）
+- 物理ポート専用（[VLAN](../reference/glossary.md#term-vlan) / [PortChannel](../reference/glossary.md#term-portchannel) には直接設定不可、メンバ port で設定）
 - 超過分は単純ドロップ
-- 統計（hit / drop 数）は本 HLD のスコープ外
+- 統計（hit / drop 数）は本 [HLD](../reference/glossary.md#term-hld) のスコープ外
 
 ## アーキテクチャ
 
@@ -69,7 +69,7 @@ flowchart LR
 
 ## Warm boot
 
-CONFIG_DB に永続化、system warm boot および SWSS Docker warm boot を跨いで継続することが要件[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) に永続化、system warm boot および SWSS Docker warm boot を跨いで継続することが要件[^1]。
 
 ## CONFIG_DB / CLI
 
@@ -100,8 +100,8 @@ show storm-control interface Ethernet0
 
 ## 干渉する機能
 
-- VLAN / PortChannel: メンバ物理ポートで設定。LAG ハッシュ前の入力段で計測されるため独立に効く
-- PolicerOrch: ACL ポリサーと同じ Orch だが、ストーム制御は内部命名規則 `<intf>_<storm_type>` で別管理
+- VLAN / PortChannel: メンバ物理ポートで設定。[LAG](../reference/glossary.md#term-lag) ハッシュ前の入力段で計測されるため独立に効く
+- PolicerOrch: [ACL](../reference/glossary.md#term-acl) ポリサーと同じ Orch だが、ストーム制御は内部命名規則 `<intf>_<storm_type>` で別管理
 - Warm boot: PolicerOrch が CONFIG_DB 再読み込みで SAI 再投入
 
 ## トラブルシューティング
@@ -115,7 +115,7 @@ show storm-control interface Ethernet0
 
 - [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): L2 フラッディング全般
 - [07-acl-copp-mirror](../topics/07-acl-copp-mirror/index.md): policer / レート制御の文脈
-- [08-qos-buffer](../topics/08-qos-buffer/index.md): policer / QoS との関係
+- [08-qos-buffer](../topics/08-qos-buffer/index.md): policer / [QoS](../reference/glossary.md#term-qos) との関係
 
 ## 引用元
 
@@ -127,3 +127,5 @@ show storm-control interface Ethernet0
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 450bde84609d -->

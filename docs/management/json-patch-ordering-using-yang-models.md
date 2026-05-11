@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`config apply-patch <jsonpatch>` で投入された JsonPatch (RFC6902) を、**SONiC YANG モデル制約を満たしつつ任意の中間状態が valid となるように複数 `JsonChange` に分割** するアルゴリズム[^1]。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。
+`config apply-patch <jsonpatch>` で投入された JsonPatch (RFC6902) を、**SONiC [YANG](../reference/glossary.md#term-yang) モデル制約を満たしつつ任意の中間状態が valid となるように複数 `JsonChange` に分割** するアルゴリズム[^1]。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。
 
 インタフェース[^1]:
 
@@ -92,7 +92,7 @@ def rec(cur, tgt):
 
 ### `create-only` 拡張
 
-`SAI_PORT_ATTR_HW_LANE_LIST` のように **CREATE_ONLY** な属性は `replace` で書き換え不可。HLD は `sonic-extension.yang` に **新拡張 `create-only`** を追加する提案[^1]:
+`SAI_PORT_ATTR_HW_LANE_LIST` のように **CREATE_ONLY** な属性は `replace` で書き換え不可。[HLD](../reference/glossary.md#term-hld) は `sonic-extension.yang` に **新拡張 `create-only`** を追加する提案[^1]:
 
 ```yang
 extension create-only {
@@ -183,10 +183,12 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 ## 干渉する機能
 
 - **Generic Config Update and Rollback**: 本機能を内包する上位 HLD
-- **`apply-patch` CLI** / **gNMI Set RPC**: 本 orderer を使う代表的な呼び元
+- **`apply-patch` CLI** / **[gNMI](../reference/glossary.md#term-gnmi) Set RPC**: 本 orderer を使う代表的な呼び元
 - **Dynamic Port Breakout**: `create-only` 拡張の主要動機
-- **CRM 等 `must`-based 制約**: ユニットテスト 16 番が直接連動依存と must 依存の両方をカバー[^1]
+- **[CRM](../reference/glossary.md#term-crm) 等 `must`-based 制約**: ユニットテスト 16 番が直接連動依存と must 依存の両方をカバー[^1]
 
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md)
+
+<!-- glossary-links-injected: 8038cebfeb87 -->

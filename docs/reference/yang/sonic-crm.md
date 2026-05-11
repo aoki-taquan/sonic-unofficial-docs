@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`, `sonic-device_metadata`
 - top container: `sonic-crm`
 
-Critical Resource Monitoring (CRM) 設定の YANG モデル[^1]。ASIC 上の各種ハードウェアリソース（ACL カウンタ/エントリ、route、neighbor、nexthop、FDB、NAT、MPLS、SRv6、DASH オブジェクト 等）について `threshold_type` / `high_threshold` / `low_threshold` の 3 リーフをひとセットとして繰り返し定義する大型モジュール。
+Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) 設定の [YANG](../../reference/glossary.md#term-yang) モデル[^1]。ASIC 上の各種ハードウェアリソース（[ACL](../../reference/glossary.md#term-acl) カウンタ/エントリ、route、neighbor、nexthop、[FDB](../../reference/glossary.md#term-fdb)、[NAT](../../reference/glossary.md#term-nat)、[MPLS](../../reference/glossary.md#term-mpls)、[SRv6](../../reference/glossary.md#term-srv6)、[DASH](../../reference/glossary.md#term-dash) オブジェクト 等）について `threshold_type` / `high_threshold` / `low_threshold` の 3 リーフをひとセットとして繰り返し定義する大型モジュール。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -114,7 +114,7 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `CRM|Config`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `CRM|Config`
 - CLI: `crm config thresholds <type> <resource> ...`, `crm show resources`
 
 <!-- ref-triangle:start -->
@@ -131,7 +131,7 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 
 ### 典型的なデプロイ位置
 
-- Critical Resource Monitor の閾値設定。`CRM|Config` を crmorch が読んで SAI カウンタと比較し syslog 警告を出す。
+- Critical Resource Monitor の閾値設定。`CRM|Config` を crmorch が読んで [SAI](../../reference/glossary.md#term-sai) カウンタと比較し syslog 警告を出す。
 
 ### よくある落とし穴
 
@@ -149,3 +149,5 @@ crm show thresholds all
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9e946ae6784c -->

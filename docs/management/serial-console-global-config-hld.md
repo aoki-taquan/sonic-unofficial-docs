@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-シリアル（`tty`）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、**自動ログアウトのタイマー** と **SysRq カパビリティ** を運用ポリシーに合わせて設定したいという要件がある。SONiC は当初これらをハードコードしていたが、本機能はそれらを CONFIG_DB から制御できるようにする[^1]。
+シリアル（`tty`）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、**自動ログアウトのタイマー** と **SysRq カパビリティ** を運用ポリシーに合わせて設定したいという要件がある。SONiC は当初これらをハードコードしていたが、本機能はそれらを [CONFIG_DB](../reference/glossary.md#term-config_db) から制御できるようにする[^1]。
 
 Phase 1 では次の 2 ポリシーを対象とする[^1]。
 
@@ -37,7 +37,7 @@ Phase 1 では次の 2 ポリシーを対象とする[^1]。
 | `inactivity_timeout` | 0–35000（分） | 15 |
 | `sysrq_capabilities` | `enabled` / `disabled` | `disabled` |
 
-実装は **CONFIG_DB → hostcfgd → serial-config.service → /etc/profile.d, /proc/sys/kernel/sysrq, /etc/sysctl.d** の経路で、ホスト側 OS 設定ファイルを書き換えることで反映する。
+実装は **CONFIG_DB → [hostcfgd](../reference/glossary.md#term-hostcfgd) → serial-config.service → /etc/profile.d, /proc/sys/kernel/sysrq, /etc/sysctl.d** の経路で、ホスト側 OS 設定ファイルを書き換えることで反映する。
 
 ## 動作仕様
 
@@ -74,7 +74,7 @@ export TMOUT={{ serial_pol.inactivity_timeout | int * 60 }}
 
 #### sysrq_capabilities
 
-`/etc/sysctl.d/95-sysrq-sysctl.conf` に `kernel.sysrq=0/1` を書き出し、起動時の sysctl 反映に使う。同時に runtime にも反映するため `/proc/sys/kernel/sysrq` への書き込みも行うと HLD は明記している[^1]。
+`/etc/sysctl.d/95-sysrq-sysctl.conf` に `kernel.sysrq=0/1` を書き出し、起動時の sysctl 反映に使う。同時に runtime にも反映するため `/proc/sys/kernel/sysrq` への書き込みも行うと [HLD](../reference/glossary.md#term-hld) は明記している[^1]。
 
 ```jinja
 {% set sysrq = 0 %}
@@ -159,7 +159,7 @@ JSON サンプル[^1]:
 
 ### 関連する CLI
 
-HLD 上では「**現状は CONFIG_DB を手動で編集**」と書かれており、`config serial-console ...` のような専用 CLI は Phase 1 では定義されていない。`config_db.json` 直接編集 / `sonic-cfggen` / gNMI 経由で投入する想定。
+HLD 上では「**現状は CONFIG_DB を手動で編集**」と書かれており、`config serial-console ...` のような専用 CLI は Phase 1 では定義されていない。`config_db.json` 直接編集 / `sonic-cfggen` / [gNMI](../reference/glossary.md#term-gnmi) 経由で投入する想定。
 
 ### 関連する YANG
 
@@ -229,3 +229,5 @@ config save
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9b26b6a2b5fc -->

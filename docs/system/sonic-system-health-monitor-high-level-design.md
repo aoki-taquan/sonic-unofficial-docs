@@ -32,7 +32,7 @@ related:
 
 ## 1. 何を集約しているか
 
-SONiC の **「system は健全か」** を一元判定する monitor[^1]。3 系統を STATE_DB に集約し、`show system-health` / syslog / system status LED に出す。
+SONiC の **「system は健全か」** を一元判定する monitor[^1]。3 系統を [STATE_DB](../reference/glossary.md#term-state_db) に集約し、`show system-health` / syslog / system status LED に出す。
 
 ```mermaid
 flowchart LR
@@ -147,3 +147,5 @@ v0.2 で "Check service status without monit" が追加[^1]。Monit が使えな
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-health-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 6981be1a469d -->

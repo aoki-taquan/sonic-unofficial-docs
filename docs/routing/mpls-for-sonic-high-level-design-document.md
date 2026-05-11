@@ -36,10 +36,10 @@ related:
 
 ## 読み手が知りたいこと
 
-- SONiC で MPLS が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）
-- per-RIF で MPLS を on/off する設定はどこに入るか
-- ラベル経路は kernel → APPL_DB → ASIC のどの経路で流れるか
-- CRM や CLI、ASIC リソース監視は何が増えるか
+- SONiC で [MPLS](../reference/glossary.md#term-mpls) が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）
+- per-[RIF](../reference/glossary.md#term-rif) で MPLS を on/off する設定はどこに入るか
+- ラベル経路は kernel → [APPL_DB](../reference/glossary.md#term-appl_db) → ASIC のどの経路で流れるか
+- [CRM](../reference/glossary.md#term-crm) や CLI、ASIC リソース監視は何が増えるか
 
 ## スコープ（静的 LSP 中心）
 
@@ -47,10 +47,10 @@ SONiC の初期 MPLS 対応は **静的 LSP** を前提に、IPv4/IPv6 routing �
 
 1. **per-RIF で MPLS を enable/disable**
 2. **Push / Pop / Swap** ラベル操作（implicit-null / explicit-null 対応）
-3. **bulk MPLS in-segment entry の SAI programming**
+3. **bulk MPLS in-segment entry の [SAI](../reference/glossary.md#term-sai) programming**
 4. **CRM** に MPLS 系リソースを統合
 
-LDP / RSVP-TE 等の動的シグナリングと L3VPN / EVPN-MPLS は **scope 外**（Future Requirements）[^1]。
+LDP / RSVP-TE 等の動的シグナリングと L3VPN / [EVPN](../reference/glossary.md#term-evpn)-MPLS は **scope 外**（Future Requirements）[^1]。
 
 ## データフロー
 
@@ -70,8 +70,8 @@ flowchart LR
 
 要点[^1]:
 
-- ラベル経路は **kernel → fpmsyncd → APPL_DB** が基本（FRR ldpd / staticd / cRPD 等から流れる）
-- IntfMgr は CONFIG_DB の MPLS フラグを APPL_DB へ伝搬
+- ラベル経路は **kernel → [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → APPL_DB** が基本（[FRR](../reference/glossary.md#term-frr) ldpd / staticd / cRPD 等から流れる）
+- IntfMgr は [CONFIG_DB](../reference/glossary.md#term-config_db) の MPLS フラグを APPL_DB へ伝搬
 - RouteOrch が `LABEL_ROUTE_TABLE` を読み INSEG_ENTRY 化
 - **bulk SAI API** で大量 in-segment エントリを効率的に programming
 
@@ -126,7 +126,7 @@ show mpls
 show mpls route
 ```
 
-CLI 名称は HLD で完全には固定されていない[^1]。
+CLI 名称は [HLD](../reference/glossary.md#term-hld) で完全には固定されていない[^1]。
 
 ## 設定
 
@@ -161,7 +161,7 @@ show mpls route
 
 - **FRR / cRPD**: 動的に静的 LSP を流すには `staticd` MPLS 拡張または cRPD LDP 等が必要
 - **CRM**: 新規リソース監視
-- **EVPN / VXLAN**: MPLS は別 encapsulation（共存はベンダ依存）
+- **EVPN / [VXLAN](../reference/glossary.md#term-vxlan)**: MPLS は別 encapsulation（共存はベンダ依存）
 - **fpmsyncd**: kernel MPLS netlink を APPL_DB に橋渡し
 - **interface MTU**: MPLS ラベル分 MTU を消費するので隣接と整合
 
@@ -198,3 +198,5 @@ crm show resources mpls
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7255dd3dca3a -->

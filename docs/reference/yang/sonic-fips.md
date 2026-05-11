@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-fips`
 
-Federal Information Processing Standards (FIPS) 140-3 compliance YANG module for SONiC OS.[^1]
+Federal Information Processing Standards (FIPS) 140-3 compliance [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -70,7 +70,7 @@ module: sonic-fips
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FIPS|global`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FIPS|global`
 - CLI: `config fips`
 
 <!-- ref-triangle:start -->
@@ -87,7 +87,7 @@ module: sonic-fips
 
 ### 典型的なデプロイ位置
 
-- FIPS モード (連邦暗号規格) 制御。`FIPS|global` を hostcfgd が openssl / kernel crypto に反映。
+- FIPS モード (連邦暗号規格) 制御。`FIPS|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が openssl / kernel crypto に反映。
 
 ### よくある落とし穴
 
@@ -104,3 +104,5 @@ show fips status
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fips.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 928d8e8f2278 -->

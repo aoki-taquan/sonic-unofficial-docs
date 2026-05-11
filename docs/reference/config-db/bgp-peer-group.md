@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-BGP peer-group の VRF スコープでの定義テーブル。`BGP_NEIGHBOR_LIST.peer_group_name` から参照される。`sonic-bgp-cmn` grouping を `uses` し、`BGP_NEIGHBOR` と同じ共通フィールドを持つ。`frr-mgmt-framework` (`DEVICE_METADATA.frr_mgmt_framework_config = true`) が CONFIG_DB を購読する[^1]。
+[BGP](../../reference/glossary.md#term-bgp) peer-group の [VRF](../../reference/glossary.md#term-vrf) スコープでの定義テーブル。`BGP_NEIGHBOR_LIST.peer_group_name` から参照される。`sonic-bgp-cmn` grouping を `uses` し、`BGP_NEIGHBOR` と同じ共通フィールドを持つ。`frr-mgmt-framework` (`DEVICE_METADATA.frr_mgmt_framework_config = true`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -64,14 +64,14 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 
 ## 購読者
 
-- `frr-mgmt-framework`: CONFIG_DB → FRR `peer-group` コマンド
+- `frr-mgmt-framework`: CONFIG_DB → [FRR](../../reference/glossary.md#term-frr) `peer-group` コマンド
 - `bgpcfgd`: テンプレ経路で peer-group を展開
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_NEIGHBOR`、`BGP_GLOBALS`、`BGP_PEER_GROUP_AF`、`BGP_GLOBALS_LISTEN_PREFIX`
 - 関連 CLI: `config bgp` (peer-group 関連サブコマンド)
-- 関連 YANG: `sonic-bgp-peergroup`、`sonic-bgp-common`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-peergroup`、`sonic-bgp-common`
 
 <!-- ref-triangle:start -->
 
@@ -106,3 +106,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_PEER_GROUP|*'
 vtysh -c 'show bgp peer-group'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->

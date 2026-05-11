@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が **本来あるべきトポロジ** から欠落していないかを検査するためのツール群を追加する HLD。プラットフォーム標準の PCIe デバイス一覧を `pcie.yaml` に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する[^1]。
+SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が **本来あるべきトポロジ** から欠落していないかを検査するためのツール群を追加する [HLD](../reference/glossary.md#term-hld)。プラットフォーム標準の PCIe デバイス一覧を `pcie.yaml` に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する[^1]。
 
 提供される CLI は 3 コマンド[^1]:
 
@@ -156,7 +156,7 @@ PCIe Device Checking All Test ----------->>> PASSED
 
 ### 関連する CONFIG_DB / YANG
 
-該当しない。`pcie.yaml` はプラットフォーム同梱ファイルであり CONFIG_DB / YANG 経路は持たない。
+該当しない。`pcie.yaml` はプラットフォーム同梱ファイルであり [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) 経路は持たない。
 
 ### 関連する CLI
 
@@ -206,3 +206,5 @@ show platform pcieinfo -c
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

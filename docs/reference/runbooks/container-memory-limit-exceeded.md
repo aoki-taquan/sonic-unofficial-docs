@@ -31,7 +31,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **特定 container の memory leak**: 長時間稼働で増加
-2. **大規模 config (1000+ route / ACL) で初期化が memory を食う**
+2. **大規模 config (1000+ route / [ACL](../../reference/glossary.md#term-acl)) で初期化が memory を食う**
 3. **container limit のチューニング不足**: default 512MB で足りない
 4. **host 側の swap 無効 + free 不足**
 
@@ -84,5 +84,7 @@ sonic-db-cli CONFIG_DB hgetall "FEATURE|<feature>"
 
 ## 引用元
 
-[^1]: sonic-net/sonic-buildimage @ 4305596 — sonic_debian_extension
-[^2]: sonic-net/sonic-host-services @ 4305596 — hostcfgd feature mgr
+[^1]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic_debian_extension
+[^2]: sonic-net/sonic-host-services @ 4305596 — [hostcfgd](../../reference/glossary.md#term-hostcfgd) feature mgr
+
+<!-- glossary-links-injected: cdc10e959ceb -->

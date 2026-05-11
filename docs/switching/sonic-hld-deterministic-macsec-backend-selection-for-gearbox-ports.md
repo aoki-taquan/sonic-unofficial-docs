@@ -26,9 +26,9 @@ related:
 
 ## 概要
 
-外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の `switch_id` に紐づいて管理されている。従来の MACsec orchestration は **「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」** という固定動作だった[^1]。問題は、PHY SAI が MACsec エンジンを実装していない場合に **`SAI_STATUS_NOT_IMPLEMENTED`** が返り、`gbsyncd` がエラー、orchagent が不安定になる点。
+外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 [SAI](../reference/glossary.md#term-sai)（gbsyncd）の `switch_id` に紐づいて管理されている。従来の MACsec orchestration は **「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」** という固定動作だった[^1]。問題は、PHY SAI が MACsec エンジンを実装していない場合に **`SAI_STATUS_NOT_IMPLEMENTED`** が返り、`gbsyncd` がエラー、[orchagent](../reference/glossary.md#term-orchagent) が不安定になる点。
 
-本 HLD は HWSKU の `gearbox_config.json` に **PHY ごとの `macsec_supported`（boolean）** を加え、`MACsecOrch` がその capability を見て「PHY backend」か「NPU backend（既定 SAI switch）」を **決定論的に選ぶ** ようにする[^1]。runtime probing やフォールバックは行わない。
+本 [HLD](../reference/glossary.md#term-hld) は HWSKU の `gearbox_config.json` に **PHY ごとの `macsec_supported`（boolean）** を加え、`MACsecOrch` がその capability を見て「PHY backend」か「[NPU](../reference/glossary.md#term-npu) backend（既定 SAI switch）」を **決定論的に選ぶ** ようにする[^1]。runtime probing やフォールバックは行わない。
 
 互換性を保つため、フィールドが無い場合は **`true`（PHY backend）扱い**。既存挙動を壊さない[^1]。
 
@@ -169,7 +169,7 @@ reasoning: 「フォールバックしない」「不在は true 扱い」とい
 ### Backward Compatibility
 
 - `macsec_supported` は **optional**。指定が無いプラットフォームは従来どおり PHY backend
-- CONFIG_DB / APP_DB の意味論は変わらない（追加フィールドのみ）
+- [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB の意味論は変わらない（追加フィールドのみ）
 - ローリングアップグレード安全[^1]
 
 ## 設定
@@ -193,7 +193,7 @@ _GEARBOX_TABLE:phy:<phy_id>
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ## 制限事項
 
@@ -233,3 +233,5 @@ _GEARBOX_TABLE:phy:<phy_id>
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ece1ecd2bc09 -->

@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ASIC 上の共有 / 専用バッファプールを CONFIG_DB で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` (orchagent) または `buffermgrd` (dynamic buffer model) が CONFIG_DB を購読し、SAI BUFFER_POOL に変換する[^1]。
+ASIC 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が CONFIG_DB を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -71,14 +71,14 @@ BUFFER_POOL|<name>
 ## 購読者
 
 - **traditional buffer model**: `orchagent` の `BufferOrch`
-- **dynamic buffer model**: `buffermgrd` (`docker-swss`) が CONFIG_DB → APPL_DB に展開し、`bufferorch` が SAI 反映
+- **dynamic buffer model**: `buffermgrd` (`docker-swss`) が CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) に展開し、`bufferorch` が SAI 反映
 - ベンダ固有のテンプレ (`buffers_*.json.j2`) でハードウェア依存初期値が生成される
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BUFFER_PROFILE`、`BUFFER_PG`、`BUFFER_QUEUE`、`DEVICE_METADATA`
 - 関連 CLI: `config buffer`、`mmuconfig`
-- 関連 YANG: `sonic-buffer-pool`、`sonic-buffer-profile`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-pool`、`sonic-buffer-profile`
 
 <!-- ref-triangle:start -->
 
@@ -113,7 +113,7 @@ BUFFER_POOL|<name>
 ### よくある誤設定
 
 - `size` を ASIC 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
-- `mode: dynamic` を ASIC 未対応のまま使うと PFC で head-of-line を起こす。`traditional` プラットフォームでは `static`。
+- `mode: dynamic` を ASIC 未対応のまま使うと [PFC](../../reference/glossary.md#term-pfc) で head-of-line を起こす。`traditional` プラットフォームでは `static`。
 
 ### 確認コマンド
 
@@ -122,3 +122,5 @@ sonic-db-cli CONFIG_DB hgetall 'BUFFER_POOL|ingress_lossless_pool'
 show buffer pool
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ce2315bef392 -->

@@ -32,8 +32,8 @@ related:
 
 1. **`debug dump` モジュール（`--debug-dump`）が ASIC の重い snapshot を取る**: 大規模 ASIC で 1 module だけで分単位
 2. **`/var/log` 配下の log file が巨大**: `tar` の `gzip` フェーズで CPU 飽和
-3. **`vtysh -c "show ..."` 系が hang**: bgpd / zebra busy → コマンド単位で stuck
-4. **`syncd` が SAI dump 中に busy**: ASIC API 呼び出しが直列化されレスポンス遅延
+3. **`vtysh -c "show ..."` 系が hang**: bgpd / [zebra](../../reference/glossary.md#term-zebra) busy → コマンド単位で stuck
+4. **`syncd` が [SAI](../../reference/glossary.md#term-sai) dump 中に busy**: ASIC API 呼び出しが直列化されレスポンス遅延
 5. **core file / dump 過多**: 過去 dump が片付かず `/var/dump` が容量圧迫
 
 ## 切り分け手順
@@ -100,5 +100,7 @@ sonic-db-cli CONFIG_DB keys "AUTO_TECHSUPPORT_FEATURE|*"
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — `scripts/generate_dump`
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/generate_dump`
 [^2]: sonic-net/sonic-utilities @ 39732bceb — `show/main.py`
+
+<!-- glossary-links-injected: cf632b22cdc5 -->

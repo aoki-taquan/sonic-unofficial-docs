@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-EVPN/VxLAN ファブリックで全 leaf が **同一 IP / MAC をデフォルトゲートウェイ** として応答するための仕組み。各 leaf 上の VLAN 仮想インタフェースに共通の仮想 MAC を割り当て、ホスト側ポートに対してのみ応答（ファブリック側には広告しない）させる[^1]。
+[EVPN](../reference/glossary.md#term-evpn)/VxLAN ファブリックで全 leaf が **同一 IP / MAC をデフォルトゲートウェイ** として応答するための仕組み。各 leaf 上の [VLAN](../reference/glossary.md#term-vlan) 仮想インタフェースに共通の仮想 MAC を割り当て、ホスト側ポートに対してのみ応答（ファブリック側には広告しない）させる[^1]。
 
 EVPN を使わずに単独でも使える設計。SONiC では **新規 daemon 不要** で、既存の `IntfMgr` / `IntfsOrch` に処理を追加する形で実現される[^1]。
 
@@ -40,9 +40,9 @@ EVPN を使わずに単独でも使える設計。SONiC では **新規 daemon �
 
 | Repo | 変更点 |
 |------|--------|
-| sonic-swss-common | `SAG` テーブル定義の schema 追加 |
-| sonic-swss | `IntfMgr` / `IntfsOrch` に SAG ハンドラ追加。VLAN_INTERFACE の有効化フィールドを処理 |
-| sonic-utilities | `config static-anycast-gateway` / `config vlan static-anycast-gateway` / `show static-anycast-gateway` 追加。`show vlan brief` に列追加 |
+| [sonic-swss-common](../reference/glossary.md#term-sonic-swss-common) | `SAG` テーブル定義の schema 追加 |
+| [sonic-swss](../reference/glossary.md#term-sonic-swss) | `IntfMgr` / `IntfsOrch` に SAG ハンドラ追加。VLAN_INTERFACE の有効化フィールドを処理 |
+| [sonic-utilities](../reference/glossary.md#term-sonic-utilities) | `config static-anycast-gateway` / `config vlan static-anycast-gateway` / `show static-anycast-gateway` 追加。`show vlan brief` に列追加 |
 
 ### 動作
 
@@ -56,7 +56,7 @@ flowchart LR
     IO --> RT[RouteOrch\n IPv6 LL me-route 更新]
 ```
 
-VLAN_INTERFACE の `static_anycast_gateway` が `true` でグローバル `SAG|GLOBAL.gateway_mac` が設定されているとき、`IntfsOrch` は ASIC RIF の MAC を **CPU MAC ではなく SAG MAC** に書き換える。`false` または SAG MAC 未設定なら従来どおり CPU MAC を使う。
+VLAN_INTERFACE の `static_anycast_gateway` が `true` でグローバル `SAG|GLOBAL.gateway_mac` が設定されているとき、`IntfsOrch` は ASIC [RIF](../reference/glossary.md#term-rif) の MAC を **CPU MAC ではなく SAG MAC** に書き換える。`false` または SAG MAC 未設定なら従来どおり CPU MAC を使う。
 
 IPv6 link-local アドレスは MAC から派生するため、SAG ↔ CPU MAC の切替時は `RouteOrch` の API を呼んで **古い link-local の me-route を削除し、新しい MAC ベースの link-local を入れ直す** 必要がある[^1]。
 
@@ -108,7 +108,7 @@ show static-anycast-gateway
 ## 制限事項
 
 - グローバル MAC は **1 つだけ** で、VLAN 毎に異なる SAG MAC は設定できない。
-- ルータ IF 数の監視は CRM 経由で可能だが、HLD 時点では「router interfaces monitoring が CRM に未実装」と明記されており、別途エンハンスが必要[^1]。
+- ルータ IF 数の監視は [CRM](../reference/glossary.md#term-crm) 経由で可能だが、[HLD](../reference/glossary.md#term-hld) 時点では「router interfaces monitoring が CRM に未実装」と明記されており、別途エンハンスが必要[^1]。
 - Warm/Fast boot 影響なし（HLD で明記）[^1]。
 - ファブリック側へは仮想 IP/MAC を広告しない設計のため、ファブリック内 anycast 経路設計は別途 EVPN/VxLAN 側で組む必要がある。
 
@@ -116,17 +116,17 @@ show static-anycast-gateway
 
 - **VxLAN / EVPN**: 主たる組み合わせ。SAG はホスト面の默認ゲートウェイ集約として機能し、ファブリックでは個別 VTEP IP が使われる。
 - **IPv6 Link-Local**: MAC ベースの link-local アドレス変更があるため、`NeighOrch` / `RouteOrch` の link-local me-route 更新が必要。
-- **ARP / ND**: 各 leaf が同一 SAG MAC でゲートウェイ ARP/ND 応答するため、ホスト側で MAC 矛盾は発生しない（FRR/EVPN による自然な広告は別の話）。
+- **[ARP](../reference/glossary.md#term-arp) / ND**: 各 leaf が同一 SAG MAC でゲートウェイ ARP/ND 応答するため、ホスト側で MAC 矛盾は発生しない（[FRR](../reference/glossary.md#term-frr)/EVPN による自然な広告は別の話）。
 
 ## トラブルシューティング
 
 - VLAN 仮想 IF の MAC が SAG MAC にならない → `SAG|GLOBAL.gateway_mac` と `VLAN_INTERFACE|<vlan>.static_anycast_gateway` の両方が設定されているか確認。
 - IPv6 link-local 応答が来ない → MAC 変更後の link-local me-route 再追加が走っているか。`ip -6 route show local` で確認。
-- ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/BGP 側のフィルタを確認。
+- ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/[BGP](../reference/glossary.md#term-bgp) 側のフィルタを確認。
 
 ## 実装との乖離
 
-2026-05 時点で **SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階**。
+2026-05 時点で **SAG コード / [YANG](../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
 
 ### 1. どこで乖離が確認されたか
 
@@ -137,12 +137,12 @@ show static-anycast-gateway
 
 ### 2. HLD と実装の差分の中身
 
-HLD は `SAG|GLOBAL.gateway_mac`（グローバル SAG MAC）+ `VLAN_INTERFACE|<vlan>.static_anycast_gateway`（VLAN ごとの有効化フラグ）を CONFIG_DB に追加し、`SagOrch` が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、**3 つの取り込み箇所（YANG / orchagent / CLI）すべてが master に無い**。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。
+HLD は `SAG|GLOBAL.gateway_mac`（グローバル SAG MAC）+ `VLAN_INTERFACE|<vlan>.static_anycast_gateway`（VLAN ごとの有効化フラグ）を [CONFIG_DB](../reference/glossary.md#term-config_db) に追加し、`SagOrch` が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、**3 つの取り込み箇所（YANG / [orchagent](../reference/glossary.md#term-orchagent) / CLI）すべてが master に無い**。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。
 
 ### 3. 読者への影響
 
 - HLD どおりに `sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f` を実行しても `No such command` で終わる。コマンドそのものが存在しない。
-- EVPN-VXLAN マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は**個別に各 leaf に同じ MAC を振る運用回避**が必要（後述）。
+- EVPN-[VXLAN](../reference/glossary.md#term-vxlan) マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は**個別に各 leaf に同じ MAC を振る運用回避**が必要（後述）。
 - 本ページの仕様記述は将来仕様 / ベンダー fork 仕様の参考であって、現行 community SONiC で動く設定ではない。
 
 ### 4. 回避策 / 対応方法
@@ -179,8 +179,8 @@ $ grep -rln "static_anycast\|SagOrch\|SAG_GLOBAL" \
 #### 読者への影響
 
 - HLD どおりに `sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f` を叩くと `Error: No such command "static-anycast-gateway"` で終了。CLI ハンドラが click ツリーに登録されていない。
-- `CONFIG_DB` に直接 `SAG|GLOBAL` / `VLAN_INTERFACE|Vlan100` の `static_anycast_gateway` を書いても、それを購読する `SagOrch` が起動していないため SAI 側に何も伝播しない（YANG validation も無いので `config save` 後に `config load` で消えないだけ）。
-- EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は **無い**。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / AsterNOS）か、手動の anycast 設定（後述）で代替。
+- `CONFIG_DB` に直接 `SAG|GLOBAL` / `VLAN_INTERFACE|Vlan100` の `static_anycast_gateway` を書いても、それを購読する `SagOrch` が起動していないため [SAI](../reference/glossary.md#term-sai) 側に何も伝播しない（YANG validation も無いので `config save` 後に `config load` で消えないだけ）。
+- EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は **無い**。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / [AsterNOS](../reference/glossary.md#term-asternos)）か、手動の anycast 設定（後述）で代替。
 
 #### 回避策の実コマンド
 
@@ -214,9 +214,11 @@ arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
 - [sonic-swss #3167: \[swss\] add static anycast gateway support (open)](https://github.com/sonic-net/sonic-swss/pull/3167) — SagOrch 実装提案 PR、現役レビュー対象。
 - [sonic-swss #1974: \[SAG\]: Add SAG implementation (open, 古い)](https://github.com/sonic-net/sonic-swss/pull/1974) — 旧提案、長期 stale。
 - [sonic-utilities #3339: \[CLI\] add static anycast gateway support (open)](https://github.com/sonic-net/sonic-utilities/pull/3339) — CLI 側提案 PR。
-- [sonic-buildimage #19069: \[Yang\] Add SAG Yang models (open)](https://github.com/sonic-net/sonic-buildimage/pull/19069) — YANG 側提案 PR。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #19069: \[Yang\] Add SAG Yang models (open)](https://github.com/sonic-net/sonic-buildimage/pull/19069) — YANG 側提案 PR。
 - [sonic-buildimage #13676: Defining a SAG setup on an ISP connected route/switch breaks Uplink BGP peer settings (open, Edgecore)](https://github.com/sonic-net/sonic-buildimage/issues/13676) — ベンダー fork 上でも組み合わせバグが既知。
 
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: 7335cacf02a5 -->

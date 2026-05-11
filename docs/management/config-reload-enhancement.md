@@ -34,7 +34,7 @@ related:
 syncd#SDK: setEndTime: event 'create:SAI_OBJECT_TYPE_SWITCH:oid:0x21000000000000' took 32913 ms to execute
 ```
 
-reboot 経路では既に **systemd の固定 timer** で snmp / telemetry 等の **非クリティカルサービスを意図的に遅らせる** 対策があるが、これは時間ベースで event-driven ではない。本 HLD は **「ポート初期化完了を待ってから非クリティカルサービスを起動する」イベント駆動方式** を `config reload` と各種 reboot に共通で適用する設計を定義する[^1]。
+reboot 経路では既に **systemd の固定 timer** で snmp / telemetry 等の **非クリティカルサービスを意図的に遅らせる** 対策があるが、これは時間ベースで event-driven ではない。本 [HLD](../reference/glossary.md#term-hld) は **「ポート初期化完了を待ってから非クリティカルサービスを起動する」イベント駆動方式** を `config reload` と各種 reboot に共通で適用する設計を定義する[^1]。
 
 ## 動作仕様
 
@@ -52,7 +52,7 @@ reboot 経路では既に **systemd の固定 timer** で snmp / telemetry 等�
 
 旧フィールド `has_timer` → 新フィールド `delayed` に変更する[^1]。型は boolean、既定 `false`。
 
-YANG model の対応定義[^1]:
+[YANG](../reference/glossary.md#term-yang) model の対応定義[^1]:
 
 ```yang
 leaf delayed {
@@ -95,7 +95,7 @@ sequenceDiagram
 
 1. `hostcfgd` 起動時に `FEATURE` テーブルを読み、**`delayed=true` のサービスをキャッシュ**。
 2. クリティカルサービスは即起動。
-3. APPL_DB の `PORT_TABLE` を購読し、`portsyncd` が出す **`PortInitDone` キー** を待つ。
+3. [APPL_DB](../reference/glossary.md#term-appl_db) の `PORT_TABLE` を購読し、`portsyncd` が出す **`PortInitDone` キー** を待つ。
 4. `PortInitDone` 受信時、キャッシュした delayed サービスをまとめて enable。
 5. `PortInitDone` が **タイムアウト時間以内に来ない場合の保険** として、固定タイムアウトを別途定義し、その時点で delayed サービスも上げる。これは「スイッチ初期化が失敗しても管理系サービスだけは生かす」ための fail-safe[^1]。
 
@@ -133,7 +133,7 @@ systemd で固定的に挿入されていた `*.timer` 定義は **撤去** さ�
 | Show command | **新規追加なし**[^1] |
 | DB Migrator | `FEATURE.has_timer` → `FEATURE.delayed` への移行[^1] |
 | YANG model | `feature` モデルに `delayed` leaf を追加（`has_timer` を置換）[^1] |
-| SAI API | 影響なし[^1] |
+| [SAI](../reference/glossary.md#term-sai) API | 影響なし[^1] |
 
 ユーザ可視の CLI は変わらない。中身が timer ベースから event-driven に切り替わるだけ。
 
@@ -209,8 +209,10 @@ sudo config reload -y
 - `PortInitDone` が来ないまま長時間止まる: フォールバックタイムアウト到達まで delayed サービスは起動しない（HLD はタイムアウト後に起動すると規定）[^1]。`portsyncd` のログを確認。
 - 旧 image からアップグレード後に動作が変: `has_timer` のまま残っている可能性。`db_migrator` が走ったかを確認[^1]。
 - warm reboot がいつまでも完了しない: 全 delayed サービスの起動を待つ拡張により、待ちが長くなっている可能性[^1]。`hostcfgd` のログで未起動サービスを特定する。
-- syncd の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を `config reload` の同時起動による CPU 競合のせいと指摘している[^1]。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。
+- [syncd](../reference/glossary.md#term-syncd) の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を `config reload` の同時起動による CPU 競合のせいと指摘している[^1]。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config_reload/config_reload_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 50471caccd14 -->

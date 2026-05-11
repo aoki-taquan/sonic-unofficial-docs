@@ -27,12 +27,12 @@ related:
 
 ## なぜこの拡張が必要か
 
-「Overlay ECMP with BFD monitoring」HLD（`SONiC/doc/vxlan/Overlay ECMP with BFD.md`）の **後付け拡張** で、VxLAN VNET ルートに 4 種の機能を追加する[^1]:
+「Overlay [ECMP](../reference/glossary.md#term-ecmp) with [BFD](../reference/glossary.md#term-bfd) monitoring」[HLD](../reference/glossary.md#term-hld)（`SONiC/doc/vxlan/Overlay ECMP with BFD.md`）の **後付け拡張** で、VxLAN [VNET](../reference/glossary.md#term-vnet) ルートに 4 種の機能を追加する[^1]:
 
 1. **Primary / Secondary エンドポイント** の自動切替（プライマリ全滅時のみセカンダリ使用）
 2. **カスタム監視** 委譲（BFD 非対応 VTEP 向け、外部プロセスで生存確認）
 3. **per-route BFD Tx/Rx 間隔** と **directly-connected** ネクストホップサポート
-4. **`pinned_state`**: コントローラからの BFD 状態オーバーライド（SmartSwitch HA 連携）
+4. **`pinned_state`**: コントローラからの BFD 状態オーバーライド（[SmartSwitch](../reference/glossary.md#term-smartswitch) HA 連携）
 
 ## スキーマ拡張
 
@@ -61,7 +61,7 @@ pinned_state             = none|up|down   ; BFD 状態 override
 
 ### APPL_DB / STATE_DB `VNET_MONITOR_TABLE`（新規）
 
-`monitoring=custom` の場合、VnetOrch が APPL_DB に endpoint 情報（`packet_type=vxlan` / `interval` / `multiplier` / `overlay_dmac`）を書き、カスタム監視モジュールは STATE_DB 側に `state=up/down` を返す。
+`monitoring=custom` の場合、VnetOrch が [APPL_DB](../reference/glossary.md#term-appl_db) に endpoint 情報（`packet_type=vxlan` / `interval` / `multiplier` / `overlay_dmac`）を書き、カスタム監視モジュールは [STATE_DB](../reference/glossary.md#term-state_db) 側に `state=up/down` を返す。
 
 ## Primary/Secondary 切替ルール
 
@@ -100,7 +100,7 @@ flowchart LR
 ## per-route BFD / directly-connected / pinned_state
 
 - `tx/rx_monitor_timer` 変更時は BFD セッションを **一旦削除して再作成**[^1]
-- `check_directly_connected=true` の場合、ARP で直接接続を確認し、直接接続なら **通常 ECMP** で実装。primary 集合 / secondary 集合は **混在不可**（全員 direct or 全員非 direct）[^1]
+- `check_directly_connected=true` の場合、[ARP](../reference/glossary.md#term-arp) で直接接続を確認し、直接接続なら **通常 ECMP** で実装。primary 集合 / secondary 集合は **混在不可**（全員 direct or 全員非 direct）[^1]
 - `pinned_state` = `none` / `up` / `down`。SmartSwitch HA で planned maintenance や誤検知抑止に使用。詳細は [SmartSwitch HA HLD §6.4.1](https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/smart-switch-ha-hld.md#641-pinning-bfd-probe)
 
 ## 設定例
@@ -128,7 +128,7 @@ sonic-db-cli APPL_DB HSET 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32' \
 ## 干渉する機能
 
 - **BfdOrch**: per-route タイマ更新で BFD 再生成、`pinned_state` 非固定時はフラップしうる
-- **BGP `ADVERTISE_NETWORK_TABLE`**: `adv_prefix` 経路は NH 消失で広報停止まで連動
+- **[BGP](../reference/glossary.md#term-bgp) `ADVERTISE_NETWORK_TABLE`**: `adv_prefix` 経路は NH 消失で広報停止まで連動
 - **SmartSwitch HA**: `pinned_state` / `check_directly_connected` は hamgrd 操作前提
 
 ## トラブルシューティング
@@ -144,7 +144,7 @@ sonic-db-cli APPL_DB hgetall 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32'
 
 ## 関連 Topics
 
-- [03-vxlan-evpn](../topics/03-vxlan-evpn/index.md): VxLAN / EVPN / VNET 経路
+- [03-vxlan-evpn](../topics/03-vxlan-evpn/index.md): VxLAN / [EVPN](../reference/glossary.md#term-evpn) / VNET 経路
 - [05-dual-tor](../topics/05-dual-tor/index.md): SmartSwitch HA と BFD 連携
 
 ## 引用元
@@ -157,3 +157,5 @@ sonic-db-cli APPL_DB hgetall 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32'
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6c853f6b2538 -->

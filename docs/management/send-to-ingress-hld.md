@@ -27,14 +27,14 @@ related:
 
 ## 概要
 
-PINS（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される[^1]:
+[PINS](../reference/glossary.md#term-pins)（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される[^1]:
 
-1. **Direct transmit**: 送信元アプリ（LACP, P4RT 等）が送信先ポートを既に決めている場合。対応 netdev のソケットへ直接置く
-2. **Ingress pipeline inject**: 送信元アプリが「ASIC のルーティングに任せる」場合。**ASIC の ingress パイプラインに直接パケットを投入** し、ECMP / WCMP の選択や帯域・キュー深さに応じた最適経路選択を ASIC に委ねる
+1. **Direct transmit**: 送信元アプリ（[LACP](../reference/glossary.md#term-lacp), P4RT 等）が送信先ポートを既に決めている場合。対応 netdev のソケットへ直接置く
+2. **Ingress pipeline inject**: 送信元アプリが「ASIC のルーティングに任せる」場合。**ASIC の ingress パイプラインに直接パケットを投入** し、[ECMP](../reference/glossary.md#term-ecmp) / WCMP の選択や帯域・キュー深さに応じた最適経路選択を ASIC に委ねる
 
 SDN コントローラがネットワーク全体を見てフローを書く構成や、ECMP のリアルタイム性を ASIC に判断させたい場合、後者が必要になる。テスト用途で「CPU 起点で ingress に通したパケットの ASIC ルーティングを観察する」場合にも使える。
 
-本 HLD は **「Send To Ingress」専用ポート**（仮想ホスト IF）を `CONFIG_DB.SEND_TO_INGRESS_PORT` で定義し、SWSS が SAI hostif を作って CPU port にバインドする経路を導入する[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **「Send To Ingress」専用ポート**（仮想ホスト IF）を `CONFIG_DB.SEND_TO_INGRESS_PORT` で定義し、SWSS が [SAI](../reference/glossary.md#term-sai) hostif を作って CPU port にバインドする経路を導入する[^1]。
 
 ## 動作仕様
 
@@ -105,11 +105,11 @@ sequenceDiagram
 
 ### Multi-ASIC
 
-`SONiC multi asic HLD` に従い、各 ASIC が **自分の SWSS / syncd / config を持つ** ので、ASIC ごとに `SEND_TO_INGRESS` ポートを独立に作れる。各 netdev はそれぞれの namespace 内に存在する[^1]。
+`SONiC multi asic HLD` に従い、各 ASIC が **自分の SWSS / [syncd](../reference/glossary.md#term-syncd) / config を持つ** ので、ASIC ごとに `SEND_TO_INGRESS` ポートを独立に作れる。各 netdev はそれぞれの namespace 内に存在する[^1]。
 
 ### ベンダー側の対応必要性
 
-**従来の SAI `create_hostif (NETDEV)` は物理ポート / VLAN / LAG への bind が前提**。CPU port に bind できる実装になっていないベンダー SAI もあるため、**ベンダーは hostif create API を拡張して CPU port 関連付けに対応する必要がある**[^1]。これが本 HLD のポータビリティ上の主要前提。
+**従来の SAI `create_hostif (NETDEV)` は物理ポート / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) への bind が前提**。CPU port に bind できる実装になっていないベンダー SAI もあるため、**ベンダーは hostif create API を拡張して CPU port 関連付けに対応する必要がある**[^1]。これが本 HLD のポータビリティ上の主要前提。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/pins/send_to_ingress_hld.md#L130-L138 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -147,7 +147,7 @@ reasoning: 「ベンダー SAI 拡張が前提」という最重要の制約の�
 
 ### 関連する CLI
 
-HLD では専用 CLI は提案されていない（"CLI/YANG model Enhancements: N/A"[^1]）。`config_db.json` 直接編集または既存の `redis-cli` / `sonic-cfggen` で投入する想定。
+HLD では専用 CLI は提案されていない（"CLI/[YANG](../reference/glossary.md#term-yang) model Enhancements: N/A"[^1]）。`config_db.json` 直接編集または既存の `redis-cli` / `sonic-cfggen` で投入する想定。
 
 ### 関連する YANG
 
@@ -177,15 +177,15 @@ ip link show send_to_ingress
 ## 干渉する機能
 
 - **PINS Packet I/O HLD**: 本 HLD はその TX 経路を補完する位置づけ。Direct transmit と inject の選択はアプリ側に委ねられる
-- **`PortsMgr` / `PortsOrch`**: CONFIG_DB → APPL_DB → SAI の標準フローに「`SEND_TO_INGRESS_PORT` 用の小経路」を足す
-- **CPU port / Trap / CoPP**: ingress 注入時のパケットも CPU 起点と認識される可能性があり、CoPP との相互作用に注意（HLD では明記されていないが運用上の注意点）
+- **`PortsMgr` / `PortsOrch`**: [CONFIG_DB](../reference/glossary.md#term-config_db) → [APPL_DB](../reference/glossary.md#term-appl_db) → SAI の標準フローに「`SEND_TO_INGRESS_PORT` 用の小経路」を足す
+- **CPU port / Trap / [CoPP](../reference/glossary.md#term-copp)**: ingress 注入時のパケットも CPU 起点と認識される可能性があり、CoPP との相互作用に注意（HLD では明記されていないが運用上の注意点）
 - **Multi-ASIC**: 各 ASIC ごとに独立な netdev が namespace 内に作られる
 
 ## トラブルシューティング
 
 - `send_to_ingress` netdev が作成されない場合、SAI 側エラーを確認。多くは「CPU port を OBJ_ID に取れない」ベンダー SAI 制限
 - 作成されたが UP しない場合、`SAI_HOSTIF_ATTR_OPER_STATUS=true` で create されているか確認（false で作ると以降上げられない）
-- パケットを書いたのに ASIC が転送しない場合、ingress パイプラインの ACL / forwarding テーブルとマッチしているか確認
+- パケットを書いたのに ASIC が転送しない場合、ingress パイプラインの [ACL](../reference/glossary.md#term-acl) / forwarding テーブルとマッチしているか確認
 
 ## 引用元
 
@@ -206,3 +206,5 @@ ip link show send_to_ingress
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 112ecb18e1f8 -->

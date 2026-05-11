@@ -30,11 +30,11 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **minigraph.xml 構文エラー**: 解析失敗で `sonic-cfggen` が exception
+1. **[minigraph.xml](../../reference/glossary.md#term-minigraph.xml) 構文エラー**: 解析失敗で `sonic-cfggen` が exception
 2. **hwsku / platform 不整合**: minigraph 内 hwsku が `/usr/share/sonic/device/<platform>/` に存在しない
-3. **portmap (port_config.ini) との port 数不一致**
-4. **`hostcfgd` が CONFIG_DB 待ちで block**: 依存サービスが起動順を待っている
-5. **swss / syncd が初期化中に SAI エラー**
+3. **portmap ([port_config.ini](../../reference/glossary.md#term-port-config-ini)) との port 数不一致**
+4. **`hostcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) 待ちで block**: 依存サービスが起動順を待っている
+5. **swss / [syncd](../../reference/glossary.md#term-syncd) が初期化中に [SAI](../../reference/glossary.md#term-sai) エラー**
 
 ## 切り分け手順
 
@@ -87,5 +87,7 @@ docker logs syncd 2>&1 | grep -iE "ERR|SAI_STATUS" | tail -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — config/main.py
-[^2]: sonic-net/sonic-buildimage @ 4305596 — sonic-config-engine/minigraph.py
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config/main.py
+[^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic-config-engine/minigraph.py
+
+<!-- glossary-links-injected: 8772b091b635 -->

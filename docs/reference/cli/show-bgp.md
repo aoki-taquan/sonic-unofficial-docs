@@ -32,9 +32,9 @@ related:
 
 ## 概要
 
-BGP 状態表示用の CLI は **3 系統に分かれている**:
+[BGP](../../reference/glossary.md#term-bgp) 状態表示用の CLI は **3 系統に分かれている**:
 
-1. `show bgp ...` ... CONFIG_DB の `BGP_DEVICE_GLOBAL` / `BGP_AGGREGATE_ADDRESS` を `show/bgp_cli.py` が直接 dump（FRR を経由しない）。
+1. `show bgp ...` ... [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_DEVICE_GLOBAL` / `BGP_AGGREGATE_ADDRESS` を `show/bgp_cli.py` が直接 dump（[FRR](../../reference/glossary.md#term-frr) を経由しない）。
 2. `show ip bgp ...` / `show ipv6 bgp ...` ... `show/bgp_frr_v4.py` / `bgp_frr_v6.py` が `vtysh -c "show ip bgp ..."` を内部実行して FRR の出力を整形。
 3. `show running-configuration bgp` ... `show/main.py` が `vtysh -c "show running-config"` を実行（別ページ「show running-config」を参照）。
 
@@ -46,7 +46,7 @@ BGP 状態表示用の CLI は **3 系統に分かれている**:
 
 | コマンド | 用途 |
 |---------|------|
-| `show bgp device-global [-j\|--json]` | TSA / W-ECMP の現在状態を CONFIG_DB から表示 |
+| `show bgp device-global [-j\|--json]` | TSA / W-[ECMP](../../reference/glossary.md#term-ecmp) の現在状態を CONFIG_DB から表示 |
 | `show bgp aggregate-address ipv4 [-j\|--json]` | IPv4 集約 prefix の設定一覧 |
 | `show bgp aggregate-address ipv6 [-j\|--json]` | IPv6 集約 prefix の設定一覧 |
 
@@ -58,7 +58,7 @@ BGP 状態表示用の CLI は **3 系統に分かれている**:
 | `show ip bgp neighbors [<ipaddress>] [routes\|advertised-routes\|received-routes] [-n NS]` | 隣接情報 |
 | `show ip bgp network [<ip\|prefix>] [bestpath\|json\|longer-prefixes\|multipath] [-n NS]` | RIB の prefix lookup |
 | `show ip bgp aggregate-address` | bgp_cli の IPv4 aggregate 表示への shim |
-| `show ip bgp vrf <vrf> summary` / `neighbors ...` / `network ...` | VRF 配下の BGP 情報（パラメータは default VRF と同じ） |
+| `show ip bgp vrf <vrf> summary` / `neighbors ...` / `network ...` | [VRF](../../reference/glossary.md#term-vrf) 配下の BGP 情報（パラメータは default VRF と同じ） |
 | `show ipv6 bgp summary / neighbors / network / vrf ... ` | IPv6 版（IPv4 と同等の subcommand 体系） |
 
 ## 各コマンドの詳細
@@ -236,3 +236,5 @@ show ip bgp network 10.0.0.0/24
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CLI: config bgp](config-bgp.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
+
+<!-- glossary-links-injected: 498fa165fc57 -->

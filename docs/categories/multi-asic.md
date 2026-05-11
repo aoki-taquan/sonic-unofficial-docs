@@ -10,7 +10,7 @@ last_verified: 2026-05-10
 
 ## 概要
 
-**Multi-ASIC** は、1 台のスイッチ内に複数の forwarding ASIC を搭載するハードウェア構成で、SONiC では **Linux network namespace** ごとに per-ASIC の docker / Redis / orchagent / BGP インスタンスを動かすアーキテクチャを採用しています。**VOQ chassis** はこの考え方を **複数のライン カード + supervisor + fabric ASIC** に拡張した分散システムで、CHASSIS_APP_DB と system-port / system-LAG / fabric port などの広域識別子を導入します。
+**Multi-ASIC** は、1 台のスイッチ内に複数の forwarding ASIC を搭載するハードウェア構成で、SONiC では **Linux network namespace** ごとに per-ASIC の docker / [Redis](../reference/glossary.md#term-redis) / [orchagent](../reference/glossary.md#term-orchagent) / [BGP](../reference/glossary.md#term-bgp) インスタンスを動かすアーキテクチャを採用しています。**[VOQ](../reference/glossary.md#term-voq) chassis** はこの考え方を **複数のライン カード + supervisor + fabric ASIC** に拡張した分散システムで、CHASSIS_APP_DB と system-port / system-[LAG](../reference/glossary.md#term-lag) / fabric port などの広域識別子を導入します。
 
 このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断でまとめます。**platform**（VOQ / fabric / recirculation port サポート、provisiond、Golden Config）・**internals**（namespace ごとの Redis、VOQ counter aggregation）・**system**（Multi-ASIC warm-reboot、PMON、Entity MIB）・**routing**（VoQ 向け BGP、reliable TSA）・**switching**（system-LAG）・**acl-qos**（VOQ 分散転送）に分散しています。
 
@@ -86,3 +86,5 @@ VOQ シャシでは **CHASSIS_APP_DB** が新しい広域 DB として登場し�
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: aec2708c42dc -->

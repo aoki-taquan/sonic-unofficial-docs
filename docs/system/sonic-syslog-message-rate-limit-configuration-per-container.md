@@ -34,7 +34,7 @@ $SystemLogRateLimitInterval 300
 $SystemLogRateLimitBurst 20000
 ```
 
-`Interval` 秒の窓内に `Burst` 件を超えると以降を drop。flood 防止だが「もっと緩く/厳しく」したいし、host 側にも追加したい。本機能は両者を **CONFIG_DB から動的に変更** できるようにする[^1]。
+`Interval` 秒の窓内に `Burst` 件を超えると以降を drop。flood 防止だが「もっと緩く/厳しく」したいし、host 側にも追加したい。本機能は両者を **[CONFIG_DB](../reference/glossary.md#term-config_db) から動的に変更** できるようにする[^1]。
 
 ## CONFIG_DB スキーマ
 
@@ -93,7 +93,7 @@ show syslog rate-limit-host
 
 ## 制限事項
 
-- HLD は Rev 0.1 で日付欄空欄
+- [HLD](../reference/glossary.md#term-hld) は Rev 0.1 で日付欄空欄
 - App extension は capability 申告ベース（強制ではない）
 - host 設定はコンテナに伝播しないため、全体抑制には各 container にも設定が必要
 - single-ASIC で `rsyslog.conf` → `rsyslog-container.conf.j2` への切替は後方互換破壊の可能性あり
@@ -124,3 +124,5 @@ docker exec bgp supervisorctl status | grep rsyslog
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/syslog-rate-limit-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: c5a6ce567024 -->

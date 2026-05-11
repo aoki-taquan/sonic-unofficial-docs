@@ -35,9 +35,9 @@ related:
 
 ## なぜ必要か
 
-Dual-ToR（Active / Standby）でサーバ側輻輳が起きると **upper / lower 両 ToR に PFC pause が同時に伝搬** する。Standby ToR は南向きトラフィックを **同じキューでバウンスバック** して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する **PFC デッドロック** が起きる[^1]。
+Dual-ToR（Active / Standby）でサーバ側輻輳が起きると **upper / lower 両 ToR に [PFC](../reference/glossary.md#term-pfc) pause が同時に伝搬** する。Standby ToR は南向きトラフィックを **同じキューでバウンスバック** して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する **PFC デッドロック** が起きる[^1]。
 
-本機能は tunnel encap 時に **キュー / DSCP を別系統に書き換え**、decap 時にポート単位マップを **AZURE_TUNNEL** で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。`202012` / `202205` を最初のターゲットとし、SAI 新規 tunnel 属性が前提[^1]。
+本機能は tunnel encap 時に **キュー / DSCP を別系統に書き換え**、decap 時にポート単位マップを **AZURE_TUNNEL** で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。`202012` / `202205` を最初のターゲットとし、[SAI](../reference/glossary.md#term-sai) 新規 tunnel 属性が前提[^1]。
 
 ## どう動くか
 
@@ -51,7 +51,7 @@ flowchart LR
     ActiveToR -->|decap; inner DSCP=3 維持<br/>AZURE_TUNNEL → TC3, PG2| Server
 ```
 
-Standby が受けた南向きパケットは MuxTunnel (IPinIP) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。HLD は **encap 側で DSCP/Queue を書き換え**、**decap 側でポート単位 TC/PG を上書き** する 2 段で経路を分ける。
+Standby が受けた南向きパケットは MuxTunnel ([IPinIP](../reference/glossary.md#term-ipinip)) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。[HLD](../reference/glossary.md#term-hld) は **encap 側で DSCP/Queue を書き換え**、**decap 側でポート単位 TC/PG を上書き** する 2 段で経路を分ける。
 
 ### 追加 QoS マップ（AZURE_TUNNEL 系）
 
@@ -106,7 +106,7 @@ PG2 / PG6 を lossy として有効化する一方、追加 lossless キュー�
 | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | decap 時 outer DSCP→TC 上書き |
 | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` | decap 時 TC→PG 上書き |
 
-orchagent: `tunneldecaporch` が DECAP 側、`muxorch::create_tunnel` が ENCAP 側を投入する。
+[orchagent](../reference/glossary.md#term-orchagent): `tunneldecaporch` が DECAP 側、`muxorch::create_tunnel` が ENCAP 側を投入する。
 
 ### 終端オブジェクトの分離
 
@@ -174,7 +174,7 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 
 ### CLI / YANG
 
-CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `db_migrator` が旧構成から派生する。YANG は `sonic-tc-dscp`（新設）と `sonic-port-qos-map`（フィールド追加）。
+CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `db_migrator` が旧構成から派生する。[YANG](../reference/glossary.md#term-yang) は `sonic-tc-dscp`（新設）と `sonic-port-qos-map`（フィールド追加）。
 
 ## 干渉する機能
 
@@ -185,7 +185,7 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
 
 ## トラブルシューティング
 
-- バウンスバックでも pause 伝搬: `MuxTunnel0` の encap マップが ASIC_DB (`SAI_TUNNEL_ATTR_ENCAP_QOS_*`) に反映されているか。
+- バウンスバックでも pause 伝搬: `MuxTunnel0` の encap マップが [ASIC_DB](../reference/glossary.md#term-asic_db) (`SAI_TUNNEL_ATTR_ENCAP_QOS_*`) に反映されているか。
 - decap 後 TC が想定外: `dscp_mode=pipe` か（`uniform` だと outer が inner に被さって `AZURE_TUNNEL` の効きが見えない）。
 - PFCWD 対象キューがずれる: `db_migrator` で `pfcwd_sw_enable` が生成されたか、または手動投入を確認。
 - terminator 競合: MuxTunnel と通常 IPinIP の両方を立てている場合、orchagent が P2P / P2MP に分離しているか。
@@ -194,10 +194,10 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
 
 verified at: 2026-05-09。
 
-- **PFCWD フィールド名**: HLD `pfc_wd_sw_enable` に対し、master 実装は `pfcwd_sw_enable`（アンダースコア位置違い）。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から派生。CONFIG_DB / YANG (`sonic-port-qos-map`) も実装名を正とする。
+- **PFCWD フィールド名**: HLD `pfc_wd_sw_enable` に対し、master 実装は `pfcwd_sw_enable`（アンダースコア位置違い）。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から派生。[CONFIG_DB](../reference/glossary.md#term-config_db) / YANG (`sonic-port-qos-map`) も実装名を正とする。
 - `tunneldecaporch.cpp:834,1084`（`DECAP_QOS_*`）、`muxorch.cpp:259,2347`（`SAI_TUNNEL_PEER_MODE_P2P`）、`qos_config.j2:441`（Dual-ToR 限定 `AZURE_TUNNEL` 出力）は HLD どおり実装。
 
-**影響**: HLD 表記そのままで config_db.json テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では `db_migrator.py` 最新版を走らせ `pfcwd_sw_enable` が生成されているか確認する。
+**影響**: HLD 表記そのままで [config_db.json](../reference/glossary.md#term-config_db.json) テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では `db_migrator.py` 最新版を走らせ `pfcwd_sw_enable` が生成されているか確認する。
 
 **確認コマンド**:
 
@@ -229,3 +229,5 @@ redis-cli -n 4 keys 'PORT_QOS_MAP|*' \
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4a6c1db4c93d -->

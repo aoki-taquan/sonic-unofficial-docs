@@ -26,9 +26,9 @@ related:
 
 ## 概要
 
-SONiC の APPL_DB / STATE_DB に存在する主要テーブルを、**RFC 5234 ABNF 構文** で機械可読に定義する `sonic-swss` リポジトリ内の参照ドキュメント[^1]。orchagent / *syncd / *mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。
+SONiC の [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) に存在する主要テーブルを、**RFC 5234 ABNF 構文** で機械可読に定義する `sonic-swss` リポジトリ内の参照ドキュメント[^1]。[orchagent](../reference/glossary.md#term-orchagent) / *[syncd](../reference/glossary.md#term-syncd) / *mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。
 
-開発者・Verifier はこのファイルを APPL_DB / STATE_DB スキーマの一次情報として扱う。CONFIG_DB スキーマは別途 `sonic-buildimage/src/sonic-yang-models/` 配下の YANG モデルが正規。
+開発者・Verifier はこのファイルを APPL_DB / STATE_DB スキーマの一次情報として扱う。[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは別途 `sonic-buildimage/src/sonic-yang-models/` 配下の [YANG](../reference/glossary.md#term-yang) モデルが正規。
 
 ## 動作仕様
 
@@ -44,27 +44,27 @@ hash_key                = name               ; 既存キー名
 
 ファイル冒頭から並ぶ代表テーブル：
 
-- **`PORT_TABLE`**: 物理ポート（CPU / loopback は除外）。`admin_status` / `oper_status` / `lanes` / `mac` / `alias` / `speed` / `mtu` / `fec` / `autoneg` / `preemphasis` / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / QoS マッピング reference 等[^1]。
+- **`PORT_TABLE`**: 物理ポート（CPU / loopback は除外）。`admin_status` / `oper_status` / `lanes` / `mac` / `alias` / `speed` / `mtu` / `fec` / `autoneg` / `preemphasis` / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / [QoS](../reference/glossary.md#term-qos) マッピング reference 等[^1]。
 - **`INTF_TABLE`**: 論理ネットワークインタフェース。`<ifname>:<IPprefix>` 形式キー、`scope` (global/local)、`if_mtu`、`family`。
-- **`VLAN_TABLE` / `VLAN_MEMBER_TABLE`**: VLAN 定義とメンバ。
+- **`VLAN_TABLE` / `VLAN_MEMBER_TABLE`**: [VLAN](../reference/glossary.md#term-vlan) 定義とメンバ。
 - **`LAG_TABLE` / `LAG_MEMBER_TABLE`**: Port-Channel 定義とメンバ。
-- **`ROUTE_TABLE`**: 経路。`nexthop` / `intf` / `vni_label` / `router_mac` / `blackhole` / SRv6 関連 (`segment` / `seg_src` / `vpn_sid` / `policy`)。
-- **`NEIGH_TABLE`**: ARP/ND エントリ。`<ifname>:<ip>` キー。
-- **`FDB_TABLE`**: L2 FDB エントリ。
+- **`ROUTE_TABLE`**: 経路。`nexthop` / `intf` / `vni_label` / `router_mac` / `blackhole` / [SRv6](../reference/glossary.md#term-srv6) 関連 (`segment` / `seg_src` / `vpn_sid` / `policy`)。
+- **`NEIGH_TABLE`**: [ARP](../reference/glossary.md#term-arp)/ND エントリ。`<ifname>:<ip>` キー。
+- **`FDB_TABLE`**: L2 [FDB](../reference/glossary.md#term-fdb) エントリ。
 - **`MIRROR_SESSION_TABLE`**: ミラーリングセッション。
-- **`ACL_TABLE` / `ACL_RULE_TABLE`**: ACL の APPL_DB 投影。
+- **`ACL_TABLE` / `ACL_RULE_TABLE`**: [ACL](../reference/glossary.md#term-acl) の APPL_DB 投影。
 - **`COPP_TABLE`**: control-plane policer。
-- **`BFD_SESSION_TABLE`**: BFD セッション。
-- **`VNET_ROUTE_TUNNEL_TABLE` / `VXLAN_TUNNEL_TABLE`**: VxLAN / VNET。
+- **`BFD_SESSION_TABLE`**: [BFD](../reference/glossary.md#term-bfd) セッション。
+- **`VNET_ROUTE_TUNNEL_TABLE` / `VXLAN_TUNNEL_TABLE`**: VxLAN / [VNET](../reference/glossary.md#term-vnet)。
 - **`SRV6_*`**: SRv6 関連（SID list、my_sid、policy）。
 
 ### 主要 STATE_DB テーブル
 
-- **`PORT_TABLE` (STATE_DB)**: oper 状態のうち SAI/syncd 由来分。
+- **`PORT_TABLE` (STATE_DB)**: oper 状態のうち [SAI](../reference/glossary.md#term-sai)/syncd 由来分。
 - **`NEIGH_STATE_TABLE` / `INTERFACE_TABLE`**: oper 状態。
 - **`BFD_SESSION_TABLE` (STATE_DB)**: BFD の oper state（`Up` / `Down`）。
 - **`WARM_RESTART_TABLE`**: warm restart 各サブシステムの restart_count 等。
-- **`ADVERTISE_NETWORK_TABLE`**: BGP に向けた広報 hint。
+- **`ADVERTISE_NETWORK_TABLE`**: [BGP](../reference/glossary.md#term-bgp) に向けた広報 hint。
 - **`*_CAPABILITIES`**: 各機能の capability 公開（mirror / hash / debug counter 等）。
 
 ### ABNF 例
@@ -111,7 +111,7 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 
 - **生きたドキュメント**であるため、master が更新されるたびにフィールドが追加・変更される。本ページに列挙した内容は執筆時点（commit `4305596145e57e15e4c6a1a3902c0bc6c44a09c5`）のスナップショット。
 - ABNF 表記はあくまで **人間とパーサ向けの参考形式** で、orchagent 等の実装はこのファイルを直接読まない。実装側の `swss-common/schema.h` が定数定義の正規ソース。
-- 全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。**完全な定義は HLD `sonic-net/sonic-swss/doc/swss-schema.md` を参照。**
+- 全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。**完全な定義は [HLD](../reference/glossary.md#term-hld) `sonic-net/sonic-swss/doc/swss-schema.md` を参照。**
 
 ## 干渉する機能
 
@@ -121,9 +121,9 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 
 ## トラブルシューティング
 
-- 期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う `*mgrd`（intfmgrd / vlanmgrd / portmgrd 等）の状態を確認。
+- 期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う `*mgrd`（[intfmgrd](../reference/glossary.md#term-intfmgrd) / [vlanmgrd](../reference/glossary.md#term-vlanmgrd) / [portmgrd](../reference/glossary.md#term-portmgrd) 等）の状態を確認。
 - フィールド名が違って見える → `swss-schema.md` と `swss-common/schema.h` の **両方** を見て、どちらが最新かを確認する。
-- 自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の sonic-swss master コミットの `doc/swss-schema.md` で再確認するのが望ましい。
+- 自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の [sonic-swss](../reference/glossary.md#term-sonic-swss) master コミットの `doc/swss-schema.md` で再確認するのが望ましい。
 
 ## 引用元
 
@@ -134,6 +134,8 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 実コードと突合し本ページが指す `sonic-swss/doc/swss-schema.md` 内の主要 APPL_DB テーブル群が現行 master に実在することを確認:
 
 - `sonic-swss/doc/swss-schema.md` には `### PORT_TABLE` / `### INTF_TABLE` / `### VLAN_TABLE` / `### LAG_TABLE` / `### ROUTE_TABLE` / `### NEXTHOP_GROUP_TABLE` / `### CLASS_BASED_NEXT_HOP_GROUP_TABLE` / `### FC_TO_NHG_INDEX_MAP_TABLE` / `### NEIGH_TABLE` / `### SRV6_SID_LIST_TABLE` / `### SRV6_MY_SID_TABLE` / `### FDB_TABLE` / `### QUEUE_TABLE` 等のセクションが定義されており、本ページが主張する「ABNF による APPL_DB / STATE_DB 中心スキーマの集約」と一致。
-- `APP_NEXTHOP_GROUP_TABLE_NAME` は `sonic-swss/fpmsyncd/routesync.cpp:157` で実際に ProducerStateTable として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。
+- `APP_NEXTHOP_GROUP_TABLE_NAME` は `sonic-swss/fpmsyncd/routesync.cpp:157` で実際に [ProducerStateTable](../reference/glossary.md#term-producerstatetable) として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。
 
 本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。
+
+<!-- glossary-links-injected: fdde38aa50b9 -->

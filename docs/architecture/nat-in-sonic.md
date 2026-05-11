@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC は **Linux kernel の conntrack/iptables を真実源** として、ハードウェア NAT エンジン（SAI NAT API）にエントリを同期する 2 段構成を採る[^1]。設計上の役割分担:
+SONiC は **Linux kernel の conntrack/iptables を真実源** として、ハードウェア [NAT](../reference/glossary.md#term-nat) エンジン（[SAI](../reference/glossary.md#term-sai) NAT API）にエントリを同期する 2 段構成を採る[^1]。設計上の役割分担:
 
 - **`natmgrd`**: `CONFIG_DB` の static / dynamic NAT 設定を読み iptables ルールに変換
 - **kernel**: iptables / conntrack で NAT 動作と translation を生成
@@ -61,7 +61,7 @@ flowchart LR
 
 - **Static NAT (1:1)**: 内部 IP ↔ 外部 IP の固定対応
 - **Static NAPT (1:1 with port)**: 内部 IP+port ↔ 外部 IP+port の固定対応
-- **Dynamic NAT**: NAT_POOL から外部 IP をリースし、ACL / NAT_BINDINGS で対象トラフィックを定義
+- **Dynamic NAT**: NAT_POOL から外部 IP をリースし、[ACL](../reference/glossary.md#term-acl) / NAT_BINDINGS で対象トラフィックを定義
 - **Dynamic NAPT (PAT)**: 多対一の port 多重化
 - **Twice NAT**: source / destination 両方の書き換え
 
@@ -108,13 +108,13 @@ config nat add static basic 10.0.0.1 100.64.1.1
 ## 制限事項
 
 - **conntrack/iptables を真実源とする** ため、kernel 側で翻訳されたフローしか ASIC に流れない。host を経由しない fast-path 用途には向かない
-- ハードウェアサイズ（NAT entry 数）は ASIC 依存。CRM (`Critical Resource Monitoring`) で監視する想定
-- IPv6 NAT（NAT66 / NAT64）は本 HLD の主対象外
+- ハードウェアサイズ（NAT entry 数）は ASIC 依存。[CRM](../reference/glossary.md#term-crm) (`Critical Resource Monitoring`) で監視する想定
+- IPv6 NAT（NAT66 / NAT64）は本 [HLD](../reference/glossary.md#term-hld) の主対象外
 - ALG（FTP 等の payload 書き換え）は kernel 側に依存
 
 ## 干渉する機能
 
-- **VRF / interface zone 設定**: zone を間違えると一切翻訳されない
+- **[VRF](../reference/glossary.md#term-vrf) / interface zone 設定**: zone を間違えると一切翻訳されない
 - **ACL / mirror**: ACL マッチ条件と NAT の評価順序を意識する
 - **CRM**: NAT entry 上限とアラーム閾値を運用で監視
 - **conntrack timeout**: kernel の TCP/UDP idle timeout に追従して ASIC からも eviction される
@@ -123,7 +123,7 @@ config nat add static basic 10.0.0.1 100.64.1.1
 
 - 翻訳が起こらない → zone 設定、`show nat translations`、kernel `conntrack -L` を確認
 - ASIC が full → CRM `nat_entry` / `napt_entry` で残量を確認、aging timeout 短縮を検討
-- counters が 0 → NatOrch の SAI 設定エラー、syncd ログ確認
+- counters が 0 → NatOrch の SAI 設定エラー、[syncd](../reference/glossary.md#term-syncd) ログ確認
 
 ## 引用元
 
@@ -144,3 +144,5 @@ config nat add static basic 10.0.0.1 100.64.1.1
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1bfe3dfac583 -->

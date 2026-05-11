@@ -127,7 +127,7 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 
 - **`sonic-buildimage`**: slave container / Makefile / Azure pipeline
 - **`sonic-linux-kernel`**: kernel patch / config の Debian 別管理
-- **vendor SAI / platform module**: 各 vendor の Debian 対応
+- **vendor [SAI](../reference/glossary.md#term-sai) / platform module**: 各 vendor の Debian 対応
 - **`docker-sonic-vs` / VS test**: cross-compat の見張り
 - **release schedule (5月/11月)**: 取り込みターゲット
 
@@ -142,3 +142,5 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - src/sonic-host-services の docker-sonic-vs 互換維持の現状確認
 - 廃止された Debian バージョンと release ノート整合確認
 -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

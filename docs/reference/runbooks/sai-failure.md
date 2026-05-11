@@ -25,15 +25,15 @@ related:
 ## 症状
 
 - `syncd` コンテナが `Exited (134)` / `Aborted (core dumped)` で再起動を繰り返す
-- `ASIC_DB` への書き込みが詰まる、orchagent ログに `SAI API failed` が連続
+- `ASIC_DB` への書き込みが詰まる、[orchagent](../../reference/glossary.md#term-orchagent) ログに `SAI API failed` が連続
 - ASIC レベルのテーブル限界エラー (`CRM` の overflow) が観測される
 
 ## 想定原因
 
-1. **CRM (Critical Resource Monitor) で table 枯渇**: FDB / ROUTE / NEXTHOP / ACL のいずれかが ASIC 容量を超過
-2. **SAI 属性の未対応**: SDK バージョンが古く、orchagent が新属性を打って失敗
+1. **[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) で table 枯渇**: [FDB](../../reference/glossary.md#term-fdb) / ROUTE / NEXTHOP / [ACL](../../reference/glossary.md#term-acl) のいずれかが ASIC 容量を超過
+2. **[SAI](../../reference/glossary.md#term-sai) 属性の未対応**: SDK バージョンが古く、orchagent が新属性を打って失敗
 3. **同名 object の重複作成 / 削除順序ミス**: 古い参照を残したまま親 object を削除
-4. **メモリ / shared memory 不足**: redis / syncd が OOM kill
+4. **メモリ / shared memory 不足**: redis / [syncd](../../reference/glossary.md#term-syncd) が OOM kill
 5. **HW 側の障害**: ASIC reset、PCIe link down、Fabric link error
 
 ## 切り分け手順
@@ -103,5 +103,7 @@ dmesg | grep -i -E "oom|kill" | tail
 
 ## 引用元
 
-[^1]: sonic-net/sonic-sairedis @ 88bc51a — syncd 本体
-[^2]: sonic-net/sonic-swss @ 4305596 — orchagent
+[^1]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 88bc51a — syncd 本体
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — orchagent
+
+<!-- glossary-links-injected: 39cba99ab9f2 -->

@@ -20,7 +20,7 @@ sources:
 
 # VRF と Static Route の設定
 
-設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部管理システムが検証する型は YANG です。このページでは VRF 付き L3 設定の最小単位をその順で整理します。
+設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは [CONFIG_DB](../../reference/glossary.md#term-config_db)、外部管理システムが検証する型は [YANG](../../reference/glossary.md#term-yang) です。このページでは [VRF](../../reference/glossary.md#term-vrf) 付き L3 設定の最小単位をその順で整理します。
 
 ## 最小構成の流れ
 
@@ -28,7 +28,7 @@ sources:
 2. L3 interface を VRF に bind する。
 3. interface に IP address を付ける。
 4. static route を VRF 付きで追加する。
-5. 必要なら nexthop VRF、blackhole、FG ECMP を加える。
+5. 必要なら nexthop VRF、blackhole、FG [ECMP](../../reference/glossary.md#term-ecmp) を加える。
 
 CLI の詳細な引数は [config vrf](../../reference/cli/config-vrf.md) と [config route](../../reference/cli/config-route.md) を参照してください。
 
@@ -156,7 +156,7 @@ Routing entry for 203.0.113.0/24
   * 192.0.2.2, via Ethernet4, weight 1
 ```
 
-両 nexthop に `*` が出れば両方 active。片方だけなら ARP / next-hop reachability を疑います。
+両 nexthop に `*` が出れば両方 active。片方だけなら [ARP](../../reference/glossary.md#term-arp) / next-hop reachability を疑います。
 
 ## 典型シナリオ 3: VRF leaking と blackhole
 
@@ -194,7 +194,7 @@ blackhole route (流入 packet を破棄):
 }
 ```
 
-`blackhole=true` の場合 `nexthop` は空でよい (orchagent が null route を installs)。
+`blackhole=true` の場合 `nexthop` は空でよい ([orchagent](../../reference/glossary.md#term-orchagent) が null route を installs)。
 
 ## CONFIG_DB で見る形
 
@@ -215,7 +215,7 @@ STATIC_ROUTE|Vrf_blue|198.51.100.0/24
     distance = 0
 ```
 
-Loopback を使う場合は `LOOPBACK_INTERFACE` を読みます。BGP の router-id や per-VRF loopback を扱うときは [LOOPBACK_INTERFACE テーブル](../../reference/config-db/loopback-interface.md) が入口です。
+Loopback を使う場合は `LOOPBACK_INTERFACE` を読みます。[BGP](../../reference/glossary.md#term-bgp) の router-id や per-VRF loopback を扱うときは [LOOPBACK_INTERFACE テーブル](../../reference/config-db/loopback-interface.md) が入口です。
 
 ## ECMP static route の表現
 
@@ -256,8 +256,8 @@ YANG は、外部 API や config validation の入力制約を確認するとき
 |---|---|---|
 | `VRF <name> does not exist!` | route で参照した VRF 未作成 | 先に `config vrf add <name>` |
 | `Nexthop VRF <vrf> does not exist!` | `nexthop-vrf` 指定先が未作成 | leaking 先の VRF を先に作成 |
-| `interface <name> does not exist.` | route の `ifname` 未作成 | 先に物理 / VLAN / PortChannel interface を確認 |
-| `portchannel does not exist.` | LAG ifname を指定したが LAG 未作成 | `config portchannel add` |
+| `interface <name> does not exist.` | route の `ifname` 未作成 | 先に物理 / [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) interface を確認 |
+| `portchannel does not exist.` | [LAG](../../reference/glossary.md#term-lag) ifname を指定したが LAG 未作成 | `config portchannel add` |
 | `vlan interface does not exist.` | VLAN ifname を指定したが VLAN_INTERFACE 未作成 | `config interface ip add Vlan<id>` |
 | `argument is not in pattern prefix [vrf ...] <A.B.C.D/M> nexthop [vrf ...] ...` | `config route add` の引数順誤り | reference の構文に厳密に従う |
 
@@ -279,3 +279,5 @@ bind 系の暗黙挙動:
 - [YANG: sonic-interface](../../reference/yang/sonic-interface.md)
 - [YANG: sonic-static-route](../../reference/yang/sonic-static-route.md)
 - [YANG: sonic-route-common](../../reference/yang/sonic-route-common.md)
+
+<!-- glossary-links-injected: 3643cd287eaf -->

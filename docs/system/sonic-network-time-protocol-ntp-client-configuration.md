@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-SONiC のシステム時刻は外部 NTP サーバから同期する[^1]。本 HLD は CONFIG_DB の **`NTP` / `NTP_SERVER` / `NTP_KEY`** を真実源として、`hostcfgd` が `/etc/ntp.conf` (or `/etc/chrony/chrony.conf`) を rendering する設計を扱う。
+SONiC のシステム時刻は外部 NTP サーバから同期する[^1]。本 [HLD](../reference/glossary.md#term-hld) は [CONFIG_DB](../reference/glossary.md#term-config_db) の **`NTP` / `NTP_SERVER` / `NTP_KEY`** を真実源として、`hostcfgd` が `/etc/ntp.conf` (or `/etc/chrony/chrony.conf`) を rendering する設計を扱う。
 
 主要な観点:
 
 - **server リスト**: `iburst` / `prefer` / 認証鍵参照
-- **mgmt VRF / data VRF**: NTP のクエリは大抵 mgmt VRF。`MGMT_VRF_CONFIG` の `ntp_enabled` が連動
+- **mgmt [VRF](../reference/glossary.md#term-vrf) / data VRF**: NTP のクエリは大抵 mgmt VRF。`MGMT_VRF_CONFIG` の `ntp_enabled` が連動
 - **認証**: NTP shared key（symmetric MD5/SHA）または NTS（chrony）
 - **source IP / interface**: VRF / loopback の選択
 
@@ -117,7 +117,7 @@ show ntp
 | 項目 | HLD（ntp-design.md） | 現行 master |
 |---|---|---|
 | daemon | ntpd | chrony (`chronyd`) |
-| 設定生成 | `ntp.conf.j2` を hostcfgd が render | `chrony.conf.j2` を `chrony-config.sh` + jinja で render（`files/image_config/chrony/`） |
+| 設定生成 | `ntp.conf.j2` を [hostcfgd](../reference/glossary.md#term-hostcfgd) が render | `chrony.conf.j2` を `chrony-config.sh` + jinja で render（`files/image_config/chrony/`） |
 | 起動 | `service ntp restart` | `chronyd-starter.sh` 経由 |
 | TLS / NTS | ntpd は未対応 | chrony は **NTS 対応**（`chrony.conf` ディレクティブで設定可） |
 | 認証 hash | MD5 / SHA1 中心 | chrony は SHA256 / SHA384 等もサポート |
@@ -206,7 +206,7 @@ sudo systemctl restart chrony
 - [sonic-buildimage #25729: Issue 25728: Add vrf ordering dependency to chrony config (merged)](https://github.com/sonic-net/sonic-buildimage/pull/25729) — chrony の VRF 起動順序バグ修正。
 - [sonic-buildimage #24333: Bug: NTP - chrony does not sync time over MGMT VRF (open)](https://github.com/sonic-net/sonic-buildimage/issues/24333) — mgmt VRF 越し同期失敗の既知バグ。HLD の理想動作と現実の乖離点。
 - [sonic-buildimage #23904: Failed to restart chrony.service on NTP server add (open, NVIDIA)](https://github.com/sonic-net/sonic-buildimage/issues/23904) — server add 直後の reload race。
-- [sonic-buildimage #25863: \[chrony\] NTP not synchronized when MGMT_INTERFACE IP is not static (open)](https://github.com/sonic-net/sonic-buildimage/issues/25863) — DHCP mgmt IP 利用時の起動順問題。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #25863: \[chrony\] NTP not synchronized when MGMT_INTERFACE IP is not static (open)](https://github.com/sonic-net/sonic-buildimage/issues/25863) — DHCP mgmt IP 利用時の起動順問題。
 
 #### 検証日
 
@@ -218,3 +218,5 @@ sudo systemctl restart chrony
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fe85315ed00 -->

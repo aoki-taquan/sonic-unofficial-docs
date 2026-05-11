@@ -24,7 +24,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の起動は **非同期**。systemd の service が `active` でも、その内部の SWSS 系 daemon が CONFIG_DB を消化して ASIC に届くまで時間が掛かる。「**システムが本当に traffic を受けられる状態か**」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足[^1]。
+SONiC の起動は **非同期**。systemd の service が `active` でも、その内部の SWSS 系 daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) を消化して ASIC に届くまで時間が掛かる。「**システムが本当に traffic を受けられる状態か**」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足[^1]。
 
 System Ready は Python 製 daemon **`sysmonitor`** を追加し[^1]:
 
@@ -54,7 +54,7 @@ flowchart TB
 
 | キー | 意味 |
 |------|------|
-| `CONFIG_DB.FEATURE\|<name>.check_up_status` | `true` で system ready 判定対象（新規 leaf。YANG `sonic-feature` 拡張）[^1] |
+| `CONFIG_DB.FEATURE\|<name>.check_up_status` | `true` で system ready 判定対象（新規 leaf。[YANG](../reference/glossary.md#term-yang) `sonic-feature` 拡張）[^1] |
 | `STATE_DB.FEATURE\|<name>.up_status` | App が自分の closest UP を申告（true/false + 任意 `fail_reason`）[^1] |
 | `STATE_DB.SYSTEM_READY\|SYSTEM_STATE` | 集約結果（CLI が読む先）|
 
@@ -83,14 +83,14 @@ sonic-cfggen -d -v 'FEATURE'
 
 ## 制限事項
 
-- HLD Rev 0.4 で日付欄空欄
+- [HLD](../reference/glossary.md#term-hld) Rev 0.4 で日付欄空欄
 - ready 判定は **App 自己申告に依存**。app バグで `up_status` を書かないと永遠に ready にならない
 - timeout 絶対値は HLD 固定なく実装/運用側に委ねる
 - warm-boot 中の ready 判定は別扱い（warm-boot 完了の意味と微妙に異なる）
 
 ## 干渉する機能
 
-systemd / Monit（完全置換ではなく ready 判定だけ sysmonitor が担う）/ system-health フレームワーク / `FEATURE` 表（`check_up_status` 追加）/ fastboot・warmboot / TACACS / AAA / SNMP の boot 順。
+systemd / Monit（完全置換ではなく ready 判定だけ sysmonitor が担う）/ system-health フレームワーク / `FEATURE` 表（`check_up_status` 追加）/ fastboot・warmboot / TACACS / [AAA](../reference/glossary.md#term-aaa) / [SNMP](../reference/glossary.md#term-snmp) の boot 順。
 
 ## トラブルシューティング
 
@@ -121,3 +121,5 @@ journalctl -u system-health 2>/dev/null
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2116e7472e8b -->

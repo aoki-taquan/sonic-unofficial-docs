@@ -5,9 +5,9 @@ verification: stub
 ---
 
 # スイッチング
-VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。
+[VLAN](../reference/glossary.md#term-vlan)、[LAG](../reference/glossary.md#term-lag)、[MCLAG](../reference/glossary.md#term-mclag)、STP、MACsec、L2 forwarding など L2 制御面を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 19
 - 分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
@@ -46,3 +46,5 @@ VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う�
 | [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](increasing-lacp-pdu-timeout-during-warm-reboot.md) | Code-verified |
 | [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md) | Discrepancy-found |
 | [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | HLD-only |
+
+<!-- glossary-links-injected: 95e3a922d639 -->

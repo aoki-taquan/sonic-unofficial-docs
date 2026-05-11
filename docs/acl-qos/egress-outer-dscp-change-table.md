@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-encapsulated 後の **outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える** ための ACL table type[^1]。Microsoft 提案、2024-07 初版。
+encapsulated 後の **outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える** ための [ACL](../reference/glossary.md#term-acl) table type[^1]。Microsoft 提案、2024-07 初版。
 
 既存の手段の限界:
 
@@ -37,7 +37,7 @@ encapsulated 後の **outer header の DSCP を、inner header（元パケット
 - Tunnel encap 設定で inner→outer DSCP コピーは可能だが、書き換えの自由度が無い
 - Egress L3 ACL は outer の DSCP を書けるが、**inner L3 フィールドにマッチできるかは ASIC 依存**
 
-本 HLD は ASIC ハードウェア要件として `SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA` と `SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META` を使うことで、platform 中立な解を出す[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は ASIC ハードウェア要件として `SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA` と `SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META` を使うことで、platform 中立な解を出す[^1]。
 
 ## 動作仕様
 
@@ -67,7 +67,7 @@ flowchart LR
 
 ### Capability の公開
 
-`STATE_DB.ACL_ACTIONS` に `metadata range`（platform がサポートする値範囲）と capability を出す[^1]。CLI / orchagent が事前 check に使う。
+`STATE_DB.ACL_ACTIONS` に `metadata range`（platform がサポートする値範囲）と capability を出す[^1]。CLI / [orchagent](../reference/glossary.md#term-orchagent) が事前 check に使う。
 
 ### Match field
 
@@ -75,7 +75,7 @@ flowchart LR
 
 ### bind point
 
-`PORT` / `LAG`。VLAN bind は HLD の表に無い[^1]。
+`PORT` / `LAG`。[VLAN](../reference/glossary.md#term-vlan) bind は HLD の表に無い[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/acl/egress_outer_dscp_change_table.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -137,7 +137,7 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 
 ## 制限事項
 
-- **SAI metadata 属性が必須**[^1]。未対応 platform では作成不可
+- **[SAI](../reference/glossary.md#term-sai) metadata 属性が必須**[^1]。未対応 platform では作成不可
 - inner / outer の対象は encapsulated パケット限定。一般的な egress L3 ACL のように non-encap には掛けない設計
 - metadata range は platform 依存。多数 rule が同 metadata 値で衝突しないよう AclOrch が管理する
 
@@ -179,3 +179,5 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2e78c47a04ed -->

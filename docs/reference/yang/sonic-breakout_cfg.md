@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-breakout_cfg`
 
-BREAKOUT_CFG YANG Module for SONiC OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する[^1]。
+BREAKOUT_CFG [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -70,7 +70,7 @@ module: sonic-breakout_cfg
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BREAKOUT_CFG`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BREAKOUT_CFG`
 - CLI: `config interface breakout`
 
 <!-- ref-triangle:start -->
@@ -87,7 +87,7 @@ module: sonic-breakout_cfg
 
 ### 典型的なデプロイ位置
 
-- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を portmgrd / xcvrd が読み、port 再生成のトリガーになる。
+- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を [portmgrd](../../reference/glossary.md#term-portmgrd) / xcvrd が読み、port 再生成のトリガーになる。
 
 ### よくある落とし穴
 
@@ -104,3 +104,5 @@ show interfaces breakout current-mode
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 73d20853b70f -->

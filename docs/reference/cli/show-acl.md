@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`show acl` は ACL テーブルとルールの一覧表示専用サブグループ。**実装は `acl-loader show ...` の薄いラッパ**で、CONFIG_DB の読み出しは `acl-loader` 側が行う[^1]。
+`show acl` は [ACL](../../reference/glossary.md#term-acl) テーブルとルールの一覧表示専用サブグループ。**実装は `acl-loader show ...` の薄いラッパ**で、[CONFIG_DB](../../reference/glossary.md#term-config_db) の読み出しは `acl-loader` 側が行う[^1]。
 
 ## コマンド一覧
 
@@ -126,3 +126,5 @@ flowchart LR
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 31c264e58317 -->

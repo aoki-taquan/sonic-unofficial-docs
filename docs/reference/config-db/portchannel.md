@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-LACP ベースの Link Aggregation Group (LAG) を定義する。`teamd` がこのテーブルから設定を読み、Linux teamd 経由で物理ポートを bond する[^1]。`orchagent` の `PortsOrch` / `LagOrch` が SAI LAG オブジェクトを構成する。
+[LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation Group ([LAG](../../reference/glossary.md#term-lag)) を定義する。`teamd` がこのテーブルから設定を読み、Linux [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 経由で物理ポートを bond する[^1]。`orchagent` の `PortsOrch` / `LagOrch` が [SAI](../../reference/glossary.md#term-sai) LAG オブジェクトを構成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -76,9 +76,9 @@ PORTCHANNEL|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORTCHANNEL_MEMBER`、`PORTCHANNEL_INTERFACE`、`PORT`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL_MEMBER`、`PORTCHANNEL_INTERFACE`、`PORT`
 - 関連 CLI: `config portchannel`、[`config portchannel`](../cli/config-portchannel.md)
-- 関連 YANG: `sonic-portchannel`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
 <!-- ref-triangle:start -->
 
@@ -114,7 +114,7 @@ PORTCHANNEL|<name>
 ### よくある誤設定
 
 - `min_links` をメンバ総数以上にすると LAG が常時 down。
-- `fallback: true` を未設定で対向が LACP 未対応だと PortChannel が永遠に down。
+- `fallback: true` を未設定で対向が LACP 未対応だと [PortChannel](../../reference/glossary.md#term-portchannel) が永遠に down。
 - メンバ間で `speed`/`mtu` を揃えないと teamd が LAG を組まない。
 
 ### 確認コマンド
@@ -125,3 +125,5 @@ show interfaces portchannel
 teamdctl PortChannel0001 state
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 70a8686d90f5 -->

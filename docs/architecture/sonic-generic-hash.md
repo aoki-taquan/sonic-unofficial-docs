@@ -31,7 +31,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- ECMP と LAG の hash を SONiC でどう制御するか
+- [ECMP](../reference/glossary.md#term-ecmp) と [LAG](../reference/glossary.md#term-lag) の hash を SONiC でどう制御するか
 - どのフィールドが選べるのか（v6 flow label は使えるのか）
 - 設定したのに分散が変わらない時の見方
 - `hash seed` / `hash offset` は弄れるのか
@@ -39,7 +39,7 @@ related:
 
 ## 結論
 
-switch グローバルの hash 設定（**フィールド集合** と **アルゴリズム**）を ECMP / LAG それぞれで指定できる単一テーブル機能[^1]。`hash seed` と `hash offset` は対象外。capability は STATE_DB に SAI から query した結果が出るので、CLI 拒否時の根拠もそこを見る。
+switch グローバルの hash 設定（**フィールド集合** と **アルゴリズム**）を ECMP / LAG それぞれで指定できる単一テーブル機能[^1]。`hash seed` と `hash offset` は対象外。capability は [STATE_DB](../reference/glossary.md#term-state_db) に [SAI](../reference/glossary.md#term-sai) から query した結果が出るので、CLI 拒否時の根拠もそこを見る。
 
 ## 動作仕様
 
@@ -100,19 +100,19 @@ show switch-hash global
 show switch-hash capabilities
 ```
 
-YANG は `sonic-switch-hash`[^1]。
+[YANG](../reference/glossary.md#term-yang) は `sonic-switch-hash`[^1]。
 
 ## 制限事項
 
 - `hash seed` / `hash offset` は対象外（プラットフォーム固有処理に委ねる）
 - ASIC の `SAI_SWITCH_ATTR_*_HASH_*` capability に依存、未対応プラットフォームでは意味のあるバリデーション不可
 - フィールド集合は SAI 定義の enum に限られる（任意 bit 切り出し不可）
-- 詳細 SAI mapping / Test plan は HLD 本文参照
+- 詳細 SAI mapping / Test plan は [HLD](../reference/glossary.md#term-hld) 本文参照
 
 ## 干渉する機能
 
 - **ECMP routing / LAG**: 設定変更で分散が瞬間的に偏りうる
-- **Warm/Fast reboot**: SwitchOrch が CONFIG_DB から再適用
+- **Warm/Fast reboot**: SwitchOrch が [CONFIG_DB](../reference/glossary.md#term-config_db) から再適用
 - **per-port LAG hash**: 本機能はグローバルのみ、port 単位 override は scope 外
 
 ## トラブルシューティング
@@ -130,3 +130,5 @@ YANG は `sonic-switch-hash`[^1]。
 - [Topic: VRF / ECMP](../topics/04-vrf-ecmp/index.md)
 - [Topic: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md)
 - [Topic: SWSS / SAI / Redis 内部](../topics/20-swss-sai-redis/index.md)
+
+<!-- glossary-links-injected: e154a08f9ef8 -->

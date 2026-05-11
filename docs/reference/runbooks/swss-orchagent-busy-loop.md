@@ -73,11 +73,11 @@ sonic-db-cli COUNTERS_DB dbsize
 
 ## よくある原因
 
-1. **BGP flap による大量 route churn** — routeorch が `SAI_STATUS_ITEM_NOT_FOUND` retry でループ
-2. **ACL rule 大量挿入で ASIC table full** — aclorch が同一エラーを retry し続ける（`sai-table-full.md` 参照）
-3. **CRM / sai resource 枯渇** — `crm-threshold-exceeded.md` 参照
+1. **[BGP](../../reference/glossary.md#term-bgp) flap による大量 route churn** — routeorch が `SAI_STATUS_ITEM_NOT_FOUND` retry でループ
+2. **[ACL](../../reference/glossary.md#term-acl) rule 大量挿入で ASIC table full** — aclorch が同一エラーを retry し続ける（`sai-table-full.md` 参照）
+3. **[CRM](../../reference/glossary.md#term-crm) / sai resource 枯渇** — `crm-threshold-exceeded.md` 参照
 4. **依存関係解決の循環** — port / vlan / neigh の add 順序が逆で `SAI_STATUS_OBJECT_IN_USE`
-5. **syncd レスポンス遅延** — orchagent は応答待ちで spin（厳密にはブロックだが top では busy に見える）
+5. **[syncd](../../reference/glossary.md#term-syncd) レスポンス遅延** — [orchagent](../../reference/glossary.md#term-orchagent) は応答待ちで spin（厳密にはブロックだが top では busy に見える）
 6. **flex-counter の polling 頻度過剰** — `flex-counter-stuck.md` 参照
 
 ## 対処
@@ -92,3 +92,5 @@ sonic-db-cli COUNTERS_DB dbsize
 - [crm-threshold-exceeded.md](crm-threshold-exceeded.md)
 - [flex-counter-stuck.md](flex-counter-stuck.md)
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)
+
+<!-- glossary-links-injected: 3e73c8d3cd18 -->

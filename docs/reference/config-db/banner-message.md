@@ -20,7 +20,7 @@ related:
 ## 概要
 
 SSH / コンソールログイン時の login バナー、MOTD、logout バナーを設定するテーブル[^1]。
-`hostcfgd` が CONFIG_DB を購読し、`/etc/issue` / `/etc/motd` / `/etc/issue.net` を書き換える。
+`hostcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、`/etc/issue` / `/etc/motd` / `/etc/issue.net` を書き換える。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ BANNER_MESSAGE|global
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CLI: `config banner state` / `config banner login` / `config banner motd` / `config banner logout`
-- 関連 YANG: `sonic-banner`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-banner`
 
 <!-- ref-triangle:start -->
 
@@ -96,3 +96,5 @@ sonic-db-cli CONFIG_DB hgetall 'BANNER_MESSAGE|global'
 show banner
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

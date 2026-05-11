@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の data plane ACL の **初期設計** を定義する文書。ハードウェア（SAI）に降ろすための ACL テーブル / ルールの **APP_DB スキーマ** と、それを操作する `swssconfig` ベースの設定フローを規定している[^1]。
+SONiC の data plane [ACL](../reference/glossary.md#term-acl) の **初期設計** を定義する文書。ハードウェア（[SAI](../reference/glossary.md#term-sai)）に降ろすための ACL テーブル / ルールの **APP_DB スキーマ** と、それを操作する `swssconfig` ベースの設定フローを規定している[^1]。
 
 要件は **Must Have (M)** と **Should Have (S)** に分かれており、リリース必須機能は[^1]:
 
@@ -103,14 +103,14 @@ classDiagram
 
 ### サポートされる操作
 
-HLD の Supported operations[^1]:
+[HLD](../reference/glossary.md#term-hld) の Supported operations[^1]:
 
 - ACL テーブルを **type 指定** で作成
 - ACL ルールを作成し ACL テーブルに紐付け
 - ACL テーブルをポートに **attach / detach**
 - ACL ルールの削除
 
-これだけが初期スコープ。LAG への bind や port 削除時の自動 unbind はリリース時点では **対象外**[^1]。
+これだけが初期スコープ。[LAG](../reference/glossary.md#term-lag) への bind や port 削除時の自動 unbind はリリース時点では **対象外**[^1]。
 
 ### ポート連携
 
@@ -208,7 +208,7 @@ reasoning: 設定フローと full / partial モードの根拠。
 
 ### 関連する CLI
 
-HLD の段階では **`config acl` 系 CLI は定義されていない**。設定は `swssconfig` + JSON ファイルで投入する想定[^1]。後続の sonic-utilities では `config acl` / `show acl` 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。
+HLD の段階では **`config acl` 系 CLI は定義されていない**。設定は `swssconfig` + JSON ファイルで投入する想定[^1]。後続の [sonic-utilities](../reference/glossary.md#term-sonic-utilities) では `config acl` / `show acl` 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。
 
 ### 設定例（HLD ベース）
 
@@ -274,3 +274,5 @@ HLD 段階で明示されている制限[^1]:
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6946893a7d04 -->

@@ -12,11 +12,11 @@ sources:
 
 # 運用
 
-PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。
+[PINS](../../reference/glossary.md#term-pins) の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。
 
 ## Write が ASIC に届いているかの確認
 
-P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC `WriteResponse`）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と ASIC_DB を直接見て切り分けます。
+P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC `WriteResponse`）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と [ASIC_DB](../../reference/glossary.md#term-asic_db) を直接見て切り分けます。
 
 ```
 admin@sonic:~$ redis-cli -n 0 KEYS "P4RT_TABLE:*" | head
@@ -33,10 +33,10 @@ admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:
 
 切り分けの目安は次のとおりです。
 
-| APPL_DB | APPL_STATE_DB | ASIC_DB | 判定 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | APPL_STATE_DB | ASIC_DB | 判定 |
 | --- | --- | --- | --- |
 | あり | `SWSS_RC_SUCCESS` | あり | 正常 |
-| あり | `SWSS_RC_*` で失敗 | なし | P4Orch / SAI で拒否。`err_str` と orchagent ログを見る |
+| あり | `SWSS_RC_*` で失敗 | なし | P4Orch / [SAI](../../reference/glossary.md#term-sai) で拒否。`err_str` と [orchagent](../../reference/glossary.md#term-orchagent) ログを見る |
 | あり | 無 | なし | P4Orch が pending（依存未解決）。例: route の前に nexthop 未 install |
 | 無 | 無 | なし | p4rt-app が controller の write を受けていない。p4rt-app プロセスと gRPC を疑う |
 
@@ -51,7 +51,7 @@ admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i p4orch
 
 ## CPU packet path（PacketIO Receive）の確認
 
-PacketIO Receive は generic netlink + CoPP trap group が両方そろわないと届きません。次の順で確認します。
+PacketIO Receive は generic netlink + [CoPP](../../reference/glossary.md#term-copp) trap group が両方そろわないと届きません。次の順で確認します。
 
 ### 1. CoPP の trap group に genetlink が設定されているか
 
@@ -91,11 +91,11 @@ admin@sonic:~$ show ip access-lists
 admin@sonic:~$ redis-cli -n 6 KEYS "USER_WATERMARKS|COPP_*"
 ```
 
-`aclshow` で punt 用 ACL の counter が増えるか、CoPP queue の counter が増えるかを見ます。
+`aclshow` で punt 用 [ACL](../../reference/glossary.md#term-acl) の counter が増えるか、CoPP queue の counter が増えるかを見ます。
 
 ### よくある罠
 
-- ベンダ側 kernel の `genl_packet` filter 実装が無い ASIC では HLD どおりには動かない。`docker exec syncd dmesg | grep genl_packet` で確認。
+- ベンダ側 kernel の `genl_packet` filter 実装が無い ASIC では [HLD](../../reference/glossary.md#term-hld) どおりには動かない。`docker exec syncd dmesg | grep genl_packet` で確認。
 - CoPP の policer に潰されて p4rt-app に届かない。`show platform inventory copp` や trap group の `cir` / `cbs` を見る。
 
 詳細は [PacketIO HLD](../../management/packetio.md) を参照してください。
@@ -104,7 +104,7 @@ admin@sonic:~$ redis-cli -n 6 KEYS "USER_WATERMARKS|COPP_*"
 
 Send to Ingress は **ASIC の ingress pipeline にパケットを再注入する** モードです。
 
-- **使う**: controller が宛先を決め切れず、ECMP / WCMP を ASIC に判定させたい。テスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。
+- **使う**: controller が宛先を決め切れず、[ECMP](../../reference/glossary.md#term-ecmp) / WCMP を ASIC に判定させたい。テスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。
 - **使わない**: 送信先 port がすでに決まっている。Direct transmit（対応 netdev のソケット）で十分。
 
 確認手順:
@@ -117,7 +117,7 @@ admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*" \
   | grep -i send_to_ingress
 ```
 
-`PortsOrch::addSendToIngressHostIf()` がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は CONFIG_DB の有効化、ASIC の対応、syncd ログ（`SAI_STATUS_NOT_SUPPORTED`）を順に見ます。
+`PortsOrch::addSendToIngressHostIf()` がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は [CONFIG_DB](../../reference/glossary.md#term-config_db) の有効化、ASIC の対応、[syncd](../../reference/glossary.md#term-syncd) ログ（`SAI_STATUS_NOT_SUPPORTED`）を順に見ます。
 
 詳細は [Send to Ingress HLD](../../management/send-to-ingress-hld.md) を参照してください。
 
@@ -187,3 +187,5 @@ admin@sonic:~$ docker logs p4rt 2>&1 | grep VerifyState
 - [Read キャッシュ HLD](../../management/p4rt-read-cache-hld.md)
 - [ACL / CoPP / Mirror 章](../07-acl-copp-mirror/index.md)（trap group / policer の詳細）
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/index.md)（SAI 失敗観察）
+
+<!-- glossary-links-injected: 062eaeb99c58 -->

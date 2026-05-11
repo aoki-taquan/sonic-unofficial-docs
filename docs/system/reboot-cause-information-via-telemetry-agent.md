@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。`show reboot-cause` の最新表示に加えて `show reboot-cause history` で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする[^1]。
+SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は [STATE_DB](../reference/glossary.md#term-state_db) にも反映する仕組み。`show reboot-cause` の最新表示に加えて `show reboot-cause history` で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする[^1]。
 
 ## 動作仕様
 
@@ -98,13 +98,13 @@ name                 cause        time                          user    comment
 
 ### Telemetry 公開
 
-STATE_DB の `REBOOT_CAUSE|*` キーをテレメトリエージェントが標準の STATE_DB 公開経路で公開する。新規 path 設計や proto 定義は HLD には記述なし。
+STATE_DB の `REBOOT_CAUSE|*` キーをテレメトリエージェントが標準の STATE_DB 公開経路で公開する。新規 path 設計や proto 定義は [HLD](../reference/glossary.md#term-hld) には記述なし。
 
 ## 設定
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述は無い。
+HLD には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述は無い。
 
 ### 関連する CLI
 
@@ -115,7 +115,7 @@ HLD には CONFIG_DB エントリの記述は無い。
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -155,3 +155,5 @@ show reboot-cause history
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e4b0dab1086 -->

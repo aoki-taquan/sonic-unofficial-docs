@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-NTP クライアントのグローバル設定を保持するシングルトン的テーブル[^1]。YANG 上は `sonic-ntp.yang` の `container NTP` 配下 `container global` として定義され、CONFIG_DB 上は `NTP|global` の単一エントリで現れる。サーバ単位の設定は別テーブル [`NTP_SERVER`](./ntp-server.md)、鍵は [`NTP_KEY`](./ntp-server.md) で管理される。
+NTP クライアントのグローバル設定を保持するシングルトン的テーブル[^1]。[YANG](../../reference/glossary.md#term-yang) 上は `sonic-ntp.yang` の `container NTP` 配下 `container global` として定義され、[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `NTP|global` の単一エントリで現れる。サーバ単位の設定は別テーブル [`NTP_SERVER`](./ntp-server.md)、鍵は [`NTP_KEY`](./ntp-server.md) で管理される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -54,7 +54,7 @@ NTP|global
 | フィールド | 型 | 既定値 | 説明 |
 |-----------|----|--------|------|
 | `src_intf` | leaf-list union(`PORT.name` / `PORTCHANNEL.name` / `LOOPBACK_INTERFACE.name` / `MGMT_PORT.name` / `eth0`) | - | NTP の送信元インタフェース。複数指定可、ユーザ指定順を維持 |
-| `vrf` | string `mgmt` / `default` | - | NTP が動作する VRF。`mgmt` 指定時は `MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = true` の `must` 制約あり |
+| `vrf` | string `mgmt` / `default` | - | NTP が動作する [VRF](../../reference/glossary.md#term-vrf)。`mgmt` 指定時は `MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = true` の `must` 制約あり |
 | `authentication` | `stypes:admin_mode` | `disabled` | NTP 認証 |
 | `dhcp` | `stypes:admin_mode` | `enabled` | DHCP から配布された NTP サーバを使うか |
 | `server_role` | `stypes:admin_mode` | `enabled` | NTP サーバ機能 (本機を NTP server として動作) |
@@ -115,3 +115,5 @@ sonic-db-cli CONFIG_DB hgetall 'NTP|global'
 show ntp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

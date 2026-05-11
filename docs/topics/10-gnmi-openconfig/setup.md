@@ -14,7 +14,7 @@ sources:
 
 # 設定
 
-gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, VLAN, PortChannel, BGP) について OpenConfig 側のマップを起点にする。実コマンド例と容量は [gNMI usage](../../management/gnmi-usage.md) にまとまっている。
+[gNMI](../../reference/glossary.md#term-gnmi) からの Get / Set / Subscribe は、対象の [YANG](../../reference/glossary.md#term-yang) path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, [VLAN](../../reference/glossary.md#term-vlan), [PortChannel](../../reference/glossary.md#term-portchannel), [BGP](../../reference/glossary.md#term-bgp)) について OpenConfig 側のマップを起点にする。実コマンド例と容量は [gNMI usage](../../management/gnmi-usage.md) にまとまっている。
 
 ## シナリオ 1: gNMI server 立ち上げ
 
@@ -145,7 +145,7 @@ gNMI の主要 RPC を SONiC 観点で短く整理する。
 
 - **Get**: 単発取得。`encoding=JSON_IETF` で OpenConfig パスを与える形と、`encoding=JSON` で SONiC native YANG パスを与える形がある。
 - **Set**: replace / update / delete を 1 リクエストで混在できる。replace は YANG モデル意味論で部分木を置換する。delete は OpenConfig 側で表現可能なノードのみ対応するため、SONiC native 側を併用するケースがある。詳細は [Model-based replace/delete in Transformer](../../management/model-based-replace-delete-in-mgmt-framework-transformer.md) を参照する。
-- **Subscribe**: ON_CHANGE / SAMPLE / TARGET_DEFINED。CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB をまたいで購読できる。
+- **Subscribe**: ON_CHANGE / SAMPLE / TARGET_DEFINED。[CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) をまたいで購読できる。
 
 クライアント実装例、`gnmi_cli` / `gnmi_get` / `gnmi_set` の引数組み立て、TLS 設定は [gNMI usage](../../management/gnmi-usage.md) を参照する。
 
@@ -165,7 +165,7 @@ OpenConfig `aggregate` interface として PortChannel を扱う。member 追加
 
 ### BGP
 
-BGP は OpenConfig BGP と SONiC native BGP の両方が定義され、Management Framework の選択 (`frr_mgmt_framework_config`) によって FRR への反映経路が変わる。OpenConfig 経由で書く場合は `frrcfgd` が CONFIG_DB の差分から FRR vty を生成する。詳細は [BGP / FRR Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) と章 02 の [BGP - 設定](../02-bgp/setup.md) を参照する。
+BGP は OpenConfig BGP と SONiC native BGP の両方が定義され、Management Framework の選択 (`frr_mgmt_framework_config`) によって [FRR](../../reference/glossary.md#term-frr) への反映経路が変わる。OpenConfig 経由で書く場合は `frrcfgd` が CONFIG_DB の差分から FRR vty を生成する。詳細は [BGP / FRR Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) と章 02 の [BGP - 設定](../02-bgp/setup.md) を参照する。
 
 ## SONiC native YANG の役割
 
@@ -217,3 +217,5 @@ gNMI server の起動制御に使う table。
 - [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md)
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [yang-reference](yang-reference.md)
+
+<!-- glossary-links-injected: 617e688be241 -->

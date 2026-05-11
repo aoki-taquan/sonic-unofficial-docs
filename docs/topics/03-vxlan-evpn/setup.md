@@ -19,7 +19,7 @@ sources:
 
 # Overlay 設定
 
-Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。
+Overlay の設定は、最初に「L2 [VLAN](../../reference/glossary.md#term-vlan)-VNI を作るのか」「[VNET](../../reference/glossary.md#term-vnet) route を作るのか」「[EVPN](../../reference/glossary.md#term-evpn) の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる [VXLAN](../../reference/glossary.md#term-vxlan) tunnel が先に必要です。
 
 ## 最小構成の順番
 
@@ -28,7 +28,7 @@ Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route �
 3. L2 overlay なら `VXLAN_TUNNEL_MAP` で VLAN と VNI を対応させる。
 4. L3 / tenant overlay なら `VNET` を作り、VNI と VXLAN tunnel を対応させる。
 5. remote prefix は `VNET_ROUTE_TUNNEL` または controller / EVPN 経由で入れる。
-6. EVPN を使う場合は `VXLAN_EVPN_NVO` と FRR BGP-EVPN 側の設定を揃える。
+6. EVPN を使う場合は `VXLAN_EVPN_NVO` と [FRR](../../reference/glossary.md#term-frr) [BGP](../../reference/glossary.md#term-bgp)-EVPN 側の設定を揃える。
 
 ## CLI 入口
 
@@ -141,7 +141,7 @@ vtep1                10.1.0.1                       map_100_Vlan100    Vlan100 -
 
 ## 典型シナリオ 2: VNET (controller driven overlay) を設定する
 
-DASH 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が `VNET_ROUTE_TUNNEL` を直接 APPL_DB / CONFIG_DB に書きます。
+[DASH](../../reference/glossary.md#term-dash) 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が `VNET_ROUTE_TUNNEL` を直接 [APPL_DB](../../reference/glossary.md#term-appl_db) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に書きます。
 
 ```bash
 sudo config vxlan add vtep1 10.1.0.1
@@ -181,7 +181,7 @@ show vnet endpoint
 
 ## 典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する
 
-`TUNNEL` テーブルは IPinIP decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:
+`TUNNEL` テーブルは [IPinIP](../../reference/glossary.md#term-ipinip) decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:
 
 ```json
 {
@@ -199,7 +199,7 @@ show vnet endpoint
 }
 ```
 
-`TUNNEL_DECAP_TABLE` は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。orchagent が `TUNNEL` を見て APPL_DB に派生する流れです。
+`TUNNEL_DECAP_TABLE` は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。[orchagent](../../reference/glossary.md#term-orchagent) が `TUNNEL` を見て APPL_DB に派生する流れです。
 
 ## CONFIG_DB / APPL_DB の見方
 
@@ -212,15 +212,15 @@ show vnet endpoint
 | tunnel route | `VNET_ROUTE_TUNNEL` / `VNET_ROUTE_TUNNEL_TABLE` | remote endpoint、VNI、MAC、monitoring 情報 |
 | IPinIP decap | `TUNNEL` → `TUNNEL_DECAP_TABLE` | Dual-ToR や subnet decap の tunnel term |
 
-Reference の `config-db` ページは、CLI で触る table と orchagent が見る table の違いを確認する場所です。特に `TUNNEL_DECAP_TABLE` は CONFIG_DB ではなく APPL_DB / STATE_DB の table なので、直接設定ファイルへ書く対象ではありません。
+Reference の `config-db` ページは、CLI で触る table と orchagent が見る table の違いを確認する場所です。特に `TUNNEL_DECAP_TABLE` は CONFIG_DB ではなく APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) の table なので、直接設定ファイルへ書く対象ではありません。
 
 ## EVPN NVO と FRR の境界
 
-`VXLAN_EVPN_NVO` は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、VRF などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。
+`VXLAN_EVPN_NVO` は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、[VRF](../../reference/glossary.md#term-vrf) などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。
 
 ## PBH inner hash
 
-VXLAN / NVGRE の外側 header だけで ECMP / LAG hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は ACL match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は `PBH_TABLE`、`PBH_RULE`、`PBH_HASH`、`PBH_HASH_FIELD` で、VXLAN/VNET そのものの設定とは別です。
+VXLAN / NVGRE の外側 header だけで [ECMP](../../reference/glossary.md#term-ecmp) / [LAG](../../reference/glossary.md#term-lag) hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は [ACL](../../reference/glossary.md#term-acl) match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は `PBH_TABLE`、`PBH_RULE`、`PBH_HASH`、`PBH_HASH_FIELD` で、VXLAN/VNET そのものの設定とは別です。
 
 ## よくある設定エラーと対処
 
@@ -254,3 +254,5 @@ VXLAN / NVGRE の外側 header だけで ECMP / LAG hash すると、複数 flow
 - [sonic-vxlan YANG](../../reference/yang/sonic-vxlan.md)
 - [sonic-vnet YANG](../../reference/yang/sonic-vnet.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
+
+<!-- glossary-links-injected: 9f6c46bc52cb -->

@@ -32,17 +32,17 @@ keywords:
 
 # SRv6 / MPLS / Path Tracing
 
-この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、そして経路観測のための Path Tracing をまとめて読むための入口です。SRv6 関連 HLD は base、uSID、static SID、L3 隣接、VPN と段階的に積み上がっているため、ここでは「どの順で読めばよいか」と「BGP / VRF / EVPN 章とどこで接続するか」を最初に整理します。
+この章は、SONiC で [SRv6](../../reference/glossary.md#term-srv6)（Segment Routing over IPv6）、[MPLS](../../reference/glossary.md#term-mpls)、そして経路観測のための Path Tracing をまとめて読むための入口です。SRv6 関連 [HLD](../../reference/glossary.md#term-hld) は base、uSID、static SID、L3 隣接、VPN と段階的に積み上がっているため、ここでは「どの順で読めばよいか」と「[BGP](../../reference/glossary.md#term-bgp) / [VRF](../../reference/glossary.md#term-vrf) / [EVPN](../../reference/glossary.md#term-evpn) 章とどこで接続するか」を最初に整理します。
 
-SRv6 は IPv6 をベースに SID list を運ぶ network programming framework、MPLS は静的 LSP を起点に label switching を SAI/orchagent に拡張した基盤、Path Tracing は転送経路を IPv6 Hop-by-Hop オプションに刻んで観測する仕組みです。三者は別機能ですが、route / RIF / counter / QoS map といった SONiC 内部の共通部品でつながっており、特に SRv6 と Path Tracing は IPv6 forwarding と直接重なります。
+SRv6 は IPv6 をベースに SID list を運ぶ network programming framework、MPLS は静的 LSP を起点に label switching を [SAI](../../reference/glossary.md#term-sai)/[orchagent](../../reference/glossary.md#term-orchagent) に拡張した基盤、Path Tracing は転送経路を IPv6 Hop-by-Hop オプションに刻んで観測する仕組みです。三者は別機能ですが、route / [RIF](../../reference/glossary.md#term-rif) / counter / [QoS](../../reference/glossary.md#term-qos) map といった SONiC 内部の共通部品でつながっており、特に SRv6 と Path Tracing は IPv6 forwarding と直接重なります。
 
 ## この章で答える質問
 
 - SRv6 base、uSID、static SID、L3 隣接、VPN はどの順で読むか。
-- MPLS は SONiC の route / RIF / QoS マップ / CRM とどう接続するか。
+- MPLS は SONiC の route / RIF / QoS マップ / [CRM](../../reference/glossary.md#term-crm) とどう接続するか。
 - Path Tracing Midpoint は通常 IPv6 forwarding と何が違うか。SRv6 endpoint 処理とどう共存するか。
-- SRv6 / MPLS の設定は CLI / CONFIG_DB / YANG の reference にどこまであるか。
-- BGP / VRF / EVPN-VXLAN 章とはどこで境界を引くか。
+- SRv6 / MPLS の設定は CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) の reference にどこまであるか。
+- BGP / VRF / EVPN-[VXLAN](../../reference/glossary.md#term-vxlan) 章とはどこで境界を引くか。
 
 ## 読み進め方
 
@@ -50,8 +50,8 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 2. [アーキテクチャ](architecture.md): `srv6orch`、locator / SID / VPN / policy、MPLS pipeline、Path Tracing midpoint の object flow。
 3. [設定](setup.md): static SID / locator、`SRV6_MY_SID_TABLE`、`LABEL_ROUTE_TABLE`、MPLS TC マップ、PT interface ID の最小構成。
 4. [運用](operations.md): RIF counter、MySID counter、Path Tracing と show 系の確認順。
-5. [内部実装](internals.md): srv6orch の SAI 呼び出し、`MY_SID_ENTRY`、`uSID` / `L3Adj` の解決、bgpcfgd / frrcfgd の SRv6 manager。
-6. [発展トピック](advanced.md): EVPN / BGP との接続、FRR SRv6 制御プレーン、将来 phase（HMAC / sBFD / anycast SID）への分岐。
+5. [内部実装](internals.md): srv6orch の SAI 呼び出し、`MY_SID_ENTRY`、`uSID` / `L3Adj` の解決、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / frrcfgd の SRv6 manager。
+6. [発展トピック](advanced.md): EVPN / BGP との接続、[FRR](../../reference/glossary.md#term-frr) SRv6 制御プレーン、将来 phase（HMAC / sBFD / anycast SID）への分岐。
 
 ## 関連ページ
 
@@ -77,3 +77,4 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
 
+<!-- glossary-links-injected: c2701454ab65 -->

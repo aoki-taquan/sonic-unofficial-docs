@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-SONiC の機能 docker（bgp、teamd、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する[^1]。`hostcfgd` の `FeatureHandler` がこのテーブルを購読し、systemd サービスファイル (`sonic.target.wants/<feature>.service`) の enable/disable とテンプレ展開を行う。
+SONiC の機能 docker（bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する[^1]。`hostcfgd` の `FeatureHandler` がこのテーブルを購読し、systemd サービスファイル (`sonic.target.wants/<feature>.service`) の enable/disable とテンプレ展開を行う。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,13 +55,13 @@ FEATURE|<name>
 | `delayed` | string | - | `false` | システム初期化完了まで起動遅延 |
 | `has_global_scope` | string | - | `false` | true で 1 装置 1 インスタンス |
 | `has_per_asic_scope` | string | - | `false` | true で ASIC ごとにインスタンス |
-| `has_per_dpu_scope` | string | - | `false` | true で DPU ごとにインスタンス |
+| `has_per_dpu_scope` | string | - | `false` | true で [DPU](../../reference/glossary.md#term-dpu) ごとにインスタンス |
 | `high_mem_alert` | string | - | `disabled` | メモリ高使用時のアラート |
 | `set_owner` | string `kube`/`local` | - | `local` | Kubernetes 管理かローカル管理か |
 | `check_up_status` | `boolean_type` | - | `false` | system-ready ツールで監視するか |
 | `support_syslog_rate_limit` | `boolean_type` | - | `false` | サービス単位の syslog rate limit 対応 |
 
-`state` / `auto_restart` / `delayed` / `has_*_scope` / `high_mem_alert` は YANG 上 `feature-state` または `feature-scope-status` という非制約な string 型で、運用上 `enabled`/`disabled` 等の文字列を入れる。厳密な enum 制約は実装側のチェックに依る。
+`state` / `auto_restart` / `delayed` / `has_*_scope` / `high_mem_alert` は [YANG](../../reference/glossary.md#term-yang) 上 `feature-state` または `feature-scope-status` という非制約な string 型で、運用上 `enabled`/`disabled` 等の文字列を入れる。厳密な enum 制約は実装側のチェックに依る。
 
 ## 購読者
 
@@ -70,7 +70,7 @@ FEATURE|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `KUBERNETES_MASTER`（`set_owner = kube` のとき）、`SYSLOG_CONFIG_FEATURE`（`support_syslog_rate_limit = true` のとき）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `KUBERNETES_MASTER`（`set_owner = kube` のとき）、`SYSLOG_CONFIG_FEATURE`（`support_syslog_rate_limit = true` のとき）
 - 関連 CLI: `config feature state <name> <enabled|disabled>`、`config feature autorestart`
 - 関連 YANG: `sonic-feature`
 
@@ -99,7 +99,7 @@ FEATURE|<name>
 
 ### よくある誤設定
 
-- `state: disabled` で必須コンテナ（`swss` 等）を止めると orchagent ごと止まる。
+- `state: disabled` で必須コンテナ（`swss` 等）を止めると [orchagent](../../reference/glossary.md#term-orchagent) ごと止まる。
 - `auto_restart: disabled` で crash すると手動再起動が必要。
 
 ### 確認コマンド
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB keys 'FEATURE|*'
 show feature status
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9a2381a3263e -->

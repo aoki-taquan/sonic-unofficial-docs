@@ -27,9 +27,9 @@ related:
 
 ## 概要
 
-BGP 隣接 (peer) を CONFIG_DB で定義するテーブル。`bgpcfgd` (テンプレ展開) または `frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` のとき) が読み出し、FRR (`bgpd`) に反映する[^1]。テーブル定義は 2 形態に分かれる:
+[BGP](../../reference/glossary.md#term-bgp) 隣接 (peer) を [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`bgpcfgd` (テンプレ展開) または `frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` のとき) が読み出し、[FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。テーブル定義は 2 形態に分かれる:
 
-- `BGP_NEIGHBOR_TEMPLATE_LIST` (key: `neighbor`): bgpcfgd テンプレ用の単純形式
+- `BGP_NEIGHBOR_TEMPLATE_LIST` (key: `neighbor`): [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ用の単純形式
 - `BGP_NEIGHBOR_LIST` (key: `vrf_name`, `neighbor`): generic 形式。`frr_mgmt_framework_config = true` のときに使われる
 
 <!-- cdb-mermaid -->
@@ -77,7 +77,7 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 | `enforce_first_as` | boolean | first-AS enforce |
 | `solo_peer` | boolean | solo peer |
 | `ttl_security_hops` | uint8 | GTSM hops |
-| `bfd` | boolean | BFD multihop / BFD enable |
+| `bfd` | boolean | [BFD](../../reference/glossary.md#term-bfd) multihop / BFD enable |
 | `peer_port` | uint16 | TCP port |
 | `admin_status` | string `up`/`down` | セッション管理状態 |
 | `local_as_no_prepend` / `local_as_replace_as` | boolean | local-as 動作 |
@@ -89,7 +89,7 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 
 ## 制約
 
-- `BGP_NEIGHBOR_TEMPLATE_LIST` の `asn` は 1 以上（YANG `must` で refine）
+- `BGP_NEIGHBOR_TEMPLATE_LIST` の `asn` は 1 以上（[YANG](../../reference/glossary.md#term-yang) `must` で refine）
 - 一部 leaf に `must` 経由のクロス参照（`BGP_GLOBALS.vrf_name`、`BGP_PEER_GROUP`）がある
 
 ## 購読者
@@ -149,3 +149,5 @@ show ip bgp summary
 vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f65b6ed8bf8a -->

@@ -18,7 +18,7 @@ sources:
 
 # 発展トピック
 
-この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。
+この章のメインは [NAT](../../reference/glossary.md#term-nat) / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal server を同じ章でまとめて読みます。OS daemon と [CONFIG_DB](../../reference/glossary.md#term-config_db) のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。
 
 ## NTP / chrony 移行
 
@@ -31,13 +31,13 @@ SONiC は長らく `ntpd`（後に NTPsec）を使っていましたが、master
 
 chrony は client 専門（slew 専念）、kernel time discipline を維持、必要時のみソケットを開く、という設計でこれらを解決します。`NTP|global` の `vrf` フィールドと `NTP_SERVER|<ip>` の組合せから `chrony.conf` を生成します。詳細は [chrony 移行ページ](../../system/sonic-migration-to-chrony.md) と [NTP client 設定ページ](../../system/sonic-network-time-protocol-ntp-client-configuration.md) を参照してください。
 
-CONFIG_DB / YANG リファレンスは次の通りです。
+CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) リファレンスは次の通りです。
 
 - [NTP_GLOBAL CONFIG_DB](../../reference/config-db/ntp-global.md)
 - [NTP_SERVER CONFIG_DB](../../reference/config-db/ntp-server.md)
 - [sonic-ntp YANG](../../reference/yang/sonic-ntp.md)
 
-CLI は `chronyc sources` / `chronyc tracking` で同期状況を見ます。`show ntp` も後方互換として使えますが、内部は chrony です。management VRF を使う構成では `NTP|global` の `vrf: mgmt` を必ず付けます。
+CLI は `chronyc sources` / `chronyc tracking` で同期状況を見ます。`show ntp` も後方互換として使えますが、内部は chrony です。management [VRF](../../reference/glossary.md#term-vrf) を使う構成では `NTP|global` の `vrf: mgmt` を必ず付けます。
 
 ## 静的 DNS
 
@@ -45,9 +45,9 @@ CLI は `chronyc sources` / `chronyc tracking` で同期状況を見ます。`sh
 
 ## TWAMP Light
 
-TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では ASIC offload（`SAI_TWAMP_*` 系 API）を想定した HLD があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。ただし community master では SAI 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
+TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では ASIC offload（`SAI_TWAMP_*` 系 API）を想定した [HLD](../../reference/glossary.md#term-hld) があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。ただし community master では [SAI](../../reference/glossary.md#term-sai) 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
 
-QoS / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。
+[QoS](../../reference/glossary.md#term-qos) / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。
 
 ## Terminal server（udev rules）
 
@@ -103,3 +103,5 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - `sonic-buildimage` の chrony 移行関連 PR は完了側に入り、test plan 拡充と timezone まわりの細部修正が継続。
 - NAT 関連は `natorch` / `natsyncd` で aging / counter / scale 改善 PR が散発的に入る。
 - TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。
+
+<!-- glossary-links-injected: 3a5a8be23ca3 -->

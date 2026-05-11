@@ -20,23 +20,23 @@ keywords:
 
 # 概念
 
-ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、**それぞれが解いている問題は別** です。最初にこの 3 つを分けて理解しておかないと、`ACL_TABLE` / `COPP_TRAP` / `MIRROR_SESSION` の使い分けで迷うことになります。
+[ACL](../../reference/glossary.md#term-acl)（Access Control List）と [CoPP](../../reference/glossary.md#term-copp)（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、**それぞれが解いている問題は別** です。最初にこの 3 つを分けて理解しておかないと、`ACL_TABLE` / `COPP_TRAP` / `MIRROR_SESSION` の使い分けで迷うことになります。
 
 ## この 3 機能は何を解決するか
 
 | 機能 | 解いている問題 |
 | --- | --- |
 | ACL | data plane に流れるパケットを **classify して、許可 / 拒否 / リダイレクト / カウント / ミラー / DSCP 書き換え** などの action を当てる |
-| CoPP | ASIC から CPU へ punt される **control plane traffic（BGP / LLDP / ARP / DHCP 等）を policer で守る** |
+| CoPP | ASIC から CPU へ punt される **control plane traffic（[BGP](../../reference/glossary.md#term-bgp) / [LLDP](../../reference/glossary.md#term-lldp) / [ARP](../../reference/glossary.md#term-arp) / DHCP 等）を policer で守る** |
 | Mirror | 観測したいトラフィックを **指定先（local port / GRE encap / ERSPAN）へコピー** する |
 
-つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、SAI 上では policer / counter / ACL entry など部品を共有します。
+つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、[SAI](../../reference/glossary.md#term-sai) 上では policer / counter / ACL entry など部品を共有します。
 
 ## SONiC の中での位置
 
 | 軸 | 担当 |
 | --- | --- |
-| Management plane | `config acl`, `acl-loader`, CoPP の `copp_cfg.j2`, `MIRROR_SESSION` CONFIG_DB |
+| Management plane | `config acl`, `acl-loader`, CoPP の `copp_cfg.j2`, `MIRROR_SESSION` [CONFIG_DB](../../reference/glossary.md#term-config_db) |
 | Control plane | aclmgrd, AclOrch, CoppOrch, MirrorOrch |
 | Data plane | SAI ACL table / entry, SAI policer, SAI mirror session, hostif trap |
 
@@ -48,7 +48,7 @@ ACL / CoPP / Mirror はいずれも **ASIC の限られたリソース（TCAM、
 | --- | --- |
 | `ACL_TABLE` | ACL の適用段、bind 先、type（L3 / L3V6 / MIRROR / CTRLPLANE / DROP / EGR_SET_DSCP 等）を決める |
 | `ACL_RULE` | priority、match field、action を持つ個別ルール |
-| Stage | `ingress` / `egress`。bind 先（PORT / LAG / VLAN / SWITCH）と組み合わさる |
+| Stage | `ingress` / `egress`。bind 先（PORT / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) / SWITCH）と組み合わさる |
 | Table type | L3 / MIRROR / CTRLPLANE などの分類。利用可能な match / action / bind point が決まる |
 | `COPP_TRAP` / `COPP_GROUP` | CPU に punt する trap 種別と policer の組 |
 | Hostif trap | SAI 上の "CPU 行きにする" 設定。BGP / ARP / LLDP / DHCP / IP2ME など |
@@ -112,7 +112,7 @@ ACL counter は「この rule に何パケット hit したか」に答えます
 
 ## P4 / DASH ACL の置き場所
 
-DASH ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく、DASH 用 APP_DB テーブルと DASH orch の流れで扱われます。この章では「ACL と似た分類・action 概念を持つ派生領域」として位置付け、詳細は発展トピックから辿ります。
+[DASH](../../reference/glossary.md#term-dash) ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく、DASH 用 APP_DB テーブルと DASH orch の流れで扱われます。この章では「ACL と似た分類・action 概念を持つ派生領域」として位置付け、詳細は発展トピックから辿ります。
 
 ## 似た / 混同しやすい機能との違い
 
@@ -165,7 +165,7 @@ ACL / CoPP / Mirror の周辺で押さえておくべき CONFIG_DB を整理し�
 | `COPP_TRAP` / `COPP_GROUP` | CPU 行き trap と policer / queue の組 |
 | `FLEX_COUNTER_TABLE` の `ACL` / `TRAP_FLOW_COUNTER` | カウンタ収集設定 |
 
-`ACL_TABLE_TYPE` を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の HLD が引かれます。詳細は [ACL user-defined table type support](../../acl-qos/acl-user-defined-table-type-support.md) を参照してください。
+`ACL_TABLE_TYPE` を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の [HLD](../../reference/glossary.md#term-hld) が引かれます。詳細は [ACL user-defined table type support](../../acl-qos/acl-user-defined-table-type-support.md) を参照してください。
 
 ## stage と bind point の組み合わせ
 
@@ -212,3 +212,4 @@ ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session att
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: ab534bf19f1d -->

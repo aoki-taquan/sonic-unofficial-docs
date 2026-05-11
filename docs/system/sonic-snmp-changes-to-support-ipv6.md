@@ -28,11 +28,11 @@ related:
 
 ## どんな問題か
 
-SONiC 単一 ASIC 機の **SNMP over IPv6 がタイムアウトする** バグの設計修正[^1]。
+SONiC 単一 ASIC 機の **[SNMP](../reference/glossary.md#term-snmp) over IPv6 がタイムアウトする** バグの設計修正[^1]。
 
 1. SNMP request が `SRC=fc00::72`、`DST=Loopback IPv6 fc00:1::32` で到着
 2. `snmpd` (IPv6 socket `[::]:161`) が受理 → response 生成
-3. kernel が `ip -6 route get fc00::72` で best path を探し、**`src=fc00::71`（PortChannel IP）** を選ぶ
+3. kernel が `ip -6 route get fc00::72` で best path を探し、**`src=fc00::71`（[PortChannel](../reference/glossary.md#term-portchannel) IP）** を選ぶ
 4. クライアントは「DST と異なる SRC」で受信し、request-id がマッチせず timeout
 
 ```mermaid
@@ -108,7 +108,7 @@ show snmpagentaddress
 - **単一 ASIC 機向け修正**（multi-ASIC は元から発症しない）[^1]
 - `config_db.json` 直ロード時は `SNMP_AGENT_ADDRESS_CONFIG` 自動投入なし[^1]
 - Loopback / Management の **どちらを bind するかはオペレータ責任**
-- 本質的修正は net-snmp 側で `IPV6_PKTINFO` を使う対応だが、本 HLD は **回避策**
+- 本質的修正は net-snmp 側で `IPV6_PKTINFO` を使う対応だが、本 [HLD](../reference/glossary.md#term-hld) は **回避策**
 
 ## 干渉する機能
 
@@ -133,3 +133,5 @@ ip netns list                                         # multi-ASIC は分離さ�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-changes-to-support-ipv6.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: aebe7530a6f6 -->

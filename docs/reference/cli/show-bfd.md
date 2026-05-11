@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`show bfd` は BFD (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は **STATE_DB** の `BFD_SESSION_TABLE|<vrf>|<interface>|<peer>` であり、CONFIG_DB ではない[^1]。BFD セッションは BGP や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。
+`show bfd` は [BFD](../../reference/glossary.md#term-bfd) (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は **[STATE_DB](../../reference/glossary.md#term-state_db)** の `BFD_SESSION_TABLE|<vrf>|<interface>|<peer>` であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) ではない[^1]。BFD セッションは [BGP](../../reference/glossary.md#term-bgp) や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。
 
 ## コマンド一覧
 
@@ -105,7 +105,7 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 - `<peer_ip>` ... 必須。表示対象 BFD peer の IP アドレス
 
 **動作**:
-`BFD_SESSION_TABLE|*|<peer_ip>` でフィルタリングして該当セッションのみ表示。同じ peer に対して複数 VRF / interface のセッションが存在し得るため、複数行が返ることがある。該当セッションが無ければ `No BFD sessions found for peer IP <peer_ip>`。
+`BFD_SESSION_TABLE|*|<peer_ip>` でフィルタリングして該当セッションのみ表示。同じ peer に対して複数 [VRF](../../reference/glossary.md#term-vrf) / interface のセッションが存在し得るため、複数行が返ることがある。該当セッションが無ければ `No BFD sessions found for peer IP <peer_ip>`。
 
 ## 関連する STATE_DB
 
@@ -172,3 +172,5 @@ sonic-db-cli STATE_DB keys 'BFD_SESSION_TABLE|*'
 
 - [reference/CLI: show bgp](show-bgp.md)
 - [reference/CLI: show ip](show-ip.md)
+
+<!-- glossary-links-injected: ad3b2006b1d9 -->

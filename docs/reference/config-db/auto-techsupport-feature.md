@@ -45,7 +45,7 @@ flowchart LR
 AUTO_TECHSUPPORT_FEATURE|<feature_name>
 ```
 
-`<feature_name>` は `FEATURE` テーブルの `name` に対応する文字列 (1..255 chars)。YANG では `TODO: Leafref once the FEATURE YANG is added` コメントが残っており、現状は単純文字列 (leafref 未指定)[^1]。
+`<feature_name>` は `FEATURE` テーブルの `name` に対応する文字列 (1..255 chars)。[YANG](../../reference/glossary.md#term-yang) では `TODO: Leafref once the FEATURE YANG is added` コメントが残っており、現状は単純文字列 (leafref 未指定)[^1]。
 
 ## フィールド
 
@@ -64,7 +64,7 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 
 ## 購読者
 
-- `coredump_gen_handler` (`sonic-buildimage/files/scripts/coredump-compress` ハンドラ): core-dump イベントで CONFIG_DB を参照し、対応する feature の state/rate_limit_interval を評価して techsupport を起動
+- `coredump_gen_handler` (`sonic-buildimage/files/scripts/coredump-compress` ハンドラ): core-dump イベントで [CONFIG_DB](../../reference/glossary.md#term-config_db) を参照し、対応する feature の state/rate_limit_interval を評価して techsupport を起動
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -112,3 +112,5 @@ show auto-techsupport feature
 ls -lh /var/dump/
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-sFlow サンプリングのグローバル設定 / per-port セッション設定 / コレクタ宛先を定義する 3 つの container を含む。`hsflowd` (sflowd container) と `sflowmgrd` が CONFIG_DB を購読する[^1]。
+sFlow サンプリングのグローバル設定 / per-port セッション設定 / コレクタ宛先を定義する 3 つの container を含む。`hsflowd` (sflowd container) と `sflowmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -80,7 +80,7 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 |-----------|----|------|------|------|
 | `collector_ip` | ip-address | - | yes | コレクタの IPv4 / IPv6 |
 | `collector_port` | inet:port-number | 6343 | no | UDP ポート |
-| `collector_vrf` | string `mgmt`/`default` | - | no | コレクタへ到達する VRF |
+| `collector_vrf` | string `mgmt`/`default` | - | no | コレクタへ到達する [VRF](../../reference/glossary.md#term-vrf) |
 
 最大 2 コレクタ (`max-elements 2`)。`collector_vrf = 'mgmt'` は `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled = 'true'` のときのみ許容 (`must`)。
 
@@ -93,7 +93,7 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 
 - 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`、`MGMT_PORT`、`MGMT_VRF_CONFIG`
 - 関連 CLI: `config sflow enable/disable/polling-interval/agent-id/collector/interface`
-- 関連 YANG: `sonic-sflow`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-sflow`
 
 <!-- ref-triangle:start -->
 
@@ -136,3 +136,5 @@ sonic-db-cli CONFIG_DB hgetall 'SFLOW|global'
 show sflow
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

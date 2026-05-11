@@ -34,9 +34,9 @@ related:
 
 ## 概要
 
-SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の `*_TO_*_MAP` テーブルとポート毎の `PORT_QOS_MAP` を介して SAI に降ろす設計を取っている。本 HLD は **MPLS パケットの TC（Traffic Class、旧称 EXP、RFC 5462）** から内部 TC へのマップを既存 QoS フローに追加する[^1]。
+SONiC の [QoS](../reference/glossary.md#term-qos) は DSCP / DOT1P / TC の各値間でマップを定義し、[CONFIG_DB](../reference/glossary.md#term-config_db) の `*_TO_*_MAP` テーブルとポート毎の `PORT_QOS_MAP` を介して [SAI](../reference/glossary.md#term-sai) に降ろす設計を取っている。本 [HLD](../reference/glossary.md#term-hld) は **[MPLS](../reference/glossary.md#term-mpls) パケットの TC（Traffic Class、旧称 EXP、RFC 5462）** から内部 TC へのマップを既存 QoS フローに追加する[^1]。
 
-これにより、**MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用** できるようになる。SAI 自体は既に `SAI_QOS_MAP_MPLS_EXP_TO_TC` をサポートしており、本 HLD の作業は **SONiC スタック側の対応（CONFIG_DB スキーマ → orchagent → CLI）** が中心[^1]。
+これにより、**MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用** できるようになる。SAI 自体は既に `SAI_QOS_MAP_MPLS_EXP_TO_TC` をサポートしており、本 HLD の作業は **SONiC スタック側の対応（CONFIG_DB スキーマ → [orchagent](../reference/glossary.md#term-orchagent) → CLI）** が中心[^1]。
 
 > 名称について: HLD 0.2 で **「MPLS EXP」を「MPLS TC」に統一**（RFC 5462 準拠）されている[^1]。
 
@@ -199,7 +199,7 @@ HLD で明示されている制限[^1]:
 
 加えて HLD 上の留意点:
 
-- **YANG model**: HLD 上は CLI / YANG 双方の拡張に言及されているが、**直接の YANG モジュール変更の詳細は本 HLD では未定義**。
+- **[YANG](../reference/glossary.md#term-yang) model**: HLD 上は CLI / YANG 双方の拡張に言及されているが、**直接の YANG モジュール変更の詳細は本 HLD では未定義**。
 - warm boot / fast boot / scalability への影響は **無し** と HLD は明言[^1]。
 
 ## 干渉する機能
@@ -227,3 +227,5 @@ HLD で明示されている制限[^1]:
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 47919f2738a1 -->

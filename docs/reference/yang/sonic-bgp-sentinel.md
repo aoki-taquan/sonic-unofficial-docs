@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-bgp-sentinel`
 
-SONiC BGP Sentinel 機能の YANG モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定[^1]。
+SONiC [BGP](../../reference/glossary.md#term-bgp) Sentinel 機能の [YANG](../../reference/glossary.md#term-yang) モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ module: sonic-bgp-sentinel
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_SENTINELS|<sentinel_name>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_SENTINELS|<sentinel_name>`
 - CLI: なし（CONFIG_DB 直接設定）
 
 <!-- ref-triangle:start -->
@@ -94,7 +94,7 @@ module: sonic-bgp-sentinel
 
 ### よくある落とし穴
 
-- 通常の BGP neighbor と key 空間が異なるため `show bgp neighbors` には現れない。bgpcfgd のテンプレ確認が必要。
+- 通常の BGP neighbor と key 空間が異なるため `show bgp neighbors` には現れない。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) のテンプレ確認が必要。
 
 ### 関連する config / show コマンド
 
@@ -107,3 +107,5 @@ show runningconfiguration bgp
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 71acbaef9290 -->

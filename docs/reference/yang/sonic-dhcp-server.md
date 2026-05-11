@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-dhcp-server`
 
-DHCP SERVER YANG module for SONiC OS[^1]
+DHCP SERVER [YANG](../../reference/glossary.md#term-yang) module for SONiC OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -76,7 +76,7 @@ module: sonic-dhcp-server
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `DHCP_SERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DHCP_SERVER`
 - CLI: なし
 
 <!-- ref-triangle:start -->
@@ -96,7 +96,7 @@ module: sonic-dhcp-server
 
 ### よくある落とし穴
 
-- `gateway` leaf が VLAN interface IP と不一致だと割り当て後の通信が壊れる。VLAN サブネットと整合確認が必須。
+- `gateway` leaf が [VLAN](../../reference/glossary.md#term-vlan) interface IP と不一致だと割り当て後の通信が壊れる。VLAN サブネットと整合確認が必須。
 
 ### 関連する config / show コマンド
 
@@ -116,3 +116,5 @@ show dhcp_server ipv4 lease
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 30c76eee774c -->

@@ -27,14 +27,14 @@ keywords:
 
 # Reboot / Upgrade / Lifecycle
 
-この章は、SONiC の reboot family と upgrade lifecycle を「どれを選ぶか」「何が保持されるか」「運用時にどこを見るか」の順で読むための入口です。個別 HLD は warm reboot、fast reboot、express reboot、SWSS warm restart、secure upgrade、DPU upgrade などに分かれていますが、運用者や実装者が最初に知りたいのは、名前の違いよりも失う状態と守るべき前提です。
+この章は、SONiC の reboot family と upgrade lifecycle を「どれを選ぶか」「何が保持されるか」「運用時にどこを見るか」の順で読むための入口です。個別 [HLD](../../reference/glossary.md#term-hld) は warm reboot、fast reboot、express reboot、SWSS warm restart、secure upgrade、[DPU](../../reference/glossary.md#term-dpu) upgrade などに分かれていますが、運用者や実装者が最初に知りたいのは、名前の違いよりも失う状態と守るべき前提です。
 
 ## この章で答える質問
 
 - warm reboot、fast reboot、express reboot、SWSS warm restart は何が違うのか。
-- reboot 中に FDB、route、SAI object、Redis DB、container state はどこまで保持されるのか。
+- reboot 中に [FDB](../../reference/glossary.md#term-fdb)、route、[SAI](../../reference/glossary.md#term-sai) object、[Redis](../../reference/glossary.md#term-redis) DB、container state はどこまで保持されるのか。
 - `reboot`、`fast-reboot`、`warm-reboot`、`config warm_restart`、`sonic-installer` はどの場面で使うのか。
-- reboot の失敗、原因履歴、LACP/BGP peer との干渉、multi-ASIC の差分はどこから確認するのか。
+- reboot の失敗、原因履歴、[LACP](../../reference/glossary.md#term-lacp)/[BGP](../../reference/glossary.md#term-bgp) peer との干渉、multi-ASIC の差分はどこから確認するのか。
 - OS upgrade、secure upgrade、Debian cadence、Docker image versioning、DPU independent upgrade は reboot とどう接続するのか。
 
 ## 読む順番
@@ -44,12 +44,12 @@ keywords:
 3. [Setup](setup.md): CLI と設定。`reboot` 系コマンド、warm restart enable、timer、blocking mode。
 4. [Operations](operations.md): 原因調査と失敗時の確認順。reboot-cause、LACP timeout、multi-ASIC、Warmboot Manager、SWSS warm restart。
 5. [Upgrade](upgrade.md): image lifecycle。`sonic-installer`、secure upgrade、Debian cadence、versioning、DPU independent upgrade。
-6. [内部実装 / Internals](internals.md): warm reboot で SWSS / orchagent / syncd が保持する state の構造と、SAI view switching を実装側から見る。
-7. [発展トピック / Advanced](advanced.md): express boot、multi-ASIC warmboot、SmartSwitch / DPU の独立アップグレード、他章との境界。
+6. [内部実装 / Internals](internals.md): warm reboot で SWSS / [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) が保持する state の構造と、SAI view switching を実装側から見る。
+7. [発展トピック / Advanced](advanced.md): express boot、multi-ASIC warmboot、[SmartSwitch](../../reference/glossary.md#term-smartswitch) / DPU の独立アップグレード、他章との境界。
 
 ## 章内の境界
 
-この章は「reboot または upgrade の実行時に、SONiC の状態をどう落とし、どう戻すか」を扱います。SmartSwitch の NPU/DPU アーキテクチャ全体、Multi-ASIC/VOQ chassis の通常運用、port/optics の bring-up は別章の主題です。ただし reboot lifecycle に直接関係する DPU reboot、DPU graceful shutdown、multi-ASIC warm reboot はこの章でも扱います。
+この章は「reboot または upgrade の実行時に、SONiC の状態をどう落とし、どう戻すか」を扱います。SmartSwitch の [NPU](../../reference/glossary.md#term-npu)/DPU アーキテクチャ全体、Multi-ASIC/[VOQ](../../reference/glossary.md#term-voq) chassis の通常運用、port/optics の bring-up は別章の主題です。ただし reboot lifecycle に直接関係する DPU reboot、DPU graceful shutdown、multi-ASIC warm reboot はこの章でも扱います。
 
 ## 関連ページ
 
@@ -76,3 +76,4 @@ keywords:
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 - [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
 
+<!-- glossary-links-injected: 6b5023a4c56e -->

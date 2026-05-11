@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-NTP 認証 (symmetric key) で使用する鍵を CONFIG_DB に蓄積するテーブル[^1]。`ntp-config.service` (`/usr/share/sonic/templates/ntp.keys.j2` テンプレ展開) が CONFIG_DB を読み出し、chrony / ntpd の keyfile (`/etc/chrony/chrony.keys` 等) を生成する。`NTP_SERVER_LIST.key` から leafref で参照される。
+NTP 認証 (symmetric key) で使用する鍵を [CONFIG_DB](../../reference/glossary.md#term-config_db) に蓄積するテーブル[^1]。`ntp-config.service` (`/usr/share/sonic/templates/ntp.keys.j2` テンプレ展開) が CONFIG_DB を読み出し、chrony / ntpd の keyfile (`/etc/chrony/chrony.keys` 等) を生成する。`NTP_SERVER_LIST.key` から leafref で参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -71,7 +71,7 @@ NTP_KEY|<id>
 
 - 関連 CONFIG_DB: [`NTP`](ntp-global.md), [`NTP_SERVER`](ntp-server.md)
 - 関連 CLI: `config ntp add key <id> --type ... --value ...` / `config ntp authentication enable`
-- 関連 YANG: `sonic-ntp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ntp`
 
 <!-- ref-triangle:start -->
 
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB keys 'NTP_KEY|*'
 show ntp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

@@ -90,7 +90,7 @@ module: sonic-mirror-session
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MIRROR_SESSION`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MIRROR_SESSION`
 - CLI: `config mirror_session`
 
 <!-- ref-triangle:start -->
@@ -107,7 +107,7 @@ module: sonic-mirror-session
 
 ### 典型的なデプロイ位置
 
-- ERSPAN / SPAN ミラーセッション。`MIRROR_SESSION|<name>` を mirrororch が SAI mirror session に反映。
+- ERSPAN / SPAN ミラーセッション。`MIRROR_SESSION|<name>` を mirrororch が [SAI](../../reference/glossary.md#term-sai) mirror session に反映。
 
 ### よくある落とし穴
 
@@ -132,3 +132,5 @@ show mirror_session
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 96667c52d98d -->

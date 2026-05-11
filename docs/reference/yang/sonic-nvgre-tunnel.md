@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-nvgre-tunnel`
 
-NVGRE トンネルとそれに紐付く VLAN-VSID マッピングを定義する YANG モジュール[^1]。
+NVGRE トンネルとそれに紐付く [VLAN](../../reference/glossary.md#term-vlan)-VSID マッピングを定義する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -84,7 +84,7 @@ module: sonic-nvgre-tunnel
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `NVGRE_TUNNEL`, `NVGRE_TUNNEL_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NVGRE_TUNNEL`, `NVGRE_TUNNEL_MAP`
 - CLI: なし（CONFIG_DB 直接設定）
 
 <!-- ref-triangle:start -->
@@ -104,7 +104,7 @@ module: sonic-nvgre-tunnel
 
 ### よくある落とし穴
 
-- VxLAN-VNI と NVGRE-VSID の同時運用は SAI が排他なプラットフォームが多い。
+- VxLAN-VNI と NVGRE-VSID の同時運用は [SAI](../../reference/glossary.md#term-sai) が排他なプラットフォームが多い。
 
 ### 関連する config / show コマンド
 
@@ -117,3 +117,5 @@ show nvgre-tunnel
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 900cdc977a64 -->

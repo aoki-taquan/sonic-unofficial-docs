@@ -34,7 +34,7 @@ related:
 2. **FEC mode 不一致**: `rs` / `fc` / `none` が対向と一致していない
 3. **autoneg 設定の食い違い**: 片側 on / 片側 off
 4. **transceiver 互換性 / DOM 異常**: 光出力低下 / temperature alarm
-5. **Breakout 設定の port mapping 不整合**: `port_config.ini` と CONFIG_DB の不一致
+5. **Breakout 設定の port mapping 不整合**: `port_config.ini` と [CONFIG_DB](../../reference/glossary.md#term-config_db) の不一致
 
 ## 切り分け手順
 
@@ -89,5 +89,7 @@ sudo dmesg | grep -iE "phy|link" | tail -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — portsorch.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — portsorch.cpp
 [^2]: sonic-net/sonic-platform-daemons @ master — xcvrd.py
+
+<!-- glossary-links-injected: 6d49ad6a28cc -->

@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-**ポートに紐づけるエグレスバッファプロファイル群** を定義する CONFIG_DB テーブル[^1]。SAI における `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` 相当。`BUFFER_PROFILE` で定義した複数プロファイルをポート単位で順序付きリストにまとめる。
+**ポートに紐づけるエグレスバッファプロファイル群** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[SAI](../../reference/glossary.md#term-sai) における `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` 相当。`BUFFER_PROFILE` で定義した複数プロファイルをポート単位で順序付きリストにまとめる。
 
 `BUFFER_QUEUE` テーブル (queue 単位の buffer profile) と並ぶ別レベルで、こちらはポート全体としての egress プロファイル群の集約。`BUFFER_PORT_INGRESS_PROFILE_LIST` と対になる構造。
 
@@ -71,14 +71,14 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 
 ## 購読者
 
-- `buffermgrd`: CONFIG_DB → APPL_DB `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`
+- `buffermgrd`: CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`
 - `orchagent` (BufferOrch): SAI 側 port egress profile list 設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BUFFER_PROFILE`, `BUFFER_POOL`, `BUFFER_QUEUE`, `PORT`, `BUFFER_PORT_INGRESS_PROFILE_LIST`
 - 関連 CLI: `config buffer profile` 系
-- 関連 YANG: `sonic-buffer-port-egress-profile-list`, `sonic-buffer-profile`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-port-egress-profile-list`, `sonic-buffer-profile`
 
 <!-- ref-triangle:start -->
 
@@ -120,3 +120,5 @@ sonic-db-cli APPL_DB hgetall 'BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE:Ethernet0'
 show buffer pool
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 77766b59392d -->

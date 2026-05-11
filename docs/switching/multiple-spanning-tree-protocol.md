@@ -41,7 +41,7 @@ related:
 
 ## 1. なぜ MSTP か
 
-IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し **「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」** のが特徴。VLAN 数が多くても MSTI 数だけの STP インスタンスで済むためスケールに有利[^1]。
+IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し **「[VLAN](../reference/glossary.md#term-vlan) 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」** のが特徴。VLAN 数が多くても MSTI 数だけの STP インスタンスで済むためスケールに有利[^1]。
 
 ```mermaid
 flowchart LR
@@ -53,7 +53,7 @@ flowchart LR
     SO -->|SAI_STP_*| ASIC[(ASIC)]
 ```
 
-`stp` コンテナで `stpd` が走り、`stpmgrd` が CONFIG_DB ↔ APPL_DB を橋渡しする。
+`stp` コンテナで `stpd` が走り、`stpmgrd` が [CONFIG_DB](../reference/glossary.md#term-config_db) ↔ [APPL_DB](../reference/glossary.md#term-appl_db) を橋渡しする。
 
 ## 2. 設定（CONFIG_DB と CLI）
 
@@ -103,7 +103,7 @@ sudo config spanning-tree mst instance 1 priority 4096
 show spanning-tree mst instance 1
 ```
 
-詳細サブコマンド（Disabled Commands、`show spanning-tree counters` 系）は HLD の対応節を参照。
+詳細サブコマンド（Disabled Commands、`show spanning-tree counters` 系）は [HLD](../reference/glossary.md#term-hld) の対応節を参照。
 
 ## 3. MST Region
 
@@ -137,7 +137,7 @@ sequenceDiagram
 
 ### SAI
 
-- CIST が SAI の default STP オブジェクト
+- CIST が [SAI](../reference/glossary.md#term-sai) の default STP オブジェクト
 - 各 MSTI は追加の `SAI_STP_OBJECT_ID` インスタンス
 - Port × MSTI ごとに `SAI_STP_PORT_ATTR_STATE` を operate
 
@@ -145,7 +145,7 @@ MSTI 数の上限は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
 
 ## 5. 他機能との干渉
 
-- **VLAN / Port-Channel / FDB**: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習・転送が変化
+- **VLAN / Port-Channel / [FDB](../reference/glossary.md#term-fdb)**: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習・転送が変化
 - **PVST / RSTP**: 同じ `STP|GLOBAL.mode` を共有するため同時動作不可
 - **BPDU Guard / Root Guard / Edge Port**: 共通の `STP_PORT` 経由で MSTP でも有効
 
@@ -179,3 +179,5 @@ MSTI 数の上限は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a28a0493d074 -->

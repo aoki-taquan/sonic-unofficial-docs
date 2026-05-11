@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-gRPC ストリーミングテレメトリ / gNMI サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する[^1]。`telemetry` コンテナ (`docker-telemetry`、`docker-gnmi`) が起動時に CONFIG_DB を読み込む。
+gRPC ストリーミングテレメトリ / [gNMI](../../reference/glossary.md#term-gnmi) サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する[^1]。`telemetry` コンテナ (`docker-telemetry`、`docker-gnmi`) が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -72,7 +72,7 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 
 - 関連 CONFIG_DB: `GNMI_CLIENT_CERT` (gNMI クライアント証明書 fingerprint)
 - 関連 CLI: `config telemetry config-db`、`config telemetry server`、`gnoi-system reboot` 等
-- 関連 YANG: `sonic-telemetry`、`sonic-gnmi`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry`、`sonic-gnmi`
 
 <!-- ref-triangle:start -->
 
@@ -113,3 +113,5 @@ sonic-db-cli CONFIG_DB keys 'TELEMETRY|*'
 systemctl status telemetry
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4c576d9c7fa6 -->

@@ -21,9 +21,9 @@ related:
 
 ## 概要
 
-`config portchannel` は LACP ベースの Link Aggregation (LAG) を設定する。LAG 本体の作成・削除（`add` / `del`）、メンバー Ethernet ポートの追加・削除、`teamd` の retry-count パラメータ取得・設定の 3 グループ[^1]。
+`config portchannel` は [LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation ([LAG](../../reference/glossary.md#term-lag)) を設定する。LAG 本体の作成・削除（`add` / `del`）、メンバー Ethernet ポートの追加・削除、`teamd` の retry-count パラメータ取得・設定の 3 グループ[^1]。
 
-LACP の実体は **`teamd` (libteam)** で、SONiC の `teammgrd` が `PORTCHANNEL` テーブルを APPL_DB へ反映し、teamd 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを CONFIG_DB に直接書き込む役割を担う。
+LACP の実体は **`teamd` (libteam)** で、SONiC の `teammgrd` が `PORTCHANNEL` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) へ反映し、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書き込む役割を担う。
 
 ## コマンド一覧
 
@@ -253,3 +253,5 @@ teamdctl PortChannel0001 state
 show runningconfiguration | grep -i portchannel
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 38d67752c4a9 -->

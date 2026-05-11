@@ -27,10 +27,10 @@ related:
 
 ## 概要
 
-SNMP 関連の CLI は **3 つの独立したトップレベルグループ** に分かれている: `config snmp`、`config snmpagentaddress`、`config snmptrap`。すべて `config/main.py` 内に直接定義されており、`snmpd.conf` を再生成するために各操作後に `systemctl restart snmp` が走る[^1]。
+[SNMP](../../reference/glossary.md#term-snmp) 関連の CLI は **3 つの独立したトップレベルグループ** に分かれている: `config snmp`、`config snmpagentaddress`、`config snmptrap`。すべて `config/main.py` 内に直接定義されており、`snmpd.conf` を再生成するために各操作後に `systemctl restart snmp` が走る[^1]。
 
 - `config snmp ...` ... `SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` テーブルへの contact / location / community / user 操作
-- `config snmpagentaddress ...` ... snmpd の bind IP:Port:VRF を `SNMP_AGENT_ADDRESS_CONFIG` に登録
+- `config snmpagentaddress ...` ... snmpd の bind IP:Port:[VRF](../../reference/glossary.md#term-vrf) を `SNMP_AGENT_ADDRESS_CONFIG` に登録
 - `config snmptrap ...` ... v1/v2/v3 の trap 送信先を `SNMP_TRAP_CONFIG` に登録
 
 ## コマンド一覧
@@ -159,7 +159,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md) / [`SNMP_TRAP_CONFIG`](../config-db/snmp.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md) / [`SNMP_TRAP_CONFIG`](../config-db/snmp.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
 
 <!-- ref-triangle:end -->
 
@@ -245,7 +245,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- ACL で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。
+- [ACL](../../reference/glossary.md#term-acl) で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。
 - `config snmp community add` の type は `RO` / `RW`。RW を不用意に開けない。
 
 ### 関連する show / debug
@@ -256,3 +256,5 @@ show snmp user
 show runningconfiguration snmp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ded79a787b44 -->

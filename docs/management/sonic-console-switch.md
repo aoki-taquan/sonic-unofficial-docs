@@ -40,7 +40,7 @@ SONiC スイッチを「**network 機器を console（serial）経由で管理�
 
 - **reverse SSH**: `ssh -p <line-port> <sonic-mgmt-ip>` で直接 line に接続できる
 - **port-based forwarding** と **IP-based forwarding** の 2 方式
-- 各 line ごとに baudrate / flow control / remote device name / management IP を CONFIG_DB に persist
+- 各 line ごとに baudrate / flow control / remote device name / management IP を [CONFIG_DB](../reference/glossary.md#term-config_db) に persist
 - Active session は **1 line に 1 つ**[^1]
 
 ## 動作仕様
@@ -81,7 +81,7 @@ CONSOLE_PORT|<line>:
 
 ### Underlying TTY device mapping
 
-vendor / serial hub ドライバ依存で `/dev/ttyXXX` の番号と line number の対応が変わる。HLD は **mapping 定義 sample** を別表で示す[^1]:
+vendor / serial hub ドライバ依存で `/dev/ttyXXX` の番号と line number の対応が変わる。[HLD](../reference/glossary.md#term-hld) は **mapping 定義 sample** を別表で示す[^1]:
 
 ```
 line 1  -> /dev/ttyUSB0
@@ -97,7 +97,7 @@ line 2  -> /dev/ttyUSB1
 | `consutil show <line>` | 特定 line |
 | `consutil clear <line>` | session 強制切断 |
 | `consutil connect <line>` | 当該 line に接続（local 操作） |
-| `consutil sync` | STATE_DB と実 TTY 状態の整合 |
+| `consutil sync` | [STATE_DB](../reference/glossary.md#term-state_db) と実 TTY 状態の整合 |
 | `config console add <line> --baud 9600 --flow-control enabled --device <name>` | line config 追加 |
 | `config console del <line>` | line 削除 |
 | `config console enable / disable` | global ON/OFF |
@@ -149,9 +149,9 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 
 ## 干渉する機能
 
-- **AAA / RADIUS / TACACS+**: console session も RADIUS 認証可能か（PAM `login` 経由扱い）
+- **[AAA](../reference/glossary.md#term-aaa) / RADIUS / TACACS+**: console session も RADIUS 認証可能か（PAM `login` 経由扱い）
 - **reverse SSH の port range**: 既存 SSH (22) と衝突しないようにする
-- **mgmt VRF**: line 用 management IP を mgmt VRF に置く運用が多い
+- **mgmt [VRF](../reference/glossary.md#term-vrf)**: line 用 management IP を mgmt VRF に置く運用が多い
 
 ## トラブルシューティング
 
@@ -176,7 +176,7 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 
 - `consutil` CLI: `.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}` に存在 → 取り込み済み
-- `sonic-console.yang` (CONSOLE_PORT / CONSOLE_SWITCH の YANG): `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` に存在（revision 2026-02-12 `escape_char` 追加 / 2022-08-22 First Revision）
+- `sonic-console.yang` (CONSOLE_PORT / CONSOLE_SWITCH の [YANG](../reference/glossary.md#term-yang)): `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` に存在（revision 2026-02-12 `escape_char` 追加 / 2022-08-22 First Revision）
 - `consoled` デーモン本体・`ser2net` 連携・reverse SSH の port/IP forwarding ロジック: `sonic-buildimage` / `sonic-host-services` のいずれにも検出できず
 
 HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、`discrepancy-found` を維持。
@@ -191,3 +191,5 @@ HLD が想定する「serial hub 機能を備えた switch hub としての reve
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c4cccaa7fc71 -->

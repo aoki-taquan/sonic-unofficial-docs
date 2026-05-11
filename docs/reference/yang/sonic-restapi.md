@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-restapi`
 
-RESTAPI YANG Module for SONiC OS[^1]。REST API サーバの TLS 証明書 (certs) と connection 設定 (config) を持つ。
+RESTAPI [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS[^1]。REST API サーバの TLS 証明書 (certs) と connection 設定 (config) を持つ。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -81,8 +81,8 @@ module: sonic-restapi
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `RESTAPI`
-- CLI: なし（config_db.json で直接設定）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `RESTAPI`
+- CLI: なし（[config_db.json](../../reference/glossary.md#term-config_db.json) で直接設定）
 
 <!-- ref-triangle:start -->
 
@@ -95,3 +95,5 @@ module: sonic-restapi
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-restapi.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 750f82636a14 -->

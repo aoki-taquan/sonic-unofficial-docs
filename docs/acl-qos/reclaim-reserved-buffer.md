@@ -51,7 +51,7 @@ Mellanox プラットフォームで顕著な「admin-down ポートにも defau
 
 ### 「単純削除」では起きる不整合
 
-最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、HLD はこれを否定する。SAI / SDK は **「設定が無いとき = SDK default 値（一部は非ゼロ）」** であり、設定削除（`SAI_NULL_OBJECT_ID`）すると **0 にリセット** される。結果、
+最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、[HLD](../reference/glossary.md#term-hld) はこれを否定する。[SAI](../reference/glossary.md#term-sai) / SDK は **「設定が無いとき = SDK default 値（一部は非ゼロ）」** であり、設定削除（`SAI_NULL_OBJECT_ID`）すると **0 にリセット** される。結果、
 
 - 起動時設定なし → SDK default（非ゼロ）
 - 起動後に削除 → 0
@@ -130,7 +130,7 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 
 ### CONFIG_DB
 
-`zero_profile` 系は **テンプレート（buffers_config.j2）に同梱** される vendor 提供データ。CONFIG_DB に手書きする運用は想定されない。
+`zero_profile` 系は **テンプレート（buffers_config.j2）に同梱** される vendor 提供データ。[CONFIG_DB](../reference/glossary.md#term-config_db) に手書きする運用は想定されない。
 
 ## 制限事項
 
@@ -142,11 +142,11 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 
 - **Dynamic Buffer Calculation**: 同じ buffer manager が司る。dynamic mode では shutdown 時の自動 reclaim が標準動作になる
 - **db_migrator**: 旧 image からの upgrade 時に admin-down ポートを zero_profile に置換
-- **PFC / lossless**: lossless PG は zero_profile ではなく削除なので、enable し直しの順序に注意
+- **[PFC](../reference/glossary.md#term-pfc) / lossless**: lossless PG は zero_profile ではなく削除なので、enable し直しの順序に注意
 
 ## トラブルシューティング
 
-- shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか APPL_DB で確認
+- shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか [APPL_DB](../reference/glossary.md#term-appl_db) で確認
 - lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認
 
 ## 裏取り済み実装位置 (2026-05-11)
@@ -174,3 +174,5 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 568143337d00 -->

@@ -19,7 +19,7 @@ sources:
 
 # 設定
 
-ここでは AAA バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。
+ここでは [AAA](../../reference/glossary.md#term-aaa) バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。
 
 ## 認証バックエンドの選び方
 
@@ -32,7 +32,7 @@ SONiC は local user に加えて TACACS+、RADIUS、LDAP の三つの外部バ�
 | RADIUS | キャリアグレードの集中認証 | `config aaa ...` + RADIUS テーブル | 既存 reference を参照 |
 | LDAP | 既存ディレクトリへの統合 | `config aaa ...` + LDAP テーブル | [`LDAP_SERVER`](../../reference/config-db/ldap-server.md) |
 
-CLI の全体像は [config aaa](../../reference/cli/config-aaa.md) を、YANG モデル経由の表現は [sonic-system-aaa](../../reference/yang/sonic-system-aaa.md) を参照してください。バックエンド単位の典型設定と注意点は以下にあります。
+CLI の全体像は [config aaa](../../reference/cli/config-aaa.md) を、[YANG](../../reference/glossary.md#term-yang) モデル経由の表現は [sonic-system-aaa](../../reference/yang/sonic-system-aaa.md) を参照してください。バックエンド単位の典型設定と注意点は以下にあります。
 
 - [TACACS+ authentication HLD](../../management/tacacs-authentication.md)
 - [SONiC TACACS+ improvement](../../management/sonic-tacacs-improvement.md)
@@ -54,7 +54,7 @@ banner メッセージ（login 前と login 後）は `BANNER_MESSAGE` テーブ
 
 ## 設定の入口の対応
 
-| やりたいこと | CLI | CONFIG_DB | YANG / HLD |
+| やりたいこと | CLI | [CONFIG_DB](../../reference/glossary.md#term-config_db) | YANG / [HLD](../../reference/glossary.md#term-hld) |
 |---|---|---|---|
 | login_method の順序付け | `config aaa authentication login ...` | `AAA\|authentication` | [sonic-system-aaa](../../reference/yang/sonic-system-aaa.md) |
 | TACACS+ サーバ追加 | `config tacacs add/delete` | [`TACPLUS_SERVER`](../../reference/config-db/tacplus-server.md) | [TACACS+ HLD](../../management/tacacs-authentication.md) |
@@ -225,3 +225,5 @@ CONFIG_DB:
 - CONFIG_DB: `AAA`、`TACPLUS`、`TACPLUS_SERVER`、`RADIUS`、`RADIUS_SERVER`、`LDAP`、`LDAP_SERVER`、`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`
 - YANG: [`sonic-system-aaa`](../../reference/yang/sonic-system-aaa.md)、`sonic-system-tacacs`、`sonic-system-ldap`、`sonic-ssh-server`、`sonic-system-banner`
 - 関連 HLD: [TACACS+ HLD](../../management/tacacs-authentication.md)、[RADIUS HLD](../../management/radius-management-user-authentication.md)、[LDAP HLD](../../management/hld-ldap.md)、[SSH server global config HLD](../../management/ssh-server-global-config-hld.md)、[serial console HLD](../../management/serial-console-global-config-hld.md)、[banner messages HLD](../../system/banner-messages-hld.md)
+
+<!-- glossary-links-injected: 04127c73f090 -->

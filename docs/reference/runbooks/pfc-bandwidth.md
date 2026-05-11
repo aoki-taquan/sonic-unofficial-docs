@@ -27,14 +27,14 @@ related:
 
 ## 症状
 
-- RoCE / lossless トラフィックでスループットが想定の数 % にとどまる
+- [RoCE](../../reference/glossary.md#term-roce) / lossless トラフィックでスループットが想定の数 % にとどまる
 - `pfcwd show stats` で `STORM` が継続検出され、特定 queue が `disabled` 状態
 - `show queue counters` で `pkts_dropped` が増え続ける
 - `show priority-group persistent-watermark` で PG buffer の usage が常時 100% 近い
 
 ## 想定原因
 
-1. **PFC enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致** → 想定の queue に乗っていない
+1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致** → 想定の queue に乗っていない
 2. **buffer profile / pool sizing 不足**: `BUFFER_POOL|ingress_lossless_pool` の `size` がトラフィック量に対して過小
 3. **対向側で PFC pause を生成し続け、PFC storm に陥っている**: PFC WD が queue を強制 disable
 4. **headroom 計算が cable length と一致していない** (`CABLE_LENGTH` テーブル誤設定)
@@ -112,5 +112,7 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — bufferorch / pfcwdorch
-[^2]: sonic-net/sonic-utilities @ 39732bceb — pfcwd CLI
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
+
+<!-- glossary-links-injected: 700a048ebcfc -->

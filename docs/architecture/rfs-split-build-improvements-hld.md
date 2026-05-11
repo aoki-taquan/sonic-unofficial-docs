@@ -131,7 +131,7 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 - **既定無効**: 全プラットフォームで自動で速くなるわけではない。明示的に有効化する必要がある[^1]。
 - **ストレージコスト**: Stage 1 出力の squashfs を保持するため、ビルドサーバの一時領域が増える。
 - **互換性確認の責務**: 既存ビルドフローで動いていた hook（`sonic_debian_extension.sh` の前後で何かを差し込んでいる組織）は、Stage の境界をまたぐと動作が変わる可能性がある。
-- **HLD は Rev 0.1**: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定[^1]。
+- **[HLD](../reference/glossary.md#term-hld) は Rev 0.1**: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定[^1]。
 
 ## 干渉する機能
 
@@ -156,3 +156,4 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 - ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
 -->
 
+<!-- glossary-links-injected: 167700005048 -->

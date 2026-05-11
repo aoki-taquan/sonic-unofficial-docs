@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-Critical Resource Monitoring (CRM) は ASIC の HW リソース使用率 (route / nexthop / FDB / ACL / NAT / MPLS / SRv6 / DASH) をポーリング監視し、閾値超過時に `THRESHOLD_EXCEEDED` / `THRESHOLD_CLEAR` アラートを生成する機能。設定は `CRM|Config` の単一エントリに集約される[^1]。`orchagent` の `CrmOrch` が CONFIG_DB を購読し、`COUNTERS_DB` の CRM 統計を更新する。
+Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) は ASIC の HW リソース使用率 (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl) / [NAT](../../reference/glossary.md#term-nat) / [MPLS](../../reference/glossary.md#term-mpls) / [SRv6](../../reference/glossary.md#term-srv6) / [DASH](../../reference/glossary.md#term-dash)) をポーリング監視し、閾値超過時に `THRESHOLD_EXCEEDED` / `THRESHOLD_CLEAR` アラートを生成する機能。設定は `CRM|Config` の単一エントリに集約される[^1]。`orchagent` の `CrmOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、`COUNTERS_DB` の CRM 統計を更新する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,7 +55,7 @@ CRM|Config
 |------|---------------------|
 | ACL | `acl_table`, `acl_group`, `acl_entry`, `acl_counter` |
 | FIB | `ipv4_route`, `ipv6_route`, `ipv4_nexthop`, `ipv6_nexthop`, `ipv4_neighbor`, `ipv6_neighbor` |
-| ECMP | `nexthop_group`, `nexthop_group_member` |
+| [ECMP](../../reference/glossary.md#term-ecmp) | `nexthop_group`, `nexthop_group_member` |
 | L2 | `fdb_entry` |
 | NAT | `dnat_entry`, `snat_entry` |
 | 多目的 | `ipmc_entry`, `mpls_inseg`, `mpls_nexthop` |
@@ -77,13 +77,13 @@ CRM|Config
 
 ## 購読者
 
-- `orchagent` の `CrmOrch`: ポーリング、SAI から使用量取得、COUNTERS_DB 更新、syslog アラート
+- `orchagent` の `CrmOrch`: ポーリング、[SAI](../../reference/glossary.md#term-sai) から使用量取得、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) 更新、syslog アラート
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `DEVICE_METADATA`
 - 関連 CLI: `crm config thresholds ...`、`crm show resources/thresholds`
-- 関連 YANG: `sonic-crm`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-crm`
 
 <!-- ref-triangle:start -->
 
@@ -127,3 +127,5 @@ crm show summary
 crm show resources all
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e0ed5cb93cdf -->

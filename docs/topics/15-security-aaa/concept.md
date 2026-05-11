@@ -20,13 +20,13 @@ keywords:
 
 # 概念
 
-SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（`hostcfgd`、`macsecmgr`、SAI）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 HLD を読む順番が決まります。
+SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（`hostcfgd`、`macsecmgr`、[SAI](../../reference/glossary.md#term-sai)）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 [HLD](../../reference/glossary.md#term-hld) を読む順番が決まります。
 
 ## 三層のセキュリティ境界
 
 | 層 | 守るもの | 主な機能 | 主な実装 |
 | --- | --- | --- | --- |
-| Control plane | 誰がスイッチを操作できるか | AAA、TACACS+、RADIUS、LDAP、local user、SSH、serial console、banner、password policy | PAM / NSS、`hostcfgd`、`config-db` |
+| Control plane | 誰がスイッチを操作できるか | [AAA](../../reference/glossary.md#term-aaa)、TACACS+、RADIUS、LDAP、local user、SSH、serial console、banner、password policy | PAM / NSS、`hostcfgd`、`config-db` |
 | Data plane | リンク上の暗号と完全性 | MACsec、MKA、Gearbox 経由の MACsec | `macsecmgr`、`wpa_supplicant`、SAI、PHY |
 | Platform | 起動・実行・更新の真正性 | OpenSSL FIPS、secure boot、secure upgrade、container hardening、SAI POST | GRUB、shim、OpenSSL FIPS provider、Docker、SAI |
 
@@ -56,7 +56,7 @@ OpenSSL FIPS、secure boot、secure upgrade、container hardening は、いず�
 
 ## 章の境界
 
-- 管理プレーン向け CoPP（Control Plane Policing）は本章ではなく [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。
+- 管理プレーン向け [CoPP](../../reference/glossary.md#term-copp)（Control Plane Policing）は本章ではなく [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。
 - secure upgrade はライフサイクル全体の [Reboot / Upgrade / Lifecycle](../11-reboot/index.md) と重複しますが、本章では「信頼チェーン」の観点に限定し、warm/fast/SONiC-To-SONiC の手順は 11 章に委ねます。
 
 ## まず読み手の質問に答える
@@ -103,7 +103,7 @@ flowchart LR
     CFG --> MACSEC --> SAIM
 ```
 
-入口は概ね CONFIG_DB と OS 設定ファイルで、出口は PAM スタック、`/etc/ssh/sshd_config`、`wpa_supplicant.conf`、SAI MACsec object です。
+入口は概ね [CONFIG_DB](../../reference/glossary.md#term-config_db) と OS 設定ファイルで、出口は PAM スタック、`/etc/ssh/sshd_config`、`wpa_supplicant.conf`、SAI MACsec object です。
 
 ### 用語の最短整理
 
@@ -151,10 +151,10 @@ sequenceDiagram
 | --- | --- |
 | [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) | パケット流入帯域の制限。「誰が」ではなく「どのパケットを」 |
 | [VRF / management VRF](../04-vrf-ecmp/index.md) | 管理通信の経路隔離。AAA の到達経路に影響するが認証自体はこの章 |
-| [GNMI / OpenConfig](../10-gnmi-openconfig/index.md) | gNMI 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路 |
+| [GNMI / OpenConfig](../10-gnmi-openconfig/index.md) | [gNMI](../../reference/glossary.md#term-gnmi) 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路 |
 | [Reboot / Lifecycle](../11-reboot/index.md) | secure upgrade の手順は 11 章。「信頼チェーン」の理屈は本章 |
 | データ暗号化（IPSec / TLS） | SONiC でユーザーが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物 |
-| Linux 一般の hardening（kernel / sysctl） | SONiC では SAI / orchagent のセキュリティが上に乗るためここで補強する |
+| Linux 一般の hardening（kernel / sysctl） | SONiC では SAI / [orchagent](../../reference/glossary.md#term-orchagent) のセキュリティが上に乗るためここで補強する |
 
 ### 読了後にできるようになること
 
@@ -170,3 +170,4 @@ sequenceDiagram
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
+<!-- glossary-links-injected: c88ef50a2df3 -->

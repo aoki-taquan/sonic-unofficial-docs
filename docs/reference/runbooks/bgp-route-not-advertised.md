@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **`network` / redistribute 文の不足**: FRR で `network 1.1.1.0/24` または `redistribute connected` が無い
+1. **`network` / redistribute 文の不足**: [FRR](../../reference/glossary.md#term-frr) で `network 1.1.1.0/24` または `redistribute connected` が無い
 2. **outbound route-map で deny**: `route-map RM_OUT permit` の match で外れる
 3. **prefix-list で除外**: `ip prefix-list PL_OUT` の sequence で deny
 4. **next-hop self / community 設定不適**: iBGP で next-hop が peer から到達不能
@@ -77,7 +77,7 @@ sonic-db-cli CONFIG_DB keys "PREFIX_LIST|*"
 
 ## 対処方法
 
-- `network` 文追加: `vtysh -c "conf t" -c "router bgp <ASN>" -c "network 1.1.1.0/24"` → CONFIG_DB 側にも反映
+- `network` 文追加: `vtysh -c "conf t" -c "router bgp <ASN>" -c "network 1.1.1.0/24"` → [CONFIG_DB](../../reference/glossary.md#term-config_db) 側にも反映
 - route-map 修正: `route-map RM_OUT permit 100` を追加、または既存の deny を緩める
 - iBGP 経路で next-hop 問題: `neighbor <peer> next-hop-self`
 
@@ -90,4 +90,6 @@ sonic-db-cli CONFIG_DB keys "PREFIX_LIST|*"
 ## 引用元
 
 [^1]: sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c
-[^2]: sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) で [zebra](../../reference/glossary.md#term-zebra) → APP_DB 反映
+
+<!-- glossary-links-injected: 035b99b8e325 -->

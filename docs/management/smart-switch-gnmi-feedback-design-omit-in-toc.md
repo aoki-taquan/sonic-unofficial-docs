@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が **NPU 上の gNMI サーバ** を介して各 DPU を設定する。本 HLD はその gNMI 経路で「設定要求の結果が DPU SAI まで通ったか」をコントローラに返すフィードバック機構を定義する[^1]。
+[SmartSwitch](../reference/glossary.md#term-smartswitch) アーキテクチャでは外部コントローラ（[VNET](../reference/glossary.md#term-vnet) / SDN コントローラ）が **[NPU](../reference/glossary.md#term-npu) 上の [gNMI](../reference/glossary.md#term-gnmi) サーバ** を介して各 [DPU](../reference/glossary.md#term-dpu) を設定する。本 [HLD](../reference/glossary.md#term-hld) はその gNMI 経路で「設定要求の結果が DPU [SAI](../reference/glossary.md#term-sai) まで通ったか」をコントローラに返すフィードバック機構を定義する[^1]。
 
 要件[^1]:
 
@@ -153,7 +153,7 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 
 ### DPU APPL_STATE_DB スキーマ
 
-APPL_STATE_DB の各エントリは APPL_DB のエントリ **同名 key にマップ** される。値は親オブジェクトなら `result` + `version_id`、子なら `result` のみ[^1]。
+APPL_STATE_DB の各エントリは [APPL_DB](../reference/glossary.md#term-appl_db) のエントリ **同名 key にマップ** される。値は親オブジェクトなら `result` + `version_id`、子なら `result` のみ[^1]。
 
 `result` は `uint32`。**0=成功**、>0 はエラーコード[^1]。
 
@@ -178,7 +178,7 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 
 ### 関連する CONFIG_DB / CLI / YANG
 
-本 HLD は gNMI 経路の動作仕様であり、ユーザ向け CONFIG_DB / CLI 表面は持たない。設定経路は gNMI（外部）と APPL_DB / APPL_STATE_DB（内部）に閉じる。
+本 HLD は gNMI 経路の動作仕様であり、ユーザ向け [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI 表面は持たない。設定経路は gNMI（外部）と APPL_DB / APPL_STATE_DB（内部）に閉じる。
 
 ### 関連する gNMI 操作
 
@@ -196,9 +196,9 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 
 ## 干渉する機能
 
-- **DASH スキーマ**: `DASH_ROUTE_TABLE` / `DASH_ROUTE_GROUP_TABLE` / `DASH_VNET_MAPPING` などが APPL_STATE_DB のミラー対象。DASH 機能の変更は本 HLD のキー設計に直結する。
+- **[DASH](../reference/glossary.md#term-dash) スキーマ**: `DASH_ROUTE_TABLE` / `DASH_ROUTE_GROUP_TABLE` / `DASH_VNET_MAPPING` などが APPL_STATE_DB のミラー対象。DASH 機能の変更は本 HLD のキー設計に直結する。
 - **ZMQ producer/consumer state table**: NPU の gNMI Server から DPU SWSS への伝送路として ZMQ ベースの producer/consumer state table パターンを使う。
-- **DPU 側 syncd**: 実際に SAI コールするのは DPU SONiC の SYNCD。NPU SONiC は仲介役。
+- **DPU 側 [syncd](../reference/glossary.md#term-syncd)**: 実際に SAI コールするのは DPU SONiC の SYNCD。NPU SONiC は仲介役。
 
 ## トラブルシューティング
 
@@ -231,3 +231,5 @@ HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合�
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e6fe2bd4ede5 -->

@@ -20,7 +20,7 @@ sources:
 
 # 設定
 
-ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。`config acl` は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて `config acl update full` または `incremental` で投入します。
+[ACL](../../reference/glossary.md#term-acl) の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。`config acl` は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて `config acl update full` または `incremental` で投入します。
 
 ## 最小 ACL
 
@@ -62,7 +62,7 @@ table type が action の可否を制限するため、rule JSON だけを別 ta
 
 ## Policer
 
-`POLICER` は単独で packet を分類しません。ACL rule、CoPP group、mirror session などから参照される rate limiting 部品です。`METER_TYPE`、`MODE`、`CIR` / `CBS`、`PIR` / `PBS`、色別 action を持ちます。
+`POLICER` は単独で packet を分類しません。ACL rule、[CoPP](../../reference/glossary.md#term-copp) group、mirror session などから参照される rate limiting 部品です。`METER_TYPE`、`MODE`、`CIR` / `CBS`、`PIR` / `PBS`、色別 action を持ちます。
 
 ACL で使う場合は rule の action として policer 名を参照します。CoPP では `COPP_GROUP` 内に queue、trap action、meter、rate を持つ形で control plane traffic に適用されます。
 
@@ -74,9 +74,9 @@ ACL と組み合わせる場合、先に mirror session を作り、`ACL_RULE` �
 
 ## CoPP
 
-CoPP は `COPP_TRAP` が trap ID 群を定義し、`COPP_GROUP` が CPU queue と policer を定義します。`COPP_TRAP.trap_group` が `COPP_GROUP` を参照し、`coppmgr` が APPL_DB の `COPP_TABLE` に変換し、`CoppOrch` が SAI hostif trap / trap group / policer に反映します。
+CoPP は `COPP_TRAP` が trap ID 群を定義し、`COPP_GROUP` が CPU queue と policer を定義します。`COPP_TRAP.trap_group` が `COPP_GROUP` を参照し、`coppmgr` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `COPP_TABLE` に変換し、`CoppOrch` が [SAI](../../reference/glossary.md#term-sai) hostif trap / trap group / policer に反映します。
 
-YANG の正本は `sonic-copp` で、`COPP_GROUP` と `COPP_TRAP` の tree、leaf、leafref を確認できます。mirror session の YANG は `sonic-mirror-session` で、ERSPAN / SPAN の必須条件や `POLICER` への leafref を確認できます。
+[YANG](../../reference/glossary.md#term-yang) の正本は `sonic-copp` で、`COPP_GROUP` と `COPP_TRAP` の tree、leaf、leafref を確認できます。mirror session の YANG は `sonic-mirror-session` で、ERSPAN / SPAN の必須条件や `POLICER` への leafref を確認できます。
 
 ## 典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる
 
@@ -114,7 +114,7 @@ rule JSON (`/tmp/uplink_filter.json`):
 sudo acl-loader update incremental /tmp/uplink_filter.json
 ```
 
-CONFIG_DB の表現:
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の表現:
 
 ```json
 {
@@ -221,7 +221,7 @@ investig8   active    10.1.0.1   10.99.0.10   0x88be  8       64     0
 
 ## 典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる
 
-default の BGP CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。
+default の [BGP](../../reference/glossary.md#term-bgp) CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。
 
 ```json
 {
@@ -297,3 +297,5 @@ action / match 制約は ASIC capability に依存する部分があるため、
 - [COPP_TRAP テーブル](../../reference/config-db/copp-trap.md)
 - [sonic-copp YANG](../../reference/yang/sonic-copp.md)
 - [sonic-mirror-session YANG](../../reference/yang/sonic-mirror-session.md)
+
+<!-- glossary-links-injected: 9311b0e01b19 -->

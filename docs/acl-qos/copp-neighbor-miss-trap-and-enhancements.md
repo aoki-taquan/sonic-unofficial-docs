@@ -30,13 +30,13 @@ related:
 
 ## これは何か（一行で）
 
-CoPP に **`neighbor_miss` trap**（ARP/ND 未解決 IP パケット用）を追加し、SAI **enum capability query** で対応 trap を事前判定、`hw_status` を STATE_DB に出して `show copp configuration` で見える化する 4 点セットの改善[^1]。
+[CoPP](../reference/glossary.md#term-copp) に **`neighbor_miss` trap**（[ARP](../reference/glossary.md#term-arp)/ND 未解決 IP パケット用）を追加し、[SAI](../reference/glossary.md#term-sai) **enum capability query** で対応 trap を事前判定、`hw_status` を [STATE_DB](../reference/glossary.md#term-state_db) に出して `show copp configuration` で見える化する 4 点セットの改善[^1]。
 
 ## なぜ必要か
 
 - **ARP 解決前の IP トラフィックが CPU に殺到** → IP2ME など重要 trap を巻き添えにする問題があった
-- SAI が知らない trap を投げて orchagent が落ちる事象を **enum capability query で根絶**
-- 「自分の ASIC は BGP trap を install できているか？」が CLI で見えなかった → `hw_status` 列で公開
+- SAI が知らない trap を投げて [orchagent](../reference/glossary.md#term-orchagent) が落ちる事象を **enum capability query で根絶**
+- 「自分の ASIC は [BGP](../reference/glossary.md#term-bgp) trap を install できているか？」が CLI で見えなかった → `hw_status` 列で公開
 
 ## 全体構造
 
@@ -64,7 +64,7 @@ flowchart LR
 3. query 自体が非対応の SAI は **`default_supported_trap_ids`** にフォールバック（後方互換）
 4. `supported_trap_ids` を `STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps` に出版
 
-**Config** 時（APPL_DB から CoPP trap 設定が来た時）:
+**Config** 時（[APPL_DB](../reference/glossary.md#term-appl_db) から CoPP trap 設定が来た時）:
 
 1. `supported_trap_ids` に含まれるか確認
 2. 含まれる → SAI に `create_hostif_trap` で投入し `hw_status=installed`
@@ -158,7 +158,7 @@ show copp configuration detailed --group queue1_group3
 
 - `SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS` の対応は **ベンダー依存**。未実装 ASIC では `hw_status=not-installed`
 - `default_supported_trap_ids` は古い SAI 向けフォールバック。新 trap を default に入れ忘れると未 install になる可能性
-- HLD デフォルト（CIR/CBS=200、queue=1）はデバイス・トラフィックに合わせて調整余地あり
+- [HLD](../reference/glossary.md#term-hld) デフォルト（CIR/CBS=200、queue=1）はデバイス・トラフィックに合わせて調整余地あり
 
 ## 干渉する機能
 
@@ -201,3 +201,5 @@ show copp configuration detailed --group queue1_group3
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c2d0a7a9c2aa -->

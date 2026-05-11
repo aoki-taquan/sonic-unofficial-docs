@@ -71,13 +71,13 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 
 ## 購読者
 
-- `docker-sonic-restapi` の起動スクリプト: CONFIG_DB → `go-server-server` 起動引数 / 環境変数 / 証明書パスを設定
+- `docker-sonic-restapi` の起動スクリプト: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `go-server-server` 起動引数 / 環境変数 / 証明書パスを設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: なし (`FEATURE.restapi` で有効化される)
 - CLI: 標準 CLI ラッパなし。`config restapi` 系コマンドは未提供 (CONFIG_DB 直接編集または init_cfg 経由)
-- 関連 YANG: `sonic-restapi`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-restapi`
 
 <!-- ref-triangle:start -->
 
@@ -113,3 +113,5 @@ sonic-db-cli CONFIG_DB keys 'RESTAPI|*'
 systemctl status restapi
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-flex_counter`
 
-`syncd` の Flex Counter Manager が ASIC SAI カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する YANG モジュール[^1]。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の `FLEX_COUNTER_STATUS` / `FLEX_COUNTER_DELAY_STATUS` / `POLL_INTERVAL` パターン（一部は `POLL_INTERVAL` を持たない）が繰り返される。加えてルート単位フローカウンタ用の `FLOW_COUNTER_ROUTE_PATTERN` を別コンテナで定義する。
+`syncd` の Flex Counter Manager が ASIC [SAI](../../reference/glossary.md#term-sai) カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の `FLEX_COUNTER_STATUS` / `FLEX_COUNTER_DELAY_STATUS` / `POLL_INTERVAL` パターン（一部は `POLL_INTERVAL` を持たない）が繰り返される。加えてルート単位フローカウンタ用の `FLOW_COUNTER_ROUTE_PATTERN` を別コンテナで定義する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -70,10 +70,10 @@ module: sonic-flex_counter
 |---------|------|----------------|
 | `BUFFER_POOL_WATERMARK` | バッファプール ウォーターマーク | ○ |
 | `DEBUG_COUNTER` | デバッグカウンタ（ドロップ理由など） | × |
-| `ENI` | DASH ENI 統計 | ○ |
+| `ENI` | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) 統計 | ○ |
 | `DASH_METER` | DASH メーター統計 | ○ |
 | `HA_SET` | DASH HA セット統計 | ○ |
-| `PFCWD` | PFC Watchdog | ○ |
+| `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) | ○ |
 | `PG_DROP` | Priority Group ドロップ | ○ |
 | `PG_WATERMARK` | Priority Group ウォーターマーク | ○ |
 | `PORT` | ポート統計 | ○ |
@@ -83,14 +83,14 @@ module: sonic-flex_counter
 | `QUEUE` | キュー統計 | ○ |
 | `QUEUE_WATERMARK` | キューウォーターマーク | ○ |
 | `RIF` | Router Interface 統計 | ○ |
-| `RIF_RATES` | RIF レート計算 | ○ |
-| `ACL` | ACL 統計 | × |
+| `RIF_RATES` | [RIF](../../reference/glossary.md#term-rif) レート計算 | ○ |
+| `ACL` | [ACL](../../reference/glossary.md#term-acl) 統計 | × |
 | `FLOW_CNT_TRAP` | trap フローカウンタ | ○ |
 | `FLOW_CNT_ROUTE` | route フローカウンタ | ○ |
 | `TUNNEL` | トンネル統計 | ○ |
-| `WRED_ECN_QUEUE` | WRED/ECN キュー統計 | ○ |
+| `WRED_ECN_QUEUE` | [WRED](../../reference/glossary.md#term-wred)/ECN キュー統計 | ○ |
 | `WRED_ECN_PORT` | WRED/ECN ポート統計 | ○ |
-| `SRV6` | SRv6 統計 | ○ |
+| `SRV6` | [SRv6](../../reference/glossary.md#term-srv6) 統計 | ○ |
 | `SWITCH` | スイッチ全体統計 | ○ |
 
 ## typedef
@@ -115,7 +115,7 @@ module: sonic-flex_counter
 
 ## `FLOW_COUNTER_ROUTE_PATTERN`
 
-ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト VRF 用 `FLOW_COUNTER_ROUTE_PATTERN_LIST` と VRF/VNET スコープ用 `FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST` の 2 リストを持つ。`vrf_name` は leafref ではなく文字列（VNET 名も受け入れる、orchagent が後で解決する）。
+ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト [VRF](../../reference/glossary.md#term-vrf) 用 `FLOW_COUNTER_ROUTE_PATTERN_LIST` と VRF/[VNET](../../reference/glossary.md#term-vnet) スコープ用 `FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST` の 2 リストを持つ。`vrf_name` は leafref ではなく文字列（VNET 名も受け入れる、[orchagent](../../reference/glossary.md#term-orchagent) が後で解決する）。
 
 | leaf | 型 | 必須 | 説明 |
 |------|----|------|------|
@@ -133,7 +133,7 @@ module: sonic-flex_counter
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FLEX_COUNTER_TABLE|<GROUP>`, `FLOW_COUNTER_ROUTE_PATTERN`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE|<GROUP>`, `FLOW_COUNTER_ROUTE_PATTERN`
 - CLI: `counterpoll <group> {enable|disable|interval <ms>}`
 
 <!-- ref-triangle:start -->
@@ -154,7 +154,7 @@ module: sonic-flex_counter
 
 ### よくある落とし穴
 
-- `POLL_INTERVAL` を極端に小さく (< 1000ms) すると syncd CPU が張り付き、orchagent の他処理が遅延する。
+- `POLL_INTERVAL` を極端に小さく (< 1000ms) すると [syncd](../../reference/glossary.md#term-syncd) CPU が張り付き、orchagent の他処理が遅延する。
 
 ### 関連する config / show コマンド
 
@@ -167,3 +167,5 @@ counterpoll show
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: d2ce881d0d90 -->

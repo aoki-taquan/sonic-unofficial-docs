@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-物理 Ethernet ポート (`PORT`) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ[^1]。VLAN_MEMBER に登録された port は L2 として扱われるため `INTERFACE` には登録できない（VLAN_MEMBER 側の `must` で除外される）。
+物理 Ethernet ポート (`PORT`) を L3 IF として扱う設定を保持する。[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding、IP アサイン、[NAT](../../reference/glossary.md#term-nat) zone、[MPLS](../../reference/glossary.md#term-mpls)、IPv6 link-local モード、MAC を持つ[^1]。VLAN_MEMBER に登録された port は L2 として扱われるため `INTERFACE` には登録できない（VLAN_MEMBER 側の `must` で除外される）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -79,14 +79,14 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 ## 購読者
 
 - `intfmgrd`: VRF / MAC / MPLS / IPv6 LL を Linux に反映
-- `orchagent` `IntfsOrch`: SAI ルータインタフェースを生成
+- `orchagent` `IntfsOrch`: [SAI](../../reference/glossary.md#term-sai) ルータインタフェースを生成
 - `natmgrd`: `nat_zone` を利用
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`、`VRF`、`VNET`、`VLAN_MEMBER`（排他）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`VRF`、`VNET`、`VLAN_MEMBER`（排他）
 - 関連 CLI: `config interface ip add/remove`、`config interface vrf bind/unbind`
-- 関連 YANG: `sonic-interface`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-interface`
 
 <!-- ref-triangle:start -->
 
@@ -124,7 +124,7 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 ### よくある誤設定
 
-- VLAN メンバになっているポートを `INTERFACE` で L3 化すると orchagent が拒否する。VLAN_MEMBER から外してから。
+- [VLAN](../../reference/glossary.md#term-vlan) メンバになっているポートを `INTERFACE` で L3 化すると [orchagent](../../reference/glossary.md#term-orchagent) が拒否する。VLAN_MEMBER から外してから。
 - IPv6 link-local だけ欲しい場合でも L3 enable 行が必要。
 
 ### 確認コマンド
@@ -134,3 +134,5 @@ sonic-db-cli CONFIG_DB keys 'INTERFACE|Ethernet0*'
 show ip interfaces
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 057cb9f9a316 -->

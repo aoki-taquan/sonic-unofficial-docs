@@ -11,7 +11,7 @@ last_verified: 2026-05-11
 
 各状態の意味は次のとおりです。
 
-- **code-verified**: HLD と現行 master 実装を突き合わせて整合が取れているページ
+- **code-verified**: [HLD](../reference/glossary.md#term-hld) と現行 master 実装を突き合わせて整合が取れているページ
 - **runbook-verified**: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的
 - **discrepancy-found**: 実装と HLD の間に乖離が確認されたページ（[一覧](discrepancies.md)）
 - **issue-confirmed**: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ
@@ -54,3 +54,5 @@ last_verified: 2026-05-11
 | `topics` | 0 | 0 | 0 | 0 | 0 | 155 | 0 | 155 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
+
+<!-- glossary-links-injected: 167700005048 -->

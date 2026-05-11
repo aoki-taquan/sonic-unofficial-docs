@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`show vlan` は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する[^1]。`show/vlan.py` 単体に閉じており、CONFIG_DB の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` を直接読み出して整形する。
+`show vlan` は [VLAN](../../reference/glossary.md#term-vlan) とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する[^1]。`show/vlan.py` 単体に閉じており、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` を直接読み出して整形する。
 
 `VlanBrief.COLUMNS` はクラス変数として定義されており、**外部プラグイン（dhcp-relay 等）が `register_column` で列を追加できる**設計。実際 `dhcp_relay` プラグインが `DHCPv4 Servers` / `DHCPv6 Servers` 列を append している。
 
@@ -30,7 +30,7 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show vlan brief [-n <ns>]` | VLAN サマリ（VLAN ID / IP / Ports / Tagging / Proxy ARP） |
+| `show vlan brief [-n <ns>]` | VLAN サマリ（VLAN ID / IP / Ports / Tagging / Proxy [ARP](../../reference/glossary.md#term-arp)） |
 | `show vlan config [-n <ns>]` | VLAN とメンバ port を 1 行 1 メンバで列挙 |
 
 ## 各コマンドの詳細
@@ -211,3 +211,5 @@ flowchart LR
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 145837b8a94b -->

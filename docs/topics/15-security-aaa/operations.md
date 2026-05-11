@@ -14,7 +14,7 @@ sources:
 
 # 運用
 
-AAA と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password、default credential、reset、フォールバック確認の四つを順に扱います。
+[AAA](../../reference/glossary.md#term-aaa) と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password、default credential、reset、フォールバック確認の四つを順に扱います。
 
 ## 現状確認の入口
 
@@ -84,7 +84,7 @@ Number of days of warning before password expires       : 7
 
 ## Default credential management
 
-工場出荷時の `admin/YourPaSsWoRd` のような初期パスワードは、初回ログイン時に強制的に変更させる仕組みが [default credential management](../../management/default-credential-management-for-california-sb-327-conformance.md) で導入されています。California SB-327 をはじめとする規制対応が主目的で、初期 image のリプレース運用や ZTP からの初回起動時に必ず通る経路です。
+工場出荷時の `admin/YourPaSsWoRd` のような初期パスワードは、初回ログイン時に強制的に変更させる仕組みが [default credential management](../../management/default-credential-management-for-california-sb-327-conformance.md) で導入されています。California SB-327 をはじめとする規制対応が主目的で、初期 image のリプレース運用や [ZTP](../../reference/glossary.md#term-ztp) からの初回起動時に必ず通る経路です。
 
 ### 初回ログインの典型シーケンス
 
@@ -133,7 +133,7 @@ ZTP / image install 直後にこの flow を踏まずに password 変更を済�
 1. `sshd` のログ（`journalctl -u ssh`）で接続拒否か認証失敗かを切り分ける。
 2. PAM 経路を疑う場合、`/etc/pam.d/sshd` 等が `hostcfgd` 出力どおりかを比較する。
 3. NSS 経路を疑う場合、`getent passwd <user>` でバックエンドの解決状況を確認する。
-4. TACACS+ 経路は `/etc/tacplus_*` の中身と、サーバー到達性（management VRF 経由含む）を確認する。
+4. TACACS+ 経路は `/etc/tacplus_*` の中身と、サーバー到達性（management [VRF](../../reference/glossary.md#term-vrf) 経由含む）を確認する。
 5. ロックアウトが疑われる場合は `pam_faillock` の状態と、シリアル経由の local ログインの可否を確認する。
 
 ### 典型ログとその意味
@@ -161,7 +161,7 @@ sshd[12345]: pam_faillock(sshd:auth): Consecutive login failures for user admin 
 |---|---|---|
 | AAA 設定 | `CONFIG_DB` `AAA` table | `redis-cli -n 4 hgetall 'AAA\|authentication'` |
 | TACACS+ server 一覧 | `CONFIG_DB` `TACPLUS_SERVER` | `redis-cli -n 4 keys 'TACPLUS_SERVER*'` |
-| PAM 実体 | `/etc/pam.d/sshd`, `/etc/pam.d/common-auth` | hostcfgd が `/usr/share/sonic/templates/` から展開 |
+| PAM 実体 | `/etc/pam.d/sshd`, `/etc/pam.d/common-auth` | [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/usr/share/sonic/templates/` から展開 |
 | NSS 実体 | `/etc/nsswitch.conf` | `passwd: files tacplus` などを確認 |
 | TACACS+ client | `/etc/tacplus_servers`, `/etc/tacplus_nss.conf` | `cat` で内容確認 |
 | 失敗履歴 | `/var/run/faillock/<user>` | `faillock --user <user>` |
@@ -188,7 +188,7 @@ SOC / 監査対応で求められる最低限のイベントは次のとおり�
 | sudo 実行 | `/var/log/auth.log` (`sudo:`) |
 | TACACS+ accounting | TACACS server 側ログ |
 | password 変更 | `/var/log/auth.log` (`passwd[`), `chage` 履歴 |
-| default credential 変更 | `/var/log/syslog` (`first-login`), CONFIG_DB の `DEFAULT_USER` flag |
+| default credential 変更 | `/var/log/syslog` (`first-login`), [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEFAULT_USER` flag |
 | AAA 設定変更 | `/var/log/syslog` (`hostcfgd:`)、`config_db.json` の git diff |
 
 集約は syslog forwarding（`/etc/rsyslog.d/`）で SIEM に流すのが一般的です。`management_vrf` 経由で送るときは VRF binding の指定が必要なので、forward が動かないときはまずそこを疑います。
@@ -197,8 +197,10 @@ SOC / 監査対応で求められる最低限のイベントは次のとおり�
 
 1. **TACACS+ shared key を間違えて全員ロックアウト** — 必ず 2 セッション体制、または `aaa fallback=True` を維持した状態で投入する。
 2. **`config save` 前の reload で AAA 設定が消滅** — 緊急時の rollback を意図して `config reload` するも、save 前の変更はそのまま消える。事前 backup を `config_db.json.bak` で取る。
-3. **管理 IF の ACL で SSH を遮断** — ACL 変更後にすぐ確認しないと、別アクセス手段が無い遠隔機で詰む。
+3. **管理 IF の [ACL](../../reference/glossary.md#term-acl) で SSH を遮断** — ACL 変更後にすぐ確認しないと、別アクセス手段が無い遠隔機で詰む。
 4. **password expiration の一斉到達** — 全機を同日にプロビジョニングすると同日に expire する。`chage -d` でずらす運用が必要。
 5. **シリアル経由でも入れない設定（root login 完全禁止 + local user lock）** — 1 つは緊急用 local user を残しておく。
 
 データプレーンの暗号や platform 信頼チェーンの運用は [内部実装](internals.md) と [発展トピック](advanced.md) で扱います。management plane の到達性確認は [Telemetry / SNMP の運用](../09-telemetry-snmp/operations.md) も合わせて参照してください。
+
+<!-- glossary-links-injected: bf8806c6923e -->

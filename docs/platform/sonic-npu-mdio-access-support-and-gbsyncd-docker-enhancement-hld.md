@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-外部 PHY (gearbox) を制御するために gbsyncd は **PAI library** を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) **switch NPU の MDIO bus** で SAI 経由でアクセスするもの の 2 系統がある[^1]。後者では syncd と gbsyncd の **プロセス間通信（IPC）** が必要になる。本 HLD は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を **runtime ロード** することで **単一 gbsyncd docker** で全 platform を扱えるようにする設計。
+外部 PHY (gearbox) を制御するために gbsyncd は **PAI library** を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) **switch [NPU](../reference/glossary.md#term-npu) の MDIO bus** で [SAI](../reference/glossary.md#term-sai) 経由でアクセスするもの の 2 系統がある[^1]。後者では syncd と gbsyncd の **プロセス間通信（IPC）** が必要になる。本 [HLD](../reference/glossary.md#term-hld) は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を **runtime ロード** することで **単一 gbsyncd docker** で全 platform を扱えるようにする設計。
 
 ## 動作仕様
 
@@ -55,7 +55,7 @@ flowchart LR
 
 ### IPC
 
-- IPC は Unix domain socket、syncd 側に **MdioIpcServer** クラスが新設され、独立スレッドで listen/accept/read/reply を行う[^1]
+- IPC は Unix domain socket、[syncd](../reference/glossary.md#term-syncd) 側に **MdioIpcServer** クラスが新設され、独立スレッドで listen/accept/read/reply を行う[^1]
 - gbsyncd 側は **MDIO IPC client** を**動的ライブラリ**として実装。kernel sysfs ベース platform では同じ抽象の sysfs MDIO アクセス lib を選べる
 - IPC 速度は **PHY firmware download が現実的時間で完了する** ことが要件
 - デバッグでは IPC 部分を `socat` 等で simulate 可能
@@ -179,3 +179,5 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 45f90d834d39 -->

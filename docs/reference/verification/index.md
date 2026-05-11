@@ -7,7 +7,7 @@ last_verified: 2026-05-11
 
 # 裏取り運用方針
 
-本プロジェクトのドキュメントは、SONiC コミュニティ master の HLD と実コードの両方を引用しながら再構成している。HLD は分散・古い・実装と乖離している前提で書かれているため、各ページには **裏取りステータス**（`verification`）と **乖離区分**（`monitor`）の 2 段メタデータが付く。本ページはその運用方針サマリを示す。
+本プロジェクトのドキュメントは、SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) と実コードの両方を引用しながら再構成している。HLD は分散・古い・実装と乖離している前提で書かれているため、各ページには **裏取りステータス**（`verification`）と **乖離区分**（`monitor`）の 2 段メタデータが付く。本ページはその運用方針サマリを示す。
 
 詳細な運用手順は `meta/discrepancy-operations.md`、ロール定義は `meta/prompts/verifier.md` を参照（リポジトリ内）。
 
@@ -74,3 +74,5 @@ flowchart LR
 ## 関連ページ
 
 - [HLD と実装の乖離 一覧（discrepancy-index）](discrepancy-index.md): 現時点で `discrepancy-found` が付いている全ページのリスト
+
+<!-- glossary-links-injected: 167700005048 -->

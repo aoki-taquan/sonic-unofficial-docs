@@ -26,7 +26,7 @@ related:
 
 - `aclshow` で hit counter が常に 0
 - 想定通り deny されない / されすぎる
-- ACL bind 後に `show acl rule` には出るが ASIC_DB に書かれない
+- [ACL](../../reference/glossary.md#term-acl) bind 後に `show acl rule` には出るが [ASIC_DB](../../reference/glossary.md#term-asic_db) に書かれない
 
 ## 想定原因（優先度順）
 
@@ -86,5 +86,7 @@ crm show resources acl-table acl-group
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — orchagent/aclorch.cpp
-[^2]: sonic-net/sonic-utilities @ 39732bceb — acl_loader
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/aclorch.cpp
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader
+
+<!-- glossary-links-injected: 91f6af3178af -->

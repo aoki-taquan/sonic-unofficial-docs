@@ -11,7 +11,7 @@ sources:
 
 # Dual-ToR の発展トピック
 
-Dual-ToR は mux state だけで閉じた機能ではありません。standby ToR から peer ToR へ tunnel で戻す経路、DHCPv6 relay の送信元、CoPP、QoS、PFC watchdog など、周辺機能が Dual-ToR 前提の分岐を持ちます。
+Dual-ToR は mux state だけで閉じた機能ではありません。standby ToR から peer ToR へ tunnel で戻す経路、DHCPv6 relay の送信元、[CoPP](../../reference/glossary.md#term-copp)、[QoS](../../reference/glossary.md#term-qos)、[PFC](../../reference/glossary.md#term-pfc) watchdog など、周辺機能が Dual-ToR 前提の分岐を持ちます。
 
 このページでは、章の本筋から外れるものの、Dual-ToR を設計・運用するときに境界を理解しておきたい 2 つの機能を扱います。
 
@@ -33,7 +33,7 @@ tunnel DSCP remap は、encap 時に outer DSCP や queue を別系統へ移し�
 
 ## DHCPv6 dual ToR loopback
 
-DHCPv6 relay では、client の link-layer address を Option 79 として relay-forward に入れることが重要です。Dual-ToR ではさらに、relay-forward の送信元を VLAN SVI ではなく loopback IP に固定するモードが関係します。
+DHCPv6 relay では、client の link-layer address を Option 79 として relay-forward に入れることが重要です。Dual-ToR ではさらに、relay-forward の送信元を [VLAN](../../reference/glossary.md#term-vlan) SVI ではなく loopback IP に固定するモードが関係します。
 
 Active-Standby では、active ToR が relay-forward を送った後、応答が standby 側に届くような経路が発生し得ます。VLAN SVI を送信元にすると、どちらの ToR 宛の応答なのかが曖昧になります。loopback IP を送信元にすると、peer ToR は loopback 宛 IP を見て相手 ToR へ転送できます。
 
@@ -54,8 +54,8 @@ sonic-clear dhcprelay_counters
 |---|---|---|
 | DSCP remap | standby tunnel 経路が通常 queue と分離される理由 | QoS / PFC、tunnel QoS map |
 | DHCPv6 loopback | Dual-ToR で relay 応答の戻り先を安定させる理由 | DHCPv6 relay、CoPP、RADV |
-| BFD | 上流到達性や BGP 障害検出が mux 判断に影響する点 | Routing / BGP / BFD |
-| ICMP offload | link prober の高速化 | Platform / SAI offload |
+| [BFD](../../reference/glossary.md#term-bfd) | 上流到達性や [BGP](../../reference/glossary.md#term-bgp) 障害検出が mux 判断に影響する点 | Routing / BGP / BFD |
+| ICMP offload | link prober の高速化 | Platform / [SAI](../../reference/glossary.md#term-sai) offload |
 
 ## 関連ページ
 
@@ -65,34 +65,36 @@ sonic-clear dhcprelay_counters
 ## 発展トピック
 
 - **ICMP / link prober の hardware offload**: link prober は通常ソフトウェアで ICMP echo を送るが、ASIC offload を使うと sub-second の障害検出が可能になる。`linkmgrd` と SAI の検出加速機能の組合せを利用する。
-- **Soft Dual-ToR / Active-Active mux**: Active-Standby から、両 ToR が同時に転送する Active-Active モデルへの拡張提案が継続している。ARP / ND の処理、ECMP の対称性、ECMP hash の双方向一致が論点。
+- **Soft Dual-ToR / Active-Active mux**: Active-Standby から、両 ToR が同時に転送する Active-Active モデルへの拡張提案が継続している。[ARP](../../reference/glossary.md#term-arp) / ND の処理、[ECMP](../../reference/glossary.md#term-ecmp) の対称性、ECMP hash の双方向一致が論点。
 - **per-VLAN mux state**: 単一 server に複数 VLAN がある場合、VLAN ごとに異なる active ToR を選ぶ拡張。トラフィックを業務単位で振り分ける運用シナリオで役立つ。
 - **gRPC ベース peer state 同期**: 旧来の `app_db` 直書きから、明示的な peer 通信プロトコルへの移行が進む。`linkmgrd` のロジック分離と integration test が改善される方向。
 - **mux split-brain protection**: peer 連絡不能時に両 ToR が active を主張するのを避けるため、追加判定（uplink BGP 状態、BFD、ICMP）を組み合わせる。
 
 ## 既知の制約と回避方法
 
-- **mux toggle 中の transient packet loss**: linkmgrd が state を変える瞬間に ARP / FDB の整合が遅れることがある。`config mux mode auto <port>` を試したあと、`show mux status` で両 ToR の見えが揃っているかを確認する。
+- **mux toggle 中の transient packet loss**: [linkmgrd](../../reference/glossary.md#term-linkmgrd) が state を変える瞬間に ARP / [FDB](../../reference/glossary.md#term-fdb) の整合が遅れることがある。`config mux mode auto <port>` を試したあと、`show mux status` で両 ToR の見えが揃っているかを確認する。
 - **CoPP の icmp rate limiting**: 大規模 link prober は icmp 受信を増やす。CoPP の bucket を `linkmgrd` 想定の rate に合わせないと、prober 自身を drop する。
 - **PFC deadlock のリスク**: standby tunnel の outer DSCP を通常データと同じ TC に乗せると、PFC pause が peer ToR まで波及してリングを作る。tunnel DSCP remap で必ず別 PG / queue に逃がす。
 - **DHCPv6 relay の loopback source 設定漏れ**: `use-loopback-address` を片側 ToR だけ有効にすると応答が落ちる。両 ToR で揃える運用ガイドが必要。
 
 ## 将来計画 / ロードマップ
 
-- Active-Active モデルが進めば、mux state は ToR 間で対称となり、`MUX_CABLE` schema や `linkmgrd` の判定が刷新される。HLD では `dual-tor-active-active` 系の提案が議論段階。
+- Active-Active モデルが進めば、mux state は ToR 間で対称となり、`MUX_CABLE` schema や `linkmgrd` の判定が刷新される。[HLD](../../reference/glossary.md#term-hld) では `dual-tor-active-active` 系の提案が議論段階。
 - BFD / BGP unnumbered と link prober の責務統合は中長期テーマで、redundant signaling の冗長性をどう保つかが論点。
-- SmartSwitch の DPU と Dual-ToR が組み合わさる構成 ([13 DASH](../13-dash-smartswitch/index.md)) では、ENI と mux state の同期方式が future work。
+- [SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) と Dual-ToR が組み合わさる構成 ([13 DASH](../13-dash-smartswitch/index.md)) では、[ENI](../../reference/glossary.md#term-eni) と mux state の同期方式が future work。
 
 ## 関連 RFC / 仕様書
 
-- [RFC 3046](https://datatracker.ietf.org/doc/html/rfc3046) — DHCP Relay Agent Information Option
+- [RFC 3046](https://datatracker.ietf.org/doc/html/rfc3046) — [DHCP Relay](../../reference/glossary.md#term-dhcp-relay) Agent Information Option
 - [RFC 6422](https://datatracker.ietf.org/doc/html/rfc6422) — DHCPv6 Relay-Supplied Options
 - [RFC 5798](https://datatracker.ietf.org/doc/html/rfc5798) — VRRPv3 (Active/Standby の参考モデル)
-- [RFC 7348](https://datatracker.ietf.org/doc/html/rfc7348) — VXLAN (tunnel DSCP の outer header 解釈)
+- [RFC 7348](https://datatracker.ietf.org/doc/html/rfc7348) — [VXLAN](../../reference/glossary.md#term-vxlan) (tunnel DSCP の outer header 解釈)
 - [IEEE 802.1Qbb](https://1.ieee802.org/dcb/) — Priority-based Flow Control
 
 ## upstream 開発の最新動向
 
 - `sonic-linkmgrd` 配下では state machine のリファクタリングと test カバレッジ拡張が継続。ログのフォーマット改善 PR が運用負荷を下げる方向で進んでいる。
 - DHCPv6 relay agent のループバック source、Option 79、counter export 周辺が community PR で議題に上がる頻度が高い。
-- DASH / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。
+- [DASH](../../reference/glossary.md#term-dash) / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。
+
+<!-- glossary-links-injected: 76b7df4b6b16 -->

@@ -40,7 +40,7 @@ IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / int
 - Twisted-pair（Non-Gearbox）
 - SFP / QSFP / QSFP-DD CR/KR transceiver（Non-Gearbox）
 
-ベンダ固有 SAI の挙動詳細は scope 外。
+ベンダ固有 [SAI](../reference/glossary.md#term-sai) の挙動詳細は scope 外。
 
 ## 動作仕様
 
@@ -65,8 +65,8 @@ IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / int
 3. AN 有効 + adv_speeds 空 → **全サポート速度を advertise**
 4. AN 有効 + adv_interface_types 空 → **全サポート interface type を advertise**
 5. AN 無効 + interface_type 未設定 → `SAI_PORT_INTERFACE_TYPE_NONE`
-6. AN 有効中の `speed` 設定変更 → AN を **無効化してはならない**。設定値は orchagent でキャッシュし AN OFF 時に replay
-7. AN 有効中の `interface_type` の **CONFIG_DB 経由更新は block**。ただし `pmon#xcvrd` 経由 APPL_DB の **動的 interface_type 更新は SAI に伝達** して advertisement を更新する
+6. AN 有効中の `speed` 設定変更 → AN を **無効化してはならない**。設定値は [orchagent](../reference/glossary.md#term-orchagent) でキャッシュし AN OFF 時に replay
+7. AN 有効中の `interface_type` の **[CONFIG_DB](../reference/glossary.md#term-config_db) 経由更新は block**。ただし `pmon#xcvrd` 経由 [APPL_DB](../reference/glossary.md#term-appl_db) の **動的 interface_type 更新は SAI に伝達** して advertisement を更新する
 8. SFP/QSFP 系で AN 有効 → SAI は **link-training も同時に活性化**（TX FIR 動的調整）
 9. SFP/QSFP 系で AN を ON → OFF にした瞬間 → speed / FEC / interface_type / TX FIR を APPL_DB の値に **復元**。APPL_DB に該当が無ければ SAI driver default（IT=NONE, FEC=NONE, TX FIR=ベンダ依存）
 
@@ -92,7 +92,7 @@ key = PORT|<port_name>
 | `config interface advertised-speeds <if> <list>\|all` | adv speeds | AN OFF 時も CONFIG_DB に保存だけはする[^1] |
 | `config interface type <if> <type>` | 固定 interface type | AN ON 時は CONFIG_DB 保存のみで効果なし |
 | `config interface advertised-types <if> <list>\|all` | adv interface types | AN OFF 時は保存のみ |
-| `show interfaces autoneg status [<if>]` | 運用状態表示（STATE_DB から）| – |
+| `show interfaces autoneg status [<if>]` | 運用状態表示（[STATE_DB](../reference/glossary.md#term-state_db) から）| – |
 
 CLI バリデーション[^1]:
 
@@ -156,8 +156,8 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 
 ### portsyncd / portmgrd / Port Breakout / xcvrd の影響
 
-- **portsyncd**: kernel netlink 連携。AN 関連の状態は STATE_DB に流す
-- **portmgrd**: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で **incremental** 化された[^1]
+- **[portsyncd](../reference/glossary.md#term-portsyncd)**: kernel netlink 連携。AN 関連の状態は STATE_DB に流す
+- **[portmgrd](../reference/glossary.md#term-portmgrd)**: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で **incremental** 化された[^1]
 - **Port Breakout**: breakout で port 集合が変わるたび AN 設定を再構成。breakout config の `autoneg` を尊重
 - **PMON xcvrd**: 挿入された transceiver の media 種別に応じて `interface_type` を APPL_DB に動的更新（AN ON 中もこの経路だけは SAI に届く）
 
@@ -231,3 +231,5 @@ redis-cli -n 0 HGETALL "PORT_TABLE:Ethernet0" | grep -E 'autoneg|adv_|interface_
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9a441a703260 -->

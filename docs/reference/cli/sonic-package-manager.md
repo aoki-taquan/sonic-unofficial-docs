@@ -97,7 +97,7 @@ DB の `default-reference` で示された version に再インストールす�
 
 ### `sonic-package-manager uninstall <name> [--keep-config]`
 
-Package の docker image / systemd unit / 関連リソースを削除。`--keep-config` で `FEATURE` 等の CONFIG_DB エントリは残す。
+Package の docker image / systemd unit / 関連リソースを削除。`--keep-config` で `FEATURE` 等の [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは残す。
 
 ### `sonic-package-manager migrate <database>`
 
@@ -151,3 +151,5 @@ show feature status
 docker ps
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

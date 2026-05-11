@@ -26,9 +26,9 @@ related:
 
 ## 概要
 
-Multi-ASIC SONiC（複数 NPU を持つデバイス）では、各 NPU を **Linux network namespace** で隔離し、その中で `swss` / `syncd` / `database` 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の Redis インスタンスが並走することになる[^1]。
+Multi-ASIC SONiC（複数 [NPU](../reference/glossary.md#term-npu) を持つデバイス）では、各 NPU を **Linux network namespace** で隔離し、その中で `swss` / `syncd` / `database` 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の [Redis](../reference/glossary.md#term-redis) インスタンスが並走することになる[^1]。
 
-本 HLD は次を定義する:
+本 [HLD](../reference/glossary.md#term-hld) は次を定義する:
 
 1. グローバル Redis（host 側）と NPU 別 Redis の **2 階層構成**
 2. 名前空間ごとに独立した `database_config.json`
@@ -55,7 +55,7 @@ flowchart LR
   GDB -.-> DB1
 ```
 
-- **Global namespace**: AAA / syslog / ASIC↔interface マッピングのような **システム共通属性** を持つ
+- **Global namespace**: [AAA](../reference/glossary.md#term-aaa) / syslog / ASIC↔interface マッピングのような **システム共通属性** を持つ
 - **NPU namespace**: その NPU 配下のインタフェース・カウンタ・state 等を持つ
 
 Single-ASIC の SONiC は「Global = host = 唯一の Redis」として後方互換が取れる[^1]。
@@ -239,16 +239,16 @@ db.connect('CONFIG_DB')
 ## 制限事項
 
 - **異 namespace への TCP 接続は不可**: Unix socket 経由のみ。スクリプト改修時にこの制約を踏まえる必要がある[^1]。
-- **`{NS_REF_CNT}` は NPU 数と等価前提**: 1 NPU 1 namespace の前提が組み込まれている。SmartSwitch 等の DPU では別の整理が必要[^1]。
+- **`{NS_REF_CNT}` は NPU 数と等価前提**: 1 NPU 1 namespace の前提が組み込まれている。[SmartSwitch](../reference/glossary.md#term-smartswitch) 等の [DPU](../reference/glossary.md#term-dpu) では別の整理が必要[^1]。
 - **single-ASIC 互換性**: `database_global.json` を作らない（または `INCLUDES` が 1 entry のみ）構成で旧来動作を維持する。改修されたクライアントは旧構成でも壊れないこと。
 - **j2 テンプレで static に展開**: 起動時に NPU 数が確定する前提。動的 NPU 追加は本 HLD のスコープ外。
 
 ## 干渉する機能
 
-- **Multi-ASIC swss / syncd**: 各 namespace で独立に走る。本 HLD は彼らが触る Redis の置き場を整える基盤。
+- **Multi-ASIC swss / [syncd](../reference/glossary.md#term-syncd)**: 各 namespace で独立に走る。本 HLD は彼らが触る Redis の置き場を整える基盤。
 - **`is_multi_asic` 系判定**: `sonic-py-common.device_info` の関数群と組み合わせて、CLI 各処理が namespace ループを回す。
 - **VoQ Chassis（[Chassis DB](../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md)）**: 別レイヤの「Chassis DB」概念とは混同しないこと。本ページは 1 デバイス内 multi-NPU、Chassis DB はシャーシ全体の supervisor↔linecards。
-- **gNMI / REST**: クライアントが host で動くなら `database_global.json` 経由で全 namespace を辿る必要がある。
+- **[gNMI](../reference/glossary.md#term-gnmi) / REST**: クライアントが host で動くなら `database_global.json` 経由で全 namespace を辿る必要がある。
 
 ## トラブルシューティング
 
@@ -266,3 +266,5 @@ db.connect('CONFIG_DB')
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9bb22471f747 -->

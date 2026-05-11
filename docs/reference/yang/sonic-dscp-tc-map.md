@@ -73,7 +73,7 @@ module: sonic-dscp-tc-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `DSCP_TO_TC_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DSCP_TO_TC_MAP`
 
 <!-- ref-triangle:start -->
 
@@ -88,7 +88,7 @@ module: sonic-dscp-tc-map
 
 ### 典型的なデプロイ位置
 
-- DSCP → TC マッピング。`DSCP_TO_TC_MAP|<name>` を qosorch が SAI qos map に反映。
+- DSCP → TC マッピング。`DSCP_TO_TC_MAP|<name>` を qosorch が [SAI](../../reference/glossary.md#term-sai) qos map に反映。
 
 ### よくある落とし穴
 
@@ -106,3 +106,4 @@ show qos map dscp-tc
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 96667c52d98d -->

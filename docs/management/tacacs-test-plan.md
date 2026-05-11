@@ -156,7 +156,7 @@ flowchart LR
 - NSS TACACS+ 設定: L34-L35 (`NSS_TACPLUS_CONF=/etc/tacplus_nss.conf`, `NSS_TACPLUS_CONF_TEMPLATE=...j2`)、L801-L813 で `tacplus_nss.conf` をテンプレ生成
 - `/etc/pam.d/common-auth-sonic` 経由の include 切替: L748-L752
 
-テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて hostcfgd で実装済み。`code-verified` に昇格。
+テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて [hostcfgd](../reference/glossary.md#term-hostcfgd) で実装済み。`code-verified` に昇格。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -164,3 +164,5 @@ flowchart LR
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9bd150521228 -->

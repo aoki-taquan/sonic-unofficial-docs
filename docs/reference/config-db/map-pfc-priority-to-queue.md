@@ -23,11 +23,11 @@ related:
 
 ## 概要
 
-**PFC priority (0..7) → 出力キュー (qindex 0..7) のマッピング** を定義する CONFIG_DB テーブル[^1]。`PORT_QOS_MAP.pfc_to_queue_map` から参照され、`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` として ASIC に反映される。
+**[PFC](../../reference/glossary.md#term-pfc) priority (0..7) → 出力キュー (qindex 0..7) のマッピング** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`PORT_QOS_MAP.pfc_to_queue_map` から参照され、`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` として ASIC に反映される。
 
 PFC frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` (ingress 側 PG マップ) と対になる egress 側の表。
 
-> テーブル名は YANG container 名そのまま `MAP_PFC_PRIORITY_TO_QUEUE` で、`PFC_PRIORITY_TO_QUEUE_MAP` ではない点に注意。CONFIG_DB key にもこの名前が使われる。
+> テーブル名は [YANG](../../reference/glossary.md#term-yang) container 名そのまま `MAP_PFC_PRIORITY_TO_QUEUE` で、`PFC_PRIORITY_TO_QUEUE_MAP` ではない点に注意。CONFIG_DB key にもこの名前が使われる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -85,7 +85,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 
 ## 購読者
 
-- `qosorch` (`docker-swss`): CONFIG_DB → SAI `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` オブジェクト生成
+- `qosorch` (`docker-swss`): CONFIG_DB → [SAI](../../reference/glossary.md#term-sai) `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` オブジェクト生成
 - 反映先は `PORT_QOS_MAP.pfc_to_queue_map` 経由でポートにバインドされる
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -132,3 +132,5 @@ sonic-db-cli CONFIG_DB hget 'PORT_QOS_MAP|Ethernet0' pfc_to_queue_map
 show queue counters
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3dadbe92257e -->

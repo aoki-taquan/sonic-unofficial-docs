@@ -27,10 +27,10 @@ related:
 
 ## 概要
 
-`orchagent` は APPL_DB 経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。SAI が失敗を返した場合の振る舞いはこれまで Orch ごとに散発的に書かれており、**統一された失敗ハンドリング枠組みが無かった**。本 HLD はその枠組みとして次の 2 点を導入する[^1]:
+`orchagent` は [APPL_DB](../reference/glossary.md#term-appl_db) 経由で受けた要求を [SAI](../reference/glossary.md#term-sai) コール列に展開して [syncd](../reference/glossary.md#term-syncd) / SAI に投げる。SAI が失敗を返した場合の振る舞いはこれまで Orch ごとに散発的に書かれており、**統一された失敗ハンドリング枠組みが無かった**。本 [HLD](../reference/glossary.md#term-hld) はその枠組みとして次の 2 点を導入する[^1]:
 
 1. **`Orch` 基底クラスに 4 つの virtual 関数** (`handleSaiCreate/Set/Remove/Get Status`) を追加し、Create/Set/Remove/Get それぞれで失敗時動作を共通化／個別化する
-2. **`ERROR_DB`** を新設し、orchagent で解決できない失敗を上位（fpmsyncd 等）にエスカレーションする経路を作る
+2. **`ERROR_DB`** を新設し、[orchagent](../reference/glossary.md#term-orchagent) で解決できない失敗を上位（[fpmsyncd](../reference/glossary.md#term-fpmsyncd) 等）にエスカレーションする経路を作る
 
 ## 動作仕様
 
@@ -71,7 +71,7 @@ virtual task_process_status handleSaiGetStatus   (sai_api_t api, sai_status_t st
 | 戻り値 | 動作 | 例 |
 |--------|------|-----|
 | `task_success` | crash しない、retry しない、正常終了扱い | Remove で `SAI_STATUS_ITEM_NOT_FOUND` |
-| `task_failed`  | crash しない、retry しない、orchagent は走り続けるが ERROR_DB に上げる | 不正な ACL、IP 衝突、HW permanent error |
+| `task_failed`  | crash しない、retry しない、orchagent は走り続けるが ERROR_DB に上げる | 不正な [ACL](../reference/glossary.md#term-acl)、IP 衝突、HW permanent error |
 | `task_need_retry` | crash しない、後で retry | 一時的に解決可能と見込める失敗 |
 | `exit(EXIT_FAILURE)` | プロセス crash、SwSS auto-restart | SwSS 再起動で解消可能な失敗 |
 
@@ -147,7 +147,7 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
 
 ### 関連する CONFIG_DB / CLI / YANG
 
-外部設定表面は無い。すべて orchagent 内部 + ERROR_DB（Redis）に閉じる。
+外部設定表面は無い。すべて orchagent 内部 + ERROR_DB（[Redis](../reference/glossary.md#term-redis)）に閉じる。
 
 ## 制限事項
 
@@ -196,7 +196,7 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
   1. orchagent 側で SAI 失敗時に `ERROR_DB.ERROR_APPL_*` へ HSET
   2. fpmsyncd / その他上位プロセスが ERROR_DB を subscribe
   3. 上位プロセスがハンドリング後に `DEL` で除去
-- **読者への影響**: 個別 Orch が SAI 失敗を検出した場合、現状は `SWSS_LOG_ERROR` でログを出して `task_need_retry` / `task_failed` / `exit(EXIT_FAILURE)` のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は **ログ監視か APPL_DB / ASIC_DB の状態差から失敗を間接推定** するしかない。route install エラーに限れば後発の **BGP Suppress FIB Pending**（`dplane_fpm_nl` + RTM_F_OFFLOAD 経路）が代替経路を提供する。
+- **読者への影響**: 個別 Orch が SAI 失敗を検出した場合、現状は `SWSS_LOG_ERROR` でログを出して `task_need_retry` / `task_failed` / `exit(EXIT_FAILURE)` のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は **ログ監視か APPL_DB / [ASIC_DB](../reference/glossary.md#term-asic_db) の状態差から失敗を間接推定** するしかない。route install エラーに限れば後発の **[BGP](../reference/glossary.md#term-bgp) Suppress FIB Pending**（`dplane_fpm_nl` + RTM_F_OFFLOAD 経路）が代替経路を提供する。
 - **回避策**:
   - SAI 失敗を運用監視で拾うなら `/var/log/syslog` の `SAI_STATUS_*` 文字列を集約する。
   - BGP 経路の install 失敗に限れば BGP Suppress FIB Pending 機能を有効化する（[../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) 参照）。
@@ -225,8 +225,10 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
 
 #### 関連 GitHub Issue / PR
 
-- [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは sonic-swss orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。CRM (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
+- [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは [sonic-swss](../reference/glossary.md#term-sonic-swss) orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。[CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/SAI_failure_handling.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: c0d7064c3cb2 -->

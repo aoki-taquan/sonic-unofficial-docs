@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-イベント駆動 (core dump 生成) で `show techsupport` を自動実行・古いダンプを掃除する機能の設定。グローバル既定値の `AUTO_TECHSUPPORT|GLOBAL` と feature 別オーバーライドの `AUTO_TECHSUPPORT_FEATURE|<feature_name>` の 2 系統を持つ[^1]。`auto-techsupport.service` / `coredump-compress` ホストサービスが CONFIG_DB を購読する。
+イベント駆動 (core dump 生成) で `show techsupport` を自動実行・古いダンプを掃除する機能の設定。グローバル既定値の `AUTO_TECHSUPPORT|GLOBAL` と feature 別オーバーライドの `AUTO_TECHSUPPORT_FEATURE|<feature_name>` の 2 系統を持つ[^1]。`auto-techsupport.service` / `coredump-compress` ホストサービスが [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -66,7 +66,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 | `available_mem_threshold` | decimal64 | 10.0 | feature 単位のメモリ閾値 |
 | `rate_limit_interval` | uint16 | - | feature 単位の rate limit。`0` で無効化 |
 
-`feature_name` は `FEATURE` テーブルとの整合が前提だが現状 leafref は張られていない (YANG 内コメント `TODO: Leafref once the FEATURE YANG is added`)。
+`feature_name` は `FEATURE` テーブルとの整合が前提だが現状 leafref は張られていない ([YANG](../../reference/glossary.md#term-yang) 内コメント `TODO: Leafref once the FEATURE YANG is added`)。
 
 ## 購読者
 
@@ -119,3 +119,5 @@ sonic-db-cli CONFIG_DB hgetall 'AUTO_TECHSUPPORT|GLOBAL'
 show auto-techsupport global
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

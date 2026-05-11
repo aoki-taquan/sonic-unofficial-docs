@@ -26,11 +26,11 @@ related:
 
 ここでは SONiC の **config 永続化と全体差し替え** の中核となる以下の 5 コマンドをまとめる:
 
-- `config save` ... 現 CONFIG_DB を JSON ファイルに dump
+- `config save` ... 現 [CONFIG_DB](../../reference/glossary.md#term-config_db) を JSON ファイルに dump
 - `config load` ... ファイルを CONFIG_DB に書く (既存の状態を保持しつつ merge)
 - `config reload` ... CONFIG_DB をクリアしてからファイルを再ロード (services 再起動含む)
 - `config replace` ... 現在の config と target config の **差分のみ** を当てる minimum-disruption replace
-- `config qos reload` ... QoS 関連 (buffer / scheduler / queue / wred 等) を再生成
+- `config qos reload` ... [QoS](../../reference/glossary.md#term-qos) 関連 (buffer / scheduler / queue / wred 等) を再生成
 
 すべて `config/main.py` 内 (`@config.command()` 直付け) で定義される[^1]。
 
@@ -87,7 +87,7 @@ config replace <target-file-path>
 ```
 
 **動作**:
-target を読み込み、`GenericUpdater().replace(...)` が現在の CONFIG_DB との **JSON Patch (RFC 6902) を計算**して適用する。同じテーブル間で差分が無ければ touch しないため、ACL は変わらないが BGP だけ変えるといった部分更新でも DHCP services は再起動されない[^3]。`replace` 系は `apply-patch` / `rollback` と同じ generic_config_updater 機構の上に乗る。
+target を読み込み、`GenericUpdater().replace(...)` が現在の CONFIG_DB との **JSON Patch (RFC 6902) を計算**して適用する。同じテーブル間で差分が無ければ touch しないため、[ACL](../../reference/glossary.md#term-acl) は変わらないが [BGP](../../reference/glossary.md#term-bgp) だけ変えるといった部分更新でも DHCP services は再起動されない[^3]。`replace` 系は `apply-patch` / `rollback` と同じ generic_config_updater 機構の上に乗る。
 
 target file には **完全な config 全体** を渡す必要がある (`**WARNING** The target config file should be the whole config, not just the part intended to be updated.`)。
 
@@ -113,7 +113,7 @@ target file には **完全な config 全体** を渡す必要がある (`**WARN
 
 - `config save` → ファイルを sort して書き戻すため、手書き JSON を `save` 経由で経由させると **キー順が変わる**。`git diff` で純粋な差分を見たい場合は注意。
 - `config reload` は **CONFIG_DB を完全に置き換える**。`config save` していない一時的な設定変更は失われる。
-- `config replace` の `--format SONICYANG` 指定時は YANG モデルバリデーションが有効で、不適合な値は `--ignore-non-yang-tables` 等で個別に逃がす必要がある。
+- `config replace` の `--format SONICYANG` 指定時は [YANG](../../reference/glossary.md#term-yang) モデルバリデーションが有効で、不適合な値は `--ignore-non-yang-tables` 等で個別に逃がす必要がある。
 - `config load` は merge なので、**削除した設定は CONFIG_DB に残る**。クリーンな状態にしたいなら必ず `config reload` を使う。
 
 <!-- cli-mermaid -->
@@ -155,12 +155,12 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- Mgmt VRF / Mgmt interface / Mgmt route のまとめて設定。
+- Mgmt [VRF](../../reference/glossary.md#term-vrf) / Mgmt interface / Mgmt route のまとめて設定。
 - out-of-band 監視ネット切替時の安全な再設定。
 
 ### よくある落とし穴
 
-- Mgmt VRF を有効化すると SSH/SNMP/NTP も VRF コンテキストへ切り替わる。
+- Mgmt VRF を有効化すると SSH/[SNMP](../../reference/glossary.md#term-snmp)/NTP も VRF コンテキストへ切り替わる。
 - Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。
 
 ### 関連する show / debug
@@ -171,3 +171,5 @@ show management_interface address
 ip -4 route show vrf mgmt
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ea618b0f5027 -->

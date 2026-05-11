@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC の BGP は長らく **Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う** 設計になっていた。具体的には単一 ASIC では `Loopback0`、マルチ ASIC では `Loopback4096` の IPv4 アドレスをそのまま使用する。さらに `bgpcfgd` 側にも「`Loopback0` の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた[^1]。
+SONiC の [BGP](../reference/glossary.md#term-bgp) は長らく **Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う** 設計になっていた。具体的には単一 ASIC では `Loopback0`、マルチ ASIC では `Loopback4096` の IPv4 アドレスをそのまま使用する。さらに `bgpcfgd` 側にも「`Loopback0` の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた[^1]。
 
 本機能は `CONFIG_DB.DEVICE_METADATA|localhost` に `bgp_router_id` フィールドを追加し、**ユーザが任意の IPv4 を BGP router-id として明示指定できる** ようにする。同時に、`bgp_router_id` が設定されている場合に限り、単一 ASIC 系の BGP ピア追加から `Loopback0` IPv4 への強い依存を切り離す。`bgp_router_id` を設定しない場合、振る舞いは従来と完全に同一である。
 
@@ -61,7 +61,7 @@ flowchart TD
 | 状況 | Loopback0/4096 IPv4 あり | Loopback0/4096 IPv4 なし |
 |------|--------------------------|--------------------------|
 | `bgp_router_id` 設定あり | `bgp_router_id` を採用 | `bgp_router_id` を採用 |
-| `bgp_router_id` 設定なし | Loopback0/4096 IPv4 を採用 | router-id 未指定（FRR デフォルト動作。zebra 未起動時は 0.0.0.0）|
+| `bgp_router_id` 設定なし | Loopback0/4096 IPv4 を採用 | router-id 未指定（[FRR](../reference/glossary.md#term-frr) デフォルト動作。[zebra](../reference/glossary.md#term-zebra) 未起動時は 0.0.0.0）|
 
 つまり **`bgp_router_id` が定義されていれば常にそれを最優先で採用** し、Loopback アドレスは無関係になる。
 
@@ -122,7 +122,7 @@ flowchart TD
     BE_CHK -->|No| ABORT
 ```
 
-注意点として、**iBGP ピア追加は依然として `Loopback4096` IPv4 を必須** とする。HLD は内部ピアの追加ロジックは今回の変更対象外と明記している[^1]。
+注意点として、**iBGP ピア追加は依然として `Loopback4096` IPv4 を必須** とする。[HLD](../reference/glossary.md#term-hld) は内部ピアの追加ロジックは今回の変更対象外と明記している[^1]。
 
 ### 動作シーケンス（単一 ASIC、新ロジック）
 
@@ -170,7 +170,7 @@ bgp_router_id   = inet:ipv4-address
 
 ### 関連する CLI
 
-HLD には専用の `config` / `show` CLI 追加は記載されていない。`config_db.json` 直接編集または既存の汎用 CONFIG_DB 操作経路（`sonic-cfggen` / gNMI 等）から設定する想定。
+HLD には専用の `config` / `show` CLI 追加は記載されていない。`config_db.json` 直接編集または既存の汎用 [CONFIG_DB](../reference/glossary.md#term-config_db) 操作経路（`sonic-cfggen` / [gNMI](../reference/glossary.md#term-gnmi) 等）から設定する想定。
 
 ### 関連する YANG
 
@@ -206,7 +206,7 @@ module sonic-device_metadata {
 
 - **Loopback0 / Loopback4096**: 引き続き iBGP ピア追加（マルチ ASIC）の必須条件として `Loopback4096` IPv4 が要求される。`bgp_router_id` を設定しても iBGP の依存は解消されない。
 - **FRR の router-id 自動選択**: `bgp_router_id` も Loopback も無い場合、FRR は最大 IP アドレスを router-id に選ぶ。zebra 未起動時は `0.0.0.0` が選ばれる旨が HLD に明記されている[^1]。ネットワーク全体で一意でないと BGP セッションが確立できない。
-- **bgpcfgd**: ピア追加判定が `bgp_router_id` の有無を見るように拡張される。
+- **[bgpcfgd](../reference/glossary.md#term-bgpcfgd)**: ピア追加判定が `bgp_router_id` の有無を見るように拡張される。
 
 ## トラブルシューティング
 
@@ -217,3 +217,5 @@ module sonic-device_metadata {
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-router-id.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 2e36dfd7f559 -->

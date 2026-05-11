@@ -14,7 +14,7 @@ sources:
 
 # 発展トピック
 
-ここでは platform 層の信頼チェーンと container hardening を扱います。OpenSSL FIPS、secure boot、secure upgrade、container hardening は、それぞれ独立した HLD として整備されており、本ページは「どの順で読み、どこで交わるか」を示すための導線です。
+ここでは platform 層の信頼チェーンと container hardening を扱います。OpenSSL FIPS、secure boot、secure upgrade、container hardening は、それぞれ独立した [HLD](../../reference/glossary.md#term-hld) として整備されており、本ページは「どの順で読み、どこで交わるか」を示すための導線です。
 
 ## 信頼チェーンの全体像
 
@@ -69,7 +69,7 @@ OpenSSL FIPS は、暗号モジュールが FIPS 140-3 の要件を満たして�
 
 ## Container hardening
 
-SONiC は機能を Docker コンテナに分割しており、各コンテナの権限・capabilities・mount を絞ることが防御深度の鍵になります。設計の意図と推奨デフォルトは [container hardening](../../system/sonic-container-hardening.md) にまとまっています。AAA や MACsec のような機密に近い経路を持つコンテナほど、不要な capability を削る恩恵が大きい点に注意します。
+SONiC は機能を Docker コンテナに分割しており、各コンテナの権限・capabilities・mount を絞ることが防御深度の鍵になります。設計の意図と推奨デフォルトは [container hardening](../../system/sonic-container-hardening.md) にまとまっています。[AAA](../../reference/glossary.md#term-aaa) や MACsec のような機密に近い経路を持つコンテナほど、不要な capability を削る恩恵が大きい点に注意します。
 
 ## 章間リンク
 
@@ -80,7 +80,7 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 
 ## 発展トピック
 
-- **gNSI による証明書 / authz 集中管理**: gNMI 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。
+- **gNSI による証明書 / authz 集中管理**: [gNMI](../../reference/glossary.md#term-gnmi) 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。
 - **MACsec MKA scale**: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが ASIC / CPU に効く。`MACSEC_PROFILE` の rekey interval 設計が要点。
 - **HSM / TPM 連携**: secure boot 鍵や TLS 秘密鍵を HSM / TPM に保管する構成。`tpm2-tools` と secure upgrade の連携が議題。
 - **role-based access control (RBAC)**: ユーザロールと権限の細分化。AAA 認証後の authz で扱うが、CLI / gNMI 両面で一貫した role が要求される。
@@ -113,4 +113,6 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 
 - `sonic-gnmi` で gNSI 関連 PR が継続して入る。証明書回転、authz ポリシー push の SDK が拡張。
 - secure upgrade 周りで署名検証パスのリファクタが進行中。`sonic-installer` のテレメトリ出力改善も並走。
-- container hardening の対象 docker (bgp, swss, syncd, telemetry など) ごとに capability 削減 PR が段階投入されている。
+- container hardening の対象 docker (bgp, swss, [syncd](../../reference/glossary.md#term-syncd), telemetry など) ごとに capability 削減 PR が段階投入されている。
+
+<!-- glossary-links-injected: f871da4a7b84 -->

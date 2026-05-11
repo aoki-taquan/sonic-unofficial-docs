@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`pmon` container には既に `ledd`（LED）/ `xcvrd`（SFP）の daemon があるが、**PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは platform plugin を直接叩く** ため遅く、container 跨ぎでデータ重複も発生していた[^1]。本 HLD は **PSU / FAN 用 daemon を新設して周期収集 → STATE_DB**、misc syseeprom 系は **boot 時 1 回 dump → STATE_DB** とし、CLI / SNMP は **DB のみを read** する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。
+`pmon` container には既に `ledd`（LED）/ `xcvrd`（SFP）の daemon があるが、**PSU / FAN / chassis / syseeprom データへの CLI / [SNMP](../reference/glossary.md#term-snmp) アクセスは platform plugin を直接叩く** ため遅く、container 跨ぎでデータ重複も発生していた[^1]。本 [HLD](../reference/glossary.md#term-hld) は **PSU / FAN 用 daemon を新設して周期収集 → [STATE_DB](../reference/glossary.md#term-state_db)**、misc syseeprom 系は **boot 時 1 回 dump → STATE_DB** とし、CLI / SNMP は **DB のみを read** する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。
 
 ## 動作仕様
 
@@ -61,7 +61,7 @@ flowchart LR
 
 - 起動時に **constant data**（serial, manufacturer, model 等）を 1 回読み込み STATE_DB に書く
 - 以降は **periodic loop**（PSU/FAN/xcvr の variable 値）で温度・電圧・回転数・status を更新
-- **set 操作**（status LED 色, fan speed 等）は CONFIG_DB 変更を subscribe してハンドラから platform API 呼出[^1]
+- **set 操作**（status LED 色, fan speed 等）は [CONFIG_DB](../reference/glossary.md#term-config_db) 変更を subscribe してハンドラから platform API 呼出[^1]
 
 ### Misc one-shot task
 
@@ -150,3 +150,5 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 - show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認
 - ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
 -->
+
+<!-- glossary-links-injected: 8b787f87bebc -->

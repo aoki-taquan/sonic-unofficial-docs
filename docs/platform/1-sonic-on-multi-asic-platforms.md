@@ -36,9 +36,9 @@ related:
 1 台の chassis 内に複数 ASIC を持つ platform で SONiC を動かすための設計[^1]:
 
 - **ASIC ごとに linux network namespace を分ける**（`asic0` / `asic1` / ...）
-- 各 namespace に**独自の Redis インスタンス**（`database0`、`database1`...）と独自の SWSS / syncd / FRR
-- ASIC 間は **internal links（sonic-net / fabric / cross-port）と internal BGP** で結ぶ
-- 外部から見える操作（CLI / SNMP / gNMI）は **host namespace 上の集約レイヤ**が ASIC 横断で扱う
+- 各 namespace に**独自の [Redis](../reference/glossary.md#term-redis) インスタンス**（`database0`、`database1`...）と独自の SWSS / [syncd](../reference/glossary.md#term-syncd) / [FRR](../reference/glossary.md#term-frr)
+- ASIC 間は **internal links（sonic-net / fabric / cross-port）と internal [BGP](../reference/glossary.md#term-bgp)** で結ぶ
+- 外部から見える操作（CLI / [SNMP](../reference/glossary.md#term-snmp) / [gNMI](../reference/glossary.md#term-gnmi)）は **host namespace 上の集約レイヤ**が ASIC 横断で扱う
 
 ## どんな構造か
 
@@ -72,7 +72,7 @@ flowchart LR
 
 - **`asic.conf` / `platform.json`**: ASIC 数・type・internal port マッピング・role（front-panel / fabric）を宣言
 - **per-namespace docker**: `swss@asic0`、`syncd@asic0` のような instanced systemd unit
-- **共有 CONFIG_DB（host）+ per-asic DB**: device-wide 設定は host CONFIG_DB に、port / asic 固有は per-asic に分離
+- **共有 [CONFIG_DB](../reference/glossary.md#term-config_db)（host）+ per-asic DB**: device-wide 設定は host CONFIG_DB に、port / asic 固有は per-asic に分離
 - **internal BGP**: front-panel ASIC 同士で iBGP を張り route 情報を共有（`BGP_INTERNAL_NEIGHBOR`）
 - **CLI 集約**: `show ... -n asic0` で per-asic、引数なしで全 ASIC 集約
 
@@ -80,7 +80,7 @@ flowchart LR
 
 `DEVICE_METADATA|<asic>.sub_role` が `FrontEnd` / `BackEnd` を区別[^1]:
 
-- **FrontEnd**: 外向き port を持つ。BGP / ARP / 通常の SONiC 機能が動く
+- **FrontEnd**: 外向き port を持つ。BGP / [ARP](../reference/glossary.md#term-arp) / 通常の SONiC 機能が動く
 - **BackEnd**: fabric 役。traffic は通すが control plane は限定
 
 ## 設定 / CLI
@@ -100,16 +100,16 @@ flowchart LR
 
 ## 制限事項
 
-- **multi-asic 対応の sonic-utilities** が必要。`-n` 未対応コマンドは ASIC 横断で正しく動かない
+- **multi-asic 対応の [sonic-utilities](../reference/glossary.md#term-sonic-utilities)** が必要。`-n` 未対応コマンドは ASIC 横断で正しく動かない
 - **memory 消費**: ASIC 数 × Redis / swss / syncd / FRR の常駐で CPU / メモリ要件が高い
 - **warm reboot 同期**: 全 ASIC を協調的に shutdown / boot する仕組みが必要
-- **single-json multi-asic**: `multi-asic-single-json` HLD で扱う統合 config 形式とは使い分け
+- **single-json multi-asic**: `multi-asic-single-json` [HLD](../reference/glossary.md#term-hld) で扱う統合 config 形式とは使い分け
 
 ## 干渉する機能
 
 - **multi-asic warm reboot**: per-asic syncd / swss を協調 shutdown する HLD
 - **single-json multi-asic config**: 一枚の JSON で per-asic 設定を一元管理する HLD（[multi-asic-single-json-configuration-design](multi-asic-single-json-configuration-design.md)）
-- **CRM（critical resource monitoring）**: per-asic で監視
+- **[CRM](../reference/glossary.md#term-crm)（critical resource monitoring）**: per-asic で監視
 - **Internal BGP / chassis BGP**: 内部 iBGP と外部 eBGP の境界
 
 ## トラブルシューティング
@@ -134,3 +134,5 @@ flowchart LR
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: aaa8798bb58a -->

@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が **動作開始前に Pre-Operational Self-Test (POST)** を通っていなければならない。本 HLD は SONiC で MACsec の POST を SAI 経由でトリガし、その結果を `STATE_DB.FIPS_MACSEC_POST_TABLE` に公開、`MACSecMgr` が POST pass を確認してから MACsec 設定を流す設計を定義する[^1]。
+FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が **動作開始前に Pre-Operational Self-Test (POST)** を通っていなければならない。本 [HLD](../reference/glossary.md#term-hld) は SONiC で MACsec の POST を [SAI](../reference/glossary.md#term-sai) 経由でトリガし、その結果を `STATE_DB.FIPS_MACSEC_POST_TABLE` に公開、`MACSecMgr` が POST pass を確認してから MACsec 設定を流す設計を定義する[^1]。
 
 設計上の要件は次の 4 点[^1]:
 
@@ -54,7 +54,7 @@ flowchart LR
 
 - POST 結果は `STATE_DB.FIPS_MACSEC_POST_TABLE` 1 つに集約
 - `Orchagent` は SAI switch 作成時に POST capability を問い合わせ、対応箇所で POST を有効化
-- `MACSecMgr` は STATE_DB を見て POST pass を確認するまで MACsec 設定を処理しない（FIPS 準拠の核）
+- `MACSecMgr` は [STATE_DB](../reference/glossary.md#term-state_db) を見て POST pass を確認するまで MACsec 設定を処理しない（FIPS 準拠の核）
 
 ### STATE_DB スキーマ
 
@@ -143,7 +143,7 @@ sequenceDiagram
     end
 ```
 
-`MACSecMgr` は `macsec` コンテナで動作し、CONFIG_DB を購読する従来のロールに **POST 状態の事前チェック** を足す形で拡張される[^1]。これが FIPS 準拠の最終ガード。
+`MACSecMgr` は `macsec` コンテナで動作し、[CONFIG_DB](../reference/glossary.md#term-config_db) を購読する従来のロールに **POST 状態の事前チェック** を足す形で拡張される[^1]。これが FIPS 準拠の最終ガード。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -185,7 +185,7 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ## 制限事項
 
@@ -225,3 +225,5 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fae4babedf51 -->

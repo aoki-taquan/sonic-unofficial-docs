@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の docker は歴史的に多くが **`--privileged`** で動いていた。CVE 対策とコンプライアンス要請から、**最低限必要な linux capability・mount・device だけを与える** 形に絞り込む取り組みが本 HLD のスコープ[^1]。
+SONiC の docker は歴史的に多くが **`--privileged`** で動いていた。CVE 対策とコンプライアンス要請から、**最低限必要な linux capability・mount・device だけを与える** 形に絞り込む取り組みが本 [HLD](../reference/glossary.md#term-hld) のスコープ[^1]。
 
 主な硬化軸:
 
@@ -50,9 +50,9 @@ flowchart LR
 
 各 docker は **何が必要か** を改修ごとに洗い出してテンプレート化する。たとえば[^1]:
 
-- **swss / syncd**: Redis socket / shm へのアクセス、syncd は SAI vendor の特殊 device が必要なことがある
+- **swss / [syncd](../reference/glossary.md#term-syncd)**: [Redis](../reference/glossary.md#term-redis) socket / shm へのアクセス、syncd は [SAI](../reference/glossary.md#term-sai) vendor の特殊 device が必要なことがある
 - **bgp**: routing socket、netlink 操作。NET_ADMIN 等は必要
-- **teamd**: NET_ADMIN、NET_RAW
+- **[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)**: NET_ADMIN、NET_RAW
 - **lldp**: NET_RAW + 特定 interface への access
 - **dhcp_relay**: NET_BIND_SERVICE / NET_RAW
 
@@ -103,3 +103,5 @@ flowchart LR
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f6289dc80312 -->

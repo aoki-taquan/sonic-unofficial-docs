@@ -9,9 +9,9 @@ sources: []
 
 # 設定
 
-SWSS / SAI / Redis レイヤの「設定」は、機能 CLI のように `config bgp` で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。具体的には Redis instance のレイアウト、Multi-ASIC namespace、FEATURE による daemon 起動制御、event-driven な config reload、container health probe の 5 つで、いずれも `/etc/sonic/` 配下のファイルと CONFIG_DB の `FEATURE` テーブルで制御されます。
+SWSS / [SAI](../../reference/glossary.md#term-sai) / [Redis](../../reference/glossary.md#term-redis) レイヤの「設定」は、機能 CLI のように `config bgp` で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。具体的には Redis instance のレイアウト、Multi-ASIC namespace、FEATURE による daemon 起動制御、event-driven な config reload、container health probe の 5 つで、いずれも `/etc/sonic/` 配下のファイルと [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブルで制御されます。
 
-本ページでは「単一 ASIC」「COUNTERS_DB の Redis 分割」「Multi-ASIC / VOQ chassis」「FEATURE と config reload 遅延」「container health probe」の 5 シナリオで、ファイル例 + CLI + 確認手順をまとめます。
+本ページでは「単一 ASIC」「[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の Redis 分割」「Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis」「FEATURE と config reload 遅延」「container health probe」の 5 シナリオで、ファイル例 + CLI + 確認手順をまとめます。
 
 ## 設定対象ファイルとテーブル一覧
 
@@ -198,7 +198,7 @@ show feature autorestart
 
 ### config reload と delayed container
 
-`delayed: True` の container は、PortInitDone を待ってから起動されます。これは BGP などが「ASIC 上の port がまだない」状態で route を流し始めることを避ける設計です。詳細は [config reload の event-driven 化](../../management/config-reload-enhancement.md) を読んでください。
+`delayed: True` の container は、PortInitDone を待ってから起動されます。これは [BGP](../../reference/glossary.md#term-bgp) などが「ASIC 上の port がまだない」状態で route を流し始めることを避ける設計です。詳細は [config reload の event-driven 化](../../management/config-reload-enhancement.md) を読んでください。
 
 ```bash
 # config reload を投げる
@@ -239,9 +239,9 @@ docker exec swss /usr/bin/healthcheck.sh
 | 新 instance を追加したが daemon が古い socket を掴む | daemon プロセスが既にロード済みの SonicDBConfig をキャッシュ | 影響 daemon を再起動 (`systemctl restart swss` 等)、必要なら `config reload -y` |
 | Multi-ASIC で `redis-cli` が host を見てしまう | `ip netns exec` 無しで実行 | `sudo ip netns exec asic0 redis-cli ...` か、`-n asic0` 付き sonic-cli を使う |
 | `config feature state` の変更が次回起動で消える | `config save` 忘れ | `sudo config save -y` で `config_db.json` を永続化 |
-| delayed container が起動しない | PortInitDone が来ていない / portmgrd 異常 | `redis-cli -n 6 KEYS 'PORT_TABLE*'`、`journalctl -u portmgrd`、`show interfaces status` で port が UP か |
+| delayed container が起動しない | PortInitDone が来ていない / [portmgrd](../../reference/glossary.md#term-portmgrd) 異常 | `redis-cli -n 6 KEYS 'PORT_TABLE*'`、`journalctl -u portmgrd`、`show interfaces status` で port が UP か |
 | `docker inspect` で `Health.Status` 欄が空 | healthcheck が Dockerfile に未定義の古い image | image を最新化、または `monit` 経由の判定にフォールバック |
-| Multi-ASIC で APPL_DB の更新が片側 ASIC にしか反映されない | 書き手が namespace を指定せず host Redis を更新 | `swsscommon.SonicV2Connector(namespace='asic0')` を使う、scripts は `-n asic<N>` フラグを通す |
+| Multi-ASIC で [APPL_DB](../../reference/glossary.md#term-appl_db) の更新が片側 ASIC にしか反映されない | 書き手が namespace を指定せず host Redis を更新 | `swsscommon.SonicV2Connector(namespace='asic0')` を使う、scripts は `-n asic<N>` フラグを通す |
 | COUNTERS_DB を別 instance に分けたら CLI が値を返さない | CLI 側が socket をハードコード | `swsscommon` 経由の CLI を使う、`database_config.json` の socket と CLI の参照先を一致 |
 
 ## 確認に使う show / redis コマンドまとめ
@@ -276,3 +276,5 @@ ip netns list
 - [SWSS / SAI / Redis のアーキテクチャ](architecture.md)
 - [SWSS / SAI / Redis の運用](operations.md)
 - [SWSS / SAI / Redis の internals](internals.md)
+
+<!-- glossary-links-injected: b2d3aa50236f -->

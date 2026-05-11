@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-TACACS+ Authentication（既存）の上に **コマンド単位の authorization と accounting** を追加する HLD[^1]:
+TACACS+ Authentication（既存）の上に **コマンド単位の authorization と accounting** を追加する [HLD](../reference/glossary.md#term-hld)[^1]:
 
 - 既存: authentication / session authz / session accounting / コマンド authz（ローカル permission のみ）
 - 追加: **コマンド authorization（TACACS+）** と **コマンド accounting（TACACS+）**
@@ -91,7 +91,7 @@ flowchart LR
 
 ### hostcfg enforcer
 
-`AAA Config` モジュールが CONFIG_DB から bash config / auditd config / TACACS+ config を生成する[^1]:
+`AAA Config` モジュールが [CONFIG_DB](../reference/glossary.md#term-config_db) から bash config / auditd config / TACACS+ config を生成する[^1]:
 
 ```mermaid
 flowchart LR
@@ -104,7 +104,7 @@ flowchart LR
 
 `AAA` テーブルは `authentication` / `authorization` / `accounting` の 3 種をキーとして持ち、各キーで `login`（実体は protocol リスト, e.g. `local,tacacs+`）、`fallback`、`failthrough` を管理[^1]。
 
-> 注: 過去 HLD 上は `protocol` 属性として記載されたが、現行 `sonic-system-aaa` YANG では `login` 属性として実装されており、互換性のため `login` のままとする[^1]。
+> 注: 過去 HLD 上は `protocol` 属性として記載されたが、現行 `sonic-system-aaa` [YANG](../reference/glossary.md#term-yang) では `login` 属性として実装されており、互換性のため `login` のままとする[^1]。
 
 ## 関連 CLI[^1]
 
@@ -171,3 +171,5 @@ Bad responses: 1
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

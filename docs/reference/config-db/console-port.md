@@ -74,7 +74,7 @@ CONSOLE_SWITCH|console_mgmt
 
 ## 関連リファレンス
 
-- YANG: `sonic-console`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-console`
 
 <!-- ref-triangle:end -->
 
@@ -104,3 +104,5 @@ sonic-db-cli CONFIG_DB keys 'CONSOLE_PORT|*'
 show console
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d5320e852f7a -->

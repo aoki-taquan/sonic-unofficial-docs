@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-gNMI Subscribe は YANG path に紐づくデータを **stream / poll / once** モードでクライアントに push する仕組み[^1]。SONiC は `sonic-mgmt-framework` の Translib + STATE_DB / COUNTERS_DB / APPL_DB の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。
+[gNMI](../reference/glossary.md#term-gnmi) Subscribe は [YANG](../reference/glossary.md#term-yang) path に紐づくデータを **stream / poll / once** モードでクライアントに push する仕組み[^1]。SONiC は `sonic-mgmt-framework` の Translib + [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。
 
 サポートする SubscriptionMode（per-path）:
 
@@ -57,7 +57,7 @@ flowchart LR
 主要な仕組み[^1]:
 
 - **Sync 期 → Stream 期**: 最初に現在値の snapshot（sync_response）を送り、以後 update を流す
-- **ON_CHANGE が成立する path**: STATE_DB のキー単位（`PORT_TABLE` 等）。Redis keyspace notification と組合せ
+- **ON_CHANGE が成立する path**: STATE_DB のキー単位（`PORT_TABLE` 等）。[Redis](../reference/glossary.md#term-redis) keyspace notification と組合せ
 - **SAMPLE の interval**: subscribe 時に client が指定。下限は server 設定で抑える
 - **wildcards**: `interfaces/interface[name=*]/state/oper-status` のように expand してから subscribe
 - **TARGET_DEFINED の選択**: counter 系 → SAMPLE、state 系 → ON_CHANGE が一般的
@@ -83,7 +83,7 @@ ON_CHANGE で長時間更新がない時、`heartbeat-interval` で生存通知�
 ## 干渉する機能
 
 - **management framework**: Translib / Transformer の同居機構
-- **gNMI Master Arbitration**: 複数クライアントの集中制御で先行ロックを取る HLD（management area）
+- **gNMI Master Arbitration**: 複数クライアントの集中制御で先行ロックを取る [HLD](../reference/glossary.md#term-hld)（management area）
 - **dial-in / dial-out telemetry**: dial-out では subscribe をサーバ側起動で行う
 - **STATE_DB schema**: ON_CHANGE 効率は STATE_DB スキーマ設計に依存
 
@@ -105,3 +105,5 @@ ON_CHANGE で長時間更新がない時、`heartbeat-interval` で生存通知�
 - TLS / cert 認証と gNSI / gNOI 統合の現行実装確認
 - gNMI Master Arbitration / dial-out telemetry との実装関係確認
 -->
+
+<!-- glossary-links-injected: 9cb1b1c08d60 -->

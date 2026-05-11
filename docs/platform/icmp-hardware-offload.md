@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を **ICMP echo の往復** で監視している。`linkmgrd` 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は **200〜400 ms** が下限となっていた[^1]。本機能は ICMP echo セッションを **NPU にオフロード** することで、検出時間を **< 10 ms** まで短縮することを要件とする。
+SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を **ICMP echo の往復** で監視している。`linkmgrd` 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は **200〜400 ms** が下限となっていた[^1]。本機能は ICMP echo セッションを **[NPU](../reference/glossary.md#term-npu) にオフロード** することで、検出時間を **< 10 ms** まで短縮することを要件とする。
 
 オフロードに伴い `linkmgrd` の挙動が大きく変わる。プローブには 3 ms オーダーの極小タイマーを使うため deadline timer を廃止し、ハードウェア処理と TLV パケットを処理するソフトウェアスレッドを併存させる **ハイブリッドモデル** を採用する。NPU が認識しないコントロールメッセージ（TLV 入り ICMP）はソフトウェア側 cookie で送出する。
 
@@ -50,7 +50,7 @@ flowchart LR
     LM -->|TLV ICMP のみ\n(software cookie)| KSOCK[Linux raw socket]
 ```
 
-`IcmpOrch` は新規追加コンポーネント[^1]。SAI 1.12 で導入された `saiicmpecho.h` 系属性とスイッチ通知を扱う。
+`IcmpOrch` は新規追加コンポーネント[^1]。[SAI](../reference/glossary.md#term-sai) 1.12 で導入された `saiicmpecho.h` 系属性とスイッチ通知を扱う。
 
 ### セッションタイプ（NORMAL / RX）
 
@@ -190,7 +190,7 @@ reasoning: capability fallback の根拠。
 | DB | Table | Key | 主なフィールド |
 |----|-------|-----|---------------|
 | APP_DB | `ICMP_ECHO_SESSION_TABLE` | `default:Ethernet0:6000:NORMAL` | `dst_ip`, `dst_mac`, `tx_interval`, `rx_interval`, `session_cookie`, `session_guid`, `src_ip` |
-| STATE_DB | `ICMP_ECHO_SESSION_TABLE` | `default\|Ethernet0\|6000\|NORMAL` | 上記 + `state` (`Up`/`Down`), `hw_lookup` |
+| [STATE_DB](../reference/glossary.md#term-state_db) | `ICMP_ECHO_SESSION_TABLE` | `default\|Ethernet0\|6000\|NORMAL` | 上記 + `state` (`Up`/`Down`), `hw_lookup` |
 
 ### 関連する CLI
 
@@ -222,13 +222,13 @@ show icmp sessions
 
 ### 関連する YANG
 
-HLD には専用 YANG モジュール定義の記述がない（既存 `sonic-mux-cable.yang` 系の拡張になると推測されるが未明記）。
+[HLD](../reference/glossary.md#term-hld) には専用 [YANG](../reference/glossary.md#term-yang) モジュール定義の記述がない（既存 `sonic-mux-cable.yang` 系の拡張になると推測されるが未明記）。
 
 ## 干渉する機能
 
 - **Software link prober**: 同一 mux ポートで HW / SW の両方を同時に走らせない設計。capability が無ければ自動 SW にフォールバック。
 - **TLV パケット**: HW モードでも TLV 入り ICMP は SW 経路でやりとりされる。peer NPU が誤って offload しないよう、software cookie の固定値が peer 側 NPU の検査ロジックに浸透している必要がある。
-- **CoPP / ACL**: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては ASIC レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。
+- **[CoPP](../reference/glossary.md#term-copp) / [ACL](../reference/glossary.md#term-acl)**: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては ASIC レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。
 - **Loopback IP**: HLD は両 ToR が **同じ Loopback IP を ICMP echo の src** として使うトポロジ前提。これは DualToR の active-active 設計と整合する。
 
 ## トラブルシューティング
@@ -249,3 +249,5 @@ HLD には専用 YANG モジュール定義の記述がない（既存 `sonic-mu
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 712ec0192f02 -->

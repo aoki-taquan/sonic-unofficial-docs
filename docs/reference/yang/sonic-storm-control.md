@@ -72,7 +72,7 @@ module: sonic-storm-control
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PORT_STORM_CONTROL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_STORM_CONTROL`
 - CLI: `config interface storm-control`, `show storm-control`
 
 <!-- ref-triangle:start -->
@@ -87,3 +87,5 @@ module: sonic-storm-control
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-storm-control.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 896d391185a9 -->

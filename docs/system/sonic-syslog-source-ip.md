@@ -26,9 +26,9 @@ related:
 
 ## なぜ Source IP / VRF が必要か
 
-SONiC の syslog forwarding に **source IP / VRF / port / protocol / filter / severity** を設定できるようにする HLD（2022, v0.2 で大幅拡張）[^1]。security / 識別、Mgmt VRF 利用時の到達性確保が動機。
+SONiC の syslog forwarding に **source IP / [VRF](../reference/glossary.md#term-vrf) / port / protocol / filter / severity** を設定できるようにする [HLD](../reference/glossary.md#term-hld)（2022, v0.2 で大幅拡張）[^1]。security / 識別、Mgmt VRF 利用時の到達性確保が動機。
 
-`rsyslogd` の **`omfwd` 出力モジュール** 機能を流用し、CONFIG_DB → `rsyslog-config` daemon → `/etc/rsyslog.conf` 生成の経路を通す。
+`rsyslogd` の **`omfwd` 出力モジュール** 機能を流用し、[CONFIG_DB](../reference/glossary.md#term-config_db) → `rsyslog-config` daemon → `/etc/rsyslog.conf` 生成の経路を通す。
 
 スコープ[^1]:
 
@@ -141,3 +141,5 @@ VRF / Mgmt VRF（`device` と組み合わせ）/ rsyslog テンプレート（`f
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/syslog-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 0f664a284ac4 -->

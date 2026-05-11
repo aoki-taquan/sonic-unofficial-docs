@@ -29,13 +29,13 @@ related:
 
 - `warm-reboot` 実行後に Data plane の通信が想定（< 1s）を超えて 30s 〜 数分断する
 - `warm-reboot` 自体が途中で abort して通常の `reboot` にフォールバックする
-- 再起動後に SAI object が再生成され、FDB / ARP / Route が全部 relearn になっている
+- 再起動後に [SAI](../../reference/glossary.md#term-sai) object が再生成され、[FDB](../../reference/glossary.md#term-fdb) / [ARP](../../reference/glossary.md#term-arp) / Route が全部 relearn になっている
 
 ## 想定原因
 
-1. **`WARM_RESTART` テーブルで該当機能が enable されていない** (bgp / teamd / swss / syncd / nat 等)
-2. **BGP graceful restart の対向側未対応 / capability 未交換**: GR helper として動作するために対向 peer も GR 対応が必要
-3. **dataplane object 量が大きすぎて reconciliation が間に合わない** (Route 数十万件 + ACL 大量) → restore_count に至らずタイムアウト
+1. **`WARM_RESTART` テーブルで該当機能が enable されていない** (bgp / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) / nat 等)
+2. **[BGP](../../reference/glossary.md#term-bgp) graceful restart の対向側未対応 / capability 未交換**: GR helper として動作するために対向 peer も GR 対応が必要
+3. **dataplane object 量が大きすぎて reconciliation が間に合わない** (Route 数十万件 + [ACL](../../reference/glossary.md#term-acl) 大量) → restore_count に至らずタイムアウト
 4. **`pre-shutdown` のチェックで pending operation あり** (`COUNTERS_DB` の queue / port が busy)
 5. **platform / SAI が warm boot 非対応** (Mellanox/Broadcom SDK バージョン依存)
 
@@ -103,5 +103,7 @@ sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — `scripts/warm-reboot`
-[^2]: sonic-net/sonic-swss @ 4305596 — warm_restart helper
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/warm-reboot`
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — warm_restart helper
+
+<!-- glossary-links-injected: 2c3c04148df7 -->

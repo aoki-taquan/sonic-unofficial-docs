@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。`VNET` が VNI と VXLAN tunnel の対応を持ち、`VNET_ROUTE` と `VNET_ROUTE_TUNNEL` が VNET スコープの静的経路を表す[^1]。`schema.h` では APPL_DB 側の `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` と、CONFIG_DB 側の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 定数が定義されている[^2]。
+[VNET](../../reference/glossary.md#term-vnet) は [VXLAN](../../reference/glossary.md#term-vxlan) overlay 上の仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル群。`VNET` が VNI と VXLAN tunnel の対応を持ち、`VNET_ROUTE` と `VNET_ROUTE_TUNNEL` が VNET スコープの静的経路を表す[^1]。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` と、CONFIG_DB 側の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 定数が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -88,7 +88,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 | `mac_address` | MAC address list | no | encapsulated packet の inner destination MAC |
 | `vni` | VNI list | no | encapsulated packet に使う VNI |
 | `consistent_hashing_buckets` | uint16 | no | consistent hashing bucket 数 |
-| `metric` | uint8 | no | route 分類用 metric。YANG コメント上、経路動作には影響しない |
+| `metric` | uint8 | no | route 分類用 metric。[YANG](../../reference/glossary.md#term-yang) コメント上、経路動作には影響しない |
 
 ## 制約
 
@@ -99,7 +99,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 
 ## 購読者
 
-- `vxlanmgrd` / `vnetorch` 系: CONFIG_DB の VNET 設定を APPL_DB `VNET_TABLE` 系へ投影し、orchagent 側で SAI overlay / route に反映する。
+- `vxlanmgrd` / `vnetorch` 系: CONFIG_DB の VNET 設定を APPL_DB `VNET_TABLE` 系へ投影し、[orchagent](../../reference/glossary.md#term-orchagent) 側で [SAI](../../reference/glossary.md#term-sai) overlay / route に反映する。
 - `orchagent`: APPL_DB `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を消費する。
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -146,3 +146,5 @@ show vnet brief
 show vnet routes all
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f21bcbaa368c -->

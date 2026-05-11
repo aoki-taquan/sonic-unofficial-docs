@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の Warm Reboot 設計に関する **open issues / 設計の選択肢** を整理した文書[^1]。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、SAI API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。
+SONiC の [Warm Reboot](../reference/glossary.md#term-warm-reboot) 設計に関する **open issues / 設計の選択肢** を整理した文書[^1]。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、[SAI](../reference/glossary.md#term-sai) API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。
 
 ## 動作仕様
 
@@ -37,8 +37,8 @@ SONiC の Warm Reboot 設計に関する **open issues / 設計の選択肢** �
 
 | Phase | 範囲 |
 |-------|------|
-| Phase 1 | swss / BGP の docker warm restart |
-| Phase 2 | teamd / syncd（libsai / SDK 含む）の docker warm restart |
+| Phase 1 | swss / [BGP](../reference/glossary.md#term-bgp) の docker warm restart |
+| Phase 2 | [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [syncd](../reference/glossary.md#term-syncd)（libsai / SDK 含む）の docker warm restart |
 | Phase 3 | system 全体 warm reboot（DB save/restore、Linux 環境 graceful 復元） |
 
 ### Docker warm upgrade 手順[^1]
@@ -117,9 +117,11 @@ warm restart は 2 段階:
 
 - **fast-reboot**: 関連だが state save 規模が異なる
 - **libsai / SDK**: warm restart 対応の baseline
-- **sonic-sairedis**: 両アプローチの主舞台
-- **CONFIG_DB / APPL_DB save/restore**: Phase 3 の system warm reboot
+- **[sonic-sairedis](../reference/glossary.md#term-sonic-sairedis)**: 両アプローチの主舞台
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) save/restore**: Phase 3 の system warm reboot
 
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/open_issues.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/open_issues.md)
+
+<!-- glossary-links-injected: d01061035612 -->

@@ -26,7 +26,7 @@ related:
 
 `show feature` グループは SONiC の **feature** (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は `show/feature.py` の `@click.group(name='feature')`[^1]。
 
-CONFIG_DB の `FEATURE` テーブル (Writer 側は `config/feature.py`) と STATE_DB の `FEATURE|<name>` を組み合わせて表示する。STATE_DB のキーは `hostcfgd` / `featured` が container 起動状況を逐次書き込む側。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブル (Writer 側は `config/feature.py`) と [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を組み合わせて表示する。STATE_DB のキーは `hostcfgd` / `featured` が container 起動状況を逐次書き込む側。
 
 ## コマンド一覧
 
@@ -134,3 +134,5 @@ teamd          enabled   enabled        up
 pmon           enabled   enabled        up
 ```
 <!-- /usage-example -->
+
+<!-- glossary-links-injected: 881c373e11ef -->

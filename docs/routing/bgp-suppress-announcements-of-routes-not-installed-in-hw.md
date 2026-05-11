@@ -27,16 +27,16 @@ related:
 
 ## 概要
 
-T1 リブート直後に「FIB に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / PFC storm」というシナリオを防ぐため、**ASIC 書き込み完了まで BGP advertise を抑止する** end-to-end フィードバック機構[^1]。
+T1 リブート直後に「FIB に乗っていない prefix を [BGP](../reference/glossary.md#term-bgp) がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / [PFC](../reference/glossary.md#term-pfc) storm」というシナリオを防ぐため、**ASIC 書き込み完了まで BGP advertise を抑止する** end-to-end フィードバック機構[^1]。
 
 要点:
 
-- FRR の **bgp suppress-fib-pending** 機能を活用。FRR は zebra から `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグが立った応答を受けると当該 prefix を peer に advertise する
-- SONiC 側は orchagent / fpmsyncd 経由で「ASIC 書き込み完了」を zebra に返すループを実装
+- [FRR](../reference/glossary.md#term-frr) の **bgp suppress-fib-pending** 機能を活用。FRR は [zebra](../reference/glossary.md#term-zebra) から `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグが立った応答を受けると当該 prefix を peer に advertise する
+- SONiC 側は [orchagent](../reference/glossary.md#term-orchagent) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由で「ASIC 書き込み完了」を zebra に返すループを実装
 - **FRR の `dplane_fpm_nl` 新プラグインへの移行が前提**（旧 `fpm` plugin は対応せず）[^1]
 - グローバル ON/OFF を `DEVICE_METADATA.localhost.suppress-fib-pending` で切替。default disabled、ランタイム切替可
 
-スコープ外: MPLS、VNET routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise[^1]。
+スコープ外: [MPLS](../reference/glossary.md#term-mpls)、[VNET](../reference/glossary.md#term-vnet) routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise[^1]。
 
 ## 動作仕様
 
@@ -62,7 +62,7 @@ sequenceDiagram
     B->>B: advertise to peers
 ```
 
-応答チャネルは「**fpmsyncd ↔ zebra の TCP/FPM ソケット双方向利用**」。HLD で response channel performance（per-route 通知のオーバーヘッド低減）の節を立てている[^1]。
+応答チャネルは「**fpmsyncd ↔ zebra の TCP/[FPM](../reference/glossary.md#term-fpm) ソケット双方向利用**」。[HLD](../reference/glossary.md#term-hld) で response channel performance（per-route 通知のオーバーヘッド低減）の節を立てている[^1]。
 
 ### CONFIG_DB
 
@@ -119,7 +119,7 @@ reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 
 ### CLI
 
-HLD では専用 CLI の言及は無い。`config device-metadata` 系で書く想定か、CONFIG_DB を直接編集する。
+HLD では専用 CLI の言及は無い。`config device-metadata` 系で書く想定か、[CONFIG_DB](../reference/glossary.md#term-config_db) を直接編集する。
 
 ### 設定例
 
@@ -138,14 +138,14 @@ sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" suppress-fib-pending ena
 ## 干渉する機能
 
 - **fpmsyncd NextHop Group 拡張**: 同じ `dplane_fpm_nl` を共有するため、両機能の有効化状態が干渉しないか要確認
-- **routeorch / orchagent crash**: 従来は「route install 失敗 = orchagent crash で全 service restart」だったが、本機能はあくまで advertise 抑止であり crash 経路は別問題（ARP / nh resolution と組み合わせて議論）
-- **CRM**: ASIC リソース不足時の advertise 抑止に効くが、CRM threshold 設定との連携は HLD では未深堀
+- **routeorch / orchagent crash**: 従来は「route install 失敗 = orchagent crash で全 service restart」だったが、本機能はあくまで advertise 抑止であり crash 経路は別問題（[ARP](../reference/glossary.md#term-arp) / nh resolution と組み合わせて議論）
+- **[CRM](../reference/glossary.md#term-crm)**: ASIC リソース不足時の advertise 抑止に効くが、CRM threshold 設定との連携は HLD では未深堀
 
 ## トラブルシューティング
 
 - 有効化したが advertise が止まらない → BGP session を reset（`clear bgp *`）必要
 - 有効化後に route advertise が極端に遅い → `dplane_fpm_nl` への移行が完了しているか確認
-- consistency monitor が誤判定 → スクリプトの周期と STATE_DB 反映遅延の関係を確認
+- consistency monitor が誤判定 → スクリプトの周期と [STATE_DB](../reference/glossary.md#term-state_db) 反映遅延の関係を確認
 
 ## 引用元
 
@@ -167,3 +167,5 @@ sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" suppress-fib-pending ena
 - `sonic-swss/fpmsyncd/routesync.h:19-22` で `RTM_F_OFFLOAD` の define、`routesync.cpp:3115` で `rtm->rtm_flags |= RTM_F_OFFLOAD` を発行する zebra 応答ロジックが実装されている。fpmsyncd は `dplane_fpm_nl` 経由で zebra に offload 応答を返すフィードバックループの一端を担う。
 
 HLD と実装は一致。`code-verified` に昇格。
+
+<!-- glossary-links-injected: 7ebdde32cc55 -->

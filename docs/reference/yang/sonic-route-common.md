@@ -24,7 +24,7 @@ related:
 - import: `sonic-vrf`, `sonic-route-map`
 - top container: `sonic-route-common`
 
-SONIC ROUTE common YANG[^1]
+SONIC ROUTE common [YANG](../../reference/glossary.md#term-yang)[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -61,7 +61,7 @@ module: sonic-route-common
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `vrf_name` | `sonic-route-common/ROUTE_REDISTRIBUTE/ROUTE_REDISTRIBUTE_LIST/vrf_name` | `union` | yes |  | union(string, leafref) | VRF name |
+| `vrf_name` | `sonic-route-common/ROUTE_REDISTRIBUTE/ROUTE_REDISTRIBUTE_LIST/vrf_name` | `union` | yes |  | union(string, leafref) | [VRF](../../reference/glossary.md#term-vrf) name |
 | `src_protocol` | `sonic-route-common/ROUTE_REDISTRIBUTE/ROUTE_REDISTRIBUTE_LIST/src_protocol` | `string` | yes |  |  | IP protocols such as connected, ospf and static |
 | `dst_protocol` | `sonic-route-common/ROUTE_REDISTRIBUTE/ROUTE_REDISTRIBUTE_LIST/dst_protocol` | `string` | yes |  |  | IP protocol such as bgp |
 | `addr_family` | `sonic-route-common/ROUTE_REDISTRIBUTE/ROUTE_REDISTRIBUTE_LIST/addr_family` | `string` | yes |  |  | Address family ipv4/ipv6 |
@@ -78,7 +78,7 @@ module: sonic-route-common
 
 ## 関連 CONFIG_DB / CLI
 
-- 関連 CLI / CONFIG_DB は本ページからは未リンク（CONFIG_DB のテーブル名は本モジュールの top-level container と一致するのが通例）
+- 関連 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) は本ページからは未リンク（CONFIG_DB のテーブル名は本モジュールの top-level container と一致するのが通例）
 
 <!-- ref-triangle:start -->
 
@@ -99,3 +99,5 @@ module: sonic-route-common
 - [Topics: SRv6 / MPLS / Path Tracing](../../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

@@ -31,7 +31,7 @@ related:
 
 SONiC の port mirroring 拡張。Port / Port-Channel 単位の **ingress / egress / both** SPAN、および ERSPAN（IP encapsulation）に対応する[^1]。複数ソース・単一宛先の動的セッション管理、Port-Channel に対するセッションは少なくとも 1 メンバが UP のとき有効、を要件とする。
 
-v0.2 では **Mirror Capability Discovery and Validation** が追加された（プラットフォームが対応する mirror モード・属性を STATE_DB に公開して上位が事前検証できるようにする仕組み）[^1]。
+v0.2 では **Mirror Capability Discovery and Validation** が追加された（プラットフォームが対応する mirror モード・属性を [STATE_DB](../reference/glossary.md#term-state_db) に公開して上位が事前検証できるようにする仕組み）[^1]。
 
 ## 動作仕様
 
@@ -76,7 +76,7 @@ MIRROR_SESSION|<session_name>
 
 ### Capability Discovery
 
-`MIRROR_CAPABILITIES` テーブル（STATE_DB）に、プラットフォームでサポートされる mirror モードと属性を syncd 起動時に書き込み。`MirrorOrch` は新セッション作成前に capability を参照し、未対応モードを `MirrorMgr` に対してエラー返却する。
+`MIRROR_CAPABILITIES` テーブル（STATE_DB）に、プラットフォームでサポートされる mirror モードと属性を [syncd](../reference/glossary.md#term-syncd) 起動時に書き込み。`MirrorOrch` は新セッション作成前に capability を参照し、未対応モードを `MirrorMgr` に対してエラー返却する。
 
 ## 設定
 
@@ -106,13 +106,13 @@ show mirror_session
 ## 制限事項
 
 - Mirror セッション数の上限は ASIC 依存。Capability Discovery で取得する。
-- Port-Channel 宛先は HLD の主要対象ではない（ソースのみ Port-Channel 対応が明記）。
+- Port-Channel 宛先は [HLD](../reference/glossary.md#term-hld) の主要対象ではない（ソースのみ Port-Channel 対応が明記）。
 - Warm boot 影響は HLD 別節を参照。
-- 詳細フロー / SAI 属性マッピングは HLD `doc/port-mirroring/SONiC_Port_Mirroring_HLD.md` を参照。
+- 詳細フロー / [SAI](../reference/glossary.md#term-sai) 属性マッピングは HLD `doc/port-mirroring/SONiC_Port_Mirroring_HLD.md` を参照。
 
 ## 干渉する機能
 
-- **ACL ベース mirror（Everflow）**: 別途 ACL ルールに `MIRROR` アクションを付ける機能があり、本ページの port-based mirror とは独立に動く。
+- **[ACL](../reference/glossary.md#term-acl) ベース mirror（Everflow）**: 別途 ACL ルールに `MIRROR` アクションを付ける機能があり、本ページの port-based mirror とは独立に動く。
 - **Buffer / Egress queue**: ERSPAN は egress queue を消費する。輻輳時のミラー精度に影響。
 - **Port-Channel メンバシップ変更**: メンバ全滅でセッションが down する。
 
@@ -132,3 +132,5 @@ show mirror_session
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0ab6d4c40634 -->

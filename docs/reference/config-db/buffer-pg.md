@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、PFC 動作の根本となる設定。`buffermgrd` が APPL_DB に転送、`orchagent` `BufferOrch` が SAI ingress PG buffer profile を設定する。
+ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、[PFC](../../reference/glossary.md#term-pfc) 動作の根本となる設定。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) ingress PG buffer profile を設定する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -67,9 +67,9 @@ BUFFER_PG|<port>|<pg_num>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_PROFILE`、`BUFFER_POOL`、`PORT`、`PFC_WD`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`、`BUFFER_POOL`、`PORT`、`PFC_WD`
 - 関連 CLI: なし（`config_db.json` でロード）
-- 関連 YANG: `sonic-buffer-pg`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-pg`
 
 <!-- ref-triangle:start -->
 
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB keys 'BUFFER_PG|Ethernet0|*'
 show buffer pg
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: faaeb5caf487 -->

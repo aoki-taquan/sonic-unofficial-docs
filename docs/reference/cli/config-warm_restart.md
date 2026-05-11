@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`config warm_restart` は warm restart の enable 状態と daemon timer を設定する CLI グループ。enable/disable は STATE_DB の `WARM_RESTART_ENABLE_TABLE|<module>` を更新し、timer 系は CONFIG_DB の `WARM_RESTART` を更新する[^1]。
+`config warm_restart` は warm restart の enable 状態と daemon timer を設定する CLI グループ。enable/disable は [STATE_DB](../../reference/glossary.md#term-state_db) の `WARM_RESTART_ENABLE_TABLE|<module>` を更新し、timer 系は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `WARM_RESTART` を更新する[^1]。
 
 ## コマンド一覧
 
@@ -30,10 +30,10 @@ related:
 |---------|------|
 | `config warm_restart enable [--namespace <ns>] [<module>]` | module の warm restart を有効化 |
 | `config warm_restart disable [--namespace <ns>] [<module>]` | module の warm restart を無効化 |
-| `config warm_restart neighsyncd_timer [--namespace <ns>] <seconds>` | `swss` の neighsyncd timer を設定 |
+| `config warm_restart neighsyncd_timer [--namespace <ns>] <seconds>` | `swss` の [neighsyncd](../../reference/glossary.md#term-neighsyncd) timer を設定 |
 | `config warm_restart bgp_timer [--namespace <ns>] <seconds>` | `bgp` の timer を設定 |
 | `config warm_restart teamsyncd_timer [--namespace <ns>] <seconds>` | `teamd` の teamsyncd timer を設定 |
-| `config warm_restart bgp_eoiu [--namespace <ns>] [true|false]` | BGP EOIU を設定 |
+| `config warm_restart bgp_eoiu [--namespace <ns>] [true|false]` | [BGP](../../reference/glossary.md#term-bgp) EOIU を設定 |
 
 ## 各コマンドの詳細
 
@@ -96,7 +96,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- BGP / teamd / swss / syncd の warm-restart 有効化と timer 調整。
+- BGP / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) の warm-restart 有効化と timer 調整。
 - ソフト再起動前の安全弁としての有効化。
 
 ### よくある落とし穴
@@ -112,3 +112,5 @@ show warm_restart state
 sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4836d1c1f005 -->

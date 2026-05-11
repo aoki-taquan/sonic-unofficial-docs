@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの **physical inventory が BMC（OpenBMC 等）配下** にあり、CPU 直結ではない[^1]。HLD は **NPU 上の SONiC pmon と BMC の通信レイヤを抽象化** して、`Chassis` / `Psu` / `Fan` / `Thermal` プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。
+「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの **physical inventory が BMC（OpenBMC 等）配下** にあり、CPU 直結ではない[^1]。[HLD](../reference/glossary.md#term-hld) は **[NPU](../reference/glossary.md#term-npu) 上の SONiC pmon と BMC の通信レイヤを抽象化** して、`Chassis` / `Psu` / `Fan` / `Thermal` プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。
 
 ## 動作仕様
 
@@ -64,7 +64,7 @@ flowchart LR
 | `THERMAL_INFO` | STATE | sensor 温度 |
 | `CHASSIS_INFO` | STATE | model / serial / FRU |
 
-直接の CONFIG_DB スキーマは新設せず、既存の platform monitor 設計に乗せる想定。
+直接の [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは新設せず、既存の platform monitor 設計に乗せる想定。
 
 ## 関連 CLI
 
@@ -84,10 +84,10 @@ flowchart LR
 
 ## 干渉する機能
 
-- **smartswitch-pmon**: NPU+DPU+BMC 構成での DPU 状態取得
+- **smartswitch-pmon**: NPU+[DPU](../reference/glossary.md#term-dpu)+BMC 構成での DPU 状態取得
 - **transceiver / sensor monitoring**: 同 area 別 HLD と pmon ループを共有
 - **system health monitor**: BMC 由来 critical event を吸収するパス
-- **IP address assignment**: BMC への通信は management VRF や別 NIC 経由になることが多い
+- **IP address assignment**: BMC への通信は management [VRF](../reference/glossary.md#term-vrf) や別 NIC 経由になることが多い
 
 ## トラブルシューティング
 
@@ -114,3 +114,5 @@ flowchart LR
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 48ebde1d0ff1 -->

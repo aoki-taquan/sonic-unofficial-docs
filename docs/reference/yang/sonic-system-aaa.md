@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`, `sonic-system-tacacs`
 - top container: `sonic-system-aaa`
 
-Authentication, Authorization, and Accounting (AAA) YANG module for SONiC OS.[^1]
+Authentication, Authorization, and Accounting ([AAA](../../reference/glossary.md#term-aaa)) [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -84,7 +84,7 @@ module: sonic-system-aaa
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `AAA`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `AAA`
 - CONFIG_DB: `TACPLUS`
 - CONFIG_DB: `RADIUS`
 - CLI: `config aaa`
@@ -109,3 +109,5 @@ module: sonic-system-aaa
 - [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->

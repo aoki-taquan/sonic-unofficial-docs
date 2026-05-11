@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show mac` は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと FDB を、`aging-time` を指定すると別系統 (APPL_DB) を読みに行く。
+`show mac` は [FDB](../../reference/glossary.md#term-fdb) (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと FDB を、`aging-time` を指定すると別系統 ([APPL_DB](../../reference/glossary.md#term-appl_db)) を読みに行く。
 
 ## コマンド一覧
 
@@ -47,7 +47,7 @@ show mac
 
 **オプション**:
 
-- `-v / --vlan` ... 特定 VLAN の FDB のみ
+- `-v / --vlan` ... 特定 [VLAN](../../reference/glossary.md#term-vlan) の FDB のみ
 - `-p / --port` ... 特定ポート上の FDB のみ
 - `-a / --address` ... 指定 MAC アドレス
 - `-t / --type` ... `static` / `dynamic` のみ
@@ -148,7 +148,7 @@ excerpt: |
 
 ## 補足
 
-- `fdbshow` 自体は APPL_DB / ASIC_DB / STATE_DB を読み合わせて FDB を組み立てる。CONFIG_DB は使わない
+- `fdbshow` 自体は APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [STATE_DB](../../reference/glossary.md#term-state_db) を読み合わせて FDB を組み立てる。[CONFIG_DB](../../reference/glossary.md#term-config_db) は使わない
 - aging time の **設定** は `config mac aging_time <seconds>` 等が存在する場合に行う（本ページは表示系のみ）
 
 <!-- cli-mermaid -->
@@ -178,7 +178,7 @@ flowchart LR
 
 [^1]: <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1199>
 
-[^2]: APPL_DB の `SWITCH_TABLE` は orchagent が書き込む。`fdb_aging_time` は秒単位。
+[^2]: APPL_DB の `SWITCH_TABLE` は [orchagent](../../reference/glossary.md#term-orchagent) が書き込む。`fdb_aging_time` は秒単位。
 
 <!-- usage-example -->
 ## 実行例
@@ -212,3 +212,5 @@ show mac count
 
 - [reference/CLI: show vlan](show-vlan.md)
 - [reference/CLI: show interfaces](show-interfaces.md)
+
+<!-- glossary-links-injected: b36cf35fd34f -->

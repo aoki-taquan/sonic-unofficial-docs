@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-fabric-port`
 
-VOQ chassis におけるラインカード間ファブリックリンクの port 設定を保持する。隔離状態、 alias、 lanes、強制 unisolate 状態などを定義する[^1]。
+[VOQ](../../reference/glossary.md#term-voq) chassis におけるラインカード間ファブリックリンクの port 設定を保持する。隔離状態、 alias、 lanes、強制 unisolate 状態などを定義する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -76,7 +76,7 @@ module: sonic-fabric-port
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FABRIC_PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_PORT`
 - CLI: `show fabric`
 
 <!-- ref-triangle:start -->
@@ -110,3 +110,5 @@ show fabric port status
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 1016e42925ad -->

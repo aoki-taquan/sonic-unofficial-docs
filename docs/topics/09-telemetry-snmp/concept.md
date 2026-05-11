@@ -27,12 +27,12 @@ SONiC の observability は、用途ごとに別のサブシステムが担当�
 
 スイッチが「動いている」「壊れている」「過負荷になりかけている」を、人とシステムに伝える経路を提供するのがこの章のサブシステム群です。具体的には、次のような質問に対する受け皿を、目的別に複数並べているのが SONiC の作りになっています。
 
-- いまこの瞬間のポート利用率を 5 秒に 1 回 NMS に push してほしい (gNMI Subscribe SAMPLE)
-- BGP セッションが落ちたら同じ秒のうちにイベントを受けたい (gNMI ON_CHANGE / syslog)
-- 月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい (SNMP)
+- いまこの瞬間のポート利用率を 5 秒に 1 回 NMS に push してほしい ([gNMI](../../reference/glossary.md#term-gnmi) Subscribe SAMPLE)
+- [BGP](../../reference/glossary.md#term-bgp) セッションが落ちたら同じ秒のうちにイベントを受けたい (gNMI ON_CHANGE / syslog)
+- 月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい ([SNMP](../../reference/glossary.md#term-snmp))
 - 顧客トラフィックの一部をミラー先 collector に流して可視化したい (sFlow / DTel)
 - 「あの時間帯に何が起きていたか」を後追いするための包括 snapshot がほしい (`show techsupport`、core dump、kdump)
-- ASIC リソース（route、ACL entry、neighbor 等）が枯渇する前に検知したい (CRM)
+- ASIC リソース（route、[ACL](../../reference/glossary.md#term-acl) entry、neighbor 等）が枯渇する前に検知したい ([CRM](../../reference/glossary.md#term-crm))
 
 ここで重要なのは、これらが**同じ「ポート counter」を扱っていても、入口とプロトコル、データ更新タイミングが全部違う**ということです。読む側はまず「何を答える経路か」で分類すると混乱しません。
 
@@ -41,27 +41,27 @@ SONiC の observability は、用途ごとに別のサブシステムが担当�
 Telemetry / SNMP 系は基本的に **management plane** に属しますが、データ供給源は control / data plane の両方に深く食い込みます。
 
 - **Management plane (経路の主役)**: `snmp` コンテナ、`telemetry` / `gnmi` コンテナ、`hsflowd`、`syslog-ng`、`auto-techsupport` などの daemon が外部とのプロトコル端点を担います。
-- **Control plane (供給源の一部)**: BGP / LLDP / LACP などの daemon が syslog や STATE_DB に状態を流し、それを上記 daemon が拾います。
-- **Data plane (供給源の主体)**: FlexCounter / DTel / sFlow agent が ASIC / SAI から counter / sample を引き、COUNTERS_DB に蓄積するか、ASIC から直接 wire に出します。
+- **Control plane (供給源の一部)**: BGP / [LLDP](../../reference/glossary.md#term-lldp) / [LACP](../../reference/glossary.md#term-lacp) などの daemon が syslog や [STATE_DB](../../reference/glossary.md#term-state_db) に状態を流し、それを上記 daemon が拾います。
+- **Data plane (供給源の主体)**: [FlexCounter](../../reference/glossary.md#term-flexcounter) / DTel / sFlow agent が ASIC / [SAI](../../reference/glossary.md#term-sai) から counter / sample を引き、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) に蓄積するか、ASIC から直接 wire に出します。
 
 経路 (transport) と供給源 (data path) が独立しているのが SONiC の observability の設計思想で、新しい counter を増やすときは「SAI で取れるか → flex counter group に入れるか → DB に乗せるか → どの transport で出すか」を順に決めます。
 
 ## 用語の定義
 
-- **SNMP**: UDP 161/162 で `snmpd` が受け、SONiC subagent (`snmp-agent` / `sonic_ax_impl`) が AgentX 経由で Redis を MIB 表現に変換します。polling 専用、pull 型。
-- **gNMI**: gRPC 上で YANG path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では `telemetry` コンテナの `gnmi-server` が実装。
-- **gNOI / gNSI**: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。
-- **FlexCounter**: syncd の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、`COUNTERS_DB` に書きます。
+- **SNMP**: UDP 161/162 で `snmpd` が受け、SONiC subagent (`snmp-agent` / `sonic_ax_impl`) が AgentX 経由で [Redis](../../reference/glossary.md#term-redis) を MIB 表現に変換します。polling 専用、pull 型。
+- **gNMI**: gRPC 上で [YANG](../../reference/glossary.md#term-yang) path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では `telemetry` コンテナの `gnmi-server` が実装。
+- **[gNOI](../../reference/glossary.md#term-gnoi) / gNSI**: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。
+- **FlexCounter**: [syncd](../../reference/glossary.md#term-syncd) の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、`COUNTERS_DB` に書きます。
 - **CRM (Critical Resource Monitoring)**: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。
 - **sFlow**: パケットサンプリング + interface counter を `sFlow datagram` として外部 collector に UDP 送信するプロトコル。SONiC では `hsflowd` が担当。
-- **DTel (Data plane Telemetry)**: INT (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。
+- **DTel (Data plane Telemetry)**: [INT](../../reference/glossary.md#term-int) (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。
 - **Syslog / Event**: テキストログと構造化イベント。`syslog-ng` で集約し、外部 collector に転送。
 - **Techsupport**: `show techsupport` が作る tarball。CLI 出力、Redis dump、syslog、journal、core などをまとめる。
-- **Dump utility**: `sonic-dump` がオブジェクト単位（PORT / VLAN / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。
+- **Dump utility**: `sonic-dump` がオブジェクト単位（PORT / [VLAN](../../reference/glossary.md#term-vlan) / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。
 
 ## 3 つの観測経路
 
-- **Polling 系**: SNMP、`show` コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / APPL_DB）か直接 SAI / Linux に取りに行きます。
+- **Polling 系**: SNMP、`show` コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db)）か直接 SAI / Linux に取りに行きます。
 - **Streaming 系**: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量の集めるなら polling より向きます。
 - **証跡系**: syslog、event、core dump、kdump、auto-techsupport。障害が起きた瞬間の状態を残し、後から `show techsupport` の tarball や dump utility で取り出します。
 
@@ -85,11 +85,11 @@ CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を STATE
 
 ## FlexCounter / CRM / DTel / sFlow / watermark の棲み分け
 
-- **FlexCounter**: orchagent ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。`COUNTERS:` table の供給元です。
+- **FlexCounter**: [orchagent](../../reference/glossary.md#term-orchagent) ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。`COUNTERS:` table の供給元です。
 - **CRM**: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、STATE_DB と syslog に出します。FlexCounter の counter とは別目的です。
 - **DTel**: Inband Network Telemetry を ASIC が直接 export するもので、SONiC からは設定パスのみ通り、データは外部 collector へ流れます。
 - **sFlow**: hsflowd がサンプリングと counter を psample / kernel から取り、外部 collector に sFlow datagram を送ります。
-- **Watermark**: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は QoS 章で扱います。
+- **Watermark**: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は [QoS](../../reference/glossary.md#term-qos) 章で扱います。
 
 ## SNMP と gNMI telemetry は同じか
 
@@ -157,3 +157,4 @@ flowchart TB
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: bcf0ee3d3334 -->

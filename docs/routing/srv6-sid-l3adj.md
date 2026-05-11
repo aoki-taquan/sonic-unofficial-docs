@@ -26,7 +26,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の SRv6 サポートは別 HLD（[srv6_hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md)）で定義済みだが、**cross-connect 系 behavior**（`uA` / `End.X` / `uDX4` / `uDX6` / `End.DX4` / `End.DX6`）は出口の **L3 隣接 (L3Adj)** を必要とする[^1]。これらの behavior 用に **APPL_DB に `adj` パラメータ** が追加されているにもかかわらず、`SRv6Orch` がこれを処理していなかった。本 HLD は **`SRv6Orch` を L3Adj 対応に拡張** し、SID と nexthop ID を ASIC に programming できるようにする[^1]。
+SONiC の [SRv6](../reference/glossary.md#term-srv6) サポートは別 [HLD](../reference/glossary.md#term-hld)（[srv6_hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md)）で定義済みだが、**cross-connect 系 behavior**（`uA` / `End.X` / `uDX4` / `uDX6` / `End.DX4` / `End.DX6`）は出口の **L3 隣接 (L3Adj)** を必要とする[^1]。これらの behavior 用に **[APPL_DB](../reference/glossary.md#term-appl_db) に `adj` パラメータ** が追加されているにもかかわらず、`SRv6Orch` がこれを処理していなかった。本 HLD は **`SRv6Orch` を L3Adj 対応に拡張** し、SID と nexthop ID を ASIC に programming できるようにする[^1]。
 
 対象 behavior[^1]:
 
@@ -64,7 +64,7 @@ sequenceDiagram
 
 ## SAI 側はどうなるか
 
-`SAI_OBJECT_TYPE_MY_SID_ENTRY` には既に `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` 属性があり、cross-connect 系 endpoint behavior（`X`, `DX4`, `DX6`, `B6_ENCAPS`, `B6_ENCAPS_RED`, `B6_INSERT`, `B6_INSERT_RED`）で `validonly` として参照される[^1]。**SAI 側に新規 API は不要**[^1]。
+`SAI_OBJECT_TYPE_MY_SID_ENTRY` には既に `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` 属性があり、cross-connect 系 endpoint behavior（`X`, `DX4`, `DX6`, `B6_ENCAPS`, `B6_ENCAPS_RED`, `B6_INSERT`, `B6_INSERT_RED`）で `validonly` として参照される[^1]。**[SAI](../reference/glossary.md#term-sai) 側に新規 API は不要**[^1]。
 
 ```c
 SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID
@@ -77,7 +77,7 @@ SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID
 
 ## 設定
 
-本 HLD は **CONFIG_DB / CLI / YANG への変更を伴わない**。`SRV6_MY_SID_TABLE` の `adj` パラメータは既存スキーマ（srv6_hld 側で定義済み）であり、本 HLD はその処理を実装するだけ。実際の SID 投入は FRR + `dplane_fpm_sonic` 経由で APPL_DB に書かれる。
+本 HLD は **[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) への変更を伴わない**。`SRV6_MY_SID_TABLE` の `adj` パラメータは既存スキーマ（srv6_hld 側で定義済み）であり、本 HLD はその処理を実装するだけ。実際の SID 投入は [FRR](../reference/glossary.md#term-frr) + `dplane_fpm_sonic` 経由で APPL_DB に書かれる。
 
 ```bash
 # 直接 APPL_DB に書く例（通常は FRR 経由）
@@ -87,7 +87,7 @@ sonic-db-cli APPL_DB hset 'SRV6_MY_SID_TABLE:fc00:1::ffff:0:0:0/128' \
 
 ## 制限事項
 
-- L3Adj 対応は **uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6 のみ**[^1]。`End` / `End.T` / `End.DT4` / `End.DT6` 等は別経路（VRF 等）
+- L3Adj 対応は **uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6 のみ**[^1]。`End` / `End.T` / `End.DT4` / `End.DT6` 等は別経路（[VRF](../reference/glossary.md#term-vrf) 等）
 - nexthop が未解決のまま SID が長く pending list に残っても気付きづらい
 - Neighbor DELETE で SID を ASIC から削除する設計は traffic 断を伴う
 - ベンダ SAI 実装で `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` の `validonly` 制約が異なる可能性
@@ -111,7 +111,7 @@ sonic-db-cli ASIC_DB keys '*MY_SID*'                  # ASIC に降りている�
 
 ## 関連 Topics
 
-- [17-srv6-mpls](../topics/17-srv6-mpls/index.md): SRv6 / MPLS / Segment Routing 全般
+- [17-srv6-mpls](../topics/17-srv6-mpls/index.md): SRv6 / [MPLS](../reference/glossary.md#term-mpls) / Segment Routing 全般
 
 ## 引用元
 
@@ -123,3 +123,5 @@ sonic-db-cli ASIC_DB keys '*MY_SID*'                  # ASIC に降りている�
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bc7fc7c93f94 -->

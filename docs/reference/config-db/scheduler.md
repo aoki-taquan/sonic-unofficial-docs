@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する[^1]。`qosorch` が SAI scheduler を生成、`QUEUE.scheduler` から leafref で参照される。
+キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) scheduler を生成、`QUEUE.scheduler` から leafref で参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -73,9 +73,9 @@ SCHEDULER|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `QUEUE`、`PORT_QOS_MAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `QUEUE`、`PORT_QOS_MAP`
 - 関連 CLI: なし
-- 関連 YANG: `sonic-scheduler`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-scheduler`
 
 <!-- ref-triangle:start -->
 
@@ -117,3 +117,5 @@ sonic-db-cli CONFIG_DB keys 'SCHEDULER|*'
 show queue counters
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: bbcc78132807 -->

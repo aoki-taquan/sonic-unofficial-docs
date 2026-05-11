@@ -16,7 +16,7 @@ sources:
 
 # アーキテクチャ
 
-観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP / gNMI / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。
+観測経路は ASIC 側で値を作り、[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / 各 daemon が [Redis](../../reference/glossary.md#term-redis) に書き、上から [SNMP](../../reference/glossary.md#term-snmp) / [gNMI](../../reference/glossary.md#term-gnmi) / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。
 
 ## Counter 収集の全体像
 
@@ -37,11 +37,11 @@ flowchart TB
   SNMPS --> SNMP[snmpd]
 ```
 
-ASIC counter は syncd 側の flex counter group がまとめて polling し、COUNTERS_DB の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。CRM は別スレッドで ASIC resource を読み、STATE_DB の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が APPL_DB / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。
+ASIC counter は syncd 側の flex counter group がまとめて polling し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。[CRM](../../reference/glossary.md#term-crm) は別スレッドで ASIC resource を読み、[STATE_DB](../../reference/glossary.md#term-state_db) の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。
 
 ## FlexCounter Refactor の意味
 
-FlexCounter refactor 以前は orchagent が固定周期で counter を読み、main loop の遅延要因になりました。Refactor 後は syncd の flex counter infra に責務が移り、group 単位で対象 OID と interval を制御します。`COUNTERS_PORT_NAME_MAP` / `COUNTERS_QUEUE_NAME_MAP` のような map が、論理名（`Ethernet0` など）から SAI OID への変換を提供します。
+[FlexCounter](../../reference/glossary.md#term-flexcounter) refactor 以前は orchagent が固定周期で counter を読み、main loop の遅延要因になりました。Refactor 後は syncd の flex counter infra に責務が移り、group 単位で対象 OID と interval を制御します。`COUNTERS_PORT_NAME_MAP` / `COUNTERS_QUEUE_NAME_MAP` のような map が、論理名（`Ethernet0` など）から [SAI](../../reference/glossary.md#term-sai) OID への変換を提供します。
 
 Counter initialization optimization は、起動直後に全 port / queue / PG に対して flex counter を 1 件ずつ install すると遅いという問題に対し、bulk API で一括登録する変更です。読み手にとっては、起動直後の counter 出現タイミングが早まる点と、`counterpoll` 状態が `disable` のときは MAP は作られても polling されない点を覚えておけば十分です。
 
@@ -78,3 +78,5 @@ syslog は rsyslog が container と host を集約し、設定された `SYSLOG
 - [Generic SAI extension CRM](../../system/generic-sai-extension-critical-resource-monitoring-crm.md)
 - [CONFIG_DB CRM](../../reference/config-db/crm.md)
 - [FLEX_COUNTER_TABLE](../../reference/config-db/flex-counter-table.md)
+
+<!-- glossary-links-injected: 8ee080235646 -->

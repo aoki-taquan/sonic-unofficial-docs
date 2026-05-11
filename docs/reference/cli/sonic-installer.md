@@ -153,7 +153,7 @@ stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`WARM_RESTART_ENABLE_TABLE`](../config-db/warm-restart.md) / [`WARM_RESTART_TABLE`](../config-db/warm-restart.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`WARM_RESTART_ENABLE_TABLE`](../config-db/warm-restart.md) / [`WARM_RESTART_TABLE`](../config-db/warm-restart.md)
 
 <!-- ref-triangle:end -->
 
@@ -220,3 +220,5 @@ show boot
 show version
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`
 - top container: `sonic-mclag`
 
-SONIC MCLAG[^1]
+SONIC [MCLAG](../../reference/glossary.md#term-mclag)[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -96,7 +96,7 @@ module: sonic-mclag
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MCLAG_DOMAIN`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MCLAG_DOMAIN`
 - CONFIG_DB: `MCLAG_INTERFACE`
 - CONFIG_DB: `MCLAG_UNIQUE_IP`
 - CLI: `config mclag`
@@ -114,3 +114,4 @@ module: sonic-mclag
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 85453414afcc -->

@@ -37,7 +37,7 @@ related:
 
 ## 概要
 
-業務スイッチには、ログイン前後やログアウト時に **法的注意文・運用情報・MOTD** を表示する要件が頻繁にある。SONiC 既定の Debian バナー（`Debian GNU/Linux 11`）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は **CONFIG_DB → hostcfgd → banner-config systemd サービス → Linux ファイル** という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする[^1]。
+業務スイッチには、ログイン前後やログアウト時に **法的注意文・運用情報・MOTD** を表示する要件が頻繁にある。SONiC 既定の Debian バナー（`Debian GNU/Linux 11`）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は **[CONFIG_DB](../reference/glossary.md#term-config_db) → [hostcfgd](../reference/glossary.md#term-hostcfgd) → banner-config systemd サービス → Linux ファイル** という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする[^1]。
 
 | 種別 | タイミング | 反映先ファイル |
 |------|-----------|----------------|
@@ -182,7 +182,7 @@ container BANNER_MESSAGE {
 }
 ```
 
-YANG 既定値: `state=disabled`, `login=Debian GNU/Linux 11`, `motd=` SONiC ASCII art (HLD 中の長文), `logout=""`.
+[YANG](../reference/glossary.md#term-yang) 既定値: `state=disabled`, `login=Debian GNU/Linux 11`, `motd=` SONiC ASCII art ([HLD](../reference/glossary.md#term-hld) 中の長文), `logout=""`.
 
 ### 設定例
 
@@ -201,7 +201,7 @@ show banner
 ## 干渉する機能
 
 - **`/etc/issue` / `/etc/motd`**: 他の systemd サービスや Debian メンテナンスでこれらのファイルを再生成すると、`banner-config` の出力と競合する。基本的には `banner-config` が後勝ちで上書きする想定。
-- **`hostcfgd`**: 既存の他テーブル監視（NTP / SNMP / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。
+- **`hostcfgd`**: 既存の他テーブル監視（NTP / [SNMP](../reference/glossary.md#term-snmp) / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。
 - **SSH (`sshd`)**: `/etc/issue.net` の変更は次回接続から反映される。既存セッションには影響しない。
 
 ## トラブルシューティング
@@ -222,3 +222,5 @@ show banner
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9f97d965cf27 -->

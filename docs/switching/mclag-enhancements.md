@@ -29,19 +29,19 @@ related:
 
 # MCLAG Enhancements
 
-> 大きな HLD（42 KB）。本ページは architecturally distinctive な要素に絞る。詳細は `doc/mclag/MCLAG_Enhancements_HLD.md` を参照。
+> 大きな [HLD](../reference/glossary.md#term-hld)（42 KB）。本ページは architecturally distinctive な要素に絞る。詳細は `doc/mclag/MCLAG_Enhancements_HLD.md` を参照。
 
 ## なぜ拡張するのか
 
-MCLAG（Multi-Chassis LAG）は 2 台が **互いに peer** となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する[^1]:
+[MCLAG](../reference/glossary.md#term-mclag)（Multi-Chassis [LAG](../reference/glossary.md#term-lag)）は 2 台が **互いに peer** となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する[^1]:
 
-1. **dynamic configuration**（再起動なしで domain / mclag_interface を CONFIG_DB から触れる）
+1. **dynamic configuration**（再起動なしで domain / mclag_interface を [CONFIG_DB](../reference/glossary.md#term-config_db) から触れる）
 2. **keep-alive / session timeout の動的設定**
 3. **static MAC** の peer 間同期
 4. **ICCP 学習 MAC の aging disable**
 5. **MAC sync 最適化**
 6. **isolation group** で peer-link 経由の重複転送を抑止
-7. **unique IP** で MCLAG VLAN 上の L3 プロトコル（OSPF 等）対応
+7. **unique IP** で MCLAG [VLAN](../reference/glossary.md#term-vlan) 上の L3 プロトコル（OSPF 等）対応
 
 ## 全体構造
 
@@ -72,8 +72,8 @@ flowchart LR
 要点[^1]:
 
 - **`iccpd`** が ICCP メッセージで peer と同期
-- **`MclagSyncd`** が ICCP 由来の MAC / interface state を APPL_DB に橋渡し
-- 旧 MclagSyncd 内部 FDB はリファクタで撤廃され、APPL_DB の `APP_MCLAG_FDB_TABLE` に集約[^1]
+- **`MclagSyncd`** が ICCP 由来の MAC / interface state を [APPL_DB](../reference/glossary.md#term-appl_db) に橋渡し
+- 旧 MclagSyncd 内部 [FDB](../reference/glossary.md#term-fdb) はリファクタで撤廃され、APPL_DB の `APP_MCLAG_FDB_TABLE` に集約[^1]
 
 ## 各拡張ポイント
 
@@ -81,7 +81,7 @@ flowchart LR
 |------|------|
 | **Static MAC sync** | FdbOrch が CONFIG_DB 由来 static MAC を ICCP で peer に reflect[^1] |
 | **Unique IP** | MCLAG VLAN intf に **個別 IP** を持たせ、OSPF 等 L3 隣接を成立させる。`MCLAG_UNIQUE_IP\|Vlan100 unique_ip=enable`[^1] |
-| **Isolation Group** | peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。SAI は `SAI_OBJECT_TYPE_ISOLATION_GROUP`[^1] |
+| **Isolation Group** | peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。[SAI](../reference/glossary.md#term-sai) は `SAI_OBJECT_TYPE_ISOLATION_GROUP`[^1] |
 | **Aging disable** | remote 学習 MAC は local aging で消さない[^1] |
 | **MAC sync 最適化** | bulk / 差分転送で多 VLAN 構成の収束時間短縮[^1] |
 
@@ -122,12 +122,12 @@ show mclag intf-list
 - HLD は Rev 0.1 で日付欄空欄
 - ICCP は **2 台ピアまで**（3-way 以上は未対応）
 - isolation group は SAI 対応必須。未対応 ASIC では peer-link 経由のループ抑止は別手法
-- unique IP では active/active 両方が L3 で見える。OSPF cost / BGP を peer 間で揃える必要
+- unique IP では active/active 両方が L3 で見える。OSPF cost / [BGP](../reference/glossary.md#term-bgp) を peer 間で揃える必要
 - 大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり
 
 ## 干渉する機能
 
-iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ VXLAN・EVPN MH（別冗長機構）/ L3 PortChannel・sub-interface。
+iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ [VXLAN](../reference/glossary.md#term-vxlan)・[EVPN](../reference/glossary.md#term-evpn) MH（別冗長機構）/ L3 [PortChannel](../reference/glossary.md#term-portchannel)・sub-interface。
 
 ## トラブルシューティング
 
@@ -154,3 +154,5 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 26d6d1d39324 -->

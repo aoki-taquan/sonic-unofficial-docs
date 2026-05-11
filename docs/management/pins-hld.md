@@ -26,8 +26,8 @@ related:
 
 ## 読み手が知りたいこと
 
-- PINS とは何で、既存 SONiC に何を足すのか
-- なぜ SAI pipeline を **P4 で表現** するアプローチを取るのか
+- [PINS](../reference/glossary.md#term-pins) とは何で、既存 SONiC に何を足すのか
+- なぜ [SAI](../reference/glossary.md#term-sai) pipeline を **P4 で表現** するアプローチを取るのか
 - 既存 RouteOrch / NeighOrch との **同 ASIC table 共有** をどう成立させるのか
 - 応答経路（response path）と新規 `APPL_STATE_DB` の役割
 - Packet IO の **3 種類**（packet in / port 直送 / send_to_ingress）
@@ -62,10 +62,10 @@ flowchart LR
 
 | Component | 役割 |
 |-----------|------|
-| **P4RT Application** | 独立 container、複数 gRPC client を受ける。APPL_DB の P4RT table へ書込、結果を controller に通知。read も対応[^1] |
+| **P4RT Application** | 独立 container、複数 gRPC client を受ける。[APPL_DB](../reference/glossary.md#term-appl_db) の P4RT table へ書込、結果を controller に通知。read も対応[^1] |
 | **P4 Programs / P4Info** | SAI pipeline を P4 で記述、p4c コンパイル後の P4Info を controller が初回接続時に push |
 | **P4 APPL_DB Tables** | `P4RT:<TableType><TableName>` 命名。`TableType ∈ {FIXED, ACL}`、TableName は SAI object（router_interface / neighbor / next_hop / IPV4 / IPV6 等）|
-| **P4Orch** | APPL_DB → ASIC_DB の翻訳。他 orch の SAI object を **参照しつつ refcount を上げる** |
+| **P4Orch** | APPL_DB → [ASIC_DB](../reference/glossary.md#term-asic_db) の翻訳。他 orch の SAI object を **参照しつつ refcount を上げる** |
 | **APPL_STATE_DB** | 新 DB、app 向け state query。schema は APPL_DB と同形 |
 | **SAI Extensions (`saip4ext.h`)** | programmable HW で user 定義拡張を vendor SAI に橋渡し |
 
@@ -73,13 +73,13 @@ flowchart LR
 
 P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱う必要がある。現行 SWSS は **ownership tag と response path が無い** ため、緑色 path は既存テーブル使い回しでなく **並行 path** として実装される[^1]。将来 SWSS が同機能を持てば既存パスへ統合する方針。
 
-応答 path: SWSS ↔ syncd の同期通信を **app まで延伸** する[^1]。SDN controller は各プログラム要求の成否 ack で次動作を決めるため必須。`APPL_STATE_DB` への応答書出しは config フラグで on/off できる設計。
+応答 path: SWSS ↔ [syncd](../reference/glossary.md#term-syncd) の同期通信を **app まで延伸** する[^1]。SDN controller は各プログラム要求の成否 ack で次動作を決めるため必須。`APPL_STATE_DB` への応答書出しは config フラグで on/off できる設計。
 
 ## Packet IO
 
 | 方向 | 機構 |
 |------|------|
-| **Packet In** | controller が ACL を program して punt/copy。punt 先は `genetlink` type host interface（sFlow と同方式）。target egress port 等の追加属性は ASIC 非依存モデルで P4RT App container に渡す |
+| **Packet In** | controller が [ACL](../reference/glossary.md#term-acl) を program して punt/copy。punt 先は `genetlink` type host interface（sFlow と同方式）。target egress port 等の追加属性は ASIC 非依存モデルで P4RT App container に渡す |
 | **Packet Out (port 直送)** | 既存 port netdev を使い ingress pipeline をバイパス |
 | **Packet Out (ASIC 経由)** | 新 netdev `send_to_ingress` を導入し ingress pipeline を通して送出 |
 
@@ -92,21 +92,21 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 ## CLI / CONFIG_DB / YANG
 
 - CLI 変更なし
-- CONFIG_DB に PINS 機能 enable/disable フラグ（例: APPL_STATE_DB 応答書出しの on/off）
+- [CONFIG_DB](../reference/glossary.md#term-config_db) に PINS 機能 enable/disable フラグ（例: APPL_STATE_DB 応答書出しの on/off）
 - gRPC listen はデフォルト **tcp/9559** ハードコード（将来 ConfigDB モデル化予定）
 
 ## 制限事項
 
 - 初版 MVP は IP route / next hop / next hop group / ACL（drop / punt）のみ
 - gRPC port は hardcode (`9559`)
-- 関連 supplementary HLD（P4RT App / P4Orch / SAI P4 / Packet IO / APPL_STATE_DB / P4 拡張 / DB Schema）の多くが `in_progress`
+- 関連 supplementary [HLD](../reference/glossary.md#term-hld)（P4RT App / P4Orch / SAI P4 / Packet IO / APPL_STATE_DB / P4 拡張 / DB Schema）の多くが `in_progress`
 
 ## 干渉する機能
 
 - **RouteOrch / NeighOrch / AclOrch**: P4Orch が同 ASIC table を共有し SAI object 参照
 - **sFlow**: packet-in の genetlink hostif 機構を共有
-- **gNMI / sonic-telemetry**: 将来 ConfigDB モデル化の参考
-- **DASH / SmartSwitch**: SDN モデルとして思想的近接
+- **[gNMI](../reference/glossary.md#term-gnmi) / sonic-telemetry**: 将来 ConfigDB モデル化の参考
+- **[DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch)**: SDN モデルとして思想的近接
 
 ## 引用元
 
@@ -125,3 +125,5 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b59b552ea208 -->

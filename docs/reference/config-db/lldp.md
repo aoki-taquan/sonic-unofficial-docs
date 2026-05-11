@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`LLDP` テーブルはシステム全体の LLDP 設定 (`GLOBAL` キー) を、`LLDP_PORT` テーブルはポート単位の LLDP 有効化 / モードを保持する[^1]。`lldp-syncd` および `docker-lldp` 内の `lldpd` が CONFIG_DB を読み出して動作する。
+`LLDP` テーブルはシステム全体の [LLDP](../../reference/glossary.md#term-lldp) 設定 (`GLOBAL` キー) を、`LLDP_PORT` テーブルはポート単位の LLDP 有効化 / モードを保持する[^1]。`lldp-syncd` および `docker-lldp` 内の `lldpd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み出して動作する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -46,7 +46,7 @@ LLDP|GLOBAL
 LLDP_PORT|<ifname>
 ```
 
-`LLDP` テーブルは `GLOBAL` 単一エントリ（YANG では `container GLOBAL` 直下のスカラー leaf 群）。`LLDP_PORT` は `PORT` への leafref をキーに持つリスト。
+`LLDP` テーブルは `GLOBAL` 単一エントリ（[YANG](../../reference/glossary.md#term-yang) では `container GLOBAL` 直下のスカラー leaf 群）。`LLDP_PORT` は `PORT` への leafref をキーに持つリスト。
 
 | キー | 型 | 説明 |
 |------|----|------|
@@ -78,11 +78,11 @@ grouping `lldp_mode_config` を `uses`:
 ## 制約
 
 - `hello_time` 5..254 秒、`multiplier` 1..10（hold time = hello × multiplier）
-- `LLDP_PORT.ifname` は `PORT` への leafref（VLAN / PortChannel 等は対象外）
+- `LLDP_PORT.ifname` は `PORT` への leafref（[VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) 等は対象外）
 
 ## 購読者
 
-- `lldp-syncd` (`docker-lldp`) — `lldpd` 設定生成、STATE_DB への neighbor 反映
+- `lldp-syncd` (`docker-lldp`) — `lldpd` 設定生成、[STATE_DB](../../reference/glossary.md#term-state_db) への neighbor 反映
 - `lldpd` (open-lldp フォーク)
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -127,3 +127,5 @@ sonic-db-cli CONFIG_DB hgetall 'LLDP|GLOBAL'
 show lldp table
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4f72b3e79b97 -->

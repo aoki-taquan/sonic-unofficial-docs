@@ -31,7 +31,7 @@ SONiC ビルドは大別すると 2 段階で構成される[^1]:
 1. Debian / Python パッケージ コンパイル — 比較的速い
 2. **Docker イメージビルド** — 遅い（特に複数ユーザ並列時）
 
-本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は主に第 2 段階に焦点を当て、4 つの最適化を提案する[^1]:
 
 1. Dockerfile の **`COPY` / `RUN` をマージしてレイヤ数を削減**
 2. Docker 18.09 + **BuildKit** の有効化
@@ -44,7 +44,7 @@ SONiC ビルドは大別すると 2 段階で構成される[^1]:
 
 各 `COPY` / `RUN` 行は新しい Docker レイヤを生成する。`--no-cache --squash` で最終出力を 1 レイヤに潰しているため、**ビルド中の細かいレイヤ分割は無意味なコスト**[^1]。
 
-**Before**: 各 deb パッケージごとに 1 行ずつ `COPY` / `RUN`（SNMP docker で 52 ステップ）
+**Before**: 各 deb パッケージごとに 1 行ずつ `COPY` / `RUN`（[SNMP](../reference/glossary.md#term-snmp) docker で 52 ステップ）
 
 ```Dockerfile
 COPY debs/libnl-3-200_3.2.27-2_amd64.deb /debs/
@@ -228,3 +228,4 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
 
+<!-- glossary-links-injected: 1d579f83f1e2 -->

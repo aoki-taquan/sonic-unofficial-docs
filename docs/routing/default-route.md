@@ -39,7 +39,7 @@ DualToR 構成では 2 台の ToR が `active` / `standby` または `active-act
 - 有効なデフォルトルートあり: `state:ok`
 - 有効なデフォルトルートなし: `state:na`
 
-`linkmgrd` はこの STATE_DB エントリを購読し、変化を mux 状態機械にフィードする。HLD 時点では実装は **IPv4 のみを実効的に使用** するが、通知ハンドラ自体は IPv4 / IPv6 の両エントリに対応した形で定義することが要件として明記されている[^1]。
+`linkmgrd` はこの [STATE_DB](../reference/glossary.md#term-state_db) エントリを購読し、変化を mux 状態機械にフィードする。[HLD](../reference/glossary.md#term-hld) 時点では実装は **IPv4 のみを実効的に使用** するが、通知ハンドラ自体は IPv4 / IPv6 の両エントリに対応した形で定義することが要件として明記されている[^1]。
 
 ```mermaid
 flowchart LR
@@ -167,7 +167,7 @@ sequenceDiagram
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述はない。状態の購読対象は `STATE_DB` 側であり、CONFIG_DB を介した有効化スイッチは定義されていない（オン/オフは下記のコマンドラインオプション経由）。
+HLD には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述はない。状態の購読対象は `STATE_DB` 側であり、CONFIG_DB を介した有効化スイッチは定義されていない（オン/オフは下記のコマンドラインオプション経由）。
 
 ### 関連する CLI
 
@@ -175,7 +175,7 @@ HLD には `show` / `config` 系の SONiC CLI への追加は記載されてい�
 
 | オプション | 用途 |
 |------------|------|
-| `--default_route` (`-d`) | linkmgrd でデフォルトルート連動を有効化する |
+| `--default_route` (`-d`) | [linkmgrd](../reference/glossary.md#term-linkmgrd) でデフォルトルート連動を有効化する |
 
 ### 関連する YANG
 
@@ -208,7 +208,7 @@ linkmgrd --default_route
 ## 裏取りメモ (batch 30, 2026-05-11)
 
 - `sonic-linkmgrd/src/MuxManager.cpp:104` の `void MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)` と続く `mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)` (line 121) で、デフォルトルート連動機能が **起動引数によるオプトイン** として実装されていることを確認。`MuxManager.h:298,302` のヘッダコメントにも「shutdowns link prober & avoid switching active when default route is missing」と機能の主旨が明記。
-- `sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb = unique_ptr<swss::Table>(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))` として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。
+- `sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb = unique_ptr<swss::Table>(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))` として STATE_DB 上の ROUTE state テーブルを open しており、[orchagent](../reference/glossary.md#term-orchagent) がデフォルトルート状態を STATE_DB に書く経路が実装済み。
 
 HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。`code-verified` に昇格。
 
@@ -218,3 +218,5 @@ HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書�
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e95f91b51175 -->

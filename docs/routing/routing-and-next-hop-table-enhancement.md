@@ -28,7 +28,7 @@ related:
 
 ## なぜ必要か
 
-従来の SONiC は `APP_DB.ROUTE_TABLE` 各エントリにネクストホップ情報 (`nexthop` / `ifname`) を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き orchagent でパースするため、メモリと処理時間が二重に重い[^1]。
+従来の SONiC は `APP_DB.ROUTE_TABLE` 各エントリにネクストホップ情報 (`nexthop` / `ifname`) を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き [orchagent](../reference/glossary.md#term-orchagent) でパースするため、メモリと処理時間が二重に重い[^1]。
 
 本機能は **APP_DB 側でネクストホップ群を独立テーブルに切り出し**、ルートはそのキー参照だけを持つ形に変える。
 
@@ -53,7 +53,7 @@ ROUTE_TABLE
   nexthop_group  = NEXT_HOP_GROUP_TABLE:key   ; 新規。指定時は nexthop/ifname の代替
 ```
 
-キーはアプリ任意の文字列で HLD は命名規則を規定しない。
+キーはアプリ任意の文字列で [HLD](../reference/glossary.md#term-hld) は命名規則を規定しない。
 
 !!! note "競合ルール"
     `nexthop_group` と従来の `nexthop`/`ifname` を **両方** 持つエントリは無視される[^1]。
@@ -72,15 +72,15 @@ flowchart TD
   MAP --> RT[RouteOrch が参照解決]
 ```
 
-ルート側 `RouteOrch` は `nexthop_group` フィールドを見て `NhgOrch` に SAI OID を問い合わせる。群未到着なら pending リストへ。ハード上限で群作成不能なら **1 メンバ暫定使用** に縮退し、ルートは「暫定形式」通知を受けて pending を維持する[^1]。
+ルート側 `RouteOrch` は `nexthop_group` フィールドを見て `NhgOrch` に [SAI](../reference/glossary.md#term-sai) OID を問い合わせる。群未到着なら pending リストへ。ハード上限で群作成不能なら **1 メンバ暫定使用** に縮退し、ルートは「暫定形式」通知を受けて pending を維持する[^1]。
 
 ### 参照カウント
 
-群は参照ルートが残っている間は削除されない。`NhgOrch` が参照カウントを保持する。`orchagent` 再起動時は ROUTE_TABLE 更新で回復する[^1]。
+群は参照ルートが残っている間は削除されない。`NhgOrch` が参照カウントを保持する。`orchagent` 再起動時は [ROUTE_TABLE](../reference/glossary.md#term-route_table) 更新で回復する[^1]。
 
 ### 既存 RouteOrch 群との非干渉
 
-`RouteOrch` 暗黙管理の既存群（メンバ集合キー）と新 `NhgOrch` 群（任意キー）は **同一メンバでも別物として ASIC_DB に書かれる**。HLD は「全ルートを旧か新のいずれかに統一」想定[^1]。Fine grained ECMP 群は影響を受けない。
+`RouteOrch` 暗黙管理の既存群（メンバ集合キー）と新 `NhgOrch` 群（任意キー）は **同一メンバでも別物として [ASIC_DB](../reference/glossary.md#term-asic_db) に書かれる**。HLD は「全ルートを旧か新のいずれかに統一」想定[^1]。Fine grained [ECMP](../reference/glossary.md#term-ecmp) 群は影響を受けない。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -112,7 +112,7 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 
 ## 設定
 
-APP_DB スキーマ拡張のため **CONFIG_DB / CLI 変更なし**。書き込むのは外部ルーティングアプリ（カスタム fpmsyncd 等）。`show ip route` / `show ipv6 route` は **出力フォーマット不変** が要件で、CLI 側が `nexthop_group` を解決する[^1]。
+APP_DB スキーマ拡張のため **[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI 変更なし**。書き込むのは外部ルーティングアプリ（カスタム [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 等）。`show ip route` / `show ipv6 route` は **出力フォーマット不変** が要件で、CLI 側が `nexthop_group` を解決する[^1]。
 
 ### 設定例
 
@@ -136,7 +136,7 @@ ROUTE_TABLE:10.100.0.0/24
 
 - **Fine grained ECMP**: 既存 fine grained 群は挙動不変[^1]
 - **Warm boot**: ルート-群対応の維持責務は **アプリ側**。群キーを再起動跨ぎで安定化するか APP_DB から復元すること[^1]
-- **Fast reboot / BGP graceful restart**: 影響なし
+- **Fast reboot / [BGP](../reference/glossary.md#term-bgp) graceful restart**: 影響なし
 
 ## トラブルシューティング
 
@@ -160,3 +160,5 @@ ROUTE_TABLE:10.100.0.0/24
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fa4061b260ea -->

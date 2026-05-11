@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-FRR `zebra` は dplane_fpm_nl プラグインで Linux kernel の **NextHop Group (NHG) netlink** メッセージ（`RTM_NEWNEXTHOP` / `RTM_DELNEXTHOP`）を FPM へ流せる。本拡張はそれを `fpmsyncd` で受け、`APPL_DB.NEXTHOP_GROUP_TABLE` に NHG エンティティとして書き、`ROUTE_TABLE` 側は **`nexthop_group` フィールドで NHG を参照** する形に変える[^1]。
+[FRR](../reference/glossary.md#term-frr) `zebra` は dplane_fpm_nl プラグインで Linux kernel の **NextHop Group (NHG) netlink** メッセージ（`RTM_NEWNEXTHOP` / `RTM_DELNEXTHOP`）を [FPM](../reference/glossary.md#term-fpm) へ流せる。本拡張はそれを `fpmsyncd` で受け、`APPL_DB.NEXTHOP_GROUP_TABLE` に NHG エンティティとして書き、`ROUTE_TABLE` 側は **`nexthop_group` フィールドで NHG を参照** する形に変える[^1]。
 
-狙いは BGP PIC（Prefix-Independent Convergence）と recursive route 対応。多数 prefix が同一 NH 集合を共有する SP/DC のスケール条件下で、route 1 件あたりの payload を縮小し、`orchagent`・SAI への流量を減らす。
+狙いは [BGP](../reference/glossary.md#term-bgp) PIC（Prefix-Independent Convergence）と recursive route 対応。多数 prefix が同一 NH 集合を共有する SP/DC のスケール条件下で、route 1 件あたりの payload を縮小し、`orchagent`・[SAI](../reference/glossary.md#term-sai) への流量を減らす。
 
 本機能は **デフォルト無効**。`DEVICE_METADATA.localhost.fpm_use_nexthop_groups = "enabled"` で起動時に切り替える設計[^1]。
 
@@ -75,19 +75,19 @@ ROUTE_TABLE:10.1.1.4/32
 
 ### NhgOrch の拡張
 
-既存 NhgOrch は CONFIG_DB / APPL_DB の手動 NHG 用だったが、本拡張で `APPL_DB.NEXTHOP_GROUP_TABLE` の動的更新（FRR 由来）を受け、member の add/del を SAI NHG member の差分更新で実施する[^1]。
+既存 NhgOrch は [CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の手動 NHG 用だったが、本拡張で `APPL_DB.NEXTHOP_GROUP_TABLE` の動的更新（FRR 由来）を受け、member の add/del を SAI NHG member の差分更新で実施する[^1]。
 
 ### 有効化条件
 
 - `DEVICE_METADATA.localhost.fpm_use_nexthop_groups = enabled` を CONFIG_DB に書く
-- bgpd / zebra 起動時に `fpm use-nexthop-groups` を vty に流す（FRR 設定テンプレート側で生成）
+- bgpd / [zebra](../reference/glossary.md#term-zebra) 起動時に `fpm use-nexthop-groups` を vty に流す（FRR 設定テンプレート側で生成）
 - `dplane_fpm_nl` プラグインが必須（202305 以降は default）
 
 ランタイム切替は **未対応**。再起動が必要[^1]。
 
 ### Warm boot / Fast boot
 
-HLD では「現状の warm reboot ロジックで NHG エントリの restore は明示対応していない、open issue」と書かれている[^1]。`NEXTHOP_GROUP_TABLE` の永続化と再注入が要 follow-up。
+[HLD](../reference/glossary.md#term-hld) では「現状の warm reboot ロジックで NHG エントリの restore は明示対応していない、open issue」と書かれている[^1]。`NEXTHOP_GROUP_TABLE` の永続化と再注入が要 follow-up。
 
 ### libnl 依存
 
@@ -134,7 +134,7 @@ DEVICE_METADATA|localhost:
 
 ### CLI
 
-HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集または config_db.json 経由）。
+HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集または [config_db.json](../reference/glossary.md#term-config_db.json) 経由）。
 
 ## 制限事項
 
@@ -145,7 +145,7 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 
 ## 干渉する機能
 
-- **Fine-Grained ECMP / Ordered NHG**: 同じ ROUTE_TABLE / NHG パスを使う。同時利用時の優先関係は HLD で確定していない
+- **Fine-Grained [ECMP](../reference/glossary.md#term-ecmp) / Ordered NHG**: 同じ [ROUTE_TABLE](../reference/glossary.md#term-route_table) / NHG パスを使う。同時利用時の優先関係は HLD で確定していない
 - **routeorch / NhgOrch**: `nexthop_group` 参照型 ROUTE_TABLE エントリの解決ロジックを共有
 - **BGP PIC / Recursive routes**: 本拡張が前提条件
 
@@ -231,14 +231,16 @@ vtysh -c 'show running-config zebra' | grep -i "fpm use-next-hop-groups\|nexthop
 sonic-db-cli APPL_DB keys 'NEXTHOP_GROUP_TABLE:*' | head
 ```
 
-`fpm use-next-hop-groups` が `running-config` に出ていれば成功。`NEXTHOP_GROUP_TABLE:*` キーが見えれば fpmsyncd 経路も生きている。
+`fpm use-next-hop-groups` が `running-config` に出ていれば成功。`NEXTHOP_GROUP_TABLE:*` キーが見えれば [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経路も生きている。
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-buildimage #16762: \[fpmsyncd\] Fpmsyncd Next Hop Table Enhancement (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16762) — `zebra.conf.j2` への NHG 切替フラグ導入。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16762: \[fpmsyncd\] Fpmsyncd Next Hop Table Enhancement (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16762) — `zebra.conf.j2` への NHG 切替フラグ導入。
 - [sonic-buildimage #23500: \[frr\] update next hop group support by metadata value with disabled as the default value (merged, 202511)](https://github.com/sonic-net/sonic-buildimage/pull/23500) — default を `disabled` に固定する change。デフォルトでは NHG が **無効** な点に注意。
 - [sonic-buildimage #16941: \[action\]\[PR:16747\] fix default zebra config not inserted into empty zebra.conf (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16941) — 関連の zebra.conf 生成バグ修正。
 
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: 60508bd384e0 -->

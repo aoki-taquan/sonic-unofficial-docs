@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-管理 VRF（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル[^1]。`hostcfgd` が監視し、有効化されると Linux カーネル側に `mgmt` という名前の VRF を作成し、management port (`eth0`) を所属させる。
+管理 [VRF](../../reference/glossary.md#term-vrf)（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル[^1]。`hostcfgd` が監視し、有効化されると Linux カーネル側に `mgmt` という名前の VRF を作成し、management port (`eth0`) を所属させる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -64,8 +64,8 @@ container 構造のため key は固定文字列 `vrf_global`。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`NTP`](./ntp-global.md)、`MGMT_INTERFACE`、`MGMT_PORT`、`SNMP_AGENT_ADDRESS_CONFIG`
-- 関連 YANG: `sonic-mgmt_vrf`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NTP`](./ntp-global.md)、`MGMT_INTERFACE`、`MGMT_PORT`、`SNMP_AGENT_ADDRESS_CONFIG`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mgmt_vrf`
 - 関連 CLI: `config vrf add mgmt` / `config vrf del mgmt`（CLI ヘルパが本フィールドを書き換える）
 
 <!-- ref-triangle:start -->
@@ -91,7 +91,7 @@ container 構造のため key は固定文字列 `vrf_global`。
 
 ### よくある誤設定
 
-- mgmt VRF を有効化したのに NTP/SNMP/SYSLOG 側で vrf 指定を忘れて疎通しない。
+- mgmt VRF を有効化したのに NTP/[SNMP](../../reference/glossary.md#term-snmp)/SYSLOG 側で vrf 指定を忘れて疎通しない。
 
 ### 確認コマンド
 
@@ -100,3 +100,5 @@ sonic-db-cli CONFIG_DB hgetall 'MGMT_VRF_CONFIG|vrf_global'
 show mgmt-vrf
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 60a02696c221 -->

@@ -28,12 +28,12 @@ related:
 
 - なぜ counter 初期化に分単位の時間がかかっていたのか
 - 何を「1 個ずつ」から「まとめて」に変えたのか
-- sub orchagent 側で何を意識する必要があるか
+- sub [orchagent](../reference/glossary.md#term-orchagent) 側で何を意識する必要があるか
 - 旧来の `batch_mode` 引数は実装でどうなっているのか
 
 ## なぜ初期化が遅いか（旧フローの問題）
 
-SONiC の counter は **counter group**（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で flex counter が管理する。各 group は初期化時、object ごとに **`sai_bulk_object_get_stats`** を 1 件で呼び「この SAI object で bulk polling できるか」を確認していた[^1]。
+SONiC の counter は **counter group**（port / port-drop / PG-drop / queue / watermark / [RIF](../reference/glossary.md#term-rif) 等）単位で flex counter が管理する。各 group は初期化時、object ごとに **`sai_bulk_object_get_stats`** を 1 件で呼び「この [SAI](../reference/glossary.md#term-sai) object で bulk polling できるか」を確認していた[^1]。
 
 port 数が多い系（例: 257 ports）では port あたり 3 PG + 8 queue + 1 port = 12 object、これに counter group 数が掛かるため呼び出し回数が爆発する。確認完了までは orchagent が port up 通知を捌けず **ブロックする**。ベンチマークでは初期化時間の **98% がベンダ SAI 内** で消費されていた[^1]。
 
@@ -104,7 +104,7 @@ sequenceDiagram
 
 ## 制限事項
 
-- **runtime polling の最適化はスコープ外**。本 HLD は初期化のみ[^1]
+- **runtime polling の最適化はスコープ外**。本 [HLD](../reference/glossary.md#term-hld) は初期化のみ[^1]
 - 集合呼び出し失敗時は object 数だけ個別 fallback が発生 → unsupported 混入で効果減
 - queue 系 uc / mc 分割でテストも分割対応
 - Warm boot / Fast boot への影響は無し[^1]
@@ -137,3 +137,5 @@ sequenceDiagram
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 14c16f9ace85 -->

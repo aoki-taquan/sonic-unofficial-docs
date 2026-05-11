@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-`show interfaces` は物理ポート・PortChannel・SubInterface の **状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ** を一覧表示する。`show/interfaces/__init__.py` がメインで、`show/main.py` 末尾の `cli.add_command(interfaces.interfaces)` で登録される[^1]。
+`show interfaces` は物理ポート・[PortChannel](../../reference/glossary.md#term-portchannel)・SubInterface の **状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ** を一覧表示する。`show/interfaces/__init__.py` がメインで、`show/main.py` 末尾の `cli.add_command(interfaces.interfaces)` で登録される[^1]。
 
-ほとんどのコマンドが内部で **`intfutil`** または **`portstat`** を `subprocess` で起動して整形済みテーブルを生成する。CONFIG_DB / STATE_DB / COUNTERS_DB から直接読むのは breakout 表示などごく一部。
+ほとんどのコマンドが内部で **`intfutil`** または **`portstat`** を `subprocess` で起動して整形済みテーブルを生成する。[CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から直接読むのは breakout 表示などごく一部。
 
 ## コマンド一覧
 
@@ -43,7 +43,7 @@ related:
 | `show interfaces tpid [<intf>]` | `intfutil -c tpid` |
 | `show interfaces breakout` | `BREAKOUT_CFG` + platform.json から JSON 出力 |
 | `show interfaces breakout current-mode [<intf>]` | 現在の breakout モード |
-| `show interfaces neighbor` | LLDP 情報を含む隣接表示 |
+| `show interfaces neighbor` | [LLDP](../../reference/glossary.md#term-lldp) 情報を含む隣接表示 |
 | `show interfaces neighbor expected` | DEVICE_NEIGHBOR テーブルを表示 |
 | `show interfaces transceiver eeprom` 等 | xcvrd の transceiver データ表示（後述） |
 | `show interfaces counters` | `portstat` でカウンタ表示 (groups: errors / fec-stats / fec-histogram / detailed / rates / rif / trim) |
@@ -55,7 +55,7 @@ related:
 | `show interfaces fast-linkup status [<intf>]` | fast link-up 状態 |
 | `show interfaces phy-signal <intf>` | PHY 信号品質 |
 | `show interfaces phy-serdes <intf>` | PHY SerDes 情報 |
-| `show interfaces portchannel` | LAG とメンバ状態（`teamshow`） |
+| `show interfaces portchannel` | [LAG](../../reference/glossary.md#term-lag) とメンバ状態（`teamshow`） |
 
 ## 主要コマンドの詳細
 
@@ -67,7 +67,7 @@ related:
 ### `show interfaces status [<interfacename>]`
 
 **動作**:
-`intfutil -c status -i <intf> [-d <display>] [-n <namespace>]` を起動。表示列: Interface / Lanes / Speed / MTU / FEC / Alias / Vlan / Oper / Admin / Type / Asym PFC。
+`intfutil -c status -i <intf> [-d <display>] [-n <namespace>]` を起動。表示列: Interface / Lanes / Speed / MTU / FEC / Alias / Vlan / Oper / Admin / Type / Asym [PFC](../../reference/glossary.md#term-pfc)。
 
 ### `show interfaces description [<interfacename>]`
 
@@ -114,7 +114,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 ```
 
 **動作**:
-`portstat -c <category> ...` を起動して整形 stdout を表示。`--period N` で前回の `portstat -d <ns>` cache との差分を出して **N 秒間のレート**を表示する。`fec-histogram` は SAI Bin 値を可視化する詳細サブコマンド。
+`portstat -c <category> ...` を起動して整形 stdout を表示。`--period N` で前回の `portstat -d <ns>` cache との差分を出して **N 秒間のレート**を表示する。`fec-histogram` は [SAI](../../reference/glossary.md#term-sai) Bin 値を可視化する詳細サブコマンド。
 
 ### `show interfaces autoneg status` / `link-training status` / `fec status`
 
@@ -122,7 +122,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 ### `show interfaces switchport config` / `switchport status`
 
-`config` は `PORT` の `mode` (`access` / `trunk` / `routed`) と untagged-VLAN を、`status` はランタイム状態 (oper VLAN メンバシップ) を表示。
+`config` は `PORT` の `mode` (`access` / `trunk` / `routed`) と untagged-[VLAN](../../reference/glossary.md#term-vlan) を、`status` はランタイム状態 (oper VLAN メンバシップ) を表示。
 
 ### `show interfaces dhcp-mitigation-rate [<intf>]`
 
@@ -138,7 +138,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 ### `show interfaces portchannel`
 
-`show/interfaces/portchannel.py` 配下の `teamshow` ラッパで、`PORTCHANNEL_MEMBER` 各ポートの teamd ランタイム状態（runner, link, slave 状態）を表示する。
+`show/interfaces/portchannel.py` 配下の `teamshow` ラッパで、`PORTCHANNEL_MEMBER` 各ポートの [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) ランタイム状態（runner, link, slave 状態）を表示する。
 
 ## オプション・共通仕様
 
@@ -240,3 +240,5 @@ show interfaces counters -i Ethernet0
 show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ae1451afbe05 -->

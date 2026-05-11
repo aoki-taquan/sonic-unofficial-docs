@@ -25,7 +25,7 @@ related:
 
 ## なぜ必要なのか
 
-ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT 等）は **ハードウェアサイズで上限がある**。上限到達で**運用中に突然パケットドロップやプログラム失敗**が起きるため、CRM は使用量をポーリングして **しきい値超えで WARN / CRITICAL を syslog に出す** ことで障害前検知を狙う[^1]。
+ASIC 側の各種リソース（route 表、neighbor、[ACL](../reference/glossary.md#term-acl) counter、[FDB](../reference/glossary.md#term-fdb)、[NAT](../reference/glossary.md#term-nat) 等）は **ハードウェアサイズで上限がある**。上限到達で**運用中に突然パケットドロップやプログラム失敗**が起きるため、[CRM](../reference/glossary.md#term-crm) は使用量をポーリングして **しきい値超えで WARN / CRITICAL を syslog に出す** ことで障害前検知を狙う[^1]。
 
 ねらい:
 
@@ -35,14 +35,14 @@ ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT �
 
 ## 監視対象の resource
 
-主要種別（HLD ベース、後発追加あり）[^1]:
+主要種別（[HLD](../reference/glossary.md#term-hld) ベース、後発追加あり）[^1]:
 
 - L3: `IPV4_ROUTE` / `IPV6_ROUTE` / `IPV4_NEIGHBOR` / `IPV6_NEIGHBOR` / `IPV4_NEXTHOP` / `IPV6_NEXTHOP`
 - L3 group: `NEXTHOP_GROUP` / `NEXTHOP_GROUP_MEMBER`
 - L2: `FDB_ENTRY`
 - ACL: `ACL_TABLE` / `ACL_GROUP` / `ACL_ENTRY` / `ACL_COUNTER`
 - NAT / multicast: `DNAT_ENTRY` / `SNAT_ENTRY` / `IPMC_ENTRY`
-- Tunnel / SRv6 等は後発で追加
+- Tunnel / [SRv6](../reference/glossary.md#term-srv6) 等は後発で追加
 
 ## どう動くのか
 
@@ -79,7 +79,7 @@ flowchart LR
 
 ## 制限事項
 
-- **SAI 側 availability API が必要**。vendor 未対応 resource は値が出ない
+- **[SAI](../reference/glossary.md#term-sai) 側 availability API が必要**。vendor 未対応 resource は値が出ない
 - WARN/CRIT は syslog のみで **自動 recovery アクションは無い**
 - 多 resource を高頻度ポーリングすると **ASIC SDK 負荷増**
 - `ACL_COUNTER` / `FDB_ENTRY` は SDK query が高コストになることがあり、長めの polling 推奨
@@ -97,7 +97,7 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 ## 関連 Topics
 
 - [07-acl-copp-mirror](../topics/07-acl-copp-mirror/index.md): ACL リソース消費
-- [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): orchagent と SAI の関係
+- [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): [orchagent](../reference/glossary.md#term-orchagent) と SAI の関係
 
 ## 引用元
 
@@ -109,3 +109,5 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4bc7eca3bfbd -->

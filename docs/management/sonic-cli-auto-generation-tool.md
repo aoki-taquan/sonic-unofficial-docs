@@ -28,14 +28,14 @@ related:
 ## 読み手が知りたいこと
 
 - どんなとき CLI 自動生成が嬉しいのか（手書きと比べて何が省ける？）
-- YANG の **container / list / leaf-list / grouping** がそれぞれどう CLI に化けるか
+- [YANG](../reference/glossary.md#term-yang) の **container / list / leaf-list / grouping** がそれぞれどう CLI に化けるか
 - 生成された CLI が実行時にやっていること（特に YANG validation）
 - `sonic-package-manager` の `manifest.json` でどう ON/OFF するか
 - 開発手元で `sonic-cli-gen` を叩いて確認する手順
 
 ## なぜ自動生成が要るか
 
-SONiC Application Extension (SAE) として 3rd party 機能を **追加 docker** で持ち込む際に、CLI を都度書く工数を減らすため、**YANG モデルから `show` / `config` click plugin を自動生成** するユーティリティ[^1]。生成 CLI は `sonic-utilities` の plugin 機構経由でロードされ、CONFIG_DB スキーマと整合した形になる。手書きより **YANG 型・enum・range・mandatory 違反が早期検知** される利点もある。
+SONiC Application Extension (SAE) として 3rd party 機能を **追加 docker** で持ち込む際に、CLI を都度書く工数を減らすため、**YANG モデルから `show` / `config` click plugin を自動生成** するユーティリティ[^1]。生成 CLI は `sonic-utilities` の plugin 機構経由でロードされ、[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマと整合した形になる。手書きより **YANG 型・enum・range・mandatory 違反が早期検知** される利点もある。
 
 ```mermaid
 flowchart LR
@@ -126,7 +126,7 @@ sonic-cli-gen generate config sonic-acl
 sonic-cli-gen remove   config sonic-acl
 ```
 
-`/usr/local/yang-models/` に置いた YANG が対象。HLD には動作確認済 YANG リスト（`sonic-acl`, `sonic-vlan`, `sonic-port` 等）あり[^1]。
+`/usr/local/yang-models/` に置いた YANG が対象。[HLD](../reference/glossary.md#term-hld) には動作確認済 YANG リスト（`sonic-acl`, `sonic-vlan`, `sonic-port` 等）あり[^1]。
 
 ## 制限事項
 
@@ -151,3 +151,5 @@ sonic-cli-gen remove   config sonic-acl
 - [HLD: SONiC YANG model guidelines](sonic-yang-model-guidelines.md)
 - [HLD: SONiC Management Framework](sonic-management-framework.md)
 - [HLD: SONiC Application Extension Guide](sonic-application-extension-guide.md)
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

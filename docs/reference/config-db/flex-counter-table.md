@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル[^1]。`syncd` の `FlexCounter` モジュールがこのテーブルを購読し、SAI bulk counter API の周期呼び出しスケジュールを切り替える。fast-reboot 時の `FLEX_COUNTER_DELAY_STATUS = true` で system-ready まで停止可能。
+[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル[^1]。`syncd` の `FlexCounter` モジュールがこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) bulk counter API の周期呼び出しスケジュールを切り替える。fast-reboot 時の `FLEX_COUNTER_DELAY_STATUS = true` で system-ready まで停止可能。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -44,7 +44,7 @@ flowchart LR
 FLEX_COUNTER_TABLE|<group>
 ```
 
-`<group>` は固定の counter グループ名。23 グループ前後が YANG で定義される（下表）。
+`<group>` は固定の counter グループ名。23 グループ前後が [YANG](../../reference/glossary.md#term-yang) で定義される（下表）。
 
 ## 共通フィールド
 
@@ -66,26 +66,26 @@ FLEX_COUNTER_TABLE|<group>
 |----------|------|
 | `BUFFER_POOL_WATERMARK` | バッファプール watermark |
 | `DEBUG_COUNTER` | drop reason 等のデバッグカウンタ |
-| `ENI` | DASH ENI カウンタ |
+| `ENI` | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) カウンタ |
 | `DASH_METER` / `HA_SET` | DASH 関連 |
-| `PFCWD` | PFC watchdog |
+| `PFCWD` | [PFC](../../reference/glossary.md#term-pfc) watchdog |
 | `PG_DROP` / `PG_WATERMARK` | priority group ドロップ / watermark |
 | `PORT` / `PORT_RATES` / `PORT_BUFFER_DROP` / `PORT_PHY_ATTR` | ポート系 |
 | `QUEUE` / `QUEUE_WATERMARK` | キュー系 |
 | `RIF` / `RIF_RATES` | router-interface 系 |
-| `ACL` | ACL ヒットカウンタ |
+| `ACL` | [ACL](../../reference/glossary.md#term-acl) ヒットカウンタ |
 | `FLOW_CNT_TRAP` | host-IF trap flow |
 | `FLOW_CNT_ROUTE` | route flow（`FLOW_COUNTER_ROUTE_PATTERN` と連携） |
 | `TUNNEL` | tunnel 系 |
-| `WRED_ECN_QUEUE` / `WRED_ECN_PORT` | WRED/ECN マーキング |
-| `SRV6` | SRv6 |
+| `WRED_ECN_QUEUE` / `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/ECN マーキング |
+| `SRV6` | [SRv6](../../reference/glossary.md#term-srv6) |
 | `SWITCH` | スイッチレベルグローバル |
 
 ## 関連サブテーブル
 
-- `FLOW_COUNTER_ROUTE_PATTERN` (key: `ip_prefix`): default VRF のルートフロー対象パターン
+- `FLOW_COUNTER_ROUTE_PATTERN` (key: `ip_prefix`): default [VRF](../../reference/glossary.md#term-vrf) のルートフロー対象パターン
     - `max_match_count` (uint32, 1..50): バインドする最大ルート数
-- `FLOW_COUNTER_ROUTE_PATTERN` の VRF 版 list (key: `vrf_name`, `ip_prefix`): VRF / VNET 名スコープ
+- `FLOW_COUNTER_ROUTE_PATTERN` の VRF 版 list (key: `vrf_name`, `ip_prefix`): VRF / [VNET](../../reference/glossary.md#term-vnet) 名スコープ
 
 ## 購読者
 
@@ -95,7 +95,7 @@ FLEX_COUNTER_TABLE|<group>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `FLOW_COUNTER_ROUTE_PATTERN`、`COUNTERS_DB`（実カウンタ値の読み出し先）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLOW_COUNTER_ROUTE_PATTERN`、`COUNTERS_DB`（実カウンタ値の読み出し先）
 - 関連 CLI: `counterpoll <group> enable/disable`、`counterpoll <group> interval <ms>`
 - 関連 YANG: `sonic-flex_counter`
 
@@ -124,7 +124,7 @@ FLEX_COUNTER_TABLE|<group>
 
 ### 典型値
 
-- key 形式: `FLEX_COUNTER_TABLE|<group>` (PORT / QUEUE / PG_WATERMARK / RIF 等)`。
+- key 形式: `FLEX_COUNTER_TABLE|<group>` (PORT / QUEUE / PG_WATERMARK / [RIF](../../reference/glossary.md#term-rif) 等)`。
 - `FLEX_COUNTER_STATUS`: `enable`、`POLL_INTERVAL`: 1000〜10000ms。
 
 ### よくある誤設定
@@ -138,3 +138,5 @@ sonic-db-cli CONFIG_DB keys 'FLEX_COUNTER_TABLE|*'
 counterpoll show
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2925fe8ca9ca -->

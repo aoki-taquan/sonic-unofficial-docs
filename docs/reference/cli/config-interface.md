@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`config interface` は物理ポート（`PORT`）・PortChannel・SubInterface・Loopback の **state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID** などをまとめて制御するサブグループ。IP アドレスや VRF 紐付け、IPv6 機能の有無、VRRP 設定、PFC / Storm-Control / Buffer / Transceiver もここから入る[^1]。
+`config interface` は物理ポート（`PORT`）・[PortChannel](../../reference/glossary.md#term-portchannel)・SubInterface・Loopback の **state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID** などをまとめて制御するサブグループ。IP アドレスや [VRF](../../reference/glossary.md#term-vrf) 紐付け、IPv6 機能の有無、VRRP 設定、[PFC](../../reference/glossary.md#term-pfc) / Storm-Control / Buffer / Transceiver もここから入る[^1]。
 
 `@config.group(...)` 直下で `--namespace`/`-n` を **multi-ASIC のときだけ required**として受け取り、`ConfigDBConnector(namespace=...)` を `ctx.obj['config_db']` に格納する仕組み。配下の各コマンドはこの connector を使って `PORT` 等を mod する。
 
@@ -78,7 +78,7 @@ def interface(ctx, namespace):
 | `config interface ip` | IP アドレスの追加・削除（`add` / `remove`） |
 | `config interface ipv6` | IPv6 機能 (`enable use-link-local-only` 等) |
 | `config interface vrf` | VRF バインド (`bind` / `unbind`) |
-| `config interface mpls` | MPLS 有効化 (`add` / `remove`) |
+| `config interface mpls` | [MPLS](../../reference/glossary.md#term-mpls) 有効化 (`add` / `remove`) |
 | `config interface buffer` | priority-group / queue のプロファイル割当 |
 | `config interface transceiver` | SFP / トランシーバ制御 (`lpmode` 等) |
 | `config interface vrrp` / `vrrp6` | VRRPv4 / VRRPv6 設定 |
@@ -146,7 +146,7 @@ excerpt: |
 ### `config interface speed <interface_name> <speed>`
 
 **動作**:
-コマンド本体は CONFIG_DB を直接書かず、外部ツール `portconfig -p <intf> -s <speed>` を `subprocess` 起動する。`portconfig` 内部で `PORT` テーブルの `speed` フィールドが更新される。multi-ASIC 時は `-n <namespace>` が `portconfig` にも転送される。`-v|--verbose` で `-vv` を付与。
+コマンド本体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書かず、外部ツール `portconfig -p <intf> -s <speed>` を `subprocess` 起動する。`portconfig` 内部で `PORT` テーブルの `speed` フィールドが更新される。multi-ASIC 時は `-n <namespace>` が `portconfig` にも転送される。`-v|--verbose` で `-vv` を付与。
 
 ### `config interface link-training` / `autoneg` / `advertised-speeds` / `type` / `advertised-types` / `mtu` / `tpid` / `fec`
 
@@ -202,7 +202,7 @@ excerpt: |
 
 ### `config interface mpls add <interface>` / `remove <interface>`
 
-該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`intfmgrd` (sonic-swss/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。
+該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`intfmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。
 
 ### `config interface buffer priority-group lossless add/remove/set` 等
 
@@ -226,7 +226,7 @@ excerpt: |
 
 ### `config interface dhcp-mitigation-rate add/del <interface> <rate>`
 
-`PORT` テーブルの `dhcp_rate_limit` フィールドに kpps を書き込む。dhcprelayd が ingress rate-limiter として SAI に反映する。
+`PORT` テーブルの `dhcp_rate_limit` フィールドに kpps を書き込む。dhcprelayd が ingress rate-limiter として [SAI](../../reference/glossary.md#term-sai) に反映する。
 
 ### `config interface enable / disable / sample-rate / sample-direction`
 
@@ -281,8 +281,8 @@ if clicommon.get_interface_naming_mode() == "alias":
 
 ### よくある落とし穴
 
-- `config interface speed` は対応 speed を超えると syncd でエラー。`show interfaces capabilities` で事前確認。
-- `config interface shutdown` は admin_status を down にするだけで、サブインタフェース・LAG メンバには独立に適用が必要。
+- `config interface speed` は対応 speed を超えると [syncd](../../reference/glossary.md#term-syncd) でエラー。`show interfaces capabilities` で事前確認。
+- `config interface shutdown` は admin_status を down にするだけで、サブインタフェース・[LAG](../../reference/glossary.md#term-lag) メンバには独立に適用が必要。
 
 ### 関連する show / debug
 
@@ -366,3 +366,5 @@ flowchart LR
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bb400b8b9471 -->

@@ -34,7 +34,7 @@ related:
 
 ## なぜ PacketIO に拡張が要るか
 
-通常 netdev では **すべての punt パケット** が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要[^1]:
+通常 netdev では **すべての punt パケット** が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（[PINS](../reference/glossary.md#term-pins) / SDN コントローラ）は次が必要[^1]:
 
 - Receive: controller が install した punt flow にマッチする **専用チャネル**、**input port + target egress port** のメタデータ付き
 - Transmit: 任意 port への directed transmit、および **`send_to_ingress`**（ASIC pipeline 再注入で egress 選択を ASIC に任せる送信モード）
@@ -43,7 +43,7 @@ related:
 
 通常 netdev とは別に **`SAI_HOSTIF_TYPE_GENETLINK`** 型 hostif を作り、user-defined trap を `HOSTIF_TABLE_ENTRY` で bind する[^1]。
 
-| SAI 属性 | 用途 |
+| [SAI](../reference/glossary.md#term-sai) 属性 | 用途 |
 |----------|------|
 | `SAI_HOSTIF_TYPE_GENETLINK` | generic netlink hostif |
 | `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | listen する multicast group 名 |
@@ -67,7 +67,7 @@ sequenceDiagram
     end
 ```
 
-CoppOrch は **CPU queue ごとの新 trap group** を処理し、ACL entry 単位で trap を作る[^1]。
+CoppOrch は **CPU queue ごとの新 trap group** を処理し、[ACL](../reference/glossary.md#term-acl) entry 単位で trap を作る[^1]。
 
 ## ベンダ kernel driver の責務（3 つ）
 
@@ -101,7 +101,7 @@ graph LR
     PIPE --> EGR[egress port 自動選択]
 ```
 
-設定は CONFIG_DB の `SEND_TO_INGRESS_PORT`:
+設定は [CONFIG_DB](../reference/glossary.md#term-config_db) の `SEND_TO_INGRESS_PORT`:
 
 ```json
 {"SEND_TO_INGRESS_PORT": {"send_to_ingress": {}}}
@@ -111,7 +111,7 @@ graph LR
 
 ### ベンダ Transmit 拡張
 
-通常 SAI hostif (netdev) は **physical port / VLAN / LAG にのみ作成可能**。CPU port 用に作れるようベンダ SAI の拡張が必要[^1]。CPU port ingress を ASIC が forward するベンダ固有設定もセットで要る。
+通常 SAI hostif (netdev) は **physical port / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) にのみ作成可能**。CPU port 用に作れるようベンダ SAI の拡張が必要[^1]。CPU port ingress を ASIC が forward するベンダ固有設定もセットで要る。
 
 ## 設定
 
@@ -131,7 +131,7 @@ graph LR
 
 ### CLI
 
-本 HLD は CLI 拡張を伴わない[^1]。P4Runtime / PINS コントローラ経由で操作する。
+本 [HLD](../reference/glossary.md#term-hld) は CLI 拡張を伴わない[^1]。P4Runtime / PINS コントローラ経由で操作する。
 
 ### 設定例
 
@@ -154,7 +154,7 @@ graph LR
 - **PortsOrch**: `SEND_TO_INGRESS_PORT` 処理 + CPU port netdev 作成
 - **既存 sFlow / `psample`**: genetlink 仕様を共有
 - **ベンダ ASIC SDK / kernel driver**: receive 経路と CPU port ingress を実装
-- **既存 CoPP (`copp_cfg.j2`)**: trap group / queue マッピングの拡張
+- **既存 [CoPP](../reference/glossary.md#term-copp) (`copp_cfg.j2`)**: trap group / queue マッピングの拡張
 
 ## トラブルシューティング
 
@@ -186,3 +186,5 @@ graph LR
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 334f0ec53f10 -->

@@ -27,7 +27,7 @@ related:
 
 - `show lldp table` で隣接が表示されたり消えたりを 30 秒〜数分単位で繰り返す
 - `/var/log/syslog` に `lldpd: removing neighbor` が連続出力
-- ZTP / minigraph の自動構成や topology 検証が断続的に失敗する
+- [ZTP](../../reference/glossary.md#term-ztp) / minigraph の自動構成や topology 検証が断続的に失敗する
 
 ## 切り分けフロー
 
@@ -67,7 +67,7 @@ sudo journalctl -u lldp --since "1 hour ago" | tail
 ## よくある原因
 
 1. **物理リンクの瞬断** — FEC error / SFP 接触不良。`link-flapping.md` 参照
-2. **対向の LLDP tx-interval が長く、hold-time を超過** — 既定 30 秒、hold-multiplier 4 が標準
+2. **対向の [LLDP](../../reference/glossary.md#term-lldp) tx-interval が長く、hold-time を超過** — 既定 30 秒、hold-multiplier 4 が標準
 3. **lldp container の OOM / 再起動** — `container-memory-limit-exceeded.md` 参照
 4. **中継機の LLDP BPDU フィルタ** — DAC 直結ではなく Hub / Tap 経由で frame が間引かれる
 5. **port admin down/up の運用スクリプト** — 監視スクリプトが LLDP-MED の都合で port toggle している
@@ -78,3 +78,5 @@ sudo journalctl -u lldp --since "1 hour ago" | tail
 - [fec-errors.md](fec-errors.md)
 - [container-memory-limit-exceeded.md](container-memory-limit-exceeded.md)
 - [../cli/show-lldp.md](../cli/show-lldp.md)
+
+<!-- glossary-links-injected: 512d9ffb4e12 -->

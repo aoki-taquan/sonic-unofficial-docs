@@ -31,10 +31,10 @@ related:
 
 ## なぜ必要か
 
-SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案[^1]:
+[SmartSwitch](../reference/glossary.md#term-smartswitch)（[NPU](../reference/glossary.md#term-npu) + 複数 [DPU](../reference/glossary.md#term-dpu)）で NPU↔DPU の転送モデルは 2 案[^1]:
 
 1. **VIP ベース**: コントローラが DPU ごとに VIP を払い出す。実装単純だが DPU ごとに VIP を消費しコスト高。
-2. **ENI ベース転送（本 HLD）**: ホストは **スイッチ単位の VIP のみ** を使い、NPU 上で ENI 単位の ACL ルールで local / remote DPU にリダイレクト。
+2. **[ENI](../reference/glossary.md#term-eni) ベース転送（本 [HLD](../reference/glossary.md#term-hld)）**: ホストは **スイッチ単位の VIP のみ** を使い、NPU 上で ENI 単位の [ACL](../reference/glossary.md#term-acl) ルールで local / remote DPU にリダイレクト。
 
 ENI ベースは VIP 消費を 1 cluster 単位まで削減でき、ENI を SmartSwitch を跨いで配置できる柔軟性も得られる。
 
@@ -64,7 +64,7 @@ flowchart LR
 
 | Phase | 内容 |
 |-------|------|
-| Phase 1（本 HLD） | `HaMgrd` が `DASH_ENI_FORWARD_TABLE` を書き、orchagent が **primary endpoint のみ** ACL 化。Tunnel Termination ルールも生成。BFD 未使用 |
+| Phase 1（本 HLD） | `HaMgrd` が `DASH_ENI_FORWARD_TABLE` を書き、[orchagent](../reference/glossary.md#term-orchagent) が **primary endpoint のみ** ACL 化。Tunnel Termination ルールも生成。[BFD](../reference/glossary.md#term-bfd) 未使用 |
 | Phase 2 | local / remote DPU に BFD を張り、状態で primary / secondary を切替 |
 
 ### コンポーネント構成
@@ -141,7 +141,7 @@ HA failover の過渡期に「旧 active が standby に降格、旧 standby は
 例: "2.2.2.1@tunnel_name,100"
 ```
 
-`AclOrch` が `VxLanTunnOrch` から tunnel NH OID を解決して SAI に下ろせる。
+`AclOrch` が `VxLanTunnOrch` から tunnel NH OID を解決して [SAI](../reference/glossary.md#term-sai) に下ろせる。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md#L182-L211 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -185,11 +185,11 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 
 ### CLI / YANG
 
-専用 CLI・YANG は HLD では言及なし。
+専用 CLI・[YANG](../reference/glossary.md#term-yang) は HLD では言及なし。
 
 ## 制限事項
 
-- 対象は **FNIC のみ**。それ以外の DASH シナリオはスコープ外。
+- 対象は **FNIC のみ**。それ以外の [DASH](../reference/glossary.md#term-dash) シナリオはスコープ外。
 - `VIP_TABLE` は一時テーブル扱い。最終形未確定[^1]。
 - Phase 1 は BFD 連動なし。card レベル故障の検知遅延あり。
 - Warm boot / Fast boot に追加処理なし[^1]。
@@ -225,3 +225,5 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fed06be3cf8 -->

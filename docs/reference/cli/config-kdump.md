@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`config kdump` は Linux kdump (panic 時のクラッシュダンプ機構) を CONFIG_DB の `KDUMP` テーブル経由で制御する CLI で、`config/kdump.py` の `@click.group(name='kdump')` がエントリポイントとなる[^1]。書き込み先キーは常に `KDUMP|config` の **単一エントリ** で、フィールドは `enabled` / `memory` / `num_dumps` / `remote` / `ssh_string` / `ssh_path` の 6 つ。
+`config kdump` は Linux kdump (panic 時のクラッシュダンプ機構) を [CONFIG_DB](../../reference/glossary.md#term-config_db) の `KDUMP` テーブル経由で制御する CLI で、`config/kdump.py` の `@click.group(name='kdump')` がエントリポイントとなる[^1]。書き込み先キーは常に `KDUMP|config` の **単一エントリ** で、フィールドは `enabled` / `memory` / `num_dumps` / `remote` / `ssh_string` / `ssh_path` の 6 つ。
 
 `hostcfgd` がこのテーブルを subscribe して `/etc/default/kdump-tools` を再生成し、`crashkernel=` カーネル引数や ssh 転送設定を反映する。**反映には reboot が必要** で、CLI は変更時に必ずその旨を警告する[^2]。
 
@@ -120,3 +120,5 @@ flowchart LR
 ## 関連ページ
 - [HLD: kdump](../../system/kdump.md)
 - [CONFIG_DB: KDUMP](../config-db/kdump.md)
+
+<!-- glossary-links-injected: 896d391185a9 -->

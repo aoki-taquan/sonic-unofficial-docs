@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-copp`
 
-CoPP YANG Module for SONiC OS[^1]
+[CoPP](../../reference/glossary.md#term-copp) [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -113,7 +113,7 @@ module: sonic-copp
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `COPP_GROUP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_GROUP`
 - CONFIG_DB: `COPP_TRAP`
 
 <!-- ref-triangle:start -->
@@ -129,11 +129,11 @@ module: sonic-copp
 
 ### 典型的なデプロイ位置
 
-- Control Plane Policing。`COPP_GROUP` / `COPP_TRAP` を copporch が SAI hostif trap policer に反映。
+- Control Plane Policing。`COPP_GROUP` / `COPP_TRAP` を copporch が [SAI](../../reference/glossary.md#term-sai) hostif trap policer に反映。
 
 ### よくある落とし穴
 
-- `trap_ids` leaf-list の値は SAI trap 名と一致が必要。typo すると orchagent が trap 全体を skip する。
+- `trap_ids` leaf-list の値は SAI trap 名と一致が必要。typo すると [orchagent](../../reference/glossary.md#term-orchagent) が trap 全体を skip する。
 
 ### 関連する config / show コマンド
 
@@ -154,3 +154,5 @@ show copp config
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 83cdf6db76b7 -->

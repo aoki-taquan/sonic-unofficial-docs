@@ -33,9 +33,9 @@ related:
 
 ## 何のための機能か
 
-NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は SONiC に **NVGRE の decap 受信側** を追加し、外部から来た NVGRE フレームを内側の VLAN または Bridge にマップして転送できるようにする。**Phase 1 は decap のみ、encap mapper はスコープ外**[^1]。
+NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は SONiC に **NVGRE の decap 受信側** を追加し、外部から来た NVGRE フレームを内側の [VLAN](../reference/glossary.md#term-vlan) または Bridge にマップして転送できるようにする。**Phase 1 は decap のみ、encap mapper はスコープ外**[^1]。
 
-カウンタは非対応。SAI 1.9 以上が必須[^1]。
+カウンタは非対応。[SAI](../reference/glossary.md#term-sai) 1.9 以上が必須[^1]。
 
 ## どう動くか
 
@@ -49,7 +49,7 @@ flowchart LR
     ORCH -->|create_tunnel<br/>create_tunnel_map| SAI[SAI]
 ```
 
-新規 orch `nvgreorch` を `orchdaemon` に登録し、CONFIG_DB を購読する。トンネル作成時に **VLAN マッパーと Bridge マッパーの両方を既定で生成** するので、`vlan_id` を渡しても、後から bridge マップを足しても動く[^1]。
+新規 orch `nvgreorch` を `orchdaemon` に登録し、[CONFIG_DB](../reference/glossary.md#term-config_db) を購読する。トンネル作成時に **VLAN マッパーと Bridge マッパーの両方を既定で生成** するので、`vlan_id` を渡しても、後から bridge マップを足しても動く[^1]。
 
 ### CONFIG_DB スキーマ
 
@@ -147,7 +147,7 @@ sequenceDiagram
 | `config nvgre-tunnel-map delete <tunnel> <map_name>` | マップ削除 |
 | `show nvgre-tunnel` / `show nvgre-tunnel-map` | 一覧 |
 
-CLI は YANG から auto-generation tool で生成[^1]。
+CLI は [YANG](../reference/glossary.md#term-yang) から auto-generation tool で生成[^1]。
 
 ### YANG
 
@@ -216,3 +216,5 @@ show nvgre-tunnel-map
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 900cdc977a64 -->

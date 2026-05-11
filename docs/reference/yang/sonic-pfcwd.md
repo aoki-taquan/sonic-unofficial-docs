@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`
 - top container: `sonic-pfcwd`
 
-SONIC PFC Watchdog parameters[^1]
+SONIC [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) parameters[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -61,7 +61,7 @@ module: sonic-pfcwd
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `ifname` | `sonic-pfcwd/PFC_WD/PFC_WD_LIST/ifname` | `union` | yes |  | union(leafref, string) | Port name or GLOBAL for system-wide PFC Watchdog defaults. |
+| `ifname` | `sonic-pfcwd/PFC_WD/PFC_WD_LIST/ifname` | `union` | yes |  | union(leafref, string) | Port name or GLOBAL for system-wide [PFC](../../reference/glossary.md#term-pfc) Watchdog defaults. |
 | `action` | `sonic-pfcwd/PFC_WD/PFC_WD_LIST/action` | `enumeration` |  |  | drop, forward, alert | PFC watchdog action when entering storm state. |
 | `detection_time` | `sonic-pfcwd/PFC_WD/PFC_WD_LIST/detection_time` | `uint32` |  |  | range 100..5000 | Detection interval for pause storm in msec. |
 | `restoration_time` | `sonic-pfcwd/PFC_WD/PFC_WD_LIST/restoration_time` | `uint32` |  |  | range 100..60000 | Time delay before resuming normal PFC operation in msec. |
@@ -78,7 +78,7 @@ module: sonic-pfcwd
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PFC_WD`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PFC_WD`
 - CLI: `pfcwd`
 
 <!-- ref-triangle:start -->
@@ -101,3 +101,5 @@ module: sonic-pfcwd
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: eaff2dd90188 -->

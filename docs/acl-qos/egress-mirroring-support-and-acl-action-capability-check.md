@@ -41,12 +41,12 @@ related:
 
 ## なぜ必要か
 
-ACL は **ASIC ごとに ingress / egress stage で使えるアクションが異なる**。当初 SONiC は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた[^1]。
+[ACL](../reference/glossary.md#term-acl) は **ASIC ごとに ingress / egress stage で使えるアクションが異なる**。当初 SONiC は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた[^1]。
 
-本 HLD は 2 点を入れる[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は 2 点を入れる[^1]:
 
 1. **ACL_RULE に mirror を ingress/egress 別に書ける拡張**（`MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION`、後方互換のため `MIRROR_ACTION` も残す）
-2. **orchagent 起動時に SAI から ACL action capability を問い合わせ**、`STATE_DB.SWITCH_CAPABILITY` に公開。producer が投入前に validate
+2. **[orchagent](../reference/glossary.md#term-orchagent) 起動時に [SAI](../reference/glossary.md#term-sai) から ACL action capability を問い合わせ**、`STATE_DB.SWITCH_CAPABILITY` に公開。producer が投入前に validate
 
 ## 1. egress mirror サポート
 
@@ -145,14 +145,14 @@ sequenceDiagram
 vslib は `SAI_SWITCH_ATTR_ACL_STAGE_{INGRESS,EGRESS}` をサポートし、**「全 action を supported として返す」** 案を採用（device 別 emulation は保守性が悪い）[^1]。VS テスト追加:
 
 - ingress / egress テーブル × ingress / egress mirror ルールの全組合せ作成検査
-- `setReadOnlyAttribute` で `SAI_SWITCH_ATTR_ACL_STAGE_*` を上書き → orchagent 再起動 → 未対応 action ルールが ASIC_DB に出ないこと
+- `setReadOnlyAttribute` で `SAI_SWITCH_ATTR_ACL_STAGE_*` を上書き → orchagent 再起動 → 未対応 action ルールが [ASIC_DB](../reference/glossary.md#term-asic_db) に出ないこと
 
 ## 設定
 
 | 種別 | 名前 | 説明 |
 |------|------|------|
-| CONFIG_DB | `ACL_RULE` | `MIRROR_{INGRESS,EGRESS}_ACTION` / `REDIRECT_ACTION` を新キーとして受理 |
-| STATE_DB | `SWITCH_CAPABILITY\|switch` | `ACL_ACTIONS\|<stage>` / `ACL_ACTION\|<action>` を起動時に書込 |
+| [CONFIG_DB](../reference/glossary.md#term-config_db) | `ACL_RULE` | `MIRROR_{INGRESS,EGRESS}_ACTION` / `REDIRECT_ACTION` を新キーとして受理 |
+| [STATE_DB](../reference/glossary.md#term-state_db) | `SWITCH_CAPABILITY\|switch` | `ACL_ACTIONS\|<stage>` / `ACL_ACTION\|<action>` を起動時に書込 |
 | CLI | `acl-loader update incremental --mirror_stage=<stage>` | stage を明示 |
 
 ## 制限事項
@@ -166,7 +166,7 @@ vslib は `SAI_SWITCH_ATTR_ACL_STAGE_{INGRESS,EGRESS}` をサポートし、**�
 
 - AclOrch / AclRuleMirror、acl-loader
 - mirror session 種別（ingress / egress）と ACL stage の整合
-- `SWITCH_CAPABILITY` のキー namespace（CRM / port capability 等と衝突しないキー命名）
+- `SWITCH_CAPABILITY` のキー namespace（[CRM](../reference/glossary.md#term-crm) / port capability 等と衝突しないキー命名）
 
 ## トラブルシューティング
 
@@ -188,7 +188,7 @@ master（2026-05 時点）での裏取り結果:
 
 ## 関連 Topics
 
-- [07-acl-copp-mirror/concept](../topics/07-acl-copp-mirror/concept.md): ACL / CoPP / Mirror の境界
+- [07-acl-copp-mirror/concept](../topics/07-acl-copp-mirror/concept.md): ACL / [CoPP](../reference/glossary.md#term-copp) / Mirror の境界
 - [07-acl-copp-mirror/internals](../topics/07-acl-copp-mirror/internals.md): AclOrch と SAI capability
 
 ## 引用元
@@ -201,3 +201,5 @@ master（2026-05 時点）での裏取り結果:
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f6b1500402fc -->

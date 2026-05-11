@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-ポートの egress queue ごとにバッファプロファイルを割り当てる[^1]。non-VOQ 用と VOQ シャーシ用で list が分かれる。`buffermgrd` が APPL_DB に転送、`orchagent` `BufferOrch` が SAI egress queue buffer profile を反映する。
+ポートの egress queue ごとにバッファプロファイルを割り当てる[^1]。non-[VOQ](../../reference/glossary.md#term-voq) 用と VOQ シャーシ用で list が分かれる。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) egress queue buffer profile を反映する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -87,9 +87,9 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_PROFILE`、`BUFFER_POOL`、`PORT`、`DEVICE_METADATA`、`QUEUE`、`SCHEDULER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`、`BUFFER_POOL`、`PORT`、`DEVICE_METADATA`、`QUEUE`、`SCHEDULER`
 - 関連 CLI: なし
-- 関連 YANG: `sonic-buffer-queue`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-queue`
 
 <!-- ref-triangle:start -->
 
@@ -129,3 +129,5 @@ sonic-db-cli CONFIG_DB keys 'BUFFER_QUEUE|Ethernet0|*'
 show buffer queue
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6ee095ec571 -->

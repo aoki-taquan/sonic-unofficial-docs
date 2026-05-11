@@ -26,14 +26,14 @@ related:
 
 ## 読者が知りたいこと
 
-- SONiC で **SRv6 L3VPN を BGP-VPN AF と組み合わせて動かす** ための data 構造はどこにあるか
-- **APPL_DB の新規/拡張テーブル**（`SRV6_POLICY_TABLE` / `ROUTE_TABLE.vpn_sid` / `SRV6_MY_SID_TABLE`）は何のために存在するか
-- **SAI / SWSS / SONiC / FRR** のどこをいじっているのか
-- **既知の workaround**（zebra が MY_SID を netlink で渡さない問題）と、どんな構成で本機能が動くのか
+- SONiC で **[SRv6](../reference/glossary.md#term-srv6) L3VPN を [BGP](../reference/glossary.md#term-bgp)-VPN AF と組み合わせて動かす** ための data 構造はどこにあるか
+- **[APPL_DB](../reference/glossary.md#term-appl_db) の新規/拡張テーブル**（`SRV6_POLICY_TABLE` / `ROUTE_TABLE.vpn_sid` / `SRV6_MY_SID_TABLE`）は何のために存在するか
+- **[SAI](../reference/glossary.md#term-sai) / SWSS / SONiC / [FRR](../reference/glossary.md#term-frr)** のどこをいじっているのか
+- **既知の workaround**（[zebra](../reference/glossary.md#term-zebra) が MY_SID を netlink で渡さない問題）と、どんな構成で本機能が動くのか
 
 ## 1. 全体像と適用シナリオ
 
-Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 HLD。FRR 8.4+ を前提に、**SRv6 を network programming framework** として VPN 識別と policy ベース steering を実装する[^1]。
+Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 [HLD](../reference/glossary.md#term-hld)。FRR 8.4+ を前提に、**SRv6 を network programming framework** として VPN 識別と policy ベース steering を実装する[^1]。
 
 ```mermaid
 flowchart LR
@@ -50,13 +50,13 @@ flowchart LR
 
 変更領域:
 
-- **FRR**: VRF route leak / BGP advertise delay / conditional advertisement / SRv6 Policy
+- **FRR**: [VRF](../reference/glossary.md#term-vrf) route leak / BGP advertise delay / conditional advertisement / SRv6 Policy
 - **SAI**: SRv6 VPN 用 SAI（Cisco 提案の SAI 拡張）
 - **SWSS / SONiC**: 新規 `SRV6_POLICY_TABLE`、`ROUTE_TABLE.vpn_sid` / `policy` フィールド、`SRv6Orch` / `RouteOrch` 拡張
 
 ## 2. APPL_DB スキーマ
 
-新規・拡張のみを列挙。CONFIG_DB / SONiC CLI / YANG は本 HLD では追加されない（FRR / コントローラから APPL_DB に直接書く）。
+新規・拡張のみを列挙。[CONFIG_DB](../reference/glossary.md#term-config_db) / SONiC CLI / [YANG](../reference/glossary.md#term-yang) は本 HLD では追加されない（FRR / コントローラから APPL_DB に直接書く）。
 
 ### SRV6_POLICY_TABLE（新規）
 
@@ -100,7 +100,7 @@ SRv6 VPN ルート追加時、`SRv6Orch` は `vpn_sid` 付き BGP NH 用の SRv6
 
 ### Anycast MY_SID と nexthop id
 
-Alibaba 運用では **anycast routes を MY_SID として使う** ことで BGP NH 収束時のアウトを抑える。FRR zebra は `SRV6_MY_SID` をカーネルに直接書くため、netlink 経由で fpmsyncd に流れない既知問題があり、本 HLD で workaround を導入している[^1]。`End.X` action の nexthop id 処理も `srv6orch` に追加。
+Alibaba 運用では **anycast routes を MY_SID として使う** ことで BGP NH 収束時のアウトを抑える。FRR zebra は `SRV6_MY_SID` をカーネルに直接書くため、netlink 経由で [fpmsyncd](../reference/glossary.md#term-fpmsyncd) に流れない既知問題があり、本 HLD で workaround を導入している[^1]。`End.X` action の nexthop id 処理も `srv6orch` に追加。
 
 ### Segment list 最適化
 
@@ -133,7 +133,7 @@ router bgp 65001
 
 ## 6. 干渉する機能
 
-- **SRv6 Static Configuration HLD**: CONFIG_DB の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を bgpcfgd 経由で投入する別経路。本ページの BGP 学習経路と組み合わせて使う
+- **SRv6 Static Configuration HLD**: CONFIG_DB の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を [bgpcfgd](../reference/glossary.md#term-bgpcfgd) 経由で投入する別経路。本ページの BGP 学習経路と組み合わせて使う
 - **VRF / VRF leaking**: FRR の VRF route leak が前提
 - **BGP PIC**: FRR 側 PIC が無いときの workaround として anycast MY_SID を使う、と HLD で記述あり[^1]
 
@@ -158,3 +158,5 @@ router bgp 65001
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 053f95bd27bf -->

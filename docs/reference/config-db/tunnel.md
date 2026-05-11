@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る IPinIP トンネルを定義するテーブル[^1]。`tunnelmgrd` が CONFIG_DB の本テーブルを購読し、APPL_DB `TUNNEL_DECAP_TABLE` を生成。`tunneldecaporch` (orchagent) が SAI tunnel オブジェクトを作成する。
+SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る [IPinIP](../../reference/glossary.md#term-ipinip) トンネルを定義するテーブル[^1]。`tunnelmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の本テーブルを購読し、[APPL_DB](../../reference/glossary.md#term-appl_db) `TUNNEL_DECAP_TABLE` を生成。`tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)) が [SAI](../../reference/glossary.md#term-sai) tunnel オブジェクトを作成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -54,7 +54,7 @@ flowchart LR
 TUNNEL|<mux_tunnel>
 ```
 
-- `<mux_tunnel>`: `MuxTunnel<n>` の文字列パターン（YANG `pattern "MuxTunnel[0-9]+"`）
+- `<mux_tunnel>`: `MuxTunnel<n>` の文字列パターン（[YANG](../../reference/glossary.md#term-yang) `pattern "MuxTunnel[0-9]+"`）
 
 ## フィールド
 
@@ -120,3 +120,5 @@ sonic-db-cli CONFIG_DB keys 'TUNNEL|*'
 show tunnel
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 1f724ed8975d -->

@@ -32,7 +32,7 @@ related:
 ## 読み手が知りたいこと
 
 - BMC とは何で、SONiC からどう操作するか
-- どこに設定を入れ（`bmc.json`）、どこに反映される（CONFIG_DB / `/etc/network/interfaces`）か
+- どこに設定を入れ（`bmc.json`）、どこに反映される（[CONFIG_DB](../reference/glossary.md#term-config_db) / `/etc/network/interfaces`）か
 - `show platform bmc` / firmware update / techsupport それぞれ何が起こるか
 - BMC 非対応プラットフォームではどう振る舞うか
 
@@ -206,3 +206,5 @@ sudo show techsupport     # BMC dump 自動同梱
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

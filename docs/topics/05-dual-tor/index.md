@@ -38,14 +38,14 @@ keywords:
 
 この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。
 
-既存ページは HLD 単位で分かれているため、ここでは運用者や設計者が実際に持つ質問の順に並べ直します。Active-Standby と Active-Active の選び方、`linkmgrd` / `MuxOrch` / `ycabled` / gRPC client の責務、`MUX_CABLE` の最小設定、障害時に見るべき CLI、そして QoS / DHCPv6 など周辺機能との境界を扱います。
+既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で分かれているため、ここでは運用者や設計者が実際に持つ質問の順に並べ直します。Active-Standby と Active-Active の選び方、`linkmgrd` / `MuxOrch` / `ycabled` / gRPC client の責務、`MUX_CABLE` の最小設定、障害時に見るべき CLI、そして [QoS](../../reference/glossary.md#term-qos) / DHCPv6 など周辺機能との境界を扱います。
 
 ## この章で答える質問
 
 - Active-Active と Active-Standby Dual-ToR は何が違い、どちらを選ぶのか。
 - `linkmgrd`、`MuxOrch`、`ycabled`、gRPC client はそれぞれ何を管理するのか。
 - mux state、prefix-based neighbor、default route 連動はどの障害を避けるのか。
-- ICMP hardware offload、BFD、DSCP remap、DHCPv6 loopback は Dual-ToR でどこに関係するのか。
+- ICMP hardware offload、[BFD](../../reference/glossary.md#term-bfd)、DSCP remap、DHCPv6 loopback は Dual-ToR でどこに関係するのか。
 
 ## 読み進め方
 
@@ -81,3 +81,4 @@ keywords:
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 
+<!-- glossary-links-injected: 8b515830f775 -->

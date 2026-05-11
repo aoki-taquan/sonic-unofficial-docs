@@ -31,11 +31,11 @@ related:
 
 ## なぜ必要か
 
-SONiC は従来 VLAN を **SONiC 独自 YANG** 経由でしか REST / gNMI 公開していなかった。本機能はこれに **OpenConfig YANG** (`openconfig-interfaces` + `openconfig-vlan` + `openconfig-if-ip`) を追加し、相互運用性を上げる[^1]。
+SONiC は従来 [VLAN](../reference/glossary.md#term-vlan) を **SONiC 独自 [YANG](../reference/glossary.md#term-yang)** 経由でしか REST / [gNMI](../reference/glossary.md#term-gnmi) 公開していなかった。本機能はこれに **OpenConfig YANG** (`openconfig-interfaces` + `openconfig-vlan` + `openconfig-if-ip`) を追加し、相互運用性を上げる[^1]。
 
-実装は `sonic-mgmt-common` の **transformer** 経路（translib ベースではない）。Management Framework / gNMI コンテナにコードを追加するだけで、**CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマ変更は無し**[^1]。
+実装は `sonic-mgmt-common` の **transformer** 経路（translib ベースではない）。Management Framework / gNMI コンテナにコードを追加するだけで、**[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / COUNTER_DB のスキーマ変更は無し**[^1]。
 
-スコープ[^1]: ✅ VLAN interface / member の設定取得、Ethernet / PortChannel メンバ管理、VLAN intf の IPv4/IPv6。❌ KLISH CLI 変更なし、❌ Subinterface 非対応。
+スコープ[^1]: ✅ VLAN interface / member の設定取得、Ethernet / [PortChannel](../reference/glossary.md#term-portchannel) メンバ管理、VLAN intf の IPv4/IPv6。❌ KLISH CLI 変更なし、❌ Subinterface 非対応。
 
 ## 全体像
 
@@ -96,7 +96,7 @@ curl -k "https://<dut>/restconf/data/openconfig-interfaces:interfaces/interface=
   -H "accept: application/yang-data+json"
 ```
 
-gNMI は `Set` (REPLACE / UPDATE / DELETE) / `Get` / `Subscribe` (ON_CHANGE / SAMPLE) をサポート[^1]。詳細ペイロード例とエラーカタログは原文 HLD §3〜§6 参照。
+gNMI は `Set` (REPLACE / UPDATE / DELETE) / `Get` / `Subscribe` (ON_CHANGE / SAMPLE) をサポート[^1]。詳細ペイロード例とエラーカタログは原文 [HLD](../reference/glossary.md#term-hld) §3〜§6 参照。
 
 ## 制限事項
 
@@ -107,7 +107,7 @@ gNMI は `Set` (REPLACE / UPDATE / DELETE) / `Get` / `Subscribe` (ON_CHANGE / SA
 ## 干渉する機能
 
 - **既存 SONiC YANG 経路**: `sonic-vlan` / `sonic-vlan-interface` と CONFIG_DB を共有
-- **VlanMgr / orchagent**: スキーマ変更なしなので透過的に動く
+- **VlanMgr / [orchagent](../reference/glossary.md#term-orchagent)**: スキーマ変更なしなので透過的に動く
 - **trunk/access 切替**: `VLAN_MEMBER` キーの追加・削除と `tagging_mode` 書き換えで表現
 
 ## トラブルシューティング
@@ -136,3 +136,5 @@ PATCH が 4xx → パス表記 (`Vlan<id>`)、モード組合せ、leaf 名を�
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 86faf626ff2b -->

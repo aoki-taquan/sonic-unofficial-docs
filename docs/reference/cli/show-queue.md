@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show queue` は queue counter、WRED counter、queue watermark を表示する CLI グループ。counter は `queuestat` / `wredstat`、watermark は `watermarkstat` へ委譲する[^1]。
+`show queue` は queue counter、[WRED](../../reference/glossary.md#term-wred) counter、queue watermark を表示する CLI グループ。counter は `queuestat` / `wredstat`、watermark は `watermarkstat` へ委譲する[^1]。
 
 ## コマンド一覧
 
@@ -130,3 +130,5 @@ show queue watermark unicast
 show queue persistent-watermark
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0d61b44aa6d3 -->

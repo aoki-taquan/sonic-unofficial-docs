@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-feature`
 
-SONiC service/feature enable, disable, and auto-restart control YANG module.[^1]
+SONiC service/feature enable, disable, and auto-restart control [YANG](../../reference/glossary.md#term-yang) module.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -72,7 +72,7 @@ module: sonic-feature
 | `delayed` | `sonic-feature/FEATURE/FEATURE_LIST/delayed` | `feature-delay-status` |  | false |  | Delay starting this feature until system initialization completes. |
 | `has_global_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_global_scope` | `feature-scope-status` |  | false |  | When true, only one instance of this service runs on the device. |
 | `has_per_asic_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_per_asic_scope` | `feature-scope-status` |  | false |  | When true, one instance of this service runs per ASIC. |
-| `has_per_dpu_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_per_dpu_scope` | `feature-scope-status` |  | false |  | When true, one instance of this service runs per DPU. |
+| `has_per_dpu_scope` | `sonic-feature/FEATURE/FEATURE_LIST/has_per_dpu_scope` | `feature-scope-status` |  | false |  | When true, one instance of this service runs per [DPU](../../reference/glossary.md#term-dpu). |
 | `high_mem_alert` | `sonic-feature/FEATURE/FEATURE_LIST/high_mem_alert` | `feature-state` |  | disabled |  | Enable or disable alerting on high memory utilization by this feature. |
 | `set_owner` | `sonic-feature/FEATURE/FEATURE_LIST/set_owner` | `feature-owner` |  | local |  | Whether the feature container is managed by Kubernetes or locally. |
 | `check_up_status` | `sonic-feature/FEATURE/FEATURE_LIST/check_up_status` | `stypes:boolean_type` |  | false |  | When true, the system-ready tool monitors this feature's readiness. |
@@ -88,7 +88,7 @@ module: sonic-feature
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FEATURE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FEATURE`
 - CLI: `config feature`
 
 <!-- ref-triangle:start -->
@@ -105,7 +105,7 @@ module: sonic-feature
 
 ### 典型的なデプロイ位置
 
-- feature コンテナの有効化 / 自動起動制御。`FEATURE|<name>` を hostcfgd が systemd unit にマッピング。
+- feature コンテナの有効化 / 自動起動制御。`FEATURE|<name>` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が systemd unit にマッピング。
 
 ### よくある落とし穴
 
@@ -123,3 +123,4 @@ show feature status
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: d883a9fa01e9 -->

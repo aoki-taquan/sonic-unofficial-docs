@@ -9,11 +9,11 @@ sources: []
 
 # 発展トピック
 
-評価・初学を超えて、CI / 大規模 lab / DPU 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 HLD を直接読むのが早く、本ページは「どれを開くか」のしおりです。
+評価・初学を超えて、CI / 大規模 lab / [DPU](../../reference/glossary.md#term-dpu) 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 [HLD](../../reference/glossary.md#term-hld) を直接読むのが早く、本ページは「どれを開くか」のしおりです。
 
 ## DASH SONiC KVM
 
-DASH（Disaggregated API for SONiC Hosts）の DPU 検証を実機 SmartSwitch なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、ENI / ACL / metering といった DASH HLD の核を仮想で踏むことができます。詳細は [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md) を参照します。
+[DASH](../../reference/glossary.md#term-dash)（Disaggregated API for SONiC Hosts）の DPU 検証を実機 [SmartSwitch](../../reference/glossary.md#term-smartswitch) なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、[ENI](../../reference/glossary.md#term-eni) / [ACL](../../reference/glossary.md#term-acl) / metering といった DASH HLD の核を仮想で踏むことができます。詳細は [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md) を参照します。
 
 DASH 章本文の機能仕様と組で読むのが前提で、DPU の HW 機能（offload 性能、PPS など）はこの環境では測れません。
 
@@ -30,9 +30,9 @@ ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選�
 | 領域 | VS で困る理由 | 実機 / 別環境が要る |
 | --- | --- | --- |
 | optics / PHY / CMIS | 物理 transceiver がない | 実機 + 対象 optics |
-| buffer / PFC / watermark / queue | SAI VS の capability 範囲外 | ASIC 実機、または ASIC simulator |
+| buffer / [PFC](../../reference/glossary.md#term-pfc) / watermark / queue | [SAI](../../reference/glossary.md#term-sai) VS の capability 範囲外 | ASIC 実機、または ASIC simulator |
 | thermal / PSU / fan / BMC / PCIe | platform docker が dummy | 実機 platform |
-| HW offload を伴う mux / EVPN encap / DASH 高速 path | data plane が Linux / BMv2 | 対応 ASIC / DPU |
+| HW offload を伴う mux / [EVPN](../../reference/glossary.md#term-evpn) encap / DASH 高速 path | data plane が Linux / BMv2 | 対応 ASIC / DPU |
 | 微小遅延・micro-burst・線速 drop | Linux datapath 性能 | 専用テスト機材 |
 | reboot 高速化検証（fast / warm / express） | platform 依存と timing 依存 | 実機 + telemetry。[Reboot / Upgrade / Lifecycle 章](../11-reboot/index.md) も参照 |
 
@@ -50,11 +50,11 @@ CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非
 
 ## 発展トピック
 
-- **Multi-DUT topology in sonic-mgmt**: 複数 DUT を仮想で組み、Dual-ToR / MC-LAG / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。
+- **Multi-DUT topology in [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)**: 複数 DUT を仮想で組み、Dual-ToR / MC-[LAG](../../reference/glossary.md#term-lag) / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。
 - **kvm 仮想 SONiC chassis**: 仮想 supervisor + 仮想 line card 構成を kvm 上で動かす。chassis_db の挙動を VS で検証できる。
-- **ptf-py3 と scapy 拡張**: data plane 検証で複雑 packet を生成。Path Tracing、SRv6、VXLAN、EVPN などで重宝。
+- **ptf-py3 と scapy 拡張**: data plane 検証で複雑 packet を生成。Path Tracing、[SRv6](../../reference/glossary.md#term-srv6)、[VXLAN](../../reference/glossary.md#term-vxlan)、EVPN などで重宝。
 - **Code coverage と gcov**: SONiC binary を gcov-enabled で build し、CI 経路で coverage を集計する取り組み。orch の race condition 検出に役立つ。
-- **fuzz testing**: gNMI / gNOI server や CLI parser に対する fuzz テスト。security 章 ([15](../15-security-aaa/index.md)) と相互参照。
+- **fuzz testing**: [gNMI](../../reference/glossary.md#term-gnmi) / [gNOI](../../reference/glossary.md#term-gnoi) server や CLI parser に対する fuzz テスト。security 章 ([15](../15-security-aaa/index.md)) と相互参照。
 
 ## 既知の制約と回避方法
 
@@ -83,3 +83,5 @@ CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非
 - `sonic-buildimage` で VS 構成と DASH KVM の整備 PR が散発的。
 - KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
 - CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。
+
+<!-- glossary-links-injected: f4f1f9bb2387 -->

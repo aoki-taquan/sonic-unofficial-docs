@@ -36,7 +36,7 @@ related:
 1. **`TELEMETRY_CLIENT` テーブル未設定 / 不整合**: `DialOut|<dst>:port` キー欠落、`encoding` / `report_type` 不一致
 2. **TLS 証明書 / CA 不整合**: collector 側 root CA とスイッチ側証明書チェーンの不一致、SAN 不足
 3. **L3 到達不能 / firewall**: collector への TCP/8080(or 設定 port) 不通
-4. **`unix_socket_address` を使う構成で counters/STATE_DB 取得失敗**: subscribe path が無効で publish 抑止
+4. **`unix_socket_address` を使う構成で counters/[STATE_DB](../../reference/glossary.md#term-state_db) 取得失敗**: subscribe path が無効で publish 抑止
 5. **dial-out client goroutine が panic で終了**: log に stack trace が出ているがプロセスは生存（telemetry container 自体は up）
 
 ## 切り分け手順
@@ -91,7 +91,7 @@ docker exec telemetry gnmi_cli -a 127.0.0.1:8080 -insecure \
 
 - `TELEMETRY_CLIENT` の値が誤っている: `sonic-db-cli` で hset し、`docker restart telemetry`。**ロールバック**: 変更前にダンプした key/value を hset で書き戻す
 - 証明書差し替え: 旧証明書を `/etc/sonic/telemetry/backup.<date>/` に退避してから配置 → `systemctl restart telemetry`。**ロールバック**: 退避ディレクトリから戻す
-- L3 不達: ルーティング / ACL 修正、`mgmt_vrf` 経由なら `ip vrf exec mgmt curl` で疎通確認
+- L3 不達: ルーティング / [ACL](../../reference/glossary.md#term-acl) 修正、`mgmt_vrf` 経由なら `ip vrf exec mgmt curl` で疎通確認
 - panic ループ: `docker logs telemetry` の stack trace から module を特定し、対応 PR を upstream で確認
 
 ## 関連ページ
@@ -102,4 +102,6 @@ docker exec telemetry gnmi_cli -a 127.0.0.1:8080 -insecure \
 ## 引用元
 
 [^1]: sonic-net/sonic-telemetry @ master — dialout_client.go
-[^2]: sonic-net/sonic-gnmi @ master — gNMI server
+[^2]: sonic-net/sonic-gnmi @ master — [gNMI](../../reference/glossary.md#term-gnmi) server
+
+<!-- glossary-links-injected: a271dccb6572 -->

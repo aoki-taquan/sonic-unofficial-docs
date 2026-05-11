@@ -45,13 +45,13 @@ flowchart TB
 | Phase | 内容 |
 |-------|------|
 | 1 Sanity Checks | リソース不足・互換性・ASIC ヘルス・hotplug 状態 |
-| 2 Freeze + Quiescence | Applications（teamd / BGP / P4RT 等）と Infrastructure（orchagent / syncd / xcvrd）の **freeze** を統一通知（Redis 経由）。失敗時は **unfreeze** で巻き戻す。`Quiescence Timer` で完了を保証 |
-| 3 Checkpointing | 各コンポーネントが state を save。orchagent は SAI、syncd は ASIC view 等 |
+| 2 Freeze + Quiescence | Applications（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [BGP](../reference/glossary.md#term-bgp) / P4RT 等）と Infrastructure（[orchagent](../reference/glossary.md#term-orchagent) / [syncd](../reference/glossary.md#term-syncd) / xcvrd）の **freeze** を統一通知（[Redis](../reference/glossary.md#term-redis) 経由）。失敗時は **unfreeze** で巻き戻す。`Quiescence Timer` で完了を保証 |
+| 3 Checkpointing | 各コンポーネントが state を save。orchagent は [SAI](../reference/glossary.md#term-sai)、syncd は ASIC view 等 |
 | 4 Reboot 実行 | `kexec`。container を **個別に止める必要が無い**ため shutdown ordering 依存が消える |
 
 ### Component Warmboot States
 
-各コンポーネントが warmboot を進める上での状態を `STATE_DB` に統一表現する（HLD では具体スキーマは別節）[^1]。これにより Warmboot Manager は polling で進捗を把握する。
+各コンポーネントが warmboot を進める上での状態を `STATE_DB` に統一表現する（[HLD](../reference/glossary.md#term-hld) では具体スキーマは別節）[^1]。これにより Warmboot Manager は polling で進捗を把握する。
 
 ### Race condition の扱い
 
@@ -63,7 +63,7 @@ freeze 中に late event（例: 直前の port flap / route flap）が来た場�
 |-----------|------|
 | Orchagent | freeze 通知 → m_toSync 空待ち → checkpoint |
 | Syncd | pre-shutdown / shutdown 統一 (Redis 経由)、`SAI_KEY_WARM_BOOT_WRITE_FILE` で SAI dump |
-| Teamd | LACP graceful shutdown のタイミングを Warmboot Manager が決定 |
+| Teamd | [LACP](../reference/glossary.md#term-lacp) graceful shutdown のタイミングを Warmboot Manager が決定 |
 | Transceiver Daemon | DOM polling 停止 |
 | Database (Redis) | RDB ダンプは最後に取られる |
 
@@ -99,7 +99,7 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 
 ## 設定
 
-HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専用設定が入る可能性あり。
+HLD で具体の CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) は提示されていない。実装時に専用設定が入る可能性あり。
 
 ## 制限事項
 
@@ -209,3 +209,5 @@ sudo reboot   # cold reboot に fallback
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: 34c2dd9af927 -->

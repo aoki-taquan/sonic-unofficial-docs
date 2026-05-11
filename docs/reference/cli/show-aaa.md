@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`show aaa` は CONFIG_DB の **`AAA` テーブル**を読み、`authentication` / `authorization` / `accounting` 各機能の現在値（または default 値）を行ごとに表示する click コマンド[^1]。`show tacacs` / `show radius` とセットで運用する。
+`show aaa` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の **`AAA` テーブル**を読み、`authentication` / `authorization` / `accounting` 各機能の現在値（または default 値）を行ごとに表示する click コマンド[^1]。`show tacacs` / `show radius` とセットで運用する。
 
 ## シグネチャ
 
@@ -94,7 +94,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- YANG: `sonic-aaa`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-aaa`
 - CONFIG_DB: [`AAA`](../config-db/aaa.md)
 
 <!-- ref-triangle:end -->
@@ -108,7 +108,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- AAA login / authorization / accounting の現状確認。
+- [AAA](../../reference/glossary.md#term-aaa) login / authorization / accounting の現状確認。
 - TACACS+ / RADIUS との連携検証。
 
 ### よくある落とし穴
@@ -124,3 +124,5 @@ show tacacs
 show radius
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->

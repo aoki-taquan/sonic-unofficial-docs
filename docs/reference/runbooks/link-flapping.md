@@ -26,7 +26,7 @@ related:
 
 - syslog に `Port <if> oper status changed from up to down` が断続
 - `show interfaces counters errors` の `RX_ERR` / `FCS` が増加
-- BGP peer が頻繁に flap
+- [BGP](../../reference/glossary.md#term-bgp) peer が頻繁に flap
 
 ## 想定原因（優先度順）
 
@@ -80,5 +80,7 @@ docker logs syncd 2>&1 | grep -i "port_state_change" | tail -20
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch.cpp port_state notification
 [^2]: sonic-net/sonic-platform-common @ 4305596 — sfp_base DOM
+
+<!-- glossary-links-injected: b1725b0a9c6a -->

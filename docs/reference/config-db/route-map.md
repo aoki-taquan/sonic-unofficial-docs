@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-ルーティングポリシー (route-map) の statement 単位の定義テーブル。BGP neighbor / peer-group や redistribute から名前で参照される。`frr-mgmt-framework` (`DEVICE_METADATA.frr_mgmt_framework_config = true`) が CONFIG_DB を購読し FRR `route-map` コマンドに変換する[^1]。
+ルーティングポリシー (route-map) の statement 単位の定義テーブル。[BGP](../../reference/glossary.md#term-bgp) neighbor / peer-group や redistribute から名前で参照される。`frr-mgmt-framework` (`DEVICE_METADATA.frr_mgmt_framework_config = true`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し [FRR](../../reference/glossary.md#term-frr) `route-map` コマンドに変換する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -61,7 +61,7 @@ ROUTE_MAP|<name>|<stmt_name>
 | `match_ipv6_prefix_set` | leafref `PREFIX_SET.name` | IPv6 prefix list match |
 | `match_protocol` | string | bgp/connected/ospf/ospf3/static |
 | `match_next_hop_set` | leafref `PREFIX_SET.name` | next-hop match |
-| `match_src_vrf` | union (`default`/leafref `VRF.name`) | source VRF match |
+| `match_src_vrf` | union (`default`/leafref `VRF.name`) | source [VRF](../../reference/glossary.md#term-vrf) match |
 | `match_neighbor` | leaf-list union | IP / interface match |
 | `match_tag` | leaf-list uint32 | tag match |
 | `match_med` / `match_origin` / `match_local_pref` | numeric / string / uint32 | BGP attribute match |
@@ -92,7 +92,7 @@ ROUTE_MAP|<name>|<stmt_name>
 
 - 関連 CONFIG_DB: `ROUTE_MAP_SET` (名前一覧)、`PREFIX_SET`、`COMMUNITY_SET`、`AS_PATH_SET`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`
 - 関連 CLI: `config route_map`、`vtysh -c "show route-map"`
-- 関連 YANG: `sonic-route-map`、`sonic-routing-policy-sets`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-route-map`、`sonic-routing-policy-sets`
 
 <!-- ref-triangle:start -->
 
@@ -126,3 +126,5 @@ sonic-db-cli CONFIG_DB keys 'ROUTE_MAP|*'
 vtysh -c 'show route-map'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->

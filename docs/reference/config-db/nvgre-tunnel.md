@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と VLAN ↔ VSID マップを CONFIG_DB に保持する[^1]。`vxlanorch` 系（NVGRE は VXLAN orch と一部実装を共有）が SAI 経由でカプセル化/デカプセル化を構成する。
+NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と [VLAN](../../reference/glossary.md#term-vlan) ↔ VSID マップを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。`vxlanorch` 系（NVGRE は [VXLAN](../../reference/glossary.md#term-vxlan) orch と一部実装を共有）が [SAI](../../reference/glossary.md#term-sai) 経由でカプセル化/デカプセル化を構成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -75,7 +75,7 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `VLAN`、`VXLAN_TUNNEL`（並存可能）
-- 関連 YANG: `sonic-nvgre-tunnel`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-nvgre-tunnel`
 - 関連 CLI: `config nvgre`
 
 <!-- ref-triangle:start -->
@@ -116,3 +116,5 @@ sonic-db-cli CONFIG_DB keys 'NVGRE_TUNNEL*'
 sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3424113d928a -->

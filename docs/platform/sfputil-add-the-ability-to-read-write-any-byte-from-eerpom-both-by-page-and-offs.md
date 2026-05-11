@@ -89,7 +89,7 @@ flowchart TB
 
 要点[^1]:
 
-- **規格ごとの page-to-overall 変換は sonic-utilities 側で実装**（platform API は触らない）
+- **規格ごとの page-to-overall 変換は [sonic-utilities](../reference/glossary.md#term-sonic-utilities) 側で実装**（platform API は触らない）
 - ベンダ実装が `NotImplementedError` を上げた場合は **「unsupported」を専用にハンドル** し、その他例外は read/write 失敗扱い
 - RJ45 ポートは対象外（EEPROM が無い）
 
@@ -106,7 +106,7 @@ Error: Write data failed! Write: 4a44, read: 0000.
 
 ### 関連する CONFIG_DB
 
-該当なし。本機能は **EEPROM 直接アクセス** であり CONFIG_DB は使わない。
+該当なし。本機能は **EEPROM 直接アクセス** であり [CONFIG_DB](../reference/glossary.md#term-config_db) は使わない。
 
 ### 関連する CLI
 
@@ -129,7 +129,7 @@ sfputil write-eeprom -p Ethernet0 -n 0 -o 26 -d 08 --verify
 
 - ベンダの platform plugin が `sfp.read_eeprom` / `sfp.write_eeprom` を実装していないと使えない[^1]
 - **RJ45 ポートは対象外**[^1]
-- active cable の page 存在チェックは「完璧にはできない」と HLD 自身が認めている[^1]。手元の cable / module の datasheet 照合はユーザ責任
+- active cable の page 存在チェックは「完璧にはできない」と [HLD](../reference/glossary.md#term-hld) 自身が認めている[^1]。手元の cable / module の datasheet 照合はユーザ責任
 - HLD は `Open/Action items` に項目記載なし。warmboot / fastboot 影響も `N/A`[^1]
 
 ## 干渉する機能
@@ -159,3 +159,5 @@ sfputil write-eeprom ... --verify
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sfputil/read_write_eeprom_by_page.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 46ea0b57b0b3 -->

@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-従来の port 構成は SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を **個別に削除→再作成** する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた[^1]。SAI 側に **bulk object API**（`create_ports` / `remove_ports` / `set_ports_attribute` / `get_ports_attribute`）が追加された[^1]ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / YANG / warm reboot は不変で、PortsOrch のみが変わる。
+従来の port 構成は [SAI](../reference/glossary.md#term-sai) profile から事前作成 → PortsOrch が [CONFIG_DB](../reference/glossary.md#term-config_db) と比較し不一致 port を **個別に削除→再作成** する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた[^1]。SAI 側に **bulk object API**（`create_ports` / `remove_ports` / `set_ports_attribute` / `get_ports_attribute`）が追加された[^1]ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / [YANG](../reference/glossary.md#term-yang) / warm reboot は不変で、PortsOrch のみが変わる。
 
 ## 動作仕様
 
@@ -46,7 +46,7 @@ vendor SAI が空 list 呼び出しに対して `SAI_STATUS_NOT_IMPLEMENTED` / `
 
 ### syncd 側のフラグ
 
-bulk API を実際に使うには syncd 起動時に **`-l` / `--enableBulk`** が必要[^1]。指定しないと SAI bulk 呼び出しが内部で個別呼び出しに展開され、時間短縮効果が無くなる。各 vendor は `config_syncd_vendor` 関数（`syncd_init_common.sh`）で当該フラグを設定する。**route / vlan / port 等 全 bulk 系がこのフラグ単一でまとめて on/off される** 点に注意。
+bulk API を実際に使うには [syncd](../reference/glossary.md#term-syncd) 起動時に **`-l` / `--enableBulk`** が必要[^1]。指定しないと SAI bulk 呼び出しが内部で個別呼び出しに展開され、時間短縮効果が無くなる。各 vendor は `config_syncd_vendor` 関数（`syncd_init_common.sh`）で当該フラグを設定する。**route / vlan / port 等 全 bulk 系がこのフラグ単一でまとめて on/off される** 点に注意。
 
 ### 新フロー (doPortTask)
 
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ### Legacy flow（fallback）
 
-bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。Multi-ASIC は ASIC ごとに swss / Redis が独立しているため bulk 判定も ASIC 単位で行われる。
+bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。Multi-ASIC は ASIC ごとに swss / [Redis](../reference/glossary.md#term-redis) が独立しているため bulk 判定も ASIC 単位で行われる。
 
 ### SAI API（参考）
 
@@ -122,7 +122,7 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 
 ## CLI / CONFIG_DB / YANG
 
-本 HLD では **変更なし**[^1]。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。
+本 [HLD](../reference/glossary.md#term-hld) では **変更なし**[^1]。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。
 
 ## Warm boot / Fast boot
 
@@ -166,3 +166,5 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bb6970f11536 -->

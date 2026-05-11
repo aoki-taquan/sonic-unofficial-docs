@@ -28,7 +28,7 @@ related:
 
 ## 何が課題なのか
 
-スイッチ上の温度センサのうち **外部（オンボード）** は既存ドライバで読めるが、**ASIC 内部センサは ASIC SDK 経由でしか読めない**[^1]。pmon に SAI 依存を入れたくないため、orchagent 側に poller を置いて STATE_DB に書き出し、`thermalctld` / `show platform temperature` / SNMP / Telemetry から透過的に参照できるようにする。
+スイッチ上の温度センサのうち **外部（オンボード）** は既存ドライバで読めるが、**ASIC 内部センサは ASIC SDK 経由でしか読めない**[^1]。pmon に [SAI](../reference/glossary.md#term-sai) 依存を入れたくないため、[orchagent](../reference/glossary.md#term-orchagent) 側に poller を置いて [STATE_DB](../reference/glossary.md#term-state_db) に書き出し、`thermalctld` / `show platform temperature` / [SNMP](../reference/glossary.md#term-snmp) / Telemetry から透過的に参照できるようにする。
 
 SAI が提供する関連属性[^1]:
 
@@ -41,7 +41,7 @@ SAI が提供する関連属性[^1]:
 
 ## どう動くのか
 
-`SwitchOrch` を `ASIC_SENSORS` の consumer に追加し、`SelectableTimer sensorsPollerTimer`（既定 10 秒）を持つ。CONFIG_DB の `admin_status` / `interval` 変更は次回 callback で反映[^1]。
+`SwitchOrch` を `ASIC_SENSORS` の consumer に追加し、`SelectableTimer sensorsPollerTimer`（既定 10 秒）を持つ。[CONFIG_DB](../reference/glossary.md#term-config_db) の `admin_status` / `interval` 変更は次回 callback で反映[^1]。
 
 ```mermaid
 flowchart LR
@@ -74,7 +74,7 @@ ASIC 内部センサも platform の `_thermal_list[]` に追加するが、Plat
 
 ## CLI と設定例
 
-`show platform temperature` で ASIC 内部センサも含めて表示される。**HLD 当時 poller 制御専用 CLI は未定義** で、`redis-cli` / `sonic-db-cli` で直接書く運用[^1]:
+`show platform temperature` で ASIC 内部センサも含めて表示される。**[HLD](../reference/glossary.md#term-hld) 当時 poller 制御専用 CLI は未定義** で、`redis-cli` / `sonic-db-cli` で直接書く運用[^1]:
 
 ```bash
 sonic-db-cli CONFIG_DB hset 'ASIC_SENSORS|ASIC_SENSORS_POLLER_STATUS' admin_status enable
@@ -111,3 +111,5 @@ show platform temperature
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 41a610d020b5 -->

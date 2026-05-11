@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-Asymmetric PFC は SONiC 機能だが、本ドキュメントはその **機能テスト計画** を扱う。既存の PTF テスト（`sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py`）を再構成し、`sonic-mgmt` の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (`pfc_gen.py`) を組み合わせて検証する[^1]。
+Asymmetric [PFC](../reference/glossary.md#term-pfc) は SONiC 機能だが、本ドキュメントはその **機能テスト計画** を扱う。既存の PTF テスト（`sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py`）を再構成し、`sonic-mgmt` の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (`pfc_gen.py`) を組み合わせて検証する[^1]。
 
 対象テストベッド: **T0-x** 系列（全 T0 構成）。SONiC DUT は **RPC image** が必須[^1]。
 
@@ -48,7 +48,7 @@ flowchart LR
 `pfc_asym.py` には以下の改修が必要[^1]:
 
 1. **送信速度向上**: `threading.Thread` を `multiprocessing.Process` に置換（GIL 回避）。L83 周辺。
-2. **ARP responder 設定生成の冗長削除**: L56 のループで毎回ファイル生成しているのを 1 回だけにする。
+2. **[ARP](../reference/glossary.md#term-arp) responder 設定生成の冗長削除**: L56 のループで毎回ファイル生成しているのを 1 回だけにする。
 
 ### 新規 pytest test suite
 
@@ -140,11 +140,11 @@ cd sonic-mgmt/tests
 pytest pfc_asym/pfc_asym.py --topology=t0
 ```
 
-具体的な引数は sonic-mgmt の標準 testbed パラメタに従う。
+具体的な引数は [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) の標準 testbed パラメタに従う。
 
 ## 制限事項
 
-- **T0 トポロジ専用**: HLD は T0-x 系列を対象としており、T1 等の他トポロジは別途検討が必要[^1]。
+- **T0 トポロジ専用**: [HLD](../reference/glossary.md#term-hld) は T0-x 系列を対象としており、T1 等の他トポロジは別途検討が必要[^1]。
 - **RPC image 必須**: 通常リリースイメージでは動作しない[^1]。
 - **Fanout 構成依存**: Mellanox / Arista それぞれの Fanout で `pfc_gen.py` 配備手順が違う。新ベンダ Fanout では拡張作業が必要。
 
@@ -162,8 +162,8 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 
 ## 裏取り済み実装位置 (2026-05-11)
 
-- Asymmetric PFC mode set: `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `setPortPfcAsym()`（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` を `SEPARATE`/`COMBINED` で SAI に書き込む）
-- CONFIG_DB.PORT.pfc_asym パース＆適用: 同 `portsorch.cpp` L5407-L5434（mode の妥当性チェックと `setPortPfcAsym()` 呼び出し、unsupported 時のスキップログ）
+- Asymmetric PFC mode set: `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `setPortPfcAsym()`（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` を `SEPARATE`/`COMBINED` で [SAI](../reference/glossary.md#term-sai) に書き込む）
+- [CONFIG_DB](../reference/glossary.md#term-config_db).PORT.pfc_asym パース＆適用: 同 `portsorch.cpp` L5407-L5434（mode の妥当性チェックと `setPortPfcAsym()` 呼び出し、unsupported 時のスキップログ）
 - 初期 attribute セット: 同 `portsorch.cpp` L1347-L1361（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` への XOFF 値書き込み）
 - Port 構造体: `sonic-swss/orchagent/port/portcnt.h` L89 `pfc_asym` メンバ
 
@@ -179,3 +179,5 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e2888922ac14 -->

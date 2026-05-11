@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には **TX 側 VMA**（電気振幅）と **RX 側 OMA**（光振幅）の監視が決定的。本 HLD は CMIS LPO 上に **拡張デバッグレジスタ**を新設し、SONiC から Redis に公開する設計[^1]。
+LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には **TX 側 VMA**（電気振幅）と **RX 側 OMA**（光振幅）の監視が決定的。本 [HLD](../reference/glossary.md#term-hld) は CMIS LPO 上に **拡張デバッグレジスタ**を新設し、SONiC から [Redis](../reference/glossary.md#term-redis) に公開する設計[^1]。
 
 ## 動作仕様
 
@@ -109,7 +109,7 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 
 ## 干渉する機能
 
-- **xcvrd / TRANSCEIVER_INFO**: 既存スキーマに新 key を追加。テレメトリ / sonic-mgmt の telemetry テスト側の更新が必要
+- **xcvrd / TRANSCEIVER_INFO**: 既存スキーマに新 key を追加。テレメトリ / [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) の telemetry テスト側の更新が必要
 - **CmisApi / CCmisApi**: 同階層の sibling
 - **vendor 個別 PN マッチ**: vendor が増えるほど factory 分岐が増える
 
@@ -131,3 +131,5 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ab90f1e23035 -->

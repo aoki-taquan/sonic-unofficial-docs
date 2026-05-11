@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`, `sonic-port`, `sonic-portchannel`
 - top container: `sonic-pbh`
 
-PBH YANG Module for SONiC OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple[^1]
+PBH [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -139,7 +139,7 @@ module: sonic-pbh
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PBH_HASH_FIELD`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_HASH_FIELD`
 - CONFIG_DB: `PBH_HASH`
 - CONFIG_DB: `PBH_RULE`
 - CONFIG_DB: `PBH_TABLE`
@@ -158,7 +158,7 @@ module: sonic-pbh
 
 ### 典型的なデプロイ位置
 
-- Policy Based Hashing。`PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` を pbhorch が SAI に反映。
+- Policy Based Hashing。`PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` を pbhorch が [SAI](../../reference/glossary.md#term-sai) に反映。
 
 ### よくある落とし穴
 
@@ -175,3 +175,5 @@ show pbh statistics
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pbh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: bbcc78132807 -->

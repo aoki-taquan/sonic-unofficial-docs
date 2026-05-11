@@ -58,7 +58,7 @@ S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電�
 | 電流 | `/sys_switch/curr_sensor/curr[n]/` | `alias`, `type`, `max` (R/W), `min` (R/W), `value` (mA) |
 | Syseeprom | `/sys_switch/syseeprom` | ONIE 形式の binary を直接読める |
 | FAN | `/sys_switch/fan/fan[n]/` | metadata + `direction` (F2B/B2F), `ratio` (R/W 0-100), motor 配下に `speed` / `speed_target` / `speed_tolerance` / `speed_max` / `speed_min`、`status` (`0=absent / 1=normal / 2=abnormal`), `led_status` |
-| PSU | `/sys_switch/psu/psu[n]/` | metadata + `type` (`0=DC / 1=AC`), `present`, `power_good`, voltage / current / power / temp 系（HLD 後半）|
+| PSU | `/sys_switch/psu/psu[n]/` | metadata + `type` (`0=DC / 1=AC`), `present`, `power_good`, voltage / current / power / temp 系（[HLD](../reference/glossary.md#term-hld) 後半）|
 | Transceiver | `/sys_switch/transceiver/eth[n]/` | optic 情報 |
 | System LED | `/sys_switch/sys_led/` | location / sys / fan / psu LED 群 |
 | FPGA | `/sys_switch/fpga/fpga[n]/` | name / version / 各種 sub register |
@@ -146,3 +146,5 @@ reasoning: 仕様の path 規約と permission 表記の根拠。
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->

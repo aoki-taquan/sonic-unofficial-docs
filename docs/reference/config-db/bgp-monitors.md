@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`BGP_MONITORS` テーブルは BGP Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。`bgpcfgd` がテンプレ展開して `bgpd` の `neighbor` 設定を生成する[^1]。各エントリは BGP 隣接共通プロパティ (`sonic-bgp-cmn-neigh` grouping) を流用する。
+`BGP_MONITORS` テーブルは [BGP](../../reference/glossary.md#term-bgp) Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。`bgpcfgd` がテンプレ展開して `bgpd` の `neighbor` 設定を生成する[^1]。各エントリは BGP 隣接共通プロパティ (`sonic-bgp-cmn-neigh` grouping) を流用する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -66,16 +66,16 @@ BGP_MONITORS|<addr>
 
 ## 制約
 
-- `name` は `BGPMonitor` 固定（YANG `must` で強制）。複数モニターは `addr` で区別する
+- `name` は `BGPMonitor` 固定（[YANG](../../reference/glossary.md#term-yang) `must` で強制）。複数モニターは `addr` で区別する
 
 ## 購読者
 
 - `bgpcfgd` (`docker-fpm-frr`)
-- 間接的に `bgpd` (FRR)
+- 間接的に `bgpd` ([FRR](../../reference/glossary.md#term-frr))
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_NEIGHBOR`、`BGP_GLOBALS`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`、`BGP_GLOBALS`
 - 関連 YANG: `sonic-bgp-monitor`、`sonic-bgp-common`
 - 関連 CLI: `config bgp`
 
@@ -114,3 +114,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_MONITORS|*'
 vtysh -c 'show bgp summary'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->

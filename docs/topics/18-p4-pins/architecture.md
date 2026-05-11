@@ -13,7 +13,7 @@ sources:
 
 # アーキテクチャ
 
-PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から orchagent までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 HLD ページに移譲します。
+[PINS](../../reference/glossary.md#term-pins) の data path は「コントローラ → P4RT App → [APPL_DB](../../reference/glossary.md#term-appl_db) → P4Orch → [SAI](../../reference/glossary.md#term-sai) → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から [orchagent](../../reference/glossary.md#term-orchagent) までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 [HLD](../../reference/glossary.md#term-hld) ページに移譲します。
 
 ## controller から ASIC までの流れ
 
@@ -36,15 +36,15 @@ flowchart LR
 
 ## Read 経路と entity_cache_
 
-Read は AppDb (Redis) を毎回叩くと 16,000 フローで約 1.3 秒かかるため、PI 形式そのままを保持する **entity_cache_**（HLD では `table_entry_cache_`）を p4rt-app プロセス内に持ち、Read はキャッシュから直接返します。実測で約 40 倍（1.3s → 40ms）高速化します。Write の INSERT / MODIFY / DELETE はキャッシュも同時更新し、`VerifyState()` がキャッシュと AppDb の整合を確認します。詳細は [Read キャッシュ HLD](../../management/p4rt-read-cache-hld.md) を参照してください。
+Read は AppDb ([Redis](../../reference/glossary.md#term-redis)) を毎回叩くと 16,000 フローで約 1.3 秒かかるため、PI 形式そのままを保持する **entity_cache_**（HLD では `table_entry_cache_`）を p4rt-app プロセス内に持ち、Read はキャッシュから直接返します。実測で約 40 倍（1.3s → 40ms）高速化します。Write の INSERT / MODIFY / DELETE はキャッシュも同時更新し、`VerifyState()` がキャッシュと AppDb の整合を確認します。詳細は [Read キャッシュ HLD](../../management/p4rt-read-cache-hld.md) を参照してください。
 
 ## PacketIO の経路
 
 PacketIO は CPU と controller の間にもう一系統のチャネルを足します。
 
-- **Receive**: controller が install した punt flow にマッチしたパケットだけが、CoPP の `genetlink_name` / `genetlink_mcgrp_name` を持つ trap group 経由で generic netlink に流れ、p4rt-app が受信して controller に転送します。`copporch` の `createGenetlinkHostIf()` が SAI hostif を作成する経路です。
+- **Receive**: controller が install した punt flow にマッチしたパケットだけが、[CoPP](../../reference/glossary.md#term-copp) の `genetlink_name` / `genetlink_mcgrp_name` を持つ trap group 経由で generic netlink に流れ、p4rt-app が受信して controller に転送します。`copporch` の `createGenetlinkHostIf()` が SAI hostif を作成する経路です。
 - **Transmit (Direct)**: 送信先 port が決まっているケースで、対応する netdev のソケットへ書きます。
-- **Transmit (Send to Ingress)**: ASIC の ingress pipeline に再注入し、ECMP / WCMP / queue を ASIC に判定させます。`PortsOrch::addSendToIngressHostIf()` が `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 経由で `SAI_HOSTIF_TYPE_NETDEV` 属性の hostif を作成します。
+- **Transmit (Send to Ingress)**: ASIC の ingress pipeline に再注入し、[ECMP](../../reference/glossary.md#term-ecmp) / WCMP / queue を ASIC に判定させます。`PortsOrch::addSendToIngressHostIf()` が `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 経由で `SAI_HOSTIF_TYPE_NETDEV` 属性の hostif を作成します。
 
 詳細は [PacketIO HLD](../../management/packetio.md) と [Send to Ingress HLD](../../management/send-to-ingress-hld.md) を参照してください。
 
@@ -57,3 +57,5 @@ PacketIO は CPU と controller の間にもう一系統のチャネルを足し
 | `ASIC_DB` (1) | sairedis 経由の SAI オブジェクト | 通常 SONiC と同じ |
 
 `P4RT_TABLE` の具体 schema や DB layout の追加点は [PINS HLD](../../management/pins-hld.md) を参照してください。
+
+<!-- glossary-links-injected: 96695e77e194 -->

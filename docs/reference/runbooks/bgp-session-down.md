@@ -29,15 +29,15 @@ related:
 
 - `show ip bgp summary` で対向の State が `Active` / `Connect` / `Idle (Admin)` のままになる
 - Peer の確立後すぐ flap する (`Established` → `Idle`)
-- Container `bgp` 内では FRR (bgpd) が動作しているが、SONiC 側 `show` で peer が表示されない
+- Container `bgp` 内では [FRR](../../reference/glossary.md#term-frr) (bgpd) が動作しているが、SONiC 側 `show` で peer が表示されない
 
 ## 想定原因（優先度順）
 
-1. **L1 / L2 / L3 の事前条件が満たされていない**: interface oper down、IP 未設定、MTU 不一致、対向側 ACL でブロック
-2. **CONFIG_DB と FRR の同期失敗**: `bgpcfgd` (= FRR config generator) がテンプレ生成エラーで停止し、`vtysh -c "show run"` に neighbor が出ない
+1. **L1 / L2 / L3 の事前条件が満たされていない**: interface oper down、IP 未設定、MTU 不一致、対向側 [ACL](../../reference/glossary.md#term-acl) でブロック
+2. **[CONFIG_DB](../../reference/glossary.md#term-config_db) と FRR の同期失敗**: `bgpcfgd` (= FRR config generator) がテンプレ生成エラーで停止し、`vtysh -c "show run"` に neighbor が出ない
 3. **AS 番号 / router-id の設定誤り**: ローカル AS が `DEVICE_METADATA|localhost` の `bgp_asn` と一致しない
 4. **管理上 disable されている**: `BGP_NEIGHBOR|<ip>` の `admin_status` = `down`
-5. **BFD セッション断**: `bfdd` が UP しないと BGP が即 down する構成（bfd hold-down）
+5. **[BFD](../../reference/glossary.md#term-bfd) セッション断**: `bfdd` が UP しないと [BGP](../../reference/glossary.md#term-bgp) が即 down する構成（bfd hold-down）
 
 ## 切り分け手順
 
@@ -94,7 +94,7 @@ sudo grep -iE "bgp|bfd" /var/log/syslog | tail -100
 
 - 「3.」で CONFIG_DB と FRR が乖離している場合: `sudo systemctl restart bgp` で再生成。これでも反映されないなら `bgpcfgd` テンプレ (`/usr/share/sonic/templates/bgpd/`) を確認
 - AS / router-id を修正する場合: `sonic-cfggen -j /etc/sonic/config_db.json` での import 後 `config save -y` → `config reload -y`
-- BFD で flap している場合: `BFD_SESSION_TABLE`（APPL_DB）で session 状態を確認し、BFD timer を緩める
+- BFD で flap している場合: `BFD_SESSION_TABLE`（[APPL_DB](../../reference/glossary.md#term-appl_db)）で session 状態を確認し、BFD timer を緩める
 
 ## 関連ページ
 
@@ -107,5 +107,7 @@ sudo grep -iE "bgp|bfd" /var/log/syslog | tail -100
 ## 引用元
 
 [^1]: sonic-net/sonic-frr @ 799f47f — bgpd FSM
-[^2]: sonic-net/sonic-swss @ 4305596 — bfdorch / fpmsyncd
-[^3]: sonic-net/sonic-utilities @ 39732bceb — show bgp 実装
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bfdorch / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd)
+[^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show bgp 実装
+
+<!-- glossary-links-injected: fa5251a92f24 -->

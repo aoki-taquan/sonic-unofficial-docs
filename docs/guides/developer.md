@@ -10,7 +10,7 @@ last_verified: 2026-05-10
 
 ## 想定シナリオ
 
-SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。
+SONiC に機能追加・拡張を入れたい読者を想定しています。[HLD](../reference/glossary.md#term-hld)、[YANG](../reference/glossary.md#term-yang)、[CONFIG_DB](../reference/glossary.md#term-config_db)、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。
 
 ## 推奨 reading path
 
@@ -42,3 +42,5 @@ SONiC に機能追加・拡張を入れたい読者を想定しています。HL
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

@@ -85,7 +85,7 @@ flowchart LR
 
 ### `config.user` との違い
 
-HLD は `rules/config.user` との明確な使い分けを示している[^1]:
+[HLD](../reference/glossary.md#term-hld) は `rules/config.user` との明確な使い分けを示している[^1]:
 
 | 観点 | `rules/config.user` | `rules/profiles/*.mk` |
 |------|---------------------|------------------------|
@@ -149,7 +149,7 @@ HLD は「CI/CD でやれば良いのでは」という問いに対して、**�
 
 ### 関連する CONFIG_DB
 
-該当なし。本機能は **ビルド時の Makefile 機構** であり、ランタイムの CONFIG_DB は触らない。
+該当なし。本機能は **ビルド時の Makefile 機構** であり、ランタイムの [CONFIG_DB](../reference/glossary.md#term-config_db) は触らない。
 
 ### 関連する CLI
 
@@ -183,7 +183,7 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
 
 - **既存の `make ENABLE_*=y all` 形** : そのまま動く。`PROFILE` を併用しても、make の変数解決ルールに従う。
 - **secure upgrade 系（`SECURE_UPGRADE_*`）**: HLD の例で挙げられる典型ユースケース。署名証明書とビルドフラグを 1 ファイルにまとめておけるのが直接の旨味[^1]。
-- **ZTP（`ENABLE_ZTP`, `USERNAME`, `PASSWORD` 等）** : 同様にプロファイル化しやすい代表例[^1]。
+- **[ZTP](../reference/glossary.md#term-ztp)（`ENABLE_ZTP`, `USERNAME`, `PASSWORD` 等）** : 同様にプロファイル化しやすい代表例[^1]。
 - **CI/CD パイプライン**: CI 側で個別フラグを並べていた箇所をプロファイル指定に置き換えられる。手元ビルドとの **再現性** が揃うのが効果。
 
 ## トラブルシューティング
@@ -248,3 +248,5 @@ HLD は「`rules/config` < `rules/config.user` < `rules/profiles/$(PROFILE).mk`�
 - sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
 - 結論: HLD は提案段階で master に未マージ
 -->
+
+<!-- glossary-links-injected: 5f2e4324e3ff -->

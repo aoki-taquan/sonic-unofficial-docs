@@ -23,16 +23,16 @@ related:
 
 ## このページの目的
 
-SONiC の **CONFIG_DB テーブル** が「誰によって読まれるか」を一望できる早見表。
-個別テーブルページ (`reference/config-db/<table>.md`) は **書く側 (CLI / YANG / 値の意味)** に焦点を当てているのに対し、本ページは **読む側 (subscribe 先 Orch / *mgrd / SAI 経路)** をまとめる。
+SONiC の **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル** が「誰によって読まれるか」を一望できる早見表。
+個別テーブルページ (`reference/config-db/<table>.md`) は **書く側 (CLI / [YANG](../reference/glossary.md#term-yang) / 値の意味)** に焦点を当てているのに対し、本ページは **読む側 (subscribe 先 Orch / *mgrd / [SAI](../reference/glossary.md#term-sai) 経路)** をまとめる。
 
 経路は大きく 2 種類ある。
 
-1. **CONFIG_DB → cfgmgr (intfmgrd / portmgrd / vlanmgrd / teammgrd …) → APPL_DB → orchagent → SAI**
+1. **CONFIG_DB → cfgmgr ([intfmgrd](../reference/glossary.md#term-intfmgrd) / [portmgrd](../reference/glossary.md#term-portmgrd) / [vlanmgrd](../reference/glossary.md#term-vlanmgrd) / teammgrd …) → [APPL_DB](../reference/glossary.md#term-appl_db) → [orchagent](../reference/glossary.md#term-orchagent) → SAI**
    - cfgmgr は CONFIG_DB の生値を APPL_DB の運用用テーブル形式に変換し、orchagent が APPL_DB を購読して SAI を叩く
-   - インターフェース系・LAG・VLAN・FDB・Tunnel など大半のデータパス系
+   - インターフェース系・[LAG](../reference/glossary.md#term-lag)・[VLAN](../reference/glossary.md#term-vlan)・[FDB](../reference/glossary.md#term-fdb)・Tunnel など大半のデータパス系
 2. **CONFIG_DB を orchagent が直接 subscribe → SAI**
-   - QoS / Buffer (一部) / ACL / Policer / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統
+   - [QoS](../reference/glossary.md#term-qos) / Buffer (一部) / [ACL](../reference/glossary.md#term-acl) / Policer / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統
 
 下表は `orchdaemon.cpp` の Orch 構築コードと、`cfgmgr/*.cpp` の `TableConnector` 登録から逆引きしたもの。
 
@@ -59,7 +59,7 @@ SONiC の **CONFIG_DB テーブル** が「誰によって読まれるか」を�
 | `LOOPBACK_INTERFACE` | `intfmgrd` → `IntfsOrch` | ✓ | `sai_router_intf_api` (loopback) |
 | `VLAN_SUB_INTERFACE` | `intfmgrd` → `IntfsOrch` | ✓ | `sai_router_intf_api` (subport) |
 | `VOQ_INBAND_INTERFACE` | `intfmgrd` (chassis VoQ) | ✓ | (VoQ 内部) |
-| `GEARBOX` | `xcvrd` / portsyncd | (state) | `sai_phy_api` (外部 PHY) |
+| `GEARBOX` | `xcvrd` / [portsyncd](../reference/glossary.md#term-portsyncd) | (state) | `sai_phy_api` (外部 PHY) |
 
 ## VLAN / FDB / LAG / STP
 
@@ -84,7 +84,7 @@ SONiC の **CONFIG_DB テーブル** が「誰によって読まれるか」を�
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
-| `STATIC_ROUTE` | `fpmsyncd` (FRR 経由) → `RouteOrch` (`APP_ROUTE_TABLE`) | ✓ | `sai_route_api` |
+| `STATIC_ROUTE` | `fpmsyncd` ([FRR](../reference/glossary.md#term-frr) 経由) → `RouteOrch` (`APP_ROUTE_TABLE`) | ✓ | `sai_route_api` |
 | `BGP_NEIGHBOR` | `bgpcfgd` → FRR vtysh | (FRR) | (FRR が APPL_DB に route 書込) |
 | `BGP_PEER_GROUP` | `bgpcfgd` | (FRR) | — |
 | `BGP_DEVICE_GLOBAL` | `BgpGlobalStateOrch` (直接 CFG) | — | `sai_switch_api` (TCP MD5 等の hint) |
@@ -106,7 +106,7 @@ SONiC の **CONFIG_DB テーブル** が「誰によって読まれるか」を�
 | `TUNNEL` | `tunnelmgrd` → `TunnelDecapOrch` (`APP_TUNNEL_DECAP_TABLE`) | ✓ | `sai_tunnel_api` (decap) |
 | `VXLAN_TUNNEL` | `vxlanmgrd` → `VxlanTunnelOrch` (`APP_VXLAN_TUNNEL_TABLE`) | ✓ | `sai_tunnel_api` |
 | `VXLAN_TUNNEL_MAP` | `vxlanmgrd` → `VxlanTunnelMapOrch` | ✓ (`APP_VXLAN_TUNNEL_MAP_TABLE`) | `sai_tunnel_api` (map) |
-| `VXLAN_EVPN_NVO` | `vxlanmgrd` / `vrfmgrd` → `EvpnNvoOrch` | ✓ (`APP_VXLAN_EVPN_NVO_TABLE`) | (EVPN 制御面) |
+| `VXLAN_EVPN_NVO` | `vxlanmgrd` / `vrfmgrd` → `EvpnNvoOrch` | ✓ (`APP_VXLAN_EVPN_NVO_TABLE`) | ([EVPN](../reference/glossary.md#term-evpn) 制御面) |
 | `VNET` | `vrfmgrd` / `vxlanmgrd` → `VNetOrch` (`APP_VNET_TABLE`) | ✓ | `sai_virtual_router_api` |
 | `VNET_ROUTE` | `VNetCfgRouteOrch` → `VNetRouteOrch` (`APP_VNET_RT_TABLE`) | ✓ | `sai_route_api` |
 | `VNET_ROUTE_TUNNEL` | `VNetCfgRouteOrch` → `VNetRouteOrch` (`APP_VNET_RT_TUNNEL_TABLE`) | ✓ | `sai_route_api` + tunnel nh |
@@ -175,7 +175,7 @@ QoS/Buffer 系は **orchagent が CONFIG_DB を直接 subscribe** する経路�
 | `BUFFER_PORT_INGRESS_PROFILE_LIST` | `buffermgrd` → `BufferOrch` | ✓ | `sai_port_api` (binding) |
 | `BUFFER_PORT_EGRESS_PROFILE_LIST` | `buffermgrd` → `BufferOrch` | ✓ | `sai_port_api` (binding) |
 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | `buffermgrdyn` | (内部計算) | — |
-| `PFC_WD_TABLE` | `PfcWdSwOrch` (直接 CFG) | — | `sai_acl_api` + `sai_queue_api` (PFC WD) |
+| `PFC_WD_TABLE` | `PfcWdSwOrch` (直接 CFG) | — | `sai_acl_api` + `sai_queue_api` ([PFC](../reference/glossary.md#term-pfc) WD) |
 
 ## 監視 / 観測 / Telemetry / Debug
 
@@ -195,7 +195,7 @@ QoS/Buffer 系は **orchagent が CONFIG_DB を直接 subscribe** する経路�
 | `HIGH_FREQUENCY_TELEMETRY_GROUP` | `HFTelOrch` | — | `sai_tam_api` |
 | `RATES` | (counters/rate-calc daemon) | — | (内部) |
 | `TWAMP_SESSION` | `TwampOrch` (直接 CFG) | — | `sai_twamp_api` |
-| `BFD_SESSION` (app-only) | `BfdOrch` (`APP_BFD_SESSION_TABLE`) | (FRR/BFD) | `sai_bfd_api` |
+| `BFD_SESSION` (app-only) | `BfdOrch` (`APP_BFD_SESSION_TABLE`) | (FRR/[BFD](../reference/glossary.md#term-bfd)) | `sai_bfd_api` |
 | `ICMP_ECHO_SESSION` (app-only) | `IcmpOrch` (`APP_ICMP_ECHO_SESSION_TABLE`) | — | `sai_bfd_api` (echo) |
 
 ## Switch / Chassis / Fabric / Platform
@@ -219,7 +219,7 @@ QoS/Buffer 系は **orchagent が CONFIG_DB を直接 subscribe** する経路�
 
 ## DASH / SmartSwitch (DPU-side orchagent)
 
-CONFIG_DB → APPL_DB → orchagent と同じ構造を **DPU 専用 Redis** 上で持つ。テーブル名は `DASH_*`。
+CONFIG_DB → APPL_DB → orchagent と同じ構造を **[DPU](../reference/glossary.md#term-dpu) 専用 [Redis](../reference/glossary.md#term-redis)** 上で持つ。テーブル名は `DASH_*`。
 
 | APPL_DB テーブル (DPU 側) | subscribe 主体 | SAI 経路 |
 |---|---|---|
@@ -237,7 +237,7 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **DPU 専用 Redis** 上�
 | `DASH_ACL_IN_TABLE` / `DASH_ACL_OUT_TABLE` | `DashAclOrch` | `sai_dash_acl_api` |
 | `DASH_ACL_GROUP_TABLE` / `DASH_ACL_RULE_TABLE` | `DashAclOrch` | `sai_dash_acl_api` |
 | `DASH_HA_SET_TABLE` / `DASH_HA_SCOPE_TABLE` | `DashHaOrch` | `sai_dash_ha_api` |
-| `DASH_ENI_FORWARD_TABLE` | `DashEniFwdOrch` (NPU 側 orchagent) | `sai_acl_api` (forward) |
+| `DASH_ENI_FORWARD_TABLE` | `DashEniFwdOrch` ([NPU](../reference/glossary.md#term-npu) 側 orchagent) | `sai_acl_api` (forward) |
 | `DASH_HA_GLOBAL_CONFIG` (CFG_DB) | `DashHaOrch` (CFG) | (HA 設定) |
 
 ## 認証 / 802.1X 系
@@ -323,9 +323,9 @@ flowchart LR
   sai --> asic[ASIC]
 ```
 
-- 「`*mgrd` → APPL_DB → orchagent」: ポート/インターフェース/VLAN/LAG/Tunnel/Buffer/sFlow/Macsec/CoPP/NAT/STP/Fabric
-- 「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/FlexCounter/HFTel/NvgreTunnel/Switch(一部)
-- 「FRR / kernel daemon が中継」: BGP/OSPF/Static route(`fpmsyncd`)、VRRP、NTP、Mgmt VRF、DHCP
+- 「`*mgrd` → APPL_DB → orchagent」: ポート/インターフェース/VLAN/LAG/Tunnel/Buffer/sFlow/Macsec/[CoPP](../reference/glossary.md#term-copp)/[NAT](../reference/glossary.md#term-nat)/STP/Fabric
+- 「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/[FlexCounter](../reference/glossary.md#term-flexcounter)/HFTel/NvgreTunnel/Switch(一部)
+- 「FRR / kernel daemon が中継」: [BGP](../reference/glossary.md#term-bgp)/OSPF/Static route(`fpmsyncd`)、VRRP、NTP、Mgmt [VRF](../reference/glossary.md#term-vrf)、DHCP
 
 ## 関連リファレンス
 
@@ -341,3 +341,5 @@ flowchart LR
 - [`sonic-swss/orchagent/orchdaemon.cpp`](https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp)
 - [`sonic-swss/cfgmgr/`](https://github.com/sonic-net/sonic-swss/tree/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr) (各 `*mgrd.cpp`)
 - [`sonic-swss-common/common/schema.h`](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h)
+
+<!-- glossary-links-injected: a118e8b048d0 -->

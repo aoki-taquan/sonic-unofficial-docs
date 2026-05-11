@@ -14,7 +14,7 @@ sources:
 
 # Upgrade lifecycle
 
-upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。SONiC では OS image、Docker image、Debian base、FRR、DPU image などが別々の粒度で更新されます。
+upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。SONiC では OS image、Docker image、Debian base、[FRR](../../reference/glossary.md#term-frr)、[DPU](../../reference/glossary.md#term-dpu) image などが別々の粒度で更新されます。
 
 ## image upgrade の基本線
 
@@ -47,7 +47,7 @@ secure upgrade は reboot を速くする機能ではなく、reboot 前に「�
 
 ## DPU independent upgrade
 
-SmartSwitch では DPU が独立して upgrade される場合があります。[Smart Switch: DPU 独立アップグレード](../../system/independent-dpu-upgrade.md) は gNOI 経路、upgrade sequence、影響範囲を説明します。NPU 側 SONiC image の切替とは別 lifecycle なので、全体 reboot、DPU reboot、DPU graceful shutdown と区別して計画します。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) では DPU が独立して upgrade される場合があります。[Smart Switch: DPU 独立アップグレード](../../system/independent-dpu-upgrade.md) は [gNOI](../../reference/glossary.md#term-gnoi) 経路、upgrade sequence、影響範囲を説明します。[NPU](../../reference/glossary.md#term-npu) 側 SONiC image の切替とは別 lifecycle なので、全体 reboot、DPU reboot、DPU graceful shutdown と区別して計画します。
 
 ## 関連ページ
 
@@ -56,3 +56,5 @@ SmartSwitch では DPU が独立して upgrade される場合があります。
 - [SONiC Debian アップグレード方針](../../system/sonic-debian-upgrade-cadence.md)
 - [SONiC OS と Docker イメージのセマンティックバージョニング](../../system/sonic-os-sonic-docker-images-versioning.md)
 - [Smart Switch: DPU 独立アップグレード](../../system/independent-dpu-upgrade.md)
+
+<!-- glossary-links-injected: 35048036a2de -->

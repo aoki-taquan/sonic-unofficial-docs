@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`storagemond` は **SSD / eMMC など内部ストレージの health / wear-out** を定期監視し、STATE_DB に publish する pmon 系 daemon[^1]。狙いは:
+`storagemond` は **SSD / eMMC など内部ストレージの health / wear-out** を定期監視し、[STATE_DB](../reference/glossary.md#term-state_db) に publish する pmon 系 daemon[^1]。狙いは:
 
 - vendor 別ツール（`smartctl`、`mmc-utils` 等）の出力を SONiC 共通スキーマに正規化
 - write amplification、reserved blocks、temperature、life-remaining を読みやすい形にする
@@ -43,7 +43,7 @@ flowchart LR
     SHOW[show platform storage] --> STATE
 ```
 
-主な観測項目（HLD 概念）[^1]:
+主な観測項目（[HLD](../reference/glossary.md#term-hld) 概念）[^1]:
 
 - **device 名**, **model**, **serial**, **firmware revision**
 - **temperature**
@@ -104,3 +104,5 @@ flowchart LR
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 10394a5e95a8 -->

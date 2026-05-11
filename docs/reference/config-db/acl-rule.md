@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`ACL_TABLE` 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ[^1]。`AclOrch` が `ACL_TABLE` 配下のルールを SAI ACL entry として展開する。
+`ACL_TABLE` 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ[^1]。`AclOrch` が `ACL_TABLE` 配下のルールを [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) entry として展開する。
 
 !!! warning "YANG 未定義"
     `ACL_RULE` テーブルは YANG モジュールで未定義。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}`。
@@ -84,7 +84,7 @@ ACL_RULE|<table_name>|<rule_name>
 | `TUNNEL_VNI` | VNI |
 | `INNER_ETHER_TYPE` / `INNER_IP_PROTOCOL` / `INNER_L4_SRC_PORT` / `INNER_L4_DST_PORT` | inner header |
 | `INNER_SRC_MAC` / `INNER_DST_MAC` / `INNER_SRC_IP` | inner header |
-| `BTH_OPCODE` / `AETH_SYNDROME` | RoCE 用 |
+| `BTH_OPCODE` / `AETH_SYNDROME` | [RoCE](../../reference/glossary.md#term-roce) 用 |
 | `TUNNEL_TERM` | bool |
 | `META_DATA` | uint32 |
 
@@ -94,7 +94,7 @@ ACL_RULE|<table_name>|<rule_name>
 |------|------|
 | `PACKET_ACTION` | `FORWARD` / `DROP` 等 |
 | `REDIRECT_ACTION` | redirect 先（next-hop / mirror セッション 等） |
-| `DO_NOT_NAT_ACTION` | NAT バイパス |
+| `DO_NOT_NAT_ACTION` | [NAT](../../reference/glossary.md#term-nat) バイパス |
 | `DISABLE_TRIM_ACTION` | バッファ trim 無効化 |
 | `MIRROR_ACTION` / `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` | mirror セッション参照 |
 | `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` / `FLOW_SAMPLE_PERCENT` / `REPORT_ALL_PACKETS` | DTel (`DTEL_*`) |
@@ -113,9 +113,9 @@ ACL_RULE|<table_name>|<rule_name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `ACL_TABLE`、`MIRROR_SESSION`、`POLICER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_TABLE`、`MIRROR_SESSION`、`POLICER`
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
-- 関連 YANG: なし
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし
 
 <!-- ref-triangle:start -->
 
@@ -165,3 +165,5 @@ sonic-db-cli CONFIG_DB keys 'ACL_RULE|EVERFLOW|*'
 aclshow -a -t EVERFLOW
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6e0f82e1634 -->

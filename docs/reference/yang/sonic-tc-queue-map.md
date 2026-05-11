@@ -73,7 +73,7 @@ module: sonic-tc-queue-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `TC_TO_QUEUE_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TC_TO_QUEUE_MAP`
 
 <!-- ref-triangle:start -->
 
@@ -88,11 +88,11 @@ module: sonic-tc-queue-map
 
 ### 典型的なデプロイ位置
 
-- TC → output queue マッピング。`TC_TO_QUEUE_MAP|<name>` を qosorch が SAI qos map に反映。
+- TC → output queue マッピング。`TC_TO_QUEUE_MAP|<name>` を qosorch が [SAI](../../reference/glossary.md#term-sai) qos map に反映。
 
 ### よくある落とし穴
 
-- key は TC 番号 (0-7) string。範囲外を入れると orchagent が map を skip するためサイレント不適用になる。
+- key は TC 番号 (0-7) string。範囲外を入れると [orchagent](../../reference/glossary.md#term-orchagent) が map を skip するためサイレント不適用になる。
 
 ### 関連する config / show コマンド
 
@@ -113,3 +113,5 @@ show qos map tc-queue
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fb312971a750 -->

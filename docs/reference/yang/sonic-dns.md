@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-dns`
 
-Domain Name System (DNS) resolver configuration YANG module for SONiC OS.[^1]
+Domain Name System (DNS) resolver configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -89,7 +89,7 @@ module: sonic-dns
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `DNS_NAMESERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DNS_NAMESERVER`
 - CONFIG_DB: `DNS_OPTIONS`
 - CLI: `config dns`
 
@@ -107,11 +107,11 @@ module: sonic-dns
 
 ### 典型的なデプロイ位置
 
-- DNS resolver / domain 設定。`DNS_NAMESERVER|<ip>` を hostcfgd が `/etc/resolv.conf` に書く。
+- DNS resolver / domain 設定。`DNS_NAMESERVER|<ip>` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/resolv.conf` に書く。
 
 ### よくある落とし穴
 
-- VRF (mgmt) 環境で `mgmt-vrf` 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。
+- [VRF](../../reference/glossary.md#term-vrf) (mgmt) 環境で `mgmt-vrf` 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。
 
 ### 関連する config / show コマンド
 
@@ -131,3 +131,5 @@ show dns nameserver
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0072c8c44112 -->

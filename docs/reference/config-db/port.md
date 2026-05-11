@@ -26,7 +26,7 @@ related:
 
 物理スイッチポートの設定を保持するテーブル。ポート名（`Ethernet0` など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、MACsec プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する[^1]。
 
-`portmgrd` / `orchagent` の `PortsOrch` が PORT テーブルを購読し、SAI 経由で hardware に設定を反映する。`speed` と `lanes` は通常 `port_config.ini` 由来の初期値で、運用中に CLI で変更可能。
+`portmgrd` / `orchagent` の `PortsOrch` が PORT テーブルを購読し、[SAI](../../reference/glossary.md#term-sai) 経由で hardware に設定を反映する。`speed` と `lanes` は通常 `port_config.ini` 由来の初期値で、運用中に CLI で変更可能。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -79,11 +79,11 @@ PORT|<name>
 | `subport` | uint8 (0..8) | - | - | breakout で生成された論理サブポート番号 |
 | `index` | uint16 | - | - | フロントパネルポートインデックス |
 | `asic_port_name` | string | - | - | ASIC 内部のポート名（例: `Eth0-ASIC1`） |
-| `role` | string `Ext`/`Int`/`Inb`/`Rec`/`Dpc` | - | `Ext` | 多 ASIC / SmartSwitch のロール |
+| `role` | string `Ext`/`Int`/`Inb`/`Rec`/`Dpc` | - | `Ext` | 多 ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) のロール |
 | `admin_status` | `admin_status` (`up`/`down`) | - | `down` | 管理状態 |
 | `fec` | string `rs`/`fc`/`none`/`auto` | - | - | 前方誤り訂正モード |
 | `dom_polling` | `admin_mode` (`enabled`/`disabled`) | - | - | DOM (Digital Optical Monitoring) ポーリング |
-| `pfc_asym` | string `on`/`off` | - | - | 非対称 PFC |
+| `pfc_asym` | string `on`/`off` | - | - | 非対称 [PFC](../../reference/glossary.md#term-pfc) |
 | `tpid` | `tpid_type` (0x8100 / 0x9100 / 0x9200 / 0x88a8) | - | - | TPID。HW 対応時のみ |
 | `mux_cable` | boolean | - | - | dual-ToR mux cable 接続フラグ |
 | `macsec` | leafref `MACSEC_PROFILE.name` | - | - | 適用する MACsec プロファイル |
@@ -106,9 +106,9 @@ PORT|<name>
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN_MEMBER`（PORT を leafref 参照）、`PORTCHANNEL_MEMBER`（PORT を leafref）、`INTERFACE`（L3 用 PORT 上の IP）、`MACSEC_PROFILE`、`BUFFER_PG` / `BUFFER_QUEUE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN_MEMBER`（PORT を leafref 参照）、`PORTCHANNEL_MEMBER`（PORT を leafref）、`INTERFACE`（L3 用 PORT 上の IP）、`MACSEC_PROFILE`、`BUFFER_PG` / `BUFFER_QUEUE`
 - 関連 CLI: [`config interface`](../cli/config-interface.md)（speed / mtu / admin / fec / autoneg を変更）
-- 関連 YANG: `sonic-port`、`sonic-types`（`switchport_mode`、`admin_status`、`interface_type`、`tpid_type`）
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port`、`sonic-types`（`switchport_mode`、`admin_status`、`interface_type`、`tpid_type`）
 
 <!-- ref-triangle:start -->
 
@@ -136,7 +136,7 @@ PORT|<name>
 
 ### 典型値
 
-- `Ethernet0` 等の `EthernetN` 形式キー。`N` は port_config.ini 由来の lane base。
+- `Ethernet0` 等の `EthernetN` 形式キー。`N` は [port_config.ini](../../reference/glossary.md#term-port-config-ini) 由来の lane base。
 - `speed`: 10000 / 25000 / 40000 / 100000 / 400000 (Mbps)。
 - `mtu`: 9100（jumbo を有効にする一般運用値）。
 - `admin_status`: `up`（運用ポート）。
@@ -147,8 +147,8 @@ PORT|<name>
 
 - `speed` を `lanes` 数と不整合な値にすると SAI が `SAI_STATUS_INVALID_PARAMETER` を返してポートが down のまま。
 - 対向と `fec` が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。
-- `mtu` を VLAN/PortChannel メンバ間で揃えないと L2 で巨大フレームがドロップされる。
-- Breakout 中の親ポートに `admin_status: up` を残すと subport と二重設定で orchagent エラー。
+- `mtu` を [VLAN](../../reference/glossary.md#term-vlan)/[PortChannel](../../reference/glossary.md#term-portchannel) メンバ間で揃えないと L2 で巨大フレームがドロップされる。
+- Breakout 中の親ポートに `admin_status: up` を残すと subport と二重設定で [orchagent](../../reference/glossary.md#term-orchagent) エラー。
 
 ### 確認コマンド
 
@@ -158,3 +158,5 @@ show interfaces status
 show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ea1f97661839 -->

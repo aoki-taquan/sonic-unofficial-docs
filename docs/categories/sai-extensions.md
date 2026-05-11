@@ -10,11 +10,11 @@ last_verified: 2026-05-10
 
 ## 概要
 
-**SAI (Switch Abstraction Interface)** は OCP が定義する ASIC 抽象 API で、SONiC は `libsairedis` + `syncd` を経由して SAI を叩き、`orchagent` がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも **capability 問い合わせ**（`sai_query_attribute_enum_values_capability` / `sai_query_stats_capability` / `sai_query_api_version`）や **失敗時のハンドリング**（`handleSai*Status` / `ERROR_DB` / dump 取得）が独立した HLD として整備されています。
+**[SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface)** は OCP が定義する ASIC 抽象 API で、SONiC は `libsairedis` + `syncd` を経由して SAI を叩き、`orchagent` がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも **capability 問い合わせ**（`sai_query_attribute_enum_values_capability` / `sai_query_stats_capability` / `sai_query_api_version`）や **失敗時のハンドリング**（`handleSai*Status` / `ERROR_DB` / dump 取得）が独立した [HLD](../reference/glossary.md#term-hld) として整備されています。
 
-このカテゴリは、SAI そのものを横断するページを集めます。**capability 問い合わせ系**（ACL action / counter capability / API version check）・**failure handling**（dump-on-failure・virtual handleSaiStatus）・**SAI POST**（MACsec FIPS）・**Generic SAI Extension の CRM**・**SAI bulk API 系**（Port Profile Init / Auto FEC）が中心です。
+このカテゴリは、SAI そのものを横断するページを集めます。**capability 問い合わせ系**（[ACL](../reference/glossary.md#term-acl) action / counter capability / API version check）・**failure handling**（dump-on-failure・virtual handleSaiStatus）・**SAI POST**（MACsec FIPS）・**Generic SAI Extension の [CRM](../reference/glossary.md#term-crm)**・**SAI bulk API 系**（Port Profile Init / Auto FEC）が中心です。
 
-SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応する実装が swss / sairedis / syncd / sonic-platform-common にまたがります。たとえば `egress mirroring + action capability check` は `aclorch` が SAI capability を見てフォールバックする実装で、`sai_query_stats_capability` は `counter caps` を `CounterCheck` 系から呼びます。
+SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応する実装が swss / sairedis / [syncd](../reference/glossary.md#term-syncd) / sonic-platform-common にまたがります。たとえば `egress mirroring + action capability check` は `aclorch` が SAI capability を見てフォールバックする実装で、`sai_query_stats_capability` は `counter caps` を `CounterCheck` 系から呼びます。
 
 主要キーワード: `SAI`, `attribute`, `capability`, `API`, `failure handling`, `POST`, `CRM`
 
@@ -50,7 +50,7 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 ## 関連 Topics 章
 
-- [Topics 20: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) — SWSS / SAI / Redis を段階的に学ぶ章
+- [Topics 20: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) — SWSS / SAI / [Redis](../reference/glossary.md#term-redis) を段階的に学ぶ章
 - [Topics 14: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) — SAI ポート属性の前提
 
 ## verification ステータス注意点
@@ -70,3 +70,5 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f1fdf27b05bc -->

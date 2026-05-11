@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`, `sonic-loopback-interface`, `sonic-mgmt_port`
 - top container: `sonic-system-radius`
 
-Remote Authentication Dial-In User Service (RADIUS) YANG module for SONiC OS.[^1]
+Remote Authentication Dial-In User Service (RADIUS) [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -94,7 +94,7 @@ module: sonic-system-radius
 | `priority` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/priority` | `uint8` |  |  | range 1..64 | Server selection priority; higher values are tried first. |
 | `timeout` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/timeout` | `uint16` |  | `5` | range 1..60 | Per-server response timeout in seconds. |
 | `retransmit` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/retransmit` | `uint8` |  | `3` | range 0..10 | Per-server number of retransmit attempts before failing over. |
-| `vrf` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/vrf` | `string` |  |  | pattern `mgmt\|default` | VRF used to reach this RADIUS server. |
+| `vrf` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/vrf` | `string` |  |  | pattern `mgmt\|default` | [VRF](../../reference/glossary.md#term-vrf) used to reach this RADIUS server. |
 | `src_intf` | `sonic-system-radius/RADIUS_SERVER/RADIUS_SERVER_LIST/src_intf` | `union` |  |  | leafref(PORT, PORTCHANNEL, LOOPBACK_INTERFACE, MGMT_PORT) or `Vlan<id>` | Source interface to use for RADIUS server communication. |
 
 ## leafref / 依存
@@ -108,7 +108,7 @@ module: sonic-system-radius
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `RADIUS|global`, `RADIUS_SERVER|<ipaddress>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS|global`, `RADIUS_SERVER|<ipaddress>`
 - CLI: `config radius`
 
 <!-- ref-triangle:start -->
@@ -123,3 +123,5 @@ module: sonic-system-radius
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-radius.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: a6c6612be307 -->

@@ -26,12 +26,12 @@ related:
 
 ## 概要
 
-光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / voltage—を SONiC は SNMP 経由で外部に公開する。MIB は IETF 標準の[^1]:
+光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / voltage—を SONiC は [SNMP](../reference/glossary.md#term-snmp) 経由で外部に公開する。MIB は IETF 標準の[^1]:
 
 - **RFC 2737 Entity MIB**（chassis / port / sensor 等の物理エンティティのインベントリ）
 - **RFC 3433 Entity Sensor MIB**（sensor の数値・単位・タイムスタンプ）
 
-このドキュメントは関連の sonic-mgmt 側 SNMP テスト拡張の **test plan** をまとめたもの。本ページではテストの構造から、何を満たせば SONiC 側実装が「testbed として正しく動く」と言えるかを抽出する。
+このドキュメントは関連の [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) 側 SNMP テスト拡張の **test plan** をまとめたもの。本ページではテストの構造から、何を満たせば SONiC 側実装が「testbed として正しく動く」と言えるかを抽出する。
 
 ## 動作仕様（テスト観点）
 
@@ -72,7 +72,7 @@ flowchart LR
 
 ### 関連する CONFIG_DB
 
-該当なし。本テスト計画はテスト側の動作確認であり、CONFIG_DB は使わない。
+該当なし。本テスト計画はテスト側の動作確認であり、[CONFIG_DB](../reference/glossary.md#term-config_db) は使わない。
 
 ### 関連する CLI
 
@@ -92,11 +92,11 @@ snmpwalk -v2c -c <community> <DUT> entitySensorValue
 
 - テスト対象は **UP port のみ**[^1]。down port や未挿入 port の MIB エントリ仕様は本 test plan の対象外
 - ベンダ実装が Entity Sensor MIB の `entitySensorValue` を返さない場合、test case 3 の「エントリ存在」判定は通っても値が無効値になる
-- HLD は Rev 0.2、日付欄空欄。テスト範囲は最低限の存在確認に留まり、値の妥当性検証（正常値 vs 警告値）は別テストプランの管轄
+- [HLD](../reference/glossary.md#term-hld) は Rev 0.2、日付欄空欄。テスト範囲は最低限の存在確認に留まり、値の妥当性検証（正常値 vs 警告値）は別テストプランの管轄
 
 ## 干渉する機能
 
-- **xcvrd**: STATE_DB の `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_INFO` を埋めないと SNMP 側に何も出ない
+- **xcvrd**: [STATE_DB](../reference/glossary.md#term-state_db) の `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_INFO` を埋めないと SNMP 側に何も出ない
 - **`extension-to-physical-entity-mib`** HLD: SONiC は Entity MIB を独自拡張しており、その仕様と整合する必要
 - **sonic-snmpagent / sonic_ax_impl**: SONiC の SNMP 実装。Python ベースで、STATE_DB を見て MIB を作る
 - **sonic-mgmt**: 実際にこのテストを動かす testbed フレームワーク
@@ -129,3 +129,5 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.99.1.1.1.4 | head    # entPhySenso
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: af8665f32249 -->

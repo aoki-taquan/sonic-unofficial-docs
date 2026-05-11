@@ -24,7 +24,7 @@ related:
 - import: `sonic-mgmt_port`, `ietf-inet-types`, `sonic-types`
 - top container: `sonic-mgmt_interface`
 
-OOB マネジメントインタフェース（`eth0` 等）の IP アドレス・デフォルトゲートウェイ・強制ルートを定義する YANG モジュール[^1]。
+OOB マネジメントインタフェース（`eth0` 等）の IP アドレス・デフォルトゲートウェイ・強制ルートを定義する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -62,7 +62,7 @@ module: sonic-mgmt_interface
 | `name` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/name` | `leafref` | yes |  | `/mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | 対象マネジメントポート名（`eth0` 等） |
 | `ip_prefix` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/ip_prefix` | `stypes:sonic-ip-prefix` | yes |  | must: `gwaddr` と family が一致 | マネジメントインタフェース IP/プレフィックス |
 | `gwaddr` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/gwaddr` | `inet:ip-address` |  |  | must: `ip_prefix` と family が一致 | デフォルトゲートウェイアドレス |
-| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト VRF または management VRF に追加する強制ルート（`interfaces.j2` で展開） |
+| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト [VRF](../../reference/glossary.md#term-vrf) または management VRF に追加する強制ルート（`interfaces.j2` で展開） |
 
 ## leafref / 依存
 
@@ -74,7 +74,7 @@ module: sonic-mgmt_interface
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MGMT_INTERFACE|<name>|<ip_prefix>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_INTERFACE|<name>|<ip_prefix>`
 - CLI: `config interface ip add eth0 <addr>`
 
 <!-- ref-triangle:start -->
@@ -91,7 +91,7 @@ module: sonic-mgmt_interface
 
 ### 典型的なデプロイ位置
 
-- Management interface の IP / GW 設定。`MGMT_INTERFACE|eth0|<prefix>` を hostcfgd / networking が処理。
+- Management interface の IP / GW 設定。`MGMT_INTERFACE|eth0|<prefix>` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) / networking が処理。
 
 ### よくある落とし穴
 
@@ -108,3 +108,5 @@ show management_interface address
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 0072c8c44112 -->

@@ -10,8 +10,8 @@ last_verified: 2026-05-10
 
 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。
 
-- **discrepancy**: HLD と現行実装の挙動が一致していないと裏取りで分かった点。`docs/_meta/discrepancies.md` に集約。
-- **reference gap**: CLI / CONFIG_DB / YANG のうち、まだ辞書化が追いついていない名前。`meta/reference-gaps.md` に集約。
+- **discrepancy**: [HLD](../../reference/glossary.md#term-hld) と現行実装の挙動が一致していないと裏取りで分かった点。`docs/_meta/discrepancies.md` に集約。
+- **reference gap**: CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) のうち、まだ辞書化が追いついていない名前。`meta/reference-gaps.md` に集約。
 
 ## discrepancy の追跡
 
@@ -35,7 +35,7 @@ discrepancy が新規に追加される導線は次の通り。
 `meta/reference-gaps.md` には、Indexer が `sonic-net/sonic-utilities` の CLI / `sonic-yang-models` の YANG モジュール / CONFIG_DB の table を棚卸ししたうちで、まだ辞書化が追いついていないものを並べてある。2026-05-10 時点の傾向は次の通り。
 
 - **CLI**: 全 110 グループのうち 44 カバー (約 40 %)。未カバー 66 はサブグループ単位で重要度評価済み。
-- **CONFIG_DB**: YANG 由来の table 候補のうち 76 が辞書化済。残りは派生 / 内部 / DPU 専用などを中心に未カバー。
+- **CONFIG_DB**: YANG 由来の table 候補のうち 76 が辞書化済。残りは派生 / 内部 / [DPU](../../reference/glossary.md#term-dpu) 専用などを中心に未カバー。
 - **YANG**: 39 / 136 モジュール (約 29 %) を辞書化。
 
 機能章を書く際の運用は次の通り。
@@ -54,3 +54,5 @@ discrepancy の解消は、HLD 側を書き換えるのではなく、実装と�
 - [Discrepancy index](../../reference/verification/discrepancy-index.md)
 - [リファレンス トップ](../../reference/index.md)
 - [リファレンス横断索引 トップ](index.md)
+
+<!-- glossary-links-injected: ae9992096eee -->

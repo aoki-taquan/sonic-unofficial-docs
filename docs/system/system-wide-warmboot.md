@@ -26,16 +26,16 @@ related:
 
 1. **shutdown→kexec→bootup の各段階で誰が何をするか**（順序）
 2. **`SONIC_BOOT_TYPE` の値とその意味**（warm / fast / fastfast / express）
-3. **SAI に求める warm shutdown / warm recovery の API 契約**
+3. **[SAI](../reference/glossary.md#term-sai) に求める warm shutdown / warm recovery の API 契約**
 4. **fast-reboot や Warmboot Manager との関係**
-5. **データプレーン断や orchagent compare が止まる場合の見どころ**
+5. **データプレーン断や [orchagent](../reference/glossary.md#term-orchagent) compare が止まる場合の見どころ**
 
 ## 1. 何の HLD か
 
 全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない **warmboot の枠組み**[^1]。fast-reboot スクリプト基盤を再利用し、`SONIC_BOOT_TYPE` カーネル引数で挙動を分岐する。
 
 - **kernel argument**: `SONIC_BOOT_TYPE=[fast-reboot|warm|cold]`。fast / warm 二重指定不可。`fast-reboot` 表記を互換のため許容、将来 `fast` 簡素化を計画[^1]
-- **永続化先**: `/host/warmboot/dump.rdb`（Redis 全体）+ `/host/warmboot/sai-warmboot.bin`（SAI state）
+- **永続化先**: `/host/warmboot/dump.rdb`（[Redis](../reference/glossary.md#term-redis) 全体）+ `/host/warmboot/sai-warmboot.bin`（SAI state）
 - **fast-reboot との関係**: スクリプトは symlink 兼用、名前で分岐
 
 機能一覧的なまとめは [`sonic-warm-reboot.md`](sonic-warm-reboot.md)、運用比較は [11-reboot](../topics/11-reboot/index.md)。
@@ -55,10 +55,10 @@ flowchart LR
 ポイント[^1]:
 
 - **bgp**: graceful restart 有効化
-- **teamd**: 最終的な valid update を peer に出し 90s 確保
+- **[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)**: 最終的な valid update を peer に出し 90s 確保
 - **swss**: MAC learning / aging 無効化、orchagent freeze、`WARM_RESTART_TABLE:system` フラグ
 - Redis ダンプは AOF / RDB の `dump.rdb`（旧版の per-DB json は廃止）
-- **syncd**: warm shutdown で SAI に `/host/warmboot/sai-warmboot.bin` を書かせる
+- **[syncd](../reference/glossary.md#term-syncd)**: warm shutdown で SAI に `/host/warmboot/sai-warmboot.bin` を書かせる
 
 ### SAI: warm shutdown 期待値
 
@@ -123,7 +123,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 - `SONIC_BOOT_TYPE` 表記揺れ（`fast-reboot` vs `fast`）は将来変わる可能性
 - **fast-reboot**: 同基盤・同 kernel arg を共有
 - **Warmboot Manager**: 後発の shutdown orchestrator、共存設計
-- **BGP graceful restart / teamd 90s timer**: control plane downtime <90s に必須
+- **[BGP](../reference/glossary.md#term-bgp) graceful restart / teamd 90s timer**: control plane downtime <90s に必須
 
 ## 6. トラブルシューティング
 
@@ -145,3 +145,5 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 446a7059dd14 -->

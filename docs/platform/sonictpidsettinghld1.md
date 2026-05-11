@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-TPID（Tag Protocol Identifier）は VLAN tag を識別する Ethernet frame 内の 16-bit 値。デフォルトは IEEE 802.1Q の `0x8100`、Q-in-Q 外側で使われる `0x88A8` や歴史的な `0x9100` / `0x9200` がある。SONiC 既定では port の TPID は `0x8100` 固定だったが、ASIC 側に「**指定 TPID と一致しない VLAN tag は customer payload として扱う**」モードを設定できるようにする[^1]。
+TPID（Tag Protocol Identifier）は [VLAN](../reference/glossary.md#term-vlan) tag を識別する Ethernet frame 内の 16-bit 値。デフォルトは IEEE 802.1Q の `0x8100`、Q-in-Q 外側で使われる `0x88A8` や歴史的な `0x9100` / `0x9200` がある。SONiC 既定では port の TPID は `0x8100` 固定だったが、ASIC 側に「**指定 TPID と一致しない VLAN tag は customer payload として扱う**」モードを設定できるようにする[^1]。
 
 主用途は **fanout switch** の置換[^1]: PTF テストで tagged packet を流すために fanout 側で 802.1Q tunnel を張りたい場合、TPID を別値に振ることで tunnel 動作を再現できる。
 
@@ -56,7 +56,7 @@ TPID 0x0800 is not allowed. Allowed: 0x8100, 0x9100, 0x9200, or 0x88A8.
 
 ### Capability query と STATE_DB
 
-ベンダ SAI が `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` を実装しているかを **boot 時に問い合わせ** て `STATE_DB` の `SWITCH_CAPABILITY|switch` に保存する[^1]:
+ベンダ [SAI](../reference/glossary.md#term-sai) が `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` を実装しているかを **boot 時に問い合わせ** て `STATE_DB` の `SWITCH_CAPABILITY|switch` に保存する[^1]:
 
 ```
 SWITCH_CAPABILITY|switch
@@ -77,7 +77,7 @@ admin@SONiC:~$ sudo config interface tpid PortChannel0002 0x9200
 HW is not capable to support PortChannel TPID config.
 ```
 
-これにより orchagent / SAI 層で fail させずに **早期に拒否** する設計。
+これにより [orchagent](../reference/glossary.md#term-orchagent) / SAI 層で fail させずに **早期に拒否** する設計。
 
 ### Config flow
 
@@ -95,7 +95,7 @@ flowchart LR
 
 ### LAG メンバへの直接設定は禁止
 
-ポートが既に LAG メンバである場合、port 単独への TPID 設定はできない[^1]:
+ポートが既に [LAG](../reference/glossary.md#term-lag) メンバである場合、port 単独への TPID 設定はできない[^1]:
 
 ```
 admin@SONiC:~$ sudo config interface tpid Ethernet4 0x9200
@@ -156,7 +156,7 @@ reasoning: capability query を STATE_DB に保存して CLI 前段で拒否す�
 
 ### Linux Kernel との関係
 
-Linux kernel は VLAN TPID を `0x8100` (802.1Q) または `0x88A8` (802.1ad) しか受け付けない[^1]。SONiC TPID 設定は **ASIC 側だけ** を変える。Kernel 側で送受信する VLAN frame は引き続き 0x8100/0x88A8 のいずれか。Q-in-Q の完全実装ではない、と HLD が明言。
+Linux kernel は VLAN TPID を `0x8100` (802.1Q) または `0x88A8` (802.1ad) しか受け付けない[^1]。SONiC TPID 設定は **ASIC 側だけ** を変える。Kernel 側で送受信する VLAN frame は引き続き 0x8100/0x88A8 のいずれか。Q-in-Q の完全実装ではない、と [HLD](../reference/glossary.md#term-hld) が明言。
 
 ## 設定
 
@@ -200,7 +200,7 @@ show interface tpid
 
 - **VLAN / 802.1Q**: 既定 0x8100 のままなら従来動作。それ以外は ingress で「unrecognized VLAN tag = customer payload」扱い
 - **port breakout**: breakout で sub-port が新規生成される際、TPID は default の 0x8100 に戻る想定（HLD で明記なし）
-- **LAG (PortChannel) / teamd**: LAG TPID は member port 全部に効く。capability が LAG に対して false の SKU では LAG TPID 設定不可
+- **LAG ([PortChannel](../reference/glossary.md#term-portchannel)) / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)**: LAG TPID は member port 全部に効く。capability が LAG に対して false の SKU では LAG TPID 設定不可
 - **show interface status**: HLD は既存出力に TPID を足す案を退け、別途 `show interface tpid` を追加[^1]
 
 ## トラブルシューティング
@@ -230,3 +230,5 @@ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>" | grep TPID
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 33e8880c866a -->

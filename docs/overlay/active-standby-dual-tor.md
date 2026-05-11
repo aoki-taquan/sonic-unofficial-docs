@@ -55,14 +55,14 @@ related:
 1. dual ToR の基本構成と **要件** は？
 2. **誰が** active/standby を判定して切り替えるのか？
 3. **standby ToR で受けたサーバ宛トラフィック** はどう転送されるのか？
-4. **neighbor / ARP / NDP** の特殊扱いはなぜ必要？
+4. **neighbor / [ARP](../reference/glossary.md#term-arp) / [NDP](../reference/glossary.md#term-ndp)** の特殊扱いはなぜ必要？
 5. y-cable I2C 障害時はどうなる？
 6. **CLI / DB** の最小セットは？
 7. switchover 遅延を測りたいときに見るテーブルは？
 
 ## 1. 構成と要件
 
-**2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続** し、片側を active、もう片側を standby として運用する構成[^1]。`linkmgrd` が link health を監視し、不健全を検知すると **standby 側が自発的に active へ昇格** する。standby 側で受けたトラフィックは **IPinIP tunnel** で peer ToR に転送する。
+**2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続** し、片側を active、もう片側を standby として運用する構成[^1]。`linkmgrd` が link health を監視し、不健全を検知すると **standby 側が自発的に active へ昇格** する。standby 側で受けたトラフィックは **[IPinIP](../reference/glossary.md#term-ipinip) tunnel** で peer ToR に転送する。
 
 要件は **「リンク or ToR 障害時に健全な側へ切り替えられること」** に尽きる[^1]。
 
@@ -76,7 +76,7 @@ ToR ↔ NIC の動作[^1]:
 
 routing 側[^1]:
 
-- 両 ToR は **同じ VLAN 設定 + 同じ virtual MAC** を保持し T1 に同じ prefix を広告
+- 両 ToR は **同じ [VLAN](../reference/glossary.md#term-vlan) 設定 + 同じ virtual MAC** を保持し T1 に同じ prefix を広告
 - 同じ port が **両 ToR で active / standby** に分かれる
 - standby ToR で受けた server 宛 traffic は **L3 IPinIP tunnel** で peer ToR に転送
 
@@ -110,7 +110,7 @@ IPv4 / IPv6 双方を送るが **判定は IPv4 のみ**。IPv6 はモニタ用�
 
 ### MuxState (I2C 経由)
 
-y-cable の I2C レジスタ（例: Credo の `B132 @ page 4`）から MUX 方向を取得[^1]: `MuxActive` / `MuxStandby` / `MuxUnknown`（I2C 応答なし = cable 故障 / 電源 OFF）。
+y-cable の I2C レジスタ（例: Credo の `B132 @ page 4`）から [MUX](../reference/glossary.md#term-mux) 方向を取得[^1]: `MuxActive` / `MuxStandby` / `MuxUnknown`（I2C 応答なし = cable 故障 / 電源 OFF）。
 
 ### LinkManager 状態遷移表
 
@@ -148,17 +148,17 @@ active → unknown 遷移時は `linkprober_suspend_timer` で一時的に heart
 
 ### MuxOrch
 
-linkmgrd の状態変化を購読し[^1]:
+[linkmgrd](../reference/glossary.md#term-linkmgrd) の状態変化を購読し[^1]:
 
 1. tunnel route 追加 / 削除
-2. **standby port での ingress drop ACL** 追加 / 削除
+2. **standby port での ingress drop [ACL](../reference/glossary.md#term-acl)** 追加 / 削除
 3. neighbor entry の取り扱い（後述）
 
-HLD は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。**現行 master は「neighbor + standalone tunnel route」併用案** を採用（後段「実装との乖離 / 補足」参照）。
+[HLD](../reference/glossary.md#term-hld) は neighbor 取扱い 3 案（route+neighbor 共存 / [orchagent](../reference/glossary.md#term-orchagent) delete / ACL redirect）を比較するが最終採用案を明示していない。**現行 master は「neighbor + standalone tunnel route」併用案** を採用（後段「実装との乖離 / 補足」参照）。
 
 ### Rollback 動作
 
-orchagent が遷移失敗した場合[^1]: 元状態に rollback → APP_DB に新状態 → ycabled が STATE_DB に書き戻し → orchagent が STATE_DB に `unknown` を書く → linkmgrd が再判定。orchagent は state 変化に対して **idempotent** であること。
+orchagent が遷移失敗した場合[^1]: 元状態に rollback → APP_DB に新状態 → ycabled が [STATE_DB](../reference/glossary.md#term-state_db) に書き戻し → orchagent が STATE_DB に `unknown` を書く → linkmgrd が再判定。orchagent は state 変化に対して **idempotent** であること。
 
 ## 4. neighbor の特殊扱い
 
@@ -296,7 +296,7 @@ config muxcable mode auto all
 ## 干渉する機能
 
 - **`linkmgrd`**: state machine 主体
-- **`orchagent` (`MuxCfgOrch` / `MuxOrch` / `TunnelOrch`)**: SAI 反映 + tunnel + ACL drop
+- **`orchagent` (`MuxCfgOrch` / `MuxOrch` / `TunnelOrch`)**: [SAI](../reference/glossary.md#term-sai) 反映 + tunnel + ACL drop
 - **`ycabled` (旧 `xcvrd`)**: I2C 経由の MUX 制御
 - **`nbrmgrd` / `arp_update` / kernel sysctl**: proxy ARP / GARP / NDP / proxy_ndp / accept_untracked_na
 - **decap-after-tunnel CPU trap 対策の Python service**: 6.3.5.1 の neighbor miss 解消用
@@ -339,3 +339,5 @@ config muxcable mode auto all
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b5409080014b -->

@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-Multi-ASIC SONiC では、システム共通の DB が **host 上の "global database" container** に居て、ASIC 毎の DB は **各 ASIC namespace 内の database container** に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、**どの table をどちらの DB に書くか** を切り分ける必要がある。本 HLD はその切り分け方針を定める[^1]。
+Multi-ASIC SONiC では、システム共通の DB が **host 上の "global database" container** に居て、ASIC 毎の DB は **各 ASIC namespace 内の database container** に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、**どの table をどちらの DB に書くか** を切り分ける必要がある。本 [HLD](../reference/glossary.md#term-hld) はその切り分け方針を定める[^1]。
 
 PMON 自体は **host 上に 1 個** のまま。daemon を namespace 別に複製するのではなく、**daemon 内部で namespace を選び分ける** 設計を取る[^1]。
 
@@ -36,11 +36,11 @@ PMON 自体は **host 上に 1 個** のまま。daemon を namespace 別に複�
 
 | Table | 置き場 | 担当 daemon | 根拠 |
 |-------|--------|-------------|------|
-| `PSU_INFO`, `CHASSIS_INFO` | **global STATE_DB**（host）| psud | system-wide HW で ASIC 非依存 |
+| `PSU_INFO`, `CHASSIS_INFO` | **global [STATE_DB](../reference/glossary.md#term-state_db)**（host）| psud | system-wide HW で ASIC 非依存 |
 | `EEPROM_INFO` | **global STATE_DB** | syseepromd | 同上 |
 | `FAN_INFO`, `TEMPERATURE_INFO` | **global STATE_DB** | thermalctld | 同上 |
 | `TRANSCEIVER_INFO`, `TRANSCEIVER_DOM_SENSOR`, `TRANSCEIVER_STATUS` | **per-ASIC STATE_DB**（各 namespace）| xcvrd | port は ASIC 配下 |
-| APPL_DB の `PORT_TABLE`（LED 連動用） | **per-ASIC APPL_DB** | ledd, xcvrd | 同上 |
+| [APPL_DB](../reference/glossary.md#term-appl_db) の `PORT_TABLE`（LED 連動用） | **per-ASIC APPL_DB** | ledd, xcvrd | 同上 |
 
 判定基準[^1]:
 
@@ -49,7 +49,7 @@ PMON 自体は **host 上に 1 個** のまま。daemon を namespace 別に複�
 
 ### Front-end / back-end ASIC の扱い
 
-Multi-ASIC chassis（VOQ や fixed multi-NPU）では[^1]:
+Multi-ASIC chassis（[VOQ](../reference/glossary.md#term-voq) や fixed multi-[NPU](../reference/glossary.md#term-npu)）では[^1]:
 
 - **front-end ASIC**: front panel port を持つ
 - **back-end ASIC**: ASIC 同士をつなぐ backplane
@@ -130,7 +130,7 @@ reasoning: table の global / per-ASIC 振り分けと port_config.ini の ASIC 
 
 ### Mellanox 例外
 
-Mellanox プラットフォームでは transceiver plug in/out イベントが **mlnx SDK 経由 syncd 内** で出る。multi-ASIC では **syncd は per-namespace** になるので、xcvrd の plugin が namespace 別に SDK と通信する形に変える必要がある[^1]。
+Mellanox プラットフォームでは transceiver plug in/out イベントが **mlnx SDK 経由 [syncd](../reference/glossary.md#term-syncd) 内** で出る。multi-ASIC では **syncd は per-namespace** になるので、xcvrd の plugin が namespace 別に SDK と通信する形に変える必要がある[^1]。
 
 ## 設定
 
@@ -163,8 +163,8 @@ sudo ip netns exec asic1 redis-cli -n 6 KEYS "TRANSCEIVER_INFO|*"
 ## 干渉する機能
 
 - **multi-ASIC HLD**: container 配置の前提
-- **port_config.ini / hwsku ディレクトリ構成**: per-ASIC 配置に従って解釈する必要
-- **Entity MIB**: psud / thermalctld / xcvrd 由来データを SNMP に出す側。データソース DB が分散することを意識する
+- **[port_config.ini](../reference/glossary.md#term-port-config-ini) / hwsku ディレクトリ構成**: per-ASIC 配置に従って解釈する必要
+- **Entity MIB**: psud / thermalctld / xcvrd 由来データを [SNMP](../reference/glossary.md#term-snmp) に出す側。データソース DB が分散することを意識する
 - **`thermalctld` / `psud`**: グローバル DB のままで動くが、後発の SensorMon 等の同居設計では再考の余地あり
 - **`xcvrd` の SDK 連携**: Mellanox を典型に、syncd 配置と紐づく
 
@@ -193,3 +193,5 @@ docker exec pmon supervisorctl status
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5c7d9a7109a -->

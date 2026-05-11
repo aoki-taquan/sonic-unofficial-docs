@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-bgp-common`
 - top container: `sonic-bgp-monitor`
 
-`bgpcfgd` が扱う BGP monitor peer 設定。 BMP / monitoring collector 用の擬似ピアを定義する[^1]。
+`bgpcfgd` が扱う [BGP](../../reference/glossary.md#term-bgp) monitor peer 設定。 BMP / monitoring collector 用の擬似ピアを定義する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -84,8 +84,8 @@ module: sonic-bgp-monitor
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_MONITORS`
-- CLI: なし（`bgpcfgd` が config_db.json から読み取り FRR 設定に反映）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_MONITORS`
+- CLI: なし（`bgpcfgd` が [config_db.json](../../reference/glossary.md#term-config_db.json) から読み取り [FRR](../../reference/glossary.md#term-frr) 設定に反映）
 
 <!-- ref-triangle:start -->
 
@@ -100,7 +100,7 @@ module: sonic-bgp-monitor
 
 ### 典型的なデプロイ位置
 
-- BMP / BGP モニタリング neighbor 設定。`BGP_MONITORS` テーブルが bgpcfgd 経由で FRR に流し込まれる。
+- BMP / BGP モニタリング neighbor 設定。`BGP_MONITORS` テーブルが [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 経由で FRR に流し込まれる。
 
 ### よくある落とし穴
 
@@ -117,3 +117,5 @@ show bgp summary
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 332ab906917a -->

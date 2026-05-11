@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`snmpd` のリッスンアドレスと UDP ポートを CONFIG_DB に登録するテーブル[^1]。`docker-snmp` 起動スクリプトが CONFIG_DB を読み、`snmpd.conf` の `agentaddress` 行を生成する。複数エントリで複数アドレス / ポート / VRF を同時に bind できる。
+`snmpd` のリッスンアドレスと UDP ポートを [CONFIG_DB](../../reference/glossary.md#term-config_db) に登録するテーブル[^1]。`docker-snmp` 起動スクリプトが CONFIG_DB を読み、`snmpd.conf` の `agentaddress` 行を生成する。複数エントリで複数アドレス / ポート / [VRF](../../reference/glossary.md#term-vrf) を同時に bind できる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `agent_ip` | `inet:ip-address` | SNMP エージェントの bind IP |
+| `agent_ip` | `inet:ip-address` | [SNMP](../../reference/glossary.md#term-snmp) エージェントの bind IP |
 | `port` | `inet:port-number` または空文字 (default 161 を意味する) | bind UDP ポート |
 | `vrf_name` | enum: 空文字 / `mgmt` / `Vrf<name>` (`Vrf[a-zA-Z0-9_-]+`) | bind VRF。空文字は default |
 
@@ -69,7 +69,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 - 関連 CONFIG_DB: [`SNMP`](snmp.md), `SNMP_COMMUNITY`, `SNMP_USER`
 - 関連 CLI: `config snmp agentaddress { add | del } <ip> [-p <port>] [-v <vrf>]`
-- 関連 YANG: `sonic-snmp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-snmp`
 
 <!-- ref-triangle:start -->
 
@@ -106,3 +106,5 @@ sonic-db-cli CONFIG_DB keys 'SNMP_AGENT_ADDRESS_CONFIG|*'
 show runningconfiguration snmp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 60a02696c221 -->

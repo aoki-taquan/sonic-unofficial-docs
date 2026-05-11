@@ -33,12 +33,12 @@ related:
 
 ## 概要
 
-Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。本機能は SONiC スイッチを **Magic Packet の送信元** として使えるようにするもので、運用ツールから WoL を発行することでサーバ群を遠隔起動できる。NIC 側で WoL 受信が動作するかは別問題（受信側 BIOS / NIC 設定）であり、本 HLD のスコープ外である。
+Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。本機能は SONiC スイッチを **Magic Packet の送信元** として使えるようにするもので、運用ツールから WoL を発行することでサーバ群を遠隔起動できる。NIC 側で WoL 受信が動作するかは別問題（受信側 BIOS / NIC 設定）であり、本 [HLD](../reference/glossary.md#term-hld) のスコープ外である。
 
 機能は 2 経路で利用できる[^1]。
 
 - `sonic-utilities` の `wol` CLI スクリプト（管理者がスイッチに SSH してから実行）
-- `sonic-gnmi` の `SonicWolService` gNOI サービス（外部から RPC で叩く。最終的には `sonic-host-services` 経由で同じ `wol` CLI が実行される）
+- `sonic-gnmi` の `SonicWolService` [gNOI](../reference/glossary.md#term-gnoi) サービス（外部から RPC で叩く。最終的には `sonic-host-services` 経由で同じ `wol` CLI が実行される）
 
 リビジョン 1.1 (2024-10-11) で **UDP ペイロード形式の Magic Packet** が追加され、ルーティング越しの WoL に対応している。
 
@@ -80,7 +80,7 @@ gNOI 側は最終的に同じ `wol` CLI を呼び出す形で実装される設�
 | UDP payload: 0xff x6 + TargetMAC x16 + Password (0/4/6) |
 ```
 
-宛先 IP は既定 `255.255.255.255`、宛先 UDP ポートは既定 `9` で、`-a` / `-t` で上書きできる。`-u` 指定時は宛先 MAC は OS のネットワークスタックに任せる（ARP / ND の解決結果で決まる）。`-u` と `-b` は同時指定できない。
+宛先 IP は既定 `255.255.255.255`、宛先 UDP ポートは既定 `9` で、`-a` / `-t` で上書きできる。`-u` 指定時は宛先 MAC は OS のネットワークスタックに任せる（[ARP](../reference/glossary.md#term-arp) / ND の解決結果で決まる）。`-u` と `-b` は同時指定できない。
 
 ### CLI 引数の組み合わせ規則
 
@@ -169,7 +169,7 @@ CLI 側は以下を検査する[^1]。
 
 ### 関連する CONFIG_DB
 
-本機能は send-only のオペレーションコマンドであり、永続設定を持たない。CONFIG_DB エントリは無い。
+本機能は send-only のオペレーションコマンドであり、永続設定を持たない。[CONFIG_DB](../reference/glossary.md#term-config_db) エントリは無い。
 
 ### 関連する CLI
 
@@ -179,7 +179,7 @@ CLI 側は以下を検査する[^1]。
 
 ### 関連する YANG
 
-HLD に YANG モジュール定義の記載は無い（永続設定を持たないため）。
+HLD に [YANG](../reference/glossary.md#term-yang) モジュール定義の記載は無い（永続設定を持たないため）。
 
 ### 設定例
 
@@ -196,7 +196,7 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 
 ## 干渉する機能
 
-- **VLAN / ポートチャネル**: `<interface>` には VLAN 名 / PortChannel 名も指定可能。送出は OS のネットワークスタックを通る（特に `-u` モード）。
+- **[VLAN](../reference/glossary.md#term-vlan) / ポートチャネル**: `<interface>` には VLAN 名 / [PortChannel](../reference/glossary.md#term-portchannel) 名も指定可能。送出は OS のネットワークスタックを通る（特に `-u` モード）。
 - **gNOI / sonic-gnmi**: `SonicWolService` は他の gNOI サービスと同じく D-Bus 経由で sonic-host-service に橋渡しされる。`Docker to Host communication` の枠組みに乗る[^1]。
 - **インタフェース状態**: HLD は対象インタフェースが `down` の場合をエラーとして規定している。事前に `show interface status` で確認するか、`config interface startup` で起こす。
 
@@ -234,7 +234,7 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 
 #### 関連 GitHub Issue / PR
 
-- [GitHub Issue / PR の関連リンクは未確認] — `wol` CLI / `SonicWolService` gNOI 実装は sonic-utilities / sonic-gnmi の個別 PR で取り込まれており、HLD 単独のトラッキング Issue は確認できず。
+- [GitHub Issue / PR の関連リンクは未確認] — `wol` CLI / `SonicWolService` gNOI 実装は [sonic-utilities](../reference/glossary.md#term-sonic-utilities) / sonic-gnmi の個別 PR で取り込まれており、HLD 単独のトラッキング Issue は確認できず。
 
 ## 引用元
 
@@ -246,3 +246,5 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d6835cb78451 -->

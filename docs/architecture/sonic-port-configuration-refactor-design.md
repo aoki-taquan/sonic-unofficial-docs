@@ -31,7 +31,7 @@ related:
 
 SONiC のポート定義は伝統的に **`port_config.ini`**（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する[^1]。共通パーサ `sonic-buildimage/src/sonic-config-engine/portconfig.py` がいる一方で、**他のリポジトリ・モジュールにも独自に同じファイルをパースするコード** が散在しており、メンテ性が悪化している。
 
-本 HLD は **すべての `port_config.ini` 関連ロジックを `portconfig.py` に寄せる** リファクタを定義する。さらに当時並行で進んでいた `port_config.ini` → `platform.json` 移行を踏まえ、**パース層を 1 箇所に集約しておけば後段の差し替えコストが下がる** ことを動機にしている[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **すべての `port_config.ini` 関連ロジックを `portconfig.py` に寄せる** リファクタを定義する。さらに当時並行で進んでいた `port_config.ini` → `platform.json` 移行を踏まえ、**パース層を 1 箇所に集約しておけば後段の差し替えコストが下がる** ことを動機にしている[^1]。
 
 ## 動作仕様
 
@@ -41,7 +41,7 @@ SONiC のポート定義は伝統的に **`port_config.ini`**（プラットフ�
 
 歴史的経緯として `port_config.ini` を **0-based** で書いている SKU が一部残っていた。これらは **すべて 1-based に揃える** ことが本リファクタの前提条件として示されている[^1]:
 
-> "For now, there are still a few SKUs provided port_config.ini file with 0-based port index, all those port_config.ini files should be changed to 1-based." [^1]
+> "For now, there are still a few SKUs provided [port_config.ini](../reference/glossary.md#term-port-config-ini) file with 0-based port index, all those port_config.ini files should be changed to 1-based." [^1]
 
 ポート index は他モジュールでも使われるため、抜けがあると下流に伝播する。共通パーサが必ず index を返すことで、呼び出し側は「無いケース」を考えなくて済む構造になる。
 
@@ -115,7 +115,7 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 
 ### 関連する CONFIG_DB
 
-該当エントリは無い。`port_config.ini` / `platform.json` は **CONFIG_DB の上流** にあるビルド成果物であり、本リファクタは「パース実装の集約」だけを扱う。CONFIG_DB の `PORT` テーブル等の schema は変更しない[^1]。
+該当エントリは無い。`port_config.ini` / `platform.json` は **[CONFIG_DB](../reference/glossary.md#term-config_db) の上流** にあるビルド成果物であり、本リファクタは「パース実装の集約」だけを扱う。CONFIG_DB の `PORT` テーブル等の schema は変更しない[^1]。
 
 ### 関連する CLI
 
@@ -128,7 +128,7 @@ HLD が示すテスト計画[^1]:
 1. **t0 / t1-lag topology の regression** を回し、既存テストが破壊されていないこと。
 2. **`show interfaces` 全 sub-command** をリファクタ前後で出力比較。
 3. **`sfputil` 全 sub-command** を比較。特に `sfputil lpmode` / `sfputil reset` が **正しいインターフェース** に効くことを確認。
-4. システム起動後、xcrvrd（transceiver daemon）が Redis に正しいデータを push しているか。
+4. システム起動後、xcrvrd（transceiver daemon）が [Redis](../reference/glossary.md#term-redis) に正しいデータを push しているか。
 5. SFP モジュール挿抜で status が反映されるか。
 6. xcrvrd を kill した後、Redis 側の関連情報が削除されるか。
 7. DOM 情報が正しく更新されるか。
@@ -174,3 +174,5 @@ HLD が示すテスト計画[^1]:
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 54111b0e8f9b -->

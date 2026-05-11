@@ -23,7 +23,7 @@ related:
 
 SONiC コミュニティが新機能を contribute する際の **品質レベル定義** [^1]。3 段階:
 
-- **Alpha**: 設計と最低限のテストはあるが、SAI / 平台 vendor API がまだ無い段階
+- **Alpha**: 設計と最低限のテストはあるが、[SAI](../reference/glossary.md#term-sai) / 平台 vendor API がまだ無い段階
 - **Beta**: 1 vendor 以上で SAI / 平台 API が利用可能、テスト計画はレビュー済みで一部実装
 - **GA (General Availability)**: テスト計画が sign-off + フル実装
 
@@ -34,11 +34,11 @@ SONiC コミュニティが新機能を contribute する際の **品質レベ�
 | 観点 | Alpha | Beta | GA |
 |------|-------|------|----|
 | Unit / VS テスト（カバレッジ整合） | 必須 | 必須 | 必須 |
-| `enabled/disabled` を CONFIG_DB で制御 | **disabled** 既定 | **disabled** 既定 | HLD で求める場合のみ enabled 既定 |
+| `enabled/disabled` を [CONFIG_DB](../reference/glossary.md#term-config_db) で制御 | **disabled** 既定 | **disabled** 既定 | [HLD](../reference/glossary.md#term-hld) で求める場合のみ enabled 既定 |
 | 投入先 | master のみ | master のみ | master + 必要なら backport 可 |
 | SAI vendor 実装 | 不要 | **1 vendor 以上で利用可** | **1 vendor 以上で利用可** |
 | Platform vendor API | 不要 | **1 vendor 以上で利用可** | **1 vendor 以上で利用可** |
-| 既存機能への degradation | 無し（sonic-mgmt 全体 pass） | 無し | 無し |
+| 既存機能への degradation | 無し（[sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) 全体 pass） | 無し | 無し |
 | sonic-mgmt テスト計画 | レビュー済み | 一部実装 | sign-off + フル実装 |
 
 ### Release Notes での公開
@@ -80,3 +80,5 @@ SONiC コミュニティが新機能を contribute する際の **品質レベ�
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/guidelines/SONiC feature quality definition.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/guidelines/SONiC%20feature%20quality%20definition.md)
+
+<!-- glossary-links-injected: 72e7c14fa9b9 -->

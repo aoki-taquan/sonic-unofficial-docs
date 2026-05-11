@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-PORTCHANNEL とその物理メンバ PORT の対応を保持する。`teammgrd` がこの関係を読み、teamd の `enslave` 操作を実行する[^1]。
+PORTCHANNEL とその物理メンバ PORT の対応を保持する。`teammgrd` がこの関係を読み、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) の `enslave` 操作を実行する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -65,13 +65,13 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 ## 購読者
 
 - `teammgrd`: メンバの追加・削除を teamd に伝達
-- `orchagent` `LagOrch`: SAI LAG member を生成・削除
+- `orchagent` `LagOrch`: [SAI](../../reference/glossary.md#term-sai) [LAG](../../reference/glossary.md#term-lag) member を生成・削除
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORTCHANNEL`、`PORT`、`VLAN_MEMBER` (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、`must` 制約は VLAN 側)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`PORT`、`VLAN_MEMBER` (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、`must` 制約は VLAN 側)
 - 関連 CLI: `config portchannel member add/del`
-- 関連 YANG: `sonic-portchannel`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
 <!-- ref-triangle:start -->
 
@@ -103,7 +103,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 ### よくある誤設定
 
-- VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると orchagent エラー。
+- VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると [orchagent](../../reference/glossary.md#term-orchagent) エラー。
 - L3 IP を持つポートを LAG メンバに入れると INTERFACE 側が孤立。
 
 ### 確認コマンド
@@ -113,3 +113,5 @@ sonic-db-cli CONFIG_DB keys 'PORTCHANNEL_MEMBER|PortChannel0001|*'
 show interfaces portchannel
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ad8e612d9a21 -->

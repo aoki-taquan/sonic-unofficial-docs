@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-VLAN に **複数のサブネット** を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC `dhcrelay`）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に **`giaddr` 欄をどのサブネットの IP にするかが事実上ランダム** になる問題があった。サーバ側 DHCP は `giaddr` をもとにスコープを選ぶため、毎回違う `giaddr` が来るとプール選択がブレてしまう[^1]。
+[VLAN](../reference/glossary.md#term-vlan) に **複数のサブネット** を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC `dhcrelay`）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に **`giaddr` 欄をどのサブネットの IP にするかが事実上ランダム** になる問題があった。サーバ側 DHCP は `giaddr` をもとにスコープを選ぶため、毎回違う `giaddr` が来るとプール選択がブレてしまう[^1]。
 
 本機能は `VLAN_INTERFACE` テーブルに **`secondary` フラグ** を追加し、`dhcrelay` の起動引数に **`-pg <primary-gateway>`** を渡すことで、リレーが常に primary サブネットの IP を `giaddr` に書き込むよう固定する。複数サブネットを持ちつつ DHCP は primary の 1 系統に集約する設計である。**IPv4 限定**[^1]。
 
@@ -44,7 +44,7 @@ VLAN 配下の各 IP プレフィックスは次のいずれかに分類され�
 | Primary | secondary 未設定（既定） | DHCP リレーが処理する |
 | Secondary | `secondary: true` | DHCP リレーは処理しない（giaddr に使わない、サーバはこのレンジから払い出さない）|
 
-理想は **VLAN 配下に primary は 1 つ、それ以外を secondary** にする運用。複数 primary がある場合の挙動は HLD では定義されないが、`-pg` で渡される 1 つの IP のみが `giaddr` に固定されるため、結局 primary は 1 つに絞られる。
+理想は **VLAN 配下に primary は 1 つ、それ以外を secondary** にする運用。複数 primary がある場合の挙動は [HLD](../reference/glossary.md#term-hld) では定義されないが、`-pg` で渡される 1 つの IP のみが `giaddr` に固定されるため、結局 primary は 1 つに絞られる。
 
 ### dhcrelay 起動引数
 
@@ -175,7 +175,7 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 
 - **Minigraph**: `SecondarySubnets` 等の minigraph フィールドが追加される。`sonic-config-engine` のテストにそれを取り込む変更が入る[^1]。
 - **DHCPv6 Relay**: 本機能は IPv4 限定。IPv6 リレーには影響しない。
-- **Routing / FRR**: secondary プレフィックスも IP インタフェースとして OS には設定されるため、ルーティングプロトコルから見える経路に変化はない。secondary だからといって OS から消えるわけではない点に注意。
+- **Routing / [FRR](../reference/glossary.md#term-frr)**: secondary プレフィックスも IP インタフェースとして OS には設定されるため、ルーティングプロトコルから見える経路に変化はない。secondary だからといって OS から消えるわけではない点に注意。
 - **Warm/Fast boot**: 影響なし（HLD 明記）。
 - **メモリ**: 機能 disabled 時の追加コスト無し（HLD 明記）。
 
@@ -196,3 +196,5 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 800751a0842d -->

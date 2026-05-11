@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC を **basic L2 switch** として構成した場合の最小機能を T0 トポロジで検証する[^1]。範囲は意図的に絞られており、L3 / BGP / ACL は対象外。L2 モードの構成手順は [SONiC wiki: L2-Switch-mode](https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode) に従う。
+SONiC を **basic L2 switch** として構成した場合の最小機能を T0 トポロジで検証する[^1]。範囲は意図的に絞られており、L3 / [BGP](../reference/glossary.md#term-bgp) / [ACL](../reference/glossary.md#term-acl) は対象外。L2 モードの構成手順は [SONiC wiki: L2-Switch-mode](https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode) に従う。
 
 ## 動作仕様
 
@@ -32,17 +32,17 @@ SONiC を **basic L2 switch** として構成した場合の最小機能を T0 �
 sonic-cfggen -H -p -k $HWSKU --preset l2
 ```
 
-- `-H` で MAC を埋め込み、`-k`/`-p` で port_config.ini を渡す[^1]
+- `-H` で MAC を埋め込み、`-k`/`-p` で [port_config.ini](../reference/glossary.md#term-port-config-ini) を渡す[^1]
 - 全ポートが admin-up + Vlan 1000 の untagged member になる構成
 
 ### テストケース[^1]
 
-| # | 項目 | sonic-mgmt パス | 期待 |
+| # | 項目 | [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) パス | 期待 |
 |---|------|------|------|
-| 1 | sanity | `tests/common/sanity_check.py` | orchagent / syncd 起動、リンク Up |
-| 2 | FDB | `tests/fdb/test_fdb.py` | 全ポートで MAC 学習 |
-| 3 | VLAN + ARP + PING | `tests/vlan/test_vlan.py`（一部要修正: PortChannel 想定箇所） | Vlan IF への IP 設定後、ARP / ping 成立 |
-| 4 | SNMP | `tests/snmp/test_snmp_interfaces.py` / `test_snmp_cpu.py` / `test_snmp_psu.py` | Walk 成功（MAC / IF / CPU / PSU 取得） |
+| 1 | sanity | `tests/common/sanity_check.py` | [orchagent](../reference/glossary.md#term-orchagent) / [syncd](../reference/glossary.md#term-syncd) 起動、リンク Up |
+| 2 | [FDB](../reference/glossary.md#term-fdb) | `tests/fdb/test_fdb.py` | 全ポートで MAC 学習 |
+| 3 | [VLAN](../reference/glossary.md#term-vlan) + [ARP](../reference/glossary.md#term-arp) + PING | `tests/vlan/test_vlan.py`（一部要修正: [PortChannel](../reference/glossary.md#term-portchannel) 想定箇所） | Vlan IF への IP 設定後、ARP / ping 成立 |
+| 4 | [SNMP](../reference/glossary.md#term-snmp) | `tests/snmp/test_snmp_interfaces.py` / `test_snmp_cpu.py` / `test_snmp_psu.py` | Walk 成功（MAC / IF / CPU / PSU 取得） |
 
 サニティチェックは **各テストの前後** で走らせる[^1]。
 
@@ -73,3 +73,5 @@ sonic-cfggen -H -p -k $HWSKU --preset l2
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e750be044737 -->

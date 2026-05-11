@@ -10,11 +10,11 @@ last_verified: 2026-05-10
 
 ## 概要
 
-SONiC は **sonic-buildimage** リポジトリで Debian ベースの host OS + 機能ごとの **Docker コンテナ**（swss / syncd / bgp / lldp / pmon / snmp / database / teamd / dhcp_relay / nat / radv 等）を組み合わせて 1 枚のスイッチイメージを生成する大規模ビルドシステムを採用しています。`make` + `Dockerfile.j2` + `slave docker` という多段ビルドが特徴で、ビルド時間とイメージサイズの最適化が継続的な課題です。
+SONiC は **[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)** リポジトリで Debian ベースの host OS + 機能ごとの **Docker コンテナ**（swss / [syncd](../reference/glossary.md#term-syncd) / bgp / lldp / pmon / snmp / database / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / dhcp_relay / nat / radv 等）を組み合わせて 1 枚のスイッチイメージを生成する大規模ビルドシステムを採用しています。`make` + `Dockerfile.j2` + `slave docker` という多段ビルドが特徴で、ビルド時間とイメージサイズの最適化が継続的な課題です。
 
-このカテゴリは container / build / image / upgrade に関わるページを area 横断でまとめます。**architecture**（ビルドプロファイル・ビルド時間最適化・RFS Split build）・**platform**（NPU MDIO / gbsyncd docker 化）・**routing**（dhcp-relay docker）・**system**（Process / Docker stats、Secure Upgrade、Container Hardening、Debian / docker semver、warm restart、syslog rate limit）の 14 ページが対象です。
+このカテゴリは container / build / image / upgrade に関わるページを area 横断でまとめます。**architecture**（ビルドプロファイル・ビルド時間最適化・RFS Split build）・**platform**（[NPU](../reference/glossary.md#term-npu) MDIO / gbsyncd docker 化）・**routing**（dhcp-relay docker）・**system**（Process / Docker stats、Secure Upgrade、Container Hardening、Debian / docker semver、warm restart、syslog rate limit）の 14 ページが対象です。
 
-ランタイム面では **container hardening**（capability / read-only / privileged の段階的削減）と **secure upgrade**（image 署名検証）が重要な軸で、それぞれ `SECURE_UPGRADE_MODE` や docker capability 列を CONFIG_DB に持ちます。docker warm restart は本カテゴリと [Warm-Reboot 関連](reboot.md) の両方に出現します。
+ランタイム面では **container hardening**（capability / read-only / privileged の段階的削減）と **secure upgrade**（image 署名検証）が重要な軸で、それぞれ `SECURE_UPGRADE_MODE` や docker capability 列を [CONFIG_DB](../reference/glossary.md#term-config_db) に持ちます。docker warm restart は本カテゴリと [Warm-Reboot 関連](reboot.md) の両方に出現します。
 
 主要キーワード: `container`, `Docker`, `build`, `image`, `Debian`, `sonic-buildimage`, `secure upgrade`, `hardening`, `RFS`
 
@@ -70,3 +70,5 @@ SONiC は **sonic-buildimage** リポジトリで Debian ベースの host OS + 
 - [SmartSwitch 関連](smartswitch.md)
 - [SAI 拡張属性追加系](sai-extensions.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
+
+<!-- glossary-links-injected: 8c38d3f9eb46 -->

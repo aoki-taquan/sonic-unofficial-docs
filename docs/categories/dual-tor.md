@@ -10,9 +10,9 @@ last_verified: 2026-05-10
 
 ## 概要
 
-**Dual-ToR** は、サーバを 2 つの ToR スイッチに **active-standby** または **active-active** で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は **y-cable + linkmgrd** ベースの active-standby と、**prefix-based neighbor + gRPC** ベースの active-active の 2 系統を実装しています。
+**Dual-ToR** は、サーバを 2 つの ToR スイッチに **active-standby** または **active-active** で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は **y-cable + [linkmgrd](../reference/glossary.md#term-linkmgrd)** ベースの active-standby と、**prefix-based neighbor + gRPC** ベースの active-active の 2 系統を実装しています。
 
-このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。**overlay**（active-active / active-standby の HLD、トンネル DSCP リマップ）・**routing**（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・**platform**（ICMP HW offload による link prober NPU 化）・**management**（DualToR 用 gRPC client）・**reference**（`config muxcable` / `show muxcable` / `MUX_CABLE` テーブル）に分散しているのが特徴です。
+このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。**overlay**（active-active / active-standby の [HLD](../reference/glossary.md#term-hld)、トンネル DSCP リマップ）・**routing**（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・**platform**（ICMP HW offload による link prober [NPU](../reference/glossary.md#term-npu) 化）・**management**（DualToR 用 gRPC client）・**reference**（`config muxcable` / `show muxcable` / `MUX_CABLE` テーブル）に分散しているのが特徴です。
 
 Dual-ToR は **active-standby** のほうがマスター実装としては成熟しており、**active-active** は比較的新しく gRPC ベースのケーブル制御に依存します。Y-cable と SoC（Service-on-Cable）が混在する用語空間なので、最初に [`active-standby-dual-tor.md`](../overlay/active-standby-dual-tor.md) を読むと state machine の語彙が整理されます。
 
@@ -49,18 +49,18 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 ## 典型的な読み進め方
 
-1. **active-standby 全体像** → `active-standby-dual-tor.md` で linkmgrd state machine と y-cable・IPinIP tunnel を把握
+1. **active-standby 全体像** → `active-standby-dual-tor.md` で linkmgrd state machine と y-cable・[IPinIP](../reference/glossary.md#term-ipinip) tunnel を把握
 2. **CLI / DB** → `config-muxcable.md` / `show-muxcable.md` / `mux-cable.md` で実機操作の語彙
 3. **mux 経路制御** → `prefix-based-mux-neighbors.md` → `multiple-nexthop-route-hld.md` で routing 側の挙動
 4. **active-active** → `active-active-dual-tor.md` で gRPC ベースの新方式
-5. **運用上の落とし穴** → `dscp-remapping-for-tunnel-traffic.md` で PFC デッドロック回避
+5. **運用上の落とし穴** → `dscp-remapping-for-tunnel-traffic.md` で [PFC](../reference/glossary.md#term-pfc) デッドロック回避
 6. **オフロード最適化** → `icmp-hardware-offload.md` で linkprober の NPU 化
 
 ## 関連 Topics 章
 
 - [Topics 05: Dual-ToR](../topics/05-dual-tor/index.md) — Dual-ToR を段階的に学ぶ章
-- [Topics 02: BGP](../topics/02-bgp/index.md) — Dual-ToR の上流 BGP 構成
-- [Topics 06: L2 VLAN / LAG](../topics/06-l2-vlan-lag/index.md) — VLAN 設計の前提
+- [Topics 02: BGP](../topics/02-bgp/index.md) — Dual-ToR の上流 [BGP](../reference/glossary.md#term-bgp) 構成
+- [Topics 06: L2 VLAN / LAG](../topics/06-l2-vlan-lag/index.md) — [VLAN](../reference/glossary.md#term-vlan) 設計の前提
 
 ## verification ステータス注意点
 
@@ -78,3 +78,5 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 856e5b1efe05 -->

@@ -27,7 +27,7 @@ related:
 
 SONiC は管理インタフェース経由で **DHCP から DNS リゾルバ情報を動的に受け取る** のが既定挙動である。一方、ユーザが手動で `/etc/resolv.conf` を書いてもタイミングによっては DHCP の更新で上書きされてしまい、**静的 DNS が保護されない** という問題があった[^1]。
 
-本機能は CONFIG_DB に `DNS_NAMESERVER` テーブルを追加し、CLI から永続的に静的 DNS を投入できるようにする。中継には Debian の `resolvconf` パッケージを使う。`resolvconf` は「複数の DNS 情報供給源を統合してアプリに通知する」フレームワークで、これに `mgmt-intf.static` という形でユーザ設定を流し込み、動的 DHCP 情報と静的設定の優先制御を行う設計である。
+本機能は [CONFIG_DB](../reference/glossary.md#term-config_db) に `DNS_NAMESERVER` テーブルを追加し、CLI から永続的に静的 DNS を投入できるようにする。中継には Debian の `resolvconf` パッケージを使う。`resolvconf` は「複数の DNS 情報供給源を統合してアプリに通知する」フレームワークで、これに `mgmt-intf.static` という形でユーザ設定を流し込み、動的 DHCP 情報と静的設定の優先制御を行う設計である。
 
 加えて、SONiC の各 docker コンテナ内 `/etc/resolv.conf` も同期する必要があるため、新規の resolvconf プラグイン **`update-containers`** が DNS 変更時に各コンテナへ `/etc/resolv.conf` をコピーする[^1]。
 
@@ -107,7 +107,7 @@ sequenceDiagram
 
 ### 制限
 
-- **管理インタフェースが静的 IP の場合、動的 DNS が動かない**。HLD で明示的に書かれた制限。これは `dhclient` 経由で `<mgmt-intf>.dhclient` ファイルが作成されないためであり、本機能というより resolvconf 連携の都合である[^1]。
+- **管理インタフェースが静的 IP の場合、動的 DNS が動かない**。[HLD](../reference/glossary.md#term-hld) で明示的に書かれた制限。これは `dhclient` 経由で `<mgmt-intf>.dhclient` ファイルが作成されないためであり、本機能というより resolvconf 連携の都合である[^1]。
 - Warm/fast boot には影響なし。
 - Config migration は特別扱い不要。
 
@@ -147,7 +147,7 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 |-------|-----|-----------|------|
 | `DNS_NAMESERVER` | `<ip-address>` | （空） | キーそのものが nameserver の IP（v4 / v6） |
 
-YANG では最大 3 件まで（`max-elements 3`）に制限される[^1]。
+[YANG](../reference/glossary.md#term-yang) では最大 3 件まで（`max-elements 3`）に制限される[^1]。
 
 ### 関連する CLI
 
@@ -198,7 +198,7 @@ CONFIG_DB JSON:
 
 - **DHCP (mgmt インタフェース)**: 静的 DNS 設定がある間は DHCP 経由 DNS は無視される（resolvconf の動的更新を停止するため）。
 - **管理インタフェース静的 IP**: dhclient が走らないため、そもそも動的 DNS が来ない。静的 DNS を入れない限り名前解決ができない可能性。
-- **Docker コンテナ内 DNS 利用**: SNMP / TACACS / NTP 等が FQDN で設定されている場合、`update-containers` プラグインによる伝播タイミングが遅れると瞬間的に解決失敗する可能性。
+- **Docker コンテナ内 DNS 利用**: [SNMP](../reference/glossary.md#term-snmp) / TACACS / NTP 等が FQDN で設定されている場合、`update-containers` プラグインによる伝播タイミングが遅れると瞬間的に解決失敗する可能性。
 - **`config reload`**: `sonic.target` 再起動の流れで `resolv-config.service` も再走するので、DNS_NAMESERVER の変更は永続化していれば再 reload 後も反映される。
 
 ## トラブルシューティング
@@ -218,3 +218,5 @@ CONFIG_DB JSON:
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c2ecb3310ac8 -->

@@ -5,9 +5,9 @@ verification: stub
 ---
 
 # ACL & QoS
-ACL、CoPP、mirror、buffer、PFC、watermark、scheduler などパケット制御と QoS を扱う章。
+[ACL](../reference/glossary.md#term-acl)、[CoPP](../reference/glossary.md#term-copp)、mirror、buffer、[PFC](../reference/glossary.md#term-pfc)、watermark、scheduler などパケット制御と [QoS](../reference/glossary.md#term-qos) を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 31
 - 分布: Code-verified: 23 / Discrepancy-found: 2 / HLD-only: 6
@@ -59,3 +59,5 @@ ACL、CoPP、mirror、buffer、PFC、watermark、scheduler などパケット制
 | [ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）](port-buffer-drop-counters-in-sonic.md) | Code-verified |
 | [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](reclaim-reserved-buffer-sequence-flow.md) | Code-verified |
 | [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](configurable-drop-counters-in-sonic.md) | Code-verified |
+
+<!-- glossary-links-injected: f16175ea2d57 -->

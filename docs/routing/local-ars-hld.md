@@ -36,7 +36,7 @@ related:
 
 ## design 意図
 
-Local ARS は ECMP の next-hop 選択を **静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える** 機能[^1]。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。
+Local ARS は [ECMP](../reference/glossary.md#term-ecmp) の next-hop 選択を **静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える** 機能[^1]。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。
 
 「Local」とは、**自スイッチ内の ASIC 観測値だけで判断** することを示す。複数ホップ協調の Global ARS は別テーマ。
 
@@ -55,7 +55,7 @@ flowchart LR
 主要な構成要素[^1]:
 
 - **ARS profile**: idle window / sample interval / quantization band / threshold 等のパラメータ束
-- **ARS object（SAI）**: nexthop group や ECMP に紐づける ASIC 機能 object。SAI 側で `SAI_OBJECT_TYPE_ARS` 系拡張に対応
+- **ARS object（[SAI](../reference/glossary.md#term-sai)）**: nexthop group や ECMP に紐づける ASIC 機能 object。SAI 側で `SAI_OBJECT_TYPE_ARS` 系拡張に対応
 - **ARS interface**: per-egress-port の有効化と max load
 - **flowlet 風挙動**: 同一フローでも idle window 後は別 path に切り替え可（ARS の本質）
 
@@ -66,7 +66,7 @@ flowchart LR
 | `ARS` | グローバル admin / モード（mode=`PER_FLOWLET_QUALITY` / `PER_PACKET_QUALITY` 等） |
 | `ARS_PROFILE` | profile 名 ↔ パラメータ群 |
 | `ARS_INTERFACE` | per-port enable / max_load |
-| `ARS_NEXTHOP_GROUP_MAP` | nexthop group に profile を紐づけ（HLD 表現上） |
+| `ARS_NEXTHOP_GROUP_MAP` | nexthop group に profile を紐づけ（[HLD](../reference/glossary.md#term-hld) 表現上） |
 
 ### 主な CLI
 
@@ -79,7 +79,7 @@ flowchart LR
 
 ## 制限事項
 
-- **対応 ASIC のみ**: SAI ARS 拡張をサポートする NPU でのみ動く
+- **対応 ASIC のみ**: SAI ARS 拡張をサポートする [NPU](../reference/glossary.md#term-npu) でのみ動く
 - **Local 観測のみ**: 自スイッチを越えた congestion は見えないため、fabric の global view が必要なケースはカバー外
 - **profile チューニング**: idle window / quantization の設定が不適切だと flapping や順序逆転を招く
 - **ECMP との組み合わせ**: 既存 ECMP（policy-based hashing 等）と評価順序が衝突しないか注意
@@ -89,7 +89,7 @@ flowchart LR
 - **inner packet hashing in ECMP**: ECMP ハッシュキー設定との組み合わせ
 - **policy-based hashing**: フィールド指定ハッシュと ARS の動的選択の競合
 - **fine-grained ECMP / weighted ECMP**: 重みづけ next-hop と ARS の relative priority
-- **congestion control（PFC / ECN）**: ARS の判断材料となる出力 queue 観測
+- **congestion control（[PFC](../reference/glossary.md#term-pfc) / ECN）**: ARS の判断材料となる出力 queue 観測
 
 ## トラブルシューティング
 
@@ -105,7 +105,7 @@ flowchart LR
 
 - **HLD 記述**: `ArsOrch`（または `NextHopGroupOrch` 拡張）が `ARS` / `ARS_PROFILE` / `ARS_INTERFACE` テーブルを subscribe して SAI ARS object に反映する。
 - **実装位置**: `sonic-swss/orchagent/` に `arsorch.cpp` / `arsorch.h` 相当ファイル無し（grep ヒット 0）。`nhgorch.cpp` (NhgOrch) にも ARS 連携コードは存在しない。
-- **差分の中身**: orch 層の処理が無いため CONFIG_DB に `ARS|*` を書いても何も起きない。`gDirectory` への ArsOrch 登録も無い。
+- **差分の中身**: orch 層の処理が無いため [CONFIG_DB](../reference/glossary.md#term-config_db) に `ARS|*` を書いても何も起きない。`gDirectory` への ArsOrch 登録も無い。
 - **読者への影響**: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。
 - **回避策**:
   - **コミュニティ SONiC master では現状利用不可**。
@@ -118,7 +118,7 @@ flowchart LR
 - **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/` に `sonic-ars.yang` 無し。`sonic-cfggen` のテンプレート集にも参照無し。
 - **差分の中身**: yang validation が ARS テーブルを受け付けないため、`config_db.json` に `ARS` セクションを書くと `sonic-cfggen` でエラーになる可能性がある（ConfigMgmt の strict 検証時）。
 - **読者への影響**: 設定ファイルとして書く手段が無い。
-- **回避策**: 設定を試したい場合は `sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled` のように Redis 直書きで yang を迂回する。ただし orch が受けないため効果は無い。
+- **回避策**: 設定を試したい場合は `sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled` のように [Redis](../reference/glossary.md#term-redis) 直書きで yang を迂回する。ただし orch が受けないため効果は無い。
 
 ### 3. CLI（`config ars` / `show ars`）未取り込み
 
@@ -155,3 +155,5 @@ flowchart LR
 - 対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認
 - inner packet hashing / policy-based hashing / fine-grained ECMP との同居挙動確認
 -->
+
+<!-- glossary-links-injected: abf52c3eb945 -->

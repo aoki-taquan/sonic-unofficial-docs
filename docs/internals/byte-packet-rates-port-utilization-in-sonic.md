@@ -58,7 +58,7 @@ flowchart LR
 
 要点[^1]:
 
-- 既存の port / RIF 用 Flex Counter は元の SAI カウンタを `COUNTERS_DB:COUNTERS:vid` に書き続ける。
+- 既存の port / [RIF](../reference/glossary.md#term-rif) 用 Flex Counter は元の [SAI](../reference/glossary.md#term-sai) カウンタを `COUNTERS_DB:COUNTERS:vid` に書き続ける。
 - 新規 `PORT_RATES` / `RIF_RATES` グループは独自インターバル（既定 1s、設定可）で動き、対応 Lua プラグインが計算を行う。
 - 計算は `RATES:vid` というキーに保存される。`COUNTERS:vid` と同じ vid をキーに使うが、テーブル名で完全分離。
 - Lua プラグインは前回値 (`*_last`) も `RATES:vid` 内に持ち、自分で更新する。
@@ -92,7 +92,7 @@ ALPHA = 2 / (N + 1)
 EMA   = ALPHA * VALUE + (1 - ALPHA) * EMA_last
 ```
 
-`ALPHA` は CONFIG_DB に **事前計算した値** を入れる設計。Lua プラグインから毎回計算しなくて済む。
+`ALPHA` は [CONFIG_DB](../reference/glossary.md#term-config_db) に **事前計算した値** を入れる設計。Lua プラグインから毎回計算しなくて済む。
 
 `SMOOTH_INTERVAL` を変えると EMA の応答性が変わる: `N=1` で実質 EMA 無効、`N` を大きくすると遅延と引き換えに滑らかになる。
 
@@ -251,7 +251,7 @@ config rate smoothing_interval port 5    # EMA N=5
 
 ## トラブルシューティング
 
-- `portstat` で BPS / PPS が常に 0: `RATES:<port_vid>` が COUNTERS_DB に書かれているか `redis-cli -n 2 keys 'RATES*'` で確認。Lua プラグインが回っていない、または Flex Counter group が disable の可能性。
+- `portstat` で BPS / PPS が常に 0: `RATES:<port_vid>` が [COUNTERS_DB](../reference/glossary.md#term-counters_db) に書かれているか `redis-cli -n 2 keys 'RATES*'` で確認。Lua プラグインが回っていない、または Flex Counter group が disable の可能性。
 - 値がガタつく: `smoothing_interval` を上げて EMA を効かせる。
 - `RATES` の値と `COUNTERS` の差分が合わない: EMA で平滑化されているため、瞬時カウンタの素差分とは一致しない。これが意図。
 - `counter poll port_rates enable` でエラー: 既存 `port` counter polling が disable の可能性。先にそちらを enable する。
@@ -267,3 +267,5 @@ config rate smoothing_interval port 5    # EMA N=5
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9cdd945b9162 -->

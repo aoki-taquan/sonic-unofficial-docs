@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ポートの egress queue ごとに `SCHEDULER` (WRR/DWRR/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が SAI queue scheduler / WRED を設定する。VOQ シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
+ポートの egress queue ごとに `SCHEDULER` (WRR/DWRR/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) queue scheduler / [WRED](../../reference/glossary.md#term-wred) を設定する。[VOQ](../../reference/glossary.md#term-voq) シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -86,9 +86,9 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `SCHEDULER`、`WRED_PROFILE`、`PORT`、`BUFFER_QUEUE`、`TC_TO_QUEUE_MAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `SCHEDULER`、`WRED_PROFILE`、`PORT`、`BUFFER_QUEUE`、`TC_TO_QUEUE_MAP`
 - 関連 CLI: なし（`config_db.json` ロード）
-- 関連 YANG: `sonic-queue`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-queue`
 
 <!-- ref-triangle:start -->
 
@@ -120,7 +120,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ### よくある誤設定
 
-- PFC 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。
+- [PFC](../../reference/glossary.md#term-pfc) 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。
 
 ### 確認コマンド
 
@@ -129,3 +129,5 @@ sonic-db-cli CONFIG_DB keys 'QUEUE|Ethernet0|*'
 show queue counters
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 74fd06c02dcc -->

@@ -24,15 +24,15 @@ related:
 
 ## 症状
 
-- BGP で受信した route が `show ip route` に出るが、ASIC 側 forwarding に反映されない
+- [BGP](../../reference/glossary.md#term-bgp) で受信した route が `show ip route` に出るが、ASIC 側 forwarding に反映されない
 - `sonic-db-cli APPL_DB hgetall ROUTE_TABLE:...` に値があるのに、対応する `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*` が存在しない
 - `swss` / `syncd` の CPU が継続的に高い
 
 ## 想定原因（優先度順）
 
-1. **orchagent が特定 task で詰まる**: ACL / Nexthop group 再計算で長時間ロック
-2. **syncd ↔ SAI 呼び出しでベンダ SDK がブロック**
-3. **CRM 枯渇による SAI 書込失敗**: `SAI_STATUS_TABLE_FULL` で retry ループ
+1. **[orchagent](../../reference/glossary.md#term-orchagent) が特定 task で詰まる**: [ACL](../../reference/glossary.md#term-acl) / Nexthop group 再計算で長時間ロック
+2. **[syncd](../../reference/glossary.md#term-syncd) ↔ [SAI](../../reference/glossary.md#term-sai) 呼び出しでベンダ SDK がブロック**
+3. **[CRM](../../reference/glossary.md#term-crm) 枯渇による SAI 書込失敗**: `SAI_STATUS_TABLE_FULL` で retry ループ
 4. **redis broken pipe / slow consumer**: PUB/SUB チャネルで詰まり
 5. **multi-asic namespace の reflection 遅延**
 
@@ -91,5 +91,7 @@ sonic-db-cli APPL_DB info clients | head
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — orchdaemon.cpp
-[^2]: sonic-net/sonic-sairedis @ master — Syncd.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — orchdaemon.cpp
+[^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ master — Syncd.cpp
+
+<!-- glossary-links-injected: 867f28b4b211 -->

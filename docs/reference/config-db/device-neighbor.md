@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル[^1]。LLDP の正解値 (expected neighbor) として `lldp` / `lldpmgrd` が利用するほか、minigraph 取り込み時にも生成される。隣接機器の hwsku 等のメタデータは [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md) 側で管理する。
+直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル[^1]。[LLDP](../../reference/glossary.md#term-lldp) の正解値 (expected neighbor) として `lldp` / `lldpmgrd` が利用するほか、minigraph 取り込み時にも生成される。隣接機器の hwsku 等のメタデータは [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md) 側で管理する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,16 +60,16 @@ DEVICE_NEIGHBOR|<peer_name>
 ## 制約
 
 - `local_port` は `PORT_LIST.name` への leafref。存在しないポートを指定するとバリデーションで弾かれる
-- `name` は `DEVICE_NEIGHBOR_METADATA_LIST.name` と慣習的に一致させ、メタデータ側を joins する運用が一般的（YANG レベルでは leafref 化されていない）
+- `name` は `DEVICE_NEIGHBOR_METADATA_LIST.name` と慣習的に一致させ、メタデータ側を joins する運用が一般的（[YANG](../../reference/glossary.md#term-yang) レベルでは leafref 化されていない）
 
 ## 購読者
 
 - `lldpmgrd`: 期待 neighbor として LLDP の判定に利用
-- minigraph パーサ (sonic-cfggen): `minigraph.xml` から生成
+- minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): `minigraph.xml` から生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)、`PORT`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)、`PORT`
 - 関連 YANG: `sonic-device_neighbor`、`sonic-device_neighbor_metadata`
 - 関連 CLI: なし（minigraph または `config_db.json` 経由で投入）
 
@@ -96,7 +96,7 @@ DEVICE_NEIGHBOR|<peer_name>
 
 ### よくある誤設定
 
-- `name` が `DEVICE_NEIGHBOR_METADATA` に未登録だと BGP の neighbor 名解決が失敗。
+- `name` が `DEVICE_NEIGHBOR_METADATA` に未登録だと [BGP](../../reference/glossary.md#term-bgp) の neighbor 名解決が失敗。
 
 ### 確認コマンド
 
@@ -105,3 +105,5 @@ sonic-db-cli CONFIG_DB keys 'DEVICE_NEIGHBOR|*'
 show lldp neighbors
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 429c29da8627 -->

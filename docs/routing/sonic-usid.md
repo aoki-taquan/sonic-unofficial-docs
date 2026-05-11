@@ -26,9 +26,9 @@ related:
 
 ## 概要
 
-uSID（micro-SID）は IETF [Compressed SRv6 Segment List Encoding](https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/) と [SRv6 uSID instructions](https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/) で定義される、SRv6 SID を **16 bit などに圧縮** する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に **最大 6 個の uSID** を詰められる[^1]。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。
+uSID（micro-SID）は IETF [Compressed SRv6 Segment List Encoding](https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/) と [SRv6 uSID instructions](https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/) で定義される、[SRv6](../reference/glossary.md#term-srv6) SID を **16 bit などに圧縮** する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に **最大 6 個の uSID** を詰められる[^1]。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。
 
-本 HLD は SONiC の既存 `srv6orch`（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 系）に対し、**uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加** する拡張のみを定義する。SAI API は既存の `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` ですべて表現できるため、SAI の変更は不要である[^1]。SONiC の FRR 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。
+本 [HLD](../reference/glossary.md#term-hld) は SONiC の既存 `srv6orch`（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 系）に対し、**uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加** する拡張のみを定義する。[SAI](../reference/glossary.md#term-sai) API は既存の `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` ですべて表現できるため、SAI の変更は不要である[^1]。SONiC の [FRR](../reference/glossary.md#term-frr) 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。
 
 ## 動作仕様
 
@@ -47,7 +47,7 @@ uSID（micro-SID）は IETF [Compressed SRv6 Segment List Encoding](https://data
 要点:
 
 - `uN` / `uA` は **PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor**[^1]
-- `uDT*` / `uDX*` は SAI レイヤでは既存の End.DT* / End.DX* と完全に同じ。orchagent の文字列マッピングだけが追加される
+- `uDT*` / `uDX*` は SAI レイヤでは既存の End.DT* / End.DX* と完全に同じ。[orchagent](../reference/glossary.md#term-orchagent) の文字列マッピングだけが追加される
 
 ### orchagent 側変更
 
@@ -59,7 +59,7 @@ flowchart LR
     SAI --> ASIC[ASIC]
 ```
 
-`srv6orch` は `APPL_DB.SRV6_MY_SID_TABLE` を購読する。HLD は新しい `action` 文字列（`un`, `ua`, `udt4`, `udt6`, `udt46`, `udx4`, `udx6`）を **既存の `end_behavior_map` / `end_flavor_map` に追記する** だけの変更とする[^1]。APPL_DB スキーマ自体に変更は無い。
+`srv6orch` は `APPL_DB.SRV6_MY_SID_TABLE` を購読する。HLD は新しい `action` 文字列（`un`, `ua`, `udt4`, `udt6`, `udt46`, `udx4`, `udx6`）を **既存の `end_behavior_map` / `end_flavor_map` に追記する** だけの変更とする[^1]。[APPL_DB](../reference/glossary.md#term-appl_db) スキーマ自体に変更は無い。
 
 具体的なマップ追記内容（HLD 抜粋）:
 
@@ -136,7 +136,7 @@ End-of-Carrier: 0000 (2 個並べて 128bit 充足)
 
 ### 関連する CONFIG_DB
 
-HLD では新規 CONFIG_DB スキーマは導入されない。SRv6 全体としては既存の `SRV6_MY_SID_TABLE`（APPL_DB）と関連する CONFIG_DB スキーマ（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 参照）を使う。
+HLD では新規 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは導入されない。SRv6 全体としては既存の `SRV6_MY_SID_TABLE`（APPL_DB）と関連する CONFIG_DB スキーマ（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 参照）を使う。
 
 ### 関連する CLI
 
@@ -154,7 +154,7 @@ uN（uSID transit）を持つノード:
 }
 ```
 
-uDT46（VRF にデキャプ）:
+uDT46（[VRF](../reference/glossary.md#term-vrf) にデキャプ）:
 
 ```json
 "SRV6_MY_SID_TABLE": {
@@ -167,7 +167,7 @@ uDT46（VRF にデキャプ）:
 
 ## 制限事項
 
-- 本 HLD のスコープは **データプレーン programming のみ**。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を BGP / IS-IS で配布する経路は別問題[^1]
+- 本 HLD のスコープは **データプレーン programming のみ**。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を [BGP](../reference/glossary.md#term-bgp) / IS-IS で配布する経路は別問題[^1]
 - uN / uA は flavor が **PSP_AND_USD 固定**。他の flavor を選びたいユースケースは現状非対応
 - ベース SRv6 HLD 由来の制約（locator パース、locator_block_len 等の事前合意値）はそのまま継承する
 
@@ -199,3 +199,5 @@ uDT46（VRF にデキャプ）:
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 462a4dbe73d7 -->

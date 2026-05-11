@@ -26,9 +26,9 @@ related:
 
 ## なぜ必要か
 
-SONiC の routing は **FRR** に依存し、`zebra` daemon が経路を計算して内蔵 FPM (Forwarding Plane Manager) モジュール `dplane_fpm_nl` が **Netlink で SONiC に push**、`fpmsyncd` が受けて `APPL_DB` に書く[^1]。
+SONiC の routing は **[FRR](../reference/glossary.md#term-frr)** に依存し、`zebra` daemon が経路を計算して内蔵 [FPM](../reference/glossary.md#term-fpm) (Forwarding Plane Manager) モジュール `dplane_fpm_nl` が **[Netlink](../reference/glossary.md#term-netlink) で SONiC に push**、`fpmsyncd` が受けて `APPL_DB` に書く[^1]。
 
-問題は `dplane_fpm_nl` が **kernel への Netlink をそのままコピー** することだ。kernel data model にしか属性が無いので、SONiC 固有属性は表現できない。例えば SRv6 SID では SONiC は `block_len` / `node_len` / `func_len` / `arg_len` が要るが、`dplane_fpm_nl` の Netlink にはそれを乗せる枠が無い[^1]。
+問題は `dplane_fpm_nl` が **kernel への Netlink をそのままコピー** することだ。kernel data model にしか属性が無いので、SONiC 固有属性は表現できない。例えば [SRv6](../reference/glossary.md#term-srv6) SID では SONiC は `block_len` / `node_len` / `func_len` / `arg_len` が要るが、`dplane_fpm_nl` の Netlink にはそれを乗せる枠が無い[^1]。
 
 ```mermaid
 graph LR
@@ -46,7 +46,7 @@ graph LR
 - SONiC コミュニティが必要に応じ **SONiC 固有 Netlink TLV** を追加
 - FRR upstream の改造を不要にする
 
-配置: `sonic-buildimage/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c`。ビルドは `build-dplane-fpm-sonic-module.patch` が FRR zebra Makefile を改修して `.so` を install する[^1]。
+配置: `sonic-buildimage/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c`。ビルドは `build-dplane-fpm-sonic-module.patch` が FRR [zebra](../reference/glossary.md#term-zebra) Makefile を改修して `.so` を install する[^1]。
 
 ### 起動オプション切替
 
@@ -78,11 +78,11 @@ sequenceDiagram
     FS->>APP: SID entry 書き込み
 ```
 
-参考 PR: `sonic-buildimage#18715`（モジュール + patch + supervisor）、`sonic-swss#3123`（fpmsyncd 拡張）[^1]。
+参考 PR: `sonic-buildimage#18715`（モジュール + patch + supervisor）、`sonic-swss#3123`（[fpmsyncd](../reference/glossary.md#term-fpmsyncd) 拡張）[^1]。
 
 ## 設定
 
-CONFIG_DB / CLI / YANG **変更なし**。zebra 起動 option と `fpmsyncd` 挙動が透過的に切り替わるインフラ刷新で、ユーザ操作は不要。
+[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) **変更なし**。zebra 起動 option と `fpmsyncd` 挙動が透過的に切り替わるインフラ刷新で、ユーザ操作は不要。
 
 ```bash
 ps aux | grep zebra | grep -o 'dplane_fpm_[a-z_]*'
@@ -101,7 +101,7 @@ ps aux | grep zebra | grep -o 'dplane_fpm_[a-z_]*'
 
 - **`zebra` 起動 (`supervisor.conf.j2`)**: `-M` で `dplane_fpm_sonic` 選択
 - **`fpmsyncd`**: 受理側ハンドラ
-- **`SRV6_MY_SID_TABLE` (APPL_DB)**: SRv6 SID 書き込み先
+- **`SRV6_MY_SID_TABLE` ([APPL_DB](../reference/glossary.md#term-appl_db))**: SRv6 SID 書き込み先
 - **FRR upstream**: 互換維持の責務
 
 ## トラブルシューティング
@@ -127,3 +127,5 @@ ps aux | grep zebra | grep -o 'dplane_fpm_[a-z_]*'
 - sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID メッセージ受理実装確認 (PR #3123)
 - APPL_DB.SRV6_MY_SID_TABLE スキーマ取り込み確認
 -->
+
+<!-- glossary-links-injected: 45d35cd4cb64 -->

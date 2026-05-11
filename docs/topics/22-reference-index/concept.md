@@ -22,9 +22,9 @@ keywords:
 
 | 層 | 場所 | 役割 | 1 ページの粒度 |
 |---|---|---|---|
-| 機能章 (topics) | `docs/topics/<NN>-<feature>/` | 読み物。設定 → 運用 → 内部実装の順に複数 HLD を再構成する | 章 = 4〜8 ページ |
+| 機能章 (topics) | `docs/topics/<NN>-<feature>/` | 読み物。設定 → 運用 → 内部実装の順に複数 [HLD](../../reference/glossary.md#term-hld) を再構成する | 章 = 4〜8 ページ |
 | 辞書 (reference) | `docs/reference/{cli,config-db,yang}/` | 辞書。コマンド名 / table 名 / モジュール名から仕様を逆引き | 1 ページ = 1 コマンド群 or 1 テーブル or 1 モジュール |
-| カテゴリ (categories) | `docs/categories/` | 軸別の集約 (例: SAI 拡張、CLI 章ごとの章まとめ)。area 横断のメタ整理 | 1 ページ = 1 軸 |
+| カテゴリ (categories) | `docs/categories/` | 軸別の集約 (例: [SAI](../../reference/glossary.md#term-sai) 拡張、CLI 章ごとの章まとめ)。area 横断のメタ整理 | 1 ページ = 1 軸 |
 
 機能章は「読み手の問いから入る」設計、辞書は「名前から入る」設計、カテゴリは「軸 (実装階層、HLD 種別) から入る」設計である。3 層は同じ素材を別の入口から照射しているだけで、相互排他にはしない。
 
@@ -32,9 +32,9 @@ keywords:
 
 辞書ページの本文は HLD と CLI 実装ベースで書かれているため、機能章本文側で再度長文の仕様を書くと内容が二重化する。Phase B 着手時のルールは次の通り。
 
-- 機能章の「設定」ページからは、CONFIG_DB table のスキーマ詳細を引きたい場合に reference ページへリンクする。本文では table 名と主キー、最小設定例の意味だけを書く。
+- 機能章の「設定」ページからは、[CONFIG_DB](../../reference/glossary.md#term-config_db) table のスキーマ詳細を引きたい場合に reference ページへリンクする。本文では table 名と主キー、最小設定例の意味だけを書く。
 - 機能章の「運用」ページからは、CLI コマンドの全オプションを引きたい場合に reference ページへリンクする。本文では「どの順番でどのコマンドを叩くか」だけを書く。
-- 機能章の「内部実装」ページからは、YANG モデル名と native / OpenConfig の対応を引きたい場合に reference ページへリンクする。
+- 機能章の「内部実装」ページからは、[YANG](../../reference/glossary.md#term-yang) モデル名と native / OpenConfig の対応を引きたい場合に reference ページへリンクする。
 - reference ページからは、関連機能章へ戻れるリンクが望ましい (本章は逆引き表をここでまとめるため、reference ページ自身の本文は触らない)。
 
 ## カテゴリページとの関係
@@ -46,7 +46,7 @@ keywords:
 - platform / port lifecycle
 - ほかドキュメント整理軸
 
-カテゴリは「実装階層の縦軸 (SAI / SWSS / syncd) に沿って HLD を束ねたい」「ある主題 (counter、test plan) を横断したい」など、機能章とは別の軸でページを集める用途で残す。機能章で読み終えた読者が、さらに「同じ階層で関連する HLD を一覧したい」ときに辿る位置付けである。
+カテゴリは「実装階層の縦軸 (SAI / SWSS / [syncd](../../reference/glossary.md#term-syncd)) に沿って HLD を束ねたい」「ある主題 (counter、test plan) を横断したい」など、機能章とは別の軸でページを集める用途で残す。機能章で読み終えた読者が、さらに「同じ階層で関連する HLD を一覧したい」ときに辿る位置付けである。
 
 ## discrepancy と reference gap の位置
 
@@ -67,3 +67,4 @@ Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `co
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
+<!-- glossary-links-injected: 2e72833604bb -->

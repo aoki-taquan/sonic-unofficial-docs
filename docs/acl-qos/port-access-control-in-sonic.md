@@ -34,11 +34,11 @@ related:
 
 ## 概要
 
-物理ポート単位の **クライアント認証** （IEEE 802.1x + MAB）を SONiC に持ち込む機能[^1]。RADIUS で外部 AAA サーバに問合せ、結果に応じて当該 MAC をポートに「authorized / unauthorized」状態で許可する。authorized クライアントを VLAN に動的に割り当てる（VLAN assignment）こともできる。
+物理ポート単位の **クライアント認証** （IEEE 802.1x + MAB）を SONiC に持ち込む機能[^1]。RADIUS で外部 [AAA](../reference/glossary.md#term-aaa) サーバに問合せ、結果に応じて当該 MAC をポートに「authorized / unauthorized」状態で許可する。authorized クライアントを [VLAN](../reference/glossary.md#term-vlan) に動的に割り当てる（VLAN assignment）こともできる。
 
 要点:
 
-- 対象は **物理 interface のみ**（LAG / VLAN bind は不可）[^1]
+- 対象は **物理 interface のみ**（[LAG](../reference/glossary.md#term-lag) / VLAN bind は不可）[^1]
 - 認証方式: 802.1x（EAPoL）/ MAB（MAC をクライアント識別子として RADIUS に問合せ）。両方を同一ポートに有効化可、優先順序は設定可能[^1]
 - ホストモード: Multiple Hosts / Single-Host / Multiple Authentication
 - ポートモード: Auto / Force-Authorized / Force-Unauthorized
@@ -97,7 +97,7 @@ RADIUS_SERVER|<server-ip>:
 ### SAI 影響
 
 - **Bridge port learning mode の変更**: PAC 有効ポートでは learning 制御が PAC 側に移る[^1]
-- **FDB**: authorized クライアント MAC のみ移動 / 学習を許可。MAC move 時の挙動は HLD で別節
+- **[FDB](../reference/glossary.md#term-fdb)**: authorized クライアント MAC のみ移動 / 学習を許可。MAC move 時の挙動は [HLD](../reference/glossary.md#term-hld) で別節
 - **VLAN**: RADIUS から VLAN 割当属性が来たら dynamic VLAN bind
 - **Host interface trap**: EAPoL / MAB 用フレームを CPU に上げるため新 trap 追加
 
@@ -178,7 +178,7 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 
 - **VLAN / FDB**: dynamic VLAN 割当・MAC move によって VLAN_MEMBER / FDB が変動
 - **AAA / RADIUS**: AAA improvements や RADIUS 全体の改修と密接（management 章の RADIUS / AAA ページ参照）
-- **CoPP**: EAPoL / MAB のフレームを CPU に上げる trap が CoPP queue を消費
+- **[CoPP](../reference/glossary.md#term-copp)**: EAPoL / MAB のフレームを CPU に上げる trap が CoPP queue を消費
 
 ## トラブルシューティング
 
@@ -195,7 +195,7 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 - RADIUS / RADIUS_SERVER イベント処理: 同 L502-L623（DEL warn, hostapd への RADIUS 設定再計算）
 - pacmgr daemon entry: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp` / `pacmgr.cpp`
 
-> SAI bridge port learning モード制御や host-bound EAPoL trap の vendor SAI 取り込み度合いは別バッチで sairedis / sai-headers 側を裏取りする。
+> [SAI](../reference/glossary.md#term-sai) bridge port learning モード制御や host-bound EAPoL trap の vendor SAI 取り込み度合いは別バッチで sairedis / sai-headers 側を裏取りする。
 
 ## 引用元
 
@@ -216,3 +216,5 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 095225652dd9 -->
