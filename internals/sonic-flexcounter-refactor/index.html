@@ -16657,7 +16657,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -16668,19 +16668,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜリファクタが要るか（旧構造の問題）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スコープと要件
+        何に置き換えるか（新構造）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="何に置き換えるか（新構造）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counterids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterIds のテンプレ化
       
     </span>
   </a>
@@ -16691,39 +16702,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        旧構造の問題
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#countercontext" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新構造: CounterContext テンプレート
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counterids" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CounterIds 構造のテンプレ化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         統計種別ごとの差異の吸収
       
     </span>
@@ -16731,68 +16709,35 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#addupdate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Add/Update カウンタオブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Remove カウンタオブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#plugin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Plugin 追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        統計収集ループの簡略化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#poc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        効果（POC）
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API レベルの変化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#poc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        効果（PoC）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -16800,38 +16745,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -16842,7 +16759,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -16853,7 +16770,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -16864,7 +16781,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22804,7 +22732,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22815,19 +22743,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜリファクタが要るか（旧構造の問題）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        スコープと要件
+        何に置き換えるか（新構造）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="何に置き換えるか（新構造）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counterids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterIds のテンプレ化
       
     </span>
   </a>
@@ -22838,39 +22777,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        旧構造の問題
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#countercontext" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        新構造: CounterContext テンプレート
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counterids" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CounterIds 構造のテンプレ化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         統計種別ごとの差異の吸収
       
     </span>
@@ -22878,68 +22784,35 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#addupdate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Add/Update カウンタオブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Remove カウンタオブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#plugin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Plugin 追加
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        統計収集ループの簡略化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#poc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        効果（POC）
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API レベルの変化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#poc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        効果（PoC）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -22947,38 +22820,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22989,7 +22834,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -23000,7 +22845,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -23011,7 +22856,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23048,29 +22904,19 @@
 
 <div class="admonition note">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>verifier-batch-18 で確認:</p>
-<ul>
-<li><code>sonic-sairedis/syncd/FlexCounter.h:43-</code> に <code>class BaseCounterContext</code> を定義、<code>std::map&lt;std::string, std::shared_ptr&lt;BaseCounterContext&gt;&gt; m_counterContext;</code>（223 行目）も実装済</li>
-<li><code>sonic-sairedis/syncd/FlexCounter.cpp:1664-</code> に <code>template ... class AttrContext : public CounterContext&lt;AttrType&gt;</code> を定義、派生として <code>PortPhyAttrContext</code>（1769）・<code>PortPhySerdesAttrContext</code>（2204）等を実装</li>
-<li><code>getCounterContext</code> / <code>createCounterContext</code> / <code>removeCounterContext</code> / <code>hasCounterContext</code> の API も <code>FlexCounter.h:162-172</code> に存在し、HLD POC が master に取り込まれていることを確認</li>
-</ul>
+<p><code>sonic-sairedis/syncd/FlexCounter.h:43-</code> に <code>class BaseCounterContext</code>、<code>std::map&lt;std::string, std::shared_ptr&lt;BaseCounterContext&gt;&gt; m_counterContext;</code> (L223) を確認。<code>FlexCounter.cpp:1664-</code> に <code>template ... class AttrContext : public CounterContext&lt;AttrType&gt;</code>、派生 <code>PortPhyAttrContext</code> (L1769) / <code>PortPhySerdesAttrContext</code> (L2204) を確認。<code>getCounterContext</code> / <code>createCounterContext</code> / <code>removeCounterContext</code> / <code>hasCounterContext</code> の API も <code>FlexCounter.h:162-172</code> に存在し、HLD PoC が master 取り込み済みであることを確認。</p>
 </div>
 <h1 id="flexcounter-countercontext">FlexCounter リファクタ（CounterContext テンプレート化）<a class="headerlink" href="#flexcounter-countercontext" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>syncd</code> の <code>FlexCounter</code> クラスは、port / queue / buffer pool / priority group など <strong>多数の統計・属性タイプ</strong> を扱う巨大クラスである。port counter / queue counter / queue attribute… ごとに <code>setXXXCounterList</code>, <code>removeXXX</code>, <code>collectXXXCounters</code>, <code>collectXXXAttr</code> といった <strong>ほぼ同じロジックの関数群</strong> が独立して実装されており、<code>FlexCounter.cpp</code> だけで約 4000 行・<code>FlexCounter.h</code> で約 600 行に膨らんでいる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>この HLD は、SAI 側の型が異なる（<code>sai_port_stat_t</code> / <code>sai_queue_stat_t</code> / <code>sai_port_attr_t</code> ...）ため一見テンプレ化しにくいこの構造を、<strong><code>CounterContext&lt;T&gt;</code> / <code>AttrContext&lt;T&gt;</code> というテンプレートクラス</strong> に集約してコードを大幅に圧縮するリファクタを定義している。POC では <code>FlexCounter.cpp</code> が 1000 行・<code>.h</code> が 200 行まで縮み、新しい統計タイプを追加する際の手数が劇的に減るとされる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>公開 API（<code>FlexCounter</code> の interface）は <strong>不変</strong> とすることが要件。他コンポーネントから見るとリファクタは透過<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">スコープと要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD が明示する制約<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>変更は <strong><code>FlexCounter</code> クラス内</strong> に閉じる。</li>
-<li><strong>public interface の機能は同一</strong> に保つ。</li>
-<li>他のクラス・コンポーネントから見て <strong>透過</strong> であること。</li>
+<li>旧 <code>FlexCounter</code> クラスの何が問題で、なぜリファクタが要るのか</li>
+<li>SAI 統計型がバラバラなのに、どうやってテンプレ化したのか</li>
+<li>公開 API は変わるのか</li>
+<li>新しい counter type を追加する手数はどう減るのか</li>
 </ul>
-<p>つまり呼び出し側コードに手を入れない。リファクタ対象は <code>sonic-sairedis</code> の <code>FlexCounter.cpp</code> / <code>FlexCounter.h</code> のみ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">旧構造の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>旧来は統計種別ごとに 3 系統のデータを別々に持っていた<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_2">なぜリファクタが要るか（旧構造の問題）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>syncd</code> の <code>FlexCounter</code> は port / queue / buffer pool / priority group など <strong>多数の統計・属性タイプ</strong> を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに <code>setXXXCounterList</code> / <code>removeXXX</code> / <code>collectXXXCounters</code> / <code>collectXXXAttr</code> が独立実装されていて <code>FlexCounter.cpp</code> 約 4000 行、<code>.h</code> 約 600 行に膨らんでいる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧来は統計種別ごとに 3 系統のデータを別々に持っていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23080,22 +22926,23 @@
 </thead>
 <tbody>
 <tr>
-<td>Counter IDs map（vid + rid + 取得する counter ID の集合）</td>
+<td>Counter IDs map</td>
 <td><code>m_portCounterIdsMap</code>, <code>m_queueCounterIdsMap</code> ...</td>
 </tr>
 <tr>
-<td>Plugins（Redis 側で実行する Lua の SHA）</td>
+<td>Plugins（Redis Lua の SHA）</td>
 <td><code>m_portPlugins</code>, <code>m_queuePlugins</code> ...</td>
 </tr>
 <tr>
-<td>Supported counters（SAI が対応している counter ID の集合）</td>
+<td>Supported counters</td>
 <td><code>m_supportedPortCounters</code>, <code>m_supportedQueueCounters</code> ...</td>
 </tr>
 </tbody>
 </table>
-<p>加えて種別ごとの構造体（<code>PortCounterIds</code>, <code>QueueCounterIds</code>, <code>BufferPoolCounterIds</code> ...）と関数群（<code>setXXXCounterList</code>, <code>collectXXXCounters</code> ...）も一式存在。<strong>ロジックはほぼ同一だが SAI 統計型が違うので C++ の同じコンテナに入れられない</strong> という制約が、重複を温存していた<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="countercontext">新構造: CounterContext テンプレート<a class="headerlink" href="#countercontext" title="Permanent link">&para;</a></h3>
-<p>新設計では各統計/属性タイプは <strong><code>CounterContext&lt;T&gt;</code> / <code>AttrContext&lt;T&gt;</code> のインスタンス</strong> で代表され、<code>FlexCounter</code> 内では <strong><code>counter_context_map</code>（種別 → context のマップ）</strong> に格納される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。先述の 3 系統のデータは context のメンバに移動する:</p>
+<p>加えて種別ごとに <code>PortCounterIds</code> / <code>QueueCounterIds</code> / <code>BufferPoolCounterIds</code> 等の構造体と関数群が一式存在。<strong>ロジックはほぼ同一だが SAI 統計型が違うため C++ の同じコンテナに入らない</strong> という制約が重複を温存していた<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>公開 API（<code>FlexCounter</code> の interface）は <strong>不変</strong> であることが要件。呼出し側コードに手を入れない<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">何に置き換えるか（新構造）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>各統計/属性タイプを <strong><code>CounterContext&lt;T&gt;</code> / <code>AttrContext&lt;T&gt;</code> のインスタンス</strong> で代表し、<code>FlexCounter</code> 内では <strong><code>m_counterContext</code>（種別 → context のマップ）</strong> に格納する。3 系統のデータは context のメンバへ移動<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23133,41 +22980,28 @@
         + removeObject(vid)
         + addPlugin(sha)
     }
-    class CounterContext~T~ {
-        - object_ids_map
-        - plugins
-        - supported_counters
-    }
-    class AttrContext~T~ {
-        - object_ids_map
-        - plugins
-        - supported_counters
-    }
-    BaseCounterContext &lt;|-- CounterContext
-    BaseCounterContext &lt;|-- AttrContext
+    BaseCounterContext &lt;|-- CounterContext~T~
+    BaseCounterContext &lt;|-- AttrContext~T~
     FlexCounter --&gt; BaseCounterContext : owns N</code></pre>
-<h3 id="counterids">CounterIds 構造のテンプレ化<a class="headerlink" href="#counterids" title="Permanent link">&para;</a></h3>
-<p>旧来 <code>PortCounterIds</code> / <code>QueueCounterIds</code> / <code>BufferPoolCounterIds</code> などが個別定義されていたところを、<strong>型パラメータ付き 1 つの <code>CounterIds&lt;StatType&gt;</code></strong> に集約する。<code>buffer_pool</code> のみ per-instance の <code>stats_mode</code> を持つので、SFINAE / <code>enable_if</code> で <strong>specialization</strong> を使い分ける<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="counterids">CounterIds のテンプレ化<a class="headerlink" href="#counterids" title="Permanent link">&para;</a></h3>
+<p>旧 <code>PortCounterIds</code> / <code>QueueCounterIds</code> / <code>BufferPoolCounterIds</code> を 1 つの <code>CounterIds&lt;StatType&gt;</code> に集約。<code>buffer_pool</code> のみ per-instance の <code>stats_mode</code> を持つので <strong>specialization</strong> で吸収<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">StatType</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Enable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">void</span><span class="o">&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CounterIds</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">rid</span><span class="p">;</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">StatType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">counter_ids</span><span class="p">;</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">};</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">// buffer_pool は instance 単位の stats_mode を持つので</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1">// 特殊化で stats_mode を増やす</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">StatType</span><span class="o">&gt;</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CounterIds</span><span class="o">&lt;</span><span class="n">StatType</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">                  </span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">enable_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">StatType</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">                                                       </span><span class="n">sai_buffer_pool_stat_t</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">rid</span><span class="p">;</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">StatType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">counter_ids</span><span class="p">;</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="n">sai_stats_mode_t</span><span class="w"> </span><span class="n">stats_mode</span><span class="p">;</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">};</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">StatType</span><span class="o">&gt;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">struct</span><span class="w"> </span><span class="nc">CounterIds</span><span class="o">&lt;</span><span class="n">StatType</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">                  </span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">enable_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">StatType</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">                                                       </span><span class="n">sai_buffer_pool_stat_t</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">rid</span><span class="p">;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">StatType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">counter_ids</span><span class="p">;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="n">sai_stats_mode_t</span><span class="w"> </span><span class="n">stats_mode</span><span class="p">;</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">};</span>
 </span></code></pre></div>
-<p>これで「instance 単位の stats_mode 有無」がコードベースで一元管理される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">統計種別ごとの差異の吸収<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>統計種別ごとにフローは似ていても <strong>完全に同一ではない</strong> ため、<code>BaseCounterContext</code> にフラグを置いて差異を吸収する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="_4">統計種別ごとの差異の吸収<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><code>BaseCounterContext</code> にフラグを置いて分岐させる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23177,104 +23011,93 @@
 </thead>
 <tbody>
 <tr>
-<td>SAI 経由で statistic capability を query するか否か</td>
-<td><code>BaseCounterContext</code> 内 flag</td>
+<td>SAI capability query を行うか</td>
+<td><code>BaseCounterContext</code> フラグ</td>
 </tr>
 <tr>
-<td>capability query を毎回行うか初回のみか</td>
-<td><code>BaseCounterContext</code> 内 flag</td>
+<td>capability query を毎回 / 初回のみ</td>
+<td><code>BaseCounterContext</code> フラグ</td>
 </tr>
 <tr>
 <td><code>getStats</code> か <code>getStatsExt</code> か</td>
-<td><code>BaseCounterContext</code> 内 flag</td>
+<td><code>BaseCounterContext</code> フラグ</td>
 </tr>
 <tr>
 <td>per-object の stats_mode をサポートするか</td>
-<td><code>if constexpr</code> で型に応じて分岐</td>
+<td><code>if constexpr</code> で型分岐</td>
 </tr>
 </tbody>
 </table>
-<p>これにより派生クラスは振る舞い flag を設定するだけで、共通実装が分岐する形になる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="addupdate">Add/Update カウンタオブジェクト<a class="headerlink" href="#addupdate" title="Permanent link">&para;</a></h3>
-<p>旧フロー<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FlexCounterManager → FlexCounter::addCounter
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   → setXXXCounterList
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>       → updateXXXSupportedCounters (SAI capability query)
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>           → 失敗時 fallback: getXXXSupportedCounters (実値で query)
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>       → supported が空でなければ XXXCounterIdsMap に登録
+<p>派生クラスは振る舞いフラグを設定するだけで共通実装が分岐する。</p>
+<h2 id="api">API レベルの変化<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<p>公開 API は不変。内部のみ次のように整理<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong>Add/Update</strong>: <code>FlexCounter::addCounter</code> は対応する context を引いて context 側メソッドを呼ぶだけ。<code>setXXXCounterList</code> 以降のロジックが <strong>context に丸ごと移動</strong></li>
+<li><strong>Remove</strong>: 旧来 <code>FlexCounter</code> が直接 <code>m_XXXCounterIdsMap</code> から消していたのを <code>CounterContext::removeObject(vid)</code> に委譲</li>
+<li><strong>Plugin 追加</strong>: <code>m_XXXPlugins</code> への push を <code>BaseCounterContext::addPlugin</code> に移動</li>
+<li><strong>統計収集ループ</strong>: 関数ポインタマップを廃し、<code>m_counterContext</code> を素朴に走査:</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">FlexCounter::collectCounters</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">Table</span><span class="w"> </span><span class="o">&amp;</span><span class="n">countersTable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_counterContext</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">collectData</span><span class="p">(</span><span class="n">countersTable</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">countersTable</span><span class="p">.</span><span class="n">flush</span><span class="p">();</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>新フロー: 上の <code>setXXXCounterList</code> 以降が <strong><code>CounterContext</code> に丸ごと移動</strong>。<code>FlexCounter::addCounter</code> は対応する context を引いて context 側のメソッドを呼ぶだけになる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。フロー自体は同じだが、<strong>実装が context 内に閉じる</strong> のが核心。</p>
-<h3 id="remove">Remove カウンタオブジェクト<a class="headerlink" href="#remove" title="Permanent link">&para;</a></h3>
-<p>旧来は <code>FlexCounter</code> が直接 <code>m_XXXCounterIdsMap</code> から消していた。新設計では <code>CounterContext</code> / <code>AttrContext</code> の <code>removeObject(vid)</code> に委譲する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="plugin">Plugin 追加<a class="headerlink" href="#plugin" title="Permanent link">&para;</a></h3>
-<p>Lua plugin の SHA を <code>m_XXXPlugins</code> に積む処理も <code>BaseCounterContext::addPlugin</code> に移動する<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_6">統計収集ループの簡略化<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>旧来は <code>collectXXXCounters</code> の関数ポインタをマップに登録してループする構造だった。新設計では <code>m_counterContext</code> を素朴に走査して各 context の <code>collectData</code> を呼ぶだけになる<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">FlexCounter::collectCounters</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">Table</span><span class="w"> </span><span class="o">&amp;</span><span class="n">countersTable</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_counterContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">collectData</span><span class="p">(</span><span class="n">countersTable</span><span class="p">);</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">countersTable</span><span class="p">.</span><span class="n">flush</span><span class="p">();</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="kt">void</span><span class="w"> </span><span class="nf">FlexCounter::runPlugins</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">counters_db</span><span class="p">)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">{</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">argv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">counters_db</span><span class="p">.</span><span class="n">getDbId</span><span class="p">()),</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="n">COUNTERS_TABLE</span><span class="p">,</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">m_pollInterval</span><span class="p">)</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="p">};</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_counterContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">runPlugin</span><span class="p">(</span><span class="n">counters_db</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>関数ポインタマップが不要になるのと、新統計タイプの追加が <strong><code>CounterContext&lt;NewType&gt;</code> の登録 1 行</strong> で済むのが効果。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/flex_counter/flex_counter_refactor.md#L36-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Code lines of FlexCounter.cpp change from ~4000 to ~1000
-  Code lines of FlexCounter.h change from ~600 to ~200
-  Supporting new flex counter would requires only change a few places instead of implementing all those setXXXCounterList/removeXXX/collectXXXCounter and so on
-reasoning: 行数削減と「新統計タイプ追加コスト低減」が本リファクタの主要動機である根拠。
--->
-
-<h3 id="poc">効果（POC）<a class="headerlink" href="#poc" title="Permanent link">&para;</a></h3>
-<p>POC レベルでの効果<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>新統計タイプの追加は <strong><code>CounterContext&lt;NewType&gt;</code> の登録 1 行</strong> で済む。</p>
+<h2 id="poc">効果（PoC）<a class="headerlink" href="#poc" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>旧</th>
+<th>新</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FlexCounter.cpp</code> 行数</td>
+<td>約 4000</td>
+<td><strong>約 1000</strong></td>
+</tr>
+<tr>
+<td><code>FlexCounter.h</code> 行数</td>
+<td>約 600</td>
+<td><strong>約 200</strong></td>
+</tr>
+<tr>
+<td>新統計タイプ追加</td>
+<td><code>setXXXCounterList</code> 等を一式実装</td>
+<td>context 登録 + 振舞フラグ設定</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB / CLI / YANG への影響は HLD 上 <strong>N/A</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>FLEX_COUNTER_TABLE</code> スキーマは不変、syncd 内部実装のみ変更。</p>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>HLD は <code>Restrictions/Limitations</code> を <strong>N/A</strong> と明記<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。事実上の前提として C++ テンプレートと SFINAE / <code>if constexpr</code> を多用するため C++17 以降相当のコンパイラが必要（HLD には言及なし）。</p>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>FlexCounter.cpp</code>: 約 4000 行 → 約 1000 行</li>
-<li><code>FlexCounter.h</code>: 約 600 行 → 約 200 行</li>
-<li>新しい flex counter タイプを追加する際の改修箇所が <strong>数か所</strong> に削減</li>
+<li><strong><code>FlexCounterManager</code></strong>: 呼出し側として変更不要。<code>FlexCounter::addCounter</code> の signature と意味は維持</li>
+<li><strong>既存 Lua plugin (Watermark / RATES / WRED 等)</strong>: SHA 登録経路と <code>runPlugins</code> 挙動は同等、Lua 側は不変</li>
+<li><strong>warmboot / fastboot</strong>: HLD は影響 N/A。public interface 不変が前提<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>新規 SAI 統計の追加</strong>: 拡張容易性が向上</li>
 </ul>
-<h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>このリファクタはユーザ可視の振る舞いを変えない。CONFIG_DB / CLI / YANG への影響は HLD 上 <strong>N/A</strong><sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。<code>FLEX_COUNTER_TABLE</code> 自体のスキーマは変わらず、syncd 内部実装のみが変わる。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。</p>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p>HLD は <code>Restrictions/Limitations</code> を <strong>N/A</strong> と明記している<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<br />
-ただし C++ テンプレートと SFINAE / <code>if constexpr</code> を多用するため、コンパイラ要件（C++17 以降相当）が事実上の前提となる点に注意。HLD には言及がない。</p>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>FlexCounterManager</code></strong>: 呼び出し側として変更不要。<code>FlexCounter::addCounter</code> の signature と意味は維持されるため、上位ロジックの改修なし<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>既存の Lua plugin (Watermark / RATES / WRED 等)</strong>: plugin の SHA 登録経路と <code>runPlugins</code> の挙動は同等。Plugin 側の Lua スクリプトには変更不要。</li>
-<li><strong>warmboot / fastboot</strong>: HLD は影響を <strong>N/A</strong> と記載している<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。public interface 不変が前提なので、起動再構成のセマンティクスは変わらない想定。</li>
-<li><strong>新規 SAI 統計の追加</strong>: 拡張容易性が向上する側面。<code>CounterContext&lt;NewSaiStatType&gt;</code> を登録すれば既存ロジックを継承できる。</li>
+<li>特定種別だけ counter が取れない → <code>BaseCounterContext</code> の差異吸収フラグ（capability query 有無、<code>getStats</code> / <code>getStatsExt</code> 切替）の設定誤りを疑う</li>
+<li>HLD 内コード断片は <strong>デモンストレーション用</strong> と明記。最終実装と完全一致は保証されない<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>リファクタは振る舞い不変が要件のため、新たに増えるトラブル類型は基本的に無い。観点としては:</p>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リファクタ後の syncd で <strong>特定種別の counter だけ取れない</strong> 事象が起きた場合、<code>BaseCounterContext</code> の差異吸収 flag（capability query 有無、<code>getStats</code> / <code>getStatsExt</code> 切替）の設定誤りを疑う。</li>
-<li>POC コードと production コードの差分。HLD 内のコード断片は <strong>デモンストレーション用</strong> と明記されており、最終実装と完全一致は保証されない<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><a href="../../topics/20-swss-sai-redis/internals/">Topic 20 SWSS/SAI/Redis - internals</a></li>
+<li><a href="../../topics/09-telemetry-snmp/internals/">Topic 09 Telemetry/SNMP - internals</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/flex_counter_refactor.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/flex_counter/flex_counter_refactor.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -7779,7 +7779,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ SPM が要るか
       
     </span>
   </a>
@@ -7817,34 +7828,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -7874,6 +7857,17 @@
     <span class="md-ellipsis">
       
         トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
       
     </span>
   </a>
@@ -22699,7 +22693,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ SPM が要るか
       
     </span>
   </a>
@@ -22737,34 +22742,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -22794,6 +22771,17 @@
     <span class="md-ellipsis">
       
         トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
       
     </span>
   </a>
@@ -22838,54 +22826,59 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>実装裏取り済み（下記コード位置）。SPM CLI: sonic-utilities/sonic_package_manager/{main.py,manifest.py,manager.py,database.py,dockerapi.py} で確認。</p>
+<p>SPM CLI: <code>sonic-utilities/sonic_package_manager/{main.py,manifest.py,manager.py,database.py,dockerapi.py}</code> で確認。</p>
 </div>
 <h1 id="sonic-application-extension-infrastructuresonic-package-manager-spm">SONiC Application Extension Infrastructure（sonic-package-manager / SPM）<a class="headerlink" href="#sonic-application-extension-infrastructuresonic-package-manager-spm" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>3rd-party / 任意の docker コンテナを「SONiC application extension」として <strong>inbox 機能と同じ管理面で扱う</strong> ためのフレームワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙い:</p>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>3rd-party docker を inbox 機能と同列に扱うために何が必要か</li>
+<li>install から起動までの実体は何が動くのか</li>
+<li>manifest にはどんな互換性情報を書くのか</li>
+<li>CLI 拡張や showtech はどう連携されるのか</li>
+</ul>
+<h2 id="spm">なぜ SPM が要るか<a class="headerlink" href="#spm" title="Permanent link">&para;</a></h2>
+<p>3rd-party / 任意の docker コンテナを「SONiC application extension」として <strong>inbox 機能と同じ管理面で扱う</strong> ためのフレームワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>アプリ追加が <code>apt</code>-相当の単一 CLI で済む（<code>sonic-package-manager install</code>）</li>
 <li>通常の SONiC 機能と同じく <code>FEATURE</code> テーブル・<code>config feature</code> で on/off</li>
 <li>warm reboot / reset-factory・showtech・syslog 等の運用フックに統一して載る</li>
-<li>動作するために必要な base image や他機能を <strong>manifest</strong> に宣言し、互換性を機械的に検証</li>
+<li>動作に必要な base image や他機能を <strong>manifest</strong> に宣言し互換性を機械的に検証</li>
 </ul>
 <h2 id="_2">構成要素<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     REG[(コンテナレジストリ)] --&gt; PM[sonic-package-manager]
-    PM --&gt; PKGDB[/var/lib/sonic-package-manager/\n(installed manifests)]
+    PM --&gt; PKGDB[/var/lib/sonic-package-manager/&lt;br/&gt;installed manifests]
     PM --&gt; DOCKER[(local docker images)]
-    PM --&gt; CFGDB[CONFIG_DB\nFEATURE エントリ追加]
+    PM --&gt; CFGDB[CONFIG_DB&lt;br/&gt;FEATURE エントリ追加]
     CFGDB --&gt; HC[hostcfgd]
     HC --&gt; SVC[/etc/systemd/system/&lt;feature&gt;.service]
     SVC --&gt; CONT[docker run --name &lt;feature&gt;]</code></pre>
-<p>主要なコンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>主要コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>CLI <code>sonic-package-manager</code>（別名 SPM）</strong>: install / uninstall / upgrade / list / show / repository サブコマンドを提供</li>
-<li><strong>manifest</strong>: コンテナイメージに同梱される JSON。package 名、version、依存（base image / 他 package / SONiC version 範囲）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン等のフック宣言</li>
+<li><strong>CLI <code>sonic-package-manager</code>（別名 SPM）</strong>: install / uninstall / upgrade / list / show / repository</li>
+<li><strong>manifest</strong>: コンテナイメージ同梱の JSON。package 名、version、依存（base image / 他 package / SONiC version 範囲）、起動引数、warm-reboot 対応フラグ、CLI 拡張・showtech プラグイン宣言</li>
 <li><strong><code>hostcfgd</code></strong>: <code>FEATURE</code> 追加に追従して systemd unit を rendering し start/stop を駆動</li>
-<li><strong>CLI plugin</strong>: 各 package が <code>click</code> ベースの CLI を <code>sonic-utilities</code> に動的 register（plugin entry-point）</li>
+<li><strong>CLI plugin</strong>: 各 package が <code>click</code> ベース CLI を <code>sonic-utilities</code> に動的 register（plugin entry-point）</li>
 </ul>
 <h2 id="_3">ライフサイクル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     INST[install &lt;repo&gt;:&lt;tag&gt;] --&gt; PULL[image pull]
-    PULL --&gt; VERIFY[manifest 検証\n(version / 依存 / SONiC ver)]
-    VERIFY --&gt; REGISTER[FEATURE エントリ追加\nCLI plugin register\nshowtech plugin register]
+    PULL --&gt; VERIFY[manifest 検証&lt;br/&gt;version / 依存 / SONiC ver]
+    VERIFY --&gt; REGISTER[FEATURE 追加&lt;br/&gt;CLI plugin / showtech plugin 登録]
     REGISTER --&gt; ENABLE[config feature state &lt;pkg&gt; enabled]
     ENABLE --&gt; RUN[hostcfgd → systemd → docker]
     RUN --&gt; UNINST[uninstall]
-    UNINST --&gt; STOP[feature disable]
-    STOP --&gt; CLEAN[FEATURE 削除\nimage / plugin 削除]</code></pre>
-<p>manifest が必須宣言する項目（HLD ベース）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    UNINST --&gt; CLEAN[disable → FEATURE 削除&lt;br/&gt;image / plugin 削除]</code></pre>
+<p>manifest が必須宣言する項目<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>name</code>、<code>version</code></li>
+<li><code>name</code> / <code>version</code></li>
 <li><code>base-os</code> / <code>min-sonic-version</code> / <code>max-sonic-version</code></li>
 <li><code>depends</code> / <code>breaks</code>（他 package との互換性）</li>
-<li><code>service</code> / <code>container</code> 起動オプション（warm-reboot 対応、privileged 必要性、namespaces）</li>
+<li><code>service</code> / <code>container</code> 起動オプション（warm-reboot 対応、privileged、namespaces）</li>
 <li><code>cli</code>（<code>config</code> / <code>show</code> への拡張サブコマンド）</li>
-<li><code>processes</code>（critical processes として監視するか）</li>
+<li><code>processes</code>（critical process として監視するか）</li>
 </ul>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -22900,7 +22893,6 @@
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -22937,33 +22929,29 @@
 </table>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>manifest 互換性検査の限界</strong>: <code>min-sonic-version</code> / <code>depends</code> で表せない暗黙依存（kernel module、SAI 拡張等）は捕まえられない</li>
-<li><strong>warm reboot 対応</strong>: package 側の対応が必要。非対応 package は warm reboot でリセットされる</li>
-<li><strong>CLI plugin の衝突</strong>: 同じ <code>config &lt;subcommand&gt;</code> を複数 package が登録すると挙動不定</li>
+<li><strong>manifest 検査の限界</strong>: <code>min-sonic-version</code> / <code>depends</code> で表せない暗黙依存（kernel module、SAI 拡張等）は捕まえられない</li>
+<li><strong>warm reboot 対応</strong>: package 側の対応が必要。非対応 package は warm reboot でリセット</li>
+<li><strong>CLI plugin 衝突</strong>: 同じ <code>config &lt;subcommand&gt;</code> を複数 package が登録すると挙動不定</li>
 <li><strong>資源管理</strong>: cgroup / メモリ / CPU 上限はコンテナ起動オプションでしか制御できない</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>inbox 機能の <code>FEATURE</code></strong>: 名前空間が同じため衝突に注意</li>
-<li><strong>warm/fast reboot</strong>: 非対応 package の data plane 連続性は保証できない</li>
-<li><strong>show techsupport</strong>: package 側 plugin が登録されないと、その docker のログが収集されない</li>
+<li><strong>warm/fast reboot</strong>: 非対応 package の data plane 連続性は保証不可</li>
+<li><strong>show techsupport</strong>: package 側 plugin が登録されないと docker のログが収集されない</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>install 失敗 → <code>sonic-package-manager</code> のログ、image pull 権限、manifest 検証エラーを確認</li>
-<li>起動しない → <code>systemctl status &lt;feature&gt;</code> と docker ログ、<code>config feature</code> 状態を確認</li>
-<li>CLI が出ない → plugin entry-point の取り込み、<code>sonic-utilities</code> の再起動 / shell の再ログイン</li>
+<li>install 失敗 → <code>sonic-package-manager</code> ログ / image pull 権限 / manifest 検証エラー</li>
+<li>起動しない → <code>systemctl status &lt;feature&gt;</code> と docker ログ / <code>config feature</code> 状態</li>
+<li>CLI が出ない → plugin entry-point の取り込み、<code>sonic-utilities</code> 再起動 / shell 再ログイン</li>
+</ul>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/19-build-packaging/architecture/">Topic 19 Build/Packaging - architecture</a></li>
+<li><a href="../../topics/19-build-packaging/operations/">Topic 19 Build/Packaging - operations</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- sonic-package-manager (SPM) CLI の sonic-utilities への取り込みと entry-point の確認
-- manifest スキーマ（base-os / min-sonic-version / depends 等）の現行実装フィールド名確認
-- hostcfgd の FEATURE → systemd unit rendering ロジック現行確認
-- CONFIG_DB FEATURE スキーマと package 由来 feature の処理差分確認
-- warm reboot 非対応 package のフォールバック挙動確認
-- third-party container hardening / 資源制限機構の現行実装確認
--->
-
 <div class="footnote">
 <hr />
 <ol>
