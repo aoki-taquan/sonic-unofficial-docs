@@ -70,3 +70,8 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 - [BGP / EVPN 関連](bgp-evpn.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)

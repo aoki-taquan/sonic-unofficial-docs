@@ -143,3 +143,8 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 - vendor 別実装差異（zero_profile 提供の有無）の現行 sonic-buildimage 内ベンダーディレクトリ確認
 - shared headroom pool model など複数 buffer model における zero_profile 互換性確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)

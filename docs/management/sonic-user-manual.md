@@ -96,3 +96,8 @@ flowchart LR
 - show techsupport の現行収集対象（plugin 機構）の確認
 - application extension が CLI を拡張するパスの現行 entry-point 仕様確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)

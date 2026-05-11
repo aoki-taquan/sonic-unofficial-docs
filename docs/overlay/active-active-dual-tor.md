@@ -265,3 +265,8 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 - BGP update delay 10s 設定の現行 master 取り込み確認
 - ingress drop ACL skip の MuxOrch 実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)

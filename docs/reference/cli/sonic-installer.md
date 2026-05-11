@@ -161,3 +161,8 @@ stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 [^1]: `get_bootloader()` は `sonic_installer/bootloader/__init__.py` がプラットフォーム文字列から ABOOT / GRUB / U-Boot 系を選択する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_installer/bootloader>
 
 [^2]: `print_deprecation_warning` 呼び出しは `sonic_installer/main.py` の各サブコマンド冒頭。例: `sonic-installer set-default` (L662)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_installer/main.py#L662>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)

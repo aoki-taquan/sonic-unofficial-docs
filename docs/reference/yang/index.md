@@ -115,3 +115,8 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 ## 引用元
 
 `sonic-yang-models` (`sonic-net/sonic-buildimage`) `src/sonic-yang-models/yang-models/` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。各モジュールページに具体的なファイルパスと commit SHA を記載する。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)

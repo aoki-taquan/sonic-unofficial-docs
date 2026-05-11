@@ -33,3 +33,9 @@ SONiC に機能追加・拡張を入れたい読者を想定しています。HL
 - 「新機能追加時のチェックリスト」がありません。YANG 追加、CONFIG_DB schema、CLI、orch / daemon、test plan、migration、docs 反映を 1 本の流れで示すページが必要です。
 - HLD と実コードの対応を横断検索する入口が弱い状態です。各ページの sources はありますが、開発者が「この CONFIG_DB テーブルを読む daemon はどれか」「この CLI がどの DB を書くか」を俯瞰する索引が欲しい状態です。
 - テスト観点の導線が area 別に散っているため、開発者向けに test plan の読み方、既存テストとの対応、検証粒度をまとめるとよいです。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

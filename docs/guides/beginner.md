@@ -28,3 +28,9 @@ SONiC を初めて触る読者を想定しています。ネットワーク OS �
 - 「SONiC の全体像」を 1 ページで説明する導入記事が不足しています。トップページには要約がありますが、CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB、SwSS、syncd、SAI の関係を初学者向けに順序立てて読む導線はまだ弱い状態です。
 - 「最小用語集」がありません。SAI、orchagent、syncd、CONFIG_DB、YANG、FRR、PMON、multi-ASIC などの用語は各ページに散っています。
 - area index の多くが stub のため、初学者が area の中で何を読むべきか判断しにくい状態です。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

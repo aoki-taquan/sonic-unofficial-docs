@@ -129,3 +129,8 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/logging/Logging_and_sysdump_arch_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)

@@ -173,3 +173,8 @@ graph LR
 - ベンダ kernel driver の genl_packet filter 実装の現行確認
 - copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)

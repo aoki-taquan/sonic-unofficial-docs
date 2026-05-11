@@ -163,3 +163,8 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/dynamically-headroom-calculation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)

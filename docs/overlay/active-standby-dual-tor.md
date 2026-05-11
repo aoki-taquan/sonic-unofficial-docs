@@ -326,3 +326,8 @@ config muxcable mode auto all
 - arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認
 - accept_untracked_na の kernel backport 状況確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)

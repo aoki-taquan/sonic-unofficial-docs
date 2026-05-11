@@ -144,3 +144,8 @@ reasoning: Phase 1 のサポート機能の根拠。
 - v0.5 で追加された MySID counter (counter polling / config srv6 counter CLI) の現行実装確認
 - FRR SRv6 fpmsyncd 連携の取り込み状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
