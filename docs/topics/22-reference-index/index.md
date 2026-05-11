@@ -19,13 +19,21 @@ keywords:
 
 この章は、`docs/reference/` 配下に集めた CLI / CONFIG_DB / YANG の辞書ページと、Phase B で新設された機能章 (`docs/topics/`) との間を行き来するための索引である。機能章は読み物として運用導線を提供し、reference は辞書として「テーブル名」「コマンド名」「モジュール名」から逆引きできる。両者は別物だが、本来は両方向にリンクされていることが望ましい。
 
-`docs/reference/` 配下の現状は以下の通り (2026-05-10 時点)。
+`docs/reference/` 配下の現状は以下の通り (2026-05-11 時点)。最新の機械集計は [reference/index.md のカバー率表](../../reference/index.md#coverage) を参照する (本ページの数字は読み物中の参考値)。
 
-- CLI ページ: 48 件 (`config-*` / `show-*` / `debug-*` / `clear` / `reboot-fast-warm` / `sonic-*` ツール)
-- CONFIG_DB ページ: 76 件 (table family ごと)
-- YANG ページ: 39 件 (`sonic-*` モジュールごと)
+- CLI ページ: 72 件 (`config-*` / `show-*` / `debug-*` / `clear` / `reboot-fast-warm` / `sonic-*` ツール)
+- CONFIG_DB ページ: 121 件 (table family ごと)
+- YANG ページ: 84 件 (`sonic-*` モジュールごと)
+- Runbooks: 45 件 (症状逆引き)
+- Verification: 1 件 (`discrepancy-index`)
 
 この章では、これらを「機能章のどこから引かれるか」「逆に辞書からどの章へ戻るか」の対応表で並べ直す。既存 reference ページの本文と frontmatter は変更しない。
+
+## reference/index.md との分担
+
+- **早見リンク集 (機能 → CLI / CONFIG_DB / YANG / Runbook の主要ページ)** は [reference/index.md](../../reference/index.md#quickref) が canonical。
+- **章番号別の詳細表 (Phase B topics 章のどこから何が引かれるか)** は本章の [cli-index](cli-index.md) / [config-db-index](config-db-index.md) / [yang-index](yang-index.md) が canonical。
+- 統計 (カバー率 / verification 内訳) は reference/index.md が canonical。本章は数値を引用するのみ。
 
 ## 想定読み手の質問
 
