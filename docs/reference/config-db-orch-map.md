@@ -257,79 +257,57 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **DPU 専用 Redis** 上�
 | `SAG` | (sag agent / static anycast) | — | `sai_router_intf_api` |
 | `NTP` | `ntp-config` | — | (systemd-timesyncd / chrony) |
 
-## 管理プレーン / FRR / その他 daemon 系
+## 管理 / システムサービス / セキュリティ
 
-orchagent / cfgmgr の経路ではなく、独立した systemd サービスまたは FRR が CONFIG_DB を購読する系統。SAI には到達しないため SAI 列は `—`。
+これらは orchagent / SAI 経路を持たず、ホスト側 daemon (`hostcfgd` / 専用 daemon / FRR) が CONFIG_DB を直接 subscribe して Linux / FRR / 外部サービスへ反映する。**ASIC を直接プログラムしない** 設定群。
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
-| `AAA` | `hostcfgd` (pam_aaa) | — | — |
-| `TACPLUS` | `hostcfgd` | — | — |
-| `TACPLUS_SERVER` | `hostcfgd` | — | — |
-| `RADIUS_SERVER` | `hostcfgd` | — | — |
-| `LDAP` | `hostcfgd` | — | — |
-| `LDAP_SERVER` | `hostcfgd` | — | — |
-| `BANNER_MESSAGE` | `hostcfgd` | — | — |
-| `KDUMP` | `hostcfgd` | — | — |
-| `FIPS` | `hostcfgd` (fips-config) | — | — |
-| `NTP_GLOBAL` | `ntp-config` | — | — |
-| `NTP_KEY` | `ntp-config` | — | — |
-| `NTP_SERVER` | `ntp-config` | — | — |
-| `SNMP` | `snmpd` (snmpmgr) | — | — |
-| `SNMP_COMMUNITY` | `snmpd` | — | — |
-| `SNMP_USER` | `snmpd` | — | — |
-| `SNMP_AGENT_ADDRESS_CONFIG` | `snmpd` | — | — |
-| `LLDP` | `lldp-syncd` (`lldpd`) | — | — |
-| `LLDP_PORT` | `lldp-syncd` | — | — |
-| `SYSLOG_SERVER` | `hostcfgd` (rsyslog) | — | — |
-| `SYSLOG_CONFIG` | `hostcfgd` (rsyslog) | — | — |
-| `SYSLOG_CONFIG_FEATURE` | `hostcfgd` | — | — |
-| `TELEMETRY` | `telemetry` (gNMI) | — | — |
-| `TELEMETRY_CLIENT` | `telemetry` | — | — |
-| `RESTAPI` | `restapi` | — | — |
-| `KUBERNETES_MASTER` | `ctrmgrd` (kube_commands) | — | — |
-| `DEVICE_NEIGHBOR` | `lldpmgrd` (`bgpcfgd`) | — | — |
-| `DEVICE_NEIGHBOR_METADATA` | `bgpcfgd` (peer metadata) | — | — |
-| `DEVICE_RUNTIME_METADATA` | `hostcfgd` (各 daemon) | — | — |
-| `BREAKOUT_CFG` | `portmgrd` (init) | — | `sai_port_api` (init only) |
-| `MGMT_INTERFACE` | `interfaces-config` (kernel netlink) | — | — |
-| `MGMT_PORT` | `interfaces-config` | — | — |
-| `MGMT_VRF_CONFIG` | `vrfmgrd` (mgmt VRF) | — | — |
-| `CONSOLE_PORT` | `consutil` (console-config) | — | — |
-| `CONSOLE_SWITCH` | `consutil` | — | — |
-| `AUTO_TECHSUPPORT` | `auto-techsupport` | — | — |
-| `AUTO_TECHSUPPORT_FEATURE` | `auto-techsupport` | — | — |
-| `WARM_RESTART` | `warm-restart-cli` (各 Orch warmrestart hint) | — | — |
-| `BGP_GLOBALS` | `bgpcfgd` (FRR) | — | — |
-| `BGP_GLOBALS_AF` | `bgpcfgd` (FRR) | — | — |
-| `BGP_GLOBALS_AF_NETWORK` | `bgpcfgd` (FRR) | — | — |
-| `BGP_GLOBALS_AF_AGGREGATE_ADDR` | `bgpcfgd` (FRR) | — | — |
-| `BGP_AGGREGATE_ADDRESS` | `bgpcfgd` (FRR) | — | — |
-| `BGP_ALLOWED_PREFIXES` | `bgpcfgd` (FRR) | — | — |
-| `BGP_NEIGHBOR_AF` | `bgpcfgd` (FRR) | — | — |
-| `BGP_PEER_GROUP_AF` | `bgpcfgd` (FRR) | — | — |
-| `BGP_PEER_RANGE` | `bgpcfgd` (FRR) | — | — |
-| `BGP_MONITORS` | `bgpcfgd` (FRR) | — | — |
-| `BMP` | `bmpcfgd` (FRR BMP) | — | — |
-| `ROUTE_MAP` | `bgpcfgd` (FRR) | — | — |
-| `ROUTE_MAP_SET` | `bgpcfgd` (FRR) | — | — |
-| `PREFIX_LIST` | `bgpcfgd` (FRR) | — | — |
-| `PREFIX_SET` | `bgpcfgd` (FRR) | — | — |
-| `COMMUNITY_SET` | `bgpcfgd` (FRR) | — | — |
-| `AS_PATH_SET` | `bgpcfgd` (FRR) | — | — |
-| `DHCPV4_RELAY` | `dhcprelayd` | — | — |
-| `MUX_LINKMGR` | `linkmgrd` | — | — |
-| `MACSEC_PROFILE` | `macsecmgrd` (`MACsecOrch`) | ✓ | `sai_macsec_api` |
-| `PFC_WD` | `pfcwd` (`PfcWdOrch`) | — | `sai_acl_api` (pfc-wd) |
-| `MAP_PFC_PRIORITY_TO_QUEUE` | `qosorch` (`QosOrch`) | — | `sai_qos_map_api` |
-| `LOSSLESS_TRAFFIC_PATTERN` | `buffermgrdyn` (dynamic buffer) | — | `sai_buffer_api` |
-| `FLEX_COUNTER_TABLE` | `flexcounterorch` (`FlexCounterOrch`) | — | (counter group) |
-| `SUBNET_DECAP` | `subnetdecapmgrd` (`TunnelDecapOrch`) | ✓ | `sai_tunnel_api` |
-| `HEARTBEAT` | `linkmgrd` (heartbeat agent) | — | — |
-| `SYSTEM_DEFAULTS` | `hostcfgd` (boot defaults) | — | — |
-| `SSH_SERVER` | `hostcfgd` (sshd) | — | — |
-| `WARM_RESTART_ENABLE_TABLE` | 各 daemon (warm restart hint) | — | — |
-| `WARM_RESTART_TABLE` | 各 daemon (warm restart state) | — | — |
+| `BANNER_MESSAGE` | `hostcfgd` | — | (sshd banner) |
+| `BMP` | `bmpcfgd` | — | (FRR BMP) |
+| `BGP_AGGREGATE_ADDRESS` | `bgpcfgd` | — | (FRR) |
+| `BGP_BBR` | `bgpcfgd` | — | (FRR) |
+| `BGP_GLOBALS` | `bgpcfgd` | — | (FRR) |
+| `BGP_GLOBALS_AF` | `bgpcfgd` | — | (FRR) |
+| `BGP_MONITORS` | `bgpcfgd` | — | (FRR) |
+| `BGP_PEER_RANGE` | `bgpcfgd` | — | (FRR dynamic peer) |
+| `BGP_SENTINELS` | `bgpcfgd` | — | (FRR) |
+| `BREAKOUT_CFG` | `xcvrd` / `portsyncd` | — | `sai_port_api` (port breakout) |
+| `DHCP_SERVER` | `dhcpservd` | — | (kernel L4) |
+| `DNS_NAMESERVER` | `hostcfgd` | — | (/etc/resolv.conf) |
+| `DNS_OPTIONS` | `hostcfgd` | — | (/etc/resolv.conf) |
+| `FIPS` | `hostcfgd` | — | (openssl FIPS mode) |
+| `KDUMP` | `hostcfgd` | — | (kdump-tools) |
+| `LDAP` | `hostcfgd` | — | (nslcd / PAM) |
+| `LDAP_SERVER` | `hostcfgd` | — | (nslcd) |
+| `LLDP` | `lldpmgrd` | — | (lldpd) |
+| `LLDP_PORT` | `lldpmgrd` | — | (lldpd) |
+| `MACSEC_PROFILE` | `macsecmgrd` | ✓ (`APP_MACSEC_*`) | `sai_macsec_api` |
+| `MAP_PFC_PRIORITY_TO_QUEUE` | `QosOrch` (直接 CFG) | — | `sai_qos_map_api` |
+| `MGMT_INTERFACE` | `mgmt-framework` / `interfaces-config` | — | (kernel netlink) |
+| `MGMT_PORT` | `mgmt-framework` / `interfaces-config` | — | (kernel netlink) |
+| `NTP_KEY` | `ntp-config` | — | (chrony key) |
+| `NTP_SERVER` | `ntp-config` | — | (chrony server) |
+| `PASSW_HARDENING` | `hostcfgd` | — | (PAM pwquality) |
+| `PFC_WD` | `PfcWdSwOrch` | — | `sai_acl_api` + `sai_queue_api` |
+| `RADIUS` | `hostcfgd` | — | (PAM radius) |
+| `RADIUS_SERVER` | `hostcfgd` | — | (PAM radius) |
+| `RESTAPI` | `restapi` | — | (REST server cert/listen) |
+| `ROUTE_MAP` | `bgpcfgd` | — | (FRR route-map) |
+| `ROUTE_MAP_SET` | `bgpcfgd` | — | (FRR prefix/community list) |
+| `SNMP` | `snmp-config` | — | (snmpd) |
+| `SNMP_AGENT_ADDRESS_CONFIG` | `snmp-config` | — | (snmpd) |
+| `SNMP_COMMUNITY` | `snmp-config` | — | (snmpd) |
+| `SNMP_USER` | `snmp-config` | — | (snmpd v3) |
+| `SSH_SERVER` | `hostcfgd` | — | (sshd_config) |
+| `SYSLOG_CONFIG` | `hostcfgd` | — | (rsyslog) |
+| `SYSLOG_SERVER` | `hostcfgd` | — | (rsyslog) |
+| `SYSTEM_DEFAULTS` | `db_migrator` (起動時参照) | — | (機能フラグ) |
+| `TACPLUS` | `hostcfgd` | — | (PAM tacplus) |
+| `TACPLUS_SERVER` | `hostcfgd` | — | (PAM tacplus) |
+| `AAA` | `hostcfgd` | — | (PAM/NSS 切替) |
+| `VERSIONS` | `db_migrator` (sonic-installer / メタ) | — | — |
+| `WARM_RESTART` | `warmrestart` (各 Orch / daemon hint) | — | (warm-reboot 制御) |
 
 ## 経路パターンまとめ
 

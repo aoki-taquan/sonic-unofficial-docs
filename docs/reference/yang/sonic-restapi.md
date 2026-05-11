@@ -26,6 +26,22 @@ related:
 
 RESTAPI YANG Module for SONiC OS[^1]。REST API サーバの TLS 証明書 (certs) と connection 設定 (config) を持つ。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-restapi"]
+  C1[("CONFIG_DB<br/>RESTAPI")]
+  Y --> C1
+  D1["restapi"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

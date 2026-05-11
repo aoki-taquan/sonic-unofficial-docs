@@ -26,6 +26,22 @@ related:
 
 IEEE 802.1AE MACsec のプロファイル（CAK/CKN、cipher、replay protection、rekey 等）を保持する YANG モジュール[^1]。ポートへの紐付けは `sonic-port` の `macsec` リーフ側で行う。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-macsec"]
+  C1[("CONFIG_DB<br/>MACSEC_PROFILE")]
+  Y --> C1
+  D1["macsecmgrd"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```
