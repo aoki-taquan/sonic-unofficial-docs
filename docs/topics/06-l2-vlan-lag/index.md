@@ -61,6 +61,7 @@ sources:
 3. [設定](setup.md): VLAN / PortChannel / interface / sub-port / TPID の代表パターン。
 4. [運用](operations.md): `show vlan`、`mclagdctl`、FDB、storm control、link damping の確認順。
 5. [発展トピック](advanced.md): OpenConfig、distributed VOQ LAG、Wake-on-LAN、他章との境界。
+6. [内部実装](internals.md): VlanMgr / PortChannelMgr / IntfMgr / FdbOrch の責務分担と APPL_DB / STATE_DB の整合を実装側から見る。
 
 ## 関連ページ
 

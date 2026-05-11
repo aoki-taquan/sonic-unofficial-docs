@@ -31,6 +31,7 @@ last_verified: 2026-05-10
 3. [CONFIG_DB 横断索引](config-db-index.md): table family を機能章ごとに並べ、逆引きを提供する。
 4. [YANG 横断索引](yang-index.md): native SONiC YANG と OpenConfig / management framework との関係。
 5. [品質と gap](quality-gaps.md): discrepancy ページと reference gap の追跡方法。
+6. [内部実装](internals.md): reference ページの生成パイプライン (Indexer / gen_coverage / gen_cross_ref) と、frontmatter / verification status の運用を実装側から見る。
 
 ## 関連ページ
 

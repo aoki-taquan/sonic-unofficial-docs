@@ -23,6 +23,7 @@ sources: []
 2. [アーキテクチャ](architecture.md): build artifact が ONIE installer になるまでの流れと RFS split を追う。
 3. [設定 / 運用](operations.md): SPM・application extension・package manager の lifecycle を運用面から見る。
 4. [発展トピック](advanced.md): ARM、container hardening、feature quality を、リリース品質の導線として読む。
+5. [内部実装](internals.md): sonic-buildimage の Makefile / docker 階層、slave container、`rules/` / `dockers/` の責務分担、Application Extension マニフェストの解釈を実装側から見る。
 
 ## 統合した既存ページ
 

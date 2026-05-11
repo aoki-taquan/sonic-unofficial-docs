@@ -33,6 +33,7 @@ sources:
 4. [運用](operations.md): route / FIB / interface / RIF counter / route flow counter の確認順をまとめる。
 5. [ECMP family](ecmp.md): ECMP、WCMP、FG ECMP、Ordered ECMP、Generic Hash、CBF の選び方を比較する。
 6. [発展トピック](advanced.md): VRRP、SAG、TSA、他章への橋渡しを整理する。
+7. [内部実装](internals.md): RouteOrch / NeighOrch / NhgOrch の責務と、ROUTE / NEIGH / NEXT_HOP_GROUP テーブルの整合を実装側から見る。
 
 ## 統合した既存ページ
 
