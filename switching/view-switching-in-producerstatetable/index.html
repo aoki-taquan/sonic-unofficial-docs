@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#producerstatetable-view-switchingwarm-reboot" class="md-skip">
+        <a href="#producerstatetable-view-switching" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -9933,7 +9933,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        なぜ必要か
       
     </span>
   </a>
@@ -9941,44 +9941,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の Redis オブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        追加 API
+        API と動作
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="API と動作">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#set-del" class="md-nav__link">
+  <a href="#apply_temp_view-4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        set() / del() の二重挙動
+        apply_temp_view() の 4 ステップ
       
     </span>
   </a>
@@ -9986,17 +9964,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#apply_temp_view" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        apply_temp_view() の差分計算
+        差分判定ルール
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -10005,82 +9988,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設計上のトレードオフ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#view-db-producer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一時 view を DB ではなく producer メモリ に置く理由
-      
-    </span>
-  </a>
-  
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        文字列同一だが意味同一でない場合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -10091,7 +10002,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -10102,7 +10013,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -10113,7 +10024,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22823,7 +22745,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        なぜ必要か
       
     </span>
   </a>
@@ -22831,44 +22753,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#redis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既存の Redis オブジェクト
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        追加 API
+        API と動作
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="API と動作">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#set-del" class="md-nav__link">
+  <a href="#apply_temp_view-4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        set() / del() の二重挙動
+        apply_temp_view() の 4 ステップ
       
     </span>
   </a>
@@ -22876,17 +22776,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#apply_temp_view" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        apply_temp_view() の差分計算
+        差分判定ルール
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22895,82 +22800,10 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設計上のトレードオフ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#view-db-producer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一時 view を DB ではなく producer メモリ に置く理由
-      
-    </span>
-  </a>
-  
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        文字列同一だが意味同一でない場合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22981,7 +22814,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22992,7 +22825,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -23003,7 +22836,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23039,50 +22883,16 @@
 
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-swss-common/common/producerstatetable.h</code> L51/L53 で <code>create_temp_view()</code> / <code>apply_temp_view()</code>、L58 で <code>bool m_tempViewActive</code>、L66 で <code>TableDump m_tempViewState</code> を確認。<code>producerstatetable.cpp</code> L31 で <code>m_tempViewActive(false)</code> 初期化、L132/L172/L205/L254 の各 set/del 系で <code>m_tempViewActive</code> 分岐により <code>m_tempViewState</code> を更新、L324-479 で <code>create_temp_view</code> / <code>apply_temp_view</code> の差分計算（既存 key の比較 + 新規 add + 既存削除）と Lua 引数組み立てを確認（verified at: 2026-05-09）。</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-swss-common/common/producerstatetable.h</code> <code>create_temp_view()</code> / <code>apply_temp_view()</code> / <code>m_tempViewActive</code> / <code>m_tempViewState</code>、<code>producerstatetable.cpp</code> の set/del 分岐と差分計算 (L324-479) を確認（verified at: 2026-05-09）。</p>
 </div>
-<h1 id="producerstatetable-view-switchingwarm-reboot">ProducerStateTable の view switching（warm reboot 用の差分適用）<a class="headerlink" href="#producerstatetable-view-switchingwarm-reboot" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>warm reboot を支えるためには、各 daemon が <strong>新しい状態を一気に作って consumer に届ける</strong> 機構が必要になる。再起動直後に旧 view と新 view を比較し、<strong>差分だけ</strong> SAI に流せれば、再 program によるデータプレーン断を最小化できる。</p>
-<p>この HLD は <code>ProducerStateTable</code> に <strong>「一時 view」を在メモリで構築 → <code>apply_temp_view()</code> で旧 view との差分だけを Redis に書き出す</strong> 仕組みを追加する設計を定義している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。差分計算は producer 側で行い、<code>pop()</code> を含む <code>ConsumerStateTable</code> 側のロジックは <strong>無変更</strong> で済むのがポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>設計の前提として、<strong>1 つのテーブルに対して producer は 1 つだけ</strong> という仮定を置く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。複数 producer が同時に同テーブルを書く構成では、view 切替中の二次 producer の書き込みが <code>apply_temp_view()</code> で失われる可能性がある。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="redis">既存の Redis オブジェクト<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
-<p>ProducerStateTable / ConsumerStateTable は既存で次のオブジェクト群を使っている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>用途</th>
-<th>例（テーブル名 <code>ROUTE_TABLE</code> の場合）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TableHash</td>
-<td><code>ROUTE_TABLE:25.78.106.0/27</code>（先頭に空白）</td>
-</tr>
-<tr>
-<td>StateHash</td>
-<td><code>_ROUTE_TABLE:25.78.106.0/27</code></td>
-</tr>
-<tr>
-<td>KeySet</td>
-<td><code>ROUTE_TABLE_KEY_SET</code></td>
-</tr>
-<tr>
-<td>DelKeySet</td>
-<td><code>ROUTE_TABLE_DEL_SET</code></td>
-</tr>
-<tr>
-<td>Channel</td>
-<td><code>ROUTE_TABLE_CHANNEL</code></td>
-</tr>
-</tbody>
-</table>
-<p>view switching では <strong>追加の Redis オブジェクトは作らない</strong>。代わりに producer プロセス内に在メモリで <code>TableDump m_tempViewState</code>（TableHash 相当の構造）と <code>bool m_tempViewActive</code> フラグを持つ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="api">追加 API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
-<p><code>ProducerStateTable</code> に以下 2 つの API を追加し、既存の <code>set()</code> / <code>del()</code> の挙動を <code>m_tempViewActive</code> で分岐させる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h1 id="producerstatetable-view-switching">ProducerStateTable view switching<a class="headerlink" href="#producerstatetable-view-switching" title="Permanent link">&para;</a></h1>
+<h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>warm reboot では、各 daemon が <strong>新しい状態を一気に作って consumer に届ける</strong> 必要がある。再起動直後に旧 view と新 view を比較し <strong>差分だけ</strong> SAI に流せれば、再 program によるデータプレーン断が最小化される。</p>
+<p>本 HLD は <code>ProducerStateTable</code> に「一時 view をプロセス内メモリで構築 → <code>apply_temp_view()</code> で旧 view との差分だけ Redis に書き出す」機構を追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。差分計算は producer 側で行うため <strong><code>ConsumerStateTable</code> (pop 含む) は無変更</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>前提: <strong>1 テーブルにつき producer は 1 つだけ</strong>。複数 producer が同テーブルを書くと、view 切替中の二次 producer の書き込みが <code>apply_temp_view()</code> で失われる可能性がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="api">API と動作<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<p><code>ProducerStateTable</code> 追加 2 API<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23097,141 +22907,108 @@
 </tr>
 <tr>
 <td><code>apply_temp_view()</code></td>
-<td>旧 view との差分を計算し、最小の <code>set/del</code> を Redis に書き出す。最後に <code>m_tempViewActive=false</code></td>
+<td>旧 view と diff、最小の set/del を Redis に出す。最後に <code>m_tempViewActive=false</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="set-del"><code>set()</code> / <code>del()</code> の二重挙動<a class="headerlink" href="#set-del" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart TD
-    SET[set/del 呼び出し] --&gt; Q{m_tempViewActive?}
-    Q -- false --&gt; R[既存どおり Redis に直接書く]
-    Q -- true --&gt; M[m_tempViewState のみ更新\n(consumer に届かない)]</code></pre>
-<p><code>m_tempViewActive == true</code> の間は、<code>set()</code> / <code>del()</code> は <strong>DB に書かず、<code>m_tempViewState</code> のみ更新</strong>する。この間 consumer 側には何も届かない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="apply_temp_view"><code>apply_temp_view()</code> の差分計算<a class="headerlink" href="#apply_temp_view" title="Permanent link">&para;</a></h3>
-<p><code>apply_temp_view()</code> の処理ステップ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ol>
-<li><strong>既存の pending 操作を捨てる</strong>: <code>KeySet</code> / <code>DelKeySet</code> / <code>StateHash:*</code> を全削除。前回の view 切替の途中残骸や保留中の更新を一掃する。</li>
-<li><strong>現在 view の dump</strong>: <code>TableDump tableDump; dump(tableDump);</code> で旧 view の内容を取得。</li>
-<li><strong>差分計算</strong>: <code>tableDump</code>（旧）と <code>m_tempViewState</code>（新）を突き合わせ、必要最小の <code>set</code> / <code>del</code> キーリストを作る。</li>
-<li><strong>書き出し</strong>: 新 view の field/value を <code>StateHash:*</code> に書き、<code>KeySet</code> / <code>DelKeySet</code> に対象キーを加え、<code>Channel</code> に publish。最後に <code>m_tempViewActive=false</code>。</li>
-</ol>
-<p>差分判定の規則（HLD の擬似コードより）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>旧 view</th>
-<th>新 view</th>
-<th>動作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>key あり</td>
-<td>key なし</td>
-<td><code>del</code></td>
-</tr>
-<tr>
-<td>key あり</td>
-<td>key あり、値完全一致</td>
-<td>何もしない（StateHash も書き直さない）</td>
-</tr>
-<tr>
-<td>key あり、ある field が新にない</td>
-<td>—</td>
-<td><code>del</code> + <code>set</code>（一旦消して新規で作り直す）</td>
-</tr>
-<tr>
-<td>ある field の値が変化</td>
-<td>—</td>
-<td><code>set</code></td>
-</tr>
-<tr>
-<td>新側に追加 field がある</td>
-<td>—</td>
-<td><code>set</code></td>
-</tr>
-<tr>
-<td>key なし（旧）</td>
-<td>key あり（新）</td>
-<td><code>set</code>（このループ外で扱われる）</td>
-</tr>
-</tbody>
-</table>
-<p><code>pop()</code> を含む <code>ConsumerStateTable</code> 側は <strong>何も変更しない</strong>。<code>apply_temp_view()</code> が結局のところ <strong>通常の <code>set</code> / <code>del</code> シーケンスを Redis に出す</strong> だけなので、consumer から見ると普通の更新の連続にしか見えない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant APP as Application
     participant PST as ProducerStateTable
     participant DB as Redis
     participant CST as ConsumerStateTable
-
     APP-&gt;&gt;PST: create_temp_view()
-    Note over PST: m_tempViewActive = true&lt;br/&gt;m_tempViewState.clear()
+    Note over PST: m_tempViewActive=true&lt;br/&gt;m_tempViewState.clear()
     APP-&gt;&gt;PST: set/del (×N)
-    Note over PST: m_tempViewState のみ更新
+    Note over PST: m_tempViewState のみ更新&lt;br/&gt;(consumer に届かない)
     APP-&gt;&gt;PST: apply_temp_view()
     PST-&gt;&gt;DB: DEL KeySet/DelKeySet/StateHash:*
-    PST-&gt;&gt;DB: dump current view
+    PST-&gt;&gt;DB: dump 旧 view
     Note over PST: 差分計算
-    PST-&gt;&gt;DB: HSET StateHash:k... (新 view)
-    PST-&gt;&gt;DB: SADD KeySet ... / DelKeySet ...
+    PST-&gt;&gt;DB: HSET StateHash:k (差分のみ)
+    PST-&gt;&gt;DB: SADD KeySet/DelKeySet
     PST-&gt;&gt;DB: PUBLISH Channel
-    DB-&gt;&gt;CST: 通知
-    CST-&gt;&gt;CST: 通常の set/del を pop で取り出す</code></pre>
-<!-- evidence:
-source: sonic-net/SONiC/doc/warm-reboot/view_switch.md#L92-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  To apply temporary view, there are several steps:
-  1. Drop all pending operations by clearing KeySet, DelKeySet, and StateHash
-  2. Dump content of current view
-  3. Compare current view and target view, generate a minimal set of `set()` and `del()` operations
-  4. Write to KeySet, DelKeySet, and StateHash accordingly, publish the change to the channel, and unset `m_tempViewActive` flag.
-reasoning: apply_temp_view の 4 ステップが「既存削除 → dump → diff → 書き戻し」である根拠。
--->
-
-<h3 id="_3">設計上のトレードオフ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<h4 id="view-db-producer">一時 view を <strong>DB ではなく producer メモリ</strong> に置く理由<a class="headerlink" href="#view-db-producer" title="Permanent link">&para;</a></h4>
+    DB-&gt;&gt;CST: 通常の set/del 通知</code></pre>
+<h3 id="apply_temp_view-4"><code>apply_temp_view()</code> の 4 ステップ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#apply_temp_view-4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>pending を捨てる</strong>: <code>KeySet</code> / <code>DelKeySet</code> / <code>StateHash:*</code> を全削除</li>
+<li><strong>旧 view dump</strong>: <code>dump(tableDump)</code> で現状取得</li>
+<li><strong>差分計算</strong>: <code>tableDump</code> と <code>m_tempViewState</code> を突合</li>
+<li><strong>書き出し</strong>: 差分のみ書き、<code>KeySet</code>/<code>DelKeySet</code>/<code>Channel</code> に通知。<code>m_tempViewActive=false</code></li>
+</ol>
+<h3 id="_2">差分判定ルール<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>旧</th>
+<th>新</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>あり</td>
+<td>なし</td>
+<td><code>del</code></td>
+</tr>
+<tr>
+<td>あり</td>
+<td>あり (完全一致)</td>
+<td>何もしない</td>
+</tr>
+<tr>
+<td>あり field 欠落</td>
+<td>—</td>
+<td><code>del</code> + <code>set</code>（消して作り直し）</td>
+</tr>
+<tr>
+<td>field 値変化 / 追加</td>
+<td>—</td>
+<td><code>set</code></td>
+</tr>
+<tr>
+<td>なし</td>
+<td>あり</td>
+<td><code>set</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">設計上のトレードオフ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>DB に置くと producer がクラッシュしても他 producer が継続できるが、<strong>Redis 上のオブジェクトが増えて分かりにくく</strong> なる。</li>
-<li>比較ロジックを Redis Lua で書くのは設計意図に反する。</li>
-<li>そもそも「1 producer / 1 table」という前提と「producer クラッシュ時の継続が高優先要件ではない」という割り切りで、メモリ持ちにする方がシンプル<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>メモリ持ち vs Redis 持ち</strong>: Redis に置けば producer クラッシュ時も他 producer が継続できるが、Redis オブジェクトが増え、比較を Lua で書く設計は嫌がられる。「1 producer / 1 table」と「クラッシュ復帰は高優先でない」割り切りでメモリ持ち<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>literal 比較</strong>: <code>"10.0.0.1,10.0.0.3"</code> と <code>"10.0.0.3,10.0.0.1"</code> は別物扱い。<strong>semantic 正規化はアプリ側責任</strong>。<code>fpmsyncd</code> は nexthop をソートしてから set する必要がある<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h4 id="_4">文字列同一だが意味同一でない場合<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
-<p>例: <code>nexthop</code> フィールドに <code>"10.0.0.1,10.0.0.3"</code> と <code>"10.0.0.3,10.0.0.1"</code> が来ると、ProducerStateTable は <strong>literal で比較</strong> するため別物扱いになり不要な <code>set</code> が生成される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これは ProducerStateTable 側で吸収せず、<strong>アプリ側で「semantic consistency = literal consistency」を担保</strong> する責務とする。例えば <code>fpmsyncd</code> は nexthop アドレスを <strong>ソートしてから <code>set</code></strong> する必要がある<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>このページの機能はライブラリレベルの API。CONFIG_DB / CLI / YANG への直接の制御点は存在しない。</p>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い（warm reboot トリガ自体は別系統）。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当 CLI は無い。warm reboot のオーケストレーション CLI （<code>warm-reboot</code> 等）から間接的に発火する想定。</p>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>HLD 上で明示・暗黙の制限<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>1 producer / 1 table</strong> の前提。複数 producer が同テーブルに書くと secondary の書き込みが <code>apply_temp_view()</code> で失われうる。</li>
-<li>producer が <code>create_temp_view()</code> 後にクラッシュすると <strong>未適用の差分はメモリと共に消える</strong>。再起動した producer は通常の手順で view を再構築する必要がある。</li>
-<li>field 値の <strong>semantic 同一性</strong> はアプリ側責任。ProducerStateTable は文字列比較しかできない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>差分計算は producer プロセス内のメモリで行う。<strong>テーブル全体の dump をメモリに保持する</strong> ため、巨大テーブル（数十万エントリ）でメモリ消費が増える可能性がある（HLD では明示の上限なし）。</li>
+<li><strong>1 producer / 1 table</strong> 前提（secondary の更新は消えうる）</li>
+<li><code>create_temp_view()</code> 後にプロセスクラッシュすると未適用 diff は失われる（再構築要）</li>
+<li>field 値の semantic 同一性はアプリ責任（literal 比較のみ）</li>
+<li>巨大テーブル（数十万 entry）で <strong>dump をメモリ保持</strong> するメモリ消費（HLD 上限明示なし）</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>warm reboot 全般</strong>: 各 daemon（<code>bgpd</code> / <code>fpmsyncd</code> / <code>swssconfig</code> 等）が <code>create_temp_view()</code> で新状態を組み立て、<code>apply_temp_view()</code> で原子的に SAI に降ろす流れの一部となる。</li>
-<li><strong><code>fpmsyncd</code>（FRR → APP_DB の橋）</strong>: nexthop ソートのようなアプリ側の正規化が必須。これを怠ると warm reboot 時に大量の不要 <code>set</code> が走り、データプレーン断のリスクが上がる<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>ConsumerStateTable</code></strong>: 変更不要。<code>apply_temp_view()</code> から見える挙動は通常の <code>set/del</code> のシーケンスのみ<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Redis のメモリ</strong>: pending 操作の cleanup（<code>DEL KeySet/DelKeySet/StateHash:*</code>）が走るため、view 切替の瞬間に Redis 上の残骸を一掃するセマンティクスがある。これに依存している経路があると影響が出る可能性がある。</li>
+<li><strong>warm reboot 全般</strong>: <code>bgpd</code> / <code>fpmsyncd</code> / <code>swssconfig</code> 等が view 切替を使う</li>
+<li><strong><code>fpmsyncd</code></strong>: nexthop ソート等の正規化必須<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>ConsumerStateTable</code></strong>: 変更不要（普通の set/del にしか見えない）</li>
+<li><strong>Redis のメモリ</strong>: <code>apply_temp_view</code> の DEL に依存している経路があると影響あり</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>view 切替後にデータプレーンに古い状態が残る: <code>apply_temp_view()</code> の最初の DEL が想定どおり走っているか、producer が他の view（別 ProducerStateTable インスタンス）と取り違えていないか確認。</li>
-<li>不要な <code>set</code> が大量発生: アプリ側で field 値の正規化（ソート、表記揺れ吸収）が抜けている可能性。<code>fpmsyncd</code> の nexthop ソートが代表例<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>view 切替の途中で producer クラッシュ: <code>m_tempViewState</code> はメモリ上のため失われる。Redis 上の <code>KeySet</code> / <code>DelKeySet</code> / <code>StateHash:*</code> が部分的に残っている可能性は無い（apply 開始時に DEL するため、apply 前なら旧 view のまま）。再起動して view 構築をやり直す。</li>
-<li>二次 producer の更新が消える: 「1 producer / 1 table」前提が崩れている構成。HLD 範囲外なので、構成を見直すか別機構を検討する<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>切替後に古い状態が残る → <code>apply_temp_view()</code> 冒頭の DEL が走ったか確認</li>
+<li>不要 <code>set</code> 大量発生 → アプリ側 field 正規化が抜けている可能性</li>
+<li>切替途中で producer クラッシュ → <code>m_tempViewState</code> はメモリ消失。apply 前なら Redis は旧 view のまま、再構築可能</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/11-reboot/architecture/">11-reboot/architecture</a>: warm reboot 全体像</li>
+<li><a href="../../topics/11-reboot/internals/">11-reboot/internals</a>: view switching 内部</li>
+<li><a href="../../topics/20-swss-sai-redis/internals/">20-swss-sai-redis/internals</a>: ProducerStateTable / ConsumerStateTable</li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/view_switch.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/warm-reboot/view_switch.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
