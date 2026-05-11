@@ -16,139 +16,110 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    `sonic-gnmi/gnmi_server/server.go` L925 で `origin == "sonic-db"` 判定、L60/L646 で `enableConfigDbJournal` フラグを確認。`sonic-gnmi/sonic_data_client/mixed_db_client.go` L65 `Name: "sonic-db"` / L1255-1267 で `import sonic_yang` Python 連携、L1433 `c.origin == "sonic-db"` の分岐を確認。`sonic-gnmi/sonic_service_client/dbus_client_test.go` L233-313 で `ConfigReload` dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。
+    `sonic-gnmi/gnmi_server/server.go` L925 で `origin == "sonic-db"` 判定、L60/L646 で `enableConfigDbJournal` フラグを確認。`sonic-gnmi/sonic_data_client/mixed_db_client.go` L65 `Name: "sonic-db"` / L1255-1267 で `import sonic_yang` Python 連携、L1433 `c.origin == "sonic-db"` の分岐、`sonic-gnmi/sonic_service_client/dbus_client_test.go` L233-313 で `ConfigReload` dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。
 
-# SONiC gNMI Server インタフェース設計（`CONFIG_DB` / SONiC YANG / Generic Config Updater 連携）
+# SONiC gNMI Server インタフェース設計
 
-## 概要
+## 読み手が知りたいこと
 
-`sonic-restapi` は case-by-case API で汎用性に欠け、`sonic-telemetry` は読み取り (gRPC) のみだった。本 HLD は `sonic-telemetry` 同コンテナ内に **gNMI server の Set/Get/Capabilities RPC** を実装し、CONFIG_DB / APPL_DB / StateDB / CountersDB を **SONiC DB schema または SONiC YANG schema** で読み書き可能にする。`sonic-restapi` は将来 gNMI に置き換える計画[^1]。
+- なぜ `sonic-telemetry` の Get 専用では不十分で、Set RPC を足したのか
+- gNMI path の **origin / target** がどう DB / YANG を切り替えるか
+- 1 SetRequest の **トランザクション境界** と ロールバック範囲はどこまでか
+- gNMI `delete / update / replace` がどう **JsonPatch** に翻訳されるか
+- container 内 gNMI から host で動く `config apply-patch` / `config reload` をどう呼ぶか
 
-## 動作仕様
+## なぜ拡張が必要か
 
-### Phase 1 / Phase 2 要件[^1]
+`sonic-restapi` は case-by-case な API で汎用性が無く、`sonic-telemetry` は **読み取り (gRPC) 専用** だった。本 HLD は `sonic-telemetry` 同コンテナに gNMI **Set / Get / Capabilities** を実装し、CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB を **DB schema または SONiC YANG schema** で読み書き可能にする。将来 `sonic-restapi` を gNMI に置き換える計画[^1]。
 
-**Phase 1**:
-- Set / Get / Capabilities RPC
-- 増分・全更新双方を Set でサポート
-- 入力スキーマ: SONiC YANG または CONFIG_DB schema
-- DB read: APPL/CONFIG/STATE/COUNTERS、DB write: APPL/CONFIG
-- CONFIG_DB schema 入力でも **YANG 検証必須**
-- VNET route の高速大量投入（APPL_DB）
-- multi-ASIC、bulk 操作、TLS 相互認証
+Phase 1: Set/Get/Capabilities、増分・全更新、CONFIG_DB schema 入力でも **YANG 検証必須**、VNET route の大量投入、multi-ASIC、bulk、TLS 相互認証。Phase 2 で TACACS+ 認可と gNOI 経由アップグレード[^1]。
 
-**Phase 2**: TACACS+ 認可、gNOI 経由のアップグレード。
+## path の origin と target でスキーマを切替
 
-### gNMI path の origin と target
-
-origin で **どのスキーマか**、path 第 1 要素で **どの DB か**、第 2 要素で **どのインスタンスか** を表す[^1]:
+origin で **スキーマ**、`elem[0]` で **DB**、`elem[1]` で **インスタンス**[^1]:
 
 | 要素 | 値 |
 |------|----|
 | `origin` | `sonic_db`（既定）/ `sonic_yang` |
 | `elem[0]` | `CONFIG_DB` / `APPL_DB` / `STATE_DB` / `COUNTERS_DB` |
-| `elem[1]` | `localhost` / `asic0`,`asic1`,... / `dpu0`,... |
+| `elem[1]` | `localhost` / `asic0`,`asic1` / `dpu0`,... |
 | `elem[2..]` | DB schema ならテーブル名・キー、YANG なら `sonic-<feat>:<...>` |
 
-1 リクエスト中で **YANG path と DB path を混在不可**[^1]。
-
-### Stage 1 / Stage 2 のスキーマ展開
+1 リクエスト中で **YANG path と DB path を混在不可**。Stage 1 では DB schema のみ、Stage 2 で YANG path を追加[^1]。
 
 ```mermaid
 flowchart LR
-  CL[gNMI client] --> SRV[gNMI server<br>sonic-telemetry container]
-  SRV -->|origin=sonic_db<br>target=CONFIG_DB| GCU[generic_config_updater<br>+ sonic-config-engine]
-  SRV -->|origin=sonic_db<br>target=APPL_DB<br>VNET_ROUTE_TABLE| SCU[special_config_updater]
+  CL[gNMI client] --> SRV[gNMI server<br>sonic-telemetry]
+  SRV -->|origin=sonic_db<br>CONFIG_DB| GCU[generic_config_updater<br>+ sonic-config-engine]
+  SRV -->|origin=sonic_db<br>APPL_DB VNET_ROUTE| SCU[special_config_updater]
   SRV -->|origin=sonic_yang| GCU
   GCU -->|YANG validate| YV[(sonic-yang-models)]
   GCU --> CDB[(CONFIG_DB)]
   SCU --> ADB[(APPL_DB)]
 ```
 
-Stage 1 では **SONiC DB schema のみ** を実装し、Stage 2 で SONiC YANG path を追加する[^1]。
+## トランザクションとロールバック
 
-### トランザクションとロック
+- 1 SetRequest = 1 トランザクション、並列 Set 不可。**single worker** がキュー処理[^1]
+- 操作順序は gNMI 仕様通り `delete` → `replace` → `update`
+- Set 開始時に running config の **checkpoint** を取り、書込中の Get はそれを返す
+- CONFIG_DB は `generic_config_updater` のロールバックを使う
+- **APPL_DB はロールバック非対応**（VNET route が例外）。クライアント側で逆操作補完
 
-- 1 SetRequest = 1 トランザクション。並列 Set 不可。**single worker** がキューから処理する[^1]
-- 操作順序: gNMI 仕様通り `delete` → `replace` → `update`
-- Set 開始時に running config の **checkpoint** を取り、書込中の Get はその checkpoint を返す
-- CONFIG_DB のロールバックは `generic_config_updater` の rollback を使う。**APPL_DB はロールバック非対応**で、VNET route が例外。クライアント側で逆操作で補う[^1]
+## SetRequest → JsonPatch 変換
 
-### SetRequest → JsonPatch 変換
+`generic_config_updater apply-patch` は JsonPatch を取るため変換する[^1]:
 
-`generic_config_updater` の `apply-patch` API は JsonPatch を取る。gNMI の `delete` / `update` / `replace` を JsonPatch に翻訳する[^1]:
+| gNMI | JsonPatch |
+|------|-----------|
+| `Delete` | `remove` |
+| `Update` | `add`（create or update）|
+| `Replace`（値なし & default なし）| `remove` |
+| `Replace`（値あり）| `add` |
 
-| gNMI | 説明 | JsonPatch |
-|------|------|-----------|
-| `Delete` | path を削除 | `remove` |
-| `Update` | 値があれば create or update | `add` |
-| `Replace`（値なし & default なし） | path を削除 | `remove` |
-| `Replace`（値あり） | create or update | `add` |
-
-例:
-```text
-replace { path: .../DEVICE_NEIGHBOR/Ethernet96 }
-replace { path: .../DEVICE_NEIGHBOR/Ethernet8/port  val: "eth1" }
-
-→ JsonPatch:
-[{"op":"remove", "path":"/DEVICE_NEIGHBOR/Ethernet96"},
- {"op":"add",    "path":"/DEVICE_NEIGHBOR/Ethernet8/port", "value":"eth1"}]
-```
-
-### 全更新
-
-ルート (`elem: CONFIG_DB / localhost`) に対する **`delete` + `update`** の組合せで全置換。`sonic-config-engine` を使う。後続の全更新 / 増分更新で上書きされる[^1]:
+全更新はルート (`CONFIG_DB/localhost`) に対する `delete` + `update` の組合せで `sonic-config-engine` を使う[^1]:
 
 ```text
 delete { path: CONFIG_DB/localhost }
 update { path: CONFIG_DB/localhost  val: <full json> }
 ```
 
-### 永続化
+CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に永続化、APPL_DB は永続化されない（リブート後 client が再投入）[^1]。
 
-CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に保存される。APPL_DB は永続化されない（リブート後 client が再投入）[^1]。
+## Heartbeat / Container ↔ Host / 認証
 
-### Heartbeat / reprogram
-
-クライアントは **Capabilities RPC を heartbeat** として使い、応答に含まれる **reset status** を見てフルリブートを検知し、APPL_DB を再投入する。gNMI コンテナ単独再起動なら再投入不要[^1]。
-
-### 認証
-
-`sonic-telemetry` の 3 方式を踏襲[^1]:
-
-- **Password**: gRPC metadata で user/pass
-- **JWT**: 認証後トークンを metadata
-- **Client cert**: TLS 検証 + CN を username に
-
-### Container ↔ Host 連携
-
-`config apply-patch` と `config reload` は host で動かす設計のため、コンテナ内で `systemctl` 直接呼び出しは危険。**host service を dbus 経由で呼ぶ** 方式を採る[^1]。`config reload` 系は gNMI と gNOI を組み合わせる別経路も検討対象。
-
-### Data protection（APPL_DB）
-
-APPL_DB は YANG が無い旧テーブルが多い。新規 YANG が無いテーブルへの set は拒否、`config false` の path も拒否する方針[^1]。
+- **Heartbeat**: client は Capabilities RPC を heartbeat に使い、応答中の **reset status** からフル再投入が必要かを判断[^1]
+- **container → host**: `config apply-patch` / `config reload` は host 実行のため、container 内 `systemctl` は不可。**dbus 経由で host service** を呼ぶ[^1]
+- **認証**: `sonic-telemetry` の 3 方式（Password gRPC metadata / JWT / Client cert で CN を username 化）を踏襲[^1]
+- **APPL_DB protection**: YANG 未定義テーブルへの set 拒否、`config false` path も拒否[^1]
 
 ## 関連 CLI
 
 | Command | 用途 |
 |---------|------|
-| `config apply-patch <file>` | JsonPatch 増分適用（generic_config_updater） |
+| `config apply-patch <file>` | JsonPatch 増分適用（generic_config_updater）|
 | `config reload [<file>]` | 全置換 |
 
 ## 制限事項
 
 - 並列 Set 不可（serialize）
-- APPL_DB rollback 無し（VNET route のみ）
-- JSON value mixed schema（YANG path と DB path）禁止
+- APPL_DB rollback 無し（VNET route のみ例外）
+- YANG path と DB path の混在禁止
 - TLS 相互認証必須
 
 ## 干渉する機能
 
-- **generic_config_updater**: gNMI 増分 Set の中核
+- **generic_config_updater**: 増分 Set の中核
 - **sonic-config-engine**: 全更新の中核
-- **sonic-restapi**: gNMI が完成したら廃止予定
+- **sonic-restapi**: gNMI で置換予定
 - **TACACS+**: Phase 2 で AAA 連携
 
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md)
+
+## 関連ページ
+
+- [Topic: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
+- [HLD: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE](model-based-replace-delete-in-mgmt-framework-transformer.md)
+- [HLD: JSON patch ordering using YANG models](json-patch-ordering-using-yang-models.md)

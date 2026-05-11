@@ -15,86 +15,83 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    `sonic-host-services/host_modules/gnoi_reset.py` L28-78 で `factoryOs` / `zeroFill` / `retainCerts` フラグの受領と `factory_os_unsupported` / `zero_fill_unsupported` のレスポンス分岐実装を確認。`sonic-gnmi/gnmi_server/gnoi_reset.go` L16-41 で `factory_reset.Start` ハンドラが DBus 経由 `FactoryReset` を呼ぶ実装を、`sonic-gnmi/sonic_service_client/dbus_client.go` L353 で `DbusClient.FactoryReset` を確認。`sonic-gnmi/pkg/gnoi/file/remove_test.go` L18-49 で File.Remove のパス検証（nil / config_db.json / `../../etc/passwd` リジェクト等）を確認。`sonic-gnmi/gnoi_client/file/file.go` L26-58 で File Stat/Get クライアント、`sonic-gnmi/gnoi_client/factory_reset/factory_reset.go` を確認（verified at: 2026-05-09）。
+    `sonic-host-services/host_modules/gnoi_reset.py` L28-78 で `factoryOs` / `zeroFill` / `retainCerts` フラグ受領と `factory_os_unsupported` / `zero_fill_unsupported` レスポンス分岐実装を確認。`sonic-gnmi/gnmi_server/gnoi_reset.go` L16-41 で `factory_reset.Start` ハンドラが DBus 経由 `FactoryReset` を呼ぶ実装、`sonic-gnmi/sonic_service_client/dbus_client.go` L353 で `DbusClient.FactoryReset`、`sonic-gnmi/pkg/gnoi/file/remove_test.go` L18-49 で File.Remove のパス検証（nil / config_db.json / `../../etc/passwd` リジェクト等）を確認。`sonic-gnmi/gnoi_client/file/file.go` L26-58 で File Stat/Get クライアント、`sonic-gnmi/gnoi_client/factory_reset/factory_reset.go` を確認。
 
-# gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
+# gNOI File.Remove と FactoryReset.Start
 
-## 概要
+## 読み手が知りたいこと
 
-gNOI（gRPC Network Operations Interface）は CLI の代替として **gRPC マイクロサービスで運用コマンドを実行** するための仕様で、protobuf 定義は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。SONiC では gNMI/telemetry サーバ（UMF: Unified Management Framework）が gNOI も同じ TCP ポート（標準 9339）で受け、認証認可後にバックエンドへ振り分ける[^1]。
+- gNOI とは何で、なぜ gNMI と同じポートで受けるのか
+- なぜ container（telemetry）の中で実行せず **DBUS で host** に投げる必要があるのか
+- `File.Remove` は何を消せて、何を消せないのか（path traversal は防げているか）
+- `FactoryReset.Start` の **3 フラグ**（`factory_os` / `zero_fill` / `retain_certs`）は何を意味するか
+- 同時実行の抑制とエラー時の挙動
 
-本 HLD はそのうち以下 2 つの RPC を SONiC に追加する設計を定める[^1]:
+## なぜこの拡張が必要か
 
-- `gnoi.file.File.Remove`: target のファイルを削除（**現状は `config_db.json` 限定**）
+gNOI（gRPC Network Operations Interface）は CLI 代替として **gRPC で運用コマンドを実行** する仕様で、protobuf は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も **同じ TCP 9339** で受け、認証認可後にバックエンドへ振り分ける[^1]。本 HLD は以下 2 つの RPC を実装[^1]:
+
+- `gnoi.file.File.Remove`: target ファイル削除（**現状は `config_db.json` 限定**）
 - `gnoi.factory_reset.FactoryReset.Start`: 工場出荷状態に戻す
 
-バックエンドは host service（python ベース、プラグイン構成）に対し DBUS で要求を投げる形を取る。詳細は [SONiC GNMI Server Interface Design](https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md) と [Docker to Host communication](https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/Docker%20to%20Host%20communication.md) を参照[^1]。
+バックエンドは python ベースの host service（プラグイン構成）に **DBUS で要求** を投げる形を取る。詳細は [SONiC GNMI Server Interface Design](https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md) と [Docker to Host communication](https://github.com/sonic-net/SONiC/blob/master/doc/mgmt/Docker%20to%20Host%20communication.md) を参照[^1]。
 
-## 動作仕様
-
-### 全体構成
+## 全体構成
 
 ```mermaid
 flowchart LR
-    CL[gNOI client] -->|gRPC :9339\nauthn/authz| UMF[gNMI/UMF サーバ\n(telemetry container)]
-    UMF -->|FE: protobuf 受領| FE[GNOI*Server]
-    FE -->|JSON / 文字列| TR[transformer\nFileRemove / FactoryReset]
+    CL[gNOI client] -->|gRPC :9339<br/>authn/authz| UMF[gNMI/UMF サーバ<br/>telemetry container]
+    UMF --> FE[GNOI*Server]
+    FE --> TR[transformer<br/>FileRemove / FactoryReset]
     TR -->|HostQuery| DBUS[(DBUS)]
-    DBUS --> HS[SONiC Host Service\n(host process, plugin: infra_host / gnoi_reset)]
-    HS -->|exec_cmd / issue_reset| OS[Linux host]
+    DBUS --> HS[SONiC Host Service<br/>plugin: infra_host / gnoi_reset]
+    HS --> OS[Linux host]
 ```
 
-要点:
+- gNOI と gNMI は **同じ TCP 9339** で受ける
+- container（telemetry）→ host 到達は **DBUS + host service**
+- 危険な操作（factory reset / ファイル削除）は host 側で実行
 
-- gNOI と gNMI は **同じ TCP ポート 9339** で受ける[^1]
-- container（telemetry）から host への到達手段として DBUS + host service を使う
-- 危険な操作（factory reset / ファイル削除）はホスト側で実行する
-
-### gNOI File.Remove
+## File.Remove
 
 protobuf（[openconfig/gnoi/file](https://github.com/openconfig/gnoi/blob/main/file/file.proto)）:
 
 ```proto
-service File {
-  rpc Remove(RemoveRequest) returns (RemoveResponse) {}
-}
-message RemoveRequest { string remote_file = 1; }
+service File { rpc Remove(RemoveRequest) returns (RemoveResponse) {} }
+message RemoveRequest  { string remote_file = 1; }
 message RemoveResponse {}
 ```
 
 SONiC 実装の特徴[^1]:
 
-- **`config_db.json` のみ削除可**。host service backend で `rm ..../etc/sonic/config_db.json` の文字列マッチで検証し、それ以外は失敗させる
-- フロントエンド（gNMI UMF サーバの `GNOIFileServer.Remove`）は `transformer.FileRemove(req.GetRemoteFile())` を呼ぶ
-- `transformer.FileRemove` 内では `HostQuery("infra_host.exec_cmd", "rm "+remoteFile)` で host service に DBUS でコマンドを投げる
+- **`config_db.json` のみ削除可**。host service backend で `rm ..../etc/sonic/config_db.json` を文字列マッチで検証、それ以外は失敗
+- FE (`GNOIFileServer.Remove`) は `transformer.FileRemove(remote_file)` を呼ぶ
+- `transformer.FileRemove` は `HostQuery("infra_host.exec_cmd", "rm "+remoteFile)` で DBUS 投入
 - `fileMu` ロックで同時実行を抑制
 
 ```mermaid
 sequenceDiagram
     participant CL as Client
     participant SV as GNOIFileServer
-    participant TR as transformer.FileRemove
-    participant HS as host service\n(infra_host)
+    participant TR as transformer
+    participant HS as host service<br/>infra_host
     CL->>SV: Remove(remote_file=/etc/sonic/config_db.json)
     SV->>TR: FileRemove(remote_file)
-    TR->>HS: HostQuery("infra_host.exec_cmd", "rm /etc/sonic/config_db.json")
-    HS->>HS: string match\n("rm ..../etc/sonic/config_db.json")
+    TR->>HS: HostQuery(exec_cmd, "rm ...config_db.json")
+    HS->>HS: string match
     alt match OK
-        HS->>HS: rm を実行
-        HS-->>TR: ok
-        TR-->>SV: ok
-        SV-->>CL: RemoveResponse{}
+        HS->>HS: rm 実行
+        HS-->>SV: ok → RemoveResponse{}
     else 不一致
-        HS-->>TR: error
-        SV-->>CL: codes.Internal
+        HS-->>SV: error → codes.Internal
     end
 ```
 
-> 注: 「`config_db.json` 以外を削除させない」を **string match** で守るのは脆弱な実装に見える。実コード上で正規表現や allow list がどうなっているか要検証。
+> 注: 「`config_db.json` 以外を消させない」を **string match** で守るのは脆く見える。実装側で `../` 系の traversal が抜けないか要確認（`remove_test.go` で `../../etc/passwd` リジェクトは UT 済）。
 
-### gNOI FactoryReset.Start
+## FactoryReset.Start
 
-protobuf（[openconfig/gnoi/factory_reset](https://github.com/openconfig/gnoi/blob/main/factory_reset/factory_reset.proto)）抜粋:
+protobuf 抜粋（[openconfig/gnoi/factory_reset](https://github.com/openconfig/gnoi/blob/main/factory_reset/factory_reset.proto)）:
 
 ```proto
 message StartRequest {
@@ -103,117 +100,73 @@ message StartRequest {
   bool retain_certs = 3; // 証明書を保持
 }
 message StartResponse {
-  oneof response {
-    ResetSuccess reset_success = 1;
-    ResetError   reset_error   = 2;
-  }
+  oneof response { ResetSuccess reset_success = 1; ResetError reset_error = 2; }
 }
 ```
 
-`Start` の意味は強烈で、**storage / configuration / logs / certificates / licenses を全消去** し、出荷状態で再起動する[^1]。`retain_certs` だけ証明書を残すなど例外を許す。
-
-#### 実装フロー
+`Start` は **storage / configuration / logs / certificates / licenses を全消去** し出荷状態で再起動する強烈な操作で、`retain_certs` だけ証明書を残す等の例外を許す[^1]。
 
 ```mermaid
 sequenceDiagram
     participant CL as Client
     participant SV as GNOIFactoryResetServer
-    participant TR as transformer.FactoryReset
-    participant HS as host service\n(gnoi_reset)
+    participant TR as transformer
+    participant HS as host service<br/>gnoi_reset
     CL->>SV: Start(StartRequest)
-    SV->>SV: protojson.Marshal(req)
-    SV->>TR: factoryReset(jsonReq)
-    TR->>HS: HostQuery("gnoi_reset.issue_reset", jsonReq)
+    SV->>TR: factoryReset(protojson)
+    TR->>HS: HostQuery(gnoi_reset.issue_reset, jsonReq)
     HS->>HS: storage / config / logs / certs / licenses クリーン
-    HS-->>TR: jsonResp (ResetSuccess or ResetError)
-    SV-->>CL: StartResponse
+    HS-->>SV: jsonResp (ResetSuccess or ResetError)
 ```
 
 ポイント[^1]:
 
-- フロントエンドはリクエストを **JSON シリアライズ** してホスト側へ渡す
-- バックエンドも JSON で応答を返す
+- FE はリクエストを **JSON シリアライズ** して host に渡す（応答も JSON）
 - `resetMu` ロックで同時実行を抑制
-- フラグが指定されたが未対応の場合、`INVALID_ARGUMENT` + `ResetError` で返す（gNOI 仕様準拠）
+- 未対応フラグ指定時は `INVALID_ARGUMENT` + `ResetError`（gNOI 仕様準拠）
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md#L154-L176 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  The front end implementation marshals the request, and sends it to the sonic-host-service via the host module `gnoi_reset`.
-  The back end is expected to return the response in JSON format.
-  ...
-  func FactoryReset(reqStr string) (string, error) {
-      resetMu.Lock()
-      defer resetMu.Unlock()
-      return checkQueryOutput(HostQuery("gnoi_reset.issue_reset", reqStr))
-  }
-reasoning: 「FE が JSON 化して DBUS 経由 gnoi_reset.issue_reset に渡す + ロック」という実装ルールの根拠。
--->
-
-### SAI / Warmboot / Fastboot
-
-- SAI API の変更なし[^1]
-- Warmboot / Fastboot への影響なし[^1]
-
-## 設定
-
-### 関連する CONFIG_DB
-
-専用 CONFIG_DB スキーマは無い。gNMI 認証認可・証明書配置などの既存の telemetry 経路を再利用する。
-
-### 関連する CLI
+## CLI / 設定例
 
 | Command | 用途 |
 |---------|------|
-| `gnoi_client ...` | UMF が提供する gNOI 呼び出し用クライアント。JSON / proto いずれの形式もサポート予定[^1] |
-
-UMF 同梱の `gnoi_client` はテスト・運用検証向け。`go-grpc` ベースの汎用 gNOI クライアントでも当然呼べる。
-
-### 関連する YANG
-
-該当 YANG モジュールは HLD で言及されていない。
-
-### 設定例（呼び出しイメージ）
+| `gnoi_client ...` | UMF が提供する gNOI 呼び出し用クライアント |
 
 ```bash
-# config_db.json 削除（target が許可した場合）
 gnoi_client file remove --remote_file /etc/sonic/config_db.json
-
-# factory reset（証明書だけ残す）
-gnoi_client factory_reset start \
-  --factory_os=false --zero_fill=false --retain_certs=true
+gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_certs=true
 ```
+
+専用 CONFIG_DB / YANG は無く、gNMI 認証認可・証明書配置などの既存 telemetry 経路を再利用する。SAI / Warmboot / Fastboot への影響なし[^1]。
 
 ## 制限事項
 
-- `File.Remove` は **`/etc/sonic/config_db.json` 限定**。それ以外のパスは host service が拒否する[^1]
-- `File.Remove` の path 検証が **string match** ベースなのは表現として脆い。`../` 系の path traversal で抜けないか実装で要確認
-- `FactoryReset.Start` は **デバイス上の状態を破壊する重操作**。誤実行防止のために認可ロールを最小限に絞る運用が必須
-- 各種フラグ（`factory_os`, `zero_fill`, `retain_certs`）の **対応状況はベンダ依存**。未対応の場合 `INVALID_ARGUMENT` で返す[^1]
-- 同時実行は `fileMu` / `resetMu` で防がれる
+- `File.Remove` は **`/etc/sonic/config_db.json` 限定**
+- path 検証が **string match** ベースで `../` 系の抜け道に注意（UT で代表ケースはカバー）
+- `FactoryReset.Start` は **デバイス状態を破壊する重操作**。誤実行防止に RBAC で role を絞ること
+- 各フラグの対応はベンダ依存。未対応時 `INVALID_ARGUMENT`
+- 同時実行は `fileMu` / `resetMu` で抑制
 
 ## 干渉する機能
 
-- **gNMI / telemetry**: 同じ 9339 ポート・同じ認証経路。証明書設定や RBAC が共通
-- **SONiC Host Service / DBUS**: docker → host 通信の汎用機構を共有[^1]
-- **`config save` / `config reload`**: `config_db.json` 削除直後の挙動（再生成・初期化）と整合させる必要
-- **証明書管理（gNMI 用）**: `retain_certs=true` のとき残るのは何か（gNMI 用の `/etc/sonic/telemetry/...` を含むか）が運用上の要点
+- **gNMI / telemetry**: 同 9339 ポート・同認証経路（証明書 / RBAC 共通）
+- **SONiC Host Service / DBUS**: docker → host 通信の汎用機構を共有
+- **`config save` / `config reload`**: `config_db.json` 削除直後の再生成・初期化と整合させる
+- **gNMI 用証明書**: `retain_certs=true` で残る範囲（`/etc/sonic/telemetry/...` 含むか）が運用上の要点
 
 ## トラブルシューティング
 
-- `Remove` が `INTERNAL` で失敗する場合、host service ログで `infra_host.exec_cmd` の string match 結果を確認
-- `FactoryReset` が `INVALID_ARGUMENT` で返る場合、未対応フラグ（`zero_fill` 等）が指定されていないか確認
-- DBUS 経由の host service が応答しない場合、`SONiC Host Service` が host で動いているかと、container ↔ host の DBUS proxy 設定を確認
+- `Remove` が `INTERNAL` → host service ログで `infra_host.exec_cmd` の string match 結果確認
+- `FactoryReset` が `INVALID_ARGUMENT` → 未対応フラグ（`zero_fill` 等）を指定していないか
+- DBUS 応答なし → SONiC Host Service の稼働と container↔host の DBUS proxy 設定確認
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- concerns hint:
-- File.Remove の path 検証実装 (string match か allow list か)
-- gnoi_reset.issue_reset の host service 実装
-- gnoi_client CLI の sonic-mgmt-common / sonic-utilities への取り込み
-- factory_os / zero_fill / retain_certs フラグのベンダ実装状況
-- 認証認可 (RBAC) と factory reset 権限の分離
-- HLD 後の他 gNOI RPC (System / OS) 拡張との関係
--->
+## 関連ページ
+
+- [Topic: gNMI / OpenConfig - gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md)
+- [HLD: gNOI System APIs](gnoi-hld-for-system-apis.md)
+- [HLD: gNOI OS APIs](gnoi-hld-for-os-apis.md)
+- [HLD: gNOI healthz API](gnoi-hld-for-healthz-api.md)
+- [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
