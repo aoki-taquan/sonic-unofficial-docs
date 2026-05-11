@@ -238,12 +238,36 @@ sonic-clear fdb port Ethernet0
 
 実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
 
-- **`config mac` / `config vlan range` CLI 未取り込み**: HLD は `config mac aging_time` / `config mac add` / `config mac del` / `config vlan range` / `config vlan member range` を提案するが、現行 master の `sonic-utilities/config/main.py` には `mac` グループおよび `vlan range` サブコマンドは存在しない。`show mac aging-time` (`show/main.py:1244`) は実装済みだが、CLI 経由での aging_time 設定 / static MAC 追加 / VLAN レンジ作成は **CONFIG_DB 直接書き込み（sonic-cfggen / config_db.json 編集）** か、`sonic-utilities/scripts/fdbclear`（旧来の `sonic-clear fdb` 相当）でのフラッシュ運用となっている。
-- **HLD と一致する実装**: `sonic-swss/orchagent/fdborch.cpp` 側は HLD どおり実装済み。具体的には:
-    - `fdborch.cpp:91-138` MAC move event ハンドリング（`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を使用）
-    - `fdborch.cpp:459,1254-1316,1754` `saved_fdb_entries` による「port が VLAN 未メンバの間に来た static MAC を保留 → 復活」の実装
-    - `fdborch.cpp:985,1006,1038,1090,1217` `flushFDBEntries(bridge_port_oid, vlan_oid)` による per-port / per-VLAN / per-(port,VLAN) flush API
-    - `sonic-swss/orchagent/switchorch.cpp:49,664,1674-1686` で `SWITCH_TABLE.fdb_aging_time` キーから `SAI_SWITCH_ATTR_FDB_AGING_TIME` への反映
+### 1. `config mac` / `config vlan range` CLI 未取り込み
+
+- **HLD 記述**: `config mac aging_time <sec>` / `config mac add <mac> <vlan> <port>` / `config mac del <mac> <vlan>` / `config vlan range add <from> <to>` / `config vlan member range add <from> <to> <port>` を `sonic-utilities` に追加する。
+- **実装位置**: `sonic-utilities/config/main.py` 全体を grep しても `mac` グループ・`vlan range` サブコマンドは見当たらない（`mac` の hit は `localhost.mac` 等の device_metadata 関連のみ:`config/main.py:2542,2568,2569`）。`show mac aging-time` (`sonic-utilities/show/main.py:1244` 付近) のみ読み取り側が実装済み。
+- **差分の中身**: HLD で提案された 5 つの CLI コマンドは未取り込み。`config vlan add <vlan_id>` 単体は存在するが、レンジ指定（`100 199`）と `-w`（pipelining）オプションは存在しない。
+- **読者への影響**: HLD の CLI 例（`config mac add ...` や `config vlan range add ...`）をそのまま打つと "no such command" エラーで失敗する。VLAN を 100 個一括投入したい運用要件があっても CLI では実現できない。
+- **回避策**:
+  - aging_time 設定: `sonic-db-cli CONFIG_DB HSET 'SWITCH|switch' fdb_aging_time 300` で直接書く。`switchorch.cpp` がこれを受けて `SAI_SWITCH_ATTR_FDB_AGING_TIME` に反映する（switchorch.cpp:49,664,1674-1686 で確認）。
+  - static MAC: `sonic-db-cli CONFIG_DB HSET 'FDB|Vlan100|00-11-22-33-44-55' port Ethernet0` で直接書く。
+  - VLAN レンジ作成: `for i in $(seq 100 199); do config vlan add $i; config vlan member add $i Ethernet0; done` のループで代替（pipelining は効かないので遅い）。あるいは `config_db.json` を直接編集して `config reload`。
+  - FDB クリア: `sonic-clear fdb all` / `sonic-clear fdb port Ethernet0` は実装済みなので利用可。
+
+### 2. HLD と一致する実装（orch 側）
+
+orchagent 側は HLD のとおり実装済み:
+
+- **MAC move event ハンドリング**: `sonic-swss/orchagent/fdborch.cpp:91-138`、`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を fdborch.cpp:507,583 で設定。MAC move を SAI 経由で許可し、port 変化時の再学習を許容する。
+- **saved FDB エントリ**: `fdborch.cpp:459` で `saved_fdb_entries[update.port.m_alias].push_back(...)`、`fdborch.cpp:1254-1271` で port が VLAN メンバになったタイミングで `saved_fdb_entries` を取り出して再投入する経路を確認。HLD の「port が VLAN 未メンバの間の static MAC を保留」設計と一致。
+- **per-port / per-VLAN flush API**: `fdborch.cpp:1079-1090` `void FdbOrch::flushFDBEntries(sai_object_id_t bridge_port_oid, sai_object_id_t vlan_oid)` が中核。呼び出しサイト:
+  - `fdborch.cpp:985` `flushFDBEntries(port.m_bridge_port_id, SAI_NULL_OBJECT_ID);` （per-port）
+  - `fdborch.cpp:1006` `flushFDBEntries(SAI_NULL_OBJECT_ID, vlanPort.m_vlan_info.vlan_oid);` （per-VLAN）
+  - `fdborch.cpp:1038,1248` `flushFDBEntries(port.m_bridge_port_id, vlan.m_vlan_info.vlan_oid);` （per-(port,VLAN)）
+- **aging_time**: `sonic-swss/orchagent/switchorch.cpp:49` で `fdb_aging_time` キーを mapping、`:664` switch 状態取得、`:1674-1686` で `SAI_SWITCH_ATTR_FDB_AGING_TIME` を set。HLD と一致。
+
+### 3. HLD は 2019 年改訂のため命名上の小差異あり
+
+- **HLD 記述**: 一部の図で `FDB_TABLE:<vlan>:<mac>` 形式（コロン区切り）と書かれているが、現行は `FDB_TABLE:<vlan>|<mac>` のような hybrid 表記が並ぶ。
+- **実装位置**: schema.h と各 orch のキー組み立てを参照。
+- **読者への影響**: redis-cli で keys pattern を指定する際に区切り文字を間違えると hit しない。
+- **回避策**: `redis-cli -n 0 keys 'FDB_TABLE:*'` で取得した実際のキーフォーマットを基準に書く。区切り文字は SONiC バージョンで揺らぐので、固定パターンに頼らない。
 
 ## 引用元
 
