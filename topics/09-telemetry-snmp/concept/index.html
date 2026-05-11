@@ -3068,6 +3068,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#telemetry-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telemetry / SNMP 機能は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3079,7 +3112,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         何を答えるか別の整理
@@ -3123,7 +3156,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#microburst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: 早朝の microburst を後追いする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22170,6 +22236,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#telemetry-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telemetry / SNMP 機能は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22181,7 +22280,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         何を答えるか別の整理
@@ -22225,7 +22324,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#microburst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: 早朝の microburst を後追いする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22262,6 +22394,38 @@
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の 3 つに分けると迷いません。</p>
+<h2 id="telemetry-snmp">Telemetry / SNMP 機能は何を解決するか<a class="headerlink" href="#telemetry-snmp" title="Permanent link">&para;</a></h2>
+<p>スイッチが「動いている」「壊れている」「過負荷になりかけている」を、人とシステムに伝える経路を提供するのがこの章のサブシステム群です。具体的には、次のような質問に対する受け皿を、目的別に複数並べているのが SONiC の作りになっています。</p>
+<ul>
+<li>いまこの瞬間のポート利用率を 5 秒に 1 回 NMS に push してほしい (gNMI Subscribe SAMPLE)</li>
+<li>BGP セッションが落ちたら同じ秒のうちにイベントを受けたい (gNMI ON_CHANGE / syslog)</li>
+<li>月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい (SNMP)</li>
+<li>顧客トラフィックの一部をミラー先 collector に流して可視化したい (sFlow / DTel)</li>
+<li>「あの時間帯に何が起きていたか」を後追いするための包括 snapshot がほしい (<code>show techsupport</code>、core dump、kdump)</li>
+<li>ASIC リソース（route、ACL entry、neighbor 等）が枯渇する前に検知したい (CRM)</li>
+</ul>
+<p>ここで重要なのは、これらが<strong>同じ「ポート counter」を扱っていても、入口とプロトコル、データ更新タイミングが全部違う</strong>ということです。読む側はまず「何を答える経路か」で分類すると混乱しません。</p>
+<h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
+<p>Telemetry / SNMP 系は基本的に <strong>management plane</strong> に属しますが、データ供給源は control / data plane の両方に深く食い込みます。</p>
+<ul>
+<li><strong>Management plane (経路の主役)</strong>: <code>snmp</code> コンテナ、<code>telemetry</code> / <code>gnmi</code> コンテナ、<code>hsflowd</code>、<code>syslog-ng</code>、<code>auto-techsupport</code> などの daemon が外部とのプロトコル端点を担います。</li>
+<li><strong>Control plane (供給源の一部)</strong>: BGP / LLDP / LACP などの daemon が syslog や STATE_DB に状態を流し、それを上記 daemon が拾います。</li>
+<li><strong>Data plane (供給源の主体)</strong>: FlexCounter / DTel / sFlow agent が ASIC / SAI から counter / sample を引き、COUNTERS_DB に蓄積するか、ASIC から直接 wire に出します。</li>
+</ul>
+<p>経路 (transport) と供給源 (data path) が独立しているのが SONiC の observability の設計思想で、新しい counter を増やすときは「SAI で取れるか → flex counter group に入れるか → DB に乗せるか → どの transport で出すか」を順に決めます。</p>
+<h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SNMP</strong>: UDP 161/162 で <code>snmpd</code> が受け、SONiC subagent (<code>snmp-agent</code> / <code>sonic_ax_impl</code>) が AgentX 経由で Redis を MIB 表現に変換します。polling 専用、pull 型。</li>
+<li><strong>gNMI</strong>: gRPC 上で YANG path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では <code>telemetry</code> コンテナの <code>gnmi-server</code> が実装。</li>
+<li><strong>gNOI / gNSI</strong>: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。</li>
+<li><strong>FlexCounter</strong>: syncd の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、<code>COUNTERS_DB</code> に書きます。</li>
+<li><strong>CRM (Critical Resource Monitoring)</strong>: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。</li>
+<li><strong>sFlow</strong>: パケットサンプリング + interface counter を <code>sFlow datagram</code> として外部 collector に UDP 送信するプロトコル。SONiC では <code>hsflowd</code> が担当。</li>
+<li><strong>DTel (Data plane Telemetry)</strong>: INT (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。</li>
+<li><strong>Syslog / Event</strong>: テキストログと構造化イベント。<code>syslog-ng</code> で集約し、外部 collector に転送。</li>
+<li><strong>Techsupport</strong>: <code>show techsupport</code> が作る tarball。CLI 出力、Redis dump、syslog、journal、core などをまとめる。</li>
+<li><strong>Dump utility</strong>: <code>sonic-dump</code> がオブジェクト単位（PORT / VLAN / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。</li>
+</ul>
 <h2 id="3">3 つの観測経路<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Polling 系</strong>: SNMP、<code>show</code> コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / APPL_DB）か直接 SAI / Linux に取りに行きます。</li>
@@ -22269,7 +22433,7 @@
 <li><strong>証跡系</strong>: syslog、event、core dump、kdump、auto-techsupport。障害が起きた瞬間の状態を残し、後から <code>show techsupport</code> の tarball や dump utility で取り出します。</li>
 </ul>
 <p>同じ「ポートの利用率」を見るのでも、SNMP では IF-MIB の counter、telemetry では <code>COUNTERS:Ethernet*</code> の path、CLI では <code>show interfaces counters</code> と入口が変わります。元データは多くの場合 <code>COUNTERS_DB</code> の同じ entry で、上に何を被せるかの違いです。</p>
-<h2 id="_2">何を答えるか別の整理<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">何を答えるか別の整理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   Q1[いまの値?] --&gt; POLL[SNMP / show / CLI]
   Q2[変化を受けたい] --&gt; STREAM[gNMI telemetry / sFlow / DTel]
@@ -22292,7 +22456,78 @@
 <p>両者は経路が独立しています。SNMP は snmpd と SONiC subagent (<code>snmp-agent</code>) が MIB をマップし、gNMI telemetry は <code>telemetry</code> / <code>gnmi</code> コンテナが Redis path を YANG / OpenConfig schema で publish します。MIB と YANG の両方に含まれる情報は重複しますが、Entity MIB のように MIB 側でしか出ない統計、telemetry-agent 拡張のように gNMI 側で先に増える統計があるため、運用上は完全互換ではありません。</p>
 <h2 id="techsupport-dump-utility">Techsupport と dump utility<a class="headerlink" href="#techsupport-dump-utility" title="Permanent link">&para;</a></h2>
 <p><code>show techsupport</code> は障害時の包括的な tarball を作る古典コマンドで、CLI、Redis、syslog、journal、core などをまとめます。一方 dump utility (<code>sonic-dump</code>) はオブジェクト単位（PORT / VLAN / ACL_TABLE など）で全 DB と CLI 出力を構造化して取り出します。前者は「何が起きたかの全体保全」、後者は「特定 object の状態を深掘り」に向きます。</p>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="microburst">典型シーン: 早朝の microburst を後追いする<a class="headerlink" href="#microburst" title="Permanent link">&para;</a></h2>
+<p>03:14 に「BGP セッションが flapping した」アラートが NMS から来たとします。Telemetry / SNMP 系を使った典型的な切り分け順は次のようになります。</p>
+<pre class="mermaid"><code>flowchart TB
+  ALERT[NMS アラート&lt;br&gt;BGP flap 03:14] --&gt; Q1{何が見たい?}
+  Q1 --&gt;|直近の値| CLI[show interfaces counters&lt;br&gt;show bgp summary]
+  Q1 --&gt;|変化の履歴| GNMI[gNMI Subscribe 履歴&lt;br&gt;collector 側 TSDB]
+  Q1 --&gt;|その時刻のログ| SYSLOG[/var/log/syslog&lt;br&gt;+ event のタイムスタンプ]
+  Q1 --&gt;|その時刻の状態| TS[show techsupport tarball&lt;br&gt;+ dump utility]
+  Q1 --&gt;|リソース残量| CRM[crm show resources all]
+  CLI --&gt; DB[(COUNTERS_DB&lt;br&gt;STATE_DB)]
+  GNMI --&gt; DB
+  SYSLOG --&gt; FILE[(syslog files)]
+  TS --&gt; FILE
+  CRM --&gt; DB</code></pre>
+<p>ここで多くの運用者がやらかすのが「直近の値しか見えない CLI で過去の microburst を追う」ことです。CLI と SNMP は今この瞬間のカウンタ値を返すだけで、<strong>過去の値は外部 collector か <code>show techsupport</code> の tarball にしか残っていない</strong> という前提を最初に置く必要があります。</p>
+<h2 id="_4">似た機能との違い<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>共通点</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SNMP と gNMI</td>
+<td>counter / state を吐く</td>
+<td>SNMP は pull / UDP / MIB、gNMI は push 可 / TCP+gRPC / YANG。レイテンシと粒度が違う</td>
+</tr>
+<tr>
+<td>gNMI と sFlow</td>
+<td>telemetry を push する</td>
+<td>gNMI は state / counter の表現、sFlow はパケットサンプル + counter の datagram。後者は per-packet 情報</td>
+</tr>
+<tr>
+<td>sFlow と DTel</td>
+<td>データプレーン情報を吐く</td>
+<td>sFlow は CPU が定期サンプル、DTel は ASIC がフレーム単位で INT を埋める</td>
+</tr>
+<tr>
+<td>Syslog と Event</td>
+<td>文字列で出力</td>
+<td>syslog はテキスト、event は構造化 JSON で外部に流す</td>
+</tr>
+<tr>
+<td>Techsupport と Dump utility</td>
+<td>障害後の解析素材</td>
+<td>techsupport は switch 全体の包括、dump utility はオブジェクト指定で深掘り</td>
+</tr>
+<tr>
+<td>CRM と FlexCounter</td>
+<td>counter を扱う</td>
+<td>CRM は ASIC リソース使用量、FlexCounter は traffic counter。目的が違う</td>
+</tr>
+<tr>
+<td>Watermark と Counter</td>
+<td>ピーク値</td>
+<td>watermark は観測区間内ピークの 1 値、counter は累積。重ねて見ると挙動が分かる</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">読了後にできること<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>ここまで読めば、次の判断が自分でつくはずです。</p>
+<ul>
+<li>「過去 1 時間のポート利用率」を取りたいときに、CLI / SNMP では十分ではなく gNMI Subscribe か外部 TSDB が必要だと即断できる</li>
+<li>「ASIC で route が入らない」原因として、CRM の resource exhausted を最初に疑うべきと分かる</li>
+<li>syslog をいきなり grep する前に、<code>show techsupport</code> の tarball を保全する必要性を理解できる</li>
+<li>sFlow と DTel を「どちらか一方」と短絡せず、用途（CPU サンプル vs ASIC per-packet）で選べる</li>
+<li>SNMP と gNMI の両方が要件にあるとき、両方を独立に enable する必要があり、設定差分を片方からは見えないことを理解している</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/sonic-logging-system-dumps-arch-spec/">Logging と system dump 仕様</a></li>
 <li><a href="../../../system/show-techsupport/">show techsupport</a></li>

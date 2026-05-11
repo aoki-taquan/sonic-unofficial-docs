@@ -3614,7 +3614,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#reboot-family_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reboot family は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: 月例のセキュリティパッチ適用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         まず区別する軸
@@ -3658,7 +3702,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22159,7 +22225,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#reboot-family_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reboot family は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: 月例のセキュリティパッチ適用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         まず区別する軸
@@ -22203,7 +22313,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22240,7 +22372,55 @@
 
 <h1 id="reboot-family">Reboot family の選び方<a class="headerlink" href="#reboot-family" title="Permanent link">&para;</a></h1>
 <p>SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の cold reboot は最も単純で、OS と container をすべて落として再起動します。fast reboot は kernel 切替を短縮し、warm reboot は data plane を可能な限り維持しながら control plane を戻します。express reboot はさらに特定プラットフォーム向けにデータプレーン断を短くする設計です。</p>
-<h2 id="_1">まず区別する軸<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="reboot-family_1">Reboot family は何を解決するか<a class="headerlink" href="#reboot-family_1" title="Permanent link">&para;</a></h2>
+<p>データセンタでスイッチを再起動するときに困るのは、停止時間そのものよりも「停止中に転送が落ちる」「再起動後に経路が落ち着くまで通信が不安定になる」ことです。アプリケーション側からすると、TCP セッションが切れる、RoCE が止まる、BGP がフルテーブル再収束する、というのが避けたいイベントです。Reboot family はそれぞれ違う設計判断でこの問題に取り組みます。</p>
+<ul>
+<li>「設備保全のために完全に綺麗な状態から起動したい」→ cold reboot</li>
+<li>「セキュリティパッチを当てる程度なので、停止時間は短く済ませたい」→ fast reboot</li>
+<li>「BGP GR とハードウェアの転送状態を維持して、隣接機器から見えないように落としたい」→ warm reboot</li>
+<li>「sub-second の data plane 断で完結させたい」→ express reboot</li>
+<li>「OS ごと落とすほどではなく、特定 daemon だけ更新したい」→ service warm restart</li>
+</ul>
+<p>つまり Reboot family が解決しているのは、「<strong>どの粒度の停止で、どの状態を保持して、どこから戻すか</strong>」という運用工程の選択肢を提供することです。逆に「速度だけ」「ダウンタイムだけ」で選ぶと、保持されない状態に依存した運用設計をしてしまって痛い目に遭います。</p>
+<h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
+<p>Reboot 系の機能は <strong>management plane と control plane の境界</strong> に座ります。</p>
+<ul>
+<li>入口は CLI (<code>reboot</code> / <code>fast-reboot</code> / <code>warm-reboot</code> / <code>config warm_restart ...</code>)、gNOI (<code>Reboot</code> RPC)、Ansible 等の自動化経路。</li>
+<li>中間で <code>pre-shutdown</code>、<code>warm shutdown</code>、DB backup（<code>/host/warmboot/</code>）、kexec の準備が走ります。</li>
+<li>起動時には reboot type を <code>STATE_DB</code> / <code>/proc/cmdline</code> から判別し、syncd / orchagent / fpmsyncd / neighsyncd / teamd などが各々 warm / fast モードで起動し、最終的に reboot finalizer が「整合性が取れた」と判定して終了します。</li>
+<li>データプレーン状態の維持は SAI の warm boot サポートと ASIC firmware の協力が前提です。</li>
+<li>BGP / LACP / IGMP などの control plane プロトコルは Graceful Restart や warm restart 拡張で peer 側にも見えないように落ちます。</li>
+</ul>
+<p>つまり Reboot は「<strong>OS 全体の lifecycle イベントとして system 全コンポーネントを一斉に協調させる</strong>」サブシステムです。1 コンポーネントでも warm 対応が抜けると warm reboot は不成立になります。</p>
+<h2 id="_1">用語の定義<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Cold reboot</strong>: 普通の <code>reboot</code>。OS ごと止めて起動し直す。</li>
+<li><strong>Fast reboot</strong>: kexec で kernel だけ載せ替えて bootloader / firmware 初期化を省略する。data plane は止まる。</li>
+<li><strong>Warm reboot</strong>: data plane を維持したまま OS を再起動。SAI の warm boot と DB backup / restore に依存。</li>
+<li><strong>Express reboot</strong>: fast reboot を拡張し、特定 ASIC で data plane 断を sub-second に詰めた派生。Cisco 8000 系向け HLD が背景。</li>
+<li><strong>Service warm restart</strong>: OS は維持したまま、<code>swss</code> / <code>bgp</code> / <code>teamd</code> などの container や daemon 単位で warm 再起動する。</li>
+<li><strong>Warm shutdown / pre-shutdown</strong>: warm reboot 前に SAI / orchagent / fpmsyncd 等に「これから warm で落ちる」と通知し、DB を凍結する手順。</li>
+<li><strong>Reconciliation</strong>: 起動後に kernel と APPL_DB の状態を突き合わせて、抜け漏れを補正するフェーズ。</li>
+<li><strong>Reboot finalizer</strong>: reconciliation を待ち、整合性が取れたタイミングで warm/fast モードを終了させる単純な systemd unit。</li>
+<li><strong>kexec</strong>: Linux の機能で、既存 kernel から新 kernel を直接ロードして起動する仕組み。BIOS / bootloader を経由しない。</li>
+</ul>
+<h2 id="_2">典型シーン: 月例のセキュリティパッチ適用<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>最も多いユースケースは、夜間メンテで OS のセキュリティパッチを適用したい、ダウンタイムは短いほどよい、BGP peer から見るとちょっと flap してくれていい、というレベルです。</p>
+<pre class="mermaid"><code>flowchart TB
+  Start[月例 patch 適用] --&gt; Q1{data plane を維持する?}
+  Q1 --&gt;|不要| Q2{kernel だけ載せ替える?}
+  Q2 --&gt;|はい| FAST[fast-reboot]
+  Q2 --&gt;|いいえ| COLD[reboot]
+  Q1 --&gt;|はい| Q3{ASIC が warm boot 対応?}
+  Q3 --&gt;|はい| WARM[warm-reboot&lt;br&gt;BGP GR / LAG keep-alive 前提]
+  Q3 --&gt;|platform 限定 hw 最適化あり| EXP[express reboot]
+  FAST --&gt; POST[reboot finalizer&lt;br&gt;fast / warm の終了判定]
+  WARM --&gt; POST
+  EXP --&gt; POST
+  COLD --&gt; NORMAL[通常起動]
+  POST --&gt; NORMAL</code></pre>
+<p>警告として、warm reboot は <strong>「事前条件が成立しないと automatic に cold reboot に落ちる」</strong> ことが多く、その判定は <code>warm-reboot</code> script の最初に出ます。CLI が <code>Warm reboot is not supported</code> と返したらそこで一度停止し、何が足りないかを確認するのが正解です。</p>
+<h2 id="_3">まず区別する軸<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -22302,7 +22482,53 @@
 <p><code>config warm_restart</code> は system-wide reboot ではなく、daemon や feature container の restart 時に状態を戻すための設定です。たとえば <code>swss</code> の warm restart は、APPL_DB / ASIC_DB / kernel / orchagent の関係を検証しながら restore と sync up を行います。warm reboot と同じく「状態を保持して差分を吸収する」考え方を使いますが、対象は OS ではなく service lifecycle です。</p>
 <h2 id="express-reboot">express reboot は派生として読む<a class="headerlink" href="#express-reboot" title="Permanent link">&para;</a></h2>
 <p>Express reboot は <a href="../../../system/sonic-express-reboot-hld-spec/">Express Reboot</a> の HLD にあるように、fast reboot script、syncd start type、platform integration を拡張して、特定 platform の sub-second data plane disruption を狙います。一般的な SONiC reboot の入口としてではなく、fast/warm の概念を理解した後の platform-specific optimization として読むのが自然です。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_4">似た機能との違い<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>共通点</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISSU (In-Service Software Upgrade)</td>
+<td>無停止アップグレード狙い</td>
+<td>ISSU はベンダー OS の概念。SONiC は「warm reboot で同等を目指す」アプローチで、ISSU 専用 path はない</td>
+</tr>
+<tr>
+<td>Container restart (<code>docker restart</code>)</td>
+<td>プロセスだけ動かす</td>
+<td>container restart は OS 全体を維持。service warm restart はそれに「state を持って戻す」工程を追加</td>
+</tr>
+<tr>
+<td>Kernel hot patch (kpatch / livepatch)</td>
+<td>OS 停止せず修正</td>
+<td>反映できるのは kernel patch のみ。SONiC のユーザ空間 / SAI 更新は cover しない</td>
+</tr>
+<tr>
+<td>BGP Graceful Restart</td>
+<td>peer から落ちて見えない</td>
+<td>BGP GR は protocol 機能。warm reboot は GR を「使うため」の OS 側基盤</td>
+</tr>
+<tr>
+<td>Power cycle</td>
+<td>完全に落とす</td>
+<td>power cycle は人手 / PDU 操作。cold reboot より長く、BIOS POST も走る</td>
+</tr>
+</tbody>
+</table>
+<p>warm reboot と「container restart + warm restart 機能」は混同しやすいですが、<strong>前者は kernel ごと再起動する OS イベント、後者は OS は触らない daemon イベント</strong> という違いを覚えておくと判断が早くなります。</p>
+<h2 id="_5">読了後にできること<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>「BGP GR 対応 peer に対しては warm reboot、GR 未対応 peer も含む場合は fast reboot」のような選択を、root cause から説明できる</li>
+<li>warm reboot 前に <code>show warm_restart config</code> で feature ごとの restart timer を確認する必要性が分かる</li>
+<li>起動後の <code>show warm_restart state</code> で stuck している daemon を特定し、reboot finalizer がなぜ終了しないかの当たりがつく</li>
+<li>express reboot は platform-specific であり、自前 platform で動かない場合の原因（ASIC SDK / SAI 拡張 / fast-reboot script の patch）まで遡れる</li>
+<li>service warm restart と warm reboot の関係を「同じ DB backup / restore の枠組みを、対象範囲を変えて再利用している」と整理して説明できる</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../categories/reboot/">Warm-Reboot / Fast-Reboot 関連</a></li>
 <li><a href="../../../system/sonic-warm-reboot/">SONiC Warm Reboot</a></li>

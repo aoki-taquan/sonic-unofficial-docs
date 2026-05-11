@@ -3328,7 +3328,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#gnmi-openconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI / OpenConfig 機能は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nms-interface-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: NMS から interface description をまとめて投入する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         入口の責務を分ける
@@ -3361,7 +3405,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -3372,7 +3416,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22159,7 +22225,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#gnmi-openconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI / OpenConfig 機能は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nms-interface-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: NMS から interface description をまとめて投入する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         入口の責務を分ける
@@ -22192,7 +22302,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -22203,7 +22313,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22240,7 +22372,63 @@
 
 <h1 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ YANG モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。</p>
-<h2 id="_2">入口の責務を分ける<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="gnmi-openconfig">gNMI / OpenConfig 機能は何を解決するか<a class="headerlink" href="#gnmi-openconfig" title="Permanent link">&para;</a></h2>
+<p>データセンタの規模で運用していると、CLI でログインして 1 台ずつ設定する世界はすぐに破綻する。NMS / SDN コントローラから API でまとめて投入し、戻りも構造化データで取りたい、しかもベンダーが混ざってもなるべく同じ表現で扱いたい。この要求に答えるのが gNMI（プロトコル）と OpenConfig（モデル）の組み合わせで、SONiC では次の問題を一気に解消している。</p>
+<ul>
+<li>CLI 専用機能と API 専用機能が分裂し、片方からしか触れないコマンドが生まれる問題</li>
+<li>ベンダー固有の MIB / CLI を毎回翻訳しないと NMS から触れない問題</li>
+<li>設定の get / set を別プロトコル（SSH/CLI と SNMP）で行わなければならない問題</li>
+<li>「いまの設定」と「いまの状態」を片方ずつ取りに行く（candidate / running / operational がバラバラ）問題</li>
+<li>設定変更を pull する手段しかなく、変更通知を push できない問題</li>
+</ul>
+<p>逆に、低レイヤの ASIC 設定や SONiC 固有 feature flag の中には OpenConfig がまだカバーしていない領域もあり、その隙間を SONiC native YANG が埋める、という二段構えになっている。</p>
+<h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
+<p>gNMI / OpenConfig は <strong>management plane の中心</strong> に座る。具体的には次の経路で動く。</p>
+<ul>
+<li><strong>Transport 層</strong>: <code>telemetry</code> コンテナ内の gnmi-server が gRPC を受け、<code>mgmt-framework</code> コンテナの REST server が同じ Translib に乗る。</li>
+<li><strong>モデル変換層</strong>: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ CONFIG_DB の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。</li>
+<li><strong>検証層</strong>: <code>sonic-yang-models</code> が pyang ベースで YANG 制約をチェック。違反は Transport 層に RPC error として戻る。</li>
+<li><strong>永続化層</strong>: CONFIG_DB writer が Redis に書き、<code>config save</code> 相当の挙動が <code>save-on-set</code> 設定で自動化される。</li>
+<li><strong>反映層</strong>: 他章と同じく orchagent → syncd → SAI → ASIC の通常経路を流れる。</li>
+</ul>
+<p>つまり gNMI / OpenConfig 章は「<strong>ConfigDB に到達するまでの道のり</strong>」を扱う。ConfigDB から先（orchagent から ASIC まで）は他章の責任、という切り分けで読めばよい。</p>
+<h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>gNMI</strong>: gRPC Network Management Interface。<code>Capabilities</code> / <code>Get</code> / <code>Set</code> / <code>Subscribe</code> の 4 RPC を持つ。</li>
+<li><strong>gNOI</strong>: gRPC Network Operations Interface。<code>Reboot</code> / <code>File</code> / <code>OS</code> / <code>Healthz</code> / <code>Cert</code> などの操作 RPC。</li>
+<li><strong>gNSI</strong>: gRPC Network Security Interface。<code>Authz</code> / <code>Pathz</code> / <code>Credentialz</code> / <code>Certz</code> などのセキュリティ管理 RPC。</li>
+<li><strong>OpenConfig</strong>: ベンダー非依存の YANG モデル群。<code>openconfig-interfaces</code>、<code>openconfig-bgp</code> などが主要。</li>
+<li><strong>SONiC YANG (native)</strong>: <code>sonic-port</code>、<code>sonic-vlan</code> のように CONFIG_DB スキーマ 1:1 で書かれた YANG モデル群。</li>
+<li><strong>Translib</strong>: OpenConfig / SONiC YANG を翻訳して CONFIG_DB へ落とす中間層。YGOT ベース。</li>
+<li><strong>Transformer</strong>: Translib 内のモデル変換。フィールド単位で OpenConfig ↔ SONiC のマッピングを定義。</li>
+<li><strong>Save-on-Set</strong>: gNMI Set が成功した時に <code>/etc/sonic/config_db.json</code> まで永続化する設定。</li>
+<li><strong>Master Arbitration</strong>: 複数 client が同じ path に同時 Set する競合を防ぐため、gNMI Set の「primary client」を Election で決める仕組み。</li>
+<li><strong>Dial-out subscription</strong>: collector 側ではなく switch 側から telemetry stream を発信する telemetry の逆方向モード。</li>
+</ul>
+<h2 id="nms-interface-description">典型シーン: NMS から interface description をまとめて投入する<a class="headerlink" href="#nms-interface-description" title="Permanent link">&para;</a></h2>
+<p>NMS が 100 台の ToR に対し interface description を OpenConfig path で Set する場面を考える。SONiC 内ではこう動く。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant NMS
+  participant GNMI as telemetry container&lt;br&gt;(gnmi-server)
+  participant TR as Translib / Transformer
+  participant YANG as sonic-yang-models
+  participant CFG as CONFIG_DB
+  participant ORCH as portsyncd / orchagent
+  NMS-&gt;&gt;GNMI: SetRequest(path=/interfaces/interface[name=Ethernet0]/config/description)
+  GNMI-&gt;&gt;TR: convert OpenConfig → internal
+  TR-&gt;&gt;YANG: validate (must / when 制約)
+  YANG--&gt;&gt;TR: ok
+  TR-&gt;&gt;CFG: write PORT|Ethernet0:description=…
+  CFG--&gt;&gt;ORCH: keyspace notification
+  ORCH-&gt;&gt;ORCH: 該当 feature 無関係なので無視
+  TR--&gt;&gt;GNMI: SetResponse(ok)
+  GNMI--&gt;&gt;NMS: ok
+  NMS-&gt;&gt;GNMI: Subscribe ON_CHANGE /interfaces/interface/state/oper-status
+  GNMI-&gt;&gt;CFG: STATE_DB watch
+  CFG--&gt;&gt;GNMI: oper-status updates
+  GNMI--&gt;&gt;NMS: stream</code></pre>
+<p>ポイントは <strong>Set した path と Subscribe する path がどちらも YANG モデル上の path</strong> で、<code>/config/...</code> と <code>/state/...</code> で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。</p>
+<h2 id="_3">入口の責務を分ける<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -22287,7 +22475,7 @@
 <p>同じ機能を OpenConfig と SONiC YANG の両方から触れる場合、Transformer がフィールド単位で変換するため、片方からの設定がもう片方の get でも見えるのが原則である。ただし、OpenConfig 側がそのフィールドを表現しない場合は SONiC YANG だけで操作する。OpenConfig マップの実装範囲は機能ごとに異なるため、interface は <a href="../../../management/openconfig-support-for-ethernet-interfaces/">OpenConfig support for ethernet interfaces</a>、PortChannel は <a href="../../../switching/openconfig-support-for-portchannel-aggregate-interface/">OpenConfig PortChannel</a>、VLAN は <a href="../../../switching/add-support-for-vlan-interface-using-openconfig-yang/">OpenConfig VLAN</a>、BGP は <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">SONiC FRR BGP Unified Mgmt Framework</a> を参照する。</p>
 <h2 id="cli-gnmi">CLI と gNMI の整合<a class="headerlink" href="#cli-gnmi" title="Permanent link">&para;</a></h2>
 <p>SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。同じ操作を CLI と gNMI で別実装にしないための設計で、CLI 追加時の重複を減らす目的もある。自動生成の流れは <a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a> にまとまっている。CLI から入った設定が gNMI Get で同じ表現で戻ってくることを期待するなら、その機能が YANG モデル経由で扱われているかを最初に確認する。</p>
-<h2 id="_3">この章での読み方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">この章での読み方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>リクエストの内部フローを追いたいときは <a href="../architecture/">アーキテクチャ</a> へ。</li>
 <li>実際に Get / Set / Subscribe を書くときは <a href="../setup/">設定</a> へ。</li>
@@ -22295,7 +22483,57 @@
 <li>gNOI、gNSI で reboot / file / OS install / healthz / 証明書配布を扱うときは <a href="../gnoi-gnsi/">gNOI / gNSI</a> へ。</li>
 <li>YANG モジュールを機能章から逆引きするときは <a href="../yang-reference/">YANG リファレンス</a> へ。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">似た機能との違い<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>共通点</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SNMP</td>
+<td>NMS から状態を取れる</td>
+<td>SNMP は MIB / UDP / pull のみ。gNMI は YANG / gRPC / push 可。Set 系も SNMP は SET PDU しかなく実運用では使われない</td>
+</tr>
+<tr>
+<td>NETCONF</td>
+<td>YANG モデル駆動</td>
+<td>NETCONF は SSH + XML、gNMI は gRPC + protobuf。SONiC は NETCONF を実装していないので議論はモデル互換性の話に限る</td>
+</tr>
+<tr>
+<td>RESTCONF</td>
+<td>YANG モデル駆動 + HTTP</td>
+<td>SONiC の REST server は OpenAPI 生成版で、RESTCONF の RFC 8040 仕様には準拠しない。同じ Translib に乗るので機能は等価</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td>設定の入口</td>
+<td>CLI は内部で同じ YANG / Translib を経由（auto-generate 経由）。差は transport と UX のみ</td>
+</tr>
+<tr>
+<td>SAI / <code>sonic-cfggen</code></td>
+<td>設定の最終形</td>
+<td>gNMI は ConfigDB まで、SAI は ASIC 上の object。gNMI からは SAI を直接触れない</td>
+</tr>
+<tr>
+<td>gRPC で書いた独自 API</td>
+<td>gRPC 上で動く</td>
+<td>gNMI は仕様化された 4 RPC のみ。汎用 gRPC ではないので、独自拡張は path / extension で行う</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">読了後にできること<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>同じ機能を OpenConfig path と SONiC native path のどちらで触るべきか、その feature が OpenConfig で表現できるかを基準に判断できる</li>
+<li>gNMI Set が失敗したとき、Transport 層・Translib 変換・YANG validation・ConfigDB writer のどこで止まったか順序立てて切り分けられる</li>
+<li>「CLI からは見える設定が gNMI Get で取れない」現象を、YANG モデル未対応 / Transformer 未実装 / state path 未実装の 3 つから選ぶ目線を持てる</li>
+<li>Master arbitration / save-on-set / dial-out のような運用上の仕掛けが、なぜ必要かを CLI との対比で説明できる</li>
+<li>gNOI と gNSI が gNMI とは別の RPC セットで、reboot / 証明書管理が transport 共用なだけと理解できる</li>
+</ul>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/sonic-management-framework/">Management Framework 全体像</a></li>
 <li><a href="../../../management/sonic-gnmi-server-interface-design/">gNMI server interface design</a></li>

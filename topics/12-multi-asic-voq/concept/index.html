@@ -3872,6 +3872,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#multi-asic-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC / VOQ は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pizza-box-multi-asic-voq-chassis" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3938,7 +3971,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: VOQ chassis での経路投入と転送
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22181,6 +22247,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#multi-asic-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC / VOQ は何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の定義
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pizza-box-multi-asic-voq-chassis" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,7 +22346,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: VOQ chassis での経路投入と転送
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22284,6 +22416,42 @@
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。</p>
+<h2 id="multi-asic-voq">Multi-ASIC / VOQ は何を解決するか<a class="headerlink" href="#multi-asic-voq" title="Permanent link">&para;</a></h2>
+<p>1 ASIC の pizza-box では足りない radix（ポート数 × 帯域）が必要になったとき、ハードウェア側は「1 筐体に複数 ASIC を載せる」「複数 line card を fabric でつなぐ」という拡張を取ります。ところが NOS から見ると、ASIC が複数あるだけで以下が一気に難しくなります。</p>
+<ul>
+<li>ポート命名空間: <code>Ethernet0</code> が複数 ASIC の片方にあるのか、どちらにあるのか</li>
+<li>routing daemon: 同じ BGP プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか</li>
+<li>設定永続化: CONFIG_DB は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか</li>
+<li>counter / show: <code>show interfaces counters</code> は ASIC を跨ぐのか、まとめるのか</li>
+<li>fabric / chassis: line card を跨いだ system port は単一 switch に見えるのか</li>
+</ul>
+<p>Multi-ASIC SONiC と VOQ SONiC が解決しているのは、<strong>「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる</strong>ことです。具体的な手段が、namespace 分離、Redis インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。</p>
+<h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
+<p>Multi-ASIC / VOQ は data plane の構造を反映した <strong>全層横断のアーキテクチャ変更</strong> で、特定 1 機能ではなく次の各層に変更が入ります。</p>
+<ul>
+<li><strong>Linux</strong>: ASIC ごとに <code>asic0</code>、<code>asic1</code> ... の network namespace を作り、portmgmtd / orchagent / syncd / bgpd を namespace 内で複数起動</li>
+<li><strong>Redis / DB</strong>: ASIC ごとに <code>redis&lt;N&gt;.sock</code> を立て、CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ</li>
+<li><strong>Routing</strong>: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。FRR の <code>vrf</code> ではなく namespace で分離</li>
+<li><strong>Forwarding plane</strong>: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成</li>
+<li><strong>CLI</strong>: <code>show</code> 系コマンドが <code>--namespace</code> を取り、引数なしのときは全 namespace を集約。<code>sonic-utilities</code> が namespace 一覧を <code>/usr/share/sonic/device/.../asic.conf</code> から読む</li>
+</ul>
+<p>つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / VXLAN / QoS / Reboot...）が<strong>「1 ASIC の前提」で書かれている内容に対する例外条項集</strong>でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。</p>
+<h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Pizza-box</strong>: 1U〜2U 程度の fixed switch。多くは 1 ASIC。</li>
+<li><strong>Multi-ASIC platform</strong>: 1 筐体に複数 ASIC を搭載した固定スイッチ。例: 一部 7800 / 7050 系の大型機。</li>
+<li><strong>VOQ chassis</strong>: 複数 line card と fabric / supervisor card を持つシャーシ型システム。modular chassis とも。</li>
+<li><strong>Line card (LC)</strong>: front-panel port と 1 つ以上の ASIC を搭載する差し込みカード。</li>
+<li><strong>Fabric card / supervisor</strong>: line card 間を fabric ASIC で結ぶ内部スイッチング層を担当するカード。</li>
+<li><strong>Namespace</strong>: Linux network namespace。SONiC では ASIC ごとに 1 つ。</li>
+<li><strong>Front-panel port</strong>: 運用者が実際にケーブルを挿す物理 port。<code>Ethernet0</code> などの命名。</li>
+<li><strong>System port</strong>: VOQ chassis 全体で一意な論理 port ID。chassis 内の全 front-panel port を 1 名前空間で表現する。</li>
+<li><strong>Fabric port</strong>: line card と fabric ASIC を結ぶ内部 port。L2/L3 forwarding はせず cell スイッチング。</li>
+<li><strong>Recirculation port</strong>: ASIC 内でパケットを再度パイプライン入力に戻すための内部 loop port。</li>
+<li><strong>Chassis DB</strong>: supervisor 上に立つ Redis インスタンスで、全 line card に共通な system port、neighbor、router 等を集約。</li>
+<li><strong>Distributed VOQ</strong>: ingress 側で egress system port 単位の virtual output queue を持ち、credit ベースで egress に送る仕組み。HOL blocking を回避。</li>
+<li><strong>Switch type</strong>: <code>DEVICE_METADATA.localhost.switch_type</code> に <code>chassis-packet</code> / <code>voq</code> / <code>fabric</code> などが入り、起動時の挙動を分岐。</li>
+</ul>
 <h2 id="pizza-box-multi-asic-voq-chassis">Pizza-box / Multi-ASIC / VOQ Chassis の三層<a class="headerlink" href="#pizza-box-multi-asic-voq-chassis" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Pizza-box (1 ASIC)</strong>: NOS は単一の Redis インスタンスと単一の network namespace で動きます。CLI と CONFIG_DB が 1 対 1 です。</li>
@@ -22313,7 +22481,73 @@
 <h2 id="single-asic-fixed-voq-system">Single-ASIC Fixed VOQ System<a class="headerlink" href="#single-asic-fixed-voq-system" title="Permanent link">&para;</a></h2>
 <p>1 ASIC の pizza-box でも、内部で VOQ アーキテクチャを採用するシステムが定義されています。これは「pizza-box でありながら、将来的に VOQ chassis の line card として組み込むことを想定する」中間形態で、Chassis DB を持たず、system port は自分自身に閉じます。</p>
 <p>単独運用する場合は通常の Multi-ASIC として見え、<code>CONFIG_DB</code> の <code>DEVICE_METADATA.localhost.switch_type = voq</code> のような印で識別します。設定の流儀は <a href="../setup/">設定</a> で扱います。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="voq-chassis">典型シーン: VOQ chassis での経路投入と転送<a class="headerlink" href="#voq-chassis" title="Permanent link">&para;</a></h2>
+<p>外部 BGP peer から受けた route が、ある line card に着信して、別 line card の port から出ていく場面を考えます。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant Peer as external BGP peer
+  participant LC1 as Line Card 1 (asic0 ns)
+  participant SUP as Supervisor (Chassis DB)
+  participant LC2 as Line Card 2 (asic0 ns)
+  participant Fabric as Fabric ASIC
+  Peer-&gt;&gt;LC1: BGP UPDATE (prefix=10.0.0.0/24, nh=10.1.1.1)
+  LC1-&gt;&gt;LC1: bgpd → zebra → fpmsyncd → APPL_DB
+  LC1-&gt;&gt;LC1: orchagent → syncd → SAI (LC1 ASIC FIB)
+  LC1-&gt;&gt;SUP: system port info / neighbor share
+  SUP-&gt;&gt;LC2: 共有 neighbor / system port を反映
+  Note over LC2: 別 LC でも宛先解決可能に
+  Peer-&gt;&gt;LC2: ingress traffic to 10.0.0.0/24
+  LC2-&gt;&gt;LC2: FIB lookup → egress system port (LC1 の port)
+  LC2-&gt;&gt;Fabric: cell forwarding (VOQ で credit ベース送信)
+  Fabric-&gt;&gt;LC1: 宛先 system port に到達
+  LC1-&gt;&gt;Peer: front-panel port から送出</code></pre>
+<p>ここで重要なのは、<strong>LC1 で受信した route 情報が Chassis DB を経由して LC2 にも届く</strong> という点と、<strong>LC2 で「LC1 の port が egress」と解決できる system port 抽象が要る</strong> という点。pizza-box の感覚で「ingress 側 LC でだけ route が見えていればいい」と思うと FIB miss を量産します。</p>
+<h2 id="_3">似た機能との違い<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>共通点</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MLAG (MCLAG)</td>
+<td>複数装置を 1 つに見せたい</td>
+<td>MLAG は別筐体 2 台を LACP 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散</td>
+</tr>
+<tr>
+<td>Stack switch</td>
+<td>1 system に統合</td>
+<td>stack は management の統合が主、forwarding は stack link 経由。VOQ chassis のような cell-based fabric ではない</td>
+</tr>
+<tr>
+<td>VRF</td>
+<td>namespace に似て見える</td>
+<td>VRF は L3 route table の論理分離。Multi-ASIC namespace は OS レベルの完全分離</td>
+</tr>
+<tr>
+<td>Docker container</td>
+<td>プロセス分離</td>
+<td>container は process / mount / network の分離。namespace 分離は network 軸のみ</td>
+</tr>
+<tr>
+<td>SmartSwitch (DPU)</td>
+<td>複数 ASIC 的に見える</td>
+<td>SmartSwitch は switch ASIC + DPU の組合せで、Multi-ASIC とは構造が違う。詳細は dash-smartswitch 章</td>
+</tr>
+</tbody>
+</table>
+<p>特に <strong>「VOQ chassis ≒ stack」 と思うのは誤読</strong> で、VOQ chassis はハードウェアレベルで全 line card が cell-based fabric で 1 つの switch を構成するのに対し、stack は別装置の管理統合という質的に違うものです。</p>
+<h2 id="_4">読了後にできること<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show interfaces counters</code> の挙動が pizza-box と Multi-ASIC で違うことを知って、<code>-n asic0</code> を意識的に使える</li>
+<li>ある CLI が引数なしで「全 namespace まとめ」を返すか「host namespace だけ」を返すかを、まず疑えるようになる</li>
+<li>VOQ chassis 上で「BGP route が入っているのに forwarding しない」現象を、Chassis DB → system port → distributed VOQ credit のどこで止まったかで切り分けられる</li>
+<li>recirculation port は ASIC 機能であって front-panel port ではないので、<code>show interfaces</code> に出ない / 出ても触らない、と判断できる</li>
+<li>Single-ASIC VOQ system が「VOQ chassis 線形の予習」用の中間形態で、Chassis DB を持たない閉じた構成だと理解した上で switch_type を確認できる</li>
+</ul>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/1-sonic-on-multi-asic-platforms/">SONiC on Multi-ASIC Platforms</a></li>
 <li><a href="../../../platform/voq-sonic/">VOQ SONiC</a></li>
